@@ -6,6 +6,8 @@
 
 mod bindings;
 mod commands;
+mod database;
+mod miniflux;
 mod types;
 mod utils;
 
@@ -13,6 +15,9 @@ use tauri::Manager;
 
 // Re-export only what's needed externally
 pub use types::DEFAULT_QUICK_PANE_SHORTCUT;
+
+// Miniflux state
+use commands::miniflux::MinifluxState;
 
 /// Application entry point. Sets up all plugins and initializes the app.
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -45,32 +50,32 @@ pub fn run() {
     // Build with common plugins
     let mut app_builder = tauri::Builder::default();
 
-            // Single instance plugin must be registered FIRST
-            // When user tries to open a second instance, toggle window visibility
-            #[cfg(desktop)]
-            {
-                app_builder = app_builder.plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
-                    use commands::tray::{show_main_window, hide_main_window};
+    // Single instance plugin must be registered FIRST
+    // When user tries to open a second instance, toggle window visibility
+    #[cfg(desktop)]
+    {
+        app_builder = app_builder.plugin(tauri_plugin_single_instance::init(|app, _args, _cwd| {
+            use commands::tray::{hide_main_window, show_main_window};
 
-                    if let Some(window) = app.get_webview_window("main") {
-                        // Toggle window visibility: show if hidden, hide if visible
-                        match window.is_visible() {
-                            Ok(true) => {
-                                let _ = hide_main_window(app);
-                            }
-                            Ok(false) => {
-                                let _ = show_main_window(app);
-                            }
-                            Err(e) => {
-                                log::error!("Failed to check window visibility: {e}");
-                                // Fallback: try to show the window
-                                let _ = window.set_focus();
-                                let _ = window.unminimize();
-                            }
-                        }
+            if let Some(window) = app.get_webview_window("main") {
+                // Toggle window visibility: show if hidden, hide if visible
+                match window.is_visible() {
+                    Ok(true) => {
+                        let _ = hide_main_window(app);
                     }
-                }));
+                    Ok(false) => {
+                        let _ = show_main_window(app);
+                    }
+                    Err(e) => {
+                        log::error!("Failed to check window visibility: {e}");
+                        // Fallback: try to show the window
+                        let _ = window.set_focus();
+                        let _ = window.unminimize();
+                    }
+                }
             }
+        }));
+    }
 
     // Window state plugin - saves/restores window position and size
     // Note: Only applies to windows listed in capabilities (main window only, not quick-pane)
@@ -134,6 +139,9 @@ pub fn run() {
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_os::init())
+        .manage(MinifluxState {
+            client: std::sync::Arc::new(tokio::sync::Mutex::new(None)),
+        })
         .setup(|app| {
             log::info!("Application starting up");
             log::debug!(

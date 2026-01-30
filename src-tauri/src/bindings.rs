@@ -1,7 +1,7 @@
 use tauri_specta::{collect_commands, Builder};
 
 pub fn generate_bindings() -> Builder<tauri::Wry> {
-    use crate::commands::{notifications, preferences, quick_pane, recovery, tray};
+    use crate::commands::{miniflux, notifications, preferences, quick_pane, recovery, tray};
 
     Builder::<tauri::Wry>::new().commands(collect_commands![
         preferences::greet,
@@ -23,6 +23,30 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         tray::tray_set_tooltip,
         tray::tray_get_state,
         tray::tray_is_window_visible,
+        miniflux::miniflux_connect,
+        miniflux::miniflux_disconnect,
+        miniflux::miniflux_is_connected,
+        miniflux::get_categories,
+        miniflux::get_feeds,
+        miniflux::get_category_feeds,
+        miniflux::get_entries,
+        miniflux::get_entry,
+        miniflux::mark_entry_read,
+        miniflux::mark_entries_read,
+        miniflux::mark_entry_unread,
+        miniflux::toggle_entry_star,
+        miniflux::update_entry,
+        miniflux::refresh_feed,
+        miniflux::refresh_all_feeds,
+        miniflux::create_feed,
+        miniflux::update_feed,
+        miniflux::delete_feed,
+        miniflux::get_current_user,
+        miniflux::get_counters,
+        miniflux::discover_subscriptions,
+        miniflux::export_opml,
+        miniflux::import_opml,
+        miniflux::fetch_entry_content,
     ])
 }
 
