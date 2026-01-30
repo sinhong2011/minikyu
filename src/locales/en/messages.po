@@ -1,0 +1,388 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-01-23 09:49+0800\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: en\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/lib/menu.ts:20
+msgid "About {APP_NAME}"
+msgstr "About {APP_NAME}"
+
+#: src/components/preferences/PreferencesDialog.tsx:44
+msgid "Advanced"
+msgstr "Advanced"
+
+#: src/components/preferences/PreferencesDialog.tsx:39
+msgid "Appearance"
+msgstr "Appearance"
+
+#: src/lib/menu.ts:26
+msgid "Check for Updates..."
+msgstr "Check for Updates..."
+
+#: src/components/preferences/panes/AppearancePane.tsx:115
+msgid "Choose your preferred color theme"
+msgstr "Choose your preferred color theme"
+
+#: src/components/preferences/panes/AppearancePane.tsx:90
+msgid "Choose your preferred display language"
+msgstr "Choose your preferred display language"
+
+#: src/lib/commands/window-commands.ts:10
+msgid "Close the current window"
+msgstr "Close the current window"
+
+#: src/lib/commands/window-commands.ts:9
+msgid "Close Window"
+msgstr "Close Window"
+
+#: src/components/preferences/panes/AppearancePane.tsx:114
+msgid "Color Theme"
+msgstr "Color Theme"
+
+#: src/components/command-palette/CommandPalette.tsx:95
+msgid "Command Palette"
+msgstr "Command Palette"
+
+#: src/components/preferences/PreferencesDialog.tsx:65
+msgid "Customize your application preferences here."
+msgstr "Customize your application preferences here."
+
+#: src/components/preferences/panes/AppearancePane.tsx:127
+msgid "Dark"
+msgstr "Dark"
+
+#: src/components/command-palette/CommandPalette.tsx:77
+#: src/components/titlebar/CommandDialog.tsx:66
+msgid "Debug"
+msgstr "Debug"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:34
+#: src/components/preferences/panes/GeneralPane.tsx:119
+msgid "Disabled"
+msgstr "Disabled"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:34
+#: src/components/preferences/panes/GeneralPane.tsx:119
+msgid "Enabled"
+msgstr "Enabled"
+
+#: src/components/preferences/panes/GeneralPane.tsx:104
+msgid "Enter example text"
+msgstr "Enter example text"
+
+#: src/lib/commands/window-commands.ts:59
+msgid "Enter Fullscreen"
+msgstr "Enter Fullscreen"
+
+#: src/lib/commands/window-commands.ts:60
+msgid "Enter fullscreen mode"
+msgstr "Enter fullscreen mode"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:22
+msgid "Example Advanced Settings"
+msgstr "Example Advanced Settings"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:24
+msgid "Example Advanced Toggle"
+msgstr "Example Advanced Toggle"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:40
+msgid "Example Dropdown Setting"
+msgstr "Example Dropdown Setting"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:48
+msgid "Example Option 1"
+msgstr "Example Option 1"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:49
+msgid "Example Option 2"
+msgstr "Example Option 2"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:50
+msgid "Example Option 3"
+msgstr "Example Option 3"
+
+#: src/components/preferences/panes/GeneralPane.tsx:96
+msgid "Example Settings"
+msgstr "Example Settings"
+
+#: src/components/preferences/panes/GeneralPane.tsx:98
+msgid "Example Text Setting"
+msgstr "Example Text Setting"
+
+#: src/components/preferences/panes/GeneralPane.tsx:109
+msgid "Example Toggle Setting"
+msgstr "Example Toggle Setting"
+
+#: src/lib/commands/window-commands.ts:76
+msgid "Exit Fullscreen"
+msgstr "Exit Fullscreen"
+
+#: src/lib/commands/window-commands.ts:77
+msgid "Exit fullscreen mode"
+msgstr "Exit fullscreen mode"
+
+#: src/lib/commands/window-commands.ts:19
+msgid "Failed to close window: {message}"
+msgstr "Failed to close window: {message}"
+
+#: src/lib/commands/window-commands.ts:69
+msgid "Failed to enter fullscreen: {message}"
+msgstr "Failed to enter fullscreen: {message}"
+
+#: src/lib/commands/window-commands.ts:86
+msgid "Failed to exit fullscreen: {message}"
+msgstr "Failed to exit fullscreen: {message}"
+
+#: src/lib/commands/window-commands.ts:36
+msgid "Failed to minimize window: {message}"
+msgstr "Failed to minimize window: {message}"
+
+#: src/components/preferences/panes/GeneralPane.tsx:42
+msgid "Failed to register shortcut"
+msgstr "Failed to register shortcut"
+
+#: src/components/preferences/panes/GeneralPane.tsx:67
+msgid "Failed to restore previous shortcut"
+msgstr "Failed to restore previous shortcut"
+
+#: src/lib/commands/window-commands.ts:52
+msgid "Failed to toggle maximize: {message}"
+msgstr "Failed to toggle maximize: {message}"
+
+#: src/components/preferences/PreferencesDialog.tsx:34
+msgid "General"
+msgstr "General"
+
+#: src/components/preferences/panes/GeneralPane.tsx:84
+msgid "Global keyboard shortcut to toggle the quick pane from any application"
+msgstr "Global keyboard shortcut to toggle the quick pane from any application"
+
+#: src/lib/menu.ts:39
+msgid "Hide {APP_NAME}"
+msgstr "Hide {APP_NAME}"
+
+#: src/components/titlebar/LinuxTitleBar.tsx:30
+#: src/components/titlebar/WindowTitleBar.tsx:47
+#: src/lib/commands/navigation-commands.ts:16
+msgid "Hide Left Sidebar"
+msgstr "Hide Left Sidebar"
+
+#: src/lib/menu.ts:43
+msgid "Hide Others"
+msgstr "Hide Others"
+
+#: src/components/titlebar/TitleBarContent.tsx:62
+#: src/lib/commands/navigation-commands.ts:34
+#~ msgid "Hide Right Sidebar"
+#~ msgstr "Hide Right Sidebar"
+
+#: src/lib/commands/navigation-commands.ts:17
+msgid "Hide the left sidebar"
+msgstr "Hide the left sidebar"
+
+#: src/lib/commands/navigation-commands.ts:35
+#~ msgid "Hide the right sidebar"
+#~ msgstr "Hide the right sidebar"
+
+#: src/components/preferences/panes/GeneralPane.tsx:80
+msgid "Keyboard Shortcuts"
+msgstr "Keyboard Shortcuts"
+
+#: src/components/preferences/panes/AppearancePane.tsx:87
+#: src/components/preferences/panes/AppearancePane.tsx:89
+msgid "Language"
+msgstr "Language"
+
+#: src/components/preferences/panes/AppearancePane.tsx:126
+msgid "Light"
+msgstr "Light"
+
+#: src/lib/commands/window-commands.ts:27
+msgid "Minimize the current window"
+msgstr "Minimize the current window"
+
+#: src/lib/commands/window-commands.ts:26
+msgid "Minimize Window"
+msgstr "Minimize Window"
+
+#: src/components/command-palette/CommandPalette.tsx:75
+#: src/components/titlebar/CommandDialog.tsx:64
+msgid "Navigation"
+msgstr "Navigation"
+
+#: src/components/command-palette/CommandPalette.tsx:104
+#: src/components/titlebar/CommandDialog.tsx:88
+msgid "No results found."
+msgstr "No results found."
+
+#: src/lib/commands/navigation-commands.ts:25
+msgid "Open Preferences"
+msgstr "Open Preferences"
+
+#: src/lib/commands/navigation-commands.ts:26
+msgid "Open the application preferences"
+msgstr "Open the application preferences"
+
+#: src/components/command-palette/CommandPalette.tsx:84
+#~ msgid "Other"
+#~ msgstr "Other"
+
+#: src/components/command-palette/CommandPalette.tsx:84
+#: src/components/titlebar/CommandDialog.tsx:73
+msgid "Others"
+msgstr "Others"
+
+#: src/components/preferences/PreferencesDialog.tsx:63
+#: src/components/preferences/PreferencesDialog.tsx:101
+msgid "Preferences"
+msgstr "Preferences"
+
+#: src/lib/menu.ts:32
+msgid "Preferences..."
+msgstr "Preferences..."
+
+#: src/components/preferences/panes/GeneralPane.tsx:82
+msgid "Quick Pane Shortcut"
+msgstr "Quick Pane Shortcut"
+
+#: src/lib/menu.ts:52
+msgid "Quit {APP_NAME}"
+msgstr "Quit {APP_NAME}"
+
+#: src/components/preferences/ShortcutPicker.tsx:231
+msgid "Reset"
+msgstr "Reset"
+
+#: src/components/titlebar/CommandSearchButton.tsx:20
+msgid "Search or type a command..."
+msgstr "Search or type a command..."
+
+#: src/components/preferences/panes/AppearancePane.tsx:123
+msgid "Select theme"
+msgstr "Select theme"
+
+#: src/components/command-palette/CommandPalette.tsx:79
+#: src/components/titlebar/CommandDialog.tsx:68
+msgid "Settings"
+msgstr "Settings"
+
+#: src/lib/commands/notification-commands.ts:10
+msgid "Show a test toast notification"
+msgstr "Show a test toast notification"
+
+#: src/lib/menu.ts:47
+msgid "Show All"
+msgstr "Show All"
+
+#: src/components/titlebar/LinuxTitleBar.tsx:30
+#: src/components/titlebar/WindowTitleBar.tsx:48
+#: src/lib/commands/navigation-commands.ts:7
+msgid "Show Left Sidebar"
+msgstr "Show Left Sidebar"
+
+#: src/components/titlebar/TitleBarContent.tsx:62
+#: src/lib/commands/navigation-commands.ts:25
+#~ msgid "Show Right Sidebar"
+#~ msgstr "Show Right Sidebar"
+
+#: src/lib/commands/navigation-commands.ts:8
+msgid "Show the left sidebar"
+msgstr "Show the left sidebar"
+
+#: src/lib/commands/navigation-commands.ts:26
+#~ msgid "Show the right sidebar"
+#~ msgstr "Show the right sidebar"
+
+#: src/components/preferences/panes/AppearancePane.tsx:74
+msgid "Something went wrong"
+msgstr "Something went wrong"
+
+#: src/components/preferences/panes/AppearancePane.tsx:128
+msgid "System"
+msgstr "System"
+
+#: src/components/preferences/panes/AppearancePane.tsx:101
+msgid "System Default"
+msgstr "System Default"
+
+#: src/components/titlebar/TitleBar.tsx:18
+#~ msgid "Tauri App"
+#~ msgstr "Tauri App"
+
+#: src/lib/commands/notification-commands.ts:15
+msgid "Test Toast"
+msgstr "Test Toast"
+
+#: src/lib/commands/notification-commands.ts:9
+msgid "Test Toast Notification"
+msgstr "Test Toast Notification"
+
+#: src/components/preferences/panes/GeneralPane.tsx:69
+msgid "The shortcut may be out of sync. Please restart the app or try again."
+msgstr "The shortcut may be out of sync. Please restart the app or try again."
+
+#: src/components/preferences/panes/AppearancePane.tsx:112
+msgid "Theme"
+msgstr "Theme"
+
+#: src/lib/commands/notification-commands.ts:16
+msgid "This is a test notification"
+msgstr "This is a test notification"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:25
+msgid "This is an example advanced toggle setting (not persisted)"
+msgstr "This is an example advanced toggle setting (not persisted)"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:41
+msgid "This is an example dropdown/select setting (not persisted)"
+msgstr "This is an example dropdown/select setting (not persisted)"
+
+#: src/components/preferences/panes/GeneralPane.tsx:110
+msgid "This is an example switch/toggle setting (not persisted)"
+msgstr "This is an example switch/toggle setting (not persisted)"
+
+#: src/components/preferences/panes/GeneralPane.tsx:99
+msgid "This is an example text input setting (not persisted)"
+msgstr "This is an example text input setting (not persisted)"
+
+#: src/lib/menu.ts:62
+msgid "Toggle Left Sidebar"
+msgstr "Toggle Left Sidebar"
+
+#: src/lib/commands/window-commands.ts:43
+msgid "Toggle Maximize"
+msgstr "Toggle Maximize"
+
+#: src/lib/menu.ts:68
+#~ msgid "Toggle Right Sidebar"
+#~ msgstr "Toggle Right Sidebar"
+
+#: src/lib/commands/window-commands.ts:44
+msgid "Toggle window maximize state"
+msgstr "Toggle window maximize state"
+
+#: src/components/command-palette/CommandPalette.tsx:96
+#: src/components/command-palette/CommandPalette.tsx:99
+#: src/components/titlebar/CommandDialog.tsx:83
+msgid "Type a command or search..."
+msgstr "Type a command or search..."
+
+#: src/lib/menu.ts:58
+msgid "View"
+msgstr "View"
+
+#: src/components/command-palette/CommandPalette.tsx:81
+#: src/components/titlebar/CommandDialog.tsx:70
+msgid "Window"
+msgstr "Window"

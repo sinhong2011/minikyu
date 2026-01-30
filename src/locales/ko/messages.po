@@ -1,0 +1,388 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-01-28 11:00+0800\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: ko\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/lib/menu.ts:20
+msgid "About {APP_NAME}"
+msgstr "{APP_NAME} 정보"
+
+#: src/components/preferences/PreferencesDialog.tsx:44
+msgid "Advanced"
+msgstr "고급"
+
+#: src/components/preferences/PreferencesDialog.tsx:39
+msgid "Appearance"
+msgstr "외관"
+
+#: src/lib/menu.ts:26
+msgid "Check for Updates..."
+msgstr "업데이트 확인..."
+
+#: src/components/preferences/panes/AppearancePane.tsx:115
+msgid "Choose your preferred color theme"
+msgstr "선호하는 색상 테마를 선택하세요"
+
+#: src/components/preferences/panes/AppearancePane.tsx:90
+msgid "Choose your preferred display language"
+msgstr "선호하는 표시 언어를 선택하세요"
+
+#: src/lib/commands/window-commands.ts:10
+msgid "Close the current window"
+msgstr "현재 창 닫기"
+
+#: src/lib/commands/window-commands.ts:9
+msgid "Close Window"
+msgstr "창 닫기"
+
+#: src/components/preferences/panes/AppearancePane.tsx:114
+msgid "Color Theme"
+msgstr "색상 테마"
+
+#: src/components/command-palette/CommandPalette.tsx:95
+msgid "Command Palette"
+msgstr "명령 팔레트"
+
+#: src/components/preferences/PreferencesDialog.tsx:65
+msgid "Customize your application preferences here."
+msgstr "여기에서 애플리케이션 설정을 사용자 지정하세요."
+
+#: src/components/preferences/panes/AppearancePane.tsx:127
+msgid "Dark"
+msgstr "다크"
+
+#: src/components/command-palette/CommandPalette.tsx:77
+#: src/components/titlebar/CommandDialog.tsx:66
+msgid "Debug"
+msgstr "디버그"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:34
+#: src/components/preferences/panes/GeneralPane.tsx:119
+msgid "Disabled"
+msgstr "비활성화됨"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:34
+#: src/components/preferences/panes/GeneralPane.tsx:119
+msgid "Enabled"
+msgstr "활성화됨"
+
+#: src/components/preferences/panes/GeneralPane.tsx:104
+msgid "Enter example text"
+msgstr "예제 텍스트 입력"
+
+#: src/lib/commands/window-commands.ts:59
+msgid "Enter Fullscreen"
+msgstr "전체 화면"
+
+#: src/lib/commands/window-commands.ts:60
+msgid "Enter fullscreen mode"
+msgstr "전체 화면 모드로 전환"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:22
+msgid "Example Advanced Settings"
+msgstr "고급 설정 예제"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:24
+msgid "Example Advanced Toggle"
+msgstr "고급 토글 예제"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:40
+msgid "Example Dropdown Setting"
+msgstr "드롭다운 설정 예제"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:48
+msgid "Example Option 1"
+msgstr "옵션 1"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:49
+msgid "Example Option 2"
+msgstr "옵션 2"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:50
+msgid "Example Option 3"
+msgstr "옵션 3"
+
+#: src/components/preferences/panes/GeneralPane.tsx:96
+msgid "Example Settings"
+msgstr "설정 예제"
+
+#: src/components/preferences/panes/GeneralPane.tsx:98
+msgid "Example Text Setting"
+msgstr "텍스트 설정 예제"
+
+#: src/components/preferences/panes/GeneralPane.tsx:109
+msgid "Example Toggle Setting"
+msgstr "토글 설정 예제"
+
+#: src/lib/commands/window-commands.ts:76
+msgid "Exit Fullscreen"
+msgstr "전체 화면 종료"
+
+#: src/lib/commands/window-commands.ts:77
+msgid "Exit fullscreen mode"
+msgstr "전체 화면 모드 종료"
+
+#: src/lib/commands/window-commands.ts:19
+msgid "Failed to close window: {message}"
+msgstr "창을 닫는 데 실패했습니다: {message}"
+
+#: src/lib/commands/window-commands.ts:69
+msgid "Failed to enter fullscreen: {message}"
+msgstr "전체 화면으로 전환하는 데 실패했습니다: {message}"
+
+#: src/lib/commands/window-commands.ts:86
+msgid "Failed to exit fullscreen: {message}"
+msgstr "전체 화면을 종료하는 데 실패했습니다: {message}"
+
+#: src/lib/commands/window-commands.ts:36
+msgid "Failed to minimize window: {message}"
+msgstr "창을 최소화하는 데 실패했습니다: {message}"
+
+#: src/components/preferences/panes/GeneralPane.tsx:42
+msgid "Failed to register shortcut"
+msgstr "단축키 등록에 실패했습니다"
+
+#: src/components/preferences/panes/GeneralPane.tsx:67
+msgid "Failed to restore previous shortcut"
+msgstr "이전 단축키를 복원하는 데 실패했습니다"
+
+#: src/lib/commands/window-commands.ts:52
+msgid "Failed to toggle maximize: {message}"
+msgstr "최대화 전환에 실패했습니다: {message}"
+
+#: src/components/preferences/PreferencesDialog.tsx:34
+msgid "General"
+msgstr "일반"
+
+#: src/components/preferences/panes/GeneralPane.tsx:84
+msgid "Global keyboard shortcut to toggle the quick pane from any application"
+msgstr "모든 애플리케이션에서 빠른 창을 전환하는 전역 키보드 단축키"
+
+#: src/lib/menu.ts:39
+msgid "Hide {APP_NAME}"
+msgstr "{APP_NAME} 숨기기"
+
+#: src/components/titlebar/LinuxTitleBar.tsx:30
+#: src/components/titlebar/WindowTitleBar.tsx:47
+#: src/lib/commands/navigation-commands.ts:16
+msgid "Hide Left Sidebar"
+msgstr "왼쪽 사이드바 숨기기"
+
+#: src/lib/menu.ts:43
+msgid "Hide Others"
+msgstr "기타 숨기기"
+
+#: src/components/titlebar/TitleBarContent.tsx:62
+#: src/lib/commands/navigation-commands.ts:34
+#~ msgid "Hide Right Sidebar"
+#~ msgstr "오른쪽 사이드바 숨기기"
+
+#: src/lib/commands/navigation-commands.ts:17
+msgid "Hide the left sidebar"
+msgstr "왼쪽 사이드바 숨기기"
+
+#: src/lib/commands/navigation-commands.ts:35
+#~ msgid "Hide the right sidebar"
+#~ msgstr "오른쪽 사이드바 숨기기"
+
+#: src/components/preferences/panes/GeneralPane.tsx:80
+msgid "Keyboard Shortcuts"
+msgstr "키보드 단축키"
+
+#: src/components/preferences/panes/AppearancePane.tsx:87
+#: src/components/preferences/panes/AppearancePane.tsx:89
+msgid "Language"
+msgstr "언어"
+
+#: src/components/preferences/panes/AppearancePane.tsx:126
+msgid "Light"
+msgstr "라이트"
+
+#: src/lib/commands/window-commands.ts:27
+msgid "Minimize the current window"
+msgstr "현재 창 최소화"
+
+#: src/lib/commands/window-commands.ts:26
+msgid "Minimize Window"
+msgstr "창 최소화"
+
+#: src/components/command-palette/CommandPalette.tsx:75
+#: src/components/titlebar/CommandDialog.tsx:64
+msgid "Navigation"
+msgstr "탐색"
+
+#: src/components/command-palette/CommandPalette.tsx:104
+#: src/components/titlebar/CommandDialog.tsx:88
+msgid "No results found."
+msgstr "결과를 찾을 수 없습니다."
+
+#: src/lib/commands/navigation-commands.ts:25
+msgid "Open Preferences"
+msgstr "설정 열기"
+
+#: src/lib/commands/navigation-commands.ts:26
+msgid "Open the application preferences"
+msgstr "애플리케이션 설정 열기"
+
+#: src/components/command-palette/CommandPalette.tsx:84
+#~ msgid "Other"
+#~ msgstr "기타"
+
+#: src/components/command-palette/CommandPalette.tsx:84
+#: src/components/titlebar/CommandDialog.tsx:73
+msgid "Others"
+msgstr "기타"
+
+#: src/components/preferences/PreferencesDialog.tsx:63
+#: src/components/preferences/PreferencesDialog.tsx:101
+msgid "Preferences"
+msgstr "설정"
+
+#: src/lib/menu.ts:32
+msgid "Preferences..."
+msgstr "설정..."
+
+#: src/components/preferences/panes/GeneralPane.tsx:82
+msgid "Quick Pane Shortcut"
+msgstr "빠른 창 단축키"
+
+#: src/lib/menu.ts:52
+msgid "Quit {APP_NAME}"
+msgstr "{APP_NAME} 종료"
+
+#: src/components/preferences/ShortcutPicker.tsx:231
+msgid "Reset"
+msgstr "재설정"
+
+#: src/components/titlebar/CommandSearchButton.tsx:20
+msgid "Search or type a command..."
+msgstr "검색 또는 명령 입력..."
+
+#: src/components/preferences/panes/AppearancePane.tsx:123
+msgid "Select theme"
+msgstr "테마 선택"
+
+#: src/components/command-palette/CommandPalette.tsx:79
+#: src/components/titlebar/CommandDialog.tsx:68
+msgid "Settings"
+msgstr "설정"
+
+#: src/lib/commands/notification-commands.ts:10
+msgid "Show a test toast notification"
+msgstr "테스트 알림 표시"
+
+#: src/lib/menu.ts:47
+msgid "Show All"
+msgstr "모두 표시"
+
+#: src/components/titlebar/LinuxTitleBar.tsx:30
+#: src/components/titlebar/WindowTitleBar.tsx:48
+#: src/lib/commands/navigation-commands.ts:7
+msgid "Show Left Sidebar"
+msgstr "왼쪽 사이드바 표시"
+
+#: src/components/titlebar/TitleBarContent.tsx:62
+#: src/lib/commands/navigation-commands.ts:25
+#~ msgid "Show Right Sidebar"
+#~ msgstr "오른쪽 사이드바 표시"
+
+#: src/lib/commands/navigation-commands.ts:8
+msgid "Show the left sidebar"
+msgstr "왼쪽 사이드바 표시"
+
+#: src/lib/commands/navigation-commands.ts:26
+#~ msgid "Show the right sidebar"
+#~ msgstr "오른쪽 사이드바 표시"
+
+#: src/components/preferences/panes/AppearancePane.tsx:74
+msgid "Something went wrong"
+msgstr "문제가 발생했습니다"
+
+#: src/components/preferences/panes/AppearancePane.tsx:128
+msgid "System"
+msgstr "시스템"
+
+#: src/components/preferences/panes/AppearancePane.tsx:101
+msgid "System Default"
+msgstr "시스템 기본값"
+
+#: src/components/titlebar/TitleBar.tsx:18
+#~ msgid "Tauri App"
+#~ msgstr "Tauri 앱"
+
+#: src/lib/commands/notification-commands.ts:15
+msgid "Test Toast"
+msgstr "테스트 알림"
+
+#: src/lib/commands/notification-commands.ts:9
+msgid "Test Toast Notification"
+msgstr "테스트 알림"
+
+#: src/components/preferences/panes/GeneralPane.tsx:69
+msgid "The shortcut may be out of sync. Please restart the app or try again."
+msgstr "단축키가 동기화되지 않았을 수 있습니다. 앱을 다시 시작하거나 다시 시도하세요."
+
+#: src/components/preferences/panes/AppearancePane.tsx:112
+msgid "Theme"
+msgstr "테마"
+
+#: src/lib/commands/notification-commands.ts:16
+msgid "This is a test notification"
+msgstr "이것은 테스트 알림입니다"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:25
+msgid "This is an example advanced toggle setting (not persisted)"
+msgstr "이것은 고급 토글 설정 예제입니다(저장되지 않음)"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:41
+msgid "This is an example dropdown/select setting (not persisted)"
+msgstr "이것은 드롭다운/선택 설정 예제입니다(저장되지 않음)"
+
+#: src/components/preferences/panes/GeneralPane.tsx:110
+msgid "This is an example switch/toggle setting (not persisted)"
+msgstr "이것은 스위치/토글 설정 예제입니다(저장되지 않음)"
+
+#: src/components/preferences/panes/GeneralPane.tsx:99
+msgid "This is an example text input setting (not persisted)"
+msgstr "이것은 텍스트 입력 설정 예제입니다(저장되지 않음)"
+
+#: src/lib/menu.ts:62
+msgid "Toggle Left Sidebar"
+msgstr "왼쪽 사이드바 전환"
+
+#: src/lib/commands/window-commands.ts:43
+msgid "Toggle Maximize"
+msgstr "최대화 전환"
+
+#: src/lib/menu.ts:68
+#~ msgid "Toggle Right Sidebar"
+#~ msgstr "오른쪽 사이드바 전환"
+
+#: src/lib/commands/window-commands.ts:44
+msgid "Toggle window maximize state"
+msgstr "창 최대화 상태 전환"
+
+#: src/components/command-palette/CommandPalette.tsx:96
+#: src/components/command-palette/CommandPalette.tsx:99
+#: src/components/titlebar/CommandDialog.tsx:83
+msgid "Type a command or search..."
+msgstr "명령을 입력하거나 검색..."
+
+#: src/lib/menu.ts:58
+msgid "View"
+msgstr "보기"
+
+#: src/components/command-palette/CommandPalette.tsx:81
+#: src/components/titlebar/CommandDialog.tsx:70
+msgid "Window"
+msgstr "창"

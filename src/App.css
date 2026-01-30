@@ -1,0 +1,76 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+@import "./theme-variables.css";
+
+@custom-variant dark (&:is(.dark *));
+
+@keyframes collapsible-down {
+  from {
+    height: 0;
+  }
+  to {
+    height: var(--radix-collapsible-content-height);
+  }
+}
+
+@keyframes collapsible-up {
+  from {
+    height: var(--radix-collapsible-content-height);
+  }
+  to {
+    height: 0;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border outline-ring/50;
+    box-sizing: border-box;
+    cursor: default;
+  }
+
+  body {
+    @apply text-foreground;
+    font-family:
+      -apple-system, "Segoe UI", "Roboto", "Noto Sans CJK SC", "Noto Sans CJK TC", "Noto Sans JP", "Noto Sans KR", "Microsoft YaHei", "Hiragino Sans GB", "PingFang SC", "Hiragino Kaku Gothic Pro", "Malgun Gothic", sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    -ms-user-select: none;
+    overscroll-behavior: none;
+    min-height: 100vh;
+    min-width: 100vw;
+    overflow: hidden;
+    position: relative;
+  }
+
+  svg {
+    color: inherit;
+  }
+
+  /* Allow text selection in specific areas */
+  input,
+  textarea,
+  [contenteditable="true"] {
+    user-select: text;
+    -webkit-user-select: text;
+    -moz-user-select: text;
+    -ms-user-select: text;
+    cursor: text;
+  }
+
+  /* Utility class for when pointer cursor is explicitly needed */
+  .cursor-pointer {
+    cursor: pointer;
+  }
+
+  /* Required for drag regions to work with touch/pen on Windows */
+  *[data-tauri-drag-region] {
+    -webkit-app-region: drag;
+    app-region: drag;
+  }
+}

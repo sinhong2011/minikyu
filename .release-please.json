@@ -1,0 +1,14 @@
+{
+  "$schema": "https://raw.githubusercontent.com/googleapis/release-please/main/schemas/config.json",
+  "bump-minor-pre-major": true,
+  "bump-patch-for-minor-pre-major": true,
+  "separate-pull-requests": false,
+  "packages": {
+    ".": {
+      "release-type": "node",
+      "package-name": "tauri-template",
+      "changelog-path": "CHANGELOG.md",
+      "extra-files": ["src-tauri/tauri.conf.json", "src-tauri/Cargo.toml"]
+    }
+  }
+}

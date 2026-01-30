@@ -1,0 +1,388 @@
+msgid ""
+msgstr ""
+"POT-Creation-Date: 2026-01-28 11:00+0800\n"
+"MIME-Version: 1.0\n"
+"Content-Type: text/plain; charset=utf-8\n"
+"Content-Transfer-Encoding: 8bit\n"
+"X-Generator: @lingui/cli\n"
+"Language: zh-TW\n"
+"Project-Id-Version: \n"
+"Report-Msgid-Bugs-To: \n"
+"PO-Revision-Date: \n"
+"Last-Translator: \n"
+"Language-Team: \n"
+"Plural-Forms: \n"
+
+#: src/lib/menu.ts:20
+msgid "About {APP_NAME}"
+msgstr "關於 {APP_NAME}"
+
+#: src/components/preferences/PreferencesDialog.tsx:44
+msgid "Advanced"
+msgstr "進階"
+
+#: src/components/preferences/PreferencesDialog.tsx:39
+msgid "Appearance"
+msgstr "外觀"
+
+#: src/lib/menu.ts:26
+msgid "Check for Updates..."
+msgstr "檢查更新..."
+
+#: src/components/preferences/panes/AppearancePane.tsx:115
+msgid "Choose your preferred color theme"
+msgstr "選擇您喜歡的顏色主題"
+
+#: src/components/preferences/panes/AppearancePane.tsx:90
+msgid "Choose your preferred display language"
+msgstr "選擇您喜歡的顯示語言"
+
+#: src/lib/commands/window-commands.ts:10
+msgid "Close the current window"
+msgstr "關閉目前視窗"
+
+#: src/lib/commands/window-commands.ts:9
+msgid "Close Window"
+msgstr "關閉視窗"
+
+#: src/components/preferences/panes/AppearancePane.tsx:114
+msgid "Color Theme"
+msgstr "顏色主題"
+
+#: src/components/command-palette/CommandPalette.tsx:95
+msgid "Command Palette"
+msgstr "命令面板"
+
+#: src/components/preferences/PreferencesDialog.tsx:65
+msgid "Customize your application preferences here."
+msgstr "在此自訂您的應用程式偏好設定。"
+
+#: src/components/preferences/panes/AppearancePane.tsx:127
+msgid "Dark"
+msgstr "深色"
+
+#: src/components/command-palette/CommandPalette.tsx:77
+#: src/components/titlebar/CommandDialog.tsx:66
+msgid "Debug"
+msgstr "除錯"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:34
+#: src/components/preferences/panes/GeneralPane.tsx:119
+msgid "Disabled"
+msgstr "已停用"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:34
+#: src/components/preferences/panes/GeneralPane.tsx:119
+msgid "Enabled"
+msgstr "已啟用"
+
+#: src/components/preferences/panes/GeneralPane.tsx:104
+msgid "Enter example text"
+msgstr "輸入範例文字"
+
+#: src/lib/commands/window-commands.ts:59
+msgid "Enter Fullscreen"
+msgstr "進入全螢幕"
+
+#: src/lib/commands/window-commands.ts:60
+msgid "Enter fullscreen mode"
+msgstr "進入全螢幕模式"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:22
+msgid "Example Advanced Settings"
+msgstr "範例進階設定"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:24
+msgid "Example Advanced Toggle"
+msgstr "範例進階切換"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:40
+msgid "Example Dropdown Setting"
+msgstr "範例下拉設定"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:48
+msgid "Example Option 1"
+msgstr "範例選項 1"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:49
+msgid "Example Option 2"
+msgstr "範例選項 2"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:50
+msgid "Example Option 3"
+msgstr "範例選項 3"
+
+#: src/components/preferences/panes/GeneralPane.tsx:96
+msgid "Example Settings"
+msgstr "範例設定"
+
+#: src/components/preferences/panes/GeneralPane.tsx:98
+msgid "Example Text Setting"
+msgstr "範例文字設定"
+
+#: src/components/preferences/panes/GeneralPane.tsx:109
+msgid "Example Toggle Setting"
+msgstr "範例切換設定"
+
+#: src/lib/commands/window-commands.ts:76
+msgid "Exit Fullscreen"
+msgstr "退出全螢幕"
+
+#: src/lib/commands/window-commands.ts:77
+msgid "Exit fullscreen mode"
+msgstr "退出全螢幕模式"
+
+#: src/lib/commands/window-commands.ts:19
+msgid "Failed to close window: {message}"
+msgstr "關閉視窗失敗：{message}"
+
+#: src/lib/commands/window-commands.ts:69
+msgid "Failed to enter fullscreen: {message}"
+msgstr "進入全螢幕失敗：{message}"
+
+#: src/lib/commands/window-commands.ts:86
+msgid "Failed to exit fullscreen: {message}"
+msgstr "退出全螢幕失敗：{message}"
+
+#: src/lib/commands/window-commands.ts:36
+msgid "Failed to minimize window: {message}"
+msgstr "最小化視窗失敗：{message}"
+
+#: src/components/preferences/panes/GeneralPane.tsx:42
+msgid "Failed to register shortcut"
+msgstr "註冊快捷鍵失敗"
+
+#: src/components/preferences/panes/GeneralPane.tsx:67
+msgid "Failed to restore previous shortcut"
+msgstr "恢復之前的快捷鍵失敗"
+
+#: src/lib/commands/window-commands.ts:52
+msgid "Failed to toggle maximize: {message}"
+msgstr "切換最大化失敗：{message}"
+
+#: src/components/preferences/PreferencesDialog.tsx:34
+msgid "General"
+msgstr "一般"
+
+#: src/components/preferences/panes/GeneralPane.tsx:84
+msgid "Global keyboard shortcut to toggle the quick pane from any application"
+msgstr "從任何應用程式切換快速窗格的全域鍵盤快捷鍵"
+
+#: src/lib/menu.ts:39
+msgid "Hide {APP_NAME}"
+msgstr "隱藏 {APP_NAME}"
+
+#: src/components/titlebar/LinuxTitleBar.tsx:30
+#: src/components/titlebar/WindowTitleBar.tsx:47
+#: src/lib/commands/navigation-commands.ts:16
+msgid "Hide Left Sidebar"
+msgstr "隱藏左側邊欄"
+
+#: src/lib/menu.ts:43
+msgid "Hide Others"
+msgstr "隱藏其他"
+
+#: src/components/titlebar/TitleBarContent.tsx:62
+#: src/lib/commands/navigation-commands.ts:34
+#~ msgid "Hide Right Sidebar"
+#~ msgstr "隱藏右側邊欄"
+
+#: src/lib/commands/navigation-commands.ts:17
+msgid "Hide the left sidebar"
+msgstr "隱藏左側邊欄"
+
+#: src/lib/commands/navigation-commands.ts:35
+#~ msgid "Hide the right sidebar"
+#~ msgstr "隱藏右側邊欄"
+
+#: src/components/preferences/panes/GeneralPane.tsx:80
+msgid "Keyboard Shortcuts"
+msgstr "鍵盤快捷鍵"
+
+#: src/components/preferences/panes/AppearancePane.tsx:87
+#: src/components/preferences/panes/AppearancePane.tsx:89
+msgid "Language"
+msgstr "語言"
+
+#: src/components/preferences/panes/AppearancePane.tsx:126
+msgid "Light"
+msgstr "淺色"
+
+#: src/lib/commands/window-commands.ts:27
+msgid "Minimize the current window"
+msgstr "最小化目前視窗"
+
+#: src/lib/commands/window-commands.ts:26
+msgid "Minimize Window"
+msgstr "最小化視窗"
+
+#: src/components/command-palette/CommandPalette.tsx:75
+#: src/components/titlebar/CommandDialog.tsx:64
+msgid "Navigation"
+msgstr "導覽"
+
+#: src/components/command-palette/CommandPalette.tsx:104
+#: src/components/titlebar/CommandDialog.tsx:88
+msgid "No results found."
+msgstr "未找到結果。"
+
+#: src/lib/commands/navigation-commands.ts:25
+msgid "Open Preferences"
+msgstr "開啟偏好設定"
+
+#: src/lib/commands/navigation-commands.ts:26
+msgid "Open the application preferences"
+msgstr "開啟應用程式偏好設定"
+
+#: src/components/command-palette/CommandPalette.tsx:84
+#~ msgid "Other"
+#~ msgstr "其他"
+
+#: src/components/command-palette/CommandPalette.tsx:84
+#: src/components/titlebar/CommandDialog.tsx:73
+msgid "Others"
+msgstr "其他"
+
+#: src/components/preferences/PreferencesDialog.tsx:63
+#: src/components/preferences/PreferencesDialog.tsx:101
+msgid "Preferences"
+msgstr "偏好設定"
+
+#: src/lib/menu.ts:32
+msgid "Preferences..."
+msgstr "偏好設定..."
+
+#: src/components/preferences/panes/GeneralPane.tsx:82
+msgid "Quick Pane Shortcut"
+msgstr "快速窗格快捷鍵"
+
+#: src/lib/menu.ts:52
+msgid "Quit {APP_NAME}"
+msgstr "退出 {APP_NAME}"
+
+#: src/components/preferences/ShortcutPicker.tsx:231
+msgid "Reset"
+msgstr "重置"
+
+#: src/components/titlebar/CommandSearchButton.tsx:20
+msgid "Search or type a command..."
+msgstr "搜尋或輸入命令..."
+
+#: src/components/preferences/panes/AppearancePane.tsx:123
+msgid "Select theme"
+msgstr "選擇主題"
+
+#: src/components/command-palette/CommandPalette.tsx:79
+#: src/components/titlebar/CommandDialog.tsx:68
+msgid "Settings"
+msgstr "設定"
+
+#: src/lib/commands/notification-commands.ts:10
+msgid "Show a test toast notification"
+msgstr "顯示測試通知"
+
+#: src/lib/menu.ts:47
+msgid "Show All"
+msgstr "顯示全部"
+
+#: src/components/titlebar/LinuxTitleBar.tsx:30
+#: src/components/titlebar/WindowTitleBar.tsx:48
+#: src/lib/commands/navigation-commands.ts:7
+msgid "Show Left Sidebar"
+msgstr "顯示左側邊欄"
+
+#: src/components/titlebar/TitleBarContent.tsx:62
+#: src/lib/commands/navigation-commands.ts:25
+#~ msgid "Show Right Sidebar"
+#~ msgstr "顯示右側邊欄"
+
+#: src/lib/commands/navigation-commands.ts:8
+msgid "Show the left sidebar"
+msgstr "顯示左側邊欄"
+
+#: src/lib/commands/navigation-commands.ts:26
+#~ msgid "Show the right sidebar"
+#~ msgstr "顯示右側邊欄"
+
+#: src/components/preferences/panes/AppearancePane.tsx:74
+msgid "Something went wrong"
+msgstr "發生錯誤"
+
+#: src/components/preferences/panes/AppearancePane.tsx:128
+msgid "System"
+msgstr "系統"
+
+#: src/components/preferences/panes/AppearancePane.tsx:101
+msgid "System Default"
+msgstr "系統預設"
+
+#: src/components/titlebar/TitleBar.tsx:18
+#~ msgid "Tauri App"
+#~ msgstr "Tauri 應用程式"
+
+#: src/lib/commands/notification-commands.ts:15
+msgid "Test Toast"
+msgstr "測試通知"
+
+#: src/lib/commands/notification-commands.ts:9
+msgid "Test Toast Notification"
+msgstr "測試通知"
+
+#: src/components/preferences/panes/GeneralPane.tsx:69
+msgid "The shortcut may be out of sync. Please restart the app or try again."
+msgstr "快捷鍵可能已不同步。請重新啟動應用程式或重試。"
+
+#: src/components/preferences/panes/AppearancePane.tsx:112
+msgid "Theme"
+msgstr "主題"
+
+#: src/lib/commands/notification-commands.ts:16
+msgid "This is a test notification"
+msgstr "這是一則測試通知"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:25
+msgid "This is an example advanced toggle setting (not persisted)"
+msgstr "這是一個範例進階切換設定（不會持續儲存）"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:41
+msgid "This is an example dropdown/select setting (not persisted)"
+msgstr "這是一個範例下拉/選擇設定（不會持續儲存）"
+
+#: src/components/preferences/panes/GeneralPane.tsx:110
+msgid "This is an example switch/toggle setting (not persisted)"
+msgstr "這是一個範例開關/切換設定（不會持續儲存）"
+
+#: src/components/preferences/panes/GeneralPane.tsx:99
+msgid "This is an example text input setting (not persisted)"
+msgstr "這是一個範例文字輸入設定（不會持續儲存）"
+
+#: src/lib/menu.ts:62
+msgid "Toggle Left Sidebar"
+msgstr "切換左側邊欄"
+
+#: src/lib/commands/window-commands.ts:43
+msgid "Toggle Maximize"
+msgstr "切換最大化"
+
+#: src/lib/menu.ts:68
+#~ msgid "Toggle Right Sidebar"
+#~ msgstr "切換右側邊欄"
+
+#: src/lib/commands/window-commands.ts:44
+msgid "Toggle window maximize state"
+msgstr "切換視窗最大化狀態"
+
+#: src/components/command-palette/CommandPalette.tsx:96
+#: src/components/command-palette/CommandPalette.tsx:99
+#: src/components/titlebar/CommandDialog.tsx:83
+msgid "Type a command or search..."
+msgstr "輸入命令或搜尋..."
+
+#: src/lib/menu.ts:58
+msgid "View"
+msgstr "檢視"
+
+#: src/components/command-palette/CommandPalette.tsx:81
+#: src/components/titlebar/CommandDialog.tsx:70
+msgid "Window"
+msgstr "視窗"

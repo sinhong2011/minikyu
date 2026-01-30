@@ -1,0 +1,198 @@
+# =============================================================================
+# LOGS
+# =============================================================================
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+bun-debug.log*
+lerna-debug.log*
+
+# =============================================================================
+# DEPENDENCIES
+# =============================================================================
+node_modules
+.pnp
+.pnp.js
+
+# =============================================================================
+# BUILD OUTPUT
+# =============================================================================
+dist
+dist-ssr
+build
+*.local
+*.local.*
+
+# =============================================================================
+# ENVIRONMENT FILES
+# =============================================================================
+.env
+.env.*
+!.env.example
+!.env.template
+
+# =============================================================================
+# PACKAGE MANAGER LOCKFILES (this project uses bun.lock)
+# =============================================================================
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+bun.lockb
+yarn.lock.backup
+
+# =============================================================================
+# TANSTACK ROUTER
+# =============================================================================
+src/routeTree.gen.ts
+
+# =============================================================================
+# LINGUI I18N
+# =============================================================================
+src/locales/**/*.mjs
+
+# =============================================================================
+# TESTING
+# =============================================================================
+coverage
+.nyc_output
+*.lcov
+playwright-report
+test-results
+e2e-results
+jscpd-report
+
+# =============================================================================
+# STATIC ANALYSIS
+# =============================================================================
+.eslintcache
+.stylelintcache
+.cache
+.parcel-cache
+
+# =============================================================================
+# EDITOR / IDE
+# =============================================================================
+# VS Code
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+!.vscode/launch.json
+!.vscode/tasks.json
+
+# IntelliJ / WebStorm
+.idea
+*.iml
+*.ipr
+*.iws
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
+
+# Vim / Neovim
+*.swp
+*.swo
+*~
+.vim
+
+# Emacs
+*~
+\#*\#
+.\#*
+
+# Nano
+*.save
+
+# =============================================================================
+# OS FILES
+# =============================================================================
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+
+._*
+.DocumentRevisions-V100
+.fseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+
+# Windows
+Thumbs.db
+Thumbs.db:encryptable
+ehthumbs.db
+ehthumbs_vista.db
+*.stackdump
+[Dd]esktop.ini
+$RECYCLE.BIN/
+*.cab
+*.msi
+*.msix
+*.msm
+*.msp
+*.lnk
+
+# Linux
+*~
+.nfs*
+
+# =============================================================================
+# FRAMEWORK SPECIFIC
+# =============================================================================
+# Vite
+.vite
+
+# TypeScript
+*.tsbuildinfo
+next-env.d.ts
+
+# =============================================================================
+# RUST / TAURI
+# =============================================================================
+# Cargo
+src-tauri/target/
+src-tauri/Cargo.lock
+
+# Tauri generated files
+src-tauri/gen/schemas
+
+# =============================================================================
+# TEMPORARY FILES
+# =============================================================================
+*.tmp
+*.temp
+*.bak
+*.backup
+*.orig
+*.rej
+*.patch
+
+# =============================================================================
+# MISCELLANEOUS
+# =============================================================================
+# Storybook
+storybook-static
+
+# Local Netlify folder
+.netlify
+
+# Vercel
+.vercel
+
+# Turborepo
+.turbo
+
+# Serverless directories
+.serverless

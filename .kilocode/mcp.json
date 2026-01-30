@@ -1,0 +1,21 @@
+{
+  "mcpServers": {
+    "playwright": {
+      "command": "bunx",
+      "args": ["@playwright/mcp@latest"],
+      "alwaysAllow": [
+        "browser_navigate",
+        "browser_click",
+        "browser_console_messages",
+        "browser_close",
+        "browser_take_screenshot"
+      ]
+    },
+    "tauri-mcp": {
+      "command": "bunx",
+      "args": ["@hypothesi/tauri-mcp-server"],
+      "alwaysAllow": ["driver_session", "get_setup_instructions"]
+    },
+    "shadcn": { "command": "bunx", "args": ["shadcn@latest", "mcp"] }
+  }
+}
