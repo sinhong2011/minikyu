@@ -1,0 +1,218 @@
+use crate::accounts::error::AccountError;
+use crate::accounts::keyring::{delete_credentials, save_password, save_token};
+use crate::database::init_database_pool;
+use crate::miniflux::AuthConfig;
+use chrono::Utc;
+use serde::{Deserialize, Serialize};
+use sqlx::SqlitePool;
+use tauri::AppHandle;
+
+#[derive(Debug, Clone, Serialize, Deserialize, specta::Type, sqlx::FromRow)]
+pub struct MinifluxAccount {
+    pub id: i64,
+    pub username: String,
+    pub server_url: String,
+    pub auth_method: String,
+    pub is_active: bool,
+    pub created_at: String,
+    pub updated_at: String,
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn save_miniflux_account(
+    app_handle: AppHandle,
+    config: AuthConfig,
+) -> Result<i64, AccountError> {
+    log::info!("Saving Miniflux account for: {:?}", config.username);
+
+    let username = config
+        .username
+        .as_ref()
+        .ok_or(AccountError::InvalidCredentials)?
+        .trim();
+
+    if username.is_empty() {
+        log::error!("Username is empty");
+        return Err(AccountError::InvalidCredentials);
+    }
+
+    let has_token = config
+        .auth_token
+        .as_ref()
+        .map_or(false, |t| !t.trim().is_empty());
+    let has_password = config
+        .password
+        .as_ref()
+        .map_or(false, |p| !p.trim().is_empty());
+
+    if !has_token && !has_password {
+        log::error!("Neither token nor password provided");
+        return Err(AccountError::InvalidCredentials);
+    }
+
+    let pool = init_database_pool(&app_handle).await?;
+
+    let auth_method = if has_token { "token" } else { "password" };
+    let now = Utc::now().to_rfc3339();
+
+    let existing_account: Option<(i64,)> =
+        sqlx::query_as("SELECT id FROM miniflux_accounts WHERE username = ?")
+            .bind(username)
+            .fetch_optional(&pool)
+            .await?;
+
+    let account_id = if let Some((id,)) = existing_account {
+        log::info!("Updating existing account with ID: {}", id);
+
+        sqlx::query(
+            r#"
+            UPDATE miniflux_accounts
+            SET server_url = ?,
+                auth_method = ?,
+                updated_at = ?
+            WHERE id = ?
+            "#,
+        )
+        .bind(&config.server_url)
+        .bind(auth_method)
+        .bind(&now)
+        .bind(id)
+        .execute(&pool)
+        .await?;
+
+        id
+    } else {
+        log::info!("Creating new account");
+
+        let result = sqlx::query(
+            r#"
+            INSERT INTO miniflux_accounts (username, server_url, auth_method, is_active, created_at, updated_at)
+            VALUES (?, ?, ?, 0, ?, ?)
+            "#,
+        )
+        .bind(username)
+        .bind(&config.server_url)
+        .bind(auth_method)
+        .bind(&now)
+        .bind(&now)
+        .execute(&pool)
+        .await?;
+
+        result.last_insert_rowid()
+    };
+
+    sqlx::query("UPDATE miniflux_accounts SET is_active = 0 WHERE username != ?")
+        .bind(username)
+        .execute(&pool)
+        .await?;
+
+    sqlx::query("UPDATE miniflux_accounts SET is_active = 1 WHERE username = ?")
+        .bind(username)
+        .execute(&pool)
+        .await?;
+
+    if let Some(token) = &config.auth_token {
+        if !token.trim().is_empty() {
+            save_token(&config.server_url, username, token).await?;
+            log::debug!("Token saved to keyring");
+        }
+    }
+
+    if let Some(password) = &config.password {
+        if !password.trim().is_empty() {
+            save_password(&config.server_url, username, password).await?;
+            log::debug!("Password saved to keyring");
+        }
+    }
+
+    log::info!("Account saved successfully with ID: {}", account_id);
+
+    Ok(account_id)
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn get_miniflux_accounts(
+    app_handle: AppHandle,
+) -> Result<Vec<MinifluxAccount>, AccountError> {
+    log::info!("Fetching all accounts");
+
+    let pool = init_database_pool(&app_handle).await?;
+
+    let accounts: Vec<MinifluxAccount> = sqlx::query_as(
+        "SELECT id, username, server_url, auth_method, is_active, created_at, updated_at 
+         FROM miniflux_accounts 
+         ORDER BY created_at DESC",
+    )
+    .fetch_all(&pool)
+    .await
+    .map_err(|e| {
+        log::error!("Failed to fetch accounts: {:#?}", e);
+        AccountError::DatabaseError(e.to_string())
+    })?;
+
+    log::debug!("Found {} accounts", accounts.len());
+    Ok(accounts)
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn delete_miniflux_account(
+    app_handle: AppHandle,
+    id: i64,
+) -> Result<(), AccountError> {
+    log::info!("Deleting account with ID: {}", id);
+
+    let pool = init_database_pool(&app_handle).await?;
+
+    delete_miniflux_account_impl(&pool, id).await
+}
+
+async fn delete_miniflux_account_impl(
+    pool: &SqlitePool,
+    id: i64,
+) -> Result<(), AccountError> {
+    let account: Option<(String, String)> = sqlx::query_as(
+        "SELECT server_url, username FROM miniflux_accounts WHERE id = ?",
+    )
+    .bind(id)
+    .fetch_optional(pool)
+    .await?;
+
+    let (server_url, username) = account.ok_or(AccountError::NotFound)?;
+
+    log::debug!("Deleting account for username: {}", username);
+
+    sqlx::query("DELETE FROM miniflux_accounts WHERE id = ?")
+        .bind(id)
+        .execute(pool)
+        .await?;
+
+    match delete_credentials(&server_url, &username).await {
+        Ok(_) => {
+            log::debug!("Deleted credentials from keyring");
+        }
+        Err(AccountError::NotFound) => {
+            log::debug!("No credentials found in keyring to delete");
+        }
+        Err(e) => {
+            log::error!("Failed to delete credentials from keyring: {:?}", e);
+            return Err(e);
+        }
+    }
+
+    sqlx::query("DELETE FROM users WHERE server_url = ? AND username = ?")
+        .bind(&server_url)
+        .bind(&username)
+        .execute(pool)
+        .await?;
+
+    log::info!("Successfully deleted account with ID: {}", id);
+
+    Ok(())
+}
+
+#[cfg(test)]
+#[path = "accounts.test.rs"]
+mod tests;
