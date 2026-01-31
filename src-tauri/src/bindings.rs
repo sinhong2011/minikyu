@@ -28,6 +28,7 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         accounts::save_miniflux_account,
         accounts::get_miniflux_accounts,
         accounts::delete_miniflux_account,
+        accounts::auto_reconnect_miniflux,
         miniflux::miniflux_connect,
         miniflux::miniflux_disconnect,
         miniflux::miniflux_is_connected,

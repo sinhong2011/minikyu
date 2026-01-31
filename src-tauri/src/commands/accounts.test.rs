@@ -708,4 +708,168 @@ mod tests {
         // Cleanup keyring
         let _ = delete_credentials("https://miniflux.example.com", "active_delete_user").await;
     }
+
+    #[tokio::test]
+    async fn test_auto_reconnect_no_active_account() {
+        let pool = setup_test_db().await;
+
+        // Query for active account (should be None)
+        let active_account: Option<(i64, String, String, String)> = sqlx::query_as(
+            "SELECT id, username, server_url, auth_method FROM miniflux_accounts WHERE is_active = 1",
+        )
+        .fetch_optional(&pool)
+        .await
+        .expect("Failed to query active account");
+
+        assert!(active_account.is_none(), "No active account should exist");
+    }
+
+    #[tokio::test]
+    async fn test_auto_reconnect_with_token_account() {
+        let pool = setup_test_db().await;
+
+        // Create active account with token
+        let config = AuthConfig {
+            server_url: "https://miniflux.example.com".to_string(),
+            auth_token: Some("reconnect_token_123".to_string()),
+            username: Some("reconnect_user".to_string()),
+            password: None,
+        };
+
+        save_miniflux_account_test(&pool, config.clone())
+            .await
+            .expect("Failed to save account");
+
+        // Verify account is in database
+        let active_account: Option<(i64, String, String, String)> = sqlx::query_as(
+            "SELECT id, username, server_url, auth_method FROM miniflux_accounts WHERE is_active = 1",
+        )
+        .fetch_optional(&pool)
+        .await
+        .expect("Failed to query active account");
+
+        assert!(active_account.is_some(), "Active account should exist");
+        let (_account_id, username, server_url, auth_method) = active_account.unwrap();
+        assert_eq!(username, "reconnect_user");
+        assert_eq!(server_url, "https://miniflux.example.com");
+        assert_eq!(auth_method, "token");
+
+        // Verify token is in keyring
+        let token_result = get_token(&server_url, &username).await;
+        assert!(token_result.is_ok());
+        assert_eq!(token_result.unwrap(), "reconnect_token_123");
+
+        // Cleanup keyring
+        let _ = delete_credentials("https://miniflux.example.com", "reconnect_user").await;
+    }
+
+    #[tokio::test]
+    async fn test_auto_reconnect_with_password_account() {
+        let pool = setup_test_db().await;
+
+        // Create active account with password
+        let config = AuthConfig {
+            server_url: "https://miniflux.example.com".to_string(),
+            auth_token: None,
+            username: Some("reconnect_user2".to_string()),
+            password: Some("reconnect_password_456".to_string()),
+        };
+
+        save_miniflux_account_test(&pool, config.clone())
+            .await
+            .expect("Failed to save account");
+
+        // Verify account is in database
+        let active_account: Option<(i64, String, String, String)> = sqlx::query_as(
+            "SELECT id, username, server_url, auth_method FROM miniflux_accounts WHERE is_active = 1",
+        )
+        .fetch_optional(&pool)
+        .await
+        .expect("Failed to query active account");
+
+        assert!(active_account.is_some(), "Active account should exist");
+        let (_account_id, username, server_url, auth_method) = active_account.unwrap();
+        assert_eq!(username, "reconnect_user2");
+        assert_eq!(server_url, "https://miniflux.example.com");
+        assert_eq!(auth_method, "password");
+
+        // Verify password is in keyring
+        let password_result = get_password(&server_url, &username).await;
+        assert!(password_result.is_ok());
+        assert_eq!(password_result.unwrap(), "reconnect_password_456");
+
+        // Cleanup keyring
+        let _ = delete_credentials("https://miniflux.example.com", "reconnect_user2").await;
+    }
+
+    #[tokio::test]
+    async fn test_auto_reconnect_invalid_auth_method() {
+        let pool = setup_test_db().await;
+
+        // Manually insert account with invalid auth_method to test error handling
+        let now = chrono::Utc::now().to_rfc3339();
+        sqlx::query(
+            r#"
+            INSERT INTO miniflux_accounts (username, server_url, auth_method, is_active, created_at, updated_at)
+            VALUES (?, ?, ?, 1, ?, ?)
+            "#,
+        )
+        .bind("invalid_user")
+        .bind("https://miniflux.example.com")
+        .bind("invalid_method")
+        .bind(&now)
+        .bind(&now)
+        .execute(&pool)
+        .await
+        .expect("Failed to insert account with invalid auth_method");
+
+        // Verify invalid auth_method was inserted
+        let active_account: Option<(i64, String, String, String)> = sqlx::query_as(
+            "SELECT id, username, server_url, auth_method FROM miniflux_accounts WHERE is_active = 1",
+        )
+        .fetch_optional(&pool)
+        .await
+        .expect("Failed to query active account");
+
+        assert!(active_account.is_some());
+        let (_, _, _, auth_method) = active_account.unwrap();
+        assert_eq!(auth_method, "invalid_method");
+    }
+
+    #[tokio::test]
+    async fn test_auto_reconnect_keyring_not_found() {
+        let pool = setup_test_db().await;
+
+        // Create account in database without storing credentials in keyring
+        let now = chrono::Utc::now().to_rfc3339();
+        sqlx::query(
+            r#"
+            INSERT INTO miniflux_accounts (username, server_url, auth_method, is_active, created_at, updated_at)
+            VALUES (?, ?, ?, 1, ?, ?)
+            "#,
+        )
+        .bind("missing_creds_user")
+        .bind("https://miniflux.example.com")
+        .bind("token")
+        .bind(&now)
+        .bind(&now)
+        .execute(&pool)
+        .await
+        .expect("Failed to insert account");
+
+        // Verify account exists
+        let active_account: Option<(i64, String, String, String)> = sqlx::query_as(
+            "SELECT id, username, server_url, auth_method FROM miniflux_accounts WHERE is_active = 1",
+        )
+        .fetch_optional(&pool)
+        .await
+        .expect("Failed to query active account");
+
+        assert!(active_account.is_some());
+
+        // Attempt to fetch token (should fail with NotFound)
+        let (_, username, server_url, _) = active_account.unwrap();
+        let token_result = get_token(&server_url, &username).await;
+        assert!(matches!(token_result, Err(AccountError::NotFound)));
+    }
 }

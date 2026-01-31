@@ -1,11 +1,11 @@
 use crate::accounts::error::AccountError;
-use crate::accounts::keyring::{delete_credentials, save_password, save_token};
+use crate::accounts::keyring::{delete_credentials, get_password, get_token, save_password, save_token};
 use crate::database::init_database_pool;
 use crate::miniflux::AuthConfig;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use sqlx::SqlitePool;
-use tauri::AppHandle;
+use tauri::{AppHandle, State};
 
 #[derive(Debug, Clone, Serialize, Deserialize, specta::Type, sqlx::FromRow)]
 pub struct MinifluxAccount {
@@ -211,6 +211,95 @@ async fn delete_miniflux_account_impl(
     log::info!("Successfully deleted account with ID: {}", id);
 
     Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn auto_reconnect_miniflux(
+    app_handle: AppHandle,
+    state: State<'_, crate::commands::miniflux::MinifluxState>,
+) -> Result<(), AccountError> {
+    log::info!("Auto-reconnect: Attempting to reconnect to Miniflux");
+
+    let pool = init_database_pool(&app_handle).await?;
+
+    // Query for active account
+    let active_account: Option<(i64, String, String, String)> = sqlx::query_as(
+        "SELECT id, username, server_url, auth_method FROM miniflux_accounts WHERE is_active = 1",
+    )
+    .fetch_optional(&pool)
+    .await?;
+
+    // If no active account, return early gracefully
+    if active_account.is_none() {
+        log::info!("Auto-reconnect: No active account found for auto-reconnect");
+        return Ok(());
+    }
+
+    let (account_id, username, server_url, auth_method) = active_account.unwrap();
+    log::debug!(
+        "Auto-reconnect: Found active account ID {} for user '{}' at '{}'",
+        account_id,
+        username,
+        server_url
+    );
+
+    // Fetch credentials from keyring based on auth_method
+    let config = match auth_method.as_str() {
+        "token" => {
+            let token = get_token(&server_url, &username).await.map_err(|e| {
+                log::error!(
+                    "Auto-reconnect: Failed to fetch token from keyring: {:?}",
+                    e
+                );
+                e
+            })?;
+            AuthConfig {
+                server_url: server_url.clone(),
+                auth_token: Some(token),
+                username: None,
+                password: None,
+            }
+        }
+        "password" => {
+            let password = get_password(&server_url, &username).await.map_err(|e| {
+                log::error!(
+                    "Auto-reconnect: Failed to fetch password from keyring: {:?}",
+                    e
+                );
+                e
+            })?;
+            AuthConfig {
+                server_url: server_url.clone(),
+                auth_token: None,
+                username: Some(username.clone()),
+                password: Some(password),
+            }
+        }
+        _ => {
+            log::error!(
+                "Auto-reconnect: Invalid auth_method '{}' for account ID {}",
+                auth_method,
+                account_id
+            );
+            return Err(AccountError::InvalidCredentials);
+        }
+    };
+
+    // Call miniflux_connect to establish connection
+    log::debug!("Auto-reconnect: Calling miniflux_connect with fetched credentials");
+    match crate::commands::miniflux::miniflux_connect(app_handle, state, config).await {
+        Ok(_) => {
+            log::info!("Auto-reconnect: Successfully reconnected to Miniflux");
+            Ok(())
+        }
+        Err(e) => {
+            log::error!("Auto-reconnect: Connection failed: {}", e);
+            Err(AccountError::KeyringError {
+                message: format!("Auto-reconnect failed: {}", e),
+            })
+        }
+    }
 }
 
 #[cfg(test)]

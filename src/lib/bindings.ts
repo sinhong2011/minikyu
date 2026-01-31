@@ -216,6 +216,294 @@ export const commands = {
       else return { status: 'error', error: e as any };
     }
   },
+  async saveMinifluxAccount(config: AuthConfig): Promise<Result<string, AccountError>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('save_miniflux_account', { config }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  async getMinifluxAccounts(): Promise<Result<MinifluxAccount[], AccountError>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('get_miniflux_accounts') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  async deleteMinifluxAccount(id: string): Promise<Result<null, AccountError>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('delete_miniflux_account', { id }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  async autoReconnectMiniflux(): Promise<Result<null, AccountError>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('auto_reconnect_miniflux') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Connect to Miniflux server
+   */
+  async minifluxConnect(config: AuthConfig): Promise<Result<boolean, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('miniflux_connect', { config }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Disconnect from Miniflux server
+   */
+  async minifluxDisconnect(): Promise<Result<null, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('miniflux_disconnect') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Check if connected to Miniflux server
+   */
+  async minifluxIsConnected(): Promise<Result<boolean, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('miniflux_is_connected') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Get all categories
+   */
+  async getCategories(): Promise<Result<Category[], string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('get_categories') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Get all feeds
+   */
+  async getFeeds(): Promise<Result<Feed[], string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('get_feeds') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Get feeds by category
+   */
+  async getCategoryFeeds(categoryId: string): Promise<Result<Feed[], string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('get_category_feeds', { categoryId }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Get entries with filters
+   */
+  async getEntries(filters: EntryFilters): Promise<Result<EntryResponse, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('get_entries', { filters }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Get a single entry
+   */
+  async getEntry(id: string): Promise<Result<Entry, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('get_entry', { id }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Mark entry as read
+   */
+  async markEntryRead(id: string): Promise<Result<null, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('mark_entry_read', { id }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Mark multiple entries as read
+   */
+  async markEntriesRead(ids: string[]): Promise<Result<null, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('mark_entries_read', { ids }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Toggle entry star
+   */
+  async toggleEntryStar(id: string): Promise<Result<null, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('toggle_entry_star', { id }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Update entry
+   */
+  async updateEntry(id: string, updates: EntryUpdate): Promise<Result<Entry, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('update_entry', { id, updates }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Refresh a feed
+   */
+  async refreshFeed(id: string): Promise<Result<null, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('refresh_feed', { id }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Refresh all feeds
+   */
+  async refreshAllFeeds(): Promise<Result<null, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('refresh_all_feeds') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Create a new feed
+   */
+  async createFeed(feedUrl: string, categoryId: string | null): Promise<Result<string, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('create_feed', { feedUrl, categoryId }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Update a feed
+   */
+  async updateFeed(id: string, updates: FeedUpdate): Promise<Result<Feed, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('update_feed', { id, updates }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Delete a feed
+   */
+  async deleteFeed(id: string): Promise<Result<null, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('delete_feed', { id }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Get current user
+   */
+  async getCurrentUser(): Promise<Result<User, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('get_current_user') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Get counters
+   */
+  async getCounters(): Promise<Result<Counters, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('get_counters') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Discover subscriptions from URL
+   */
+  async discoverSubscriptions(url: string): Promise<Result<Subscription[], string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('discover_subscriptions', { url }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Export OPML
+   */
+  async exportOpml(): Promise<Result<string, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('export_opml') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Import OPML
+   */
+  async importOpml(opmlContent: string): Promise<Result<null, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('import_opml', { opmlContent }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Fetch original article content
+   */
+  async fetchEntryContent(id: string, updateContent: boolean): Promise<Result<string, string>> {
+    try {
+      return {
+        status: 'ok',
+        data: await TAURI_INVOKE('fetch_entry_content', { id, updateContent }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
 };
 
 /** user-defined events **/
@@ -224,6 +512,26 @@ export const commands = {
 
 /** user-defined types **/
 
+/**
+ * Error types for account operations
+ */
+export type AccountError =
+  /**
+   * Credentials not found in keyring
+   */
+  | { type: 'NotFound' }
+  /**
+   * Invalid credentials provided
+   */
+  | { type: 'InvalidCredentials' }
+  /**
+   * Keyring operation failed
+   */
+  | { type: 'KeyringError'; data: { message: string } }
+  /**
+   * Database operation failed
+   */
+  | { type: 'DatabaseError'; data: string };
 /**
  * Application preferences that persist to disk.
  * Only contains settings that should be saved between sessions.
@@ -254,6 +562,26 @@ export type AppPreferences = {
   start_minimized: boolean;
 };
 /**
+ * Authentication Config
+ */
+export type AuthConfig = {
+  server_url: string;
+  auth_token?: string | null;
+  username?: string | null;
+  password?: string | null;
+};
+/**
+ * Miniflux Category
+ */
+export type Category = {
+  id: string;
+  user_id: string;
+  title: string;
+  hide_globally?: boolean;
+  created_at?: string | null;
+  updated_at?: string | null;
+};
+/**
  * Window close behavior options
  */
 export type CloseBehavior =
@@ -265,6 +593,136 @@ export type CloseBehavior =
    * Minimize to tray (hide window, keep running)
    */
   | 'minimize_to_tray';
+/**
+ * Counters
+ */
+export type Counters = { user_id: string; read_count: string; unread_count: string };
+/**
+ * Enclosure (for podcasts/videos)
+ */
+export type Enclosure = {
+  id: string;
+  entry_id: string;
+  url: string;
+  mime_type: string;
+  length?: string | null;
+  position?: number;
+};
+/**
+ * Miniflux Entry
+ */
+export type Entry = {
+  id: string;
+  user_id: string;
+  feed_id: string;
+  title: string;
+  url: string;
+  comments_url?: string | null;
+  author?: string | null;
+  content?: string | null;
+  hash: string;
+  published_at: string;
+  created_at?: string | null;
+  changed_at?: string | null;
+  status: string;
+  share_code?: string | null;
+  starred?: boolean;
+  reading_time?: number | null;
+  enclosures?: Enclosure[] | null;
+  feed: Feed;
+  tags?: string[];
+};
+/**
+ * Entry Filters
+ */
+export type EntryFilters = {
+  status?: string | null;
+  offset?: string | null;
+  limit?: string | null;
+  order?: string | null;
+  direction?: string | null;
+  before?: string | null;
+  after?: string | null;
+  published_before?: string | null;
+  published_after?: string | null;
+  changed_before?: string | null;
+  changed_after?: string | null;
+  before_entry_id?: string | null;
+  after_entry_id?: string | null;
+  starred?: boolean | null;
+  search?: string | null;
+  category_id?: string | null;
+  feed_id?: string | null;
+  globally_visible?: boolean | null;
+};
+/**
+ * Entry Response (with pagination)
+ */
+export type EntryResponse = { total: string; entries: Entry[] };
+/**
+ * Entry Update
+ */
+export type EntryUpdate = { title?: string | null; content?: string | null };
+/**
+ * Miniflux Feed
+ */
+export type Feed = {
+  id: string;
+  user_id: string;
+  title: string;
+  site_url: string;
+  feed_url: string;
+  category: Category | null;
+  icon: FeedIcon | null;
+  checked_at?: string | null;
+  etag_header?: string | null;
+  last_modified_header?: string | null;
+  parsing_error_message?: string | null;
+  parsing_error_count?: number;
+  scraper_rules?: string | null;
+  rewrite_rules?: string | null;
+  crawler?: boolean;
+  blocklist_rules?: string | null;
+  keeplist_rules?: string | null;
+  user_agent?: string | null;
+  username?: string | null;
+  password?: string | null;
+  disabled?: boolean;
+  ignore_http_cache?: boolean;
+  fetch_via_proxy?: boolean;
+  no_media_player?: boolean;
+  allow_self_signed_certificates?: boolean;
+  urlrewrite_rules?: string | null;
+  cookie?: string | null;
+  apprise_service_urls?: string | null;
+  hide_globally?: boolean;
+  created_at?: string | null;
+  updated_at?: string | null;
+};
+/**
+ * Feed Icon
+ */
+export type FeedIcon = { feed_id: string; icon_id: string };
+/**
+ * Feed Update
+ */
+export type FeedUpdate = {
+  feed_url?: string | null;
+  site_url?: string | null;
+  title?: string | null;
+  category_id?: string | null;
+  scraper_rules?: string | null;
+  rewrite_rules?: string | null;
+  blocklist_rules?: string | null;
+  keeplist_rules?: string | null;
+  crawler?: boolean | null;
+  user_agent?: string | null;
+  username?: string | null;
+  password?: string | null;
+  disabled?: boolean | null;
+  ignore_http_cache?: boolean | null;
+  fetch_via_proxy?: boolean | null;
+};
 export type JsonValue =
   | null
   | boolean
@@ -272,6 +730,15 @@ export type JsonValue =
   | string
   | JsonValue[]
   | Partial<{ [key in string]: JsonValue }>;
+export type MinifluxAccount = {
+  id: string;
+  username: string;
+  server_url: string;
+  auth_method: string;
+  is_active: boolean;
+  created_at: string;
+  updated_at: string;
+};
 /**
  * Error types for recovery operations (typed for frontend matching)
  */
@@ -297,6 +764,10 @@ export type RecoveryError =
    */
   | { type: 'ParseError'; message: string };
 /**
+ * Subscription (from discover)
+ */
+export type Subscription = { url: string; title: string; type: string };
+/**
  * Tray icon states for visual feedback
  */
 export type TrayIconState =
@@ -312,10 +783,34 @@ export type TrayIconState =
    * Urgent/animated alert state
    */
   | 'alert';
+/**
+ * User
+ */
+export type User = {
+  id: string;
+  username: string;
+  is_admin?: boolean;
+  theme?: string | null;
+  language?: string | null;
+  timezone?: string | null;
+  entry_sorting_direction?: string | null;
+  entry_sorting_order?: string | null;
+  entries_per_page?: number | null;
+  keyboard_shortcuts?: boolean | null;
+  display_mode?: string | null;
+  show_reading_time?: boolean | null;
+  entry_swipe?: boolean | null;
+  stylesheet?: string | null;
+  google_id?: string | null;
+  openid_connect_id?: string | null;
+  last_login_at?: string | null;
+  created_at?: string | null;
+  updated_at?: string | null;
+};
 
 /** tauri-specta globals **/
 
-import { invoke as TAURI_INVOKE } from '@tauri-apps/api/core';
+import { Channel as TAURI_CHANNEL, invoke as TAURI_INVOKE } from '@tauri-apps/api/core';
 import * as TauriApiEvent from '@tauri-apps/api/event';
 import type { WebviewWindow as __WebviewWindow__ } from '@tauri-apps/api/webviewWindow';
 
