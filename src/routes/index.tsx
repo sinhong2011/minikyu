@@ -1,6 +1,14 @@
 import { createFileRoute } from '@tanstack/react-router';
-import { HomePage } from '../pages/HomePage';
+import { z } from 'zod';
+import { MinifluxLayout } from '@/components/miniflux';
+
+const searchSchema = z.object({
+  filter: z.enum(['all', 'starred', 'today', 'history']).optional(),
+  category_id: z.string().optional(),
+  feed_id: z.string().optional(),
+});
 
 export const Route = createFileRoute('/')({
-  component: HomePage,
+  validateSearch: searchSchema,
+  component: MinifluxLayout,
 });
