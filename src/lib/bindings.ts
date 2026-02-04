@@ -7,6 +7,70 @@
 
 export const commands = {
   /**
+   * Download a file from URL to local disk
+   */
+  async downloadFile(
+    url: string,
+    fileName: string | null,
+    mediaType: string | null
+  ): Promise<Result<string, string>> {
+    try {
+      return {
+        status: 'ok',
+        data: await TAURI_INVOKE('download_file', { url, fileName, mediaType }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Cancel an active download by URL
+   */
+  async cancelDownload(url: string): Promise<Result<null, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('cancel_download', { url }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Retry a failed download
+   */
+  async retryDownload(
+    url: string,
+    fileName: string | null,
+    mediaType: string | null
+  ): Promise<Result<string, string>> {
+    try {
+      return {
+        status: 'ok',
+        data: await TAURI_INVOKE('retry_download', { url, fileName, mediaType }),
+      };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Get all active downloads
+   */
+  async getDownloads(): Promise<DownloadState[]> {
+    return await TAURI_INVOKE('get_downloads');
+  },
+  /**
+   * Get all downloads from database
+   */
+  async getDownloadsFromDb(): Promise<Result<DownloadState[], string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('get_downloads_from_db') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
    * Simple greeting command for demonstration purposes.
    */
   async greet(name: string): Promise<Result<string, string>> {
@@ -36,6 +100,30 @@ export const commands = {
   async savePreferences(preferences: AppPreferences): Promise<Result<null, string>> {
     try {
       return { status: 'ok', data: await TAURI_INVOKE('save_preferences', { preferences }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Loads the last reading entry from disk.
+   * Returns None (as null in TypeScript) if the file doesn't exist.
+   */
+  async loadLastReading(): Promise<Result<LastReadingEntry | null, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('load_last_reading') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Saves the last reading entry to disk.
+   * Uses atomic write (temp file + rename) to prevent corruption.
+   */
+  async saveLastReading(entry: LastReadingEntry): Promise<Result<null, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('save_last_reading', { entry }) };
     } catch (e) {
       if (e instanceof Error) throw e;
       else return { status: 'error', error: e as any };
@@ -167,17 +255,6 @@ export const commands = {
     }
   },
   /**
-   * Toggle main window visibility (command exposed to frontend)
-   */
-  async trayToggleWindow(): Promise<Result<null, string>> {
-    try {
-      return { status: 'ok', data: await TAURI_INVOKE('tray_toggle_window') };
-    } catch (e) {
-      if (e instanceof Error) throw e;
-      else return { status: 'error', error: e as any };
-    }
-  },
-  /**
    * Update the tray icon state
    */
   async traySetIconState(state: TrayIconState): Promise<Result<null, string>> {
@@ -227,6 +304,14 @@ export const commands = {
   async getMinifluxAccounts(): Promise<Result<MinifluxAccount[], AccountError>> {
     try {
       return { status: 'ok', data: await TAURI_INVOKE('get_miniflux_accounts') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  async getActiveMinifluxAccount(): Promise<Result<MinifluxAccount | null, AccountError>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('get_active_miniflux_account') };
     } catch (e) {
       if (e instanceof Error) throw e;
       else return { status: 'error', error: e as any };
@@ -540,7 +625,7 @@ export type AppPreferences = {
   theme: string;
   /**
    * Global shortcut for quick pane (e.g., "CommandOrControl+Shift+.")
-   * If None, uses the default shortcut
+   * If None, uses to default shortcut
    */
   quick_pane_shortcut: string | null;
   /**
@@ -553,13 +638,33 @@ export type AppPreferences = {
    */
   close_behavior: CloseBehavior;
   /**
-   * Whether to show the tray icon
+   * Whether to show tray icon
    */
   show_tray_icon: boolean;
   /**
    * Whether to start minimized to tray
    */
   start_minimized: boolean;
+  /**
+   * Reader font size (14-24)
+   */
+  reader_font_size: number;
+  /**
+   * Reader line width (45-80)
+   */
+  reader_line_width: number;
+  /**
+   * Reader font family (sans-serif, serif, monospace)
+   */
+  reader_font_family: string;
+  /**
+   * Default download path for images (null = ask every time)
+   */
+  image_download_path: string | null;
+  /**
+   * Default download path for videos (null = ask every time)
+   */
+  video_download_path: string | null;
 };
 /**
  * Authentication Config
@@ -598,6 +703,44 @@ export type CloseBehavior =
  */
 export type Counters = { user_id: string; read_count: string; unread_count: string };
 /**
+ * Download state managed by download manager
+ */
+export type DownloadState =
+  /**
+   * Download is in progress
+   */
+  | {
+      Downloading: {
+        id: string;
+        url: string;
+        progress: number;
+        downloaded_bytes: string;
+        total_bytes: string;
+        started_at: SystemTime;
+      };
+    }
+  /**
+   * Download completed successfully
+   */
+  | {
+      Completed: {
+        id: string;
+        url: string;
+        file_path: string;
+        total_bytes: string;
+        progress: number;
+        completed_at: SystemTime;
+      };
+    }
+  /**
+   * Download failed
+   */
+  | { Failed: { id: string; url: string; error: string; progress: number; failed_at: SystemTime } }
+  /**
+   * Download was cancelled
+   */
+  | { Cancelled: { id: string; url: string; progress: number; cancelled_at: SystemTime } };
+/**
  * Enclosure (for podcasts/videos)
  */
 export type Enclosure = {
@@ -630,7 +773,7 @@ export type Entry = {
   reading_time?: number | null;
   enclosures?: Enclosure[] | null;
   feed: Feed;
-  tags?: string[];
+  tags?: string[] | null;
 };
 /**
  * Entry Filters
@@ -658,7 +801,7 @@ export type EntryFilters = {
 /**
  * Entry Response (with pagination)
  */
-export type EntryResponse = { total: string; entries: Entry[] };
+export type EntryResponse = { total: string; entries?: Entry[] | null };
 /**
  * Entry Update
  */
@@ -730,6 +873,7 @@ export type JsonValue =
   | string
   | JsonValue[]
   | Partial<{ [key in string]: JsonValue }>;
+export type LastReadingEntry = { entry_id: string; timestamp: string };
 export type MinifluxAccount = {
   id: string;
   username: string;
@@ -767,6 +911,7 @@ export type RecoveryError =
  * Subscription (from discover)
  */
 export type Subscription = { url: string; title: string; type: string };
+export type SystemTime = { duration_since_epoch: string; duration_since_unix_epoch: number };
 /**
  * Tray icon states for visual feedback
  */

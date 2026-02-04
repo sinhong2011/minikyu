@@ -46,9 +46,15 @@ vi.mock('@/lib/tauri-bindings', () => ({
     saveEmergencyData: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
     loadEmergencyData: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
     cleanupOldRecoveryFiles: vi.fn().mockResolvedValue({ status: 'ok', data: 0 }),
+    switchMinifluxAccount: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
+    minifluxDisconnect: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
+    getMinifluxAccounts: vi.fn().mockResolvedValue({ status: 'ok', data: [] }),
   },
   unwrapResult: vi.fn((result: { status: string; data?: unknown }) => {
     if (result.status === 'ok') return result.data;
     throw result;
   }),
 }));
+
+// Mock Lingui macro
+vi.mock('@lingui/core/macro');

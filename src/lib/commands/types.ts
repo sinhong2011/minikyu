@@ -1,11 +1,11 @@
+import type { IconSvgElement } from '@hugeicons/react';
 import type { MessageDescriptor } from '@lingui/core';
-import type { LucideIcon } from 'lucide-react';
 
 export interface AppCommand {
   id: string;
   label: MessageDescriptor;
   description?: MessageDescriptor;
-  icon?: LucideIcon;
+  icon?: IconSvgElement;
   group?: string;
   keywords?: string[];
   execute: (context: CommandContext) => void | Promise<void>;
