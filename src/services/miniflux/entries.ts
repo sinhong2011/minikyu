@@ -1,0 +1,303 @@
+import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { logger } from '@/lib/logger';
+import {
+  commands,
+  type Entry,
+  type EntryFilters,
+  type EntryResponse,
+  type EntryUpdate,
+} from '@/lib/tauri-bindings';
+
+// Query keys for entries
+export const entryQueryKeys = {
+  all: ['miniflux', 'entries'] as const,
+  lists: () => [...entryQueryKeys.all, 'list'] as const,
+  list: (filters: EntryFilters) => [...entryQueryKeys.lists(), filters] as const,
+  detail: (id: string) => [...entryQueryKeys.all, 'detail', id] as const,
+};
+
+/**
+ * Hook to get entries with filters
+ */
+export function useEntries(filters: EntryFilters = {}) {
+  return useQuery({
+    queryKey: entryQueryKeys.list(filters),
+    queryFn: async (): Promise<EntryResponse> => {
+      logger.debug('Fetching entries from Miniflux', { filters });
+      const result = await commands.getEntries(filters);
+
+      if (result.status === 'error') {
+        // Don't show toast for expected "not connected" state
+        const isNotConnected = result.error === 'Not connected to Miniflux server';
+
+        if (isNotConnected) {
+          logger.debug('Miniflux not connected (expected on first launch)', {
+            error: result.error,
+            filters,
+          });
+        } else {
+          logger.error('Failed to fetch entries', {
+            error: result.error,
+            filters,
+          });
+          toast.error('Failed to load entries', {
+            description: result.error,
+          });
+        }
+        throw new Error(result.error);
+      }
+
+      logger.info('Entries fetched successfully', {
+        count: result.data.entries?.length ?? 0,
+        total: result.data.total,
+      });
+      return result.data;
+    },
+    staleTime: 1000 * 60 * 2, // 2 minutes
+    gcTime: 1000 * 60 * 5, // 5 minutes
+  });
+}
+
+/**
+ * Hook to get a single entry
+ */
+export function useEntry(id: string) {
+  return useQuery({
+    queryKey: entryQueryKeys.detail(id),
+    queryFn: async (): Promise<Entry> => {
+      logger.debug('Fetching entry', { id });
+      const result = await commands.getEntry(id);
+
+      if (result.status === 'error') {
+        logger.error('Failed to fetch entry', {
+          error: result.error,
+          id,
+        });
+        toast.error('Failed to load entry', {
+          description: result.error,
+        });
+        throw new Error(result.error);
+      }
+
+      logger.info('Entry fetched successfully', { id });
+      return result.data;
+    },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    gcTime: 1000 * 60 * 10, // 10 minutes
+  });
+}
+
+/**
+ * Hook to prefetch an entry on hover
+ * This allows preloading entry data before the user clicks
+ */
+export function usePrefetchEntry() {
+  const queryClient = useQueryClient();
+
+  return (id: string) => {
+    // Only prefetch if data is not already in cache
+    const existingData = queryClient.getQueryData(entryQueryKeys.detail(id));
+
+    if (!existingData) {
+      logger.debug('Prefetching entry', { id });
+      queryClient.prefetchQuery({
+        queryKey: entryQueryKeys.detail(id),
+        queryFn: async (): Promise<Entry> => {
+          const result = await commands.getEntry(id);
+
+          if (result.status === 'error') {
+            logger.debug('Failed to prefetch entry', {
+              error: result.error,
+              id,
+            });
+            throw new Error(result.error);
+          }
+
+          logger.debug('Entry prefetched successfully', { id });
+          return result.data;
+        },
+        staleTime: 1000 * 60 * 5, // 5 minutes
+        gcTime: 1000 * 60 * 10, // 10 minutes
+      });
+    }
+  };
+}
+
+/**
+ * Hook to mark entry as read
+ */
+export function useMarkEntryRead() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      logger.debug('Marking entry as read', { id });
+      const result = await commands.markEntryRead(id);
+
+      if (result.status === 'error') {
+        const isNotConnected = result.error === 'Not connected to Miniflux server';
+
+        if (!isNotConnected) {
+          logger.error('Failed to mark entry as read', {
+            error: result.error,
+            id,
+          });
+          toast.error('Failed to mark as read', {
+            description: result.error,
+          });
+        }
+        throw new Error(result.error);
+      }
+
+      logger.info('Entry marked as read', { id });
+    },
+    onSuccess: (_, id) => {
+      // Invalidate entry queries
+      queryClient.invalidateQueries({ queryKey: entryQueryKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
+      // Invalidate counters
+      queryClient.invalidateQueries({ queryKey: ['miniflux', 'counters'] });
+    },
+  });
+}
+
+/**
+ * Hook to mark multiple entries as read
+ */
+export function useMarkEntriesRead() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (ids: string[]) => {
+      logger.debug('Marking entries as read', { count: ids.length });
+      const result = await commands.markEntriesRead(ids);
+
+      if (result.status === 'error') {
+        logger.error('Failed to mark entries as read', {
+          error: result.error,
+          count: ids.length,
+        });
+        toast.error('Failed to mark as read', {
+          description: result.error,
+        });
+        throw new Error(result.error);
+      }
+
+      logger.info('Entries marked as read', { count: ids.length });
+    },
+    onSuccess: (_, ids) => {
+      // Invalidate entry queries
+      ids.forEach((id) => {
+        queryClient.invalidateQueries({ queryKey: entryQueryKeys.detail(id) });
+      });
+      queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
+      // Invalidate counters
+      queryClient.invalidateQueries({ queryKey: ['miniflux', 'counters'] });
+      toast.success(`${ids.length} entries marked as read`);
+    },
+  });
+}
+
+/**
+ * Hook to toggle entry star
+ */
+export function useToggleEntryStar() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      logger.debug('Toggling entry star', { id });
+      const result = await commands.toggleEntryStar(id);
+
+      if (result.status === 'error') {
+        const isNotConnected = result.error === 'Not connected to Miniflux server';
+
+        if (!isNotConnected) {
+          logger.error('Failed to toggle entry star', {
+            error: result.error,
+            id,
+          });
+          toast.error('Failed to toggle star', {
+            description: result.error,
+          });
+        }
+        throw new Error(result.error);
+      }
+
+      logger.info('Entry star toggled', { id });
+    },
+    onSuccess: (_, id) => {
+      // Invalidate entry queries
+      queryClient.invalidateQueries({ queryKey: entryQueryKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
+    },
+  });
+}
+
+/**
+ * Hook to update entry
+ */
+export function useUpdateEntry() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, updates }: { id: string; updates: EntryUpdate }) => {
+      logger.debug('Updating entry', { id, updates });
+      const result = await commands.updateEntry(id, updates);
+
+      if (result.status === 'error') {
+        logger.error('Failed to update entry', {
+          error: result.error,
+          id,
+        });
+        toast.error('Failed to update entry', {
+          description: result.error,
+        });
+        throw new Error(result.error);
+      }
+
+      logger.info('Entry updated successfully', { id });
+      return result.data;
+    },
+    onSuccess: (_, { id }) => {
+      // Invalidate entry queries
+      queryClient.invalidateQueries({ queryKey: entryQueryKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
+      toast.success('Entry updated');
+    },
+  });
+}
+
+/**
+ * Hook to fetch original article content
+ */
+export function useFetchEntryContent() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ id, updateContent }: { id: string; updateContent: boolean }) => {
+      logger.debug('Fetching entry content', { id, updateContent });
+      const result = await commands.fetchEntryContent(id, updateContent);
+
+      if (result.status === 'error') {
+        logger.error('Failed to fetch entry content', {
+          error: result.error,
+          id,
+        });
+        toast.error('Failed to fetch content', {
+          description: result.error,
+        });
+        throw new Error(result.error);
+      }
+
+      logger.info('Entry content fetched successfully', { id });
+      return result.data;
+    },
+    onSuccess: (_, { id }) => {
+      // Invalidate entry queries
+      queryClient.invalidateQueries({ queryKey: entryQueryKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
+    },
+  });
+}
