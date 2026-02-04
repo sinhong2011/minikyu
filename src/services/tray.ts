@@ -106,10 +106,23 @@ export function useToggleWindow() {
   return useMutation({
     mutationFn: async () => {
       logger.debug('Toggling main window visibility');
-      const result = await commands.trayToggleWindow();
+      const result = await commands.trayIsWindowVisible();
       if (result.status === 'error') {
-        logger.error('Failed to toggle window', { error: result.error });
+        logger.error('Failed to check window visibility', { error: result.error });
         throw new Error(result.error);
+      }
+      if (result.data) {
+        const hideResult = await commands.trayHideWindow();
+        if (hideResult.status === 'error') {
+          logger.error('Failed to hide window', { error: hideResult.error });
+          throw new Error(hideResult.error);
+        }
+      } else {
+        const showResult = await commands.trayShowWindow();
+        if (showResult.status === 'error') {
+          logger.error('Failed to show window', { error: showResult.error });
+          throw new Error(showResult.error);
+        }
       }
     },
     onSuccess: async () => {
