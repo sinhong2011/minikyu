@@ -1,6 +1,6 @@
 'use client';
-
-import { GripVerticalIcon } from 'lucide-react';
+import { DragDropVerticalIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import type * as React from 'react';
 import * as ResizablePrimitive from 'react-resizable-panels';
 
@@ -8,11 +8,13 @@ import { cn } from '@/lib/utils';
 
 function ResizablePanelGroup({
   className,
+  orientation = 'horizontal',
   ...props
 }: React.ComponentProps<typeof ResizablePrimitive.Group>) {
   return (
     <ResizablePrimitive.Group
       data-slot="resizable-panel-group"
+      orientation={orientation}
       className={cn('flex h-full w-full data-[panel-group-direction=vertical]:flex-col', className)}
       {...props}
     />
@@ -41,7 +43,7 @@ function ResizableHandle({
     >
       {withHandle && (
         <div className="bg-border hover:bg-primary/10 z-10 flex h-4 w-3 items-center justify-center rounded-xs border transition-colors duration-200">
-          <GripVerticalIcon className="size-2.5" />
+          <HugeiconsIcon icon={DragDropVerticalIcon} className="size-2.5" />
         </div>
       )}
     </ResizablePrimitive.Separator>
