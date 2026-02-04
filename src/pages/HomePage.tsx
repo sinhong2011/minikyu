@@ -1,6 +1,16 @@
+import {
+  Book01Icon,
+  CommandIcon,
+  Compass01Icon,
+  CubeIcon,
+  KeyboardIcon,
+  LayerIcon,
+  SparklesIcon,
+  ZapIcon,
+} from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { BookOpen, Boxes, Command, Compass, Keyboard, Layers, Sparkles, Zap } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 
@@ -9,32 +19,32 @@ export function HomePage() {
 
   const features = [
     {
-      icon: Boxes,
+      icon: CubeIcon,
       title: _(msg`Tauri v2`),
       description: _(msg`Modern Rust-powered desktop framework`),
     },
     {
-      icon: Zap,
+      icon: ZapIcon,
       title: _(msg`React 19`),
       description: _(msg`Latest React with concurrent features`),
     },
     {
-      icon: Layers,
+      icon: LayerIcon,
       title: _(msg`TanStack`),
       description: _(msg`Query, Router, and Table integration`),
     },
     {
-      icon: Keyboard,
+      icon: KeyboardIcon,
       title: _(msg`Shortcuts`),
       description: _(msg`Customizable keyboard shortcuts`),
     },
     {
-      icon: Command,
+      icon: CommandIcon,
       title: _(msg`Command Palette`),
       description: _(msg`Quick access to all features`),
     },
     {
-      icon: Sparkles,
+      icon: SparklesIcon,
       title: _(msg`shadcn/ui`),
       description: _(msg`Beautiful, accessible components`),
     },
@@ -42,12 +52,12 @@ export function HomePage() {
 
   const quickLinks = [
     {
-      icon: BookOpen,
+      icon: Book01Icon,
       label: _(msg`Documentation`),
       action: () => {},
     },
     {
-      icon: Compass,
+      icon: Compass01Icon,
       label: _(msg`Explore Features`),
       action: () => {},
     },
@@ -66,7 +76,7 @@ export function HomePage() {
         <div className="flex gap-3 pt-2">
           {quickLinks.map((link) => (
             <Button key={link.label} variant="outline" className="gap-2" onClick={link.action}>
-              <link.icon className="size-4" />
+              <HugeiconsIcon icon={link.icon} className="size-4" />
               {link.label}
             </Button>
           ))}
@@ -80,7 +90,7 @@ export function HomePage() {
             <CardHeader className="pb-3">
               <div className="flex items-center gap-3">
                 <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-primary/10">
-                  <feature.icon className="size-5 text-primary" />
+                  <HugeiconsIcon icon={feature.icon} className="size-5 text-primary" />
                 </div>
                 <CardTitle className="text-base">{feature.title}</CardTitle>
               </div>
