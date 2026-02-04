@@ -1,5 +1,5 @@
 export { MacOSWindowControls } from '../titlebar/MacOSWindowControls';
 export { TitleBar } from '../titlebar/TitleBar';
-export { LeftSideBar } from './LeftSideBar';
+export { AppSidebar } from './AppSidebar';
 export { MainWindow } from './MainWindow';
 export { MainWindowContent } from './MainWindowContent';
