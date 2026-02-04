@@ -29,6 +29,11 @@ export function usePreferences() {
           close_behavior: 'minimize_to_tray',
           show_tray_icon: true,
           start_minimized: false,
+          reader_font_size: 16,
+          reader_line_width: 65,
+          reader_font_family: 'sans-serif',
+          image_download_path: null,
+          video_download_path: null,
         };
       }
 
