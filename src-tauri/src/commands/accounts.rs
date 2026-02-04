@@ -1,11 +1,13 @@
 use crate::accounts::error::AccountError;
-use crate::accounts::keyring::{delete_credentials, get_password, get_token, save_password, save_token};
-use crate::database::init_database_pool;
+use crate::accounts::keyring::{
+    delete_credentials, get_password, get_token, save_password, save_token,
+};
 use crate::miniflux::AuthConfig;
+use crate::AppState;
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use sqlx::SqlitePool;
-use tauri::{AppHandle, State};
+use tauri::{AppHandle, Emitter, State};
 
 #[derive(Debug, Clone, Serialize, Deserialize, specta::Type, sqlx::FromRow)]
 pub struct MinifluxAccount {
@@ -22,9 +24,18 @@ pub struct MinifluxAccount {
 #[specta::specta]
 pub async fn save_miniflux_account(
     app_handle: AppHandle,
+    state: State<'_, AppState>,
     config: AuthConfig,
 ) -> Result<i64, AccountError> {
     log::info!("Saving Miniflux account for: {:?}", config.username);
+
+    let pool = state
+        .db_pool
+        .lock()
+        .await
+        .as_ref()
+        .ok_or(AccountError::NotFound)?
+        .clone();
 
     let username = config
         .username
@@ -51,8 +62,6 @@ pub async fn save_miniflux_account(
         return Err(AccountError::InvalidCredentials);
     }
 
-    let pool = init_database_pool(&app_handle).await?;
-
     let auth_method = if has_token { "token" } else { "password" };
     let now = Utc::now().to_rfc3339();
 
@@ -67,10 +76,8 @@ pub async fn save_miniflux_account(
 
         sqlx::query(
             r#"
-            UPDATE miniflux_accounts
-            SET server_url = ?,
-                auth_method = ?,
-                updated_at = ?
+            UPDATE miniflux_accounts 
+            SET server_url = ?, auth_method = ?, updated_at = ?
             WHERE id = ?
             "#,
         )
@@ -135,50 +142,116 @@ pub async fn save_miniflux_account(
 #[specta::specta]
 pub async fn get_miniflux_accounts(
     app_handle: AppHandle,
+    state: State<'_, AppState>,
 ) -> Result<Vec<MinifluxAccount>, AccountError> {
-    log::info!("Fetching all accounts");
+    log::info!("[get_miniflux_accounts] Command invoked");
 
-    let pool = init_database_pool(&app_handle).await?;
+    let pool = state
+        .db_pool
+        .lock()
+        .await
+        .as_ref()
+        .ok_or_else(|| {
+            log::error!("[get_miniflux_accounts] Database pool not initialized");
+            AccountError::NotFound
+        })?
+        .clone();
+
+    log::info!("[get_miniflux_accounts] Database pool acquired, querying accounts");
 
     let accounts: Vec<MinifluxAccount> = sqlx::query_as(
-        "SELECT id, username, server_url, auth_method, is_active, created_at, updated_at 
-         FROM miniflux_accounts 
+        "SELECT id, username, server_url, auth_method, is_active, created_at, updated_at
+         FROM miniflux_accounts
          ORDER BY created_at DESC",
     )
     .fetch_all(&pool)
     .await
     .map_err(|e| {
-        log::error!("Failed to fetch accounts: {:#?}", e);
+        log::error!("[get_miniflux_accounts] Database query failed: {:#?}", e);
         AccountError::DatabaseError(e.to_string())
     })?;
 
-    log::debug!("Found {} accounts", accounts.len());
+    log::info!(
+        "[get_miniflux_accounts] Query successful, found {} account(s)",
+        accounts.len()
+    );
+    for account in &accounts {
+        log::info!(
+            "[get_miniflux_accounts] Account: id={}, username={}, server_url={}, is_active={}",
+            account.id,
+            account.username,
+            account.server_url,
+            account.is_active
+        );
+    }
+
     Ok(accounts)
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn get_active_miniflux_account(
+    app_handle: AppHandle,
+    state: State<'_, AppState>,
+) -> Result<Option<MinifluxAccount>, AccountError> {
+    log::info!("Fetching active account");
+
+    let pool = state
+        .db_pool
+        .lock()
+        .await
+        .as_ref()
+        .ok_or(AccountError::NotFound)?
+        .clone();
+
+    let account: Option<MinifluxAccount> = sqlx::query_as(
+        "SELECT id, username, server_url, auth_method, is_active, created_at, updated_at
+         FROM miniflux_accounts
+         WHERE is_active = 1
+         LIMIT 1",
+    )
+    .fetch_optional(&pool)
+    .await
+    .map_err(|e| {
+        log::error!("Failed to fetch active account: {:#?}", e);
+        AccountError::DatabaseError(e.to_string())
+    })?;
+
+    if let Some(ref acc) = account {
+        log::debug!("Found active account: {}", acc.username);
+    } else {
+        log::debug!("No active account found");
+    }
+
+    Ok(account)
 }
 
 #[tauri::command]
 #[specta::specta]
 pub async fn delete_miniflux_account(
     app_handle: AppHandle,
+    state: State<'_, AppState>,
     id: i64,
 ) -> Result<(), AccountError> {
     log::info!("Deleting account with ID: {}", id);
 
-    let pool = init_database_pool(&app_handle).await?;
+    let pool = state
+        .db_pool
+        .lock()
+        .await
+        .as_ref()
+        .ok_or(AccountError::NotFound)?
+        .clone();
 
     delete_miniflux_account_impl(&pool, id).await
 }
 
-async fn delete_miniflux_account_impl(
-    pool: &SqlitePool,
-    id: i64,
-) -> Result<(), AccountError> {
-    let account: Option<(String, String)> = sqlx::query_as(
-        "SELECT server_url, username FROM miniflux_accounts WHERE id = ?",
-    )
-    .bind(id)
-    .fetch_optional(pool)
-    .await?;
+async fn delete_miniflux_account_impl(pool: &SqlitePool, id: i64) -> Result<(), AccountError> {
+    let account: Option<(String, String)> =
+        sqlx::query_as("SELECT server_url, username FROM miniflux_accounts WHERE id = ?")
+            .bind(id)
+            .fetch_optional(pool)
+            .await?;
 
     let (server_url, username) = account.ok_or(AccountError::NotFound)?;
 
@@ -217,11 +290,17 @@ async fn delete_miniflux_account_impl(
 #[specta::specta]
 pub async fn auto_reconnect_miniflux(
     app_handle: AppHandle,
-    state: State<'_, crate::commands::miniflux::MinifluxState>,
+    state: State<'_, crate::AppState>,
 ) -> Result<(), AccountError> {
     log::info!("Auto-reconnect: Attempting to reconnect to Miniflux");
 
-    let pool = init_database_pool(&app_handle).await?;
+    let pool = state
+        .db_pool
+        .lock()
+        .await
+        .as_ref()
+        .ok_or(AccountError::NotFound)
+        .cloned()?;
 
     // Query for active account
     let active_account: Option<(i64, String, String, String)> = sqlx::query_as(
@@ -288,9 +367,14 @@ pub async fn auto_reconnect_miniflux(
 
     // Call miniflux_connect to establish connection
     log::debug!("Auto-reconnect: Calling miniflux_connect with fetched credentials");
-    match crate::commands::miniflux::miniflux_connect(app_handle, state, config).await {
+    match crate::commands::miniflux::miniflux_connect(app_handle.clone(), state, config).await {
         Ok(_) => {
             log::info!("Auto-reconnect: Successfully reconnected to Miniflux");
+
+            if let Err(e) = app_handle.emit("miniflux-connected", ()) {
+                log::error!("Failed to emit miniflux-connected event: {}", e);
+            }
+
             Ok(())
         }
         Err(e) => {

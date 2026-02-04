@@ -307,9 +307,9 @@ pub fn format_log(
     // Print directly to stdout for terminal output with colors
     println!("{output}");
 
-    // Call the callback with empty args since we've already printed
-    // This ensures other log targets (file, webview) still receive the log
-    callback.finish(format_args!(""));
+    // Pass original message to callback for file/webview logging
+    // This ensures file logs contain the actual log content without ANSI codes
+    callback.finish(format_args!("{}", message));
 }
 
 #[cfg(test)]

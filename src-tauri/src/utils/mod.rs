@@ -2,3 +2,4 @@
 
 pub mod logger;
 pub mod platform;
+pub mod serde_helpers;

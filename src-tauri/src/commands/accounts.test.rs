@@ -164,8 +164,7 @@ mod tests {
         assert_eq!(row.4, 1); // is_active = true
 
         // Verify token is in keyring
-        let token_result =
-            get_token("https://miniflux.example.com", "testuser").await;
+        let token_result = get_token("https://miniflux.example.com", "testuser").await;
         assert!(token_result.is_ok());
         assert_eq!(token_result.unwrap(), "test_token_123");
 
@@ -205,8 +204,7 @@ mod tests {
         assert_eq!(row.4, 1); // is_active = true
 
         // Verify password is in keyring
-        let password_result =
-            get_password("https://miniflux.example.com", "testuser2").await;
+        let password_result = get_password("https://miniflux.example.com", "testuser2").await;
         assert!(password_result.is_ok());
         assert_eq!(password_result.unwrap(), "test_password_456");
 
@@ -257,8 +255,7 @@ mod tests {
         assert_eq!(row.0, "password");
 
         // Verify new password is in keyring
-        let password_result =
-            get_password("https://miniflux.example.com", "testuser3").await;
+        let password_result = get_password("https://miniflux.example.com", "testuser3").await;
         assert!(password_result.is_ok());
         assert_eq!(password_result.unwrap(), "new_password");
 
@@ -509,10 +506,7 @@ mod tests {
         assert_eq!(accounts.len(), 0, "Should return empty vector");
     }
 
-    async fn delete_miniflux_account_test(
-        pool: &SqlitePool,
-        id: i64,
-    ) -> Result<(), AccountError> {
+    async fn delete_miniflux_account_test(pool: &SqlitePool, id: i64) -> Result<(), AccountError> {
         use super::super::delete_miniflux_account_impl;
         delete_miniflux_account_impl(pool, id).await
     }
@@ -535,7 +529,11 @@ mod tests {
 
         // Delete account
         let result = delete_miniflux_account_test(&pool, account_id).await;
-        assert!(result.is_ok(), "Failed to delete account: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to delete account: {:?}",
+            result.err()
+        );
 
         // Verify account is deleted from database
         let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM miniflux_accounts WHERE id = ?")
@@ -571,15 +569,21 @@ mod tests {
             .expect("Failed to save account");
 
         // Verify password is in keyring
-        let password_result = get_password("https://miniflux.example.com", "delete_test_user2").await;
+        let password_result =
+            get_password("https://miniflux.example.com", "delete_test_user2").await;
         assert!(password_result.is_ok(), "Password should be in keyring");
 
         // Delete account
         let result = delete_miniflux_account_test(&pool, account_id).await;
-        assert!(result.is_ok(), "Failed to delete account: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to delete account: {:?}",
+            result.err()
+        );
 
         // Verify credentials are deleted from keyring
-        let password_result = get_password("https://miniflux.example.com", "delete_test_user2").await;
+        let password_result =
+            get_password("https://miniflux.example.com", "delete_test_user2").await;
         assert!(
             matches!(password_result, Err(AccountError::NotFound)),
             "Password should be deleted from keyring"
@@ -621,30 +625,32 @@ mod tests {
         .expect("Failed to insert user");
 
         // Verify user exists
-        let count: i64 = sqlx::query_scalar(
-            "SELECT COUNT(*) FROM users WHERE server_url = ? AND username = ?",
-        )
-        .bind("https://miniflux.example.com")
-        .bind("delete_test_user3")
-        .fetch_one(&pool)
-        .await
-        .expect("Failed to count users");
+        let count: i64 =
+            sqlx::query_scalar("SELECT COUNT(*) FROM users WHERE server_url = ? AND username = ?")
+                .bind("https://miniflux.example.com")
+                .bind("delete_test_user3")
+                .fetch_one(&pool)
+                .await
+                .expect("Failed to count users");
 
         assert_eq!(count, 1, "User should exist before deletion");
 
         // Delete account
         let result = delete_miniflux_account_test(&pool, account_id).await;
-        assert!(result.is_ok(), "Failed to delete account: {:?}", result.err());
+        assert!(
+            result.is_ok(),
+            "Failed to delete account: {:?}",
+            result.err()
+        );
 
         // Verify user is cascade deleted
-        let count: i64 = sqlx::query_scalar(
-            "SELECT COUNT(*) FROM users WHERE server_url = ? AND username = ?",
-        )
-        .bind("https://miniflux.example.com")
-        .bind("delete_test_user3")
-        .fetch_one(&pool)
-        .await
-        .expect("Failed to count users");
+        let count: i64 =
+            sqlx::query_scalar("SELECT COUNT(*) FROM users WHERE server_url = ? AND username = ?")
+                .bind("https://miniflux.example.com")
+                .bind("delete_test_user3")
+                .fetch_one(&pool)
+                .await
+                .expect("Failed to count users");
 
         assert_eq!(count, 0, "User should be cascade deleted");
 
@@ -658,7 +664,10 @@ mod tests {
 
         // Try to delete non-existent account
         let result = delete_miniflux_account_test(&pool, 99999).await;
-        assert!(result.is_err(), "Should fail to delete non-existent account");
+        assert!(
+            result.is_err(),
+            "Should fail to delete non-existent account"
+        );
 
         match result.unwrap_err() {
             AccountError::NotFound => {}
