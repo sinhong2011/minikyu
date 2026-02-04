@@ -1,6 +1,7 @@
+import { PanelLeftCloseIcon, PanelLeftIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { PanelLeft, PanelLeftClose } from 'lucide-react';
 import { CommandSearchButton } from '@/components/titlebar/CommandSearchButton';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -33,9 +34,9 @@ export function LinuxTitleBar({ className, onOpenCommandPalette }: LinuxTitleBar
         title={_(leftSidebarVisible ? msg`Hide Left Sidebar` : msg`Show Left Sidebar`)}
       >
         {leftSidebarVisible ? (
-          <PanelLeftClose className="h-4 w-4" />
+          <HugeiconsIcon icon={PanelLeftCloseIcon} className="h-4 w-4" />
         ) : (
-          <PanelLeft className="h-4 w-4" />
+          <HugeiconsIcon icon={PanelLeftIcon} className="h-4 w-4" />
         )}
       </Button>
 

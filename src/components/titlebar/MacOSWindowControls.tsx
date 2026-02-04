@@ -77,7 +77,7 @@ export function MacOSWindowControls({ className, ...props }: MacOSWindowControls
         tauriUnlisten();
       }
     };
-  }, [handleAltKeyDown, handleAltKeyUp]);
+  }, []); // biome-ignore lint/correctness/useExhaustiveDependencies: handlers are stable, defined outside useEffect
 
   const handleClose = async () => {
     await executeCommand('window-close', context);
@@ -114,10 +114,8 @@ export function MacOSWindowControls({ className, ...props }: MacOSWindowControls
 
   return (
     <div
-      className={cn(
-        'flex items-center gap-2 px-3 text-black active:text-black dark:text-black',
-        className
-      )}
+      role="group"
+      className={cn('flex h-6 w-11.5 items-center justify-center gap-1 ', className)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       {...props}

@@ -1,11 +1,14 @@
+import { PanelLeftCloseIcon, PanelLeftIcon, Settings01Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { PanelLeft, PanelLeftClose } from 'lucide-react';
 import { CommandSearchButton } from '@/components/titlebar/CommandSearchButton';
 import { MacOSWindowControls } from '@/components/titlebar/MacOSWindowControls';
 import { WindowsWindowControls } from '@/components/titlebar/WindowsWindowControls';
 import { Button } from '@/components/ui/button';
+import { useCommandContext } from '@/hooks/use-command-context';
 import type { AppPlatform } from '@/hooks/use-platform';
+import { executeCommand } from '@/lib/commands';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/store/ui-store';
 
@@ -19,6 +22,15 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
   const { _ } = useLingui();
   const leftSidebarVisible = useUIStore((state) => state.leftSidebarVisible);
   const toggleLeftSidebar = useUIStore((state) => state.toggleLeftSidebar);
+  const toggleDownloads = useUIStore((state) => state.toggleDownloads);
+  const commandContext = useCommandContext();
+
+  const handleOpenSettings = async () => {
+    const result = await executeCommand('open-preferences', commandContext);
+    if (!result.success && result.error) {
+      commandContext.showToast(result.error, 'error');
+    }
+  };
 
   const isMacOS = platform === 'macos';
 
@@ -41,10 +53,20 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
           title={_(leftSidebarVisible ? msg`Hide Left Sidebar` : msg`Show Left Sidebar`)}
         >
           {leftSidebarVisible ? (
-            <PanelLeftClose className="h-4 w-4" />
+            <HugeiconsIcon icon={PanelLeftCloseIcon} className="h-4 w-4" />
           ) : (
-            <PanelLeft className="h-4 w-4" />
+            <HugeiconsIcon icon={PanelLeftIcon} className="h-4 w-4" />
           )}
+        </Button>
+
+        <Button
+          onClick={handleOpenSettings}
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 shrink-0 text-foreground/70 hover:text-foreground"
+          title={_(msg`Settings`)}
+        >
+          <HugeiconsIcon icon={Settings01Icon} className="h-4 w-4" />
         </Button>
       </div>
 
@@ -55,6 +77,15 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
 
       {/* Right section */}
       <div data-tauri-drag-region className="flex items-center gap-2 pr-2">
+        <Button
+          onClick={toggleDownloads}
+          variant="ghost"
+          size="icon"
+          className="h-8 w-8 shrink-0 text-foreground/70 hover:text-foreground"
+          title={_(msg`Downloads`)}
+        >
+          ↓
+        </Button>
         {!isMacOS && <WindowsWindowControls />}
       </div>
     </div>

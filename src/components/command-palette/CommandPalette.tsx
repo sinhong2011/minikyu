@@ -1,3 +1,4 @@
+import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useEffect, useState } from 'react';
@@ -105,7 +106,7 @@ export function CommandPalette() {
                 value={command.id}
                 onSelect={() => handleCommandSelect(command.id)}
               >
-                {command.icon && <command.icon className="mr-2 h-4 w-4" />}
+                {command.icon && <HugeiconsIcon icon={command.icon} className="mr-2 h-4 w-4" />}
                 <span>{_(command.label)}</span>
                 {command.description && (
                   <span className="ml-auto text-xs text-muted-foreground">
