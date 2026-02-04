@@ -4,6 +4,8 @@ import { useEffect } from 'react';
 import { ErrorBoundary } from './components/ErrorBoundary';
 import { MainWindow } from './components/layout/MainWindow';
 import { ThemeProvider } from './components/ThemeProvider';
+import { useAccountInitialization } from './hooks/use-account-initialization';
+import { useConnectionStatusListener } from './hooks/use-connection-status';
 import { initializeLanguage } from './i18n/language-init';
 import { initializeCommandSystem } from './lib/commands';
 import { logger } from './lib/logger';
@@ -12,6 +14,9 @@ import { cleanupOldFiles } from './lib/recovery';
 import { commands } from './lib/tauri-bindings';
 
 function App() {
+  useAccountInitialization();
+  useConnectionStatusListener();
+
   // Initialize command system and cleanup on app startup
   useEffect(() => {
     logger.info('🚀 Frontend application starting up');

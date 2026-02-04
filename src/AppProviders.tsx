@@ -9,12 +9,15 @@ import { logger } from './lib/logger';
 import { buildAppMenu, setupMenuLanguageListener } from './lib/menu';
 import { cleanupOldFiles } from './lib/recovery';
 import { commands } from './lib/tauri-bindings';
+import { useAutoReconnect } from './services/miniflux/auth';
 
 interface AppProvidersProps {
   children: React.ReactNode;
 }
 
 export function AppProviders({ children }: AppProvidersProps) {
+  const { handleAutoReconnect } = useAutoReconnect();
+
   useEffect(() => {
     logger.info('🚀 Frontend application starting up');
     initializeCommandSystem();
@@ -39,6 +42,11 @@ export function AppProviders({ children }: AppProvidersProps) {
 
     cleanupOldFiles().catch((error) => {
       logger.warn('Failed to cleanup old recovery files', { error });
+    });
+
+    // Attempt auto-reconnect on app startup
+    handleAutoReconnect().catch((error) => {
+      logger.error('Auto-reconnect failed', { error });
     });
 
     logger.info('App environment', {
@@ -94,7 +102,7 @@ export function AppProviders({ children }: AppProvidersProps) {
 
     const updateTimer = setTimeout(checkForUpdates, 5000);
     return () => clearTimeout(updateTimer);
-  }, []);
+  }, [handleAutoReconnect]);
 
   return (
     <ErrorBoundary>
