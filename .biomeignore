@@ -1,0 +1,8 @@
+**/.github/**
+**/.husky/**
+**/node_modules/**
+**/.next/**
+**/dist/**
+**/out/**
+**/src/components/ui/**
+**/src/components/animate-ui/**

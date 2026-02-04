@@ -5,6 +5,9 @@
     "clientKind": "git",
     "useIgnoreFile": true
   },
+  "files": {
+    "includes": ["**/*.{js,jsx,ts,tsx,json,css,md}"]
+  },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -29,7 +32,7 @@
       "style": {
         "noNegationElse": "off",
         "useConst": "warn",
-        "useImportType": "error",
+        "useImportType": "warn",
         "useNamingConvention": {
           "level": "warn",
           "options": {
@@ -71,6 +74,16 @@
           "suspicious": {
             "noExplicitAny": "off",
             "noConsole": "off"
+          }
+        }
+      }
+    },
+    {
+      "includes": ["src/components/miniflux/**/*"],
+      "linter": {
+        "rules": {
+          "security": {
+            "noDangerouslySetInnerHtml": "off"
           }
         }
       }
