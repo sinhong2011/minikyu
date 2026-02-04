@@ -9,8 +9,10 @@ pub struct Category {
     pub title: String,
     #[serde(default)]
     pub hide_globally: bool,
-    pub created_at: String,
-    pub updated_at: String,
+    #[serde(default)]
+    pub created_at: Option<String>,
+    #[serde(default)]
+    pub updated_at: Option<String>,
 }
 
 /// Miniflux Feed
@@ -67,8 +69,10 @@ pub struct Feed {
     pub apprise_service_urls: Option<String>,
     #[serde(default)]
     pub hide_globally: bool,
-    pub created_at: String,
-    pub updated_at: String,
+    #[serde(default)]
+    pub created_at: Option<String>,
+    #[serde(default)]
+    pub updated_at: Option<String>,
 }
 
 /// Feed Icon
@@ -102,7 +106,8 @@ pub struct Entry {
     pub content: Option<String>,
     pub hash: String,
     pub published_at: String,
-    pub created_at: String,
+    #[serde(default)]
+    pub created_at: Option<String>,
     #[serde(default)]
     pub changed_at: Option<String>,
     pub status: String, // "read", "unread", "removed"
@@ -116,14 +121,15 @@ pub struct Entry {
     pub enclosures: Option<Vec<Enclosure>>,
     pub feed: Feed,
     #[serde(default)]
-    pub tags: Vec<String>,
+    pub tags: Option<Vec<String>>,
 }
 
 /// Entry Response (with pagination)
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
 pub struct EntryResponse {
     pub total: i64,
-    pub entries: Vec<Entry>,
+    #[serde(default)]
+    pub entries: Option<Vec<Entry>>,
 }
 
 /// Enclosure (for podcasts/videos)
@@ -155,9 +161,11 @@ pub struct User {
     #[serde(default)]
     pub entry_sorting_direction: Option<String>,
     #[serde(default)]
+    pub entry_sorting_order: Option<String>,
+    #[serde(default)]
     pub entries_per_page: Option<i32>,
     #[serde(default)]
-    pub keyboard_shortcuts: Option<String>,
+    pub keyboard_shortcuts: Option<bool>,
     #[serde(default)]
     pub display_mode: Option<String>,
     #[serde(default)]
@@ -165,9 +173,17 @@ pub struct User {
     #[serde(default)]
     pub entry_swipe: Option<bool>,
     #[serde(default)]
-    pub custom_css: Option<String>,
-    pub created_at: String,
-    pub updated_at: String,
+    pub stylesheet: Option<String>,
+    #[serde(default)]
+    pub google_id: Option<String>,
+    #[serde(default)]
+    pub openid_connect_id: Option<String>,
+    #[serde(default)]
+    pub last_login_at: Option<String>,
+    #[serde(default)]
+    pub created_at: Option<String>,
+    #[serde(default)]
+    pub updated_at: Option<String>,
 }
 
 /// Counters
@@ -299,7 +315,7 @@ pub struct UserUpdate {
     #[serde(default)]
     pub entries_per_page: Option<i32>,
     #[serde(default)]
-    pub keyboard_shortcuts: Option<String>,
+    pub keyboard_shortcuts: Option<bool>,
     #[serde(default)]
     pub display_mode: Option<String>,
     #[serde(default)]
@@ -307,7 +323,7 @@ pub struct UserUpdate {
     #[serde(default)]
     pub entry_swipe: Option<bool>,
     #[serde(default)]
-    pub custom_css: Option<String>,
+    pub stylesheet: Option<String>,
 }
 
 /// Sync Result
@@ -326,10 +342,13 @@ pub struct SyncResult {
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
 pub struct DownloadProgress {
     pub enclosure_id: i64,
+    pub file_name: String,
+    pub url: String,
     pub progress: i32, // 0-100
     pub downloaded_bytes: i64,
     pub total_bytes: i64,
-    pub status: String, // "downloading", "completed", "failed"
+    pub status: String, // "downloading", "completed", "failed", "cancelled"
+    pub file_path: Option<String>,
 }
 
 /// Authentication Config

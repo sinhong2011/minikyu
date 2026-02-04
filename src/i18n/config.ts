@@ -1,5 +1,7 @@
 import { i18n } from '@lingui/core';
 
+const defaultLocale = 'en';
+
 const rtlLanguages = ['he', 'fa', 'ur'];
 
 function onLocaleChange(locale: string) {
@@ -29,4 +31,4 @@ export const isRTL = (lng?: string): boolean => {
 };
 
 export default i18n;
-export { i18n, loadAndActivate, onLocaleChange };
+export { i18n, defaultLocale, loadAndActivate, onLocaleChange };

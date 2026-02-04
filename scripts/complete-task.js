@@ -81,7 +81,11 @@ function completeTask(taskIdentifier) {
   if (!matchingFile) {
     console.error(`Error: No task found matching "${taskIdentifier}"`);
     console.error(`\nAvailable tasks in tasks-todo/:`);
-    todoFiles.filter((f) => f.endsWith('.md')).forEach((f) => console.error(`   - ${f}`));
+    todoFiles
+      .filter((f) => f.endsWith('.md'))
+      .forEach((f) => {
+        console.error(`   - ${f}`);
+      });
     process.exit(1);
   }
 
@@ -108,13 +112,13 @@ function showHelp() {
 Task Completion Script
 
 Usage:
-  npm task:complete TASK_NAME       Complete a task
-  npm task:rename-done              Rename all existing completed tasks
+  bun task:complete TASK_NAME       Complete a task
+  bun task:rename-done              Rename all existing completed tasks
 
 Examples:
-  npm task:complete frontend-performance
-  npm task:complete 2
-  npm task:rename-done
+  bun task:complete frontend-performance
+  bun task:complete 2
+  bun task:rename-done
 
 Notes:
   - Task name can be partial

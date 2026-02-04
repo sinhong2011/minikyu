@@ -13,29 +13,130 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: src/pages/HomePage.tsx:73
+msgid "A modern, production-ready template for building cross-platform desktop applications with React, TypeScript, and Rust."
+msgstr "React, TypeScript, Rust를 사용하여 크로스 플랫폼 데스크톱 애플리케이션을 구축하기 위한 현대적이고 프로덕션 준비가 된 템플릿입니다."
+
 #: src/lib/menu.ts:20
 msgid "About {APP_NAME}"
 msgstr "{APP_NAME} 정보"
 
-#: src/components/preferences/PreferencesDialog.tsx:44
+#: src/pages/ComponentsPage.tsx:286
+#~ msgid "Access advanced configuration options and developer tools. Built with Radix UI primitives for accessibility."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:249
+#~ msgid "Account"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:263
+#~ msgid "Account Information"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:74
+#~ msgid "Active Users"
+#~ msgstr ""
+
+#: src/components/preferences/PreferencesDialog.tsx:45
 msgid "Advanced"
 msgstr "고급"
 
-#: src/components/preferences/PreferencesDialog.tsx:39
+#: src/pages/ComponentsPage.tsx:283
+#~ msgid "Advanced Options"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:191
+#~ msgid "Alert Examples"
+#~ msgstr ""
+
+#: src/components/layout/AppSidebar.tsx:91
+#: src/components/layout/AppSidebar.tsx:100
+#: src/components/layout/AppSidebar.tsx:227
+#: src/components/miniflux/MinifluxLayout.tsx:55
+#: src/components/miniflux/MinifluxLayout.tsx:63
+msgid "All"
+msgstr "모두"
+
+#: src/pages/ComponentsPage.tsx:335
+#~ msgid "Animated Collapsible"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:300
+#~ msgid "Animated Dropdown"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:238
+#~ msgid "Animated Tabs"
+#~ msgstr ""
+
+#: src/components/miniflux/ConnectionDialog.tsx:282
+#: src/components/miniflux/ConnectionDialog.tsx:294
+msgid "API Token"
+msgstr "API 토큰"
+
+#: src/components/miniflux/ConnectionDialog.tsx:95
+msgid "API Token is required"
+msgstr "API 토큰이 필요합니다"
+
+#: src/components/preferences/PreferencesDialog.tsx:40
 msgid "Appearance"
 msgstr "외관"
+
+#: src/pages/ComponentsPage.tsx:222
+#~ msgid "Badges & Labels"
+#~ msgstr ""
+
+#: src/pages/HomePage.tsx:49
+msgid "Beautiful, accessible components"
+msgstr "아름답고 접근하기 쉬운 컴포넌트"
+
+#: src/pages/ComponentsPage.tsx:157
+#~ msgid "Bio"
+#~ msgstr ""
+
+#: src/components/miniflux/ConnectionDialog.tsx:422
+msgid "Cancel"
+msgstr "취소"
+
+#: src/components/layout/AppSidebar.tsx:170
+msgid "Categories"
+msgstr "카테고리"
+
+#: src/components/miniflux/MinifluxLayout.tsx:50
+msgid "Category"
+msgstr "카테고리"
 
 #: src/lib/menu.ts:26
 msgid "Check for Updates..."
 msgstr "업데이트 확인..."
 
-#: src/components/preferences/panes/AppearancePane.tsx:115
+#: src/pages/TemplatesPage.tsx:96
+#~ msgid "Choose a template to kickstart your Tauri application. Each template is optimized for different use cases and includes pre-configured tools and patterns."
+#~ msgstr ""
+
+#: src/components/preferences/panes/GeneralPane.tsx:142
+msgid "Choose what happens when you click the window close button"
+msgstr "창 닫기 버튼을 클릭할 때의 동작을 선택하세요"
+
+#: src/components/preferences/panes/AppearancePane.tsx:113
 msgid "Choose your preferred color theme"
 msgstr "선호하는 색상 테마를 선택하세요"
 
-#: src/components/preferences/panes/AppearancePane.tsx:90
+#: src/components/preferences/panes/AppearancePane.tsx:88
 msgid "Choose your preferred display language"
 msgstr "선호하는 표시 언어를 선택하세요"
+
+#: src/pages/TemplatesPage.tsx:74
+#~ msgid "Clone the Repository"
+#~ msgstr ""
+
+#: src/components/preferences/panes/GeneralPane.tsx:92
+msgid "Close behavior updated"
+msgstr "닫기 동작이 업데이트되었습니다"
+
+#: src/components/preferences/panes/GeneralPane.tsx:141
+msgid "Close Button Behavior"
+msgstr "닫기 버튼 동작"
 
 #: src/lib/commands/window-commands.ts:10
 msgid "Close the current window"
@@ -45,38 +146,130 @@ msgstr "현재 창 닫기"
 msgid "Close Window"
 msgstr "창 닫기"
 
-#: src/components/preferences/panes/AppearancePane.tsx:114
+#: src/components/preferences/panes/AppearancePane.tsx:112
 msgid "Color Theme"
 msgstr "색상 테마"
 
-#: src/components/command-palette/CommandPalette.tsx:95
+#: src/components/command-palette/CommandPalette.tsx:90
+#: src/pages/HomePage.tsx:43
 msgid "Command Palette"
 msgstr "명령 팔레트"
 
-#: src/components/preferences/PreferencesDialog.tsx:65
+#: src/pages/TemplatesPage.tsx:212
+#~ msgid "Community"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:46
+#~ msgid "Complete setup with all features enabled. Best for production apps."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:54
+#~ msgid "Component Showcase"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:276
+#~ msgid "Configure application settings and customize your experience. The highlight effect follows the active tab smoothly."
+#~ msgstr ""
+
+#: src/components/miniflux/ConnectionDialog.tsx:431
+msgid "Connect"
+msgstr "연결"
+
+#: src/components/miniflux/ConnectionDialog.tsx:197
+msgid "Connect to Miniflux"
+msgstr "Miniflux에 연결"
+
+#: src/components/miniflux/MinifluxLayout.tsx:40
+msgid "Connect to Server"
+msgstr "서버에 연결"
+
+#: src/components/miniflux/MinifluxLayout.tsx:38
+msgid "Connect to your Miniflux server to get started"
+msgstr "시작하려면 Miniflux 서버에 연결하세요"
+
+#: src/components/miniflux/ConnectionDialog.tsx:428
+msgid "Connecting..."
+msgstr "연결 중..."
+
+#: src/components/ui/sonner.tsx:42
+msgid "Copied!"
+msgstr "복사됨!"
+
+#: src/components/ui/sonner.tsx:51
+msgid "Copy message"
+msgstr "메시지 복사"
+
+#: src/components/miniflux/ConnectionDialog.tsx:208
+msgid "Could not connect to saved account. Please update your credentials."
+msgstr "저장된 계정에 연결할 수 없습니다. 자격 증명을 업데이트하세요."
+
+#: src/pages/HomePage.tsx:39
+msgid "Customizable keyboard shortcuts"
+msgstr "사용자 정의 가능한 키보드 단축키"
+
+#: src/components/preferences/PreferencesDialog.tsx:66
 msgid "Customize your application preferences here."
 msgstr "여기에서 애플리케이션 설정을 사용자 지정하세요."
 
-#: src/components/preferences/panes/AppearancePane.tsx:127
+#: src/components/preferences/panes/AppearancePane.tsx:125
 msgid "Dark"
 msgstr "다크"
 
-#: src/components/command-palette/CommandPalette.tsx:77
-#: src/components/titlebar/CommandDialog.tsx:66
+#: src/components/command-palette/CommandPalette.tsx:74
 msgid "Debug"
 msgstr "디버그"
 
+#: src/pages/ComponentsPage.tsx:225
+#~ msgid "Default"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:228
+#~ msgid "Destructive"
+#~ msgstr ""
+
 #: src/components/preferences/panes/AdvancedPane.tsx:34
-#: src/components/preferences/panes/GeneralPane.tsx:119
+#: src/components/preferences/panes/GeneralPane.tsx:173
+#: src/components/preferences/panes/GeneralPane.tsx:190
+#: src/components/preferences/panes/GeneralPane.tsx:235
 msgid "Disabled"
 msgstr "비활성화됨"
 
+#: src/components/layout/AppSidebar.tsx:268
+msgid "Disconnect"
+msgstr "연결 해제"
+
+#: src/pages/ComponentsPage.tsx:148
+#~ msgid "Display Name"
+#~ msgstr ""
+
+#: src/components/preferences/panes/GeneralPane.tsx:162
+msgid "Display the application icon in the system tray. Requires restart to take effect when disabled."
+msgstr "시스템 트레이에 애플리케이션 아이콘을 표시합니다. 비활성화 시 재시작 후 적용됩니다."
+
+#: src/pages/HomePage.tsx:56
+msgid "Documentation"
+msgstr "문서"
+
+#: src/pages/ComponentsPage.tsx:302
+#~ msgid "Dropdown menu with smooth animations and highlight effects."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:152
+#~ msgid "Email"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:163
+#~ msgid "Email Notifications"
+#~ msgstr ""
+
 #: src/components/preferences/panes/AdvancedPane.tsx:34
-#: src/components/preferences/panes/GeneralPane.tsx:119
+#: src/components/preferences/panes/GeneralPane.tsx:173
+#: src/components/preferences/panes/GeneralPane.tsx:190
+#: src/components/preferences/panes/GeneralPane.tsx:235
 msgid "Enabled"
 msgstr "활성화됨"
 
-#: src/components/preferences/panes/GeneralPane.tsx:104
+#: src/components/preferences/panes/GeneralPane.tsx:220
 msgid "Enter example text"
 msgstr "예제 텍스트 입력"
 
@@ -87,6 +280,26 @@ msgstr "전체 화면"
 #: src/lib/commands/window-commands.ts:60
 msgid "Enter fullscreen mode"
 msgstr "전체 화면 모드로 전환"
+
+#: src/components/miniflux/ConnectionDialog.tsx:304
+msgid "Enter your API token"
+msgstr "API 토큰을 입력하세요"
+
+#: src/components/miniflux/ConnectionDialog.tsx:200
+msgid "Enter your Miniflux server details to connect and sync your feeds."
+msgstr "피드를 연결하고 동기화하려면 Miniflux 서버 세부 정보를 입력하세요."
+
+#: src/components/miniflux/ConnectionDialog.tsx:378
+msgid "Enter your password"
+msgstr "비밀번호를 입력하세요"
+
+#: src/components/miniflux/ConnectionDialog.tsx:345
+msgid "Enter your username"
+msgstr "사용자 이름을 입력하세요"
+
+#: src/pages/ComponentsPage.tsx:204
+#~ msgid "Error"
+#~ msgstr ""
 
 #: src/components/preferences/panes/AdvancedPane.tsx:22
 msgid "Example Advanced Settings"
@@ -112,17 +325,21 @@ msgstr "옵션 2"
 msgid "Example Option 3"
 msgstr "옵션 3"
 
-#: src/components/preferences/panes/GeneralPane.tsx:96
+#: src/components/preferences/panes/GeneralPane.tsx:212
 msgid "Example Settings"
 msgstr "설정 예제"
 
-#: src/components/preferences/panes/GeneralPane.tsx:98
+#: src/components/preferences/panes/GeneralPane.tsx:214
 msgid "Example Text Setting"
 msgstr "텍스트 설정 예제"
 
-#: src/components/preferences/panes/GeneralPane.tsx:109
+#: src/components/preferences/panes/GeneralPane.tsx:225
 msgid "Example Toggle Setting"
 msgstr "토글 설정 예제"
+
+#: src/pages/TemplatesPage.tsx:66
+#~ msgid "Examples"
+#~ msgstr ""
 
 #: src/lib/commands/window-commands.ts:76
 msgid "Exit Fullscreen"
@@ -131,6 +348,14 @@ msgstr "전체 화면 종료"
 #: src/lib/commands/window-commands.ts:77
 msgid "Exit fullscreen mode"
 msgstr "전체 화면 모드 종료"
+
+#: src/pages/HomePage.tsx:61
+msgid "Explore Features"
+msgstr ""
+
+#: src/pages/ComponentsPage.tsx:56
+#~ msgid "Explore the UI components available in this template."
+#~ msgstr ""
 
 #: src/lib/commands/window-commands.ts:19
 msgid "Failed to close window: {message}"
@@ -148,11 +373,11 @@ msgstr "전체 화면을 종료하는 데 실패했습니다: {message}"
 msgid "Failed to minimize window: {message}"
 msgstr "창을 최소화하는 데 실패했습니다: {message}"
 
-#: src/components/preferences/panes/GeneralPane.tsx:42
+#: src/components/preferences/panes/GeneralPane.tsx:49
 msgid "Failed to register shortcut"
 msgstr "단축키 등록에 실패했습니다"
 
-#: src/components/preferences/panes/GeneralPane.tsx:67
+#: src/components/preferences/panes/GeneralPane.tsx:73
 msgid "Failed to restore previous shortcut"
 msgstr "이전 단축키를 복원하는 데 실패했습니다"
 
@@ -160,20 +385,58 @@ msgstr "이전 단축키를 복원하는 데 실패했습니다"
 msgid "Failed to toggle maximize: {message}"
 msgstr "최대화 전환에 실패했습니다: {message}"
 
-#: src/components/preferences/PreferencesDialog.tsx:34
+#: src/components/preferences/panes/GeneralPane.tsx:95
+msgid "Failed to update close behavior"
+msgstr "닫기 동작 업데이트에 실패했습니다"
+
+#: src/components/preferences/panes/GeneralPane.tsx:133
+msgid "Failed to update start minimized setting"
+msgstr "최소화 시작 설정 업데이트에 실패했습니다"
+
+#: src/components/preferences/panes/GeneralPane.tsx:116
+msgid "Failed to update tray icon setting"
+msgstr "트레이 아이콘 설정 업데이트에 실패했습니다"
+
+#: src/components/miniflux/ConnectionDialog.tsx:413
+msgid "Fill from .env"
+msgstr ".env에서 채우기"
+
+#: src/pages/ComponentsPage.tsx:69
+#: src/pages/ComponentsPage.tsx:78
+#: src/pages/ComponentsPage.tsx:87
+#~ msgid "from last month"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:45
+#~ msgid "Full-Featured Template"
+#~ msgstr ""
+
+#: src/components/preferences/PreferencesDialog.tsx:35
 msgid "General"
 msgstr "일반"
 
-#: src/components/preferences/panes/GeneralPane.tsx:84
+#: src/pages/TemplatesPage.tsx:160
+#~ msgid "Get started with the template in three simple steps."
+#~ msgstr ""
+
+#: src/components/preferences/panes/GeneralPane.tsx:200
 msgid "Global keyboard shortcut to toggle the quick pane from any application"
 msgstr "모든 애플리케이션에서 빠른 창을 전환하는 전역 키보드 단축키"
+
+#: src/pages/ComponentsPage.tsx:196
+#~ msgid "Heads up!"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:350
+#~ msgid "Hidden Content"
+#~ msgstr ""
 
 #: src/lib/menu.ts:39
 msgid "Hide {APP_NAME}"
 msgstr "{APP_NAME} 숨기기"
 
-#: src/components/titlebar/LinuxTitleBar.tsx:30
-#: src/components/titlebar/WindowTitleBar.tsx:47
+#: src/components/titlebar/LinuxTitleBar.tsx:34
+#: src/components/titlebar/WindowTitleBar.tsx:52
 #: src/lib/commands/navigation-commands.ts:16
 msgid "Hide Left Sidebar"
 msgstr "왼쪽 사이드바 숨기기"
@@ -195,36 +458,124 @@ msgstr "왼쪽 사이드바 숨기기"
 #~ msgid "Hide the right sidebar"
 #~ msgstr "오른쪽 사이드바 숨기기"
 
-#: src/components/preferences/panes/GeneralPane.tsx:80
+#: src/components/layout/AppSidebar.tsx:145
+#: src/components/layout/AppSidebar.tsx:154
+#: src/components/miniflux/MinifluxLayout.tsx:61
+msgid "History"
+msgstr "히스토리"
+
+#: src/pages/TemplatesPage.tsx:51
+#~ msgid "i18n (Lingui)"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:230
+#~ msgid "Info"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:79
+#~ msgid "Install Dependencies"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:219
+#~ msgid "Join Discord"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:214
+#~ msgid "Join the community to get help and share your projects."
+#~ msgstr ""
+
+#: src/components/preferences/panes/GeneralPane.tsx:196
 msgid "Keyboard Shortcuts"
 msgstr "키보드 단축키"
 
+#: src/components/preferences/panes/AppearancePane.tsx:85
 #: src/components/preferences/panes/AppearancePane.tsx:87
-#: src/components/preferences/panes/AppearancePane.tsx:89
 msgid "Language"
 msgstr "언어"
 
-#: src/components/preferences/panes/AppearancePane.tsx:126
+#: src/pages/HomePage.tsx:29
+msgid "Latest React with concurrent features"
+msgstr "동시성 기능이 있는 최신 React"
+
+#: src/pages/TemplatesPage.tsx:200
+#~ msgid "Learn more about the template architecture and patterns."
+#~ msgstr ""
+
+#: src/components/preferences/panes/AppearancePane.tsx:124
 msgid "Light"
 msgstr "라이트"
+
+#: src/components/miniflux/MinifluxLayout.tsx:26
+msgid "Loading..."
+msgstr "로딩 중..."
+
+#: src/pages/ComponentsPage.tsx:266
+#~ msgid "Manage your account details and preferences here. The animated tabs provide a smooth visual transition between sections."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:142
+#~ msgid "Manage your profile information and preferences."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:172
+#~ msgid "Marketing Emails"
+#~ msgstr ""
+
+#: src/components/miniflux/ConnectionDialog.tsx:127
+#~ msgid "miniflux.example.com"
+#~ msgstr ""
+
+#: src/components/layout/AppSidebar.tsx:69
+msgid "Minikyu"
+msgstr "Minikyu"
+
+#: src/pages/TemplatesPage.tsx:33
+#~ msgid "Minimal setup with essential features. Perfect for new projects."
+#~ msgstr ""
 
 #: src/lib/commands/window-commands.ts:27
 msgid "Minimize the current window"
 msgstr "현재 창 최소화"
 
+#: src/components/preferences/panes/GeneralPane.tsx:153
+msgid "Minimize to tray"
+msgstr "트레이로 최소화"
+
 #: src/lib/commands/window-commands.ts:26
 msgid "Minimize Window"
 msgstr "창 최소화"
 
-#: src/components/command-palette/CommandPalette.tsx:75
-#: src/components/titlebar/CommandDialog.tsx:64
+#: src/pages/HomePage.tsx:24
+msgid "Modern Rust-powered desktop framework"
+msgstr "현대적인 Rust 기반 데스크톱 프레임워크"
+
+#: src/pages/ComponentsPage.tsx:325
+#~ msgid "More Options"
+#~ msgstr ""
+
+#: src/components/command-palette/CommandPalette.tsx:72
 msgid "Navigation"
 msgstr "탐색"
 
-#: src/components/command-palette/CommandPalette.tsx:104
-#: src/components/titlebar/CommandDialog.tsx:88
+#: src/components/miniflux/AccountSwitcher.tsx:79
+msgid "No accounts yet"
+msgstr "아직 계정이 없습니다"
+
+#: src/components/command-palette/CommandPalette.tsx:99
 msgid "No results found."
 msgstr "결과를 찾을 수 없습니다."
+
+#: src/components/miniflux/ConnectionDialog.tsx:247
+msgid "No server URL found."
+msgstr "서버 URL을 찾을 수 없습니다."
+
+#: src/components/layout/AppSidebar.tsx:186
+msgid "Not Connected"
+msgstr "연결되지 않음"
+
+#: src/pages/ComponentsPage.tsx:309
+#~ msgid "Open Menu"
+#~ msgstr ""
 
 #: src/lib/commands/navigation-commands.ts:25
 msgid "Open Preferences"
@@ -238,13 +589,32 @@ msgstr "애플리케이션 설정 열기"
 #~ msgid "Other"
 #~ msgstr "기타"
 
-#: src/components/command-palette/CommandPalette.tsx:84
-#: src/components/titlebar/CommandDialog.tsx:73
+#: src/components/command-palette/CommandPalette.tsx:80
 msgid "Others"
 msgstr "기타"
 
-#: src/components/preferences/PreferencesDialog.tsx:63
-#: src/components/preferences/PreferencesDialog.tsx:101
+#: src/pages/ComponentsPage.tsx:227
+#~ msgid "Outline"
+#~ msgstr ""
+
+#: src/components/miniflux/ConnectionDialog.tsx:368
+msgid "Password"
+msgstr "비밀번호"
+
+#: src/components/miniflux/ConnectionDialog.tsx:110
+msgid "Password is required"
+msgstr "비밀번호가 필요합니다"
+
+#: src/pages/TemplatesPage.tsx:63
+#~ msgid "Plugin Architecture"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:58
+#~ msgid "Plugin Template"
+#~ msgstr ""
+
+#: src/components/preferences/PreferencesDialog.tsx:64
+#: src/components/preferences/PreferencesDialog.tsx:99
 msgid "Preferences"
 msgstr "설정"
 
@@ -252,30 +622,134 @@ msgstr "설정"
 msgid "Preferences..."
 msgstr "설정..."
 
-#: src/components/preferences/panes/GeneralPane.tsx:82
+#: src/pages/HomePage.tsx:108
+msgid "Press"
+msgstr "누르기"
+
+#: src/pages/ComponentsPage.tsx:316
+#~ msgid "Profile"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:140
+#~ msgid "Profile Settings"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:93
+#~ msgid "Project Templates"
+#~ msgstr ""
+
+#: src/pages/HomePage.tsx:34
+msgid "Query, Router, and Table integration"
+msgstr "Query, Router 및 Table 통합"
+
+#: src/pages/HomePage.tsx:44
+msgid "Quick access to all features"
+msgstr "모든 기능에 빠르게 액세스"
+
+#: src/components/preferences/panes/GeneralPane.tsx:198
 msgid "Quick Pane Shortcut"
 msgstr "빠른 창 단축키"
+
+#: src/pages/TemplatesPage.tsx:158
+#~ msgid "Quick Start"
+#~ msgstr ""
 
 #: src/lib/menu.ts:52
 msgid "Quit {APP_NAME}"
 msgstr "{APP_NAME} 종료"
 
+#: src/components/preferences/panes/GeneralPane.tsx:154
+msgid "Quit application"
+msgstr "애플리케이션 종료"
+
+#: src/pages/HomePage.tsx:28
+msgid "React 19"
+msgstr "React 19"
+
+#: src/pages/TemplatesPage.tsx:37
+#~ msgid "React 19 + TypeScript"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:205
+#~ msgid "Read Docs"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:174
+#~ msgid "Receive emails about new products and features."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:165
+#~ msgid "Receive emails about your account activity."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:96
+#~ msgid "Recent Activity"
+#~ msgstr ""
+
 #: src/components/preferences/ShortcutPicker.tsx:231
 msgid "Reset"
 msgstr "재설정"
 
-#: src/components/titlebar/CommandSearchButton.tsx:20
+#: src/pages/TemplatesPage.tsx:84
+#~ msgid "Run Development Server"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:64
+#~ msgid "Rust Commands"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:83
+#~ msgid "Sales"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:182
+#~ msgid "Save Changes"
+#~ msgstr ""
+
+#: src/components/titlebar/CommandSearchButton.tsx:21
 msgid "Search or type a command..."
 msgstr "검색 또는 명령 입력..."
 
-#: src/components/preferences/panes/AppearancePane.tsx:123
+#: src/pages/ComponentsPage.tsx:226
+#~ msgid "Secondary"
+#~ msgstr ""
+
+#: src/components/miniflux/AccountSwitcher.tsx:60
+msgid "Select account"
+msgstr "계정 선택"
+
+#: src/components/miniflux/ConnectionDialog.tsx:235
+msgid "Select or enter server URL"
+msgstr "서버 URL 선택 또는 입력"
+
+#: src/components/preferences/panes/AppearancePane.tsx:121
 msgid "Select theme"
 msgstr "테마 선택"
 
-#: src/components/command-palette/CommandPalette.tsx:79
-#: src/components/titlebar/CommandDialog.tsx:68
+#: src/components/miniflux/ConnectionDialog.tsx:226
+msgid "Server URL"
+msgstr "서버 URL"
+
+#: src/components/miniflux/ConnectionDialog.tsx:84
+msgid "Server URL is required"
+msgstr "서버 URL이 필요합니다"
+
+#: src/components/command-palette/CommandPalette.tsx:76
+#: src/components/titlebar/WindowTitleBar.tsx:65
 msgid "Settings"
 msgstr "설정"
+
+#: src/pages/ComponentsPage.tsx:273
+#~ msgid "Settings Panel"
+#~ msgstr ""
+
+#: src/pages/HomePage.tsx:48
+msgid "shadcn/ui"
+msgstr "shadcn/ui"
+
+#: src/pages/HomePage.tsx:38
+msgid "Shortcuts"
+msgstr "단축키"
 
 #: src/lib/commands/notification-commands.ts:10
 msgid "Show a test toast notification"
@@ -285,8 +759,8 @@ msgstr "테스트 알림 표시"
 msgid "Show All"
 msgstr "모두 표시"
 
-#: src/components/titlebar/LinuxTitleBar.tsx:30
-#: src/components/titlebar/WindowTitleBar.tsx:48
+#: src/components/titlebar/LinuxTitleBar.tsx:34
+#: src/components/titlebar/WindowTitleBar.tsx:52
 #: src/lib/commands/navigation-commands.ts:7
 msgid "Show Left Sidebar"
 msgstr "왼쪽 사이드바 표시"
@@ -304,21 +778,88 @@ msgstr "왼쪽 사이드바 표시"
 #~ msgid "Show the right sidebar"
 #~ msgstr "오른쪽 사이드바 표시"
 
-#: src/components/preferences/panes/AppearancePane.tsx:74
+#: src/components/preferences/panes/GeneralPane.tsx:160
+msgid "Show Tray Icon"
+msgstr "트레이 아이콘 표시"
+
+#: src/pages/ComponentsPage.tsx:240
+#~ msgid "Smooth animated tabs from animate-ui with highlight effect."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:337
+#~ msgid "Smooth expand/collapse animation with AnimatePresence."
+#~ msgstr ""
+
+#: src/components/preferences/panes/AppearancePane.tsx:72
 msgid "Something went wrong"
 msgstr "문제가 발생했습니다"
 
-#: src/components/preferences/panes/AppearancePane.tsx:128
+#: src/components/layout/AppSidebar.tsx:127
+#: src/components/layout/AppSidebar.tsx:136
+#: src/components/miniflux/MinifluxLayout.tsx:57
+msgid "Starred"
+msgstr "별표 표시됨"
+
+#: src/components/preferences/panes/GeneralPane.tsx:179
+msgid "Start Minimized"
+msgstr "최소화된 상태로 시작"
+
+#: src/components/preferences/panes/GeneralPane.tsx:130
+msgid "Start minimized setting updated"
+msgstr "최소화 시작 설정이 업데이트되었습니다"
+
+#: src/components/preferences/panes/GeneralPane.tsx:180
+msgid "Start the application minimized to the system tray"
+msgstr "시스템 트레이에 최소화된 상태로 애플리케이션 시작"
+
+#: src/pages/TemplatesPage.tsx:32
+#~ msgid "Starter Template"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:212
+#: src/pages/ComponentsPage.tsx:229
+#~ msgid "Success"
+#~ msgstr ""
+
+#: src/components/layout/AppSidebar.tsx:260
+msgid "Sync"
+msgstr "동기화"
+
+#: src/components/preferences/panes/AppearancePane.tsx:126
 msgid "System"
 msgstr "시스템"
 
-#: src/components/preferences/panes/AppearancePane.tsx:101
+#: src/components/preferences/panes/AppearancePane.tsx:99
 msgid "System Default"
 msgstr "시스템 기본값"
+
+#: src/components/preferences/panes/GeneralPane.tsx:139
+msgid "System Tray"
+msgstr "시스템 트레이"
+
+#: src/pages/TemplatesPage.tsx:39
+#~ msgid "Tailwind CSS"
+#~ msgstr ""
+
+#: src/pages/HomePage.tsx:33
+msgid "TanStack"
+msgstr "TanStack"
+
+#: src/pages/TemplatesPage.tsx:50
+#~ msgid "TanStack Query + Router"
+#~ msgstr ""
 
 #: src/components/titlebar/TitleBar.tsx:18
 #~ msgid "Tauri App"
 #~ msgstr "Tauri 앱"
+
+#: src/pages/HomePage.tsx:23
+msgid "Tauri v2"
+msgstr "Tauri v2"
+
+#: src/pages/TemplatesPage.tsx:59
+#~ msgid "Template for building Tauri plugins with example implementations."
+#~ msgstr ""
 
 #: src/lib/commands/notification-commands.ts:15
 msgid "Test Toast"
@@ -328,13 +869,25 @@ msgstr "테스트 알림"
 msgid "Test Toast Notification"
 msgstr "테스트 알림"
 
-#: src/components/preferences/panes/GeneralPane.tsx:69
+#: src/components/preferences/panes/GeneralPane.tsx:74
 msgid "The shortcut may be out of sync. Please restart the app or try again."
 msgstr "단축키가 동기화되지 않았을 수 있습니다. 앱을 다시 시작하거나 다시 시도하세요."
 
-#: src/components/preferences/panes/AppearancePane.tsx:112
+#: src/components/miniflux/ConnectionDialog.tsx:266
+msgid "The URL of your Miniflux server (e.g., miniflux.example.com)"
+msgstr "Miniflux 서버의 URL(예: miniflux.example.com)"
+
+#: src/components/preferences/panes/AppearancePane.tsx:110
 msgid "Theme"
 msgstr "테마"
+
+#: src/pages/TemplatesPage.tsx:53
+#~ msgid "Theme Support"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:353
+#~ msgid "This content smoothly animates in and out when toggled. The collapsible uses Framer Motion's AnimatePresence for smooth enter/exit animations."
+#~ msgstr ""
 
 #: src/lib/commands/notification-commands.ts:16
 msgid "This is a test notification"
@@ -348,13 +901,31 @@ msgstr "이것은 고급 토글 설정 예제입니다(저장되지 않음)"
 msgid "This is an example dropdown/select setting (not persisted)"
 msgstr "이것은 드롭다운/선택 설정 예제입니다(저장되지 않음)"
 
-#: src/components/preferences/panes/GeneralPane.tsx:110
+#: src/components/preferences/panes/GeneralPane.tsx:226
 msgid "This is an example switch/toggle setting (not persisted)"
 msgstr "이것은 스위치/토글 설정 예제입니다(저장되지 않음)"
 
-#: src/components/preferences/panes/GeneralPane.tsx:99
+#: src/components/preferences/panes/GeneralPane.tsx:215
 msgid "This is an example text input setting (not persisted)"
 msgstr "이것은 텍스트 입력 설정 예제입니다(저장되지 않음)"
+
+#: src/pages/HomePage.tsx:108
+msgid "Tip:"
+msgstr "팁:"
+
+#: src/pages/HomePage.tsx:111
+msgid "to open the command palette and explore available commands."
+msgstr "명령 팔레트를 열고 사용 가능한 명령을 탐색하려면"
+
+#: src/components/layout/AppSidebar.tsx:109
+#: src/components/layout/AppSidebar.tsx:118
+#: src/components/miniflux/MinifluxLayout.tsx:59
+msgid "Today"
+msgstr "오늘"
+
+#: src/pages/ComponentsPage.tsx:344
+#~ msgid "Toggle Content"
+#~ msgstr ""
 
 #: src/lib/menu.ts:62
 msgid "Toggle Left Sidebar"
@@ -372,17 +943,83 @@ msgstr "최대화 전환"
 msgid "Toggle window maximize state"
 msgstr "창 최대화 상태 전환"
 
-#: src/components/command-palette/CommandPalette.tsx:96
-#: src/components/command-palette/CommandPalette.tsx:99
-#: src/components/titlebar/CommandDialog.tsx:83
+#: src/pages/ComponentsPage.tsx:65
+#~ msgid "Total Revenue"
+#~ msgstr ""
+
+#: src/components/preferences/panes/GeneralPane.tsx:112
+msgid "Tray icon disabled. Changes will take effect on restart."
+msgstr "트레이 아이콘이 비활성화되었습니다. 변경 사항은 재시작 후 적용됩니다."
+
+#: src/components/preferences/panes/GeneralPane.tsx:111
+msgid "Tray icon enabled"
+msgstr "트레이 아이콘이 활성화되었습니다"
+
+#: src/components/command-palette/CommandPalette.tsx:91
+#: src/components/command-palette/CommandPalette.tsx:94
 msgid "Type a command or search..."
 msgstr "명령을 입력하거나 검색..."
+
+#: src/pages/TemplatesPage.tsx:65
+#~ msgid "TypeScript Bindings"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:140
+#~ msgid "Use Template"
+#~ msgstr ""
+
+#: src/components/miniflux/ConnectionDialog.tsx:335
+msgid "Username"
+msgstr "사용자 이름"
+
+#: src/components/miniflux/ConnectionDialog.tsx:103
+msgid "Username is required"
+msgstr "사용자 이름이 필요합니다"
+
+#: src/components/miniflux/ConnectionDialog.tsx:284
+msgid "Username/Password"
+msgstr "사용자 이름/비밀번호"
 
 #: src/lib/menu.ts:58
 msgid "View"
 msgstr "보기"
 
-#: src/components/command-palette/CommandPalette.tsx:81
-#: src/components/titlebar/CommandDialog.tsx:70
+#: src/pages/TemplatesPage.tsx:185
+#~ msgid "View on GitHub"
+#~ msgstr ""
+
+#: src/components/layout/AppSidebar.tsx:76
+msgid "Views"
+msgstr "보기"
+
+#: src/components/miniflux/MinifluxLayout.tsx:36
+msgid "Welcome to Miniflux"
+msgstr "Miniflux에 오신 것을 환영합니다"
+
+#: src/pages/HomePage.tsx:70
+msgid "Welcome to Tauri Template"
+msgstr "Tauri 템플릿에 오신 것을 환영합니다"
+
+#: src/components/command-palette/CommandPalette.tsx:78
 msgid "Window"
 msgstr "창"
+
+#: src/pages/ComponentsPage.tsx:198
+#~ msgid "You can add components to your app using the shadcn CLI."
+#~ msgstr ""
+
+#: src/components/miniflux/ConnectionDialog.tsx:322
+msgid "You can find your API token in Miniflux Settings → API Keys"
+msgstr "Miniflux 설정 → API 키에서 API 토큰을 찾을 수 있습니다"
+
+#: src/pages/ComponentsPage.tsx:97
+#~ msgid "You have 3 unread messages."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:214
+#~ msgid "Your changes have been saved successfully."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:206
+#~ msgid "Your session has expired. Please log in again."
+#~ msgstr ""

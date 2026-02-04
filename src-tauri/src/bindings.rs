@@ -2,13 +2,21 @@ use tauri_specta::{collect_commands, Builder};
 
 pub fn generate_bindings() -> Builder<tauri::Wry> {
     use crate::commands::{
-        accounts, miniflux, notifications, preferences, quick_pane, recovery, tray,
+        accounts, downloads, miniflux, notifications, preferences, quick_pane, reading_state,
+        recovery, tray,
     };
 
     Builder::<tauri::Wry>::new().commands(collect_commands![
+        downloads::download_file,
+        downloads::cancel_download,
+        downloads::retry_download,
+        downloads::get_downloads,
+        downloads::get_downloads_from_db,
         preferences::greet,
         preferences::load_preferences,
         preferences::save_preferences,
+        reading_state::load_last_reading,
+        reading_state::save_last_reading,
         notifications::send_native_notification,
         recovery::save_emergency_data,
         recovery::load_emergency_data,
@@ -20,13 +28,13 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         quick_pane::update_quick_pane_shortcut,
         tray::tray_show_window,
         tray::tray_hide_window,
-        tray::tray_toggle_window,
         tray::tray_set_icon_state,
         tray::tray_set_tooltip,
         tray::tray_get_state,
         tray::tray_is_window_visible,
         accounts::save_miniflux_account,
         accounts::get_miniflux_accounts,
+        accounts::get_active_miniflux_account,
         accounts::delete_miniflux_account,
         accounts::auto_reconnect_miniflux,
         miniflux::miniflux_connect,

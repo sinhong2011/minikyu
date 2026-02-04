@@ -3,11 +3,11 @@
   "app": {
     "windows": [
       {
-        "title": "tauri-app",
-        "width": 1000,
-        "height": 700,
-        "minWidth": 1000,
-        "minHeight": 700,
+        "title": "Minikyu",
+        "width": 1600,
+        "height": 900,
+        "minWidth": 1200,
+        "minHeight": 800,
         "resizable": true,
         "fullscreen": false,
         "maximized": false,

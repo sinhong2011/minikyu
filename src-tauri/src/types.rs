@@ -28,17 +28,27 @@ pub static FILENAME_PATTERN: LazyLock<Regex> = LazyLock::new(|| {
 pub struct AppPreferences {
     pub theme: String,
     /// Global shortcut for quick pane (e.g., "CommandOrControl+Shift+.")
-    /// If None, uses the default shortcut
+    /// If None, uses to default shortcut
     pub quick_pane_shortcut: Option<String>,
     /// User's preferred language (e.g., "en", "es", "de")
     /// If None, uses system locale detection
     pub language: Option<String>,
     /// Behavior when window close button is clicked
     pub close_behavior: CloseBehavior,
-    /// Whether to show the tray icon
+    /// Whether to show tray icon
     pub show_tray_icon: bool,
     /// Whether to start minimized to tray
     pub start_minimized: bool,
+    /// Reader font size (14-24)
+    pub reader_font_size: u32,
+    /// Reader line width (45-80)
+    pub reader_line_width: u32,
+    /// Reader font family (sans-serif, serif, monospace)
+    pub reader_font_family: String,
+    /// Default download path for images (null = ask every time)
+    pub image_download_path: Option<String>,
+    /// Default download path for videos (null = ask every time)
+    pub video_download_path: Option<String>,
 }
 
 impl Default for AppPreferences {
@@ -50,6 +60,11 @@ impl Default for AppPreferences {
             close_behavior: CloseBehavior::default(),
             show_tray_icon: true,
             start_minimized: false,
+            reader_font_size: 16,
+            reader_line_width: 65,
+            reader_font_family: "sans-serif".to_string(),
+            image_download_path: None,
+            video_download_path: None,
         }
     }
 }
@@ -178,4 +193,38 @@ pub fn validate_close_behavior(behavior: &str) -> Result<(), String> {
         "quit" | "minimize_to_tray" => Ok(()),
         _ => Err("Invalid close behavior: must be 'quit' or 'minimize_to_tray'".to_string()),
     }
+}
+
+/// Validates reader settings.
+pub fn validate_reader_settings(
+    font_size: u32,
+    line_width: u32,
+    font_family: &str,
+) -> Result<(), String> {
+    if !(14..=24).contains(&font_size) {
+        return Err("Font size must be between 14 and 24".to_string());
+    }
+    if !(45..=80).contains(&line_width) {
+        return Err("Line width must be between 45 and 80".to_string());
+    }
+    match font_family {
+        "sans-serif" | "serif" | "monospace" => Ok(()),
+        _ => Err("Invalid font family: must be 'sans-serif', 'serif', or 'monospace'".to_string()),
+    }
+}
+
+/// Validates download path.
+pub fn validate_download_path(path: &Option<String>) -> Result<(), String> {
+    if let Some(p) = path {
+        if p.trim().is_empty() {
+            return Err("Download path cannot be empty".to_string());
+        }
+        if p.chars().count() > 500 {
+            return Err("Download path too long (max 500 characters)".to_string());
+        }
+        if p.contains("..") {
+            return Err("Download path cannot contain '..'".to_string());
+        }
+    }
+    Ok(())
 }

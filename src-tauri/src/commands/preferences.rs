@@ -5,7 +5,10 @@
 use std::path::PathBuf;
 use tauri::{AppHandle, Manager};
 
-use crate::types::{validate_language, validate_string_input, validate_theme, AppPreferences};
+use crate::types::{
+    validate_download_path, validate_language, validate_reader_settings, validate_string_input,
+    validate_theme, AppPreferences,
+};
 
 /// Gets the path to the preferences file.
 fn get_preferences_path(app: &AppHandle) -> Result<PathBuf, String> {
@@ -104,6 +107,17 @@ pub async fn save_preferences(app: AppHandle, preferences: AppPreferences) -> Re
         CloseBehavior::MinimizeToTray => "minimize_to_tray",
     };
     validate_close_behavior(behavior_str)?;
+
+    // Validate reader settings
+    validate_reader_settings(
+        preferences.reader_font_size,
+        preferences.reader_line_width,
+        &preferences.reader_font_family,
+    )?;
+
+    // Validate download paths
+    validate_download_path(&preferences.image_download_path)?;
+    validate_download_path(&preferences.video_download_path)?;
 
     log::debug!("Saving preferences to disk: {preferences:?}");
     let prefs_path = get_preferences_path(&app)?;

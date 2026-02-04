@@ -65,12 +65,22 @@ sqlx = { version = "0.8", features = [
 chrono = { version = "0.4", features = ["serde"] }
 uuid = { version = "1.0", features = ["v4", "serde"] }
 
+# Keyring for secure credential storage
+keyring = { version = "3", features = [
+  "apple-native",
+  "windows-native",
+  "sync-secret-service",
+] }
+thiserror = "2"
+
 # HTTP client for Miniflux API
-reqwest = { version = "0.12", features = ["json", "rustls-tls"] }
+reqwest = { version = "0.12", features = ["json", "rustls-tls", "stream"] }
 url = "2.5"
 base64 = "0.22"
 urlencoding = "2.1"
-tokio = { version = "1", features = ["sync"] }
+tokio = { version = "1", features = ["sync", "fs"] }
+futures-util = "0.3"
+bytes = "1.0"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]
 tauri-plugin-single-instance = "2.3.7"

@@ -4,6 +4,7 @@
 //! Command implementations are organized in the `commands` module,
 //! and shared types are in the `types` module.
 
+mod accounts;
 mod bindings;
 mod commands;
 mod database;
@@ -11,13 +12,23 @@ mod miniflux;
 mod types;
 mod utils;
 
-use tauri::Manager;
+use std::sync::Arc;
+use tauri::Emitter as TauriEmitter;
+use tauri::{Emitter, Manager};
+use tokio::sync::Mutex;
 
 // Re-export only what's needed externally
 pub use types::DEFAULT_QUICK_PANE_SHORTCUT;
 
 // Miniflux state
 use commands::miniflux::MinifluxState;
+
+/// Global application state
+#[derive(Clone)]
+pub struct AppState {
+    pub db_pool: Arc<Mutex<Option<sqlx::SqlitePool>>>,
+    pub miniflux: MinifluxState,
+}
 
 /// Application entry point. Sets up all plugins and initializes the app.
 #[cfg_attr(mobile, tauri::mobile_entry_point)]
@@ -111,11 +122,6 @@ pub fn run() {
                     tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::Stdout),
                     // Log to webview console for development
                     tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::Webview),
-                    // Log to system logs on macOS (appears in Console.app)
-                    #[cfg(target_os = "macos")]
-                    tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::LogDir {
-                        file_name: None,
-                    }),
                 ])
                 .build(),
         );
@@ -139,8 +145,11 @@ pub fn run() {
         .plugin(tauri_plugin_clipboard_manager::init())
         .plugin(tauri_plugin_opener::init())
         .plugin(tauri_plugin_os::init())
-        .manage(MinifluxState {
-            client: std::sync::Arc::new(tokio::sync::Mutex::new(None)),
+        .manage(AppState {
+            db_pool: Arc::new(Mutex::new(None)),
+            miniflux: MinifluxState {
+                client: std::sync::Arc::new(tokio::sync::Mutex::new(None)),
+            },
         })
         .setup(|app| {
             log::info!("Application starting up");
@@ -148,6 +157,46 @@ pub fn run() {
                 "App handle initialized for package: {}",
                 app.package_info().name
             );
+
+            log::info!("Initializing database pool");
+            let app_handle = app.handle().clone();
+            let handle_clone = app.handle().clone();
+            tauri::async_runtime::spawn(async move {
+                match database::init_database_pool(&app_handle).await {
+                    Ok(pool) => {
+                        log::info!("Database initialized successfully");
+
+                        let state: tauri::State<'_, AppState> = handle_clone.state();
+                        *state.db_pool.lock().await = Some(pool);
+
+                        log::info!("[Database] Initialization complete, emitting database-ready event to frontend");
+                        if let Err(e) = app_handle.emit("database-ready", ()) {
+                            log::error!("[Database] Failed to emit database-ready event: {}", e);
+                        } else {
+                            log::info!("[Database] database-ready event emitted successfully");
+                        }
+
+                        // Attempt auto-reconnect to saved account
+                        log::info!("Attempting auto-reconnect to Miniflux");
+                        if let Err(e) = commands::accounts::auto_reconnect_miniflux(
+                            app_handle.clone(),
+                            handle_clone.state(),
+                        )
+                        .await
+                        {
+                            log::error!("Auto-reconnect failed: {}", e);
+                        } else {
+                            log::info!("Auto-reconnect successful or no account to reconnect to");
+                        }
+
+                        // Initialize download manager from DB
+                        commands::downloads::init_download_manager(&app_handle).await;
+                    }
+                    Err(e) => {
+                        log::error!("Failed to initialize database: {}", e);
+                    }
+                }
+            });
 
             // Set up global shortcut plugin (without any shortcuts - we register them separately)
             #[cfg(desktop)]

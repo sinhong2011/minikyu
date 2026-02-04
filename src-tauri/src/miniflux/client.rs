@@ -1,4 +1,5 @@
 use crate::miniflux::types::*;
+use base64::{prelude::BASE64_STANDARD, Engine};
 use reqwest::{header, Client};
 use serde::de::DeserializeOwned;
 use std::time::Duration;
@@ -51,13 +52,11 @@ impl MinifluxClient {
         if let Some(token) = &self.auth_token {
             request = request.header("X-Auth-Token", token);
         } else if let (Some(username), Some(password)) = (&self.username, &self.password) {
-            let auth_value = header::HeaderValue::from_str(&format!("{}:{}", username, password))
-                .expect("Invalid auth header value");
             request = request.header(
                 header::AUTHORIZATION,
                 header::HeaderValue::from_str(&format!(
                     "Basic {}",
-                    base64::encode(&format!("{}:{}", username, password))
+                    BASE64_STANDARD.encode(&format!("{}:{}", username, password))
                 ))
                 .unwrap(),
             );
@@ -79,7 +78,7 @@ impl MinifluxClient {
                 header::AUTHORIZATION,
                 header::HeaderValue::from_str(&format!(
                     "Basic {}",
-                    base64::encode(&format!("{}:{}", username, password))
+                    BASE64_STANDARD.encode(&format!("{}:{}", username, password))
                 ))
                 .unwrap(),
             );
@@ -101,7 +100,7 @@ impl MinifluxClient {
                 header::AUTHORIZATION,
                 header::HeaderValue::from_str(&format!(
                     "Basic {}",
-                    base64::encode(&format!("{}:{}", username, password))
+                    BASE64_STANDARD.encode(&format!("{}:{}", username, password))
                 ))
                 .unwrap(),
             );
@@ -123,7 +122,7 @@ impl MinifluxClient {
                 header::AUTHORIZATION,
                 header::HeaderValue::from_str(&format!(
                     "Basic {}",
-                    base64::encode(&format!("{}:{}", username, password))
+                    BASE64_STANDARD.encode(&format!("{}:{}", username, password))
                 ))
                 .unwrap(),
             );
@@ -141,13 +140,24 @@ impl MinifluxClient {
             .map_err(|e| format!("Network error: {}", e))?;
 
         if !response.status().is_success() {
-            return Err(format!("API error: {}", response.status()));
+            let status = response.status();
+            let url = response.url().clone();
+            return Err(format!("API error: {} - {}", status, url));
         }
 
-        response
-            .json()
-            .await
-            .map_err(|e| format!("Parse error: {}", e))
+        // Log response for debugging
+        let response_text = response.text().await.map_err(|e| {
+            log::error!("Failed to read response body: {}", e);
+            format!("Failed to read response body: {}", e)
+        })?;
+
+        log::debug!("API Response from {}: {}", path, response_text);
+
+        serde_json::from_str(&response_text).map_err(|e| {
+            log::error!("Failed to parse JSON from {}: {}", path, e);
+            log::error!("Response body was: {}", response_text);
+            format!("Parse error: {}", e)
+        })
     }
 
     /// Execute POST request and parse response

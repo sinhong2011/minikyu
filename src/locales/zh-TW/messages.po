@@ -13,29 +13,130 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#: src/pages/HomePage.tsx:73
+msgid "A modern, production-ready template for building cross-platform desktop applications with React, TypeScript, and Rust."
+msgstr "一個現代化的生產就緒模板，用於使用 React、TypeScript 和 Rust 構建跨平台桌面應用程式。"
+
 #: src/lib/menu.ts:20
 msgid "About {APP_NAME}"
 msgstr "關於 {APP_NAME}"
 
-#: src/components/preferences/PreferencesDialog.tsx:44
+#: src/pages/ComponentsPage.tsx:286
+#~ msgid "Access advanced configuration options and developer tools. Built with Radix UI primitives for accessibility."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:249
+#~ msgid "Account"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:263
+#~ msgid "Account Information"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:74
+#~ msgid "Active Users"
+#~ msgstr ""
+
+#: src/components/preferences/PreferencesDialog.tsx:45
 msgid "Advanced"
 msgstr "進階"
 
-#: src/components/preferences/PreferencesDialog.tsx:39
+#: src/pages/ComponentsPage.tsx:283
+#~ msgid "Advanced Options"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:191
+#~ msgid "Alert Examples"
+#~ msgstr ""
+
+#: src/components/layout/AppSidebar.tsx:91
+#: src/components/layout/AppSidebar.tsx:100
+#: src/components/layout/AppSidebar.tsx:227
+#: src/components/miniflux/MinifluxLayout.tsx:55
+#: src/components/miniflux/MinifluxLayout.tsx:63
+msgid "All"
+msgstr "全部"
+
+#: src/pages/ComponentsPage.tsx:335
+#~ msgid "Animated Collapsible"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:300
+#~ msgid "Animated Dropdown"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:238
+#~ msgid "Animated Tabs"
+#~ msgstr ""
+
+#: src/components/miniflux/ConnectionDialog.tsx:282
+#: src/components/miniflux/ConnectionDialog.tsx:294
+msgid "API Token"
+msgstr "API 令牌"
+
+#: src/components/miniflux/ConnectionDialog.tsx:95
+msgid "API Token is required"
+msgstr "需要提供 API 令牌"
+
+#: src/components/preferences/PreferencesDialog.tsx:40
 msgid "Appearance"
 msgstr "外觀"
+
+#: src/pages/ComponentsPage.tsx:222
+#~ msgid "Badges & Labels"
+#~ msgstr ""
+
+#: src/pages/HomePage.tsx:49
+msgid "Beautiful, accessible components"
+msgstr "美觀且易於使用的元件"
+
+#: src/pages/ComponentsPage.tsx:157
+#~ msgid "Bio"
+#~ msgstr ""
+
+#: src/components/miniflux/ConnectionDialog.tsx:422
+msgid "Cancel"
+msgstr "取消"
+
+#: src/components/layout/AppSidebar.tsx:170
+msgid "Categories"
+msgstr "分類"
+
+#: src/components/miniflux/MinifluxLayout.tsx:50
+msgid "Category"
+msgstr "分類"
 
 #: src/lib/menu.ts:26
 msgid "Check for Updates..."
 msgstr "檢查更新..."
 
-#: src/components/preferences/panes/AppearancePane.tsx:115
+#: src/pages/TemplatesPage.tsx:96
+#~ msgid "Choose a template to kickstart your Tauri application. Each template is optimized for different use cases and includes pre-configured tools and patterns."
+#~ msgstr ""
+
+#: src/components/preferences/panes/GeneralPane.tsx:142
+msgid "Choose what happens when you click the window close button"
+msgstr "選擇點擊視窗關閉按鈕時的行為"
+
+#: src/components/preferences/panes/AppearancePane.tsx:113
 msgid "Choose your preferred color theme"
 msgstr "選擇您喜歡的顏色主題"
 
-#: src/components/preferences/panes/AppearancePane.tsx:90
+#: src/components/preferences/panes/AppearancePane.tsx:88
 msgid "Choose your preferred display language"
 msgstr "選擇您喜歡的顯示語言"
+
+#: src/pages/TemplatesPage.tsx:74
+#~ msgid "Clone the Repository"
+#~ msgstr ""
+
+#: src/components/preferences/panes/GeneralPane.tsx:92
+msgid "Close behavior updated"
+msgstr "關閉行為已更新"
+
+#: src/components/preferences/panes/GeneralPane.tsx:141
+msgid "Close Button Behavior"
+msgstr "關閉按鈕行為"
 
 #: src/lib/commands/window-commands.ts:10
 msgid "Close the current window"
@@ -45,38 +146,130 @@ msgstr "關閉目前視窗"
 msgid "Close Window"
 msgstr "關閉視窗"
 
-#: src/components/preferences/panes/AppearancePane.tsx:114
+#: src/components/preferences/panes/AppearancePane.tsx:112
 msgid "Color Theme"
 msgstr "顏色主題"
 
-#: src/components/command-palette/CommandPalette.tsx:95
+#: src/components/command-palette/CommandPalette.tsx:90
+#: src/pages/HomePage.tsx:43
 msgid "Command Palette"
 msgstr "命令面板"
 
-#: src/components/preferences/PreferencesDialog.tsx:65
+#: src/pages/TemplatesPage.tsx:212
+#~ msgid "Community"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:46
+#~ msgid "Complete setup with all features enabled. Best for production apps."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:54
+#~ msgid "Component Showcase"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:276
+#~ msgid "Configure application settings and customize your experience. The highlight effect follows the active tab smoothly."
+#~ msgstr ""
+
+#: src/components/miniflux/ConnectionDialog.tsx:431
+msgid "Connect"
+msgstr "連線"
+
+#: src/components/miniflux/ConnectionDialog.tsx:197
+msgid "Connect to Miniflux"
+msgstr "連線至 Miniflux"
+
+#: src/components/miniflux/MinifluxLayout.tsx:40
+msgid "Connect to Server"
+msgstr "連線至伺服器"
+
+#: src/components/miniflux/MinifluxLayout.tsx:38
+msgid "Connect to your Miniflux server to get started"
+msgstr "連線至您的 Miniflux 伺服器以開始使用"
+
+#: src/components/miniflux/ConnectionDialog.tsx:428
+msgid "Connecting..."
+msgstr "連線中..."
+
+#: src/components/ui/sonner.tsx:42
+msgid "Copied!"
+msgstr "已複製！"
+
+#: src/components/ui/sonner.tsx:51
+msgid "Copy message"
+msgstr "複製訊息"
+
+#: src/components/miniflux/ConnectionDialog.tsx:208
+msgid "Could not connect to saved account. Please update your credentials."
+msgstr "無法連線至已儲存的帳號。請更新您的憑證。"
+
+#: src/pages/HomePage.tsx:39
+msgid "Customizable keyboard shortcuts"
+msgstr "可自訂的鍵盤快捷鍵"
+
+#: src/components/preferences/PreferencesDialog.tsx:66
 msgid "Customize your application preferences here."
 msgstr "在此自訂您的應用程式偏好設定。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:127
+#: src/components/preferences/panes/AppearancePane.tsx:125
 msgid "Dark"
 msgstr "深色"
 
-#: src/components/command-palette/CommandPalette.tsx:77
-#: src/components/titlebar/CommandDialog.tsx:66
+#: src/components/command-palette/CommandPalette.tsx:74
 msgid "Debug"
 msgstr "除錯"
 
+#: src/pages/ComponentsPage.tsx:225
+#~ msgid "Default"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:228
+#~ msgid "Destructive"
+#~ msgstr ""
+
 #: src/components/preferences/panes/AdvancedPane.tsx:34
-#: src/components/preferences/panes/GeneralPane.tsx:119
+#: src/components/preferences/panes/GeneralPane.tsx:173
+#: src/components/preferences/panes/GeneralPane.tsx:190
+#: src/components/preferences/panes/GeneralPane.tsx:235
 msgid "Disabled"
 msgstr "已停用"
 
+#: src/components/layout/AppSidebar.tsx:268
+msgid "Disconnect"
+msgstr "中斷連線"
+
+#: src/pages/ComponentsPage.tsx:148
+#~ msgid "Display Name"
+#~ msgstr ""
+
+#: src/components/preferences/panes/GeneralPane.tsx:162
+msgid "Display the application icon in the system tray. Requires restart to take effect when disabled."
+msgstr "在系統匣中顯示應用程式圖示。停用時需要重新啟動才能生效。"
+
+#: src/pages/HomePage.tsx:56
+msgid "Documentation"
+msgstr "文件"
+
+#: src/pages/ComponentsPage.tsx:302
+#~ msgid "Dropdown menu with smooth animations and highlight effects."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:152
+#~ msgid "Email"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:163
+#~ msgid "Email Notifications"
+#~ msgstr ""
+
 #: src/components/preferences/panes/AdvancedPane.tsx:34
-#: src/components/preferences/panes/GeneralPane.tsx:119
+#: src/components/preferences/panes/GeneralPane.tsx:173
+#: src/components/preferences/panes/GeneralPane.tsx:190
+#: src/components/preferences/panes/GeneralPane.tsx:235
 msgid "Enabled"
 msgstr "已啟用"
 
-#: src/components/preferences/panes/GeneralPane.tsx:104
+#: src/components/preferences/panes/GeneralPane.tsx:220
 msgid "Enter example text"
 msgstr "輸入範例文字"
 
@@ -87,6 +280,26 @@ msgstr "進入全螢幕"
 #: src/lib/commands/window-commands.ts:60
 msgid "Enter fullscreen mode"
 msgstr "進入全螢幕模式"
+
+#: src/components/miniflux/ConnectionDialog.tsx:304
+msgid "Enter your API token"
+msgstr "輸入您的 API 令牌"
+
+#: src/components/miniflux/ConnectionDialog.tsx:200
+msgid "Enter your Miniflux server details to connect and sync your feeds."
+msgstr "輸入您的 Miniflux 伺服器詳細資訊以連線並同步您的訂閱源。"
+
+#: src/components/miniflux/ConnectionDialog.tsx:378
+msgid "Enter your password"
+msgstr "輸入您的密碼"
+
+#: src/components/miniflux/ConnectionDialog.tsx:345
+msgid "Enter your username"
+msgstr "輸入您的使用者名稱"
+
+#: src/pages/ComponentsPage.tsx:204
+#~ msgid "Error"
+#~ msgstr ""
 
 #: src/components/preferences/panes/AdvancedPane.tsx:22
 msgid "Example Advanced Settings"
@@ -112,17 +325,21 @@ msgstr "範例選項 2"
 msgid "Example Option 3"
 msgstr "範例選項 3"
 
-#: src/components/preferences/panes/GeneralPane.tsx:96
+#: src/components/preferences/panes/GeneralPane.tsx:212
 msgid "Example Settings"
 msgstr "範例設定"
 
-#: src/components/preferences/panes/GeneralPane.tsx:98
+#: src/components/preferences/panes/GeneralPane.tsx:214
 msgid "Example Text Setting"
 msgstr "範例文字設定"
 
-#: src/components/preferences/panes/GeneralPane.tsx:109
+#: src/components/preferences/panes/GeneralPane.tsx:225
 msgid "Example Toggle Setting"
 msgstr "範例切換設定"
+
+#: src/pages/TemplatesPage.tsx:66
+#~ msgid "Examples"
+#~ msgstr ""
 
 #: src/lib/commands/window-commands.ts:76
 msgid "Exit Fullscreen"
@@ -131,6 +348,14 @@ msgstr "退出全螢幕"
 #: src/lib/commands/window-commands.ts:77
 msgid "Exit fullscreen mode"
 msgstr "退出全螢幕模式"
+
+#: src/pages/HomePage.tsx:61
+msgid "Explore Features"
+msgstr ""
+
+#: src/pages/ComponentsPage.tsx:56
+#~ msgid "Explore the UI components available in this template."
+#~ msgstr ""
 
 #: src/lib/commands/window-commands.ts:19
 msgid "Failed to close window: {message}"
@@ -148,11 +373,11 @@ msgstr "退出全螢幕失敗：{message}"
 msgid "Failed to minimize window: {message}"
 msgstr "最小化視窗失敗：{message}"
 
-#: src/components/preferences/panes/GeneralPane.tsx:42
+#: src/components/preferences/panes/GeneralPane.tsx:49
 msgid "Failed to register shortcut"
 msgstr "註冊快捷鍵失敗"
 
-#: src/components/preferences/panes/GeneralPane.tsx:67
+#: src/components/preferences/panes/GeneralPane.tsx:73
 msgid "Failed to restore previous shortcut"
 msgstr "恢復之前的快捷鍵失敗"
 
@@ -160,20 +385,58 @@ msgstr "恢復之前的快捷鍵失敗"
 msgid "Failed to toggle maximize: {message}"
 msgstr "切換最大化失敗：{message}"
 
-#: src/components/preferences/PreferencesDialog.tsx:34
+#: src/components/preferences/panes/GeneralPane.tsx:95
+msgid "Failed to update close behavior"
+msgstr "更新關閉行為失敗"
+
+#: src/components/preferences/panes/GeneralPane.tsx:133
+msgid "Failed to update start minimized setting"
+msgstr "更新啟動時最小化設定失敗"
+
+#: src/components/preferences/panes/GeneralPane.tsx:116
+msgid "Failed to update tray icon setting"
+msgstr "更新系統匣圖示設定失敗"
+
+#: src/components/miniflux/ConnectionDialog.tsx:413
+msgid "Fill from .env"
+msgstr "從 .env 填入"
+
+#: src/pages/ComponentsPage.tsx:69
+#: src/pages/ComponentsPage.tsx:78
+#: src/pages/ComponentsPage.tsx:87
+#~ msgid "from last month"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:45
+#~ msgid "Full-Featured Template"
+#~ msgstr ""
+
+#: src/components/preferences/PreferencesDialog.tsx:35
 msgid "General"
 msgstr "一般"
 
-#: src/components/preferences/panes/GeneralPane.tsx:84
+#: src/pages/TemplatesPage.tsx:160
+#~ msgid "Get started with the template in three simple steps."
+#~ msgstr ""
+
+#: src/components/preferences/panes/GeneralPane.tsx:200
 msgid "Global keyboard shortcut to toggle the quick pane from any application"
 msgstr "從任何應用程式切換快速窗格的全域鍵盤快捷鍵"
+
+#: src/pages/ComponentsPage.tsx:196
+#~ msgid "Heads up!"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:350
+#~ msgid "Hidden Content"
+#~ msgstr ""
 
 #: src/lib/menu.ts:39
 msgid "Hide {APP_NAME}"
 msgstr "隱藏 {APP_NAME}"
 
-#: src/components/titlebar/LinuxTitleBar.tsx:30
-#: src/components/titlebar/WindowTitleBar.tsx:47
+#: src/components/titlebar/LinuxTitleBar.tsx:34
+#: src/components/titlebar/WindowTitleBar.tsx:52
 #: src/lib/commands/navigation-commands.ts:16
 msgid "Hide Left Sidebar"
 msgstr "隱藏左側邊欄"
@@ -195,36 +458,124 @@ msgstr "隱藏左側邊欄"
 #~ msgid "Hide the right sidebar"
 #~ msgstr "隱藏右側邊欄"
 
-#: src/components/preferences/panes/GeneralPane.tsx:80
+#: src/components/layout/AppSidebar.tsx:145
+#: src/components/layout/AppSidebar.tsx:154
+#: src/components/miniflux/MinifluxLayout.tsx:61
+msgid "History"
+msgstr "歷史記錄"
+
+#: src/pages/TemplatesPage.tsx:51
+#~ msgid "i18n (Lingui)"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:230
+#~ msgid "Info"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:79
+#~ msgid "Install Dependencies"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:219
+#~ msgid "Join Discord"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:214
+#~ msgid "Join the community to get help and share your projects."
+#~ msgstr ""
+
+#: src/components/preferences/panes/GeneralPane.tsx:196
 msgid "Keyboard Shortcuts"
 msgstr "鍵盤快捷鍵"
 
+#: src/components/preferences/panes/AppearancePane.tsx:85
 #: src/components/preferences/panes/AppearancePane.tsx:87
-#: src/components/preferences/panes/AppearancePane.tsx:89
 msgid "Language"
 msgstr "語言"
 
-#: src/components/preferences/panes/AppearancePane.tsx:126
+#: src/pages/HomePage.tsx:29
+msgid "Latest React with concurrent features"
+msgstr ""
+
+#: src/pages/TemplatesPage.tsx:200
+#~ msgid "Learn more about the template architecture and patterns."
+#~ msgstr ""
+
+#: src/components/preferences/panes/AppearancePane.tsx:124
 msgid "Light"
 msgstr "淺色"
+
+#: src/components/miniflux/MinifluxLayout.tsx:26
+msgid "Loading..."
+msgstr "載入中..."
+
+#: src/pages/ComponentsPage.tsx:266
+#~ msgid "Manage your account details and preferences here. The animated tabs provide a smooth visual transition between sections."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:142
+#~ msgid "Manage your profile information and preferences."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:172
+#~ msgid "Marketing Emails"
+#~ msgstr ""
+
+#: src/components/miniflux/ConnectionDialog.tsx:127
+#~ msgid "miniflux.example.com"
+#~ msgstr ""
+
+#: src/components/layout/AppSidebar.tsx:69
+msgid "Minikyu"
+msgstr "Minikyu"
+
+#: src/pages/TemplatesPage.tsx:33
+#~ msgid "Minimal setup with essential features. Perfect for new projects."
+#~ msgstr ""
 
 #: src/lib/commands/window-commands.ts:27
 msgid "Minimize the current window"
 msgstr "最小化目前視窗"
 
+#: src/components/preferences/panes/GeneralPane.tsx:153
+msgid "Minimize to tray"
+msgstr "最小化至系統匣"
+
 #: src/lib/commands/window-commands.ts:26
 msgid "Minimize Window"
 msgstr "最小化視窗"
 
-#: src/components/command-palette/CommandPalette.tsx:75
-#: src/components/titlebar/CommandDialog.tsx:64
+#: src/pages/HomePage.tsx:24
+msgid "Modern Rust-powered desktop framework"
+msgstr "現代 Rust 驅動的桌面框架"
+
+#: src/pages/ComponentsPage.tsx:325
+#~ msgid "More Options"
+#~ msgstr ""
+
+#: src/components/command-palette/CommandPalette.tsx:72
 msgid "Navigation"
 msgstr "導覽"
 
-#: src/components/command-palette/CommandPalette.tsx:104
-#: src/components/titlebar/CommandDialog.tsx:88
+#: src/components/miniflux/AccountSwitcher.tsx:79
+msgid "No accounts yet"
+msgstr "尚無帳號"
+
+#: src/components/command-palette/CommandPalette.tsx:99
 msgid "No results found."
 msgstr "未找到結果。"
+
+#: src/components/miniflux/ConnectionDialog.tsx:247
+msgid "No server URL found."
+msgstr "找不到伺服器 URL。"
+
+#: src/components/layout/AppSidebar.tsx:186
+msgid "Not Connected"
+msgstr "未連線"
+
+#: src/pages/ComponentsPage.tsx:309
+#~ msgid "Open Menu"
+#~ msgstr ""
 
 #: src/lib/commands/navigation-commands.ts:25
 msgid "Open Preferences"
@@ -238,13 +589,32 @@ msgstr "開啟應用程式偏好設定"
 #~ msgid "Other"
 #~ msgstr "其他"
 
-#: src/components/command-palette/CommandPalette.tsx:84
-#: src/components/titlebar/CommandDialog.tsx:73
+#: src/components/command-palette/CommandPalette.tsx:80
 msgid "Others"
 msgstr "其他"
 
-#: src/components/preferences/PreferencesDialog.tsx:63
-#: src/components/preferences/PreferencesDialog.tsx:101
+#: src/pages/ComponentsPage.tsx:227
+#~ msgid "Outline"
+#~ msgstr ""
+
+#: src/components/miniflux/ConnectionDialog.tsx:368
+msgid "Password"
+msgstr "密碼"
+
+#: src/components/miniflux/ConnectionDialog.tsx:110
+msgid "Password is required"
+msgstr "需要提供密碼"
+
+#: src/pages/TemplatesPage.tsx:63
+#~ msgid "Plugin Architecture"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:58
+#~ msgid "Plugin Template"
+#~ msgstr ""
+
+#: src/components/preferences/PreferencesDialog.tsx:64
+#: src/components/preferences/PreferencesDialog.tsx:99
 msgid "Preferences"
 msgstr "偏好設定"
 
@@ -252,30 +622,134 @@ msgstr "偏好設定"
 msgid "Preferences..."
 msgstr "偏好設定..."
 
-#: src/components/preferences/panes/GeneralPane.tsx:82
+#: src/pages/HomePage.tsx:108
+msgid "Press"
+msgstr ""
+
+#: src/pages/ComponentsPage.tsx:316
+#~ msgid "Profile"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:140
+#~ msgid "Profile Settings"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:93
+#~ msgid "Project Templates"
+#~ msgstr ""
+
+#: src/pages/HomePage.tsx:34
+msgid "Query, Router, and Table integration"
+msgstr ""
+
+#: src/pages/HomePage.tsx:44
+msgid "Quick access to all features"
+msgstr ""
+
+#: src/components/preferences/panes/GeneralPane.tsx:198
 msgid "Quick Pane Shortcut"
 msgstr "快速窗格快捷鍵"
+
+#: src/pages/TemplatesPage.tsx:158
+#~ msgid "Quick Start"
+#~ msgstr ""
 
 #: src/lib/menu.ts:52
 msgid "Quit {APP_NAME}"
 msgstr "退出 {APP_NAME}"
 
+#: src/components/preferences/panes/GeneralPane.tsx:154
+msgid "Quit application"
+msgstr "退出應用程式"
+
+#: src/pages/HomePage.tsx:28
+msgid "React 19"
+msgstr "React 19"
+
+#: src/pages/TemplatesPage.tsx:37
+#~ msgid "React 19 + TypeScript"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:205
+#~ msgid "Read Docs"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:174
+#~ msgid "Receive emails about new products and features."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:165
+#~ msgid "Receive emails about your account activity."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:96
+#~ msgid "Recent Activity"
+#~ msgstr ""
+
 #: src/components/preferences/ShortcutPicker.tsx:231
 msgid "Reset"
 msgstr "重置"
 
-#: src/components/titlebar/CommandSearchButton.tsx:20
+#: src/pages/TemplatesPage.tsx:84
+#~ msgid "Run Development Server"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:64
+#~ msgid "Rust Commands"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:83
+#~ msgid "Sales"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:182
+#~ msgid "Save Changes"
+#~ msgstr ""
+
+#: src/components/titlebar/CommandSearchButton.tsx:21
 msgid "Search or type a command..."
 msgstr "搜尋或輸入命令..."
 
-#: src/components/preferences/panes/AppearancePane.tsx:123
+#: src/pages/ComponentsPage.tsx:226
+#~ msgid "Secondary"
+#~ msgstr ""
+
+#: src/components/miniflux/AccountSwitcher.tsx:60
+msgid "Select account"
+msgstr "選擇帳號"
+
+#: src/components/miniflux/ConnectionDialog.tsx:235
+msgid "Select or enter server URL"
+msgstr "選擇或輸入伺服器 URL"
+
+#: src/components/preferences/panes/AppearancePane.tsx:121
 msgid "Select theme"
 msgstr "選擇主題"
 
-#: src/components/command-palette/CommandPalette.tsx:79
-#: src/components/titlebar/CommandDialog.tsx:68
+#: src/components/miniflux/ConnectionDialog.tsx:226
+msgid "Server URL"
+msgstr "伺服器 URL"
+
+#: src/components/miniflux/ConnectionDialog.tsx:84
+msgid "Server URL is required"
+msgstr "需要提供伺服器 URL"
+
+#: src/components/command-palette/CommandPalette.tsx:76
+#: src/components/titlebar/WindowTitleBar.tsx:65
 msgid "Settings"
 msgstr "設定"
+
+#: src/pages/ComponentsPage.tsx:273
+#~ msgid "Settings Panel"
+#~ msgstr ""
+
+#: src/pages/HomePage.tsx:48
+msgid "shadcn/ui"
+msgstr ""
+
+#: src/pages/HomePage.tsx:38
+msgid "Shortcuts"
+msgstr ""
 
 #: src/lib/commands/notification-commands.ts:10
 msgid "Show a test toast notification"
@@ -285,8 +759,8 @@ msgstr "顯示測試通知"
 msgid "Show All"
 msgstr "顯示全部"
 
-#: src/components/titlebar/LinuxTitleBar.tsx:30
-#: src/components/titlebar/WindowTitleBar.tsx:48
+#: src/components/titlebar/LinuxTitleBar.tsx:34
+#: src/components/titlebar/WindowTitleBar.tsx:52
 #: src/lib/commands/navigation-commands.ts:7
 msgid "Show Left Sidebar"
 msgstr "顯示左側邊欄"
@@ -304,21 +778,88 @@ msgstr "顯示左側邊欄"
 #~ msgid "Show the right sidebar"
 #~ msgstr "顯示右側邊欄"
 
-#: src/components/preferences/panes/AppearancePane.tsx:74
+#: src/components/preferences/panes/GeneralPane.tsx:160
+msgid "Show Tray Icon"
+msgstr "顯示系統匣圖示"
+
+#: src/pages/ComponentsPage.tsx:240
+#~ msgid "Smooth animated tabs from animate-ui with highlight effect."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:337
+#~ msgid "Smooth expand/collapse animation with AnimatePresence."
+#~ msgstr ""
+
+#: src/components/preferences/panes/AppearancePane.tsx:72
 msgid "Something went wrong"
 msgstr "發生錯誤"
 
-#: src/components/preferences/panes/AppearancePane.tsx:128
+#: src/components/layout/AppSidebar.tsx:127
+#: src/components/layout/AppSidebar.tsx:136
+#: src/components/miniflux/MinifluxLayout.tsx:57
+msgid "Starred"
+msgstr "喜愛"
+
+#: src/components/preferences/panes/GeneralPane.tsx:179
+msgid "Start Minimized"
+msgstr "啟動時最小化"
+
+#: src/components/preferences/panes/GeneralPane.tsx:130
+msgid "Start minimized setting updated"
+msgstr "啟動時最小化設定已更新"
+
+#: src/components/preferences/panes/GeneralPane.tsx:180
+msgid "Start the application minimized to the system tray"
+msgstr "啟動應用程式時最小化至系統匣"
+
+#: src/pages/TemplatesPage.tsx:32
+#~ msgid "Starter Template"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:212
+#: src/pages/ComponentsPage.tsx:229
+#~ msgid "Success"
+#~ msgstr ""
+
+#: src/components/layout/AppSidebar.tsx:260
+msgid "Sync"
+msgstr "同步"
+
+#: src/components/preferences/panes/AppearancePane.tsx:126
 msgid "System"
 msgstr "系統"
 
-#: src/components/preferences/panes/AppearancePane.tsx:101
+#: src/components/preferences/panes/AppearancePane.tsx:99
 msgid "System Default"
 msgstr "系統預設"
+
+#: src/components/preferences/panes/GeneralPane.tsx:139
+msgid "System Tray"
+msgstr "系統匣"
+
+#: src/pages/TemplatesPage.tsx:39
+#~ msgid "Tailwind CSS"
+#~ msgstr ""
+
+#: src/pages/HomePage.tsx:33
+msgid "TanStack"
+msgstr "TanStack"
+
+#: src/pages/TemplatesPage.tsx:50
+#~ msgid "TanStack Query + Router"
+#~ msgstr ""
 
 #: src/components/titlebar/TitleBar.tsx:18
 #~ msgid "Tauri App"
 #~ msgstr "Tauri 應用程式"
+
+#: src/pages/HomePage.tsx:23
+msgid "Tauri v2"
+msgstr "Tauri v2"
+
+#: src/pages/TemplatesPage.tsx:59
+#~ msgid "Template for building Tauri plugins with example implementations."
+#~ msgstr ""
 
 #: src/lib/commands/notification-commands.ts:15
 msgid "Test Toast"
@@ -328,13 +869,25 @@ msgstr "測試通知"
 msgid "Test Toast Notification"
 msgstr "測試通知"
 
-#: src/components/preferences/panes/GeneralPane.tsx:69
+#: src/components/preferences/panes/GeneralPane.tsx:74
 msgid "The shortcut may be out of sync. Please restart the app or try again."
 msgstr "快捷鍵可能已不同步。請重新啟動應用程式或重試。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:112
+#: src/components/miniflux/ConnectionDialog.tsx:266
+msgid "The URL of your Miniflux server (e.g., miniflux.example.com)"
+msgstr "您的 Miniflux 伺服器 URL（例如：miniflux.example.com）"
+
+#: src/components/preferences/panes/AppearancePane.tsx:110
 msgid "Theme"
 msgstr "主題"
+
+#: src/pages/TemplatesPage.tsx:53
+#~ msgid "Theme Support"
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:353
+#~ msgid "This content smoothly animates in and out when toggled. The collapsible uses Framer Motion's AnimatePresence for smooth enter/exit animations."
+#~ msgstr ""
 
 #: src/lib/commands/notification-commands.ts:16
 msgid "This is a test notification"
@@ -348,13 +901,31 @@ msgstr "這是一個範例進階切換設定（不會持續儲存）"
 msgid "This is an example dropdown/select setting (not persisted)"
 msgstr "這是一個範例下拉/選擇設定（不會持續儲存）"
 
-#: src/components/preferences/panes/GeneralPane.tsx:110
+#: src/components/preferences/panes/GeneralPane.tsx:226
 msgid "This is an example switch/toggle setting (not persisted)"
 msgstr "這是一個範例開關/切換設定（不會持續儲存）"
 
-#: src/components/preferences/panes/GeneralPane.tsx:99
+#: src/components/preferences/panes/GeneralPane.tsx:215
 msgid "This is an example text input setting (not persisted)"
 msgstr "這是一個範例文字輸入設定（不會持續儲存）"
+
+#: src/pages/HomePage.tsx:108
+msgid "Tip:"
+msgstr "提示："
+
+#: src/pages/HomePage.tsx:111
+msgid "to open the command palette and explore available commands."
+msgstr "開啟命令面板並探索可用命令。"
+
+#: src/components/layout/AppSidebar.tsx:109
+#: src/components/layout/AppSidebar.tsx:118
+#: src/components/miniflux/MinifluxLayout.tsx:59
+msgid "Today"
+msgstr "今天"
+
+#: src/pages/ComponentsPage.tsx:344
+#~ msgid "Toggle Content"
+#~ msgstr ""
 
 #: src/lib/menu.ts:62
 msgid "Toggle Left Sidebar"
@@ -372,17 +943,83 @@ msgstr "切換最大化"
 msgid "Toggle window maximize state"
 msgstr "切換視窗最大化狀態"
 
-#: src/components/command-palette/CommandPalette.tsx:96
-#: src/components/command-palette/CommandPalette.tsx:99
-#: src/components/titlebar/CommandDialog.tsx:83
+#: src/pages/ComponentsPage.tsx:65
+#~ msgid "Total Revenue"
+#~ msgstr ""
+
+#: src/components/preferences/panes/GeneralPane.tsx:112
+msgid "Tray icon disabled. Changes will take effect on restart."
+msgstr "系統匣圖示已停用。變更將在重新啟動後生效。"
+
+#: src/components/preferences/panes/GeneralPane.tsx:111
+msgid "Tray icon enabled"
+msgstr "系統匣圖示已啟用"
+
+#: src/components/command-palette/CommandPalette.tsx:91
+#: src/components/command-palette/CommandPalette.tsx:94
 msgid "Type a command or search..."
 msgstr "輸入命令或搜尋..."
+
+#: src/pages/TemplatesPage.tsx:65
+#~ msgid "TypeScript Bindings"
+#~ msgstr ""
+
+#: src/pages/TemplatesPage.tsx:140
+#~ msgid "Use Template"
+#~ msgstr ""
+
+#: src/components/miniflux/ConnectionDialog.tsx:335
+msgid "Username"
+msgstr "使用者名稱"
+
+#: src/components/miniflux/ConnectionDialog.tsx:103
+msgid "Username is required"
+msgstr "需要提供使用者名稱"
+
+#: src/components/miniflux/ConnectionDialog.tsx:284
+msgid "Username/Password"
+msgstr "使用者名稱/密碼"
 
 #: src/lib/menu.ts:58
 msgid "View"
 msgstr "檢視"
 
-#: src/components/command-palette/CommandPalette.tsx:81
-#: src/components/titlebar/CommandDialog.tsx:70
+#: src/pages/TemplatesPage.tsx:185
+#~ msgid "View on GitHub"
+#~ msgstr ""
+
+#: src/components/layout/AppSidebar.tsx:76
+msgid "Views"
+msgstr "檢視"
+
+#: src/components/miniflux/MinifluxLayout.tsx:36
+msgid "Welcome to Miniflux"
+msgstr "歡迎使用 Miniflux"
+
+#: src/pages/HomePage.tsx:70
+msgid "Welcome to Tauri Template"
+msgstr "歡迎使用 Tauri 範本"
+
+#: src/components/command-palette/CommandPalette.tsx:78
 msgid "Window"
 msgstr "視窗"
+
+#: src/pages/ComponentsPage.tsx:198
+#~ msgid "You can add components to your app using the shadcn CLI."
+#~ msgstr ""
+
+#: src/components/miniflux/ConnectionDialog.tsx:322
+msgid "You can find your API token in Miniflux Settings → API Keys"
+msgstr "您可以在 Miniflux 設定 → API 金鑰中找到您的 API 令牌"
+
+#: src/pages/ComponentsPage.tsx:97
+#~ msgid "You have 3 unread messages."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:214
+#~ msgid "Your changes have been saved successfully."
+#~ msgstr ""
+
+#: src/pages/ComponentsPage.tsx:206
+#~ msgid "Your session has expired. Please log in again."
+#~ msgstr ""

@@ -1,3 +1,4 @@
 pub mod connection;
+pub mod migrations;
 
-pub use connection::{get_db_path, init_database_pool};
+pub use connection::init_database_pool;
