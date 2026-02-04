@@ -1,7 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { locale } from '@tauri-apps/plugin-os';
-import { toast } from 'sonner';
 import {
   Select,
   SelectContent,
@@ -9,6 +8,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { showToast } from '@/components/ui/sonner';
 import { useTheme } from '@/hooks/use-theme';
 import { availableLanguages } from '@/i18n';
 import { logger } from '@/lib/logger';
@@ -69,7 +69,7 @@ export function AppearancePane() {
       }
     } catch (error) {
       logger.error('Failed to change language', { error });
-      toast.error(_(msg`Something went wrong`));
+      showToast.error(_(msg`Something went wrong`));
       return;
     }
 

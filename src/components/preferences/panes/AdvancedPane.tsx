@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useState } from 'react';
-import { Switch } from '@/components/animate-ui/components/radix/switch';
+import { Switch } from '@/components/animate-ui/components/base/switch';
 import { Label } from '@/components/ui/label';
 import {
   Select,

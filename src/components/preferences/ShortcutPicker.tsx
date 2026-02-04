@@ -119,7 +119,7 @@ export function ShortcutPicker({
   const { _ } = useLingui();
   const [isCapturing, setIsCapturing] = useState(false);
   const [pendingShortcut, setPendingShortcut] = useState<string | null>(null);
-  const inputRef = useRef<HTMLDivElement>(null);
+  const inputRef = useRef<HTMLButtonElement>(null); // biome-ignore lint/correctness/useExhaustiveDependencies: handlers are stable, defined outside useEffect
 
   const displayValue = value ?? defaultValue;
   const isDefault = value === null;
@@ -191,9 +191,9 @@ export function ShortcutPicker({
 
   return (
     <div className="flex items-center gap-2">
-      <div
+      <button
         ref={inputRef}
-        role="button"
+        type="button"
         tabIndex={disabled ? -1 : 0}
         onClick={handleClick}
         onKeyDown={(e) => {
@@ -220,7 +220,7 @@ export function ShortcutPicker({
             {formatShortcutForDisplay(displayValue)}
           </span>
         )}
-      </div>
+      </button>
 
       {!isDefault && !disabled && (
         <button

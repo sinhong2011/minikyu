@@ -1,9 +1,11 @@
+import { FolderOpenIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useQuery } from '@tanstack/react-query';
-import { useState } from 'react';
-import { toast } from 'sonner';
-import { Switch } from '@/components/animate-ui/components/radix/switch';
+import { open } from '@tauri-apps/plugin-dialog';
+import { Switch } from '@/components/animate-ui/components/base/switch';
+import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -13,6 +15,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { showToast } from '@/components/ui/sonner';
 import { logger } from '@/lib/logger';
 import { type CloseBehavior, commands } from '@/lib/tauri-bindings';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
@@ -21,8 +24,6 @@ import { SettingsField, SettingsSection } from '../shared/SettingsComponents';
 
 export function GeneralPane() {
   const { _ } = useLingui();
-  const [exampleText, setExampleText] = useState('Example value');
-  const [exampleToggle, setExampleToggle] = useState(true);
 
   const { data: preferences } = usePreferences();
   const savePreferences = useSavePreferences();
@@ -46,9 +47,7 @@ export function GeneralPane() {
 
     if (result.status === 'error') {
       logger.error('Failed to register shortcut', { error: result.error });
-      toast.error(_(msg`Failed to register shortcut`), {
-        description: result.error,
-      });
+      showToast.error(_(msg`Failed to register shortcut`), result.error);
       return;
     }
 
@@ -71,11 +70,10 @@ export function GeneralPane() {
           attemptedShortcut: newShortcut,
           originalShortcut: oldShortcut,
         });
-        toast.error(_(msg`Failed to restore previous shortcut`), {
-          description: _(
-            msg`The shortcut may be out of sync. Please restart the app or try again.`
-          ),
-        });
+        showToast.error(
+          _(msg`Failed to restore previous shortcut`),
+          _(msg`The shortcut may be out of sync. Please restart the app or try again.`)
+        );
       } else {
         logger.info('Successfully rolled back shortcut registration');
       }
@@ -92,10 +90,10 @@ export function GeneralPane() {
         ...preferences,
         close_behavior: value,
       });
-      toast.success(_(msg`Close behavior updated`));
+      showToast.success(_(msg`Close behavior updated`));
     } catch {
       logger.error('Failed to save close behavior');
-      toast.error(_(msg`Failed to update close behavior`));
+      showToast.error(_(msg`Failed to update close behavior`));
     }
   };
 
@@ -109,14 +107,14 @@ export function GeneralPane() {
         ...preferences,
         show_tray_icon: checked,
       });
-      toast.success(
+      showToast.success(
         checked
           ? _(msg`Tray icon enabled`)
           : _(msg`Tray icon disabled. Changes will take effect on restart.`)
       );
     } catch {
       logger.error('Failed to save tray icon preference');
-      toast.error(_(msg`Failed to update tray icon setting`));
+      showToast.error(_(msg`Failed to update tray icon setting`));
     }
   };
 
@@ -130,10 +128,69 @@ export function GeneralPane() {
         ...preferences,
         start_minimized: checked,
       });
-      toast.success(_(msg`Start minimized setting updated`));
+      showToast.success(_(msg`Start minimized setting updated`));
     } catch {
       logger.error('Failed to save start minimized preference');
-      toast.error(_(msg`Failed to update start minimized setting`));
+      showToast.error(_(msg`Failed to update start minimized setting`));
+    }
+  };
+
+  const handleBrowseFolder = async (type: 'image' | 'video') => {
+    try {
+      const selected = await open({
+        directory: true,
+        multiple: false,
+        title:
+          type === 'image'
+            ? _(msg`Select Image Download Folder`)
+            : _(msg`Select Video Download Folder`),
+      });
+
+      if (selected) {
+        const folderPath = selected as string;
+        if (type === 'image') {
+          await handleImagePathChange(folderPath);
+        } else {
+          await handleVideoPathChange(folderPath);
+        }
+      }
+    } catch {
+      logger.error('Failed to open folder dialog');
+      showToast.error(_(msg`Failed to select folder`));
+    }
+  };
+
+  const handleImagePathChange = async (newPath: string) => {
+    if (!preferences) return;
+
+    logger.info('Updating image download path', { path: newPath });
+
+    try {
+      await savePreferences.mutateAsync({
+        ...preferences,
+        image_download_path: newPath || null,
+      });
+      showToast.success(_(msg`Image download path updated`));
+    } catch {
+      logger.error('Failed to save image download path');
+      showToast.error(_(msg`Failed to update image download path`));
+    }
+  };
+
+  const handleVideoPathChange = async (newPath: string) => {
+    if (!preferences) return;
+
+    logger.info('Updating video download path', { path: newPath });
+
+    try {
+      await savePreferences.mutateAsync({
+        ...preferences,
+        video_download_path: newPath || null,
+      });
+      showToast.success(_(msg`Video download path updated`));
+    } catch {
+      logger.error('Failed to save video download path');
+      showToast.error(_(msg`Failed to update video download path`));
     }
   };
 
@@ -212,31 +269,50 @@ export function GeneralPane() {
         </SettingsField>
       </SettingsSection>
 
-      <SettingsSection title={_(msg`Example Settings`)}>
+      <SettingsSection title={_(msg`Download Settings`)}>
         <SettingsField
-          label={_(msg`Example Text Setting`)}
-          description={_(msg`This is an example text input setting (not persisted)`)}
+          label={_(msg`Image Download Path`)}
+          description={_(msg`Default folder for saving images. Leave empty to ask every time.`)}
         >
-          <Input
-            value={exampleText}
-            onChange={(e) => setExampleText(e.target.value)}
-            placeholder={_(msg`Enter example text`)}
-          />
+          <div className="flex items-center gap-2">
+            <Input
+              value={preferences?.image_download_path ?? ''}
+              onChange={(e) => handleImagePathChange(e.target.value)}
+              placeholder={_(msg`System default (ask every time)`)}
+              disabled={!preferences || savePreferences.isPending}
+              className="flex-1"
+            />
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleBrowseFolder('image')}
+              disabled={!preferences || savePreferences.isPending}
+            >
+              <HugeiconsIcon icon={FolderOpenIcon} className="h-4 w-4" />
+            </Button>
+          </div>
         </SettingsField>
 
         <SettingsField
-          label={_(msg`Example Toggle Setting`)}
-          description={_(msg`This is an example switch/toggle setting (not persisted)`)}
+          label={_(msg`Video Download Path`)}
+          description={_(msg`Default folder for saving videos. Leave empty to ask every time.`)}
         >
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="example-toggle"
-              checked={exampleToggle}
-              onCheckedChange={setExampleToggle}
+          <div className="flex items-center gap-2">
+            <Input
+              value={preferences?.video_download_path ?? ''}
+              onChange={(e) => handleVideoPathChange(e.target.value)}
+              placeholder={_(msg`System default (ask every time)`)}
+              disabled={!preferences || savePreferences.isPending}
+              className="flex-1"
             />
-            <Label htmlFor="example-toggle" className="text-sm">
-              {exampleToggle ? _(msg`Enabled`) : _(msg`Disabled`)}
-            </Label>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => handleBrowseFolder('video')}
+              disabled={!preferences || savePreferences.isPending}
+            >
+              <HugeiconsIcon icon={FolderOpenIcon} className="h-4 w-4" />
+            </Button>
           </div>
         </SettingsField>
       </SettingsSection>

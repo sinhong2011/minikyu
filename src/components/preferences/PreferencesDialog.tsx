@@ -1,17 +1,8 @@
+import { ColorsIcon, Settings01Icon, ZapIcon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { Palette, Settings, Zap } from 'lucide-react';
 import { useState } from 'react';
-import {
-  Sidebar,
-  SidebarContent,
-  SidebarGroup,
-  SidebarGroupContent,
-  SidebarMenu,
-  SidebarMenuButton,
-  SidebarMenuItem,
-  SidebarProvider,
-} from '@/components/animate-ui/components/radix/sidebar';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -21,6 +12,16 @@ import {
   BreadcrumbSeparator,
 } from '@/components/ui/breadcrumb';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
+import {
+  Sidebar,
+  SidebarContent,
+  SidebarGroup,
+  SidebarGroupContent,
+  SidebarMenu,
+  SidebarMenuButton,
+  SidebarMenuItem,
+  SidebarProvider,
+} from '@/components/ui/sidebar';
 import { useUIStore } from '@/store/ui-store';
 import { AdvancedPane } from './panes/AdvancedPane';
 import { AppearancePane } from './panes/AppearancePane';
@@ -32,17 +33,17 @@ const navigationItems = [
   {
     id: 'general' as const,
     label: msg`General`,
-    icon: Settings,
+    icon: Settings01Icon,
   },
   {
     id: 'appearance' as const,
     label: msg`Appearance`,
-    icon: Palette,
+    icon: ColorsIcon,
   },
   {
     id: 'advanced' as const,
     label: msg`Advanced`,
-    icon: Zap,
+    icon: ZapIcon,
   },
 ] as const;
 
@@ -70,18 +71,15 @@ export function PreferencesDialog() {
             <SidebarContent>
               <SidebarGroup>
                 <SidebarGroupContent>
-                  <SidebarMenu>
+                  <SidebarMenu className="gap-1">
                     {navigationItems.map((item) => (
                       <SidebarMenuItem key={item.id}>
-                        <SidebarMenuButton asChild isActive={activePane === item.id}>
-                          <button
-                            type="button"
-                            onClick={() => setActivePane(item.id)}
-                            className="w-full"
-                          >
-                            <item.icon />
-                            <span>{_(item.label)}</span>
-                          </button>
+                        <SidebarMenuButton
+                          isActive={activePane === item.id}
+                          onClick={() => setActivePane(item.id)}
+                        >
+                          <HugeiconsIcon icon={item.icon} />
+                          <span>{_(item.label)}</span>
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))}
