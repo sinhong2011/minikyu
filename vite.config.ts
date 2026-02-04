@@ -12,6 +12,7 @@ const host = process.env.TAURI_DEV_HOST;
 // https://vitejs.dev/config/
 export default defineConfig(async () => ({
   define: {
+    // biome-ignore lint/style/useNamingConvention: Global constant
     __APP_VERSION__: JSON.stringify(packageJson.version),
   },
   plugins: [

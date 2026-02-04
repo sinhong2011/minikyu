@@ -24,7 +24,8 @@
     "baseUrl": ".",
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "types": []
   },
   "include": ["src", "src/routeTree.gen.ts"],
   "references": [{ "path": "./tsconfig.node.json" }]
