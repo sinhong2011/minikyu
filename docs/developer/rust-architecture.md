@@ -60,7 +60,7 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
 ### 4. Regenerate TypeScript bindings
 
 ```bash
-npm run rust:bindings
+bun run rust:bindings
 ```
 
 ## Type Patterns
@@ -98,7 +98,7 @@ pub enum MyError {
 The `#[serde(tag = "type")]` makes errors easy to match in TypeScript:
 
 ```typescript
-if (error.type === 'ValidationError') {
+if (error.type === "ValidationError") {
   console.log(error.message)
 }
 ```

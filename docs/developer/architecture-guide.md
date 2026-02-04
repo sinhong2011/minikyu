@@ -142,10 +142,10 @@ Tauri applications can have multiple windows, each running a separate JavaScript
 
 ```typescript
 // Window A: emit event
-await emit('data-updated', { value: 'new data' })
+await emit("data-updated", { value: "new data" })
 
 // Window B: listen and react
-listen('data-updated', ({ payload }) => {
+listen("data-updated", ({ payload }) => {
   setData(payload.value)
 })
 ```
@@ -233,15 +233,15 @@ All Tauri commands use [tauri-specta](https://github.com/specta-rs/tauri-specta)
 
 ```typescript
 // ✅ GOOD: Type-safe with autocomplete
-import { commands } from '@/lib/tauri-bindings'
+import { commands } from "@/lib/tauri-bindings"
 
 const result = await commands.loadPreferences()
-if (result.status === 'ok') {
+if (result.status === "ok") {
   console.log(result.data.theme)
 }
 
 // ❌ BAD: String-based invoke (no type safety)
-const prefs = await invoke<AppPreferences>('load_preferences')
+const prefs = await invoke<AppPreferences>("load_preferences")
 ```
 
 See [tauri-commands.md](./tauri-commands.md) for adding new commands.
@@ -251,7 +251,7 @@ See [tauri-commands.md](./tauri-commands.md) for adding new commands.
 Before any changes are committed:
 
 ```bash
-npm run check:all
+bun run check:all
 ```
 
 See [static-analysis.md](./static-analysis.md) for all tools included.

@@ -46,7 +46,7 @@ function handleAction() {
 Convenience hooks are also available:
 
 ```typescript
-import { useIsMacOS, useIsWindows, useIsLinux } from '@/hooks/use-platform'
+import { useIsMacOS, useIsWindows, useIsLinux } from "@/hooks/use-platform"
 
 function MyComponent() {
   const isMacOS = useIsMacOS()
@@ -151,7 +151,7 @@ import {
   TitleBarLeftActions,
   TitleBarRightActions,
   TitleBarTitle,
-} from '@/components/titlebar'
+} from "@/components/titlebar"
 
 function CustomTitleBar() {
   return (
@@ -183,7 +183,7 @@ The frontend can then use paths consistently:
 
 ```typescript
 // Works on all platforms
-const parts = filePath.split('/')
+const parts = filePath.split("/")
 ```
 
 ## Tauri Configuration
@@ -275,7 +275,7 @@ JSON Merge Patch **replaces arrays entirely**, not element-by-element. Each plat
 
 ```bash
 # Runs on current platform
-npm run dev
+bun run dev
 ```
 
 ### Production Builds
@@ -284,7 +284,7 @@ Builds are platform-specific. You can only build for your current OS (cross-comp
 
 ```bash
 # Build for current platform
-npm run build
+bun run build
 ```
 
 ### CI/CD Builds

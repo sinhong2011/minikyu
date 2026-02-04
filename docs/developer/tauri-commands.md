@@ -16,12 +16,12 @@ This app uses tauri-specta to generate TypeScript bindings from Rust commands, p
 ### Calling Commands
 
 ```typescript
-import { commands, type AppPreferences } from '@/lib/tauri-bindings'
+import { commands, type AppPreferences } from "@/lib/tauri-bindings"
 
 // Commands return Result types for error handling
 const result = await commands.loadPreferences()
 
-if (result.status === 'ok') {
+if (result.status === "ok") {
   console.log(result.data.theme) // Type-safe access
 } else {
   console.error(result.error) // Type-safe error
@@ -33,7 +33,7 @@ if (result.status === 'ok') {
 Commands that can fail return a `Result<T, E>` type:
 
 ```typescript
-type Result<T, E> = { status: 'ok'; data: T } | { status: 'error'; error: E }
+type Result<T, E> = { status: "ok"; data: T } | { status: "error"; error: E }
 ```
 
 See [error-handling.md](./error-handling.md) for comprehensive error handling patterns including structured error types, retry logic, and user feedback.
@@ -41,15 +41,15 @@ See [error-handling.md](./error-handling.md) for comprehensive error handling pa
 Handle both cases:
 
 ```typescript
-const result = await commands.savePreferences({ theme: 'dark' })
+const result = await commands.savePreferences({ theme: "dark" })
 
-if (result.status === 'error') {
-  toast.error('Failed to save', { description: result.error })
+if (result.status === "error") {
+  toast.error("Failed to save", { description: result.error })
   return
 }
 
 // result.data is available here
-toast.success('Saved!')
+toast.success("Saved!")
 ```
 
 ### unwrapResult Helper
@@ -57,7 +57,7 @@ toast.success('Saved!')
 For cases where you want errors to propagate (throw) rather than handle them inline, use the `unwrapResult` helper:
 
 ```typescript
-import { commands, unwrapResult } from '@/lib/tauri-bindings'
+import { commands, unwrapResult } from "@/lib/tauri-bindings"
 
 // Throws on error, returns data on success
 const preferences = unwrapResult(await commands.loadPreferences())
@@ -73,11 +73,11 @@ const preferences = unwrapResult(await commands.loadPreferences())
 **TanStack Query example** (preferred pattern for data fetching):
 
 ```typescript
-import { useQuery } from '@tanstack/react-query'
-import { commands, unwrapResult } from '@/lib/tauri-bindings'
+import { useQuery } from "@tanstack/react-query"
+import { commands, unwrapResult } from "@/lib/tauri-bindings"
 
 const { data, error } = useQuery({
-  queryKey: ['preferences'],
+  queryKey: ["preferences"],
   queryFn: async () => unwrapResult(await commands.loadPreferences()),
 })
 // TanStack Query handles the thrown error automatically
@@ -88,11 +88,11 @@ const { data, error } = useQuery({
 ```typescript
 const handleSave = async () => {
   const result = await commands.savePreferences(preferences)
-  if (result.status === 'error') {
-    toast.error('Failed to save', { description: result.error })
+  if (result.status === "error") {
+    toast.error("Failed to save", { description: result.error })
     return
   }
-  toast.success('Preferences saved!')
+  toast.success("Preferences saved!")
 }
 ```
 
@@ -137,7 +137,7 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
 ### 4. Regenerate TypeScript bindings
 
 ```bash
-npm run rust:bindings
+bun run rust:bindings
 ```
 
 This runs `cargo test export_bindings -- --ignored` which generates `src/lib/bindings.ts`.
@@ -145,9 +145,9 @@ This runs `cargo test export_bindings -- --ignored` which generates `src/lib/bin
 ### 5. Use in frontend
 
 ```typescript
-import { commands, type MyType } from '@/lib/tauri-bindings'
+import { commands, type MyType } from "@/lib/tauri-bindings"
 
-const result = await commands.myNewCommand('arg')
+const result = await commands.myNewCommand("arg")
 ```
 
 ### 6. Commit both files
@@ -197,7 +197,7 @@ await commands.saveEmergencyData(filename, data as JsonValue)
 TypeScript bindings are generated when the app runs in debug mode, or via:
 
 ```bash
-npm run rust:bindings
+bun run rust:bindings
 ```
 
 This must be run after changing Rust commands.
@@ -208,12 +208,12 @@ Mock the commands in tests:
 
 ```typescript
 // src/test/setup.ts
-vi.mock('@/lib/tauri-bindings', () => ({
+vi.mock("@/lib/tauri-bindings", () => ({
   commands: {
     loadPreferences: vi
       .fn()
-      .mockResolvedValue({ status: 'ok', data: { theme: 'system' } }),
-    savePreferences: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
+      .mockResolvedValue({ status: "ok", data: { theme: "system" } }),
+    savePreferences: vi.fn().mockResolvedValue({ status: "ok", data: null }),
     // ... other commands
   },
 }))

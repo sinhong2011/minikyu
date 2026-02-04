@@ -38,14 +38,14 @@ bun fix:all
 
 ## Tauri CLI Commands
 
-Due to [known issues](#known-issues) with Bun and Tauri CLI, some Tauri commands should use npm/pnpm:
+Due to [known issues](#known-issues) with Bun and Tauri CLI, some Tauri commands should use bun:
 
 ```bash
 # ❌ AVOID: May fail
 bun tauri add <package>
 bun tauri android init
 
-# ✅ USE: npm/pnpm fallback
+# ✅ USE: bun fallback
 npm run tauri add <package>
 npm run tauri android init
 # OR
@@ -134,12 +134,12 @@ Tauri CLI doesn't properly detect Bun as a package manager, causing failures wit
 - `tauri android init`
 - `tauri ios dev` (iOS development on older Tauri versions)
 
-**Solution:** Use npm/pnpm for these specific commands.
+**Solution:** Use bun for these specific commands.
 
 ### Windows-Specific Issues
 
 - `bun tauri android init` fails on Windows with panic errors
-- Workaround: Use npm/pnpm for Android development on Windows
+- Workaround: Use bun for Android development on Windows
 
 ### Vite + esbuild Permission Error
 

@@ -27,12 +27,12 @@ pre-commit:
   parallel: true
   commands:
     biome-check:
-      glob: '*.{js,jsx,ts,tsx,json,css,md}'
+      glob: "*.{js,jsx,ts,tsx,json,css,md}"
       run: bun run biome check --write {staged_files}
       stage_fixed: true
 
     type-check:
-      glob: '*.{ts,tsx}'
+      glob: "*.{ts,tsx}"
       run: bunx tsc --noEmit
 ```
 
@@ -160,7 +160,7 @@ lefthook run commit-msg
 
 | Feature            | Lefthook            | Husky                      |
 | ------------------ | ------------------- | -------------------------- |
-| **Side effects**   | None                | Hooks run on `npm install` |
+| **Side effects**   | None                | Hooks run on `bun install` |
 | **Performance**    | Parallel execution  | Sequential                 |
 | **Auto-stage**     | `stage_fixed: true` | Manual                     |
 | **Cross-platform** | Native binary       | Node.js                    |

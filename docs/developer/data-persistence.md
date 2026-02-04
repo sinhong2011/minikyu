@@ -69,7 +69,7 @@ impl Default for AppPreferences {
 // src/services/preferences.ts
 export function usePreferences() {
   return useQuery({
-    queryKey: ['preferences'],
+    queryKey: ["preferences"],
     queryFn: async () => unwrapResult(await commands.loadPreferences()),
   })
 }
@@ -81,7 +81,7 @@ export function useUpdatePreferences() {
     mutationFn: (preferences: AppPreferences) =>
       commands.savePreferences(preferences),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['preferences'] })
+      queryClient.invalidateQueries({ queryKey: ["preferences"] })
     },
   })
 }
@@ -94,15 +94,15 @@ For saving data before crashes or risky operations:
 ```typescript
 // Save emergency data
 await commands.saveEmergencyData({
-  filename: 'unsaved-work',
+  filename: "unsaved-work",
   data: { content: userContent, timestamp: Date.now() },
 })
 
 // Load on startup
 const recoveryData = await commands.loadEmergencyData({
-  filename: 'unsaved-work',
+  filename: "unsaved-work",
 })
-if (recoveryData.status === 'ok' && recoveryData.data) {
+if (recoveryData.status === "ok" && recoveryData.data) {
   // Show recovery dialog
 }
 ```
@@ -138,7 +138,7 @@ Follow the pattern in `src-tauri/src/commands/preferences.rs`:
 Add to `src-tauri/src/bindings.rs` and regenerate bindings:
 
 ```bash
-npm run rust:bindings
+bun run rust:bindings
 ```
 
 ### 4. Create React hooks
@@ -146,7 +146,7 @@ npm run rust:bindings
 ```typescript
 export function useMyData() {
   return useQuery({
-    queryKey: ['my-data'],
+    queryKey: ["my-data"],
     queryFn: async () => unwrapResult(await commands.loadMyData()),
   })
 }
@@ -260,7 +260,7 @@ app.manage(DbConnection(Mutex::new(conn)));
 // Frontend: TanStack Query for caching and loading states
 export function useItems() {
   return useQuery({
-    queryKey: ['items'],
+    queryKey: ["items"],
     queryFn: async () => unwrapResult(await commands.getItems()),
   })
 }
@@ -269,7 +269,7 @@ export function useAddItem() {
   const queryClient = useQueryClient()
   return useMutation({
     mutationFn: (item: CreateItem) => commands.addItem(item),
-    onSuccess: () => queryClient.invalidateQueries({ queryKey: ['items'] }),
+    onSuccess: () => queryClient.invalidateQueries({ queryKey: ["items"] }),
   })
 }
 ```

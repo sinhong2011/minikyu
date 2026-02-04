@@ -1,49 +1,64 @@
 # Internationalization (i18n) Strategy
 
-This project uses **react-i18next** for internationalization with RTL support.
+This project uses **Lingui** for internationalization with compile-time message extraction, ICU MessageFormat, and RTL support.
 
 ## Current Setup
 
-- **Library:** react-i18next v16
-- **Locales:** English (en), Arabic (ar) with RTL support
-- **Language switching:** Runtime locale detection
+- **Library:** Lingui v5 with SWC compiler
+- **Locales:** English (en), Chinese Simplified (zh-CN), Chinese Traditional (zh-TW), Japanese (ja), Korean (ko)
+- **Language switching:** Runtime locale detection with system locale fallback
 - **RTL Support:** Automatic `dir` and `lang` attribute updates on HTML element
+- **Bundle size:** 25x smaller than react-i18next
 
-## Why react-i18next?
+## Why Lingui?
 
 ### Advantages
 
-- **Production-ready** - Stable, well-tested, battle-hardened
-- **Simple API** - Easy to use, minimal boilerplate
-- **Built-in features** - Namespace support, interpolation, pluralization
-- **DevTools integration** - React DevTools for debugging
-- **Active community** - Large ecosystem, extensive plugins
+- **Compile-time extraction** - Messages extracted at build time, no runtime overhead
+- **Type-safe** - No string key typos, direct macro usage
+- **ICU MessageFormat** - Built-in pluralization, select, and ordinal support
+- **SWC compiler** - Fast compilation without Babel
+- **PO file format** - Standard gettext format, translator-friendly
+- **Small bundle** - Minimal runtime footprint
 
 ## Configuration
 
 **File:** `src/i18n/config.ts`
 
 ```typescript
-import i18n from 'i18next'
-import { initReactI18next } from 'react-i18next'
+import { i18n } from '@lingui/core';
 
-i18n.use(initReactI18next).init({
-  resources: {
-    en: {
-      translation: {
-        /* ... */
-      },
+const rtlLanguages = ['he', 'fa', 'ur'];
+
+function onLocaleChange(locale: string) {
+  const dir = rtlLanguages.includes(locale) ? 'rtl' : 'ltr';
+  document.documentElement.dir = dir;
+  document.documentElement.lang = locale;
+}
+
+async function loadAndActivate(locale: string): Promise<void> {
+  const { messages } = await import(`../locales/${locale}/messages.ts`);
+  i18n.loadAndActivate({ locale, messages });
+  onLocaleChange(locale);
+}
+
+export const availableLanguages = ['en', 'zh-CN', 'zh-TW', 'ja', 'ko'];
+```
+
+**File:** `lingui.config.ts`
+
+```typescript
+export default defineConfig({
+  sourceLocale: 'en',
+  locales: ['en', 'zh-CN', 'zh-TW', 'ja', 'ko'],
+  catalogs: [
+    {
+      path: 'src/locales/{locale}/messages',
+      include: ['src/'],
     },
-    ar: {
-      translation: {
-        /* ... */
-      },
-    },
-  },
-  lng: 'en',
-  fallbackLng: 'en',
-  interpolation: { escapeValue: false },
-})
+  ],
+  format: 'po',
+});
 ```
 
 ## Usage
@@ -51,78 +66,208 @@ i18n.use(initReactI18next).init({
 ### React Components
 
 ```tsx
-import { useTranslation } from 'react-i18next'
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 
 function MyComponent() {
-  const { t } = useTranslation()
-  return <h1>{t('myFeature.title')}</h1>
+  const { _ } = useLingui();
+  return <h1>{_(msg`My Feature Title`)}</h1>;
 }
 ```
 
 ### Non-React Contexts
 
 ```typescript
-import i18n from '@/i18n/config'
+import { msg } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
 
-const t = i18n.t.bind(i18n)
-console.log(t('someKey'))
+const _ = i18n._.bind(i18n);
+console.log(_(msg`Some message`));
 ```
+
+### Interpolation
+
+```typescript
+const userName = 'Alice';
+_(msg`Hello, ${userName}!`);
+```
+
+### Plurals
+
+```typescript
+import { plural } from '@lingui/core/macro';
+
+_(msg`You have ${plural(count, {
+  one: '# item',
+  other: '# items'
+})} in your cart`);
+```
+
+## Extraction Workflow
+
+### Step 1: Add Messages to Code
+
+```typescript
+// Use msg macro anywhere you need messages
+_(msg`New Feature String`);
+```
+
+### Step 2: Extract Messages
+
+```bash
+bun run i18n:extract
+```
+
+This creates/updates PO files with your new messages:
+
+```
+Catalog statistics for src/locales/{locale}/messages:
+┌─────────────┬─────────────┬─────────┐
+│ Language    │ Total count │ Missing │
+├─────────────┼─────────────┼─────────┤
+│ en (source) │     97      │    -    │
+│ zh-CN       │     97      │    1    │  ← Translate this!
+│ ja          │     97      │    0    │
+└─────────────┴─────────────┴─────────┘
+```
+
+### Step 3: Translate
+
+Open `src/locales/zh-CN/messages.po` and translate missing strings:
+
+```po
+msgid "New Feature String"
+msgstr "新功能字符串"
+```
+
+### Step 4: Compile
+
+```bash
+bun run i18n:compile
+```
+
+This compiles PO files to TypeScript for runtime use.
 
 ## RTL Support
 
-Arabic locale (ar) automatically:
+RTL languages automatically:
 
-- Sets `dir="rtl"` on HTML element
-- Updates CSS logical properties support via Tailwind
-- Flips layout direction
+- Set `dir="rtl"` on HTML element
+- Update CSS logical properties support via Tailwind
+- Flip layout direction
 
-## Future Considerations: Lingui Migration
+### CSS Logical Properties
 
-The project considered migrating to **Lingui** with SWC compiler, but deferred due to incomplete research.
+Use logical properties instead of physical ones:
 
-### Potential Benefits
+| Physical (avoid) | Logical (use)                   |
+| ---------------- | ------------------------------- |
+| `text-left`      | `text-start`                    |
+| `pl-4`           | `ps-4` (padding-inline-start)   |
+| `mr-2`           | `me-2` (margin-inline-end)      |
+| `border-l`       | `border-s` (border-inline-start)|
 
-- **Compile-time translations** - Extract strings at build time
-- **SWC compiler** - Faster than Babel
-- **Type-safe keys** - No runtime string typos
-- **Plural ICU format** - Built-in pluralization
+## Adding a New Language
 
-### Migration Threshold
+### Step 1: Update lingui.config.ts
 
-Lingui migration will be revisited when:
+```typescript
+export default defineConfig({
+  locales: ['en', 'zh-CN', 'zh-TW', 'ja', 'ko', 'es'], // Add new locale
+  // ...
+});
+```
 
-- Complete research on SWC integration is available
-- Performance profiling indicates need for compile-time optimization
-- Production requirements demand advanced pluralization
+### Step 2: Extract
 
-### Migration Plan (Future)
+```bash
+bun run i18n:extract
+```
 
-1. Install Lingui packages
-2. Configure Vite plugin with SWC
-3. Extract existing translations
-4. Update all `t()` calls to Lingui macro
-5. Set up build-time extraction
-6. Test locale switching and RTL support
+This creates the new locale directory with a PO file.
 
-## Recommendations
+### Step 3: Translate
 
-**Current approach (react-i18next) is recommended for most projects because:**
+Translate all messages in `src/locales/es/messages.po`.
 
-- ✅ Works perfectly out of the box
-- ✅ No build complexity
-- ✅ Easy for contributors to learn
-- ✅ Excellent documentation
-- ✅ Production-ready
+### Step 4: Compile
 
-**Consider Lingui migration when:**
+```bash
+bun run i18n:compile
+```
 
-- 📎 You need compile-time translation extraction
-- 📎 Type safety is a hard requirement
-- 📎 You have 10+ locales with complex pluralization
-- 📎 Build performance is becoming a bottleneck
+### Step 5: Update Available Languages
+
+Update `/src/i18n/config.ts`:
+
+```typescript
+export const availableLanguages = ['en', 'zh-CN', 'zh-TW', 'ja', 'ko', 'es'];
+```
+
+### Add RTL Support (if applicable)
+
+If the language is RTL, add it to the `rtlLanguages` array in `config.ts`:
+
+```typescript
+const rtlLanguages = ['he', 'fa', 'ur', 'ar'];
+```
+
+## Best Practices
+
+1. **Use source text as keys**: `_(msg`Save Changes`)` is better than string IDs
+2. **Extract regularly**: Run `bun run i18n:extract` after adding new messages
+3. **Translate before compiling**: Ensure all PO files are translated before `bun run i18n:compile`
+4. **Use ICU MessageFormat**: Leverage pluralization, select, and other features
+5. **Keep messages complete**: Translators need full context in the source text
+6. **Use logical properties**: Always use `text-start`, `ps-*`, `me-*` etc. for RTL support
+
+## Test File Limitations
+
+Bun's test runner doesn't process Lingui macros. Use helper functions in test files:
+
+```typescript
+// Test files ONLY
+import type { MessageDescriptor } from '@lingui/core';
+
+const createMsgDescriptor = (text: string): MessageDescriptor => ({
+  id: text,
+  message: text,
+});
+
+// Use in tests
+const mockCommand: AppCommand = {
+  id: 'test-command',
+  label: createMsgDescriptor('Test Command'), // ✅ Works in tests
+  // label: msg`Test Command`,                // ❌ Breaks in Bun tests
+};
+```
+
+## Troubleshooting
+
+### Messages Not Appearing
+
+1. Did you run `bun run i18n:extract`?
+2. Did you run `bun run i18n:compile`?
+3. Check console for message extraction warnings
+
+### Missing Translations
+
+1. Check `bun run i18n:extract` output for "Missing" counts
+2. Translate strings in the PO file
+3. Run `bun run i18n:compile`
+
+### RTL Not Working
+
+1. Check language is in `rtlLanguages` array in `config.ts`
+2. Verify `document.documentElement.dir` updates
+3. Use CSS logical properties (`text-start`, not `text-left`)
+
+## Migration from react-i18next
+
+The project has fully migrated from react-i18next to Lingui. The old `i18n-patterns.md` documented Lingui patterns while `i18n-strategy.md` (this file) incorrectly still referenced react-i18next. This has now been corrected.
 
 ## References
 
-- [react-i18next Documentation](https://react.i18next.com)
-- [i18next Documentation](https://www.i18next.com)
 - [Lingui Documentation](https://lingui.dev)
+- [ICU MessageFormat](https://unicode-org.github.io/icu/userguide/format_parse/messages/)
+- [gettext PO Format](https://www.gnu.org/software/gettext/manual/html_node/PO-Files.html)

@@ -5,10 +5,10 @@ Testing patterns for Rust and TypeScript, with focus on Tauri-specific mocking.
 ## Running Tests
 
 ```bash
-npm run check:all      # All tests and checks
-npm run test           # TypeScript tests (watch mode)
-npm run test:run       # TypeScript tests (single run)
-npm run rust:test      # Rust tests
+bun run check:all      # All tests and checks
+bun run test           # TypeScript tests (watch mode)
+bun run test:run       # TypeScript tests (single run)
+bun run rust:test      # Rust tests
 ```
 
 ## TypeScript Testing
@@ -30,33 +30,33 @@ Tauri commands must be mocked since tests run outside the Tauri environment. Moc
 
 ```typescript
 // src/test/setup.ts
-import { vi } from 'vitest'
+import { vi } from "vitest"
 
 // Mock Tauri event APIs
-vi.mock('@tauri-apps/api/event', () => ({
+vi.mock("@tauri-apps/api/event", () => ({
   listen: vi.fn().mockResolvedValue(() => {}),
 }))
 
-vi.mock('@tauri-apps/plugin-updater', () => ({
+vi.mock("@tauri-apps/plugin-updater", () => ({
   check: vi.fn().mockResolvedValue(null),
 }))
 
 // Mock typed Tauri bindings (tauri-specta generated)
-vi.mock('@/lib/tauri-bindings', () => ({
+vi.mock("@/lib/tauri-bindings", () => ({
   commands: {
-    greet: vi.fn().mockResolvedValue('Hello, test!'),
+    greet: vi.fn().mockResolvedValue("Hello, test!"),
     loadPreferences: vi
       .fn()
-      .mockResolvedValue({ status: 'ok', data: { theme: 'system' } }),
-    savePreferences: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
+      .mockResolvedValue({ status: "ok", data: { theme: "system" } }),
+    savePreferences: vi.fn().mockResolvedValue({ status: "ok", data: null }),
     sendNativeNotification: vi
       .fn()
-      .mockResolvedValue({ status: 'ok', data: null }),
-    saveEmergencyData: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
-    loadEmergencyData: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
+      .mockResolvedValue({ status: "ok", data: null }),
+    saveEmergencyData: vi.fn().mockResolvedValue({ status: "ok", data: null }),
+    loadEmergencyData: vi.fn().mockResolvedValue({ status: "ok", data: null }),
     cleanupOldRecoveryFiles: vi
       .fn()
-      .mockResolvedValue({ status: 'ok', data: 0 }),
+      .mockResolvedValue({ status: "ok", data: 0 }),
   },
 }))
 ```
@@ -64,15 +64,15 @@ vi.mock('@/lib/tauri-bindings', () => ({
 ### Testing with Mocked Commands
 
 ```typescript
-import { vi } from 'vitest'
-import { commands } from '@/lib/tauri-bindings'
+import { vi } from "vitest"
+import { commands } from "@/lib/tauri-bindings"
 
 const mockCommands = vi.mocked(commands)
 
-test('loads preferences', async () => {
+test("loads preferences", async () => {
   mockCommands.loadPreferences.mockResolvedValue({
-    status: 'ok',
-    data: { theme: 'dark' },
+    status: "ok",
+    data: { theme: "dark" },
   })
 
   // Test code that calls loadPreferences
@@ -125,10 +125,10 @@ test('component with query', () => {
 ### Testing Zustand Stores
 
 ```typescript
-import { renderHook, act } from '@testing-library/react'
-import { useUIStore } from '@/store/ui-store'
+import { renderHook, act } from "@testing-library/react"
+import { useUIStore } from "@/store/ui-store"
 
-test('toggles sidebar visibility', () => {
+test("toggles sidebar visibility", () => {
   const { result } = renderHook(() => useUIStore())
 
   expect(result.current.leftSidebarVisible).toBe(true)
@@ -194,10 +194,10 @@ fn test_file_operations() {
 When adding new Tauri commands, update `src/test/setup.ts`:
 
 ```typescript
-vi.mock('@/lib/tauri-bindings', () => ({
+vi.mock("@/lib/tauri-bindings", () => ({
   commands: {
     // ... existing mocks
-    myNewCommand: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
+    myNewCommand: vi.fn().mockResolvedValue({ status: "ok", data: null }),
   },
 }))
 ```

@@ -8,7 +8,7 @@ This app uses [Lingui](https://lingui.dev/) for internationalization. All user-f
 
 - **Lingui**: Modern i18n library with compile-time extraction, ICU MessageFormat, and 25x smaller bundle than react-i18next
 - **PO translation files**: Standard gettext Portable Object format in `/src/locales/{locale}/`
-- **Source text as keys**: Use actual text as keys (`t\`Save Changes``) instead of string IDs
+- **Source text as keys**: Use actual text as keys (`_(msg`Save Changes`)`) instead of string IDs
 - **JavaScript-based native menus**: Menus are built from JavaScript to use the same translation system
 - **RTL support**: CSS uses logical properties for automatic RTL layout
 
@@ -19,18 +19,22 @@ This app uses [Lingui](https://lingui.dev/) for internationalization. All user-f
 ├── en/
 │   ├── messages.po       # English translations (source)
 │   └── messages.ts       # Compiled messages for runtime
-├── ar/
-│   ├── messages.po       # Arabic translations (RTL)
+├── zh-CN/
+│   ├── messages.po       # Chinese Simplified translations
 │   └── messages.ts
-├── fr/
-│   ├── messages.po       # French translations
+├── zh-TW/
+│   ├── messages.po       # Chinese Traditional translations
 │   └── messages.ts
+├── ja/
+│   ├── messages.po       # Japanese translations
+│   └── messages.ts
+└── ko/
+    ├── messages.po       # Korean translations
+    └── messages.ts
 
 /src/i18n/
 ├── config.ts            # Lingui i18n configuration
 ├── language-init.ts     # System locale detection
-├── compat.ts            # Legacy i18next compatibility layer
-├── react.ts             # useTranslation() compatibility wrapper
 └── index.ts             # Exports
 
 lingui.config.ts          # Lingui CLI configuration
@@ -41,27 +45,27 @@ lingui.config.ts          # Lingui CLI configuration
 ### Adding Translatable Strings
 
 ```typescript
-import { t } from '@lingui/core/macro'
-import { useLingui } from '@lingui/react'
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 
 function MyComponent() {
-  const { i18n } = useLingui()
+  const { _ } = useLingui();
 
   return (
     <div>
-      <h1>{t(i18n)`My Feature`}</h1>
-      <p>{t(i18n)`This is my feature description`}</p>
-      <button>{t(i18n)`Save Changes`}</button>
+      <h1>{_(msg`My Feature`)}</h1>
+      <p>{_(msg`This is my feature description`)}</p>
+      <button>{_(msg`Save Changes`)}</button>
     </div>
-  )
+  );
 }
 ```
 
 ### Extracting Messages
 
 ```bash
-npm run i18n:extract  # Extract messages to PO files
-npm run i18n:compile  # Compile PO files to TS for runtime
+bun run i18n:extract  # Extract messages to PO files
+bun run i18n:compile  # Compile PO files to TS for runtime
 ```
 
 The extraction automatically creates/updates PO files with your messages. Translate them in the `.po` files, then compile.
@@ -74,65 +78,64 @@ Lingui uses **source text** as keys, not pre-defined IDs. Translation keys in PO
 
 ```typescript
 // Component code
-t(i18n)`Save Changes`
+_(msg`Save Changes`)
 ```
 
 ```po
 # messages.po
 msgid "Save Changes"
-msgstr "حفظ التغييرات"
+msgstr "保存更改"
 ```
 
 ### Key Generation
 
-| Source Text                  | PO msgid                     |
-| ---------------------------- | ---------------------------- |
-| `t\`Save Changes\``          | `Save Changes`               |
-| `t\`preferences.title\``     | `preferences.title` (legacy) |
-| `t(i18n)\`About {appName}\`` | `About {appName}`            |
+| Source Text                     | PO msgid                     |
+| ------------------------------- | ---------------------------- |
+| `_(msg`Save Changes`)`          | `Save Changes`               |
+| `_(msg`About ${appName}`)`      | `About {appName}`            |
 
 ## Message Types
 
 ### Static Text
 
 ```typescript
-t(i18n)`Hello World`
+_(msg`Hello World`)
 ```
 
 ### Interpolation (ICU MessageFormat)
 
 ```typescript
 // In component
-t(i18n)`About ${appName}`
+_(msg`About ${appName}`)
 
 // In PO file
 msgid "About {appName}"
-msgstr "عن {appName}"
+msgstr "关于 {appName}"
 ```
 
 ### Plurals
 
 ```typescript
-import { plural } from '@lingui/core/macro'
+import { plural } from '@lingui/core/macro';
 
 function ItemCount({ count }: { count: number }) {
-  const { i18n } = useLingui()
+  const { _ } = useLingui();
 
   return (
     <p>
-      {t(i18n)`You have ${plural(count, {
+      {_(msg`You have ${plural(count, {
         one: '# item',
         other: '# items'
-      })} in your cart`}
+      })} in your cart`)}
     </p>
-  )
+  );
 }
 ```
 
 ### Rich Text with JSX
 
 ```typescript
-import { Trans } from '@lingui/react/macro'
+import { Trans } from '@lingui/react/macro';
 
 <Trans>
   Hello <strong>{name}</strong>, you have <Count count={5} /> messages
@@ -144,14 +147,14 @@ import { Trans } from '@lingui/react/macro'
 ### Step 1: Add Messages to Code
 
 ```typescript
-// Use t macro anywhere you need messages
-t(i18n)`New Feature String`
+// Use msg macro anywhere you need messages
+_(msg`New Feature String`)
 ```
 
 ### Step 2: Extract Messages
 
 ```bash
-npm run i18n:extract
+bun run i18n:extract
 ```
 
 This creates/updates PO files with your new messages:
@@ -162,24 +165,24 @@ Catalog statistics for src/locales/{locale}/messages:
 │ Language    │ Total count │ Missing │
 ├─────────────┼─────────────┼─────────┤
 │ en (source) │     97      │    -    │
-│ ar          │     97      │    1    │  ← Translate this!
-│ fr          │     97      │    0    │
+│ zh-CN       │     97      │    1    │  ← Translate this!
+│ ja          │     97      │    0    │
 └─────────────┴─────────────┴─────────┘
 ```
 
 ### Step 3: Translate
 
-Open `src/locales/ar/messages.po` and translate missing strings:
+Open `src/locales/zh-CN/messages.po` and translate missing strings:
 
 ```po
 msgid "New Feature String"
-msgstr "سلسلة ميزة جديدة"
+msgstr "新功能字符串"
 ```
 
 ### Step 4: Compile
 
 ```bash
-npm run i18n:compile
+bun run i18n:compile
 ```
 
 This compiles PO files to TypeScript for runtime use.
@@ -191,15 +194,15 @@ This compiles PO files to TypeScript for runtime use.
 ```typescript
 export default defineConfig({
   sourceLocale: 'en',
-  locales: ['en', 'ar', 'fr', 'es'], // Add new locale
+  locales: ['en', 'zh-CN', 'zh-TW', 'ja', 'ko', 'es'], // Add new locale
   // ...
-})
+});
 ```
 
 ### Step 2: Extract
 
 ```bash
-npm run i18n:extract
+bun run i18n:extract
 ```
 
 This creates the new locale directory with a PO file.
@@ -211,7 +214,7 @@ Translate all messages in `src/locales/es/messages.po`.
 ### Step 4: Compile
 
 ```bash
-npm run i18n:compile
+bun run i18n:compile
 ```
 
 ### Step 5: Update Available Languages
@@ -219,7 +222,7 @@ npm run i18n:compile
 Update `/src/i18n/config.ts`:
 
 ```typescript
-export const availableLanguages = ['en', 'ar', 'fr', 'es']
+export const availableLanguages = ['en', 'zh-CN', 'zh-TW', 'ja', 'ko', 'es'];
 ```
 
 ### Add RTL Support (if applicable)
@@ -227,7 +230,7 @@ export const availableLanguages = ['en', 'ar', 'fr', 'es']
 If the language is RTL, add it to the `rtlLanguages` array in `config.ts`:
 
 ```typescript
-const rtlLanguages = ['ar', 'he', 'fa', 'ur', 'es'] // if Spanish is RTL
+const rtlLanguages = ['he', 'fa', 'ur', 'ar'];
 ```
 
 ## RTL Language Support
@@ -239,9 +242,9 @@ The i18n config automatically updates `document.documentElement.dir` when the la
 ```typescript
 // In /src/i18n/config.ts
 function onLocaleChange(locale: string) {
-  const dir = rtlLanguages.includes(locale) ? 'rtl' : 'ltr'
-  document.documentElement.dir = dir
-  document.documentElement.lang = locale
+  const dir = rtlLanguages.includes(locale) ? 'rtl' : 'ltr';
+  document.documentElement.dir = dir;
+  document.documentElement.lang = locale;
 }
 ```
 
@@ -276,19 +279,20 @@ Use CSS logical properties instead of physical properties for automatic RTL supp
 
 Native menus are built from JavaScript to use the same i18n system.
 
-### Using Compatibility Layer
+### Using Lingui in Menus
 
 ```typescript
-import { i18nCompat } from '@/i18n'
+import { msg } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
 
 export async function buildAppMenu(): Promise<Menu> {
-  const { t } = i18nCompat
+  const _ = i18n._.bind(i18n);
 
   const myItem = await MenuItem.new({
     id: 'my-action',
-    text: t('menu.myAction'),
+    text: _(msg`My Action`),
     action: handleMyAction,
-  })
+  });
 
   // ... add to submenu
 }
@@ -298,12 +302,15 @@ export async function buildAppMenu(): Promise<Menu> {
 
 ```typescript
 // In /src/lib/menu.ts
-export function setupMenuLanguageListener(): void {
-  const { t } = i18nCompat
+export function setupMenuLanguageListener(): () => void {
+  const handler = async () => {
+    await buildAppMenu();
+  };
 
-  i18nCompat.on('languageChanged', async () => {
-    await buildAppMenu()
-  })
+  const unsubscribe = i18n.on('change', handler);
+  return () => {
+    if (unsubscribe) unsubscribe();
+  };
 }
 ```
 
@@ -322,14 +329,13 @@ See `/src/i18n/language-init.ts` for the implementation.
 The language selector in Preferences > Appearance allows users to change the language:
 
 ```typescript
-import { availableLanguages } from '@/i18n/config'
-import { loadAndActivate } from '@/i18n/config'
+import { availableLanguages, loadAndActivate } from '@/i18n/config';
 
 function LanguageSelector() {
   const handleChange = async (lang: string) => {
-    await loadAndActivate(lang)
+    await loadAndActivate(lang);
     // Save to preferences...
-  }
+  };
 
   return (
     <Select value={currentLanguage} onValueChange={handleChange}>
@@ -339,94 +345,37 @@ function LanguageSelector() {
         </SelectItem>
       ))}
     </Select>
-  )
+  );
 }
 ```
 
 ## React Components
-
-### useTranslation() Compatibility
-
-Existing code using `useTranslation()` continues to work via compatibility layer:
-
-```typescript
-import { useTranslation } from '@/i18n/react'
-
-function MyComponent() {
-  const { t } = useTranslation()
-  return <h1>{t('preferences.title')}</h1>
-}
-```
 
 ### Native Lingui Approach (Recommended)
 
 For new code, use Lingui's native API:
 
 ```typescript
-import { t } from '@lingui/core/macro'
-import { useLingui } from '@lingui/react'
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
 
 function MyComponent() {
-  const { i18n } = useLingui()
-  return <h1>{t(i18n)`Preferences`}</h1>
+  const { _ } = useLingui();
+  return <h1>{_(msg`Preferences`)}</h1>;
 }
 ```
 
 ## Using Translations Outside React
 
-### Compatibility Layer
-
-For non-React contexts, use the compatibility layer:
-
-```typescript
-import { i18nCompat } from '@/i18n'
-
-const { t } = i18nCompat
-const text = t('menu.about', { appName: 'My App' })
-```
-
 ### Native Lingui
 
 ```typescript
-import { msg } from '@lingui/core/macro'
-import { i18n } from '@lingui/core'
+import { msg } from '@lingui/core/macro';
+import { i18n } from '@lingui/core';
 
-const aboutMessage = msg`About {appName}`
-const _ = i18n._
-const text = _(aboutMessage, { appName: 'My App' })
-```
-
-## Migration from react-i18next
-
-### Existing Code
-
-No changes needed - the compatibility layer (`src/i18n/react.ts` and `src/i18n/compat.ts`) ensures existing i18next code continues to work.
-
-### New Features
-
-For new features, use Lingui's native approach:
-
-- Use `t\`source text\``instead of`t('key')`
-- Use ICU MessageFormat for interpolation: `{variable}`
-- Use `plural()` macro for pluralization
-- Extract messages with `npm run i18n:extract`
-
-### Gradual Migration
-
-Migrate incrementally by converting components to use Lingui macros when convenient:
-
-```diff
-- import { useTranslation } from 'react-i18next'
-+ import { t } from '@lingui/core/macro'
-+ import { useLingui } from '@lingui/react'
-
-function MyComponent() {
--  const { t } = useTranslation()
-+  const { i18n } = useLingui()
-
--  return <h1>{t('preferences.title')}</h1>
-+  return <h1>{t(i18n)`Preferences`}</h1>
-}
+const aboutMessage = msg`About ${appName}`;
+const _ = i18n._.bind(i18n);
+const text = _(aboutMessage, { appName: 'My App' });
 ```
 
 ## ICU MessageFormat Reference
@@ -436,7 +385,7 @@ Lingui uses ICU MessageFormat for advanced formatting features.
 ### Variables
 
 ```typescript
-t(i18n)`Hello ${name}`
+_(msg`Hello ${name}`)
 ```
 
 ### Plurals
@@ -474,15 +423,36 @@ ordinal(position, {
 To test RTL layout:
 
 1. Open Preferences > Appearance
-2. Change language to Arabic (ar)
+2. Change language to an RTL language (e.g., Hebrew, Persian, Urdu, Arabic)
 3. Verify layout mirrors correctly
 4. Check all text alignment uses logical properties
 
+## Test File Limitations
+
+Bun's test runner doesn't process Lingui macros. Use helper functions in test files:
+
+```typescript
+// Test files ONLY
+import type { MessageDescriptor } from '@lingui/core';
+
+const createMsgDescriptor = (text: string): MessageDescriptor => ({
+  id: text,
+  message: text,
+});
+
+// Use in tests
+const mockCommand: AppCommand = {
+  id: 'test-command',
+  label: createMsgDescriptor('Test Command'), // ✅ Works in tests
+  // label: msg`Test Command`,                // ❌ Breaks in Bun tests
+};
+```
+
 ## Best Practices
 
-1. **Use source text as keys**: `t\`Save Changes\``is better than`t('saveButton')`
-2. **Extract regularly**: Run `npm run i18n:extract` after adding new messages
-3. **Translate before compiling**: Ensure all PO files are translated before `npm run i18n:compile`
+1. **Use source text as keys**: `_(msg`Save Changes`)` is better than string IDs
+2. **Extract regularly**: Run `bun run i18n:extract` after adding new messages
+3. **Translate before compiling**: Ensure all PO files are translated before `bun run i18n:compile`
 4. **Use ICU MessageFormat**: Leverage pluralization, select, and other features
 5. **Keep messages complete**: Translators need full context in the source text
 6. **Use logical properties**: Always use `text-start`, `ps-*`, `me-*` etc. for RTL support
@@ -491,15 +461,15 @@ To test RTL layout:
 
 ### Messages Not Appearing
 
-1. Did you run `npm run i18n:extract`?
-2. Did you run `npm run i18n:compile`?
+1. Did you run `bun run i18n:extract`?
+2. Did you run `bun run i18n:compile`?
 3. Check console for message extraction warnings
 
 ### Missing Translations
 
-1. Check `npm run i18n:extract` output for "Missing" counts
+1. Check `bun run i18n:extract` output for "Missing" counts
 2. Translate strings in the PO file
-3. Run `npm run i18n:compile`
+3. Run `bun run i18n:compile`
 
 ### RTL Not Working
 

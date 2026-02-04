@@ -80,13 +80,13 @@ Native context menus using the built-in Tauri Menu API (no plugin required).
 **Usage** (`src/lib/context-menu.ts`):
 
 ```typescript
-import { showContextMenu, showEditContextMenu } from '@/lib/context-menu'
+import { showContextMenu, showEditContextMenu } from "@/lib/context-menu"
 
 // Custom menu
 await showContextMenu([
-  { id: 'copy', label: 'Copy', accelerator: 'CmdOrCtrl+C', action: handleCopy },
-  { type: 'separator' },
-  { id: 'delete', label: 'Delete', action: handleDelete },
+  { id: "copy", label: "Copy", accelerator: "CmdOrCtrl+C", action: handleCopy },
+  { type: "separator" },
+  { id: "delete", label: "Delete", action: handleDelete },
 ])
 
 // Standard edit menu (Cut, Copy, Paste, Select All)
@@ -101,26 +101,26 @@ await showTextInputContextMenu()
 Native file open/save dialogs and message boxes.
 
 ```typescript
-import { open, save, message, ask, confirm } from '@tauri-apps/plugin-dialog'
+import { open, save, message, ask, confirm } from "@tauri-apps/plugin-dialog"
 
 // Open file dialog
 const file = await open({
   multiple: false,
-  filters: [{ name: 'Text', extensions: ['txt', 'md'] }],
+  filters: [{ name: "Text", extensions: ["txt", "md"] }],
 })
 
 // Save dialog
 const path = await save({
-  defaultPath: 'document.txt',
+  defaultPath: "document.txt",
 })
 
 // Message box
-await message('Operation complete!', { title: 'Success', kind: 'info' })
+await message("Operation complete!", { title: "Success", kind: "info" })
 
 // Confirmation dialog
-const confirmed = await confirm('Are you sure?', {
-  title: 'Confirm',
-  kind: 'warning',
+const confirmed = await confirm("Are you sure?", {
+  title: "Confirm",
+  kind: "warning",
 })
 ```
 
@@ -129,19 +129,19 @@ const confirmed = await confirm('Are you sure?', {
 System notifications.
 
 ```typescript
-import { sendNotification } from '@tauri-apps/plugin-notification'
+import { sendNotification } from "@tauri-apps/plugin-notification"
 
 sendNotification({
-  title: 'Download Complete',
-  body: 'Your file has been downloaded.',
+  title: "Download Complete",
+  body: "Your file has been downloaded.",
 })
 ```
 
 Or use the typed command:
 
 ```typescript
-import { commands } from '@/lib/tauri-bindings'
-await commands.sendNativeNotification('Title', 'Body text')
+import { commands } from "@/lib/tauri-bindings"
+await commands.sendNativeNotification("Title", "Body text")
 ```
 
 ### Clipboard
@@ -149,9 +149,9 @@ await commands.sendNativeNotification('Title', 'Body text')
 Read/write system clipboard.
 
 ```typescript
-import { writeText, readText } from '@tauri-apps/plugin-clipboard-manager'
+import { writeText, readText } from "@tauri-apps/plugin-clipboard-manager"
 
-await writeText('Hello, clipboard!')
+await writeText("Hello, clipboard!")
 const text = await readText()
 ```
 
@@ -160,13 +160,13 @@ const text = await readText()
 Open files/URLs with the default system application.
 
 ```typescript
-import { openUrl, openPath } from '@tauri-apps/plugin-opener'
+import { openUrl, openPath } from "@tauri-apps/plugin-opener"
 
 // Open URL in default browser
-await openUrl('https://example.com')
+await openUrl("https://example.com")
 
 // Open file with default app
-await openPath('/path/to/document.pdf')
+await openPath("/path/to/document.pdf")
 ```
 
 ## Built-in Features (No Plugin Needed)
@@ -200,7 +200,7 @@ These plugins aren't included by default but are commonly needed:
 1. **Install via CLI**:
 
    ```bash
-   npm run tauri add PLUGIN_NAME
+   bun run tauri add PLUGIN_NAME
    ```
 
 2. **Check placement** in `lib.rs`:

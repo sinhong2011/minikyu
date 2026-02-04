@@ -311,7 +311,7 @@ If the tray icon doesn't appear in the macOS menu bar:
 1. **Check the logs**: Look for tray initialization messages in Console.app or terminal output
    ```bash
    # View recent logs
-   log show --predicate 'process == "tauri-app"' --last 5m
+   log show --predicate 'process == "Minikyu"' --last 5m
    ```
 
 2. **Verify icon file exists**:
@@ -336,7 +336,7 @@ If the tray icon doesn't appear in the macOS menu bar:
 
 6. **Verify preferences**: Ensure `show_tray_icon` is `true` in preferences
    ```bash
-   cat ~/Library/Application\ Support/com.tauri-app.app/preferences.json
+   cat ~/Library/Application\ Support/com.minikyu.app/preferences.json
    ```
 
 7. **Restart the app**: Sometimes macOS needs a restart to show the tray icon

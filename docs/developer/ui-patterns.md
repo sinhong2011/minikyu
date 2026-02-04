@@ -17,18 +17,18 @@ Tailwind v4 uses CSS-based configuration instead of `tailwind.config.js`.
 
 ```
 src/
-├── App.css              # Main window styles + Tailwind imports
+├── style.css              # Main window styles + Tailwind imports
 ├── quick-pane.css       # Quick pane window styles
 └── theme-variables.css  # Shared theme variables (colors, radii)
 ```
 
-**Multi-window theming**: `theme-variables.css` is imported by both `App.css` and `quick-pane.css` so all windows share the same theme tokens. When adding new color variables, add them to `theme-variables.css`.
+**Multi-window theming**: `theme-variables.css` is imported by both `style.css` and `quick-pane.css` so all windows share the same theme tokens. When adding new color variables, add them to `theme-variables.css`.
 
 ### Structure
 
 ```css
-@import 'tailwindcss'; /* Core Tailwind */
-@import 'tw-animate-css'; /* Animation utilities */
+@import "tailwindcss"; /* Core Tailwind */
+@import "tw-animate-css"; /* Animation utilities */
 
 @custom-variant dark (&:is(.dark *)); /* Dark mode variant */
 
@@ -106,12 +106,12 @@ Then use with Tailwind: `bg-success text-success-foreground`
 
 ```tsx
 // Access theme in components
-import { useTheme } from '@/hooks/use-theme'
+import { useTheme } from "@/hooks/use-theme"
 
 function MyComponent() {
   const { theme, setTheme } = useTheme()
 
-  return <button onClick={() => setTheme('dark')}>Current: {theme}</button>
+  return <button onClick={() => setTheme("dark")}>Current: {theme}</button>
 }
 ```
 
@@ -167,7 +167,7 @@ body {
 
 input,
 textarea,
-[contenteditable='true'] {
+[contenteditable="true"] {
   user-select: text !important; /* Enable in editable areas */
 }
 ```
@@ -262,12 +262,12 @@ shadcn components are yours to modify. Common customizations:
 
 ```tsx
 // src/components/ui/button.tsx
-const buttonVariants = cva('...', {
+const buttonVariants = cva("...", {
   variants: {
     variant: {
-      default: 'bg-primary text-primary-foreground',
+      default: "bg-primary text-primary-foreground",
       // Add custom variant
-      success: 'bg-success text-success-foreground',
+      success: "bg-success text-success-foreground",
     },
   },
 })
@@ -277,20 +277,183 @@ const buttonVariants = cva('...', {
 
 This app includes commonly needed components. Run `npx shadcn@latest add [component]` to add more from [ui.shadcn.com](https://ui.shadcn.com/docs/components).
 
+## animate-ui Components
+
+**Priority:** Always use animate-ui components first when building animated UI elements.
+
+### Overview
+
+The app includes a custom component library built with motion/react (Framer Motion) that provides smooth, performant animations for common UI patterns. These components should be preferred over shadcn/ui or other alternatives when animation is needed.
+
+### Component Structure
+
+```
+src/components/animate-ui/
+├── primitives/           # Core animated primitives
+│   ├── animate/          # Motion-based primitives
+│   │   ├── slot.tsx     # Slot pattern for composition
+│   │   ├── tabs.tsx     # Animated tabs with highlight
+│   │   └── tooltip.tsx  # Animated tooltips with floating UI
+│   └── effects/          # Animation effects
+│       └── highlight.tsx # Highlight/glow effects
+└── components/          # Styled versions of primitives
+    └── animate/
+        ├── tabs.tsx     # Styled tabs with theme integration
+        └── tooltip.tsx  # Styled tooltips with theme integration
+```
+
+### Key Features
+
+#### Slot Pattern
+
+The [`Slot`](src/components/animate-ui/primitives/animate/slot.tsx:56) component enables flexible composition via the `asChild` prop:
+
+```tsx
+import { Slot } from '@/components/animate-ui/primitives/animate/slot'
+
+// Render as child element
+<Slot asChild>
+  <button className="custom-styles">Click me</button>
+</Slot>
+
+// Or use directly in components that support asChild
+<TabsTrigger asChild>
+  <button>Tab 1</button>
+</TabsTrigger>
+```
+
+#### Animated Tabs
+
+[`Tabs`](src/components/animate-ui/components/base/tabs.tsx:19) component with smooth transitions based on Base UI:
+
+```tsx
+import {
+  Tabs,
+  TabsList,
+  TabsTab,
+  TabsPanel,
+} from "@/components/animate-ui/components/base/tabs"
+
+function MyTabs() {
+  return (
+    <Tabs defaultValue="tab1">
+      <TabsList>
+        <TabsTab value="tab1">Tab 1</TabsTab>
+        <TabsTab value="tab2">Tab 2</TabsTab>
+      </TabsList>
+      <TabsPanel value="tab1">Content 1</TabsPanel>
+      <TabsPanel value="tab2">Content 2</TabsPanel>
+    </Tabs>
+  )
+}
+```
+
+**Features:**
+
+- Built on Base UI for accessibility and keyboard navigation
+- Highlight effect that follows active tab with smooth spring animation
+- Blur and fade transition between tabs
+- Controlled and uncontrolled modes
+- Type-safe props
+- Optional auto-height animations via `TabsPanels` wrapper
+
+#### Animated Tooltips
+
+[`Tooltip`](src/components/animate-ui/primitives/animate/tooltip.tsx:347) with floating UI positioning:
+
+```tsx
+import {
+  Tooltip,
+  TooltipTrigger,
+  TooltipContent,
+  TooltipProvider,
+} from "@/components/animate-ui/components/animate/tooltip"
+
+function MyComponent() {
+  return (
+    <TooltipProvider>
+      <Tooltip>
+        <TooltipTrigger>
+          <button>Hover me</button>
+        </TooltipTrigger>
+        <TooltipContent>
+          <p>This is a tooltip</p>
+        </TooltipContent>
+      </Tooltip>
+    </TooltipProvider>
+  )
+}
+```
+
+**Features:**
+
+- Floating UI positioning with auto-flip
+- Configurable delay (open/close)
+- Smooth spring animations
+- Keyboard accessible (Escape to close)
+- Portal rendering for z-index isolation
+
+### When to Use animate-ui
+
+**Use animate-ui when:**
+
+- Building animated tabs, tooltips, or similar interactive elements
+- Need smooth transitions between states
+- Want consistent animation patterns across the app
+- Building custom animated components that need the slot pattern
+
+**Use shadcn/ui when:**
+
+- Need static components without animation (buttons, inputs, dialogs)
+- Component doesn't exist in animate-ui
+- Simpler implementation is sufficient
+
+### Customization
+
+Styled components in `src/components/animate-ui/components/animate/` can be customized like shadcn components:
+
+```tsx
+// src/components/animate-ui/components/animate/tabs.tsx
+function TabsTrigger({ className, ...props }: TabsTriggerProps) {
+  return (
+    <TabsTriggerPrimitive
+      className={cn("base-styles", "custom-styles-here", className)}
+      {...props}
+    />
+  )
+}
+```
+
+### Adding New animate-ui Components
+
+When creating new animated components:
+
+1. Create the primitive in `src/components/animate-ui/primitives/animate/`
+2. Create a styled version in `src/components/animate-ui/components/animate/`
+3. Export from the component's index file
+4. Document usage in this file
+
+Follow the existing patterns for:
+
+- Slot composition with `asChild` prop
+- Motion/react animations with spring transitions
+- Type-safe props with TypeScript
+- Theme integration with `cn()` utility
+
 ## The `cn()` Utility
 
 All components use the `cn()` utility for conditional classes:
 
 ```tsx
-import { cn } from '@/lib/utils'
+import { cn } from "@/lib/utils"
 
 function MyComponent({ className, disabled }) {
   return (
     <div
       className={cn(
-        'base-styles here',
-        disabled && 'opacity-50',
-        className // Allow overrides
+        "base-styles here",
+        disabled && "opacity-50",
+        className, // Allow overrides
       )}
     >
       ...
@@ -319,7 +482,7 @@ interface SideBarProps {
 
 export function LeftSideBar({ children, className }: SideBarProps) {
   return (
-    <div className={cn('flex flex-col h-full overflow-hidden', className)}>
+    <div className={cn("flex flex-col h-full overflow-hidden", className)}>
       {children}
     </div>
   )
@@ -332,7 +495,7 @@ For panels that toggle visibility, prefer CSS over conditional rendering:
 
 ```tsx
 // Good: Preserves component state
-;<ResizablePanel className={cn(!visible && 'hidden')}>
+;<ResizablePanel className={cn(!visible && "hidden")}>
   <SideBar />
 </ResizablePanel>
 

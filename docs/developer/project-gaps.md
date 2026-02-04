@@ -39,6 +39,7 @@ These block production use for real applications.
 Desktop apps need tray icons for background operation, quick access, and status indication.
 
 **Implementation Notes:**
+
 - Use `@tauri-apps/api/tray` (Tauri v2)
 - Support all platforms (macOS/Windows/Linux)
 - Add tray menu: Show, Hide, Quit, Preferences
@@ -57,22 +58,24 @@ Desktop apps need tray icons for background operation, quick access, and status 
 
 **Missing Configuration:**
 
-| Item | Current | Required |
-|------|---------|----------|
-| macOS Signing Identity | `-` (ad-hoc) | Developer ID certificate |
-| Windows Signing | None | Code signing certificate |
-| Updater Public Key | `YOUR_UPDATER_PUBLIC_KEY_HERE` | Generated key pair |
-| Update Endpoint | Placeholder URL | Real GitHub releases URL |
-| TAURI_SIGNING_PRIVATE_KEY | Not set | Repository secret |
-| TAURI_SIGNING_PRIVATE_KEY_PASSWORD | Not set | Repository secret |
+| Item                               | Current                        | Required                 |
+| ---------------------------------- | ------------------------------ | ------------------------ |
+| macOS Signing Identity             | `-` (ad-hoc)                   | Developer ID certificate |
+| Windows Signing                    | None                           | Code signing certificate |
+| Updater Public Key                 | `YOUR_UPDATER_PUBLIC_KEY_HERE` | Generated key pair       |
+| Update Endpoint                    | Placeholder URL                | Real GitHub releases URL |
+| TAURI_SIGNING_PRIVATE_KEY          | Not set                        | Repository secret        |
+| TAURI_SIGNING_PRIVATE_KEY_PASSWORD | Not set                        | Repository secret        |
 
 **Why Required:**
+
 - Bypass macOS Gatekeeper warnings
 - Enable auto-updates (requires signed bundles)
 - Windows SmartScreen compatibility
 - Mac App Store submission (if desired)
 
 **Setup Steps:**
+
 1. Generate updater key pair: `bunx tauri signer generate`
 2. Add private key to GitHub Secrets
 3. Update `tauri.conf.json` with public key and endpoint
@@ -91,6 +94,7 @@ Desktop apps need tray icons for background operation, quick access, and status 
 **Effort:** Medium
 
 **Required Content:**
+
 - `docs/userguide/getting-started.md` - Installation, first run
 - `docs/userguide/features.md` - Feature overview
 - `docs/userguide/keyboard-shortcuts.md` - Reference list
@@ -98,6 +102,7 @@ Desktop apps need tray icons for background operation, quick access, and status 
 - `docs/userguide/updating.md` - How updates work
 
 **Style Guide:**
+
 - Target end users, not developers
 - Include screenshots
 - Step-by-step instructions
@@ -116,10 +121,12 @@ Important for quality and maintainability but not blocking.
 **Effort:** Medium-High
 
 **Current Tests:**
+
 - ✅ `resize-panel.spec.ts`
 - ✅ `sidebar.spec.ts`
 
 **Missing Coverage:**
+
 - ⬜ Command palette (Cmd+K) - open, search, select, keyboard nav
 - ⬜ Quick pane (Cmd+Shift+.) - global shortcut, overlay behavior
 - ⬜ Preferences dialog - open, modify, save, persistence
@@ -129,14 +136,15 @@ Important for quality and maintainability but not blocking.
 - ⬜ Cross-platform - verify behavior on macOS/Windows/Linux
 
 **Implementation Pattern:**
+
 ```typescript
 // Use Tauri Playwright integration
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test"
 
-test('command palette opens with Cmd+K', async ({ page }) => {
-  await page.keyboard.press('Meta+k');
-  await expect(page.locator('[role="dialog"]')).toBeVisible();
-});
+test("command palette opens with Cmd+K", async ({ page }) => {
+  await page.keyboard.press("Meta+k")
+  await expect(page.locator('[role="dialog"]')).toBeVisible()
+})
 ```
 
 ---
@@ -186,7 +194,8 @@ jobs:
 ```
 
 **Consider Adding:**
-- Security scanning (cargo-audit, npm audit)
+
+- Security scanning (cargo-audit, bun audit)
 - Bundle size tracking
 - Performance regression tests
 - Dependency update automation (Dependabot)
@@ -196,25 +205,27 @@ jobs:
 ### 6. Error Boundary Robustness
 
 **Status:** ⚠️ Component exists, needs verification  
-**Priority:** Medium  **Effort:** Low-Medium
+**Priority:** Medium **Effort:** Low-Medium
 
 **Verify Coverage:**
+
 - ✅ Global error boundary in `App.tsx`
 - ⬜ Route-level error boundaries (TanStack Router)
 - ⬜ Component-level error boundaries for critical UI
 - ⬜ Error reporting integration (Sentry, etc.)
 
 **Pattern to Follow:**
+
 ```typescript
 // src/components/ErrorBoundary.tsx
 export class ErrorBoundary extends React.Component {
   static getDerivedStateFromError(error: Error) {
-    return { hasError: true, error };
+    return { hasError: true, error }
   }
 
   componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
     // Log to error reporting service
-    logError(error, errorInfo);
+    logError(error, errorInfo)
   }
 }
 ```
@@ -224,17 +235,19 @@ export class ErrorBoundary extends React.Component {
 ### 7. Accessibility Testing
 
 **Status:** 📝 Not assessed  
-**Priority:** Medium  **Effort:** Low-Medium
+**Priority:** Medium **Effort:** Low-Medium
 
 **Why Important:** shadcn/ui components are accessible by default, but custom code may introduce issues.
 
 **Tools:**
+
 - axe DevTools browser extension (manual)
 - `@axe-core/react` (automated in tests)
 - pa11y (CI integration)
 - Manual keyboard navigation testing
 
 **Checklist:**
+
 - [ ] All interactive elements keyboard accessible
 - [ ] Focus indicators visible
 - [ ] ARIA labels on icon-only buttons
@@ -250,14 +263,16 @@ Enhancements for future iterations.
 ### 8. SQLite Database Integration
 
 **Status:** 📝 Mentioned in docs, not implemented  
-**Priority:** Low  **Effort:** High
+**Priority:** Low **Effort:** High
 
 **Use Cases:**
+
 - Local data persistence beyond JSON
 - Complex queries
 - Migration system
 
 **Implementation:**
+
 - Add `rusqlite` to `Cargo.toml`
 - Create database abstraction layer
 - Setup migrations system
@@ -270,20 +285,23 @@ Enhancements for future iterations.
 ### 9. Analytics & Telemetry
 
 **Status:** 📝 Not implemented  
-**Priority:** Low  **Effort:** Medium
+**Priority:** Low **Effort:** Medium
 
 **Requirements:**
+
 - Privacy-first design
 - Opt-in/opt-out in preferences
 - Minimal data collection
 - Crash/error reporting
 
 **Options:**
+
 - PostHog (self-hostable)
 - Plausible (privacy-focused)
 - Custom lightweight solution
 
 **Pattern:**
+
 ```rust
 // src-tauri/src/commands/analytics.rs
 #[tauri::command]
@@ -298,14 +316,16 @@ pub async fn track_event(event: String, properties: JsonValue) -> Result<(), Str
 ### 10. Feature Flags System
 
 **Status:** 📝 Not implemented  
-**Priority:** Low  **Effort:** Medium
+**Priority:** Low **Effort:** Medium
 
 **Use Cases:**
+
 - Gradual feature rollouts
 - A/B testing
 - Premium feature gating
 
 **Implementation:**
+
 - Rust command to check flags
 - React hook: `useFeatureFlag('new-ui')`
 - External source (PostHog, LaunchDarkly, or config file)
@@ -315,15 +335,17 @@ pub async fn track_event(event: String, properties: JsonValue) -> Result<(), Str
 ### 11. Performance Monitoring
 
 **Status:** 📝 Not implemented  
-**Priority:** Low  **Effort:** Medium
+**Priority:** Low **Effort:** Medium
 
 **Metrics to Track:**
+
 - App startup time
 - Command execution latency
 - React render performance
 - Memory usage
 
 **Tools:**
+
 - Sentry Performance
 - Custom metrics collection
 - React Profiler API
@@ -333,20 +355,24 @@ pub async fn track_event(event: String, properties: JsonValue) -> Result<(), Str
 ### 12. Platform-Specific Enhancements
 
 **macOS:**
+
 - ⬜ Touch Bar support (legacy but some Macs still have it)
 - ✅ Window vibrancy (implemented)
 - ⬜ Native tabbing
 
 **Windows:**
+
 - ⬜ Jump List (recent files in taskbar)
 - ⬜ Taskbar progress indicator
 - ⬜ Notification badges
 
 **Linux:**
+
 - ⬜ Desktop entry validation
 - ⬜ AppIndicator support for tray
 
 **All Platforms:**
+
 - ⬜ Deep links / URL scheme handling
 - ⬜ File type associations
 - ⬜ Drag-and-drop improvements
@@ -359,15 +385,16 @@ pub async fn track_event(event: String, properties: JsonValue) -> Result<(), Str
 
 **Files to Update:**
 
-| File | Fields to Update |
-|------|------------------|
-| `tauri.conf.json` | `productName`, `identifier`, `publisher`, `copyright` |
-| `package.json` | `name`, `author`, `copyright` |
-| `Cargo.toml` | `name`, `description`, `authors` |
-| `README.md` | Repository URLs, your name, screenshots |
-| `src-tauri/icons/` | Replace with your app icons |
+| File               | Fields to Update                                      |
+| ------------------ | ----------------------------------------------------- |
+| `tauri.conf.json`  | `productName`, `identifier`, `publisher`, `copyright` |
+| `package.json`     | `name`, `author`, `copyright`                         |
+| `Cargo.toml`       | `name`, `description`, `authors`                      |
+| `README.md`        | Repository URLs, your name, screenshots               |
+| `src-tauri/icons/` | Replace with your app icons                           |
 
 **Icon Requirements:**
+
 - macOS: `icon.icns` (multiple sizes)
 - Windows: `icon.ico` (multiple sizes)
 - Linux: PNG files (32x32, 128x128, 128x128@2x)
@@ -408,6 +435,7 @@ High-value, low-effort improvements:
 ## Action Plan
 
 ### Phase 1: Production Ready (Week 1-2)
+
 1. Implement tray icon
 2. Configure code signing (obtain certificates)
 3. Setup updater (generate keys, configure endpoint)
@@ -415,12 +443,14 @@ High-value, low-effort improvements:
 5. Update all metadata/branding
 
 ### Phase 2: Quality Assurance (Week 3-4)
+
 6. Add comprehensive E2E tests
 7. Create CI pipeline for PRs
 8. Verify error boundaries
 9. Run accessibility audit
 
 ### Phase 3: Polish (Week 5+)
+
 10. Implement quick wins (CHANGELOG, VS Code settings, etc.)
 11. Add analytics (optional)
 12. Add feature flags (optional)
@@ -430,11 +460,11 @@ High-value, low-effort improvements:
 
 ## Decision Log
 
-| Date | Decision | Rationale |
-|------|----------|-----------|
-| 2026-01 | SQLite deferred | JSON-based preferences sufficient for most use cases |
-| 2026-01 | Analytics optional | Privacy-first approach, opt-in required |
-| 2026-01 | E2E prioritized over unit tests | Desktop app behavior best tested end-to-end |
+| Date    | Decision                        | Rationale                                            |
+| ------- | ------------------------------- | ---------------------------------------------------- |
+| 2026-01 | SQLite deferred                 | JSON-based preferences sufficient for most use cases |
+| 2026-01 | Analytics optional              | Privacy-first approach, opt-in required              |
+| 2026-01 | E2E prioritized over unit tests | Desktop app behavior best tested end-to-end          |
 
 ---
 

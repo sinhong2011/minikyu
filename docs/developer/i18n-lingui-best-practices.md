@@ -22,7 +22,8 @@ function MyComponent() {
 import { msg } from '@lingui/core/macro';
 import { i18n } from '@lingui/core';
 
-const notification = i18n._(msg`Task completed successfully`);
+const _ = i18n._.bind(i18n);
+const notification = _(msg`Task completed successfully`);
 ```
 
 ### Advantages
@@ -61,7 +62,7 @@ function PreferencesDialog() {
 
 ```typescript
 import { msg } from "@lingui/core/macro";
-import type { AppCommand } from "@/types/commands";
+import type { AppCommand } from "@/lib/commands/types";
 
 export const navigationCommands: AppCommand[] = [
   {
@@ -84,12 +85,13 @@ import { msg } from "@lingui/core/macro";
 import { i18n } from "@lingui/core";
 
 export function createMenu() {
+  const _ = i18n._.bind(i18n);
   return [
     {
-      label: i18n._(msg`File`),
+      label: _(msg`File`),
       submenu: [
-        { label: i18n._(msg`Open`), role: "open" },
-        { label: i18n._(msg`Save`), role: "save" },
+        { label: _(msg`Open`), role: "open" },
+        { label: _(msg`Save`), role: "save" },
       ],
     },
   ];
@@ -145,76 +147,78 @@ const mockCommand: AppCommand = {
 2. **Extract** - `bun run i18n:extract --clean`
 3. **Translate** - Fill `msgstr` fields in `.po` files
 4. **Compile** - `bun run i18n:compile`
-5. **Runtime** - App loads compiled `.mjs` files
+5. **Runtime** - App loads compiled `.ts` files
 
 ### File Structure
 
 ```
 src/locales/
-├── en/messages.po    # Source language (msgstr = msgid)
-├── fr/messages.po    # French (msgstr = "" awaiting translation)
-├── ar/messages.po    # Arabic (msgstr = "" awaiting translation)
-├── en/messages.mjs   # Compiled runtime file
-├── fr/messages.mjs   # Compiled runtime file
-└── ar/messages.mjs   # Compiled runtime file
+├── en/
+│   ├── messages.po    # Source language (msgstr = msgid)
+│   └── messages.ts    # Compiled runtime file
+├── zh-CN/
+│   ├── messages.po    # Chinese Simplified (msgstr = "" awaiting translation)
+│   └── messages.ts    # Compiled runtime file
+├── zh-TW/
+│   ├── messages.po    # Chinese Traditional
+│   └── messages.ts
+├── ja/
+│   ├── messages.po    # Japanese
+│   └── messages.ts
+└── ko/
+    ├── messages.po    # Korean
+    └── messages.ts
 ```
 
 ## Configuration
-
-### Babel Plugin (Required for Tests)
-
-Tests need babel macro processing:
-
-```typescript
-// vitest.config.ts
-export default defineConfig({
-  plugins: [
-    // Other plugins...
-  ],
-  test: {
-    environment: "jsdom",
-    setupFiles: ["./src/test/setup.ts"],
-    globals: true,
-  },
-  define: {
-    "process.env.NODE_ENV": '"test"',
-  },
-  resolve: {
-    alias: {
-      "@": path.resolve(__dirname, "./src"),
-    },
-  },
-  esbuild: {
-    target: "es2022",
-  },
-  // Babel plugin for macro processing in tests
-  babel: {
-    plugins: ["babel-plugin-macros"],
-  },
-});
-```
 
 ### Lingui Configuration
 
 ```typescript
 // lingui.config.ts
-export default {
-  locales: ["en", "fr", "ar"],
-  sourceLocale: "en",
+import { defineConfig } from '@lingui/cli';
+
+export default defineConfig({
+  sourceLocale: 'en',
+  locales: ['en', 'zh-CN', 'zh-TW', 'ja', 'ko'],
   catalogs: [
     {
-      path: "src/locales/{locale}/messages",
-      include: ["src/"],
-      exclude: ["**/node_modules/**"],
+      path: 'src/locales/{locale}/messages',
+      include: ['src/'],
+      exclude: ['**/node_modules/**'],
     },
   ],
-  format: "po",
-  orderBy: "messageId",
+  format: 'po',
+  orderBy: 'messageId',
   compilerBabelOptions: {
     minified: false,
     sourceMaps: false,
   },
-};
+});
+```
+
+### i18n Config
+
+```typescript
+// src/i18n/config.ts
+import { i18n } from '@lingui/core';
+
+const rtlLanguages = ['he', 'fa', 'ur'];
+
+function onLocaleChange(locale: string) {
+  const dir = rtlLanguages.includes(locale) ? 'rtl' : 'ltr';
+  document.documentElement.dir = dir;
+  document.documentElement.lang = locale;
+}
+
+async function loadAndActivate(locale: string): Promise<void> {
+  const { messages } = await import(`../locales/${locale}/messages.ts`);
+  i18n.loadAndActivate({ locale, messages });
+  onLocaleChange(locale);
+}
+
+export const availableLanguages = ['en', 'zh-CN', 'zh-TW', 'ja', 'ko'];
+export { i18n, loadAndActivate };
 ```
 
 ## Best Practices
@@ -290,17 +294,13 @@ export default {
 
 ## Current State
 
-- **Messages**: 88 total (reduced from 95 with centralized approach)
 - **Pattern**: Pure inline `msg` macro usage
 - **Tests**: Working with `createMsgDescriptor` helper
 - **Build**: TypeScript passes, extraction/compilation working
-- **Languages**: en (source), fr, ar (awaiting translation)
+- **Languages**: en (source), zh-CN, zh-TW, ja, ko
 
-## Migration Complete
+## References
 
-The project has been successfully migrated from:
-
-- ❌ Centralized `messages.ts` file with key-based access
-- ✅ Inline `msg` descriptors with direct usage
-
-All components, commands, and non-React code now use the idiomatic Lingui pattern.
+- [Lingui Documentation](https://lingui.dev)
+- [i18n-patterns.md](./i18n-patterns.md) - General i18n patterns
+- [i18n-strategy.md](./i18n-strategy.md) - Strategic overview

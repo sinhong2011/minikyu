@@ -6,7 +6,7 @@ Cross-platform native menu system built with JavaScript for i18n support, integr
 
 This app builds menus from **JavaScript** using Tauri's JS Menu API (`@tauri-apps/api/menu`). This enables:
 
-- Runtime translation via react-i18next
+- Runtime translation via Lingui
 - Dynamic menu rebuilding when language changes
 - Direct integration with React state (Zustand)
 
@@ -38,41 +38,42 @@ View
 Menus are built using translated labels and direct action handlers:
 
 ```typescript
+import { msg } from '@lingui/core/macro';
 import {
   Menu,
   MenuItem,
   Submenu,
   PredefinedMenuItem,
-} from '@tauri-apps/api/menu'
-import i18n from '@/i18n/config'
-import { useUIStore } from '@/store/ui-store'
+} from '@tauri-apps/api/menu';
+import { i18n } from '@lingui/core';
+import { useUIStore } from '@/store/ui-store';
 
 export async function buildAppMenu(): Promise<Menu> {
-  const t = i18n.t.bind(i18n)
+  const _ = i18n._.bind(i18n);
 
   const appSubmenu = await Submenu.new({
     text: APP_NAME,
     items: [
       await MenuItem.new({
         id: 'preferences',
-        text: t('menu.preferences'),
+        text: _(msg`Preferences...`),
         accelerator: 'CmdOrCtrl+,',
         action: handleOpenPreferences,
       }),
       // ... more items
     ],
-  })
+  });
 
   const menu = await Menu.new({
     items: [appSubmenu, viewSubmenu],
-  })
+  });
 
-  await menu.setAsAppMenu()
-  return menu
+  await menu.setAsAppMenu();
+  return menu;
 }
 
 function handleOpenPreferences(): void {
-  useUIStore.getState().setPreferencesOpen(true)
+  useUIStore.getState().setPreferencesOpen(true);
 }
 ```
 
@@ -81,10 +82,15 @@ function handleOpenPreferences(): void {
 Menus are automatically rebuilt when the language changes:
 
 ```typescript
-export function setupMenuLanguageListener(): void {
-  i18n.on('languageChanged', async () => {
-    await buildAppMenu()
-  })
+export function setupMenuLanguageListener(): () => void {
+  const handler = async () => {
+    await buildAppMenu();
+  };
+
+  const unsubscribe = i18n.on('change', handler);
+  return () => {
+    if (unsubscribe) unsubscribe();
+  };
 }
 ```
 
@@ -95,10 +101,10 @@ export function setupMenuLanguageListener(): void {
 ```typescript
 await MenuItem.new({
   id: 'my-action',
-  text: t('menu.myAction'),
+  text: _(msg`My Action`),
   accelerator: 'CmdOrCtrl+M',
   action: handleMyAction,
-})
+});
 ```
 
 ### Predefined Items
@@ -106,56 +112,54 @@ await MenuItem.new({
 Tauri provides common system menu items:
 
 ```typescript
-await PredefinedMenuItem.new({ item: 'Separator' })
-await PredefinedMenuItem.new({ item: 'Hide', text: t('menu.hide') })
-await PredefinedMenuItem.new({ item: 'Quit', text: t('menu.quit') })
-await PredefinedMenuItem.new({ item: 'Copy' })
-await PredefinedMenuItem.new({ item: 'Paste' })
+await PredefinedMenuItem.new({ item: 'Separator' });
+await PredefinedMenuItem.new({ item: 'Hide', text: _(msg`Hide`) });
+await PredefinedMenuItem.new({ item: 'Quit', text: _(msg`Quit`) });
+await PredefinedMenuItem.new({ item: 'Copy' });
+await PredefinedMenuItem.new({ item: 'Paste' });
 ```
 
 ### Submenus
 
 ```typescript
 const viewSubmenu = await Submenu.new({
-  text: t('menu.view'),
+  text: _(msg`View`),
   items: [
-    await MenuItem.new({ id: 'toggle-sidebar', text: t('menu.toggleSidebar'), ... }),
+    await MenuItem.new({ id: 'toggle-sidebar', text: _(msg`Toggle Sidebar`), ... }),
   ],
-})
+});
 ```
 
 ## Adding New Menu Items
 
-### Step 1: Add Translation Key
-
-```json
-// locales/en.json
-{
-  "menu.myNewAction": "My New Action"
-}
-```
-
-### Step 2: Add to Menu Builder
+### Step 1: Add to Menu Builder
 
 ```typescript
 // src/lib/menu.ts
 await MenuItem.new({
   id: 'my-new-action',
-  text: t('menu.myNewAction'),
+  text: _(msg`My New Action`),
   accelerator: 'CmdOrCtrl+N',
   action: handleMyNewAction,
-})
+});
 
 function handleMyNewAction(): void {
   // Use getState() for current store values
-  const { someValue } = useUIStore.getState()
+  const { someValue } = useUIStore.getState();
   // Perform action
 }
 ```
 
-### Step 3: Add to Other Languages
+### Step 2: Extract and Compile Translations
 
-Add the same key to all language files in `/locales/`.
+```bash
+bun run i18n:extract
+bun run i18n:compile
+```
+
+### Step 3: Translate
+
+Translate the new strings in all language PO files in `/src/locales/{locale}/messages.po`.
 
 ## Action Handlers
 
@@ -163,8 +167,8 @@ Menu actions use Zustand's `getState()` pattern for accessing current state:
 
 ```typescript
 function handleToggleLeftSidebar(): void {
-  const store = useUIStore.getState()
-  store.setLeftSidebarVisible(!store.leftSidebarVisible)
+  const store = useUIStore.getState();
+  store.setLeftSidebarVisible(!store.leftSidebarVisible);
 }
 ```
 

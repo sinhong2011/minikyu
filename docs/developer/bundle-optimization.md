@@ -36,10 +36,10 @@ Removes Tauri commands not called from your frontend.
 ## Analyzing Bundle Size
 
 ```bash
-npm run build:analyze   # Build and analyze
+bun run build:analyze   # Build and analyze
 
 # Manual analysis
-npm run build
+bun run build
 du -sh dist/*           # Check output sizes
 ls -lah dist/assets/    # Examine chunks
 ```
@@ -58,27 +58,93 @@ The built-in optimizations are sufficient for most apps. Consider more when:
 
 ```typescript
 // ❌ Imports entire library
-import * as icons from 'lucide-react'
+import * as icons from "@hugeicons/core-free-icons"
 
 // ✅ Import only what you need
-import { Search, Settings, User } from 'lucide-react'
+import { HugeiconsIcon } from "@hugeicons/react"
+import {
+  Search01Icon,
+  Settings01Icon,
+  UserIcon,
+} from "@hugeicons/core-free-icons"
 
 // ❌ Full lodash
-import _ from 'lodash'
+import _ from "lodash"
 
-// ✅ Specific functions
-import { debounce } from 'lodash-es'
+// ✅ Specific functions - prefer es-toolkit over lodash
+import { debounce } from "es-toolkit"
 ```
+
+### es-toolkit (Recommended)
+
+**Version**: 1.x (latest stable)
+
+We recommend using **es-toolkit** as the primary utility library. It provides modern, tree-shakeable alternatives to lodash with better performance and smaller bundle sizes.
+
+**Installation**:
+
+```bash
+bun add es-toolkit
+```
+
+**Advantages over lodash**:
+
+| Feature      | es-toolkit            | lodash               |
+| ------------ | --------------------- | -------------------- |
+| Bundle size  | ~1-2KB per function   | ~70KB full import    |
+| Tree shaking | Native ESM, automatic | Requires `lodash-es` |
+| Performance  | 2-10x faster          | Standard             |
+| TypeScript   | First-class support   | Good support         |
+| Modern JS    | Built for ES2020+     | Legacy compatibility |
+| Deno/Bun     | Native support        | Requires polyfills   |
+
+**Common replacements**:
+
+```typescript
+// ✅ es-toolkit (recommended)
+import {
+  debounce,
+  throttle,
+  groupBy,
+  keyBy,
+  chunk,
+  pick,
+  omit,
+} from "es-toolkit"
+
+// ❌ lodash equivalents (avoid)
+import {
+  debounce,
+  throttle,
+  groupBy,
+  keyBy,
+  chunk,
+  pick,
+  omit,
+} from "lodash-es"
+```
+
+**When to use es-toolkit**:
+
+- All new code should prefer es-toolkit
+- Refactor existing lodash imports during code maintenance
+- Use for debouncing, throttling, array/object manipulation
+
+**When you might still need lodash**:
+
+- Deep clone with circular references (`_.cloneDeep`)
+- Complex function composition (`_.flow`, `_.compose`)
+- Legacy code that would require extensive refactoring
 
 ### Date Libraries
 
 ```typescript
 // ✅ Tree-shakeable imports
-import { format } from 'date-fns/format'
-import { parseISO } from 'date-fns/parseISO'
+import { format } from "date-fns/format"
+import { parseISO } from "date-fns/parseISO"
 
 // Or use native API
-new Intl.DateTimeFormat('en-US').format(date)
+new Intl.DateTimeFormat("en-US").format(date)
 ```
 
 ## Code Splitting
@@ -106,8 +172,8 @@ export default defineConfig({
     rollupOptions: {
       output: {
         manualChunks: {
-          vendor: ['react', 'react-dom'],
-          ui: ['@radix-ui/react-dialog', '@radix-ui/react-dropdown-menu'],
+          vendor: ["react", "react-dom"],
+          ui: ["@radix-ui/react-dialog", "@radix-ui/react-dropdown-menu"],
         },
       },
     },
@@ -134,7 +200,7 @@ Only include permissions you use in `src-tauri/capabilities/desktop.json`.
 | Issue                    | Solution                                          |
 | ------------------------ | ------------------------------------------------- |
 | Large initial bundle     | Implement code splitting                          |
-| Duplicate dependencies   | `npm ls react` then `npm dedupe`                  |
+| Duplicate dependencies   | `bun ls react` then `bun dedupe`                  |
 | Unused shadcn components | Remove from `src/components/ui/`                  |
 | Heavy date library       | Use `date-fns` with tree shaking or native `Intl` |
 
@@ -143,10 +209,10 @@ Only include permissions you use in `src-tauri/capabilities/desktop.json`.
 ```bash
 # Rust binary size
 cd src-tauri && cargo build --release
-ls -lah target/release/tauri-app
+ls -lah target/release/minikyu
 
 # Frontend bundle
-npm run build && du -sh dist/
+bun run build && du -sh dist/
 ```
 
 **Remember**: Measure before optimizing. Don't over-optimize prematurely.
