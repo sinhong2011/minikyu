@@ -197,3 +197,6 @@ storybook-static
 
 # Serverless directories
 .serverless
+
+# IDE 
+.kilocode

@@ -109,23 +109,11 @@ fn create_tray_menu(app: &AppHandle) -> Result<Menu<tauri::Wry>, String> {
     let menu = Menu::new(app).map_err(|e| format!("Failed to create tray menu: {e}"))?;
 
     // Show/Hide item (dynamic based on window state)
-    let show_item = MenuItem::with_id(
-        app,
-        MENU_SHOW_ID,
-        "Show Window",
-        true,
-        None::<&str>,
-    )
-    .map_err(|e| format!("Failed to create show menu item: {e}"))?;
+    let show_item = MenuItem::with_id(app, MENU_SHOW_ID, "Show Window", true, None::<&str>)
+        .map_err(|e| format!("Failed to create show menu item: {e}"))?;
 
-    let hide_item = MenuItem::with_id(
-        app,
-        MENU_HIDE_ID,
-        "Hide Window",
-        true,
-        None::<&str>,
-    )
-    .map_err(|e| format!("Failed to create hide menu item: {e}"))?;
+    let hide_item = MenuItem::with_id(app, MENU_HIDE_ID, "Hide Window", true, None::<&str>)
+        .map_err(|e| format!("Failed to create hide menu item: {e}"))?;
 
     // Separator
     let separator1 = PredefinedMenuItem::separator(app)
@@ -169,14 +157,8 @@ fn create_tray_menu(app: &AppHandle) -> Result<Menu<tauri::Wry>, String> {
         .map_err(|e| format!("Failed to create separator: {e}"))?;
 
     // Quit
-    let quit = MenuItem::with_id(
-        app,
-        MENU_QUIT_ID,
-        "Quit",
-        true,
-        None::<&str>,
-    )
-    .map_err(|e| format!("Failed to create quit item: {e}"))?;
+    let quit = MenuItem::with_id(app, MENU_QUIT_ID, "Quit", true, None::<&str>)
+        .map_err(|e| format!("Failed to create quit item: {e}"))?;
 
     // Add items to menu
     menu.append(&show_item)
@@ -330,10 +312,7 @@ fn update_menu_visibility(app: &AppHandle) {
 // ============================================================================
 
 /// Update the tray icon based on state and theme
-fn update_tray_icon(
-    app: &AppHandle,
-    state: &TrayIconState,
-) -> Result<(), String> {
+fn update_tray_icon(app: &AppHandle, state: &TrayIconState) -> Result<(), String> {
     // Get the appropriate icon based on state and platform
     let icon = get_icon(app, state)?;
 
@@ -408,7 +387,9 @@ fn get_icon(
     // 4. Try relative paths (last resort)
     #[cfg(target_os = "macos")]
     {
-        icon_paths.push(std::path::PathBuf::from("src-tauri/icons/32x32-template.png"));
+        icon_paths.push(std::path::PathBuf::from(
+            "src-tauri/icons/32x32-template.png",
+        ));
     }
 
     icon_paths.push(std::path::PathBuf::from("src-tauri/icons/32x32.png"));
@@ -488,10 +469,7 @@ pub async fn tray_toggle_window(app: AppHandle) -> Result<(), String> {
 /// Update the tray icon state
 #[tauri::command]
 #[specta::specta]
-pub async fn tray_set_icon_state(
-    app: AppHandle,
-    state: TrayIconState,
-) -> Result<(), String> {
+pub async fn tray_set_icon_state(app: AppHandle, state: TrayIconState) -> Result<(), String> {
     update_tray_icon(&app, &state)
 }
 
