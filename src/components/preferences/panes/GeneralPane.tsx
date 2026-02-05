@@ -54,6 +54,7 @@ export function GeneralPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
+        // biome-ignore lint/style/useNamingConvention: preferences field name
         quick_pane_shortcut: newShortcut,
       });
     } catch {
@@ -88,6 +89,7 @@ export function GeneralPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
+        // biome-ignore lint/style/useNamingConvention: preferences field name
         close_behavior: value,
       });
       showToast.success(_(msg`Close behavior updated`));
@@ -105,6 +107,7 @@ export function GeneralPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
+        // biome-ignore lint/style/useNamingConvention: preferences field name
         show_tray_icon: checked,
       });
       showToast.success(
@@ -126,6 +129,7 @@ export function GeneralPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
+        // biome-ignore lint/style/useNamingConvention: preferences field name
         start_minimized: checked,
       });
       showToast.success(_(msg`Start minimized setting updated`));
@@ -168,6 +172,7 @@ export function GeneralPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
+        // biome-ignore lint/style/useNamingConvention: preferences field name
         image_download_path: newPath || null,
       });
       showToast.success(_(msg`Image download path updated`));
@@ -185,6 +190,7 @@ export function GeneralPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
+        // biome-ignore lint/style/useNamingConvention: preferences field name
         video_download_path: newPath || null,
       });
       showToast.success(_(msg`Video download path updated`));

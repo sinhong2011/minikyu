@@ -119,7 +119,7 @@ export function ShortcutPicker({
   const { _ } = useLingui();
   const [isCapturing, setIsCapturing] = useState(false);
   const [pendingShortcut, setPendingShortcut] = useState<string | null>(null);
-  const inputRef = useRef<HTMLButtonElement>(null); // biome-ignore lint/correctness/useExhaustiveDependencies: handlers are stable, defined outside useEffect
+  const inputRef = useRef<HTMLButtonElement>(null);
 
   const displayValue = value ?? defaultValue;
   const isDefault = value === null;
