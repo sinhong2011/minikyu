@@ -205,6 +205,41 @@ Tauri commands wrap database operations, TanStack Query provides frontend cachin
 React Component → TanStack Query → Tauri Command (rusqlite) → SQLite
 ```
 
+## Local-First Sync (Miniflux)
+
+Use SQLite as the **single source of truth** for categories, feeds, and entries. The UI reads local data only, while the Miniflux API is used **solely for synchronization**.
+
+### Data Flow
+
+```
+React UI → TanStack Query → Tauri Command → SQLite
+                         ↘ sync_miniflux → Miniflux API
+```
+
+### Sync Rules
+
+- **Local-first reads**: `get_categories`, `get_feeds`, `get_entries`, `get_entry` query SQLite.
+- **Local-first writes**: mutations update SQLite immediately and enqueue operations in `sync_queue`.
+- **Sync orchestration**: `sync_miniflux` performs `push_queue → pull_remote`, then emits events:
+  - `sync-started`
+  - `sync-completed`
+
+### Conflict Policy
+
+- **Local wins if pending**: if a row has a pending sync operation, remote updates do not overwrite.
+- **Server wins otherwise**: remote updates overwrite local data.
+
+### Sync State & Queue
+
+- `sync_state`: single row storing last sync timestamps and error state.
+- `sync_queue`: queued operations with retry metadata.
+
+### Frontend Integration
+
+- Use TanStack Query for data reads.
+- Use `useSyncMiniflux()` hook for syncing.
+- Track sync UI state via `useSyncStore`.
+
 ```rust
 use rusqlite::{Connection, params};
 use std::sync::Mutex;
