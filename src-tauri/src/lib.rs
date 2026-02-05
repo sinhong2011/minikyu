@@ -14,7 +14,7 @@ mod utils;
 
 use std::sync::Arc;
 use tauri::Emitter as TauriEmitter;
-use tauri::{Emitter, Manager};
+use tauri::Manager;
 use tokio::sync::Mutex;
 
 // Re-export only what's needed externally

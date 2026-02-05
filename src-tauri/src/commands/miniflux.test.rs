@@ -251,17 +251,7 @@ mod tests {
             &now,
         )
         .await;
-        insert_entry(
-            &pool,
-            1,
-            1,
-            "Test Article",
-            "unread",
-            false,
-            &now,
-            None,
-        )
-        .await;
+        insert_entry(&pool, 1, 1, "Test Article", "unread", false, &now, None).await;
 
         let filters = EntryFilters::default();
         let response = super::super::get_entries_from_db(&pool, &filters)
@@ -513,17 +503,7 @@ mod tests {
             &recent_time,
         )
         .await;
-        insert_entry(
-            &pool,
-            1,
-            1,
-            "Old Entry",
-            "unread",
-            false,
-            &old_time,
-            None,
-        )
-        .await;
+        insert_entry(&pool, 1, 1, "Old Entry", "unread", false, &old_time, None).await;
         insert_entry(
             &pool,
             2,

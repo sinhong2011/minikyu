@@ -14,6 +14,7 @@ pub struct SyncSummary {
     pub categories_pulled: u32,
 }
 #[derive(Debug, Clone, FromRow)]
+#[allow(dead_code)]
 pub struct SyncState {
     pub id: i64,
     pub last_sync_at: Option<String>,
@@ -61,6 +62,7 @@ pub async fn get_or_create_sync_state(pool: &SqlitePool) -> Result<SyncState, St
     .map_err(|e| format!("{e}"))
 }
 
+#[allow(dead_code)]
 pub async fn enqueue_sync_operation(
     pool: &SqlitePool,
     entity_type: &str,
@@ -188,12 +190,10 @@ pub async fn sync_miniflux(
     let summary = match sync_miniflux_impl(&pool, &client).await {
         Ok(summary) => summary,
         Err(error) => {
-            let _ = sqlx::query(
-                "UPDATE sync_state SET sync_in_progress = 0, sync_error = ?",
-            )
-            .bind(&error)
-            .execute(&pool)
-            .await;
+            let _ = sqlx::query("UPDATE sync_state SET sync_in_progress = 0, sync_error = ?")
+                .bind(&error)
+                .execute(&pool)
+                .await;
 
             return Err(error);
         }

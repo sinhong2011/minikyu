@@ -63,6 +63,8 @@ vi.mock('@tanstack/react-router', () => ({
 vi.mock('@/components/miniflux', () => ({
   // biome-ignore lint/style/useNamingConvention: Mock component name
   UserNav: () => <div data-testid="user-nav">UserNav</div>,
+  // biome-ignore lint/style/useNamingConvention: Mock component name
+  FeedAvatar: () => <div data-testid="feed-avatar" />,
 }));
 
 vi.mock('@/components/animate-ui/primitives/base/collapsible', () => {

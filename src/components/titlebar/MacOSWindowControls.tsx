@@ -5,7 +5,7 @@ import { executeCommand } from '@/lib/commands';
 import { cn } from '@/lib/utils';
 import { MacOSIcons } from './WindowControlIcons';
 
-interface MacOSWindowControlsProps extends HTMLProps<HTMLDivElement> {
+interface MacOSWindowControlsProps extends HTMLProps<HTMLFieldSetElement> {
   className?: string;
 }
 

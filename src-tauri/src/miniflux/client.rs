@@ -57,7 +57,7 @@ impl MinifluxClient {
                 header::AUTHORIZATION,
                 header::HeaderValue::from_str(&format!(
                     "Basic {}",
-                    BASE64_STANDARD.encode(&format!("{}:{}", username, password))
+                    BASE64_STANDARD.encode(format!("{}:{}", username, password))
                 ))
                 .unwrap(),
             );
@@ -79,7 +79,7 @@ impl MinifluxClient {
                 header::AUTHORIZATION,
                 header::HeaderValue::from_str(&format!(
                     "Basic {}",
-                    BASE64_STANDARD.encode(&format!("{}:{}", username, password))
+                    BASE64_STANDARD.encode(format!("{}:{}", username, password))
                 ))
                 .unwrap(),
             );
@@ -101,7 +101,7 @@ impl MinifluxClient {
                 header::AUTHORIZATION,
                 header::HeaderValue::from_str(&format!(
                     "Basic {}",
-                    BASE64_STANDARD.encode(&format!("{}:{}", username, password))
+                    BASE64_STANDARD.encode(format!("{}:{}", username, password))
                 ))
                 .unwrap(),
             );
@@ -123,7 +123,7 @@ impl MinifluxClient {
                 header::AUTHORIZATION,
                 header::HeaderValue::from_str(&format!(
                     "Basic {}",
-                    BASE64_STANDARD.encode(&format!("{}:{}", username, password))
+                    BASE64_STANDARD.encode(format!("{}:{}", username, password))
                 ))
                 .unwrap(),
             );

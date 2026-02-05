@@ -66,21 +66,7 @@ impl DownloadManager {
 
     /// Get all active downloads
     pub fn get_active_downloads(&self) -> Vec<DownloadState> {
-        self.active_downloads
-            .lock()
-            .unwrap()
-            .clone()
-    }
-
-    /// Remove a download from active list
-    pub fn remove_download(&self, url: &str) {
-        let mut downloads = self.active_downloads.lock().unwrap();
-        downloads.retain(|d| match d {
-            DownloadState::Downloading { url: dl_url, .. } => dl_url != url,
-            DownloadState::Completed { url: dl_url, .. } => dl_url != url,
-            DownloadState::Failed { url: dl_url, .. } => dl_url != url,
-            DownloadState::Cancelled { url: dl_url, .. } => dl_url != url,
-        });
+        self.active_downloads.lock().unwrap().clone()
     }
 }
 
@@ -92,29 +78,31 @@ static DOWNLOAD_ID_COUNTER: OnceLock<std::sync::atomic::AtomicUsize> = OnceLock:
 
 /// Get or initialize global download manager
 fn get_download_manager() -> &'static DownloadManager {
-    DOWNLOAD_MANAGER.get_or_init(|| DownloadManager::new())
+    DOWNLOAD_MANAGER.get_or_init(DownloadManager::new)
 }
 
 /// Get next unique download ID
 fn get_next_download_id() -> usize {
-    let counter = DOWNLOAD_ID_COUNTER.get_or_init(|| {
-        std::sync::atomic::AtomicUsize::new(0)
-    });
+    let counter = DOWNLOAD_ID_COUNTER.get_or_init(|| std::sync::atomic::AtomicUsize::new(0));
     counter.fetch_add(1, std::sync::atomic::Ordering::SeqCst)
 }
 
 /// Save or update download in database
+struct DownloadDbParams<'a> {
+    status: &'a str,
+    progress: i32,
+    downloaded_bytes: i64,
+    total_bytes: i64,
+    file_path: Option<&'a str>,
+    error: Option<&'a str>,
+}
+
 async fn save_download_to_db(
     app: &tauri::AppHandle,
     download_id: usize,
     url: &str,
     file_name: &str,
-    status: &str,
-    progress: i32,
-    downloaded_bytes: i64,
-    total_bytes: i64,
-    file_path: Option<&str>,
-    error: Option<&str>,
+    params: DownloadDbParams<'_>,
 ) {
     let state: tauri::State<'_, AppState> = app.state();
     let pool_lock = state.db_pool.lock().await;
@@ -137,12 +125,12 @@ async fn save_download_to_db(
         .bind(download_id as i64)
         .bind(url)
         .bind(file_name)
-        .bind(status)
-        .bind(progress)
-        .bind(downloaded_bytes)
-        .bind(total_bytes)
-        .bind(file_path)
-        .bind(error)
+        .bind(params.status)
+        .bind(params.progress)
+        .bind(params.downloaded_bytes)
+        .bind(params.total_bytes)
+        .bind(params.file_path)
+        .bind(params.error)
         .bind(&now)
         .bind(&now)
         .execute(pool)
@@ -161,9 +149,8 @@ pub async fn init_download_manager(app: &tauri::AppHandle) {
             .unwrap_or(None);
 
         if let Some(id) = max_id {
-            let counter = DOWNLOAD_ID_COUNTER.get_or_init(|| {
-                std::sync::atomic::AtomicUsize::new((id + 1) as usize)
-            });
+            let counter = DOWNLOAD_ID_COUNTER
+                .get_or_init(|| std::sync::atomic::AtomicUsize::new((id + 1) as usize));
             counter.store((id + 1) as usize, std::sync::atomic::Ordering::SeqCst);
         }
     }
@@ -192,7 +179,7 @@ pub async fn get_downloads_from_db(app: tauri::AppHandle) -> Result<Vec<Download
             let total_bytes: i64 = row.get("total_bytes");
             let file_path: Option<String> = row.get("file_path");
             let error: Option<String> = row.get("error");
-            
+
             let dummy_time = SystemTime::now();
 
             let state = match status.as_str() {
@@ -219,7 +206,13 @@ pub async fn get_downloads_from_db(app: tauri::AppHandle) -> Result<Vec<Download
                     progress,
                     failed_at: dummy_time,
                 },
-                "cancelled" | _ => DownloadState::Cancelled {
+                "cancelled" => DownloadState::Cancelled {
+                    id: id as usize,
+                    url,
+                    progress,
+                    cancelled_at: dummy_time,
+                },
+                _ => DownloadState::Cancelled {
                     id: id as usize,
                     url,
                     progress,
@@ -235,39 +228,44 @@ pub async fn get_downloads_from_db(app: tauri::AppHandle) -> Result<Vec<Download
 }
 
 /// Emit download progress event to frontend with enclosure_id
+struct DownloadEventParams {
+    progress: i32,
+    downloaded_bytes: i64,
+    total_bytes: i64,
+    status: String,
+    file_path: Option<String>,
+}
+
 fn emit_download_event_with_id(
     app: &tauri::AppHandle,
     download_id: usize,
     file_name: String,
     url: String,
-    progress: i32,
-    downloaded_bytes: i64,
-    total_bytes: i64,
-    status: &str,
-    file_path: Option<String>,
+    params: DownloadEventParams,
 ) {
-    let _ = app.emit("download-progress", DownloadProgress {
-        enclosure_id: download_id as i64,
-        file_name,
-        url,
-        progress,
-        downloaded_bytes,
-        total_bytes,
-        status: status.to_owned(),
-        file_path,
-    });
+    let _ = app.emit(
+        "download-progress",
+        DownloadProgress {
+            enclosure_id: download_id as i64,
+            file_name,
+            url,
+            progress: params.progress,
+            downloaded_bytes: params.downloaded_bytes,
+            total_bytes: params.total_bytes,
+            status: params.status,
+            file_path: params.file_path,
+        },
+    );
 }
 
 /// Get file size in bytes
 fn get_file_size(path: &str) -> Option<i64> {
-    std::fs::metadata(path)
-        .ok()
-        .map(|m| m.len() as i64)
+    std::fs::metadata(path).ok().map(|m| m.len() as i64)
 }
 
 fn extract_filename(url: &str) -> Option<String> {
     url.split('/')
-        .last()
+        .next_back()
         .filter(|s| !s.is_empty())
         .map(String::from)
 }
@@ -284,9 +282,9 @@ pub async fn download_file(
     log::info!("Starting download from: {}", url);
 
     let download_id = get_next_download_id();
-    let file_name_str = file_name.clone().unwrap_or_else(|| {
-        extract_filename(&url).unwrap_or_else(|| "download.bin".to_string())
-    });
+    let file_name_str = file_name
+        .clone()
+        .unwrap_or_else(|| extract_filename(&url).unwrap_or_else(|| "download.bin".to_string()));
 
     let preferences = crate::commands::preferences::load_preferences_sync(&app);
     let default_path = match media_type.as_deref() {
@@ -304,13 +302,16 @@ pub async fn download_file(
         download_id,
         &url,
         &file_name_str,
-        "downloading",
-        0,
-        0,
-        0,
-        None,
-        None,
-    ).await;
+        DownloadDbParams {
+            status: "downloading",
+            progress: 0,
+            downloaded_bytes: 0,
+            total_bytes: 0,
+            file_path: None,
+            error: None,
+        },
+    )
+    .await;
 
     let download_state = DownloadState::Downloading {
         id: download_id,
@@ -332,11 +333,13 @@ pub async fn download_file(
         download_id,
         file_name_str.clone(),
         url.clone(),
-        0,
-        0,
-        0,
-        "downloading",
-        None,
+        DownloadEventParams {
+            progress: 0,
+            downloaded_bytes: 0,
+            total_bytes: 0,
+            status: "downloading".to_string(),
+            file_path: None,
+        },
     );
 
     let result = perform_download(
@@ -345,7 +348,8 @@ pub async fn download_file(
         download_id,
         file_name_str.clone(),
         default_path.as_ref().map(|x| x.as_str()),
-    ).await;
+    )
+    .await;
 
     match &result {
         Ok(file_path) => {
@@ -355,13 +359,16 @@ pub async fn download_file(
                 download_id,
                 &url,
                 &file_name_str,
-                "completed",
-                100,
-                total_bytes,
-                total_bytes,
-                Some(file_path),
-                None,
-            ).await;
+                DownloadDbParams {
+                    status: "completed",
+                    progress: 100,
+                    downloaded_bytes: total_bytes,
+                    total_bytes,
+                    file_path: Some(file_path),
+                    error: None,
+                },
+            )
+            .await;
 
             let mut downloads = get_download_manager().active_downloads.lock().unwrap();
             let completed_state = DownloadState::Completed {
@@ -380,11 +387,13 @@ pub async fn download_file(
                 download_id,
                 file_name_str,
                 url,
-                100,
-                total_bytes,
-                total_bytes,
-                "completed",
-                Some(file_path.clone()),
+                DownloadEventParams {
+                    progress: 100,
+                    downloaded_bytes: total_bytes,
+                    total_bytes,
+                    status: "completed".to_string(),
+                    file_path: Some(file_path.clone()),
+                },
             );
         }
         Err(error) => {
@@ -393,13 +402,16 @@ pub async fn download_file(
                 download_id,
                 &url,
                 &file_name_str,
-                "failed",
-                0,
-                0,
-                0,
-                None,
-                Some(error),
-            ).await;
+                DownloadDbParams {
+                    status: "failed",
+                    progress: 0,
+                    downloaded_bytes: 0,
+                    total_bytes: 0,
+                    file_path: None,
+                    error: Some(error),
+                },
+            )
+            .await;
 
             let mut downloads = get_download_manager().active_downloads.lock().unwrap();
             let failed_state = DownloadState::Failed {
@@ -417,11 +429,13 @@ pub async fn download_file(
                 download_id,
                 file_name_str,
                 url,
-                0,
-                0,
-                0,
-                "failed",
-                None,
+                DownloadEventParams {
+                    progress: 0,
+                    downloaded_bytes: 0,
+                    total_bytes: 0,
+                    status: "failed".to_string(),
+                    file_path: None,
+                },
             );
         }
     }
@@ -439,10 +453,7 @@ pub fn get_downloads() -> Vec<DownloadState> {
 /// Cancel an active download by URL
 #[tauri::command]
 #[specta::specta]
-pub async fn cancel_download(
-    app: tauri::AppHandle,
-    url: String,
-) -> Result<(), String> {
+pub async fn cancel_download(app: tauri::AppHandle, url: String) -> Result<(), String> {
     log::info!("Cancelling download: {}", url);
 
     let mut id_opt = None;
@@ -461,17 +472,17 @@ pub async fn cancel_download(
     if let Some(id) = id_opt {
         {
             let mut downloads = get_download_manager().active_downloads.lock().unwrap();
-        if let Some(index) = downloads.iter().position(|d| match d {
-            DownloadState::Downloading { id: dl_id, .. } => *dl_id == id,
-            _ => false,
-        }) {
-            downloads[index] = DownloadState::Cancelled {
-                id,
-                url: url.clone(),
-                progress: 0,
-                cancelled_at: SystemTime::now(),
-            };
-        }
+            if let Some(index) = downloads.iter().position(|d| match d {
+                DownloadState::Downloading { id: dl_id, .. } => *dl_id == id,
+                _ => false,
+            }) {
+                downloads[index] = DownloadState::Cancelled {
+                    id,
+                    url: url.clone(),
+                    progress: 0,
+                    cancelled_at: SystemTime::now(),
+                };
+            }
         }
 
         let file_name = extract_filename(&url).unwrap_or_else(|| "download.bin".to_string());
@@ -481,24 +492,30 @@ pub async fn cancel_download(
             id,
             &url,
             &file_name,
-            "cancelled",
-            0,
-            0,
-            0,
-            None,
-            None,
-        ).await;
+            DownloadDbParams {
+                status: "cancelled",
+                progress: 0,
+                downloaded_bytes: 0,
+                total_bytes: 0,
+                file_path: None,
+                error: None,
+            },
+        )
+        .await;
 
-        let _ = app.emit("download-progress", DownloadProgress {
-            enclosure_id: id as i64,
-            file_name,
-            url: url.clone(),
-            progress: 0,
-            downloaded_bytes: 0,
-            total_bytes: 0,
-            status: "cancelled".to_owned(),
-            file_path: None,
-        });
+        let _ = app.emit(
+            "download-progress",
+            DownloadProgress {
+                enclosure_id: id as i64,
+                file_name,
+                url: url.clone(),
+                progress: 0,
+                downloaded_bytes: 0,
+                total_bytes: 0,
+                status: "cancelled".to_string(),
+                file_path: None,
+            },
+        );
 
         log::info!("Download cancelled: {}", url);
         Ok(())
@@ -537,12 +554,14 @@ async fn perform_download(
                 .map_err(|e| format!("Failed to create directory: {}", e))?;
         }
 
-        full_path.to_str()
+        full_path
+            .to_str()
             .ok_or_else(|| "Invalid UTF-8 path".to_string())?
             .to_string()
     } else {
         use tauri_plugin_dialog::DialogExt;
-        let path = app.dialog()
+        let path = app
+            .dialog()
             .file()
             .set_file_name(&file_name)
             .blocking_save_file()
@@ -598,13 +617,16 @@ async fn perform_download(
                 download_id,
                 url,
                 &file_name,
-                "downloading",
-                progress,
-                downloaded_bytes,
-                total_bytes,
-                None,
-                None,
-            ).await;
+                DownloadDbParams {
+                    status: "downloading",
+                    progress,
+                    downloaded_bytes,
+                    total_bytes,
+                    file_path: None,
+                    error: None,
+                },
+            )
+            .await;
         }
 
         emit_download_event_with_id(
@@ -612,11 +634,13 @@ async fn perform_download(
             download_id,
             file_name.clone(),
             url.to_string(),
-            progress,
-            downloaded_bytes,
-            total_bytes,
-            "downloading",
-            None,
+            DownloadEventParams {
+                progress,
+                downloaded_bytes,
+                total_bytes,
+                status: "downloading".to_string(),
+                file_path: None,
+            },
         );
     }
 

@@ -23,7 +23,7 @@ pub struct MinifluxAccount {
 #[tauri::command]
 #[specta::specta]
 pub async fn save_miniflux_account(
-    app_handle: AppHandle,
+    _app_handle: AppHandle,
     state: State<'_, AppState>,
     config: AuthConfig,
 ) -> Result<i64, AccountError> {
@@ -51,11 +51,11 @@ pub async fn save_miniflux_account(
     let has_token = config
         .auth_token
         .as_ref()
-        .map_or(false, |t| !t.trim().is_empty());
+        .is_some_and(|t| !t.trim().is_empty());
     let has_password = config
         .password
         .as_ref()
-        .map_or(false, |p| !p.trim().is_empty());
+        .is_some_and(|p| !p.trim().is_empty());
 
     if !has_token && !has_password {
         log::error!("Neither token nor password provided");
@@ -141,7 +141,7 @@ pub async fn save_miniflux_account(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_miniflux_accounts(
-    app_handle: AppHandle,
+    _app_handle: AppHandle,
     state: State<'_, AppState>,
 ) -> Result<Vec<MinifluxAccount>, AccountError> {
     log::info!("[get_miniflux_accounts] Command invoked");
@@ -191,7 +191,7 @@ pub async fn get_miniflux_accounts(
 #[tauri::command]
 #[specta::specta]
 pub async fn get_active_miniflux_account(
-    app_handle: AppHandle,
+    _app_handle: AppHandle,
     state: State<'_, AppState>,
 ) -> Result<Option<MinifluxAccount>, AccountError> {
     log::info!("Fetching active account");
@@ -229,7 +229,7 @@ pub async fn get_active_miniflux_account(
 #[tauri::command]
 #[specta::specta]
 pub async fn delete_miniflux_account(
-    app_handle: AppHandle,
+    _app_handle: AppHandle,
     state: State<'_, AppState>,
     id: i64,
 ) -> Result<(), AccountError> {

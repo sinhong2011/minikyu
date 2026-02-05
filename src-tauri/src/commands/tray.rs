@@ -459,13 +459,6 @@ pub async fn tray_hide_window(app: AppHandle) -> Result<(), String> {
     hide_main_window(&app)
 }
 
-/// Toggle main window visibility (command exposed to frontend)
-#[tauri::command]
-#[specta::specta]
-pub async fn tray_toggle_window(app: AppHandle) -> Result<(), String> {
-    toggle_main_window(&app)
-}
-
 /// Update the tray icon state
 #[tauri::command]
 #[specta::specta]

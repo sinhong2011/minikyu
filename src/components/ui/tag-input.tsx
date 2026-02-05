@@ -10,7 +10,7 @@ export interface Tag {
   text: string;
 }
 
-export interface TagInputProps extends Omit<React.ComponentProps<'div'>, 'onChange'> {
+export interface TagInputProps extends Omit<React.ComponentProps<'button'>, 'onChange'> {
   tags: Tag[];
   onTagsChange: (tags: Tag[]) => void;
   placeholder?: string;
@@ -19,7 +19,7 @@ export interface TagInputProps extends Omit<React.ComponentProps<'div'>, 'onChan
   disabled?: boolean;
 }
 
-const TagInput = React.forwardRef<HTMLDivElement, TagInputProps>(
+const TagInput = React.forwardRef<HTMLButtonElement, TagInputProps>(
   (
     {
       className,
@@ -89,7 +89,7 @@ const TagInput = React.forwardRef<HTMLDivElement, TagInputProps>(
       }
     };
 
-    const handleContainerKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    const handleContainerKeyDown = (event: React.KeyboardEvent<HTMLButtonElement>) => {
       if (disabled) return;
       if (event.key !== 'Enter' && event.key !== ' ') return;
       event.preventDefault();

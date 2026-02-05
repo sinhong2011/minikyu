@@ -326,18 +326,6 @@ pub struct UserUpdate {
     pub stylesheet: Option<String>,
 }
 
-/// Sync Result
-#[derive(Debug, Clone, Serialize, Deserialize, Type)]
-pub struct SyncResult {
-    pub success: bool,
-    pub entries_synced: i64,
-    pub feeds_synced: i64,
-    pub categories_synced: i64,
-    pub errors: Vec<String>,
-    #[serde(default)]
-    pub duration_ms: Option<i64>,
-}
-
 /// Download Progress
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
 pub struct DownloadProgress {

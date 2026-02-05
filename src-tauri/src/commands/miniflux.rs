@@ -254,16 +254,6 @@ pub async fn mark_entries_read(state: State<'_, AppState>, ids: Vec<i64>) -> Res
     client.update_entries(ids, "read".to_string()).await
 }
 
-/// Mark entry as unread
-#[tauri::command]
-#[specta::specta]
-pub async fn mark_entry_unread(state: State<'_, AppState>, id: i64) -> Result<(), String> {
-    let guard = state.miniflux.client.lock().await;
-    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
-
-    client.update_entries(vec![id], "unread".to_string()).await
-}
-
 /// Toggle entry star
 #[tauri::command]
 #[specta::specta]
@@ -351,7 +341,7 @@ pub async fn delete_feed(state: State<'_, AppState>, id: i64) -> Result<(), Stri
 #[specta::specta]
 pub async fn get_current_user(state: State<'_, AppState>) -> Result<crate::miniflux::User, String> {
     log::info!("[get_current_user] Command invoked");
-    
+
     let guard = state.miniflux.client.lock().await;
     let client = guard.as_ref().ok_or_else(|| {
         log::error!("[get_current_user] No Miniflux client available - not connected to server");
@@ -359,9 +349,9 @@ pub async fn get_current_user(state: State<'_, AppState>) -> Result<crate::minif
     })?;
 
     log::info!("[get_current_user] Client acquired, fetching user from Miniflux API");
-    
+
     let result = client.get_current_user().await;
-    
+
     match &result {
         Ok(user) => {
             log::info!(
@@ -375,7 +365,7 @@ pub async fn get_current_user(state: State<'_, AppState>) -> Result<crate::minif
             log::error!("[get_current_user] Failed to fetch user: {}", e);
         }
     }
-    
+
     result
 }
 
@@ -598,8 +588,7 @@ pub async fn get_entries_from_db(
         .await
         .map_err(|e| format!("Failed to fetch entries: {e}"))?;
 
-    let entries: Vec<crate::miniflux::Entry> =
-        rows.iter().map(build_entry_from_row).collect();
+    let entries: Vec<crate::miniflux::Entry> = rows.iter().map(build_entry_from_row).collect();
 
     Ok(crate::miniflux::EntryResponse {
         total,
@@ -654,7 +643,10 @@ fn apply_entry_filters(query: &mut QueryBuilder<sqlx::Sqlite>, filters: &EntryFi
     }
 }
 
-pub async fn get_entry_from_db(pool: &SqlitePool, id: i64) -> Result<crate::miniflux::Entry, String> {
+pub async fn get_entry_from_db(
+    pool: &SqlitePool,
+    id: i64,
+) -> Result<crate::miniflux::Entry, String> {
     let row = sqlx::query(
         r#"
         SELECT e.id, e.user_id, e.feed_id, e.title, e.url, e.comments_url, e.author,
@@ -692,14 +684,16 @@ pub async fn get_entry_from_db(pool: &SqlitePool, id: i64) -> Result<crate::mini
 }
 
 fn build_feed_from_row(row: &sqlx::sqlite::SqliteRow) -> crate::miniflux::Feed {
-    let category = row.get::<Option<i64>, _>("cat_id").map(|cat_id| crate::miniflux::Category {
-        id: cat_id,
-        user_id: row.get("cat_user_id"),
-        title: row.get("cat_title"),
-        hide_globally: row.get("cat_hide_globally"),
-        created_at: row.get("cat_created_at"),
-        updated_at: row.get("cat_updated_at"),
-    });
+    let category = row
+        .get::<Option<i64>, _>("cat_id")
+        .map(|cat_id| crate::miniflux::Category {
+            id: cat_id,
+            user_id: row.get("cat_user_id"),
+            title: row.get("cat_title"),
+            hide_globally: row.get("cat_hide_globally"),
+            created_at: row.get("cat_created_at"),
+            updated_at: row.get("cat_updated_at"),
+        });
 
     crate::miniflux::Feed {
         id: row.get("id"),
@@ -737,14 +731,16 @@ fn build_feed_from_row(row: &sqlx::sqlite::SqliteRow) -> crate::miniflux::Feed {
 }
 
 fn build_entry_from_row(row: &sqlx::sqlite::SqliteRow) -> crate::miniflux::Entry {
-    let feed_category = row.get::<Option<i64>, _>("c_id").map(|cat_id| crate::miniflux::Category {
-        id: cat_id,
-        user_id: row.get("c_user_id"),
-        title: row.get("c_title"),
-        hide_globally: row.get("c_hide_globally"),
-        created_at: row.get("c_created_at"),
-        updated_at: row.get("c_updated_at"),
-    });
+    let feed_category = row
+        .get::<Option<i64>, _>("c_id")
+        .map(|cat_id| crate::miniflux::Category {
+            id: cat_id,
+            user_id: row.get("c_user_id"),
+            title: row.get("c_title"),
+            hide_globally: row.get("c_hide_globally"),
+            created_at: row.get("c_created_at"),
+            updated_at: row.get("c_updated_at"),
+        });
 
     let feed = crate::miniflux::Feed {
         id: row.get("f_id"),

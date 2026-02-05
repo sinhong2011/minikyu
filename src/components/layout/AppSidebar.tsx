@@ -247,8 +247,12 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ) : (
-                categories?.map((category) => (
-                  <Collapsible key={category.id} defaultOpen={false} className="group/collapsible">
+                categories?.map((category, index) => (
+                  <Collapsible
+                    key={category.id}
+                    defaultOpen={index === 0}
+                    className="group/collapsible"
+                  >
                     <SidebarMenuItem className="">
                       <Link to="/" search={{ categoryId: category.id.toString() }}>
                         {({ isActive }) => (
