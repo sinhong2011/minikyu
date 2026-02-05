@@ -25,8 +25,8 @@ export function useAccountInitialization() {
               ? result.data.map((acc) => ({
                   id: acc.id,
                   username: acc.username,
-                  server_url: acc.server_url,
-                  is_active: acc.is_active,
+                  serverUrl: acc.server_url,
+                  isActive: acc.is_active,
                 }))
               : [],
         });
@@ -44,7 +44,7 @@ export function useAccountInitialization() {
             logger.info('[useAccountInitialization] Active account set', {
               accountId: activeAccount.id,
               username: activeAccount.username,
-              server_url: activeAccount.server_url,
+              serverUrl: activeAccount.server_url,
             });
           } else {
             logger.warn('[useAccountInitialization] No active account found in results');
