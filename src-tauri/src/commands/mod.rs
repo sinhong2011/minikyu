@@ -11,4 +11,5 @@ pub mod preferences;
 pub mod quick_pane;
 pub mod reading_state;
 pub mod recovery;
+pub mod sync;
 pub mod tray;
