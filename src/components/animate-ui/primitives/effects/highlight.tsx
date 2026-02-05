@@ -313,8 +313,11 @@ function Highlight<T extends React.ElementType = 'div'>({ ref, ...props }: Highl
         ? controlledItems
           ? render(children)
           : render(
-              React.Children.map(children, (child, index) => (
-                <HighlightItem key={index} className={props?.itemsClassName}>
+              React.Children.toArray(children).map((child) => (
+                <HighlightItem
+                  key={(React.isValidElement(child) && child.key) || undefined}
+                  className={props?.itemsClassName}
+                >
                   {child}
                 </HighlightItem>
               ))
