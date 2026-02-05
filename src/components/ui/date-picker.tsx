@@ -1,13 +1,9 @@
 import { ArrowDown01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import * as React from 'react';
-import {
-  Popover,
-  PopoverPanel,
-  PopoverTrigger,
-} from '@/components/animate-ui/components/base/popover';
 import { Button } from '@/components/ui/button';
 import { Calendar } from '@/components/ui/calendar';
+import { Popover, PopoverPanel, PopoverTrigger } from '@/components/ui/popover';
 
 interface DatePickerProps {
   value?: Date;
