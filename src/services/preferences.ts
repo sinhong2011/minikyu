@@ -24,15 +24,24 @@ export function usePreferences() {
         });
         return {
           theme: 'system',
+          // biome-ignore lint/style/useNamingConvention: preferences field name
           quick_pane_shortcut: null,
           language: null,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
           close_behavior: 'minimize_to_tray',
+          // biome-ignore lint/style/useNamingConvention: preferences field name
           show_tray_icon: true,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
           start_minimized: false,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_font_size: 16,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_line_width: 65,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_font_family: 'sans-serif',
+          // biome-ignore lint/style/useNamingConvention: preferences field name
           image_download_path: null,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
           video_download_path: null,
         };
       }

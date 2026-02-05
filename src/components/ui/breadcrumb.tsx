@@ -52,12 +52,10 @@ function BreadcrumbLink({
 
 function BreadcrumbPage({ className, ...props }: React.ComponentProps<'a'>) {
   return (
-    <a
+    <span
       data-slot="breadcrumb-page"
-      role="link"
       aria-disabled="true"
       aria-current="page"
-      tabIndex={0}
       className={cn('text-foreground font-normal', className)}
       {...props}
     />

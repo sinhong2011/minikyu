@@ -89,8 +89,16 @@ const TagInput = React.forwardRef<HTMLDivElement, TagInputProps>(
       }
     };
 
+    const handleContainerKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
+      if (disabled) return;
+      if (event.key !== 'Enter' && event.key !== ' ') return;
+      event.preventDefault();
+      inputRef.current?.focus();
+    };
+
     return (
-      <div
+      <button
+        type="button"
         ref={ref}
         className={cn(
           'border-input placeholder:text-muted-foreground focus-within:border-ring focus-within:ring-ring/50 flex min-h-9 w-full rounded-md border bg-transparent px-3 py-1 text-base shadow-xs transition-[color,box-shadow] focus-within:ring-[3px] md:text-sm',
@@ -98,6 +106,8 @@ const TagInput = React.forwardRef<HTMLDivElement, TagInputProps>(
           className
         )}
         onClick={handleContainerClick}
+        onKeyDown={handleContainerKeyDown}
+        disabled={disabled}
         {...props}
       >
         <div className="flex flex-1 flex-wrap items-center gap-1 py-1">
@@ -130,7 +140,7 @@ const TagInput = React.forwardRef<HTMLDivElement, TagInputProps>(
             className="flex-1 min-w-[120px] bg-transparent border-0 outline-none placeholder:text-muted-foreground text-foreground disabled:cursor-not-allowed"
           />
         </div>
-      </div>
+      </button>
     );
   }
 );

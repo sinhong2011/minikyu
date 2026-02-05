@@ -1,6 +1,7 @@
 import { useQuery } from '@tanstack/react-query';
 import { logger } from '@/lib/logger';
 import { commands } from '@/lib/tauri-bindings';
+import { useIsConnected } from '@/services/miniflux/auth';
 
 // Query keys for user data
 export const userQueryKeys = {
@@ -13,6 +14,8 @@ export const userQueryKeys = {
  * Use this in any component that needs user information
  */
 export function useCurrentUser() {
+  const { data: isConnected } = useIsConnected();
+
   return useQuery({
     queryKey: userQueryKeys.current(),
     queryFn: async () => {
@@ -29,12 +32,13 @@ export function useCurrentUser() {
       logger.info('[useCurrentUser] Current user data fetched successfully', {
         id: result.data.id,
         username: result.data.username,
-        is_admin: result.data.is_admin,
+        isAdmin: result.data.is_admin,
         language: result.data.language,
         timezone: result.data.timezone,
       });
       return result.data;
     },
+    enabled: isConnected ?? false,
     staleTime: 1000 * 60 * 30,
     gcTime: 1000 * 60 * 60,
   });

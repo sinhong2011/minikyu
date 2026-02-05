@@ -6,7 +6,6 @@ interface ImportMetaEnv {
   readonly PROD: boolean;
 }
 
-// biome-ignore lint/correctness/noUnusedVariables: Required for TypeScript type augmentation
 interface ImportMeta {
   readonly env: ImportMetaEnv;
 }

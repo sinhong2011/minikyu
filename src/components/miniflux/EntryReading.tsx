@@ -63,7 +63,7 @@ export function EntryReading({
 
     viewport.addEventListener('scroll', handleScroll, { passive: true });
     return () => viewport.removeEventListener('scroll', handleScroll);
-  }, [entry?.id, scrollY, isLoading]);
+  }, [scrollY]);
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {

@@ -5,6 +5,7 @@ import { extractThumbnail } from './media-utils';
 describe('extractThumbnail', () => {
   it('should extract thumbnail from enclosures if present', () => {
     const entry = {
+      // biome-ignore lint/style/useNamingConvention: API response format
       enclosures: [{ mime_type: 'image/jpeg', url: 'https://example.com/image.jpg' }],
     } as Entry;
     expect(extractThumbnail(entry)).toBe('https://example.com/image.jpg');
@@ -19,6 +20,7 @@ describe('extractThumbnail', () => {
 
   it('should prefer enclosures over content img tags', () => {
     const entry = {
+      // biome-ignore lint/style/useNamingConvention: API response format
       enclosures: [{ mime_type: 'image/jpeg', url: 'https://example.com/enclosure.jpg' }],
       content: '<img src="https://example.com/content.png">',
     } as Entry;

@@ -12,7 +12,7 @@ import { type MotionValue, motion } from 'motion/react';
 import { FeedAvatar } from '@/components/miniflux/FeedAvatar';
 import { Button } from '@/components/ui/button';
 import { Separator } from '@/components/ui/separator';
-import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
+import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Entry } from '@/lib/bindings';
 import { ReaderSettings } from './ReaderSettings';
 
@@ -80,7 +80,7 @@ export function EntryReadingHeader({
             >
               <HugeiconsIcon icon={ArrowLeft02Icon} className="h-5 w-5" strokeWidth={2} />
             </TooltipTrigger>
-            <TooltipContent>{_(msg`Previous entry (h or ←)`)}</TooltipContent>
+            <TooltipPanel>{_(msg`Previous entry (h or ←)`)}</TooltipPanel>
           </Tooltip>
 
           <Tooltip>
@@ -99,7 +99,7 @@ export function EntryReadingHeader({
             >
               <HugeiconsIcon icon={ArrowRight02Icon} className="h-5 w-5" strokeWidth={2} />
             </TooltipTrigger>
-            <TooltipContent>{_(msg`Next entry (l or →)`)}</TooltipContent>
+            <TooltipPanel>{_(msg`Next entry (l or →)`)}</TooltipPanel>
           </Tooltip>
 
           <Separator orientation="vertical" className="h-5 mx-1 place-self-center rounded-2xl" />
@@ -125,7 +125,7 @@ export function EntryReadingHeader({
                 <HugeiconsIcon icon={HeartAddIcon} className="h-5 w-5" />
               )}
             </TooltipTrigger>
-            <TooltipContent>{entry.starred ? _(msg`Unstar`) : _(msg`Star`)}</TooltipContent>
+            <TooltipPanel>{entry.starred ? _(msg`Unstar`) : _(msg`Star`)}</TooltipPanel>
           </Tooltip>
         </div>
 

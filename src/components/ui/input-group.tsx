@@ -9,9 +9,8 @@ import { cn } from '@/lib/utils';
 
 function InputGroup({ className, ...props }: React.ComponentProps<'div'>) {
   return (
-    <div
+    <fieldset
       data-slot="input-group"
-      role="group"
       className={cn(
         'group/input-group border-input dark:bg-input/30 relative flex w-full items-center rounded-md border shadow-xs transition-[color,box-shadow] outline-none',
         'h-9 min-w-0 has-[>textarea]:h-auto',
@@ -60,8 +59,7 @@ function InputGroupAddon({
   ...props
 }: React.ComponentProps<'div'> & VariantProps<typeof inputGroupAddonVariants>) {
   return (
-    <div
-      role="group"
+    <fieldset
       data-slot="input-group-addon"
       data-align={align}
       className={cn(inputGroupAddonVariants({ align }), className)}
@@ -69,6 +67,14 @@ function InputGroupAddon({
         if ((e.target as HTMLElement).closest('button')) {
           return;
         }
+        e.currentTarget.parentElement?.querySelector('input')?.focus();
+      }}
+      onKeyDown={(e) => {
+        if (e.key !== 'Enter' && e.key !== ' ') return;
+        if ((e.target as HTMLElement).closest('button')) {
+          return;
+        }
+        e.preventDefault();
         e.currentTarget.parentElement?.querySelector('input')?.focus();
       }}
       {...props}

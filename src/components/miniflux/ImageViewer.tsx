@@ -107,6 +107,7 @@ export function ImageViewer({ images, startIndex = 0, open, onOpenChange }: Imag
         root: {
           backgroundColor: 'rgba(0, 0, 0, 0.6)',
           backdropFilter: 'blur(20px) saturate(180%)',
+          // biome-ignore lint/style/useNamingConvention: vendor-prefixed CSS property
           WebkitBackdropFilter: 'blur(20px) saturate(180%)',
           '--yarl__thumbnails_thumbnail_active_border_color': 'var(--color-primary)',
         },

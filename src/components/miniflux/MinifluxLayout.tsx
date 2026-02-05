@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react';
 import { useSearch } from '@tanstack/react-router';
 import { CheckCircle2, Inbox, RefreshCw, Search, Star } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { MainWindowContent } from '@/components/layout/MainWindowContent';
 import { Button } from '@/components/ui/button';
 import { logger } from '@/lib/logger';
@@ -12,8 +12,9 @@ import { cn } from '@/lib/utils';
 import { useIsConnected } from '@/services/miniflux/auth';
 import { useCategories } from '@/services/miniflux/categories';
 import { useEntries, usePrefetchEntry } from '@/services/miniflux/entries';
-import { useRefreshAllFeeds } from '@/services/miniflux/feeds';
+import { useSyncMiniflux } from '@/services/miniflux/feeds';
 import { useLastReadingEntry, useSaveLastReading } from '@/services/reading-state';
+import { useSyncStore } from '@/store/sync-store';
 import { useUIStore } from '@/store/ui-store';
 import { ConnectionDialog } from './ConnectionDialog';
 import { EntryFiltersUI } from './EntryFilters';
@@ -35,7 +36,9 @@ export function MinifluxLayout() {
   const searchFiltersVisible = useUIStore((state) => state.searchFiltersVisible);
   const toggleSearchFilters = useUIStore((state) => state.toggleSearchFilters);
   const [localFilters, setLocalFilters] = useState<EntryFilters>({});
-  const refreshAll = useRefreshAllFeeds();
+  const syncMiniflux = useSyncMiniflux();
+  const syncing = useSyncStore((state) => state.syncing);
+  const hasAutoSyncedRef = useRef(false);
   const currentStatus = localFilters.starred ? 'starred' : localFilters.status || 'all';
   const prefetchEntry = usePrefetchEntry();
   const { data: lastReadingEntry } = useLastReadingEntry();
@@ -43,7 +46,9 @@ export function MinifluxLayout() {
 
   // Merge router filters with local filters
   const mergedFilters: EntryFilters = {
+    // biome-ignore lint/style/useNamingConvention: API field name
     ...(categoryId ? { category_id: Number(categoryId) } : {}),
+    // biome-ignore lint/style/useNamingConvention: API field name
     ...(feedId ? { feed_id: Number(feedId) } : {}),
     ...(filter === 'starred' ? { starred: true } : {}),
     ...(filter === 'history' ? { status: 'read' } : {}),
@@ -95,6 +100,7 @@ export function MinifluxLayout() {
 
       // Save last reading entry (no scroll position)
       saveLastReading.mutate({
+        // biome-ignore lint/style/useNamingConvention: API field name
         entry_id: String(entry.id),
         timestamp: String(Date.now()),
       });
@@ -133,6 +139,18 @@ export function MinifluxLayout() {
       }
     }
   }, [lastReadingEntry, entriesData, selectedEntryId, setSelectedEntryId]);
+
+  useEffect(() => {
+    if (!isConnected) {
+      hasAutoSyncedRef.current = false;
+      return;
+    }
+
+    if (!syncing && !hasAutoSyncedRef.current) {
+      hasAutoSyncedRef.current = true;
+      syncMiniflux.mutate();
+    }
+  }, [isConnected, syncing, syncMiniflux]);
 
   if (isLoading) {
     return (
@@ -200,10 +218,11 @@ export function MinifluxLayout() {
               variant="ghost"
               size="icon"
               className="h-8 w-8"
-              onClick={() => refreshAll.mutate()}
-              title={_(msg`Sync`)}
+              onClick={() => syncMiniflux.mutate()}
+              title={syncing ? _(msg`Syncing...`) : _(msg`Sync`)}
+              disabled={syncing}
             >
-              <RefreshCw className="h-4 w-4" />
+              <RefreshCw className={cn('h-4 w-4', syncing && 'animate-spin')} />
             </Button>
             <Button
               variant="ghost"

@@ -45,16 +45,19 @@ function Calendar({
           'flex items-center gap-1 w-full absolute top-0 inset-x-0 justify-between',
           defaultClassNames.nav
         ),
+        // biome-ignore lint/style/useNamingConvention: react-day-picker classNames API
         button_previous: cn(
           buttonVariants({ variant: buttonVariant }),
           'size-(--cell-size) aria-disabled:opacity-50 p-0 select-none',
           defaultClassNames.button_previous
         ),
+        // biome-ignore lint/style/useNamingConvention: react-day-picker classNames API
         button_next: cn(
           buttonVariants({ variant: buttonVariant }),
           'size-(--cell-size) aria-disabled:opacity-50 p-0 select-none',
           defaultClassNames.button_next
         ),
+        // biome-ignore lint/style/useNamingConvention: react-day-picker classNames API
         month_caption: cn(
           'flex items-center justify-center h-(--cell-size) w-full px-(--cell-size)',
           defaultClassNames.month_caption
@@ -63,8 +66,10 @@ function Calendar({
           'w-full flex items-center text-sm font-medium justify-center h-(--cell-size) gap-1.5',
           defaultClassNames.dropdowns
         ),
+        // biome-ignore lint/style/useNamingConvention: react-day-picker classNames API
         dropdown_root: cn('relative rounded-(--cell-radius)', defaultClassNames.dropdown_root),
         dropdown: cn('absolute bg-popover inset-0 opacity-0', defaultClassNames.dropdown),
+        // biome-ignore lint/style/useNamingConvention: react-day-picker classNames API
         caption_label: cn(
           'select-none font-medium',
           captionLayout === 'label'
@@ -79,7 +84,9 @@ function Calendar({
           defaultClassNames.weekday
         ),
         week: cn('flex w-full mt-2', defaultClassNames.week),
+        // biome-ignore lint/style/useNamingConvention: react-day-picker classNames API
         week_number_header: cn('select-none w-(--cell-size)', defaultClassNames.week_number_header),
+        // biome-ignore lint/style/useNamingConvention: react-day-picker classNames API
         week_number: cn(
           'text-[0.8rem] select-none text-muted-foreground',
           defaultClassNames.week_number
@@ -91,11 +98,14 @@ function Calendar({
             : '[&:first-child[data-selected=true]_button]:rounded-l-(--cell-radius)',
           defaultClassNames.day
         ),
+        // biome-ignore lint/style/useNamingConvention: react-day-picker classNames API
         range_start: cn(
           'rounded-l-(--cell-radius) bg-muted relative after:bg-muted after:absolute after:inset-y-0 after:w-4 after:right-0 -z-0 isolate',
           defaultClassNames.range_start
         ),
+        // biome-ignore lint/style/useNamingConvention: react-day-picker classNames API
         range_middle: cn('rounded-none', defaultClassNames.range_middle),
+        // biome-ignore lint/style/useNamingConvention: react-day-picker classNames API
         range_end: cn(
           'rounded-r-(--cell-radius) bg-muted relative after:bg-muted after:absolute after:inset-y-0 after:w-4 after:left-0 -z-0 isolate',
           defaultClassNames.range_end
@@ -113,9 +123,11 @@ function Calendar({
         ...classNames,
       }}
       components={{
+        // biome-ignore lint/style/useNamingConvention: react-day-picker components API
         Root: ({ className, rootRef, ...props }) => {
           return <div data-slot="calendar" ref={rootRef} className={cn(className)} {...props} />;
         },
+        // biome-ignore lint/style/useNamingConvention: react-day-picker components API
         Chevron: ({ className, orientation, ...props }) => {
           if (orientation === 'left') {
             return (
@@ -148,7 +160,9 @@ function Calendar({
             />
           );
         },
+        // biome-ignore lint/style/useNamingConvention: react-day-picker components API
         DayButton: ({ ...props }) => <CalendarDayButton locale={locale} {...props} />,
+        // biome-ignore lint/style/useNamingConvention: react-day-picker components API
         WeekNumber: ({ children, ...props }) => {
           return (
             <td {...props}>

@@ -16,7 +16,6 @@ export function MacOSWindowControls({ className, ...props }: MacOSWindowControls
   const [isWindowFocused, setIsWindowFocused] = useState(true);
 
   const last = isAltKeyPressed ? <MacOSIcons.maximize /> : <MacOSIcons.fullscreen />;
-  const key = 'Alt';
 
   const handleMouseEnter = () => {
     setIsHovering(true);
@@ -25,16 +24,16 @@ export function MacOSWindowControls({ className, ...props }: MacOSWindowControls
     setIsHovering(false);
   };
 
-  const handleAltKeyDown = (e: KeyboardEvent) => {
-    if (e.key === key) {
+  const handleAltKeyDown = React.useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Alt') {
       setIsAltKeyPressed(true);
     }
-  };
-  const handleAltKeyUp = (e: KeyboardEvent) => {
-    if (e.key === key) {
+  }, []);
+  const handleAltKeyUp = React.useCallback((e: KeyboardEvent) => {
+    if (e.key === 'Alt') {
       setIsAltKeyPressed(false);
     }
-  };
+  }, []);
 
   useEffect(() => {
     // Attach event listeners when the component mounts
@@ -77,7 +76,7 @@ export function MacOSWindowControls({ className, ...props }: MacOSWindowControls
         tauriUnlisten();
       }
     };
-  }, []); // biome-ignore lint/correctness/useExhaustiveDependencies: handlers are stable, defined outside useEffect
+  }, [handleAltKeyDown, handleAltKeyUp]);
 
   const handleClose = async () => {
     await executeCommand('window-close', context);
@@ -113,8 +112,7 @@ export function MacOSWindowControls({ className, ...props }: MacOSWindowControls
   };
 
   return (
-    <div
-      role="group"
+    <fieldset
       className={cn('flex h-6 w-11.5 items-center justify-center gap-1 ', className)}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -162,6 +160,6 @@ export function MacOSWindowControls({ className, ...props }: MacOSWindowControls
             })}
         </div>
       </button>
-    </div>
+    </fieldset>
   );
 }

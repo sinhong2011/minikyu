@@ -42,6 +42,8 @@ interface AppSidebarProps {
   className?: string;
 }
 
+const categorySkeletonKeys = Array.from({ length: 5 }, (_, index) => `category-skeleton-${index}`);
+
 function CategoryFeeds({ categoryId }: { categoryId: string }) {
   const { _ } = useLingui();
   const { data: feeds, isLoading, error } = useCategoryFeeds(categoryId);
@@ -229,8 +231,8 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
               {categoriesLoading ? (
-                Array.from({ length: 5 }).map((_, i) => (
-                  <SidebarMenuItem key={i}>
+                categorySkeletonKeys.map((key) => (
+                  <SidebarMenuItem key={key}>
                     <SidebarMenuButton disabled>
                       <HugeiconsIcon icon={Folder01Icon} className="opacity-50" />
                       <div className="bg-muted h-3 w-20 animate-pulse rounded" />
