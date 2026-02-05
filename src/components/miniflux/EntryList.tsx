@@ -86,11 +86,16 @@ export function EntryList({ filters = {}, selectedEntryId, onEntrySelect }: Entr
     prefetchEntry(entryId);
   };
 
+  const skeletonKeys = ['one', 'two', 'three', 'four', 'five', 'six'];
+
   if (isLoading) {
     return (
       <div className="space-y-3 p-4">
-        {[...Array(6)].map((_, i) => (
-          <div key={i} className="flex gap-4 p-4 rounded-lg border border-border/50 bg-muted/20">
+        {skeletonKeys.map((key) => (
+          <div
+            key={`entry-skeleton-${key}`}
+            className="flex gap-4 p-4 rounded-lg border border-border/50 bg-muted/20"
+          >
             <div className="flex-1 space-y-2">
               <Skeleton className="h-5 w-3/4" />
               <Skeleton className="h-4 w-full" />
@@ -197,7 +202,7 @@ export function EntryList({ filters = {}, selectedEntryId, onEntrySelect }: Entr
                       {extractThumbnail(entry) && (
                         <div className="relative w-full h-32 shrink-0 rounded-lg overflow-hidden bg-muted border border-border/30 mt-3">
                           <img
-                            src={extractThumbnail(entry)!}
+                            src={extractThumbnail(entry) ?? ''}
                             alt=""
                             className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                             loading="lazy"
