@@ -32,19 +32,29 @@ const mockAccounts = [
   {
     id: '1',
     username: 'user1',
+    // biome-ignore lint/style/useNamingConvention: API response format
     server_url: 'https://server1.com',
+    // biome-ignore lint/style/useNamingConvention: API response format
     is_active: true,
+    // biome-ignore lint/style/useNamingConvention: API response format
     auth_method: 'token',
+    // biome-ignore lint/style/useNamingConvention: API response format
     created_at: '',
+    // biome-ignore lint/style/useNamingConvention: API response format
     updated_at: '',
   },
   {
     id: '2',
     username: 'user2',
+    // biome-ignore lint/style/useNamingConvention: API response format
     server_url: 'https://server2.com',
+    // biome-ignore lint/style/useNamingConvention: API response format
     is_active: false,
+    // biome-ignore lint/style/useNamingConvention: API response format
     auth_method: 'token',
+    // biome-ignore lint/style/useNamingConvention: API response format
     created_at: '',
+    // biome-ignore lint/style/useNamingConvention: API response format
     updated_at: '',
   },
 ];
@@ -98,22 +108,35 @@ describe('UserNav', () => {
       data: {
         id: '1',
         username: 'user1',
+        // biome-ignore lint/style/useNamingConvention: API response format
         is_admin: true,
         language: 'en',
         timezone: 'America/New_York',
         theme: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         entry_sorting_direction: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         entry_sorting_order: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         entries_per_page: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         keyboard_shortcuts: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         display_mode: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         show_reading_time: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         entry_swipe: null,
         stylesheet: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         google_id: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         openid_connect_id: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         last_login_at: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         created_at: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         updated_at: null,
       },
       isLoading: false,
@@ -210,22 +233,35 @@ describe('UserNav', () => {
       data: {
         id: '1',
         username: 'user1',
+        // biome-ignore lint/style/useNamingConvention: API response format
         is_admin: false,
         language: null,
         timezone: null,
         theme: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         entry_sorting_direction: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         entry_sorting_order: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         entries_per_page: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         keyboard_shortcuts: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         display_mode: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         show_reading_time: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         entry_swipe: null,
         stylesheet: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         google_id: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         openid_connect_id: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         last_login_at: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         created_at: null,
+        // biome-ignore lint/style/useNamingConvention: API response format
         updated_at: null,
       },
       isLoading: false,

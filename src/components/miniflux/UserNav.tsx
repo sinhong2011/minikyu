@@ -32,13 +32,13 @@ export function UserNav() {
     accounts: accounts.map((acc) => ({
       id: acc.id,
       username: acc.username,
-      is_active: acc.is_active,
+      isActive: acc.is_active,
     })),
     currentUser: currentUser
       ? {
           id: currentUser.id,
           username: currentUser.username,
-          is_admin: currentUser.is_admin,
+          isAdmin: currentUser.is_admin,
         }
       : null,
     isLoading,
@@ -58,7 +58,7 @@ export function UserNav() {
   logger.info('[UserNav] Current account found, rendering component', {
     accountId: currentAccount.id,
     username: currentAccount.username,
-    server_url: currentAccount.server_url,
+    serverUrl: currentAccount.server_url,
   });
 
   const getInitials = (username: string) => {
