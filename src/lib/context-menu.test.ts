@@ -7,12 +7,15 @@ const mockMenuItemNew = vi.fn().mockResolvedValue({});
 const mockPredefinedMenuItemNew = vi.fn().mockResolvedValue({});
 
 vi.mock('@tauri-apps/api/menu', () => ({
+  // biome-ignore lint/style/useNamingConvention: Tauri API exports
   Menu: {
     new: mockMenuNew,
   },
+  // biome-ignore lint/style/useNamingConvention: Tauri API exports
   MenuItem: {
     new: mockMenuItemNew,
   },
+  // biome-ignore lint/style/useNamingConvention: Tauri API exports
   PredefinedMenuItem: {
     new: mockPredefinedMenuItemNew,
   },
