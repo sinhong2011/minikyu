@@ -156,8 +156,10 @@ fn highlight_key_values(message: &str, output: &mut String) {
 
         // Find the key start (look backwards from =)
         let key_start = remaining[..eq_pos]
-            .rfind(|c: char| c.is_whitespace() || c == ',' || c == '{' || c == '[' || c == '(')
-            .map(|i| i + 1)
+            .char_indices()
+            .rev()
+            .find(|(_, c)| c.is_whitespace() || *c == ',' || *c == '{' || *c == '[' || *c == '(')
+            .map(|(index, c)| index + c.len_utf8())
             .unwrap_or(0);
 
         // Extract and colorize key

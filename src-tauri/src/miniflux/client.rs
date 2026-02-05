@@ -5,6 +5,7 @@ use serde::de::DeserializeOwned;
 use std::time::Duration;
 
 /// Miniflux API Client
+#[derive(Clone)]
 pub struct MinifluxClient {
     base_url: String,
     auth_token: Option<String>,
