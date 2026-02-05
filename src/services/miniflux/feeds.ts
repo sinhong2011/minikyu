@@ -1,7 +1,12 @@
+import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 import { commands, type Feed, type FeedUpdate } from '@/lib/tauri-bindings';
+import { useSyncStore } from '@/store/sync-store';
+
+const translate = i18n._.bind(i18n);
 
 // Query keys for feeds
 export const feedQueryKeys = {
@@ -26,9 +31,7 @@ export function useFeeds() {
         logger.error('Failed to fetch feeds', {
           error: result.error,
         });
-        toast.error('Failed to load feeds', {
-          description: result.error,
-        });
+        toast.error(translate(msg`Failed to load feeds`), { description: result.error });
         throw new Error(result.error);
       }
 
@@ -57,9 +60,7 @@ export function useCategoryFeeds(categoryId: string) {
           error: result.error,
           categoryId,
         });
-        toast.error('Failed to load feeds', {
-          description: result.error,
-        });
+        toast.error(translate(msg`Failed to load feeds`), { description: result.error });
         throw new Error(result.error);
       }
 
@@ -90,9 +91,7 @@ export function useCreateFeed() {
           error: result.error,
           feedUrl,
         });
-        toast.error('Failed to create feed', {
-          description: result.error,
-        });
+        toast.error(translate(msg`Failed to create feed`), { description: result.error });
         throw new Error(result.error);
       }
 
@@ -102,7 +101,7 @@ export function useCreateFeed() {
     onSuccess: () => {
       // Invalidate feeds queries
       queryClient.invalidateQueries({ queryKey: feedQueryKeys.lists() });
-      toast.success('Feed created');
+      toast.success(translate(msg`Feed created`));
     },
   });
 }
@@ -123,9 +122,7 @@ export function useUpdateFeed() {
           error: result.error,
           id,
         });
-        toast.error('Failed to update feed', {
-          description: result.error,
-        });
+        toast.error(translate(msg`Failed to update feed`), { description: result.error });
         throw new Error(result.error);
       }
 
@@ -136,7 +133,7 @@ export function useUpdateFeed() {
       // Invalidate feeds queries
       queryClient.invalidateQueries({ queryKey: feedQueryKeys.lists() });
       queryClient.invalidateQueries({ queryKey: feedQueryKeys.detail(id) });
-      toast.success('Feed updated');
+      toast.success(translate(msg`Feed updated`));
     },
   });
 }
@@ -157,9 +154,7 @@ export function useDeleteFeed() {
           error: result.error,
           id,
         });
-        toast.error('Failed to delete feed', {
-          description: result.error,
-        });
+        toast.error(translate(msg`Failed to delete feed`), { description: result.error });
         throw new Error(result.error);
       }
 
@@ -169,7 +164,7 @@ export function useDeleteFeed() {
       // Invalidate feeds queries
       queryClient.invalidateQueries({ queryKey: feedQueryKeys.lists() });
       queryClient.invalidateQueries({ queryKey: feedQueryKeys.detail(id) });
-      toast.success('Feed deleted');
+      toast.success(translate(msg`Feed deleted`));
     },
   });
 }
@@ -190,9 +185,7 @@ export function useRefreshFeed() {
           error: result.error,
           id,
         });
-        toast.error('Failed to refresh feed', {
-          description: result.error,
-        });
+        toast.error(translate(msg`Failed to refresh feed`), { description: result.error });
         throw new Error(result.error);
       }
 
@@ -203,7 +196,7 @@ export function useRefreshFeed() {
       queryClient.invalidateQueries({ queryKey: feedQueryKeys.lists() });
       queryClient.invalidateQueries({ queryKey: feedQueryKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: ['miniflux', 'entries'] });
-      toast.success('Feed refreshed');
+      toast.success(translate(msg`Feed refreshed`));
     },
   });
 }
@@ -223,9 +216,7 @@ export function useRefreshAllFeeds() {
         logger.error('Failed to refresh all feeds', {
           error: result.error,
         });
-        toast.error('Failed to refresh feeds', {
-          description: result.error,
-        });
+        toast.error(translate(msg`Failed to refresh feeds`), { description: result.error });
         throw new Error(result.error);
       }
 
@@ -234,7 +225,46 @@ export function useRefreshAllFeeds() {
     onSuccess: () => {
       // Invalidate all Miniflux queries
       queryClient.invalidateQueries({ queryKey: ['miniflux'] });
-      toast.success('All feeds refreshed');
+      toast.success(translate(msg`All feeds refreshed`));
+    },
+  });
+}
+
+/**
+ * Hook to sync Miniflux data (refresh all feeds + manage sync state)
+ * This wraps refreshAllFeeds with sync store state management
+ */
+export function useSyncMiniflux() {
+  const queryClient = useQueryClient();
+  const startSync = useSyncStore((state) => state.startSync);
+  const completeSync = useSyncStore((state) => state.completeSync);
+  const failSync = useSyncStore((state) => state.failSync);
+
+  return useMutation({
+    mutationFn: async () => {
+      logger.debug('Starting Miniflux sync');
+      startSync();
+
+      const result = await commands.syncMiniflux();
+
+      if (result.status === 'error') {
+        logger.error('Failed to sync Miniflux', {
+          error: result.error,
+        });
+        throw new Error(result.error);
+      }
+
+      logger.info('Miniflux sync completed successfully');
+    },
+    onSuccess: () => {
+      completeSync();
+      // Invalidate all Miniflux queries
+      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+      toast.success(translate(msg`Sync completed`));
+    },
+    onError: (error: Error) => {
+      failSync(error.message);
+      toast.error(translate(msg`Sync failed`), { description: error.message });
     },
   });
 }
