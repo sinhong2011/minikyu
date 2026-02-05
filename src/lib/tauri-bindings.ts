@@ -51,6 +51,7 @@ import {
   type EntryUpdate,
   commands as generatedCommands,
   type Result,
+  type SyncSummary,
 } from './bindings';
 
 function toNumberId(id: string): number {
@@ -63,6 +64,14 @@ function toNumberId(id: string): number {
 
 export const commands = {
   ...generatedCommands,
+  async syncMiniflux(): Promise<Result<SyncSummary, string>> {
+    try {
+      return { status: 'ok', data: await invoke('sync_miniflux') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
   async getEntry(id: string): Promise<Result<Entry, string>> {
     try {
       return { status: 'ok', data: await invoke('get_entry', { id: toNumberId(id) }) };
