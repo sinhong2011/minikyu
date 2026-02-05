@@ -72,4 +72,15 @@ function PopoverDescription({ className, ...props }: PopoverPrimitive.Descriptio
   );
 }
 
-export { Popover, PopoverContent, PopoverDescription, PopoverHeader, PopoverTitle, PopoverTrigger };
+// Alias for backward compatibility
+const PopoverPanel = PopoverContent;
+
+export {
+  Popover,
+  PopoverContent,
+  PopoverPanel,
+  PopoverDescription,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+};
