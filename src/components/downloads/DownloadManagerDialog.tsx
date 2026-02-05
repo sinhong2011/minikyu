@@ -79,13 +79,18 @@ export function DownloadManagerDialog() {
 
       try {
         const unlistenFn = await listen<{
+          // biome-ignore lint/style/useNamingConvention: API event payload
           enclosure_id: number;
+          // biome-ignore lint/style/useNamingConvention: API event payload
           file_name: string;
           url: string;
           progress: number;
+          // biome-ignore lint/style/useNamingConvention: API event payload
           downloaded_bytes: number;
+          // biome-ignore lint/style/useNamingConvention: API event payload
           total_bytes: number;
           status: string;
+          // biome-ignore lint/style/useNamingConvention: API event payload
           file_path?: string;
         }>('download-progress', (event) => {
           const {
