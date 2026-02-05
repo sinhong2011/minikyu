@@ -16,19 +16,26 @@ vi.mock('@lingui/core/macro', () => ({
   msg: (descriptor: any) => descriptor,
 }));
 
-// biome-ignore lint/style/useNamingConvention: i18n keys
 i18n.load('en', {
+  // biome-ignore lint/style/useNamingConvention: i18n key
   Minikyu: 'Minikyu',
+  // biome-ignore lint/style/useNamingConvention: i18n key
   Views: 'Views',
+  // biome-ignore lint/style/useNamingConvention: i18n key
   Categories: 'Categories',
   'Not Connected': 'Not Connected',
   'Failed to load feeds': 'Failed to load feeds',
+  // biome-ignore lint/style/useNamingConvention: i18n key
   Sync: 'Sync',
+  // biome-ignore lint/style/useNamingConvention: i18n key
   All: 'All',
+  // biome-ignore lint/style/useNamingConvention: i18n key
   Today: 'Today',
+  // biome-ignore lint/style/useNamingConvention: i18n key
   Starred: 'Starred',
+  // biome-ignore lint/style/useNamingConvention: i18n key
   History: 'History',
-});
+} as Record<string, string>);
 i18n.activate('en');
 
 vi.mock('@/services/miniflux', () => ({
@@ -39,6 +46,7 @@ vi.mock('@/services/miniflux', () => ({
 }));
 
 vi.mock('@tanstack/react-router', () => ({
+  // biome-ignore lint/style/useNamingConvention: mock component name
   Link: ({ children, to, search, activeOptions }: any) => {
     return (
       <a
@@ -102,21 +110,41 @@ vi.mock('@/components/animate-ui/primitives/base/collapsible', () => {
 });
 
 const mockCategories = [
-  // biome-ignore lint/style/useNamingConvention: API response format
-  { id: '1', title: 'Tech', user_id: 1 },
-  // biome-ignore lint/style/useNamingConvention: API response format
-  { id: '2', title: 'News', user_id: 1 },
+  {
+    id: '1',
+    title: 'Tech',
+    // biome-ignore lint/style/useNamingConvention: API response format
+    user_id: 1,
+  },
+  {
+    id: '2',
+    title: 'News',
+    // biome-ignore lint/style/useNamingConvention: API response format
+    user_id: 1,
+  },
 ];
 
 const mockFeeds = [
-  // biome-ignore lint/style/useNamingConvention: API response format
   {
     id: 101,
     title: 'TechCrunch',
-    category: { id: '1', title: 'Tech', user_id: 1 },
+    category: {
+      id: '1',
+      title: 'Tech',
+      // biome-ignore lint/style/useNamingConvention: API response format
+      user_id: 1,
+    },
   },
-  // biome-ignore lint/style/useNamingConvention: API response format
-  { id: 102, title: 'Verge', category: { id: '1', title: 'Tech', user_id: 1 } },
+  {
+    id: 102,
+    title: 'Verge',
+    category: {
+      id: '1',
+      title: 'Tech',
+      // biome-ignore lint/style/useNamingConvention: API response format
+      user_id: 1,
+    },
+  },
 ];
 
 describe('AppSidebar', () => {
