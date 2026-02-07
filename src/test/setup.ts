@@ -72,7 +72,7 @@ vi.mock('@/lib/tauri-bindings', () => ({
     cleanupOldRecoveryFiles: vi.fn().mockResolvedValue({ status: 'ok', data: 0 }),
     switchMinifluxAccount: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
     minifluxDisconnect: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
-    getMinifluxAccounts: vi.fn().mockResolvedValue({ status: 'ok', data: [] }),
+    getMinifluxAccounts: vi.fn().mockResolvedValue({ status: 'ok', data: [] as any }),
   },
   unwrapResult: vi.fn((result: { status: string; data?: unknown }) => {
     if (result.status === 'ok') return result.data;

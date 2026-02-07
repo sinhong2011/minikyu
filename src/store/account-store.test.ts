@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it } from 'vitest';
-import type { MinifluxAccount } from '@/lib/tauri-bindings';
+import type { MinifluxConnection } from '@/lib/tauri-bindings';
 import { useAccountStore } from './account-store';
 
 describe('account-store', () => {
@@ -19,7 +19,7 @@ describe('account-store', () => {
 
   it('should set accounts', () => {
     const setAccounts = useAccountStore.getState().setAccounts;
-    const testAccounts: MinifluxAccount[] = [
+    const testAccounts: MinifluxConnection[] = [
       {
         id: '1',
         username: 'user1',
@@ -65,7 +65,7 @@ describe('account-store', () => {
 
   it('should add account', () => {
     const addAccount = useAccountStore.getState().addAccount;
-    const testAccount: MinifluxAccount = {
+    const testAccount: MinifluxConnection = {
       id: '3',
       username: 'user3',
       // biome-ignore lint/style/useNamingConvention: API response format
@@ -88,7 +88,7 @@ describe('account-store', () => {
 
   it('should remove account by ID', () => {
     const setAccounts = useAccountStore.getState().setAccounts;
-    const testAccounts: MinifluxAccount[] = [
+    const testAccounts: MinifluxConnection[] = [
       {
         id: '1',
         username: 'user1',
