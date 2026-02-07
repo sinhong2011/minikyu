@@ -1,7 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useForm } from '@tanstack/react-form';
-import { useEffect, useMemo } from 'react';
+import { useMemo } from 'react';
 import { z } from 'zod';
 import {
   Tabs,
@@ -32,10 +32,10 @@ import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
 import { Spinner } from '@/components/ui/spinner';
 import { logger } from '@/lib/logger';
-import { commands } from '@/lib/tauri-bindings';
+import { queryClient } from '@/lib/query-client';
 import { cn } from '@/lib/utils';
 import { useConnect } from '@/services/miniflux';
-import { useAccountStore } from '@/store/account-store';
+import { useAccounts } from '@/services/miniflux/accounts';
 
 interface ConnectionDialogProps {
   open: boolean;
@@ -50,28 +50,12 @@ export function ConnectionDialog({
 }: ConnectionDialogProps) {
   const { _ } = useLingui();
   const connect = useConnect();
-  const accounts = useAccountStore((state) => state.accounts);
+  const { data: accounts = [] } = useAccounts();
 
   const serverUrls = useMemo(() => {
     const uniqueUrls = new Set(accounts.map((acc) => acc.server_url));
     return Array.from(uniqueUrls);
   }, [accounts]);
-
-  useEffect(() => {
-    const loadAccounts = async () => {
-      const { setAccounts } = useAccountStore.getState();
-      setAccounts([]);
-      try {
-        const result = await commands.getMinifluxAccounts();
-        if (result.status === 'ok') {
-          setAccounts(result.data);
-        }
-      } catch (error) {
-        logger.error('Failed to load accounts:', { error });
-      }
-    };
-    loadAccounts();
-  }, []);
 
   // Zod schema for form validation with translated error messages
   const connectionSchema = z
@@ -150,20 +134,9 @@ export function ConnectionDialog({
       try {
         await connect.mutateAsync(config);
 
-        // Load accounts after successful connection
-        const result = await commands.getMinifluxAccounts();
-        if (result.status === 'ok') {
-          const { setAccounts, setCurrentAccountId } = useAccountStore.getState();
-
-          setAccounts(result.data);
-
-          const activeAccount = result.data.find((item) => item.is_active);
-
-          if (activeAccount) setCurrentAccountId(activeAccount.id);
-        }
+        queryClient.invalidateQueries({ queryKey: ['miniflux'] });
 
         onOpenChange(false);
-        // Reset form
         form.reset();
       } catch {
         // Error is handled by the mutation

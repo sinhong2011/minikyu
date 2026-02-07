@@ -17,23 +17,18 @@ import { Badge } from '@/components/ui/badge';
 import { logger } from '@/lib/logger';
 import { queryClient } from '@/lib/query-client';
 import { commands } from '@/lib/tauri-bindings';
+import { useAccounts, useActiveAccount } from '@/services/miniflux/accounts';
 import { useCurrentUser } from '@/services/miniflux/users';
-import { useAccountStore } from '@/store/account-store';
 
 export function UserNav() {
   const { _ } = useLingui();
-  const accounts = useAccountStore((state) => state.accounts);
-  const currentAccountId = useAccountStore((state) => state.currentAccountId);
-  const { data: currentUser, isLoading, isError } = useCurrentUser();
+  const { data: accounts = [] } = useAccounts();
+  const { data: currentAccount } = useActiveAccount();
+  const { data: currentUser, isLoading: isUserLoading, isError: isUserError } = useCurrentUser();
 
   logger.info('[UserNav] Component rendering', {
     accountsCount: accounts.length,
-    currentAccountId,
-    accounts: accounts.map((acc) => ({
-      id: acc.id,
-      username: acc.username,
-      isActive: acc.is_active,
-    })),
+    currentAccountId: currentAccount?.id,
     currentUser: currentUser
       ? {
           id: currentUser.id,
@@ -41,15 +36,12 @@ export function UserNav() {
           isAdmin: currentUser.is_admin,
         }
       : null,
-    isLoading,
-    isError,
+    isUserLoading,
+    isUserError,
   });
-
-  const currentAccount = accounts.find((acc) => acc.id === currentAccountId);
 
   if (!currentAccount) {
     logger.warn('[UserNav] No current account found, returning null (component will not render)', {
-      currentAccountId,
       availableAccountIds: accounts.map((acc) => acc.id),
     });
     return null;
@@ -74,20 +66,11 @@ export function UserNav() {
   };
 
   const handleSwitchAccount = async (accountId: string) => {
-    if (accountId === currentAccountId) return;
+    if (accountId === currentAccount.id) return;
 
     try {
       const result = await commands.switchMinifluxAccount(accountId);
       if (result.status === 'ok') {
-        const updatedResult = await commands.getMinifluxAccounts();
-        if (updatedResult.status === 'ok') {
-          const { setAccounts, setCurrentAccountId } = useAccountStore.getState();
-          setAccounts(updatedResult.data);
-          const activeAccount = updatedResult.data.find((acc) => acc.is_active);
-          if (activeAccount) {
-            setCurrentAccountId(activeAccount.id);
-          }
-        }
         queryClient.invalidateQueries({ queryKey: ['miniflux'] });
       } else {
         logger.error('Failed to switch account:', { error: result.error });
@@ -101,16 +84,6 @@ export function UserNav() {
     try {
       const result = await commands.minifluxDisconnect();
       if (result.status === 'ok') {
-        const updatedResult = await commands.getMinifluxAccounts();
-        const { setAccounts, setCurrentAccountId } = useAccountStore.getState();
-        if (updatedResult.status === 'ok') {
-          setAccounts(updatedResult.data);
-          const activeAccount = updatedResult.data.find((acc) => acc.is_active);
-          setCurrentAccountId(activeAccount ? activeAccount.id : null);
-        } else {
-          setAccounts([]);
-          setCurrentAccountId(null);
-        }
         queryClient.invalidateQueries({ queryKey: ['miniflux'] });
       }
     } catch (error) {
@@ -130,7 +103,7 @@ export function UserNav() {
           <div className="grid flex-1 text-left text-sm leading-tight">
             <div className="flex items-center gap-2">
               <span className="truncate font-semibold">{currentAccount.username}</span>
-              {!isLoading && !isError && currentUser?.is_admin && (
+              {!isUserLoading && !isUserError && currentUser?.is_admin && (
                 <Badge variant="secondary" className="text-xs px-1.5 py-0">
                   {_(msg`Admin`)}
                 </Badge>
@@ -143,7 +116,7 @@ export function UserNav() {
         </div>
       </MenuTrigger>
       <MenuPanel className="w-56" side="top" align="start" sideOffset={4}>
-        {!isLoading && !isError && currentUser && (
+        {!isUserLoading && !isUserError && currentUser && (
           <>
             <MenuGroup>
               <MenuGroupLabel>{_(msg`User Profile`)}</MenuGroupLabel>
@@ -185,7 +158,7 @@ export function UserNav() {
                   {getDomain(account.server_url)}
                 </span>
               </div>
-              {account.id === currentAccountId && (
+              {account.id === currentAccount.id && (
                 <HugeiconsIcon icon={Tick01Icon} className="size-4 text-primary shrink-0" />
               )}
             </MenuItem>

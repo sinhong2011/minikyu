@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as tauriBindings from '@/lib/tauri-bindings';
+import * as accountsService from '@/services/miniflux/accounts';
 import * as usersService from '@/services/miniflux/users';
 import { UserNav } from './UserNav';
 
@@ -27,7 +28,6 @@ const TestWrapper = ({ children }: { children: React.ReactNode }) => (
 
 const customRender = (ui: React.ReactElement) => render(ui, { wrapper: TestWrapper });
 
-// Mock store
 const mockAccounts = [
   {
     id: '1',
@@ -59,49 +59,23 @@ const mockAccounts = [
   },
 ];
 
-vi.mock('@/store/account-store', () => ({
-  useAccountStore: (selector: any) => {
-    const state = {
-      accounts: mockAccounts,
-      currentAccountId: '1',
-      setAccounts: vi.fn(),
-      setCurrentAccountId: vi.fn(),
-      isLoading: false,
-    };
-    return selector(state);
-  },
-}));
-
-vi.mock('../../../store/account-store', () => ({
-  useAccountStore: (selector: any) => {
-    const state = {
-      accounts: mockAccounts,
-      currentAccountId: '1',
-      setAccounts: vi.fn(),
-      setCurrentAccountId: vi.fn(),
-      isLoading: false,
-    };
-    return selector(state);
-  },
-}));
-
-vi.mock('/Users/niskan516/Sync/Workspace/dev/desktop/minikyu/src/store/account-store', () => ({
-  useAccountStore: (selector: any) => {
-    const state = {
-      accounts: mockAccounts,
-      currentAccountId: '1',
-      setAccounts: vi.fn(),
-      setCurrentAccountId: vi.fn(),
-      isLoading: false,
-    };
-    return selector(state);
-  },
-}));
-
 describe('UserNav', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient.clear();
+
+    vi.spyOn(accountsService, 'useAccounts').mockReturnValue({
+      data: mockAccounts,
+      isLoading: false,
+      isError: false,
+    } as any);
+
+    vi.spyOn(accountsService, 'useActiveAccount').mockReturnValue({
+      data: mockAccounts[0],
+      isLoading: false,
+      isError: false,
+      accounts: mockAccounts,
+    } as any);
 
     // Mock useCurrentUser hook with default success state
     vi.spyOn(usersService, 'useCurrentUser').mockReturnValue({
