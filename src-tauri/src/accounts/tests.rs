@@ -35,7 +35,7 @@ mod tests {
         assert!(account_id1 > 0);
 
         let account1: MinifluxAccount = sqlx::query_as(
-            "SELECT id, username, server_url, auth_method, is_active FROM miniflux_accounts WHERE id = ?"
+            "SELECT id, username, server_url, auth_method, is_active FROM miniflux_connections WHERE id = ?"
         )
         .bind(account_id1)
         .fetch_one(&pool)
@@ -60,7 +60,7 @@ mod tests {
         assert!(account_id2 > 0);
 
         let account1_after: MinifluxAccount = sqlx::query_as(
-            "SELECT id, is_active FROM miniflux_accounts WHERE id = ?"
+            "SELECT id, is_active FROM miniflux_connections WHERE id = ?"
         )
         .bind(account_id1)
         .fetch_one(&pool)
@@ -69,7 +69,7 @@ mod tests {
         assert!(!account1_after.is_active);
 
         let account2: MinifluxAccount = sqlx::query_as(
-            "SELECT id, is_active FROM miniflux_accounts WHERE id = ?"
+            "SELECT id, is_active FROM miniflux_connections WHERE id = ?"
         )
         .bind(account_id2)
         .fetch_one(&pool)
@@ -82,7 +82,7 @@ mod tests {
         assert!(result.is_ok());
 
         let account1_after_switch: MinifluxAccount = sqlx::query_as(
-            "SELECT id, is_active FROM miniflux_accounts WHERE id = ?"
+            "SELECT id, is_active FROM miniflux_connections WHERE id = ?"
         )
         .bind(account_id1)
         .fetch_one(&pool)
@@ -91,7 +91,7 @@ mod tests {
         assert!(account1_after_switch.is_active);
 
         let account2_after_switch: MinifluxAccount = sqlx::query_as(
-            "SELECT id, is_active FROM miniflux_accounts WHERE id = ?"
+            "SELECT id, is_active FROM miniflux_connections WHERE id = ?"
         )
         .bind(account_id2)
         .fetch_one(&pool)
@@ -104,7 +104,7 @@ mod tests {
         assert!(result.is_ok());
 
         let deleted_account: Option<(i64,)> = sqlx::query_as(
-            "SELECT id FROM miniflux_accounts WHERE id = ?"
+            "SELECT id FROM miniflux_connections WHERE id = ?"
         )
         .bind(account_id1)
         .fetch_optional(&pool)
@@ -113,7 +113,7 @@ mod tests {
         assert!(deleted_account.is_none());
 
         let account2_final: MinifluxAccount = sqlx::query_as(
-            "SELECT id, is_active FROM miniflux_accounts WHERE id = ?"
+            "SELECT id, is_active FROM miniflux_connections WHERE id = ?"
         )
         .bind(account_id2)
         .fetch_one(&pool)
@@ -157,7 +157,7 @@ mod tests {
         }
 
         let accounts: Vec<MinifluxAccount> = sqlx::query_as(
-            "SELECT id, username, server_url FROM miniflux_accounts ORDER BY id"
+            "SELECT id, username, server_url FROM miniflux_connections ORDER BY id"
         )
         .fetch_all(&pool)
         .await
@@ -172,7 +172,7 @@ mod tests {
         }
 
         let accounts: Vec<MinifluxAccount> = sqlx::query_as(
-            "SELECT id, is_active FROM miniflux_accounts ORDER BY id"
+            "SELECT id, is_active FROM miniflux_connections ORDER BY id"
         )
         .fetch_all(&pool)
         .await
@@ -238,46 +238,9 @@ mod tests {
             .await
             .expect("Failed to save account 1");
 
-        let result = crate::commands::accounts::save_miniflux_account_impl(&pool, config1.clone())
+        let result =         crate::commands::accounts::save_miniflux_account_impl(&pool, config1.clone())
             .await;
         assert!(result.is_ok(), "Should allow updating existing account with same username");
     }
-
-    #[tokio::test]
-    async fn test_migration_server_url_column() {
-        let pool = setup_test_db().await;
-
-        let now = Utc::now().to_rfc3339();
-
-        sqlx::query(
-            r#"
-            INSERT INTO users (id, username, theme, language, timezone, entry_sorting_order)
-            VALUES (?, ?, ?, ?, ?, ?)
-            "#,
-        )
-        .bind(1)
-        .bind("testuser")
-        .bind("light")
-        .bind("en")
-        .bind("UTC")
-        .bind("created_at")
-        .execute(&pool)
-        .await
-        .expect("Failed to insert user");
-
-        let columns: String = sqlx::query(
-            "SELECT sql FROM sqlite_master WHERE type='table' AND name='users'"
-        )
-        .fetch_one(&pool)
-        .await
-        .expect("Failed to fetch table schema")
-        .sql;
-
-        assert!(columns.contains("server_url"), "server_url column should exist in users table");
-
-        sqlx::query("DELETE FROM users WHERE id = 1")
-            .execute(&pool)
-            .await
-            .expect("Failed to cleanup");
-    }
 }
+

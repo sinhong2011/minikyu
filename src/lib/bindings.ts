@@ -301,7 +301,7 @@ export const commands = {
       else return { status: 'error', error: e as any };
     }
   },
-  async getMinifluxAccounts(): Promise<Result<MinifluxAccount[], AccountError>> {
+  async getMinifluxAccounts(): Promise<Result<MinifluxConnection[], AccountError>> {
     try {
       return { status: 'ok', data: await TAURI_INVOKE('get_miniflux_accounts') };
     } catch (e) {
@@ -309,9 +309,17 @@ export const commands = {
       else return { status: 'error', error: e as any };
     }
   },
-  async getActiveMinifluxAccount(): Promise<Result<MinifluxAccount | null, AccountError>> {
+  async getActiveMinifluxAccount(): Promise<Result<MinifluxConnection | null, AccountError>> {
     try {
       return { status: 'ok', data: await TAURI_INVOKE('get_active_miniflux_account') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  async switchMinifluxAccount(id: string): Promise<Result<null, AccountError>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('switch_miniflux_account', { id }) };
     } catch (e) {
       if (e instanceof Error) throw e;
       else return { status: 'error', error: e as any };
@@ -882,7 +890,7 @@ export type JsonValue =
   | JsonValue[]
   | Partial<{ [key in string]: JsonValue }>;
 export type LastReadingEntry = { entry_id: string; timestamp: string };
-export type MinifluxAccount = {
+export type MinifluxConnection = {
   id: string;
   username: string;
   server_url: string;
