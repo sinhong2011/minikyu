@@ -23,7 +23,8 @@
     "noImplicitOverride": true,
     "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"]
+      "@/*": ["./src/*"],
+      "@/lib/tauri-bindings": ["./src/lib/bindings.ts"]
     },
     "types": []
   },
