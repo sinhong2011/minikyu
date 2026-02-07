@@ -1,17 +1,17 @@
 import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
-import type { MinifluxAccount } from '@/lib/tauri-bindings';
+import type { MinifluxConnection } from '@/lib/tauri-bindings';
 import { logger } from './logger-middleware';
 
 interface AccountState {
-  accounts: MinifluxAccount[];
+  accounts: MinifluxConnection[];
   currentAccountId: string | null;
   isLoading: boolean;
   error: string | null;
 
-  setAccounts: (accounts: MinifluxAccount[]) => void;
+  setAccounts: (accounts: MinifluxConnection[]) => void;
   setCurrentAccountId: (id: string | null) => void;
-  addAccount: (account: MinifluxAccount) => void;
+  addAccount: (account: MinifluxConnection) => void;
   removeAccount: (id: string) => void;
   clearAccounts: () => void;
   setLoading: (loading: boolean) => void;
@@ -27,12 +27,13 @@ export const useAccountStore = create<AccountState>()(
         isLoading: false,
         error: null,
 
-        setAccounts: (accounts: MinifluxAccount[]) => set({ accounts }, undefined, 'setAccounts'),
+        setAccounts: (accounts: MinifluxConnection[]) =>
+          set({ accounts }, undefined, 'setAccounts'),
 
         setCurrentAccountId: (id: string | null) =>
           set({ currentAccountId: id }, undefined, 'setCurrentAccountId'),
 
-        addAccount: (account: MinifluxAccount) =>
+        addAccount: (account: MinifluxConnection) =>
           set(
             (state: AccountState) => ({ accounts: [account, ...state.accounts] }),
             undefined,
@@ -42,7 +43,7 @@ export const useAccountStore = create<AccountState>()(
         removeAccount: (id: string) =>
           set(
             (state: AccountState) => ({
-              accounts: state.accounts.filter((acc: MinifluxAccount) => acc.id !== id),
+              accounts: state.accounts.filter((acc: MinifluxConnection) => acc.id !== id),
             }),
             undefined,
             'removeAccount'

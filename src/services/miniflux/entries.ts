@@ -80,6 +80,11 @@ export function useEntry(id: string) {
         throw new Error(result.error);
       }
 
+      if (!result.data) {
+        logger.error('Entry data is null or undefined', { id });
+        throw new Error('Entry not found: data is missing');
+      }
+
       logger.info('Entry fetched successfully', { id });
       return result.data;
     },
@@ -112,6 +117,11 @@ export function usePrefetchEntry() {
               id,
             });
             throw new Error(result.error);
+          }
+
+          if (!result.data) {
+            logger.debug('Entry data is null or undefined during prefetch', { id });
+            throw new Error('Entry not found: data is missing');
           }
 
           logger.debug('Entry prefetched successfully', { id });

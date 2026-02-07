@@ -1,10 +1,21 @@
+use crate::utils::serde_helpers::{deserialize_i64_from_string_or_number, serialize_i64_as_string};
 use serde::{Deserialize, Serialize};
 use specta::Type;
 
 /// Miniflux Category
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
 pub struct Category {
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
     pub id: i64,
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
     pub user_id: i64,
     pub title: String,
     #[serde(default)]
@@ -18,7 +29,17 @@ pub struct Category {
 /// Miniflux Feed
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
 pub struct Feed {
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
     pub id: i64,
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
     pub user_id: i64,
     pub title: String,
     pub site_url: String,
@@ -78,13 +99,28 @@ pub struct Feed {
 /// Feed Icon
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
 pub struct FeedIcon {
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
     pub feed_id: i64,
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
     pub icon_id: i64,
 }
 
 /// Icon Data
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
 pub struct Icon {
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
     pub id: i64,
     pub data: String, // Base64 encoded
     pub mime_type: String,
@@ -93,8 +129,23 @@ pub struct Icon {
 /// Miniflux Entry
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
 pub struct Entry {
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
     pub id: i64,
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
     pub user_id: i64,
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
     pub feed_id: i64,
     pub title: String,
     pub url: String,
@@ -135,7 +186,17 @@ pub struct EntryResponse {
 /// Enclosure (for podcasts/videos)
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
 pub struct Enclosure {
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
     pub id: i64,
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
     pub entry_id: i64,
     pub url: String,
     pub mime_type: String,
@@ -148,6 +209,11 @@ pub struct Enclosure {
 /// User
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
 pub struct User {
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
     pub id: i64,
     pub username: String,
     #[serde(default)]

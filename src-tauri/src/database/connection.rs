@@ -86,7 +86,7 @@ mod tests {
         assert!(tables.contains(&"entries".to_string()));
         assert!(tables.contains(&"enclosures".to_string()));
         assert!(tables.contains(&"tags".to_string()));
-        assert!(tables.contains(&"users".to_string()));
+        assert!(tables.contains(&"miniflux_connections".to_string()));
         assert!(tables.contains(&"sync_state".to_string()));
         assert!(tables.contains(&"sync_queue".to_string()));
         assert!(tables.contains(&"podcast_progress".to_string()));

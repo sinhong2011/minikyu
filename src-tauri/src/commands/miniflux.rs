@@ -49,60 +49,6 @@ pub async fn miniflux_connect(
 
             *state.miniflux.client.lock().await = Some(client);
 
-            // Initialize database
-            let pool = state
-                .db_pool
-                .lock()
-                .await
-                .as_ref()
-                .ok_or("Database not initialized")?
-                .clone();
-            let now = Utc::now().to_rfc3339();
-            sqlx::query(
-                r#"
-                INSERT INTO users (
-                    id, username, server_url, is_admin, theme, language, timezone,
-                    entry_sorting_direction, entries_per_page, keyboard_shortcuts,
-                    display_mode, show_reading_time, entry_swipe, custom_css,
-                    created_at, updated_at
-                ) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                ON CONFLICT(server_url, username) DO UPDATE SET
-                    is_admin = excluded.is_admin,
-                    theme = excluded.theme,
-                    language = excluded.language,
-                    timezone = excluded.timezone,
-                    entry_sorting_direction = excluded.entry_sorting_direction,
-                    entries_per_page = excluded.entries_per_page,
-                    keyboard_shortcuts = excluded.keyboard_shortcuts,
-                    display_mode = excluded.display_mode,
-                    show_reading_time = excluded.show_reading_time,
-                    entry_swipe = excluded.entry_swipe,
-                    custom_css = excluded.custom_css,
-                    updated_at = excluded.updated_at
-                "#,
-            )
-            .bind(user.id)
-            .bind(&user.username)
-            .bind(&config.server_url)
-            .bind(user.is_admin)
-            .bind(user.theme.as_deref())
-            .bind(user.language.as_deref())
-            .bind(user.timezone.as_deref())
-            .bind(user.entry_sorting_direction.as_deref())
-            .bind(user.entries_per_page.unwrap_or(100))
-            .bind(user.keyboard_shortcuts)
-            .bind(user.display_mode.as_deref())
-            .bind(user.show_reading_time.unwrap_or(true))
-            .bind(user.entry_swipe.unwrap_or(true))
-            .bind(user.stylesheet.as_deref())
-            .bind(&now)
-            .bind(&now)
-            .execute(&pool)
-            .await
-            .map_err(|e| format!("Failed to save user to database: {}", e))?;
-
-            log::info!("User '{}' saved to database", user.username);
-
             log::info!("Saving credentials after successful authentication");
 
             let mut config_with_username = config.clone();
@@ -185,7 +131,7 @@ pub async fn get_feeds(state: State<'_, AppState>) -> Result<Vec<crate::miniflux
 #[specta::specta]
 pub async fn get_category_feeds(
     state: State<'_, AppState>,
-    category_id: i64,
+    category_id: String,
 ) -> Result<Vec<crate::miniflux::Feed>, String> {
     let pool = state
         .db_pool
@@ -195,7 +141,11 @@ pub async fn get_category_feeds(
         .ok_or("Database not initialized")?
         .clone();
 
-    get_category_feeds_from_db(&pool, category_id).await
+    let category_id_parsed = category_id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid category ID: {}", e))?;
+
+    get_category_feeds_from_db(&pool, category_id_parsed).await
 }
 
 /// Get entries with filters
@@ -221,7 +171,7 @@ pub async fn get_entries(
 #[specta::specta]
 pub async fn get_entry(
     state: State<'_, AppState>,
-    id: i64,
+    id: String,
 ) -> Result<crate::miniflux::Entry, String> {
     let pool = state
         .db_pool
@@ -231,37 +181,54 @@ pub async fn get_entry(
         .ok_or("Database not initialized")?
         .clone();
 
-    get_entry_from_db(&pool, id).await
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid entry ID: {}", e))?;
+
+    get_entry_from_db(&pool, id_parsed).await
 }
 
 /// Mark entry as read
 #[tauri::command]
 #[specta::specta]
-pub async fn mark_entry_read(state: State<'_, AppState>, id: i64) -> Result<(), String> {
+pub async fn mark_entry_read(state: State<'_, AppState>, id: String) -> Result<(), String> {
     let guard = state.miniflux.client.lock().await;
     let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
 
-    client.update_entries(vec![id], "read".to_string()).await
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid entry ID: {}", e))?;
+
+    client.update_entries(vec![id_parsed], "read".to_string()).await
 }
 
 /// Mark multiple entries as read
 #[tauri::command]
 #[specta::specta]
-pub async fn mark_entries_read(state: State<'_, AppState>, ids: Vec<i64>) -> Result<(), String> {
+pub async fn mark_entries_read(state: State<'_, AppState>, ids: Vec<String>) -> Result<(), String> {
     let guard = state.miniflux.client.lock().await;
     let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
 
-    client.update_entries(ids, "read".to_string()).await
+    let ids_parsed: Vec<i64> = ids
+        .iter()
+        .map(|id| id.parse::<i64>().map_err(|e| format!("Invalid entry ID: {}", e)))
+        .collect::<Result<Vec<_>, _>>()?;
+
+    client.update_entries(ids_parsed, "read".to_string()).await
 }
 
 /// Toggle entry star
 #[tauri::command]
 #[specta::specta]
-pub async fn toggle_entry_star(state: State<'_, AppState>, id: i64) -> Result<(), String> {
+pub async fn toggle_entry_star(state: State<'_, AppState>, id: String) -> Result<(), String> {
     let guard = state.miniflux.client.lock().await;
     let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
 
-    client.toggle_bookmark(id).await
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid entry ID: {}", e))?;
+
+    client.toggle_bookmark(id_parsed).await
 }
 
 /// Update entry
@@ -269,23 +236,31 @@ pub async fn toggle_entry_star(state: State<'_, AppState>, id: i64) -> Result<()
 #[specta::specta]
 pub async fn update_entry(
     state: State<'_, AppState>,
-    id: i64,
+    id: String,
     updates: EntryUpdate,
 ) -> Result<crate::miniflux::Entry, String> {
     let guard = state.miniflux.client.lock().await;
     let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
 
-    client.update_entry(id, updates).await
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid entry ID: {}", e))?;
+
+    client.update_entry(id_parsed, updates).await
 }
 
 /// Refresh a feed
 #[tauri::command]
 #[specta::specta]
-pub async fn refresh_feed(state: State<'_, AppState>, id: i64) -> Result<(), String> {
+pub async fn refresh_feed(state: State<'_, AppState>, id: String) -> Result<(), String> {
     let guard = state.miniflux.client.lock().await;
     let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
 
-    client.refresh_feed(id).await
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid feed ID: {}", e))?;
+
+    client.refresh_feed(id_parsed).await
 }
 
 /// Refresh all feeds
@@ -304,12 +279,16 @@ pub async fn refresh_all_feeds(state: State<'_, AppState>) -> Result<(), String>
 pub async fn create_feed(
     state: State<'_, AppState>,
     feed_url: String,
-    category_id: Option<i64>,
+    category_id: Option<String>,
 ) -> Result<i64, String> {
     let guard = state.miniflux.client.lock().await;
     let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
 
-    client.create_feed(feed_url, category_id).await
+    let category_id_parsed = category_id
+        .map(|id| id.parse::<i64>().map_err(|e| format!("Invalid category ID: {}", e)))
+        .transpose()?;
+
+    client.create_feed(feed_url, category_id_parsed).await
 }
 
 /// Update a feed
@@ -317,23 +296,31 @@ pub async fn create_feed(
 #[specta::specta]
 pub async fn update_feed(
     state: State<'_, AppState>,
-    id: i64,
+    id: String,
     updates: FeedUpdate,
 ) -> Result<crate::miniflux::Feed, String> {
     let guard = state.miniflux.client.lock().await;
     let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
 
-    client.update_feed(id, updates).await
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid feed ID: {}", e))?;
+
+    client.update_feed(id_parsed, updates).await
 }
 
 /// Delete a feed
 #[tauri::command]
 #[specta::specta]
-pub async fn delete_feed(state: State<'_, AppState>, id: i64) -> Result<(), String> {
+pub async fn delete_feed(state: State<'_, AppState>, id: String) -> Result<(), String> {
     let guard = state.miniflux.client.lock().await;
     let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
 
-    client.delete_feed(id).await
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid feed ID: {}", e))?;
+
+    client.delete_feed(id_parsed).await
 }
 
 /// Get current user
@@ -417,13 +404,17 @@ pub async fn import_opml(state: State<'_, AppState>, opml_content: String) -> Re
 #[specta::specta]
 pub async fn fetch_entry_content(
     state: State<'_, AppState>,
-    id: i64,
+    id: String,
     update_content: bool,
 ) -> Result<String, String> {
     let guard = state.miniflux.client.lock().await;
     let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
 
-    client.fetch_content(id, update_content).await
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid entry ID: {}", e))?;
+
+    client.fetch_content(id_parsed, update_content).await
 }
 
 pub async fn get_categories_from_db(

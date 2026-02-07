@@ -2,7 +2,7 @@
 mod tests {
     use crate::accounts::error::AccountError;
     use crate::accounts::keyring::{delete_credentials, get_password, get_token};
-    use crate::commands::accounts::MinifluxAccount;
+    use crate::commands::accounts::MinifluxConnection;
     use crate::database::migrations::run_migrations;
     use crate::miniflux::AuthConfig;
     use chrono::Utc;
@@ -49,7 +49,7 @@ mod tests {
         let now = Utc::now().to_rfc3339();
 
         let existing_account: Option<(i64,)> =
-            sqlx::query_as("SELECT id FROM miniflux_accounts WHERE username = ?")
+            sqlx::query_as("SELECT id FROM miniflux_connections WHERE username = ?")
                 .bind(username)
                 .fetch_optional(pool)
                 .await?;
@@ -57,7 +57,7 @@ mod tests {
         let account_id = if let Some((id,)) = existing_account {
             sqlx::query(
                 r#"
-                UPDATE miniflux_accounts
+                UPDATE miniflux_connections
                 SET server_url = ?,
                     auth_method = ?,
                     updated_at = ?
@@ -75,7 +75,7 @@ mod tests {
         } else {
             let result = sqlx::query(
                 r#"
-                INSERT INTO miniflux_accounts (username, server_url, auth_method, is_active, created_at, updated_at)
+                INSERT INTO miniflux_connections (username, server_url, auth_method, is_active, created_at, updated_at)
                 VALUES (?, ?, ?, 0, ?, ?)
                 "#,
             )
@@ -90,12 +90,12 @@ mod tests {
             result.last_insert_rowid()
         };
 
-        sqlx::query("UPDATE miniflux_accounts SET is_active = 0 WHERE username != ?")
+        sqlx::query("UPDATE miniflux_connections SET is_active = 0 WHERE username != ?")
             .bind(username)
             .execute(pool)
             .await?;
 
-        sqlx::query("UPDATE miniflux_accounts SET is_active = 1 WHERE username = ?")
+        sqlx::query("UPDATE miniflux_connections SET is_active = 1 WHERE username = ?")
             .bind(username)
             .execute(pool)
             .await?;
@@ -117,12 +117,12 @@ mod tests {
         Ok(account_id)
     }
 
-    async fn get_miniflux_accounts_test(
+    async fn get_miniflux_connections_test(
         pool: &SqlitePool,
-    ) -> Result<Vec<MinifluxAccount>, AccountError> {
-        let accounts: Vec<MinifluxAccount> = sqlx::query_as(
-            "SELECT id, username, server_url, auth_method, is_active, created_at, updated_at 
-             FROM miniflux_accounts 
+    ) -> Result<Vec<MinifluxConnection>, AccountError> {
+        let accounts: Vec<MinifluxConnection> = sqlx::query_as(
+            "SELECT id, username, server_url, auth_method, is_active, created_at, updated_at
+             FROM miniflux_connections
              ORDER BY created_at DESC",
         )
         .fetch_all(pool)
@@ -151,7 +151,7 @@ mod tests {
 
         // Verify account is in database
         let row: (i64, String, String, String, i64) = sqlx::query_as(
-            "SELECT id, username, server_url, auth_method, is_active FROM miniflux_accounts WHERE id = ?",
+            "SELECT id, username, server_url, auth_method, is_active FROM miniflux_connections WHERE id = ?",
         )
         .bind(account_id)
         .fetch_one(&pool)
@@ -191,7 +191,7 @@ mod tests {
 
         // Verify account is in database
         let row: (i64, String, String, String, i64) = sqlx::query_as(
-            "SELECT id, username, server_url, auth_method, is_active FROM miniflux_accounts WHERE id = ?",
+            "SELECT id, username, server_url, auth_method, is_active FROM miniflux_connections WHERE id = ?",
         )
         .bind(account_id)
         .fetch_one(&pool)
@@ -246,7 +246,7 @@ mod tests {
 
         // Verify auth_method is updated
         let row: (String,) =
-            sqlx::query_as("SELECT auth_method FROM miniflux_accounts WHERE id = ?")
+            sqlx::query_as("SELECT auth_method FROM miniflux_connections WHERE id = ?")
                 .bind(account_id2)
                 .fetch_one(&pool)
                 .await
@@ -293,7 +293,7 @@ mod tests {
 
         // Verify only one account is active
         let active_count: i64 =
-            sqlx::query_scalar("SELECT COUNT(*) FROM miniflux_accounts WHERE is_active = 1")
+            sqlx::query_scalar("SELECT COUNT(*) FROM miniflux_connections WHERE is_active =1")
                 .fetch_one(&pool)
                 .await
                 .expect("Failed to count active accounts");
@@ -302,7 +302,7 @@ mod tests {
 
         // Verify it's the second account
         let active_username: String =
-            sqlx::query_scalar("SELECT username FROM miniflux_accounts WHERE is_active = 1")
+            sqlx::query_scalar("SELECT username FROM miniflux_connections WHERE is_active = 1")
                 .fetch_one(&pool)
                 .await
                 .expect("Failed to fetch active username");
@@ -386,7 +386,7 @@ mod tests {
 
         // Verify server_url is updated
         let server_url: String =
-            sqlx::query_scalar("SELECT server_url FROM miniflux_accounts WHERE id = ?")
+            sqlx::query_scalar("SELECT server_url FROM miniflux_connections WHERE id = ?")
                 .bind(id2)
                 .fetch_one(&pool)
                 .await
@@ -426,7 +426,7 @@ mod tests {
             .expect("Failed to save second account");
 
         // Get all accounts
-        let accounts = get_miniflux_accounts_test(&pool)
+        let accounts = get_miniflux_connections_test(&pool)
             .await
             .expect("Failed to get accounts");
 
@@ -473,7 +473,7 @@ mod tests {
             .expect("Failed to save second account");
 
         // Get all accounts
-        let accounts = get_miniflux_accounts_test(&pool)
+        let accounts = get_miniflux_connections_test(&pool)
             .await
             .expect("Failed to get accounts");
 
@@ -499,7 +499,7 @@ mod tests {
         let pool = setup_test_db().await;
 
         // Get accounts from empty database
-        let accounts = get_miniflux_accounts_test(&pool)
+        let accounts = get_miniflux_connections_test(&pool)
             .await
             .expect("Failed to get accounts");
 
@@ -536,7 +536,7 @@ mod tests {
         );
 
         // Verify account is deleted from database
-        let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM miniflux_accounts WHERE id = ?")
+        let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM miniflux_connections WHERE id = ?")
             .bind(account_id)
             .fetch_one(&pool)
             .await
@@ -591,74 +591,6 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_delete_account_cascade_deletes_from_users() {
-        let pool = setup_test_db().await;
-
-        // Create account
-        let config = AuthConfig {
-            server_url: "https://miniflux.example.com".to_string(),
-            auth_token: Some("test_token".to_string()),
-            username: Some("delete_test_user3".to_string()),
-            password: None,
-        };
-
-        let account_id = save_miniflux_account_test(&pool, config.clone())
-            .await
-            .expect("Failed to save account");
-
-        // Insert user in users table
-        let now = chrono::Utc::now().to_rfc3339();
-        sqlx::query(
-            r#"
-            INSERT INTO users (id, server_url, username, is_admin, theme, language, timezone, 
-                entry_sorting_direction, entries_per_page, display_mode, 
-                show_reading_time, entry_swipe, created_at, updated_at) 
-            VALUES (1, ?, ?, 0, 'system', 'en', 'UTC', 'asc', 100, 'standalone', 1, 1, ?, ?)
-            "#,
-        )
-        .bind("https://miniflux.example.com")
-        .bind("delete_test_user3")
-        .bind(&now)
-        .bind(&now)
-        .execute(&pool)
-        .await
-        .expect("Failed to insert user");
-
-        // Verify user exists
-        let count: i64 =
-            sqlx::query_scalar("SELECT COUNT(*) FROM users WHERE server_url = ? AND username = ?")
-                .bind("https://miniflux.example.com")
-                .bind("delete_test_user3")
-                .fetch_one(&pool)
-                .await
-                .expect("Failed to count users");
-
-        assert_eq!(count, 1, "User should exist before deletion");
-
-        // Delete account
-        let result = delete_miniflux_account_test(&pool, account_id).await;
-        assert!(
-            result.is_ok(),
-            "Failed to delete account: {:?}",
-            result.err()
-        );
-
-        // Verify user is cascade deleted
-        let count: i64 =
-            sqlx::query_scalar("SELECT COUNT(*) FROM users WHERE server_url = ? AND username = ?")
-                .bind("https://miniflux.example.com")
-                .bind("delete_test_user3")
-                .fetch_one(&pool)
-                .await
-                .expect("Failed to count users");
-
-        assert_eq!(count, 0, "User should be cascade deleted");
-
-        // Cleanup keyring
-        let _ = delete_credentials("https://miniflux.example.com", "delete_test_user3").await;
-    }
-
-    #[tokio::test]
     async fn test_delete_nonexistent_account_returns_error() {
         let pool = setup_test_db().await;
 
@@ -693,7 +625,7 @@ mod tests {
 
         // Verify account is active
         let is_active: i64 =
-            sqlx::query_scalar("SELECT is_active FROM miniflux_accounts WHERE id = ?")
+            sqlx::query_scalar("SELECT is_active FROM miniflux_connections WHERE id = ?")
                 .bind(account_id)
                 .fetch_one(&pool)
                 .await
@@ -706,7 +638,7 @@ mod tests {
         assert!(result.is_ok(), "Should be able to delete active account");
 
         // Verify account is deleted
-        let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM miniflux_accounts WHERE id = ?")
+        let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM miniflux_connections WHERE id = ?")
             .bind(account_id)
             .fetch_one(&pool)
             .await
@@ -724,7 +656,7 @@ mod tests {
 
         // Query for active account (should be None)
         let active_account: Option<(i64, String, String, String)> = sqlx::query_as(
-            "SELECT id, username, server_url, auth_method FROM miniflux_accounts WHERE is_active = 1",
+            "SELECT id, username, server_url, auth_method FROM miniflux_connections WHERE is_active = 1",
         )
         .fetch_optional(&pool)
         .await
@@ -751,7 +683,7 @@ mod tests {
 
         // Verify account is in database
         let active_account: Option<(i64, String, String, String)> = sqlx::query_as(
-            "SELECT id, username, server_url, auth_method FROM miniflux_accounts WHERE is_active = 1",
+            "SELECT id, username, server_url, auth_method FROM miniflux_connections WHERE is_active = 1",
         )
         .fetch_optional(&pool)
         .await
@@ -790,7 +722,7 @@ mod tests {
 
         // Verify account is in database
         let active_account: Option<(i64, String, String, String)> = sqlx::query_as(
-            "SELECT id, username, server_url, auth_method FROM miniflux_accounts WHERE is_active = 1",
+            "SELECT id, username, server_url, auth_method FROM miniflux_connections WHERE is_active = 1",
         )
         .fetch_optional(&pool)
         .await
@@ -819,7 +751,7 @@ mod tests {
         let now = chrono::Utc::now().to_rfc3339();
         sqlx::query(
             r#"
-            INSERT INTO miniflux_accounts (username, server_url, auth_method, is_active, created_at, updated_at)
+            INSERT INTO miniflux_connections (username, server_url, auth_method, is_active, created_at, updated_at)
             VALUES (?, ?, ?, 1, ?, ?)
             "#,
         )
@@ -834,7 +766,7 @@ mod tests {
 
         // Verify invalid auth_method was inserted
         let active_account: Option<(i64, String, String, String)> = sqlx::query_as(
-            "SELECT id, username, server_url, auth_method FROM miniflux_accounts WHERE is_active = 1",
+            "SELECT id, username, server_url, auth_method FROM miniflux_connections WHERE is_active = 1",
         )
         .fetch_optional(&pool)
         .await
@@ -853,7 +785,7 @@ mod tests {
         let now = chrono::Utc::now().to_rfc3339();
         sqlx::query(
             r#"
-            INSERT INTO miniflux_accounts (username, server_url, auth_method, is_active, created_at, updated_at)
+            INSERT INTO miniflux_connections (username, server_url, auth_method, is_active, created_at, updated_at)
             VALUES (?, ?, ?, 1, ?, ?)
             "#,
         )
@@ -868,8 +800,9 @@ mod tests {
 
         // Verify account exists
         let active_account: Option<(i64, String, String, String)> = sqlx::query_as(
-            "SELECT id, username, server_url, auth_method FROM miniflux_accounts WHERE is_active = 1",
+            "SELECT id, username, server_url, auth_method FROM miniflux_connections WHERE is_active = 1",
         )
+
         .fetch_optional(&pool)
         .await
         .expect("Failed to query active account");

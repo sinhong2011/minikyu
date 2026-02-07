@@ -114,27 +114,33 @@ CREATE TABLE IF NOT EXISTS tags (
      UNIQUE(entry_id, tag)
 );
 
--- Users (for multi-user support)
-CREATE TABLE IF NOT EXISTS users (
+ -- Miniflux Connections
+CREATE TABLE IF NOT EXISTS miniflux_connections (
      id INTEGER PRIMARY KEY,
-     username TEXT NOT NULL UNIQUE,
-     is_admin BOOLEAN DEFAULT FALSE,
-     theme TEXT DEFAULT 'system',
-     language TEXT DEFAULT 'en',
-     timezone TEXT DEFAULT 'UTC',
-     entry_sorting_direction TEXT DEFAULT 'asc',
-     entries_per_page INTEGER DEFAULT 100,
-     keyboard_shortcuts TEXT,
-     -- JSON
-     display_mode TEXT DEFAULT 'standalone',
-     show_reading_time BOOLEAN DEFAULT TRUE,
-     entry_swipe BOOLEAN DEFAULT TRUE,
-     custom_css TEXT,
+     username TEXT NOT NULL,
+     server_url TEXT NOT NULL,
+     auth_method TEXT NOT NULL,
+     is_active BOOLEAN DEFAULT FALSE,
      created_at TEXT NOT NULL,
      updated_at TEXT NOT NULL
-);
+ );
 
--- Sync State
+ -- Downloads
+CREATE TABLE IF NOT EXISTS downloads (
+     id INTEGER PRIMARY KEY,
+     url TEXT NOT NULL,
+     file_name TEXT NOT NULL,
+     status TEXT NOT NULL,
+     progress INTEGER DEFAULT 0,
+     downloaded_bytes INTEGER DEFAULT 0,
+     total_bytes INTEGER DEFAULT 0,
+     file_path TEXT,
+     error TEXT,
+     created_at TEXT NOT NULL,
+     updated_at TEXT NOT NULL
+ );
+
+ -- Sync State
 CREATE TABLE IF NOT EXISTS sync_state (
      id INTEGER PRIMARY KEY,
      last_sync_at TEXT,
@@ -185,6 +191,12 @@ CREATE INDEX IF NOT EXISTS idx_entries_published_at ON entries(published_at DESC
 CREATE INDEX IF NOT EXISTS idx_entries_user_status ON entries(user_id, STATUS);
 
 CREATE INDEX IF NOT EXISTS idx_enclosures_entry_id ON enclosures(entry_id);
+
+CREATE INDEX IF NOT EXISTS idx_miniflux_connections_active ON miniflux_connections(is_active);
+
+CREATE INDEX IF NOT EXISTS idx_downloads_status ON downloads(status);
+
+CREATE INDEX IF NOT EXISTS idx_downloads_url ON downloads(url);
 
 CREATE INDEX IF NOT EXISTS idx_enclosures_media_type ON enclosures(media_type);
 

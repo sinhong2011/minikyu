@@ -11,47 +11,6 @@ pub async fn run_migrations(pool: &SqlitePool) -> Result<(), sqlx::Error> {
         record_migration(pool, 1, "initial_schema").await?;
     }
 
-    if !applied_migrations.contains(&2) {
-        apply_v2_schema(pool).await?;
-        record_migration(pool, 2, "add_downloads_table").await?;
-    }
-
-    Ok(())
-}
-
-// ... existing code ...
-
-pub(crate) async fn apply_v2_schema(pool: &SqlitePool) -> Result<(), sqlx::Error> {
-    sqlx::query(
-        r#"
-        CREATE TABLE IF NOT EXISTS downloads (
-            id INTEGER PRIMARY KEY,
-            url TEXT NOT NULL,
-            file_name TEXT NOT NULL,
-            status TEXT NOT NULL,
-            progress INTEGER DEFAULT 0,
-            downloaded_bytes INTEGER DEFAULT 0,
-            total_bytes INTEGER DEFAULT 0,
-            file_path TEXT,
-            error TEXT,
-            created_at TEXT NOT NULL,
-            updated_at TEXT NOT NULL
-        )
-        "#,
-    )
-    .execute(pool)
-    .await?;
-
-    sqlx::query("CREATE INDEX IF NOT EXISTS idx_downloads_status ON downloads(status)")
-        .execute(pool)
-        .await?;
-
-    sqlx::query("CREATE INDEX IF NOT EXISTS idx_downloads_url ON downloads(url)")
-        .execute(pool)
-        .await?;
-
-    log::info!("V2 schema migration applied (add_downloads_table)");
-
     Ok(())
 }
 
@@ -246,33 +205,7 @@ pub(crate) async fn apply_initial_schema(pool: &SqlitePool) -> Result<(), sqlx::
 
     sqlx::query(
         r#"
-        CREATE TABLE IF NOT EXISTS users (
-            id INTEGER PRIMARY KEY,
-            username TEXT NOT NULL,
-            server_url TEXT DEFAULT '',
-            is_admin BOOLEAN DEFAULT FALSE,
-            theme TEXT DEFAULT 'system',
-            language TEXT DEFAULT 'en',
-            timezone TEXT DEFAULT 'UTC',
-            entry_sorting_direction TEXT DEFAULT 'asc',
-            entries_per_page INTEGER DEFAULT 100,
-            keyboard_shortcuts TEXT,
-            display_mode TEXT DEFAULT 'standalone',
-            show_reading_time BOOLEAN DEFAULT TRUE,
-            entry_swipe BOOLEAN DEFAULT TRUE,
-            custom_css TEXT,
-            created_at TEXT NOT NULL,
-            updated_at TEXT NOT NULL,
-            UNIQUE(server_url, username)
-        )
-        "#,
-    )
-    .execute(pool)
-    .await?;
-
-    sqlx::query(
-        r#"
-        CREATE TABLE IF NOT EXISTS miniflux_accounts (
+        CREATE TABLE IF NOT EXISTS miniflux_connections (
             id INTEGER PRIMARY KEY,
             username TEXT NOT NULL,
             server_url TEXT NOT NULL,
@@ -285,6 +218,34 @@ pub(crate) async fn apply_initial_schema(pool: &SqlitePool) -> Result<(), sqlx::
     )
     .execute(pool)
     .await?;
+
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS downloads (
+            id INTEGER PRIMARY KEY,
+            url TEXT NOT NULL,
+            file_name TEXT NOT NULL,
+            status TEXT NOT NULL,
+            progress INTEGER DEFAULT 0,
+            downloaded_bytes INTEGER DEFAULT 0,
+            total_bytes INTEGER DEFAULT 0,
+            file_path TEXT,
+            error TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        )
+        "#,
+    )
+    .execute(pool)
+    .await?;
+
+    sqlx::query("CREATE INDEX IF NOT EXISTS idx_downloads_status ON downloads(status)")
+        .execute(pool)
+        .await?;
+
+    sqlx::query("CREATE INDEX IF NOT EXISTS idx_downloads_url ON downloads(url)")
+        .execute(pool)
+        .await?;
 
     sqlx::query(
         r#"
@@ -352,7 +313,7 @@ pub(crate) async fn apply_initial_schema(pool: &SqlitePool) -> Result<(), sqlx::
         "CREATE INDEX IF NOT EXISTS idx_entries_published_at ON entries(published_at DESC)",
     )
     .execute(pool)
-    .await?;
+        .await?;
 
     sqlx::query("CREATE INDEX IF NOT EXISTS idx_entries_user_status ON entries(user_id, status)")
         .execute(pool)

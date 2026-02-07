@@ -115,11 +115,11 @@ mod tests {
     }
 
     #[tokio::test]
-    async fn test_miniflux_accounts_table_creation() {
+    async fn test_miniflux_connections_table_creation() {
         let pool = SqlitePool::connect("sqlite::memory:").await.unwrap();
         run_migrations(&pool).await.unwrap();
 
-        // Verify miniflux_accounts table exists
+        // Verify miniflux_connections table exists
         let tables: Vec<String> =
             sqlx::query_scalar("SELECT name FROM sqlite_master WHERE type='table' ORDER BY name")
                 .fetch_all(&pool)
@@ -127,13 +127,13 @@ mod tests {
                 .unwrap();
 
         assert!(
-            tables.contains(&"miniflux_accounts".to_string()),
-            "miniflux_accounts table should be created"
+            tables.contains(&"miniflux_connections".to_string()),
+            "miniflux_connections table should be created"
         );
 
         // Verify table structure
         let columns: Vec<(String, String)> = sqlx::query_as(
-            "SELECT name, type FROM pragma_table_info('miniflux_accounts') ORDER BY cid",
+            "SELECT name, type FROM pragma_table_info('miniflux_connections') ORDER BY cid",
         )
         .fetch_all(&pool)
         .await
@@ -182,24 +182,6 @@ mod tests {
                 .iter()
                 .any(|(v, n)| *v == 1 && n == "initial_schema"),
             "Migration 1 should be tracked"
-        );
-    }
-
-    #[tokio::test]
-    async fn test_users_table_structure() {
-        let pool = SqlitePool::connect("sqlite::memory:").await.unwrap();
-        run_migrations(&pool).await.unwrap();
-
-        // Verify server_url column exists
-        let columns: Vec<(String, String)> =
-            sqlx::query_as("SELECT name, type FROM pragma_table_info('users') ORDER BY cid")
-                .fetch_all(&pool)
-                .await
-                .unwrap();
-
-        assert!(
-            columns.iter().any(|(name, _)| name == "server_url"),
-            "server_url column should exist"
         );
     }
 }

@@ -4,13 +4,22 @@ use crate::accounts::keyring::{
 };
 use crate::miniflux::AuthConfig;
 use crate::AppState;
+use crate::utils::serde_helpers::{
+    deserialize_i64_from_string_or_number,
+    serialize_i64_as_string,
+};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use sqlx::SqlitePool;
 use tauri::{AppHandle, Emitter, State};
 
 #[derive(Debug, Clone, Serialize, Deserialize, specta::Type, sqlx::FromRow)]
-pub struct MinifluxAccount {
+pub struct MinifluxConnection {
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
     pub id: i64,
     pub username: String,
     pub server_url: String,
@@ -66,7 +75,7 @@ pub async fn save_miniflux_account(
     let now = Utc::now().to_rfc3339();
 
     let existing_account: Option<(i64,)> =
-        sqlx::query_as("SELECT id FROM miniflux_accounts WHERE username = ?")
+        sqlx::query_as("SELECT id FROM miniflux_connections WHERE username = ?")
             .bind(username)
             .fetch_optional(&pool)
             .await?;
@@ -76,7 +85,7 @@ pub async fn save_miniflux_account(
 
         sqlx::query(
             r#"
-            UPDATE miniflux_accounts 
+            UPDATE miniflux_connections
             SET server_url = ?, auth_method = ?, updated_at = ?
             WHERE id = ?
             "#,
@@ -94,7 +103,7 @@ pub async fn save_miniflux_account(
 
         let result = sqlx::query(
             r#"
-            INSERT INTO miniflux_accounts (username, server_url, auth_method, is_active, created_at, updated_at)
+            INSERT INTO miniflux_connections (username, server_url, auth_method, is_active, created_at, updated_at)
             VALUES (?, ?, ?, 0, ?, ?)
             "#,
         )
@@ -109,12 +118,12 @@ pub async fn save_miniflux_account(
         result.last_insert_rowid()
     };
 
-    sqlx::query("UPDATE miniflux_accounts SET is_active = 0 WHERE username != ?")
+    sqlx::query("UPDATE miniflux_connections SET is_active = 0 WHERE username != ?")
         .bind(username)
         .execute(&pool)
         .await?;
 
-    sqlx::query("UPDATE miniflux_accounts SET is_active = 1 WHERE username = ?")
+    sqlx::query("UPDATE miniflux_connections SET is_active = 1 WHERE username = ?")
         .bind(username)
         .execute(&pool)
         .await?;
@@ -143,7 +152,7 @@ pub async fn save_miniflux_account(
 pub async fn get_miniflux_accounts(
     _app_handle: AppHandle,
     state: State<'_, AppState>,
-) -> Result<Vec<MinifluxAccount>, AccountError> {
+) -> Result<Vec<MinifluxConnection>, AccountError> {
     log::info!("[get_miniflux_accounts] Command invoked");
 
     let pool = state
@@ -159,9 +168,9 @@ pub async fn get_miniflux_accounts(
 
     log::info!("[get_miniflux_accounts] Database pool acquired, querying accounts");
 
-    let accounts: Vec<MinifluxAccount> = sqlx::query_as(
+    let accounts: Vec<MinifluxConnection> = sqlx::query_as(
         "SELECT id, username, server_url, auth_method, is_active, created_at, updated_at
-         FROM miniflux_accounts
+         FROM miniflux_connections
          ORDER BY created_at DESC",
     )
     .fetch_all(&pool)
@@ -193,7 +202,7 @@ pub async fn get_miniflux_accounts(
 pub async fn get_active_miniflux_account(
     _app_handle: AppHandle,
     state: State<'_, AppState>,
-) -> Result<Option<MinifluxAccount>, AccountError> {
+) -> Result<Option<MinifluxConnection>, AccountError> {
     log::info!("Fetching active account");
 
     let pool = state
@@ -204,9 +213,9 @@ pub async fn get_active_miniflux_account(
         .ok_or(AccountError::NotFound)?
         .clone();
 
-    let account: Option<MinifluxAccount> = sqlx::query_as(
+    let account: Option<MinifluxConnection> = sqlx::query_as(
         "SELECT id, username, server_url, auth_method, is_active, created_at, updated_at
-         FROM miniflux_accounts
+         FROM miniflux_connections
          WHERE is_active = 1
          LIMIT 1",
     )
@@ -248,7 +257,7 @@ pub async fn delete_miniflux_account(
 
 async fn delete_miniflux_account_impl(pool: &SqlitePool, id: i64) -> Result<(), AccountError> {
     let account: Option<(String, String)> =
-        sqlx::query_as("SELECT server_url, username FROM miniflux_accounts WHERE id = ?")
+        sqlx::query_as("SELECT server_url, username FROM miniflux_connections WHERE id = ?")
             .bind(id)
             .fetch_optional(pool)
             .await?;
@@ -257,7 +266,7 @@ async fn delete_miniflux_account_impl(pool: &SqlitePool, id: i64) -> Result<(), 
 
     log::debug!("Deleting account for username: {}", username);
 
-    sqlx::query("DELETE FROM miniflux_accounts WHERE id = ?")
+    sqlx::query("DELETE FROM miniflux_connections WHERE id = ?")
         .bind(id)
         .execute(pool)
         .await?;
@@ -275,15 +284,40 @@ async fn delete_miniflux_account_impl(pool: &SqlitePool, id: i64) -> Result<(), 
         }
     }
 
-    sqlx::query("DELETE FROM users WHERE server_url = ? AND username = ?")
-        .bind(&server_url)
-        .bind(&username)
-        .execute(pool)
-        .await?;
-
     log::info!("Successfully deleted account with ID: {}", id);
 
     Ok(())
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn switch_miniflux_account(
+    app_handle: AppHandle,
+    state: State<'_, AppState>,
+    id: String,
+) -> Result<(), AccountError> {
+    log::info!("Switching to account with ID: {}", id);
+
+    let pool = state
+        .db_pool
+        .lock()
+        .await
+        .as_ref()
+        .ok_or(AccountError::NotFound)?
+        .clone();
+
+    let account_id: i64 = id.parse().map_err(|_| AccountError::InvalidCredentials)?;
+
+    sqlx::query("UPDATE miniflux_connections SET is_active = 0")
+        .execute(&pool)
+        .await?;
+
+    sqlx::query("UPDATE miniflux_connections SET is_active = 1 WHERE id = ?")
+        .bind(account_id)
+        .execute(&pool)
+        .await?;
+
+    auto_reconnect_miniflux(app_handle, state).await
 }
 
 #[tauri::command]
@@ -304,7 +338,7 @@ pub async fn auto_reconnect_miniflux(
 
     // Query for active account
     let active_account: Option<(i64, String, String, String)> = sqlx::query_as(
-        "SELECT id, username, server_url, auth_method FROM miniflux_accounts WHERE is_active = 1",
+        "SELECT id, username, server_url, auth_method FROM miniflux_connections WHERE is_active = 1",
     )
     .fetch_optional(&pool)
     .await?;
