@@ -11,6 +11,11 @@ pub async fn run_migrations(pool: &SqlitePool) -> Result<(), sqlx::Error> {
         record_migration(pool, 1, "initial_schema").await?;
     }
 
+    if !applied_migrations.contains(&2) {
+        apply_composite_index_migration(pool).await?;
+        record_migration(pool, 2, "add_composite_index").await?;
+    }
+
     Ok(())
 }
 
@@ -58,6 +63,16 @@ async fn record_migration(
     .bind(applied_at)
     .execute(pool)
     .await?;
+
+    Ok(())
+}
+
+pub(crate) async fn apply_composite_index_migration(pool: &SqlitePool) -> Result<(), sqlx::Error> {
+    sqlx::query("CREATE INDEX IF NOT EXISTS idx_entries_feed_status ON entries(feed_id, status)")
+        .execute(pool)
+        .await?;
+
+    log::info!("Composite index migration applied (version 2)");
 
     Ok(())
 }
@@ -247,15 +262,18 @@ pub(crate) async fn apply_initial_schema(pool: &SqlitePool) -> Result<(), sqlx::
         .execute(pool)
         .await?;
 
-    sqlx::query(
-        r#"
+        sqlx::query(
+            r#"
         CREATE TABLE IF NOT EXISTS sync_state (
             id INTEGER PRIMARY KEY,
             last_sync_at TEXT,
             last_full_sync_at TEXT,
             sync_in_progress BOOLEAN DEFAULT FALSE,
             sync_error TEXT,
-            sync_version INTEGER DEFAULT 1
+            sync_version INTEGER DEFAULT 1,
+            entries_offset INTEGER DEFAULT 0,
+            entries_pulled INTEGER DEFAULT 0,
+            entries_total INTEGER DEFAULT 0
         )
         "#,
     )

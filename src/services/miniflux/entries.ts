@@ -8,6 +8,7 @@ import {
   type EntryResponse,
   type EntryUpdate,
 } from '@/lib/tauri-bindings';
+import { counterQueryKeys } from './counters';
 
 // Query keys for entries
 export const entryQueryKeys = {
@@ -167,7 +168,7 @@ export function useMarkEntryRead() {
       queryClient.invalidateQueries({ queryKey: entryQueryKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
       // Invalidate counters
-      queryClient.invalidateQueries({ queryKey: ['miniflux', 'counters'] });
+      queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
     },
   });
 }
@@ -203,7 +204,7 @@ export function useMarkEntriesRead() {
       });
       queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
       // Invalidate counters
-      queryClient.invalidateQueries({ queryKey: ['miniflux', 'counters'] });
+      queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
       toast.success(`${ids.length} entries marked as read`);
     },
   });

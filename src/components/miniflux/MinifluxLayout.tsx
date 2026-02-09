@@ -1,11 +1,20 @@
+import {
+  CheckmarkCircle01Icon,
+  InboxIcon,
+  RefreshIcon,
+  Search01Icon,
+  StarIcon,
+} from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useSearch } from '@tanstack/react-router';
-import { CheckCircle2, Inbox, RefreshCw, Search, Star } from 'lucide-react';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { MainWindowContent } from '@/components/layout/MainWindowContent';
+import { SyncProgressPopover } from '@/components/sync/SyncProgressPopover';
 import { Button } from '@/components/ui/button';
+import { useSyncProgressListener } from '@/hooks/use-sync-progress-listener';
 import { logger } from '@/lib/logger';
 import type { EntryFilters } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
@@ -39,6 +48,7 @@ export function MinifluxLayout() {
   const syncMiniflux = useSyncMiniflux();
   const syncing = useSyncStore((state) => state.syncing);
   const hasAutoSyncedRef = useRef(false);
+  useSyncProgressListener();
   const currentStatus = localFilters.starred ? 'starred' : localFilters.status || 'all';
   const prefetchEntry = usePrefetchEntry();
   const { data: lastReadingEntry } = useLastReadingEntry();
@@ -214,16 +224,24 @@ export function MinifluxLayout() {
             <h1 className="text-xl font-semibold">{getFilterTitle()}</h1>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => syncMiniflux.mutate()}
-              title={syncing ? _(msg`Syncing...`) : _(msg`Sync`)}
-              disabled={syncing}
-            >
-              <RefreshCw className={cn('h-4 w-4', syncing && 'animate-spin')} />
-            </Button>
+            <SyncProgressPopover>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => {
+                  if (!syncing) {
+                    syncMiniflux.mutate();
+                  }
+                }}
+                title={syncing ? _(msg`Syncing...`) : _(msg`Sync`)}
+              >
+                <HugeiconsIcon
+                  icon={RefreshIcon}
+                  className={cn('h-4 w-4', syncing && 'animate-spin')}
+                />
+              </Button>
+            </SyncProgressPopover>
             <Button
               variant="ghost"
               size="icon"
@@ -231,7 +249,7 @@ export function MinifluxLayout() {
               onClick={toggleSearchFilters}
               title={_(msg`Search`)}
             >
-              <Search className="h-4 w-4" />
+              <HugeiconsIcon icon={Search01Icon} className="h-4 w-4" />
             </Button>
           </div>
         </div>
@@ -266,7 +284,7 @@ export function MinifluxLayout() {
             className="h-8 text-xs px-3 gap-1.5"
             onClick={() => setLocalFilters({ ...localFilters, status: null, starred: null })}
           >
-            <Inbox className="h-3 w-3" />
+            <HugeiconsIcon icon={InboxIcon} className="h-3 w-3" />
             {_(msg`All`)}
           </Button>
           <Button
@@ -281,7 +299,7 @@ export function MinifluxLayout() {
               })
             }
           >
-            <CheckCircle2 className="h-3 w-3" />
+            <HugeiconsIcon icon={CheckmarkCircle01Icon} className="h-3 w-3" />
             {_(msg`Unread`)}
           </Button>
           <Button
@@ -290,7 +308,7 @@ export function MinifluxLayout() {
             className="h-8 text-xs px-3 gap-1.5"
             onClick={() => setLocalFilters({ ...localFilters, status: null, starred: true })}
           >
-            <Star className="h-3 w-3" />
+            <HugeiconsIcon icon={StarIcon} className="h-3 w-3" />
             {_(msg`Starred`)}
           </Button>
         </div>

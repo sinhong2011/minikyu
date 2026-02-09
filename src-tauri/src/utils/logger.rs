@@ -10,6 +10,7 @@
 //! and handles nested objects, escaped characters, and multi-line messages.
 
 use log::Level;
+use serde_json::json;
 use std::fmt;
 
 /// Get the log level from the TAURI_LOG_LEVEL environment variable
@@ -31,11 +32,7 @@ pub fn get_log_level_from_env() -> log::LevelFilter {
 
 /// Default log level based on build configuration
 fn default_log_level() -> log::LevelFilter {
-    if cfg!(debug_assertions) {
-        log::LevelFilter::Debug
-    } else {
-        log::LevelFilter::Info
-    }
+    log::LevelFilter::Info
 }
 
 /// ANSI color codes for terminal output
@@ -91,6 +88,21 @@ fn level_short_name(level: Level) -> &'static str {
     }
 }
 
+/// Build an ISO-8601 UTC timestamp string with milliseconds.
+fn now_timestamp() -> String {
+    let now = time::OffsetDateTime::now_utc();
+    format!(
+        "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}.{:03}Z",
+        now.year(),
+        now.month() as u8,
+        now.day(),
+        now.hour(),
+        now.minute(),
+        now.second(),
+        now.millisecond()
+    )
+}
+
 /// Format a timestamp with subtle styling
 fn format_timestamp(timestamp: &str, output: &mut String) {
     // Split timestamp into date and time components
@@ -115,6 +127,24 @@ fn format_timestamp(timestamp: &str, output: &mut String) {
         output.push_str(colors::TIMESTAMP);
         output.push_str(timestamp);
         output.push_str(colors::RESET);
+    }
+}
+
+/// Format a timestamp without ANSI styling
+fn format_timestamp_plain(timestamp: &str, output: &mut String) {
+    if let Some(t_pos) = timestamp.find('T') {
+        let date_part = &timestamp[..t_pos];
+        let time_part = &timestamp[t_pos + 1..];
+        output.push_str(date_part);
+        output.push(' ');
+        let time_clean = if let Some(dot_pos) = time_part.find('.') {
+            &time_part[..dot_pos]
+        } else {
+            time_part
+        };
+        output.push_str(time_clean);
+    } else {
+        output.push_str(timestamp);
     }
 }
 
@@ -144,6 +174,11 @@ fn format_target(target: &str, output: &mut String) {
     output.push_str(colors::RESET);
 }
 
+/// Format a target/module path without ANSI styling
+fn format_target_plain(target: &str, output: &mut String) {
+    output.push_str(target);
+}
+
 /// Highlight key-value pairs in a message with consistent color mapping
 fn highlight_key_values(message: &str, output: &mut String) {
     // Pattern: key=value, key: value, "key": value, etc.
@@ -151,11 +186,10 @@ fn highlight_key_values(message: &str, output: &mut String) {
 
     // Simple regex-like parsing for key=value patterns
     while let Some(eq_pos) = remaining.find('=') {
-        // Write everything before the key
-        output.push_str(&remaining[..eq_pos]);
+        let before_eq = &remaining[..eq_pos];
 
         // Find the key start (look backwards from =)
-        let key_start = remaining[..eq_pos]
+        let key_start = before_eq
             .char_indices()
             .rev()
             .find(|(_, c)| c.is_whitespace() || *c == ',' || *c == '{' || *c == '[' || *c == '(')
@@ -163,7 +197,8 @@ fn highlight_key_values(message: &str, output: &mut String) {
             .unwrap_or(0);
 
         // Extract and colorize key
-        let key = &remaining[key_start..eq_pos];
+        output.push_str(&before_eq[..key_start]);
+        let key = &before_eq[key_start..];
         output.push_str(colors::KEY);
         output.push_str(key);
         output.push_str(colors::RESET);
@@ -226,17 +261,7 @@ pub fn format_log(
     let mut output = String::with_capacity(256);
 
     // Get current timestamp
-    let now = time::OffsetDateTime::now_utc();
-    let timestamp = format!(
-        "{:04}-{:02}-{:02}T{:02}:{:02}:{:02}.{:03}Z",
-        now.year(),
-        now.month() as u8,
-        now.day(),
-        now.hour(),
-        now.minute(),
-        now.second(),
-        now.millisecond()
-    );
+    let timestamp = now_timestamp();
 
     // Format timestamp
     format_timestamp(&timestamp, &mut output);
@@ -306,12 +331,65 @@ pub fn format_log(
     // Reset at the end
     output.push_str(colors::RESET);
 
-    // Print directly to stdout for terminal output with colors
-    println!("{output}");
+    // Emit formatted output for this target
+    callback.finish(format_args!("{output}"));
+}
 
-    // Pass original message to callback for file/webview logging
-    // This ensures file logs contain the actual log content without ANSI codes
-    callback.finish(format_args!("{}", message));
+/// Plain-text log formatter for non-terminal targets (no ANSI codes)
+pub fn format_log_plain(
+    callback: tauri_plugin_log::fern::FormatCallback,
+    message: &fmt::Arguments,
+    record: &log::Record,
+) {
+    let message_str = message.to_string();
+    let mut output = String::with_capacity(192);
+
+    let timestamp = now_timestamp();
+    format_timestamp_plain(&timestamp, &mut output);
+
+    output.push(' ');
+    output.push('[');
+    output.push_str(level_short_name(record.level()));
+    output.push(']');
+    output.push(' ');
+
+    format_target_plain(record.target(), &mut output);
+
+    if let Some(file) = record.file() {
+        output.push(' ');
+        output.push('(');
+        output.push_str(file);
+        if let Some(line) = record.line() {
+            output.push(':');
+            output.push_str(&line.to_string());
+        }
+        output.push(')');
+    }
+
+    output.push_str(" -> ");
+    output.push_str(&message_str);
+
+    callback.finish(format_args!("{output}"));
+}
+
+/// JSON log formatter for file targets (one JSON object per line)
+pub fn format_log_json(
+    callback: tauri_plugin_log::fern::FormatCallback,
+    message: &fmt::Arguments,
+    record: &log::Record,
+) {
+    let timestamp = now_timestamp();
+    let payload = json!({
+        "timestamp": timestamp,
+        "level": record.level().to_string().to_lowercase(),
+        "target": record.target(),
+        "message": message.to_string(),
+        "file": record.file(),
+        "line": record.line(),
+        "module_path": record.module_path(),
+    });
+
+    callback.finish(format_args!("{payload}"));
 }
 
 #[cfg(test)]

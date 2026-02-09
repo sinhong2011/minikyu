@@ -102,7 +102,9 @@ pub fn run() {
     // Updater plugin for in-app updates
     #[cfg(desktop)]
     {
-        app_builder = app_builder.plugin(tauri_plugin_updater::Builder::new().build());
+        if !cfg!(debug_assertions) {
+            app_builder = app_builder.plugin(tauri_plugin_updater::Builder::new().build());
+        }
     }
 
     // Determine log level from environment variable or use defaults
@@ -113,15 +115,28 @@ pub fn run() {
         .plugin(tauri_plugin_notification::init())
         .plugin(
             tauri_plugin_log::Builder::new()
+                .clear_format()
                 // Use level from TAURI_LOG_LEVEL env var, or default based on build type
                 .level(log_level)
-                // Use custom formatter with syntax highlighting for terminal output
-                .format(utils::logger::format_log)
+                // Keep noisy dependencies quieter unless explicitly raised
+                .level_for("sqlx", log::LevelFilter::Warn)
+                .level_for("reqwest", log::LevelFilter::Warn)
+                .level_for("hyper", log::LevelFilter::Warn)
+                .level_for("hyper_util", log::LevelFilter::Warn)
+                .level_for("tauri", log::LevelFilter::Warn)
+                .level_for("tauri_plugin_updater", log::LevelFilter::Warn)
                 .targets([
                     // Always log to stdout for development with colorized output
-                    tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::Stdout),
+                    tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::Stdout)
+                        .format(utils::logger::format_log),
                     // Log to webview console for development
-                    tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::Webview),
+                    tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::Webview)
+                        .format(utils::logger::format_log_plain),
+                    // JSON log file in the app log directory
+                    tauri_plugin_log::Target::new(tauri_plugin_log::TargetKind::LogDir {
+                        file_name: Some("backend".into()),
+                    })
+                    .format(utils::logger::format_log_json),
                 ])
                 .build(),
         );

@@ -71,6 +71,17 @@ export const commands = {
     }
   },
   /**
+   * Clears all local app data (database, preferences, reading state, recovery files).
+   */
+  async clearLocalData(): Promise<Result<null, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('clear_local_data') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
    * Simple greeting command for demonstration purposes.
    */
   async greet(name: string): Promise<Result<string, string>> {
@@ -605,6 +616,17 @@ export const commands = {
       else return { status: 'error', error: e as any };
     }
   },
+  /**
+   * Get unread counts from local database
+   */
+  async getUnreadCounts(): Promise<Result<UnreadCounts, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('get_unread_counts') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
 };
 
 /** user-defined events **/
@@ -702,6 +724,10 @@ export type Category = {
   created_at?: string | null;
   updated_at?: string | null;
 };
+/**
+ * Per-category unread count
+ */
+export type CategoryUnread = { category_id: string; unread_count: string };
 /**
  * Window close behavior options
  */
@@ -863,6 +889,10 @@ export type Feed = {
  */
 export type FeedIcon = { feed_id: string; icon_id: string };
 /**
+ * Per-feed unread count
+ */
+export type FeedUnread = { feed_id: string; unread_count: string };
+/**
  * Feed Update
  */
 export type FeedUpdate = {
@@ -950,6 +980,15 @@ export type TrayIconState =
    * Urgent/animated alert state
    */
   | 'alert';
+/**
+ * Enhanced unread counts from local database
+ */
+export type UnreadCounts = {
+  total: string;
+  by_category: CategoryUnread[];
+  by_feed: FeedUnread[];
+  today: string;
+};
 /**
  * User
  */

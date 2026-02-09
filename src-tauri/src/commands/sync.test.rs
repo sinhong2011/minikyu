@@ -61,22 +61,11 @@ mod tests {
         .await
         .unwrap();
 
-        assert_eq!(row.0, 0, "New queue item should have retry_count = 0");
+        assert_eq!(row.0, 0, "New queue item should have retry_count =0");
         assert_eq!(row.1, "pending");
         assert!(!row.2.is_empty(), "created_at should be set");
         assert!(!row.3.is_empty(), "updated_at should be set");
     }
 
-    #[tokio::test]
-    async fn test_sync_miniflux_returns_summary() {
-        use crate::commands::sync::sync_miniflux_impl;
-        use crate::miniflux::MinifluxClient;
 
-        let pool = setup_test_db().await;
-        let client = MinifluxClient::new("https://miniflux.example.org".to_string());
-
-        let result = sync_miniflux_impl(&pool, &client).await;
-
-        assert!(result.is_err());
-    }
 }

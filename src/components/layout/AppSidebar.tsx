@@ -17,6 +17,7 @@ import {
   CollapsibleTrigger,
 } from '@/components/animate-ui/primitives/base/collapsible';
 import { FeedAvatar, UserNav } from '@/components/miniflux';
+import { AnimatedBadge } from '@/components/ui/badge-count';
 import {
   Sidebar,
   SidebarContent,
@@ -27,6 +28,7 @@ import {
   SidebarHeader,
   SidebarMenu,
   SidebarMenuAction,
+  SidebarMenuBadge,
   SidebarMenuButton,
   SidebarMenuItem,
   SidebarMenuSub,
@@ -35,7 +37,13 @@ import {
   SidebarSeparator,
 } from '@/components/ui/sidebar';
 import { cn } from '@/lib/utils';
-import { useCategories, useCategoryFeeds, useIsConnected } from '@/services/miniflux';
+import {
+  useCategories,
+  useCategoryFeeds,
+  useCategoryUnreadCount,
+  useIsConnected,
+  useUnreadCounts,
+} from '@/services/miniflux';
 
 interface AppSidebarProps {
   children?: React.ReactNode;
@@ -43,6 +51,48 @@ interface AppSidebarProps {
 }
 
 const categorySkeletonKeys = Array.from({ length: 5 }, (_, index) => `category-skeleton-${index}`);
+
+function CategoryItem({ category, index }: { category: any; index: number }) {
+  const unreadCount = useCategoryUnreadCount(Number(category.id));
+
+  return (
+    <Collapsible key={category.id} defaultOpen={index === 0} className="group/collapsible">
+      <SidebarMenuItem className="">
+        <Link to="/" search={{ categoryId: category.id.toString() }}>
+          {({ isActive }) => (
+            <SidebarMenuButton asChild tooltip={category.title} isActive={isActive}>
+              <HugeiconsIcon
+                icon={Folder01Icon}
+                className={cn(
+                  'transition-colors duration-200',
+                  isActive ? 'text-primary' : 'text-sidebar-foreground/70'
+                )}
+              />
+              <span
+                className={cn(
+                  'truncate transition-colors duration-200',
+                  isActive ? 'font-semibold text-sidebar-foreground' : 'text-sidebar-foreground/80'
+                )}
+              >
+                {category.title}
+              </span>
+              <SidebarMenuBadge>
+                <AnimatedBadge count={unreadCount} />
+              </SidebarMenuBadge>
+            </SidebarMenuButton>
+          )}
+        </Link>
+        <CollapsibleTrigger render={<SidebarMenuAction showOnHover />}>
+          <HugeiconsIcon
+            icon={ArrowRight01Icon}
+            className="transition-transform duration-300 group-data-[state=open]/collapsible:rotate-90"
+          />
+        </CollapsibleTrigger>
+        <CategoryFeeds categoryId={category.id} />
+      </SidebarMenuItem>
+    </Collapsible>
+  );
+}
 
 function CategoryFeeds({ categoryId }: { categoryId: string }) {
   const { _ } = useLingui();
@@ -110,6 +160,7 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
   const { _ } = useLingui();
   const { data: isConnected, isLoading: connectionLoading } = useIsConnected();
   const { data: categories, isLoading: categoriesLoading } = useCategories(isConnected ?? false);
+  const { data: unreadCounts } = useUnreadCounts();
 
   return (
     <Sidebar
@@ -160,6 +211,9 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
                           <span className={cn(isActive && 'font-semibold text-sidebar-foreground')}>
                             {_(msg`All`)}
                           </span>
+                          <SidebarMenuBadge>
+                            <AnimatedBadge count={Number(unreadCounts?.total ?? 0)} />
+                          </SidebarMenuBadge>
                         </SidebarMenuButton>
                       )}
                     </Link>
@@ -178,6 +232,9 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
                           <span className={cn(isActive && 'font-semibold text-sidebar-foreground')}>
                             {_(msg`Today`)}
                           </span>
+                          <SidebarMenuBadge>
+                            <AnimatedBadge count={Number(unreadCounts?.today ?? 0)} />
+                          </SidebarMenuBadge>
                         </SidebarMenuButton>
                       )}
                     </Link>
@@ -248,44 +305,7 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
                 </SidebarMenuItem>
               ) : (
                 categories?.map((category, index) => (
-                  <Collapsible
-                    key={category.id}
-                    defaultOpen={index === 0}
-                    className="group/collapsible"
-                  >
-                    <SidebarMenuItem className="">
-                      <Link to="/" search={{ categoryId: category.id.toString() }}>
-                        {({ isActive }) => (
-                          <SidebarMenuButton asChild tooltip={category.title} isActive={isActive}>
-                            <HugeiconsIcon
-                              icon={Folder01Icon}
-                              className={cn(
-                                'transition-colors duration-200',
-                                isActive ? 'text-primary' : 'text-sidebar-foreground/70'
-                              )}
-                            />
-                            <span
-                              className={cn(
-                                'truncate transition-colors duration-200',
-                                isActive
-                                  ? 'font-semibold text-sidebar-foreground'
-                                  : 'text-sidebar-foreground/80'
-                              )}
-                            >
-                              {category.title}
-                            </span>
-                          </SidebarMenuButton>
-                        )}
-                      </Link>
-                      <CollapsibleTrigger render={<SidebarMenuAction showOnHover />}>
-                        <HugeiconsIcon
-                          icon={ArrowRight01Icon}
-                          className="transition-transform duration-300 group-data-[state=open]/collapsible:rotate-90"
-                        />
-                      </CollapsibleTrigger>
-                      <CategoryFeeds categoryId={category.id} />
-                    </SidebarMenuItem>
-                  </Collapsible>
+                  <CategoryItem key={category.id} category={category} index={index} />
                 ))
               )}
             </SidebarMenu>

@@ -88,6 +88,19 @@
           }
         }
       }
+    },
+    {
+      "includes": ["src/lib/bindings.ts"],
+      "linter": {
+        "rules": {
+          "correctness": {
+            "noUnusedImports": "off"
+          },
+          "style": {
+            "useNamingConvention": "off"
+          }
+        }
+      }
     }
   ]
 }

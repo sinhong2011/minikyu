@@ -29,8 +29,8 @@ logger.error('Request failed', { error: response.error })
 ### Rust Backend
 
 - Uses `tauri-plugin-log` with standard Rust `log` crate
-- **Development**: Debug level, logs to stdout + webview console
-- **Production**: Info level, logs to stdout + app log directory
+- **Development**: Info level by default, logs to stdout + webview console + JSON log file
+- **Production**: Info level, logs to stdout + JSON log file in app log directory
 - Configuration in `src-tauri/src/lib.rs`
 - **Log Level**: Controlled via `TAURI_LOG_LEVEL` environment variable
 - **Environment Loading**: Uses `dotenvy` to load variables from `.env` file in development
@@ -59,8 +59,12 @@ The Rust backend uses `dotenvy` to load environment variables from a `.env` file
 **Valid values** (in order of verbosity): `trace`, `debug`, `info`, `warn`, `error`
 
 **Default behavior:**
-- Development: `debug` level (shows debug, info, warn, error)
+- Development: `info` level (shows info, warn, error)
 - Production: `info` level (shows info, warn, error)
+
+**Noise filters (backend):**
+- These modules are clamped to `warn` by default to keep logs readable: `sqlx`, `reqwest`, `hyper`, `hyper_util`, `tauri`, `tauri_plugin_updater`.
+- If you need their debug output, temporarily adjust these filters in `src-tauri/src/lib.rs`.
 
 **Note:** The `.env` file is only loaded in development builds. In production, only system environment variables are used. The application will not panic if the `.env` file is missing.
 
@@ -112,15 +116,15 @@ logger.setLogLevel('trace')
 
 ### Development
 
-- **Rust**: Terminal (stdout) + Browser DevTools console (webview)
+- **Rust**: Terminal (stdout) + Browser DevTools console (webview) + JSON log file
 - **TypeScript**: Browser DevTools console
 
 ### Production
 
-- **Rust**: Terminal (stdout) + log file in app log directory
+- **Rust**: Terminal (stdout) + JSON log file in app log directory
 - **TypeScript**: Browser DevTools console
 
-Log directory locations vary by platform (e.g., `~/Library/Logs/` on macOS).
+Log directory locations vary by platform (e.g., `~/Library/Logs/` on macOS). JSON logs are one object per line (JSONL) for easy parsing.
 
 ## Examples
 

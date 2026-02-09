@@ -6,3 +6,4 @@
 **/out/**
 **/src/components/ui/**
 **/src/components/animate-ui/**
+**/src/lib/bindings.ts

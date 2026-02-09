@@ -1,4 +1,5 @@
-import { CheckIcon, ChevronRightIcon, CircleIcon } from 'lucide-react';
+import { ArrowRight01Icon, CircleIcon, Tick02Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import type * as React from 'react';
 import {
   MenuArrow as MenuArrowPrimitive,
@@ -160,7 +161,7 @@ function MenuCheckboxItem({
             initial={{ opacity: 0, scale: 0.5 }}
             animate={{ opacity: 1, scale: 1 }}
           >
-            <CheckIcon className="size-4" />
+            <HugeiconsIcon icon={Tick02Icon} className="size-4" />
           </MenuCheckboxItemIndicatorPrimitive>
         </span>
         {children}
@@ -190,7 +191,7 @@ function MenuRadioItem({ className, children, disabled, ...props }: MenuRadioIte
       >
         <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
           <MenuRadioItemIndicatorPrimitive layoutId="dropdown-menu-item-indicator-radio">
-            <CircleIcon className="size-2 fill-current" />
+            <HugeiconsIcon icon={CircleIcon} className="size-2 fill-current" />
           </MenuRadioItemIndicatorPrimitive>
         </span>
         {children}
@@ -255,7 +256,7 @@ function MenuSubmenuTrigger({
         {...props}
       >
         {children}
-        <ChevronRightIcon data-slot="chevron" className="ml-auto size-4" />
+        <HugeiconsIcon icon={ArrowRight01Icon} data-slot="chevron" className="ml-auto size-4" />
       </MenuSubmenuTriggerPrimitive>
     </MenuHighlightItemPrimitive>
   );

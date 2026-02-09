@@ -2,8 +2,8 @@ use tauri_specta::{collect_commands, Builder};
 
 pub fn generate_bindings() -> Builder<tauri::Wry> {
     use crate::commands::{
-        accounts, downloads, miniflux, notifications, preferences, quick_pane, reading_state,
-        recovery, sync, tray,
+        accounts, counters, data, downloads, miniflux, notifications, preferences, quick_pane,
+        reading_state, recovery, sync, tray,
     };
 
     Builder::<tauri::Wry>::new().commands(collect_commands![
@@ -12,6 +12,7 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         downloads::retry_download,
         downloads::get_downloads,
         downloads::get_downloads_from_db,
+        data::clear_local_data,
         preferences::greet,
         preferences::load_preferences,
         preferences::save_preferences,
@@ -62,6 +63,7 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         miniflux::import_opml,
         miniflux::fetch_entry_content,
         sync::sync_miniflux,
+        counters::get_unread_counts,
     ])
 }
 

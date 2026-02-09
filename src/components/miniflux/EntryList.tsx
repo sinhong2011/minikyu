@@ -1,7 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useVirtualizer } from '@tanstack/react-virtual';
-import { useEffect, useRef } from 'react';
+import { motion } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
 import { FeedAvatar } from '@/components/miniflux';
 import {
   Item,
@@ -31,8 +32,12 @@ export function EntryList({ filters = {}, selectedEntryId, onEntrySelect }: Entr
   const { data: entriesData, isLoading, error } = useEntries(filters);
   const prefetchEntry = usePrefetchEntry();
   const selectionMode = useUIStore((state) => state.selectionMode);
+  const [newEntryIds, setNewEntryIds] = useState<Set<string>>(() => new Set());
 
   const parentRef = useRef<HTMLDivElement>(null);
+  const previousEntryIdsRef = useRef<string[]>([]);
+  const filterKeyRef = useRef<string>('');
+  const removalTimersRef = useRef<Map<string, number>>(new Map());
 
   // Virtualizer configuration
   const virtualizer = useVirtualizer({
@@ -43,6 +48,72 @@ export function EntryList({ filters = {}, selectedEntryId, onEntrySelect }: Entr
   });
 
   const virtualItems = virtualizer.getVirtualItems();
+
+  const filtersKey = JSON.stringify(filters ?? {});
+
+  useEffect(() => {
+    if (filterKeyRef.current !== filtersKey) {
+      filterKeyRef.current = filtersKey;
+      previousEntryIdsRef.current = [];
+      setNewEntryIds(new Set());
+      removalTimersRef.current.forEach((timeoutId) => {
+        window.clearTimeout(timeoutId);
+      });
+      removalTimersRef.current.clear();
+    }
+  }, [filtersKey]);
+
+  useEffect(() => {
+    const entries = entriesData?.entries;
+    if (!entries) return;
+
+    const nextIds = entries.map((entry) => entry.id);
+    const prevIds = previousEntryIdsRef.current;
+    previousEntryIdsRef.current = nextIds;
+
+    if (prevIds.length === 0) {
+      return;
+    }
+
+    const prevSet = new Set(prevIds);
+    const added = nextIds.filter((id) => !prevSet.has(id));
+    if (added.length === 0) return;
+
+    setNewEntryIds((current) => {
+      const next = new Set(current);
+      added.forEach((id) => {
+        next.add(id);
+      });
+      return next;
+    });
+
+    added.forEach((id) => {
+      const existingTimeout = removalTimersRef.current.get(id);
+      if (existingTimeout) {
+        window.clearTimeout(existingTimeout);
+      }
+
+      const timeoutId = window.setTimeout(() => {
+        setNewEntryIds((current) => {
+          const next = new Set(current);
+          next.delete(id);
+          return next;
+        });
+        removalTimersRef.current.delete(id);
+      }, 1600);
+
+      removalTimersRef.current.set(id, timeoutId);
+    });
+  }, [entriesData?.entries]);
+
+  useEffect(() => {
+    return () => {
+      removalTimersRef.current.forEach((timeoutId) => {
+        window.clearTimeout(timeoutId);
+      });
+      removalTimersRef.current.clear();
+    };
+  }, []);
 
   useEffect(() => {
     const handleGlobalKeyDown = (e: KeyboardEvent) => {
@@ -144,9 +215,17 @@ export function EntryList({ filters = {}, selectedEntryId, onEntrySelect }: Entr
           {virtualItems.map((virtualItem) => {
             const entry = entriesData.entries?.[virtualItem.index];
             if (!entry) return null;
+            const isNew = newEntryIds.has(entry.id);
 
             return (
-              <div key={virtualItem.key} className="px-3">
+              <motion.div
+                key={entry.id}
+                ref={virtualizer.measureElement}
+                className="px-3"
+                initial={isNew ? { opacity: 0, y: -6 } : false}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+              >
                 <button
                   type="button"
                   onClick={() => handleEntryClick(entry.id)}
@@ -160,10 +239,9 @@ export function EntryList({ filters = {}, selectedEntryId, onEntrySelect }: Entr
                       'relative group transition-all duration-300 ease-out p-4',
                       'hover:border-border/50 hover:bg-accent/40',
                       selectedEntryId === entry.id && 'bg-accent shadow-md',
-
-                      selectionMode && 'pl-12'
+                      selectionMode && 'pl-12',
+                      isNew && 'border-primary/40 bg-primary/5'
                     )}
-                    ref={virtualizer.measureElement}
                   >
                     <ItemHeader>
                       <div className="flex items-center gap-2 text-xs text-muted-foreground/60 w-full justify-between">
@@ -222,7 +300,7 @@ export function EntryList({ filters = {}, selectedEntryId, onEntrySelect }: Entr
                 {virtualItem.index < (entriesData.entries?.length ?? 0) - 1 && (
                   <Separator className="my-2" />
                 )}
-              </div>
+              </motion.div>
             );
           })}
         </div>

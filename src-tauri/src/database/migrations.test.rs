@@ -69,10 +69,10 @@ mod tests {
             .await
             .unwrap();
 
-        // Should have exactly 1 migration (initial_schema)
+        // Should have exactly 2 migrations (initial_schema and add_composite_index)
         assert_eq!(
-            count, 1,
-            "Should have exactly 1 migration entry after running twice"
+            count, 2,
+            "Should have exactly 2 migration entries after running twice"
         );
     }
 

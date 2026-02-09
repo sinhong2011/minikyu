@@ -6,6 +6,25 @@ use tauri::{AppHandle, Emitter, State};
 use crate::miniflux::{EntryFilters, MinifluxClient};
 use crate::AppState;
 
+/// Sync progress events for granular progress tracking
+#[derive(Debug, Clone, Serialize, Deserialize, specta::Type)]
+#[serde(tag = "event")]
+pub enum SyncProgressEvent {
+    CategoriesStarted,
+    CategoriesCompleted { count: u32 },
+    FeedsStarted,
+    FeedsCompleted { count: u32 },
+    EntriesStarted,
+    EntriesProgress {
+        pulled: u32,
+        total: u32,
+        percentage: f32,
+    },
+    EntriesCompleted,
+    CleanupStarted,
+    CleanupCompleted,
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, specta::Type)]
 pub struct SyncSummary {
     pub entries_pulled: u32,
@@ -22,6 +41,9 @@ pub struct SyncState {
     pub sync_in_progress: bool,
     pub sync_error: Option<String>,
     pub sync_version: i64,
+    pub entries_offset: i64,
+    pub entries_pulled: i64,
+    pub entries_total: i64,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -31,14 +53,22 @@ struct SyncWindow {
 
 impl Default for SyncWindow {
     fn default() -> Self {
-        Self { limit: 200 }
+        Self { limit: 50 }
+    }
+}
+
+impl SyncWindow {
+    fn grow_batch_size(&mut self) {
+        if self.limit < 500 {
+            self.limit = (self.limit * 2).min(500);
+        }
     }
 }
 
 /// Gets or creates the sync state row. Only one row exists in the table.
 pub async fn get_or_create_sync_state(pool: &SqlitePool) -> Result<SyncState, String> {
     if let Some(row) = sqlx::query_as::<_, SyncState>(
-        "SELECT id, last_sync_at, last_full_sync_at, sync_in_progress, sync_error, sync_version FROM sync_state LIMIT 1",
+        "SELECT id, last_sync_at, last_full_sync_at, sync_in_progress, sync_error, sync_version, entries_offset, entries_pulled, entries_total FROM sync_state LIMIT 1",
     )
     .fetch_optional(pool)
     .await
@@ -48,14 +78,14 @@ pub async fn get_or_create_sync_state(pool: &SqlitePool) -> Result<SyncState, St
     }
 
     sqlx::query(
-        "INSERT INTO sync_state (last_sync_at, last_full_sync_at, sync_in_progress, sync_error, sync_version) VALUES (NULL, NULL, 0, NULL, 1)",
+        "INSERT INTO sync_state (last_sync_at, last_full_sync_at, sync_in_progress, sync_error, sync_version, entries_offset, entries_pulled, entries_total) VALUES (NULL, NULL, 0, NULL, 1, 0, 0, 0)",
     )
     .execute(pool)
     .await
     .map_err(|e| format!("{e}"))?;
 
     sqlx::query_as::<_, SyncState>(
-        "SELECT id, last_sync_at, last_full_sync_at, sync_in_progress, sync_error, sync_version FROM sync_state LIMIT 1",
+        "SELECT id, last_sync_at, last_full_sync_at, sync_in_progress, sync_error, sync_version, entries_offset, entries_pulled, entries_total FROM sync_state LIMIT 1",
     )
     .fetch_one(pool)
     .await
@@ -93,6 +123,7 @@ pub async fn enqueue_sync_operation(
 pub async fn sync_miniflux_impl(
     pool: &SqlitePool,
     client: &MinifluxClient,
+    app_handle: &AppHandle,
 ) -> Result<SyncSummary, String> {
     let window = SyncWindow::default();
     let now = Utc::now().to_rfc3339();
@@ -106,6 +137,20 @@ pub async fn sync_miniflux_impl(
 
     let mut sync_state = get_or_create_sync_state(pool).await?;
     let is_full_sync = sync_state.last_full_sync_at.is_none();
+    let was_in_progress = sync_state.sync_in_progress;
+
+    // If a previous sync was interrupted (app crashed), it's now a stale in_progress flag
+    // Reset it so we don't think we're resuming indefinitely
+    if was_in_progress {
+        log::info!("Detected interrupted sync from previous run, resetting in_progress flag");
+        sqlx::query("UPDATE sync_state SET sync_in_progress = 0, sync_error = 'Sync interrupted by app closure'")
+            .execute(pool)
+            .await
+            .map_err(|e| format!("Failed to clear interrupted sync state: {e}"))?;
+
+        // Reload state after clearing in_progress
+        sync_state = get_or_create_sync_state(pool).await?;
+    }
 
     sqlx::query("UPDATE sync_state SET sync_in_progress = 1, sync_error = NULL")
         .execute(pool)
@@ -121,21 +166,49 @@ pub async fn sync_miniflux_impl(
         mark_entries_stale(pool, user_id).await?;
     }
 
+    let _ = app_handle.emit("sync-progress", &SyncProgressEvent::CategoriesStarted);
+
     let categories = client.get_categories().await?;
     let category_ids: Vec<i64> = categories.iter().map(|category| category.id).collect();
     upsert_categories(pool, &categories, &now).await?;
     summary.categories_pulled = categories.len() as u32;
+
+    let _ = app_handle.emit("sync-progress", &SyncProgressEvent::CategoriesCompleted {
+        count: summary.categories_pulled,
+    });
+
+    let _ = app_handle.emit("sync-progress", &SyncProgressEvent::FeedsStarted);
 
     let feeds = client.get_feeds().await?;
     let feed_ids: Vec<i64> = feeds.iter().map(|feed| feed.id).collect();
     upsert_feeds(pool, &feeds, &now).await?;
     summary.feeds_pulled = feeds.len() as u32;
 
-    if is_full_sync {
-        sync_full_entries(pool, client, &window, &mut summary).await?;
-    } else {
-        sync_incremental_entries(pool, client, &window, &mut summary, &sync_state).await?;
+    let _ = app_handle.emit("sync-progress", &SyncProgressEvent::FeedsCompleted {
+        count: summary.feeds_pulled,
+    });
+
+    let _ = app_handle.emit("sync-progress", &SyncProgressEvent::EntriesStarted);
+
+    // Reset resume fields if this is not a resumed sync (i.e., sync was not in progress)
+    if !sync_state.sync_in_progress {
+        sqlx::query(
+            "UPDATE sync_state SET entries_offset = 0, entries_pulled = 0, entries_total = 0",
+        )
+        .execute(pool)
+        .await
+        .map_err(|e| format!("Failed to reset sync resume state: {e}"))?;
     }
+
+    if is_full_sync {
+        sync_full_entries(pool, client, &window, &mut summary, app_handle).await?;
+    } else {
+        sync_incremental_entries(pool, client, &window, &mut summary, &sync_state, app_handle).await?;
+    }
+
+    let _ = app_handle.emit("sync-progress", &SyncProgressEvent::EntriesCompleted);
+
+    let _ = app_handle.emit("sync-progress", &SyncProgressEvent::CleanupStarted);
 
     if is_full_sync {
         delete_stale_entries(pool, user_id).await?;
@@ -147,8 +220,10 @@ pub async fn sync_miniflux_impl(
         delete_removed_categories(pool, user_id, &category_ids).await?;
     }
 
+    let _ = app_handle.emit("sync-progress", &SyncProgressEvent::CleanupCompleted);
+
     sqlx::query(
-        "UPDATE sync_state SET last_sync_at = ?, last_full_sync_at = COALESCE(last_full_sync_at, ?), sync_in_progress = 0, sync_error = NULL",
+        "UPDATE sync_state SET last_sync_at = ?, last_full_sync_at = COALESCE(last_full_sync_at, ?), sync_in_progress = 0, sync_error = NULL, entries_offset = 0, entries_pulled = 0, entries_total = 0",
     )
     .bind(&sync_started_at)
     .bind(&sync_started_at)
@@ -187,7 +262,7 @@ pub async fn sync_miniflux(
         .ok_or("Not connected to Miniflux server")?
         .clone();
 
-    let summary = match sync_miniflux_impl(&pool, &client).await {
+    let summary = match sync_miniflux_impl(&pool, &client, &app_handle).await {
         Ok(summary) => summary,
         Err(error) => {
             let _ = sqlx::query("UPDATE sync_state SET sync_in_progress = 0, sync_error = ?")
@@ -380,7 +455,9 @@ async fn sync_full_entries(
     client: &MinifluxClient,
     window: &SyncWindow,
     summary: &mut SyncSummary,
+    app_handle: &AppHandle,
 ) -> Result<(), String> {
+    let mut window = *window;
     let mut offset = 0;
     let mut total_seen = 0;
 
@@ -405,11 +482,24 @@ async fn sync_full_entries(
         summary.entries_pulled = summary.entries_pulled.saturating_add(count as u32);
         total_seen += count as i64;
 
+        let percentage = if response.total > 0 {
+            (total_seen as f32 / response.total as f32) * 100.0
+        } else {
+            100.0
+        };
+
+        let _ = app_handle.emit("sync-progress", &SyncProgressEvent::EntriesProgress {
+            pulled: summary.entries_pulled,
+            total: response.total as u32,
+            percentage,
+        });
+
         if total_seen >= response.total {
             break;
         }
 
         offset += window.limit;
+        window.grow_batch_size();
     }
 
     Ok(())
@@ -421,9 +511,17 @@ async fn sync_incremental_entries(
     window: &SyncWindow,
     summary: &mut SyncSummary,
     state: &SyncState,
+    app_handle: &AppHandle,
 ) -> Result<(), String> {
-    let mut offset = 0;
-    let mut total_seen = 0;
+    let mut window = *window;
+    let mut offset = if state.sync_in_progress { state.entries_offset } else { 0 };
+    let mut total_seen = if state.sync_in_progress { state.entries_pulled } else { 0 };
+
+    // Restore pulled count if resuming
+    if state.sync_in_progress {
+        summary.entries_pulled = state.entries_pulled as u32;
+    }
+
     let changed_after = state
         .last_sync_at
         .as_ref()
@@ -451,11 +549,36 @@ async fn sync_incremental_entries(
         summary.entries_pulled = summary.entries_pulled.saturating_add(count as u32);
         total_seen += count as i64;
 
+        let percentage = if response.total > 0 {
+            (total_seen as f32 / response.total as f32) * 100.0
+        } else {
+            100.0
+        };
+
+        // Persist progress every 10% to support resume
+        if percentage as i32 % 10 == 0 || count < window.limit as usize {
+            let _ = sqlx::query(
+                "UPDATE sync_state SET entries_offset = ?, entries_pulled = ?, entries_total = ? WHERE id = 1",
+            )
+            .bind(offset)
+            .bind(total_seen)
+            .bind(response.total)
+            .execute(pool)
+            .await;
+        }
+
+        let _ = app_handle.emit("sync-progress", &SyncProgressEvent::EntriesProgress {
+            pulled: summary.entries_pulled,
+            total: response.total as u32,
+            percentage,
+        });
+
         if total_seen >= response.total {
             break;
         }
 
         offset += window.limit;
+        window.grow_batch_size();
     }
 
     Ok(())

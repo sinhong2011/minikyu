@@ -7,6 +7,7 @@
 
 export * from './auth';
 export * from './categories';
+export * from './counters';
 export * from './entries';
 export * from './feeds';
 export * from './users';

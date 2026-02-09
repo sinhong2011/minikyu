@@ -5,6 +5,7 @@ import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 import { commands, type Feed, type FeedUpdate } from '@/lib/tauri-bindings';
 import { useSyncStore } from '@/store/sync-store';
+import { counterQueryKeys } from './counters';
 
 const translate = i18n._.bind(i18n);
 
@@ -260,6 +261,7 @@ export function useSyncMiniflux() {
       completeSync();
       // Invalidate all Miniflux queries
       queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+      queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
       toast.success(translate(msg`Sync completed`));
     },
     onError: (error: Error) => {
