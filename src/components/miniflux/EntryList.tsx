@@ -17,7 +17,7 @@ import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { extractThumbnail } from '@/lib/media-utils';
 import {
-  formatRelativeTime,
+  formatEntryTime,
   getEntryDateSectionType,
   groupEntriesByCalendarDate,
 } from '@/lib/miniflux-utils';
@@ -143,20 +143,12 @@ export function EntryList({
     }
 
     const entry = row.entry;
-    let estimatedHeight = 120;
 
-    if (extractThumbnail(entry)) {
-      estimatedHeight += 132;
-    }
+    const hasThumbnail = Boolean(extractThumbnail(entry));
+    const heightWithThumbnail = 320;
+    const heightWithoutThumbnail = 190;
 
-    const contentLength = entry.content?.replace(/<[^>]*>/g, '').length || 0;
-    estimatedHeight += Math.min(contentLength / 15, 60);
-
-    estimatedHeight += 32;
-
-    estimatedHeight += 16;
-
-    return Math.round(estimatedHeight);
+    return hasThumbnail ? heightWithThumbnail : heightWithoutThumbnail;
   };
 
   // Virtualizer configuration
@@ -424,7 +416,7 @@ export function EntryList({
                     ease: 'easeOut',
                   }}
                 >
-                  <div className="rounded-lg bg-background px-2 pt-0.5 pb-2 transition-colors duration-200">
+                  <div className="rounded-lg bg-background px-2 pt-2 pb-2 transition-colors duration-200">
                     <h2 className="px-1 text-[0.68rem] font-semibold tracking-[0.1em] text-muted-foreground/75 uppercase">
                       {row.title}
                     </h2>
@@ -485,7 +477,7 @@ export function EntryList({
                           {entry.reading_time && <span>{entry.reading_time} min</span>}
                           <span className="text-border">•</span>
                           <span className="text-xs text-muted-foreground/70">
-                            {formatRelativeTime(entry.published_at)}
+                            {formatEntryTime(entry.published_at)}
                           </span>
                           {entry.status === 'unread' && (
                             <div className="h-2.5 w-2.5 rounded-full bg-primary/70 shadow-sm" />
@@ -510,9 +502,6 @@ export function EntryList({
                             alt=""
                             className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                             loading="lazy"
-                            onLoad={() => {
-                              virtualizer.measure();
-                            }}
                           />
                         </div>
                       )}
