@@ -9,7 +9,7 @@ import parse, {
   Element,
   type HTMLReactParserOptions,
 } from 'html-react-parser';
-import { useCallback, useEffect, useId, useMemo, useState } from 'react';
+import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -47,6 +47,39 @@ interface SafeHtmlProps {
   codeTheme?: ReaderCodeTheme;
   className?: string;
   style?: React.CSSProperties;
+}
+
+interface TransitionRect {
+  left: number;
+  top: number;
+  width: number;
+  height: number;
+}
+
+const SHARED_IMAGE_ANIMATION_DURATION_MS = 280;
+const SHARED_IMAGE_ANIMATION_EASING = 'cubic-bezier(0.2, 0.72, 0.18, 1)';
+const VIEWER_CLOSE_ANIMATION_DURATION_MS = 360;
+const VIEWER_CLOSE_ANIMATION_EASING = 'cubic-bezier(0.22, 1, 0.36, 1)';
+
+function toTransitionRect(rect: DOMRect): TransitionRect {
+  return {
+    left: rect.left,
+    top: rect.top,
+    width: rect.width,
+    height: rect.height,
+  };
+}
+
+function getVisibleArea(rect: DOMRect): number {
+  const visibleWidth = Math.max(
+    0,
+    Math.min(rect.right, window.innerWidth) - Math.max(rect.left, 0)
+  );
+  const visibleHeight = Math.max(
+    0,
+    Math.min(rect.bottom, window.innerHeight) - Math.max(rect.top, 0)
+  );
+  return visibleWidth * visibleHeight;
 }
 
 function CodeBlock({
@@ -548,24 +581,448 @@ export function SafeHtml({
   const { _ } = useLingui();
   const [viewerImages, setViewerImages] = useState<Image[]>([]);
   const [viewerIndex, setViewerIndex] = useState(0);
+  const [viewerCurrentIndex, setViewerCurrentIndex] = useState(0);
   const [showViewer, setShowViewer] = useState(false);
+  const transitionImageRef = useRef<HTMLImageElement | null>(null);
+  const transitionAnimationRef = useRef<Animation | null>(null);
+  const openViewerTransitionFrameRef = useRef<number | null>(null);
+  const viewerCloseAnimationRef = useRef<Animation | null>(null);
+  const isViewerClosingRef = useRef(false);
+  const clearViewerStateTimerRef = useRef<number | null>(null);
   const copyCodeLabel = _(msg`Copy code`);
   const codeLanguageLabel = _(msg`Language`);
   const imageFallbackAlt = _(msg`Image`);
 
-  const openImageViewer = useCallback((src: string) => {
-    const imgElements = Array.from(document.querySelectorAll('.safe-html-content img'));
-    const images: Image[] = imgElements.map((img) => ({
-      src: (img as HTMLImageElement).src,
-      alt: (img as HTMLImageElement).alt,
-    }));
+  const clearSharedImageTransition = useCallback(() => {
+    const animation = transitionAnimationRef.current;
+    transitionAnimationRef.current = null;
+    if (animation) {
+      animation.onfinish = null;
+      animation.oncancel = null;
+      if (animation.playState === 'running') {
+        animation.cancel();
+      }
+    }
 
-    const clickedIndex = imgElements.findIndex((img) => (img as HTMLImageElement).src === src);
-
-    setViewerImages(images);
-    setViewerIndex(clickedIndex >= 0 ? clickedIndex : 0);
-    setShowViewer(true);
+    if (transitionImageRef.current) {
+      transitionImageRef.current.remove();
+      transitionImageRef.current = null;
+    }
   }, []);
+
+  const clearViewerCloseTransition = useCallback(() => {
+    const animation = viewerCloseAnimationRef.current;
+    viewerCloseAnimationRef.current = null;
+    if (animation) {
+      animation.onfinish = null;
+      animation.oncancel = null;
+      if (animation.playState === 'running') {
+        animation.cancel();
+      }
+    }
+    isViewerClosingRef.current = false;
+  }, []);
+
+  const clearViewerStateTimer = useCallback(() => {
+    if (clearViewerStateTimerRef.current !== null) {
+      window.clearTimeout(clearViewerStateTimerRef.current);
+      clearViewerStateTimerRef.current = null;
+    }
+  }, []);
+
+  const clearOpenViewerTransitionFrame = useCallback(() => {
+    if (openViewerTransitionFrameRef.current !== null) {
+      window.cancelAnimationFrame(openViewerTransitionFrameRef.current);
+      openViewerTransitionFrameRef.current = null;
+    }
+  }, []);
+
+  const getReaderImages = useCallback(
+    () =>
+      Array.from(document.querySelectorAll('.safe-html-content img')).filter(
+        (element): element is HTMLImageElement => element instanceof HTMLImageElement
+      ),
+    []
+  );
+
+  const getSourceImageBySrc = useCallback(
+    (src: string) => {
+      const matches = getReaderImages().filter((image) => image.src === src);
+      if (!matches.length) {
+        return null;
+      }
+
+      return (
+        matches
+          .map((image) => ({ image, visibleArea: getVisibleArea(image.getBoundingClientRect()) }))
+          .sort((a, b) => b.visibleArea - a.visibleArea)[0]?.image ?? matches[0]
+      );
+    },
+    [getReaderImages]
+  );
+
+  const getCurrentViewerImage = useCallback(() => {
+    const viewerImageElements = Array.from(document.querySelectorAll('.yarl__slide_image')).filter(
+      (element): element is HTMLImageElement => element instanceof HTMLImageElement
+    );
+
+    if (!viewerImageElements.length) {
+      return null;
+    }
+
+    return (
+      viewerImageElements
+        .map((image) => ({ image, visibleArea: getVisibleArea(image.getBoundingClientRect()) }))
+        .sort((a, b) => b.visibleArea - a.visibleArea)[0]?.image ?? viewerImageElements[0]
+    );
+  }, []);
+
+  const getViewerPortalElement = useCallback((): HTMLElement | null => {
+    const openPortal =
+      document.querySelector<HTMLElement>('.yarl__portal_open') ??
+      document.querySelector<HTMLElement>('.yarl__portal');
+    return openPortal ?? null;
+  }, []);
+
+  const computeViewerTargetRect = useCallback((image: HTMLImageElement): TransitionRect => {
+    const imageWidth = image.naturalWidth || image.clientWidth || 1;
+    const imageHeight = image.naturalHeight || image.clientHeight || 1;
+    const ratio = imageWidth / Math.max(imageHeight, 1);
+
+    const horizontalPadding = Math.max(24, Math.round(window.innerWidth * 0.08));
+    const verticalPadding = Math.max(36, Math.round(window.innerHeight * 0.1));
+
+    const maxWidth = Math.max(1, window.innerWidth - horizontalPadding * 2);
+    const maxHeight = Math.max(1, window.innerHeight - verticalPadding * 2);
+
+    let targetWidth = maxWidth;
+    let targetHeight = targetWidth / ratio;
+
+    if (targetHeight > maxHeight) {
+      targetHeight = maxHeight;
+      targetWidth = targetHeight * ratio;
+    }
+
+    return {
+      left: (window.innerWidth - targetWidth) / 2,
+      top: (window.innerHeight - targetHeight) / 2,
+      width: targetWidth,
+      height: targetHeight,
+    };
+  }, []);
+
+  const runSharedImageTransition = useCallback(
+    ({
+      src,
+      fromRect,
+      toRect,
+      onComplete,
+    }: {
+      src: string;
+      fromRect: TransitionRect;
+      toRect: TransitionRect;
+      onComplete?: () => void;
+    }) => {
+      if (typeof window === 'undefined') {
+        return;
+      }
+
+      if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+        return;
+      }
+
+      clearSharedImageTransition();
+
+      const floatingImage = document.createElement('img');
+      floatingImage.src = src;
+      floatingImage.alt = '';
+      floatingImage.decoding = 'async';
+      floatingImage.loading = 'eager';
+      floatingImage.style.position = 'fixed';
+      floatingImage.style.left = `${fromRect.left}px`;
+      floatingImage.style.top = `${fromRect.top}px`;
+      floatingImage.style.width = `${fromRect.width}px`;
+      floatingImage.style.height = `${fromRect.height}px`;
+      floatingImage.style.borderRadius = '16px';
+      floatingImage.style.objectFit = 'contain';
+      floatingImage.style.pointerEvents = 'none';
+      floatingImage.style.zIndex = '12000';
+      floatingImage.style.boxShadow = '0 22px 54px rgba(0, 0, 0, 0.35)';
+      floatingImage.style.willChange = 'left, top, width, height, opacity';
+
+      document.body.appendChild(floatingImage);
+      transitionImageRef.current = floatingImage;
+
+      const animation = floatingImage.animate(
+        [
+          {
+            left: `${fromRect.left}px`,
+            top: `${fromRect.top}px`,
+            width: `${fromRect.width}px`,
+            height: `${fromRect.height}px`,
+            opacity: 1,
+          },
+          {
+            left: `${toRect.left}px`,
+            top: `${toRect.top}px`,
+            width: `${toRect.width}px`,
+            height: `${toRect.height}px`,
+            opacity: 1,
+          },
+        ],
+        {
+          duration: SHARED_IMAGE_ANIMATION_DURATION_MS,
+          easing: SHARED_IMAGE_ANIMATION_EASING,
+          fill: 'forwards',
+        }
+      );
+
+      transitionAnimationRef.current = animation;
+      let completed = false;
+      const finish = () => {
+        if (completed) {
+          return;
+        }
+        completed = true;
+        clearSharedImageTransition();
+        onComplete?.();
+      };
+      animation.onfinish = finish;
+      animation.oncancel = finish;
+    },
+    [clearSharedImageTransition]
+  );
+
+  const openImageViewer = useCallback(
+    (src: string, triggerImageElement?: HTMLImageElement | null) => {
+      const resolvedSrc = triggerImageElement?.src ?? src;
+      const imgElements = getReaderImages();
+      const sourceImage = triggerImageElement ?? getSourceImageBySrc(resolvedSrc);
+      const sourceRect = sourceImage ? toTransitionRect(sourceImage.getBoundingClientRect()) : null;
+
+      const images: Image[] = imgElements.map((img) => ({
+        src: img.src,
+        alt: img.alt,
+      }));
+
+      const clickedIndex = imgElements.findIndex((img) => img.src === resolvedSrc);
+      const nextIndex = clickedIndex >= 0 ? clickedIndex : 0;
+
+      clearViewerStateTimer();
+      clearOpenViewerTransitionFrame();
+      clearSharedImageTransition();
+      setViewerImages(images);
+      setViewerIndex(nextIndex);
+      setViewerCurrentIndex(nextIndex);
+      setShowViewer(true);
+
+      if (!sourceRect) {
+        return;
+      }
+
+      let attempts = 0;
+      const maxAttempts = 24;
+      const runOpenTransition = () => {
+        const viewerImage = getCurrentViewerImage();
+        const hasMatchingViewerImage = viewerImage?.src === resolvedSrc;
+
+        if (!hasMatchingViewerImage && attempts < maxAttempts) {
+          attempts += 1;
+          openViewerTransitionFrameRef.current = window.requestAnimationFrame(runOpenTransition);
+          return;
+        }
+
+        openViewerTransitionFrameRef.current = null;
+
+        const targetRect = hasMatchingViewerImage
+          ? toTransitionRect(viewerImage.getBoundingClientRect())
+          : sourceImage
+            ? computeViewerTargetRect(sourceImage)
+            : null;
+        if (!targetRect) {
+          return;
+        }
+
+        if (viewerImage) {
+          viewerImage.style.opacity = '0';
+        }
+
+        runSharedImageTransition({
+          src: resolvedSrc,
+          fromRect: sourceRect,
+          toRect: targetRect,
+          onComplete: () => {
+            if (viewerImage) {
+              viewerImage.style.opacity = '';
+            }
+          },
+        });
+      };
+
+      openViewerTransitionFrameRef.current = window.requestAnimationFrame(runOpenTransition);
+    },
+    [
+      clearViewerStateTimer,
+      clearOpenViewerTransitionFrame,
+      clearSharedImageTransition,
+      computeViewerTargetRect,
+      getCurrentViewerImage,
+      getReaderImages,
+      getSourceImageBySrc,
+      runSharedImageTransition,
+    ]
+  );
+
+  const closeImageViewer = useCallback(() => {
+    if (isViewerClosingRef.current) {
+      return;
+    }
+
+    clearOpenViewerTransitionFrame();
+    const portal = getViewerPortalElement();
+    const currentSlide = viewerImages[viewerCurrentIndex] ?? null;
+    const currentSrc = currentSlide?.src;
+    const currentViewerImage = getCurrentViewerImage();
+    const currentViewerRect = currentViewerImage
+      ? toTransitionRect(currentViewerImage.getBoundingClientRect())
+      : null;
+
+    const finalizeClose = () => {
+      setShowViewer(false);
+      clearViewerStateTimer();
+      clearViewerStateTimerRef.current = window.setTimeout(() => {
+        setViewerImages([]);
+        setViewerIndex(0);
+        setViewerCurrentIndex(0);
+        clearViewerStateTimerRef.current = null;
+      }, 40);
+    };
+
+    const prefersReducedMotion =
+      typeof window !== 'undefined' &&
+      window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    if (!portal || prefersReducedMotion) {
+      finalizeClose();
+      return;
+    }
+
+    const sourceImage = currentSrc ? getSourceImageBySrc(currentSrc) : null;
+    const targetRect = sourceImage ? toTransitionRect(sourceImage.getBoundingClientRect()) : null;
+
+    clearViewerCloseTransition();
+    clearSharedImageTransition();
+    isViewerClosingRef.current = true;
+
+    const portalFadeAnimation = portal.animate([{ opacity: 1 }, { opacity: 0 }], {
+      duration: VIEWER_CLOSE_ANIMATION_DURATION_MS,
+      easing: VIEWER_CLOSE_ANIMATION_EASING,
+      fill: 'forwards',
+    });
+    viewerCloseAnimationRef.current = portalFadeAnimation;
+
+    let floatingImageAnimation: Animation | null = null;
+    if (currentSrc && currentViewerRect && targetRect) {
+      if (currentViewerImage) {
+        currentViewerImage.style.opacity = '0';
+      }
+
+      const floatingImage = document.createElement('img');
+      floatingImage.src = currentSrc;
+      floatingImage.alt = '';
+      floatingImage.decoding = 'async';
+      floatingImage.loading = 'eager';
+      floatingImage.style.position = 'fixed';
+      floatingImage.style.left = `${currentViewerRect.left}px`;
+      floatingImage.style.top = `${currentViewerRect.top}px`;
+      floatingImage.style.width = `${currentViewerRect.width}px`;
+      floatingImage.style.height = `${currentViewerRect.height}px`;
+      floatingImage.style.borderRadius = '16px';
+      floatingImage.style.objectFit = 'contain';
+      floatingImage.style.pointerEvents = 'none';
+      floatingImage.style.zIndex = '12000';
+      floatingImage.style.boxShadow = '0 22px 54px rgba(0, 0, 0, 0.35)';
+      floatingImage.style.willChange = 'left, top, width, height, opacity';
+      document.body.appendChild(floatingImage);
+      transitionImageRef.current = floatingImage;
+
+      floatingImageAnimation = floatingImage.animate(
+        [
+          {
+            left: `${currentViewerRect.left}px`,
+            top: `${currentViewerRect.top}px`,
+            width: `${currentViewerRect.width}px`,
+            height: `${currentViewerRect.height}px`,
+            opacity: 1,
+          },
+          {
+            left: `${targetRect.left}px`,
+            top: `${targetRect.top}px`,
+            width: `${targetRect.width}px`,
+            height: `${targetRect.height}px`,
+            opacity: 1,
+          },
+        ],
+        {
+          duration: VIEWER_CLOSE_ANIMATION_DURATION_MS,
+          easing: VIEWER_CLOSE_ANIMATION_EASING,
+          fill: 'forwards',
+        }
+      );
+      transitionAnimationRef.current = floatingImageAnimation;
+    }
+
+    let pendingAnimations = floatingImageAnimation ? 2 : 1;
+    let isFinished = false;
+    const finishAnimation = () => {
+      if (isFinished) {
+        return;
+      }
+
+      pendingAnimations -= 1;
+      if (pendingAnimations > 0) {
+        return;
+      }
+
+      isFinished = true;
+      clearViewerCloseTransition();
+      clearSharedImageTransition();
+      finalizeClose();
+    };
+
+    portalFadeAnimation.onfinish = finishAnimation;
+    portalFadeAnimation.oncancel = finishAnimation;
+
+    if (floatingImageAnimation) {
+      floatingImageAnimation.onfinish = finishAnimation;
+      floatingImageAnimation.oncancel = finishAnimation;
+    }
+  }, [
+    clearViewerStateTimer,
+    clearOpenViewerTransitionFrame,
+    clearViewerCloseTransition,
+    clearSharedImageTransition,
+    getCurrentViewerImage,
+    getViewerPortalElement,
+    getSourceImageBySrc,
+    viewerCurrentIndex,
+    viewerImages,
+  ]);
+
+  useEffect(
+    () => () => {
+      clearOpenViewerTransitionFrame();
+      clearViewerStateTimer();
+      clearViewerCloseTransition();
+      clearSharedImageTransition();
+    },
+    [
+      clearOpenViewerTransitionFrame,
+      clearSharedImageTransition,
+      clearViewerCloseTransition,
+      clearViewerStateTimer,
+    ]
+  );
 
   const options = useMemo<HTMLReactParserOptions>(() => {
     const parserOptions: HTMLReactParserOptions = {
@@ -582,15 +1039,21 @@ export function SafeHtml({
             return (
               <button
                 type="button"
-                onClick={() => openImageViewer(src)}
-                className="cursor-pointer group/img"
+                onClick={(event) => {
+                  const triggerImageElement = event.currentTarget.querySelector('img');
+                  openImageViewer(
+                    src,
+                    triggerImageElement instanceof HTMLImageElement ? triggerImageElement : null
+                  );
+                }}
+                className="group/img block w-full cursor-pointer"
               >
                 <img
                   {...imgProps}
                   src={src}
                   alt={alt}
                   className={cn(
-                    'mx-auto h-auto max-w-full rounded-2xl transition-all group-hover/img:ring-4 group-hover/img:ring-primary/10',
+                    'block h-auto max-w-full rounded-2xl mx-auto transition-all group-hover/img:ring-4 group-hover/img:ring-primary/10',
                     imgProps.className as string
                   )}
                 />
@@ -607,15 +1070,21 @@ export function SafeHtml({
           return (
             <button
               type="button"
-              onClick={() => openImageViewer(src)}
-              className="cursor-pointer group/img"
+              onClick={(event) => {
+                const triggerImageElement = event.currentTarget.querySelector('img');
+                openImageViewer(
+                  src,
+                  triggerImageElement instanceof HTMLImageElement ? triggerImageElement : null
+                );
+              }}
+              className="group/img block w-full cursor-pointer"
             >
               <img
                 {...props}
                 src={src}
                 alt={alt}
                 className={cn(
-                  'mx-auto h-auto max-w-full rounded-2xl transition-all group-hover/img:ring-4 group-hover/img:ring-primary/10',
+                  'block h-auto max-w-full rounded-2xl mx-auto transition-all group-hover/img:ring-4 group-hover/img:ring-primary/10',
                   props.className as string
                 )}
               />
@@ -739,13 +1208,11 @@ export function SafeHtml({
         open={showViewer}
         onOpenChange={(open) => {
           if (!open) {
-            setShowViewer(false);
-            setTimeout(() => {
-              setViewerImages([]);
-              setViewerIndex(0);
-            }, 200);
+            closeImageViewer();
           }
         }}
+        onRequestClose={closeImageViewer}
+        onViewIndexChange={setViewerCurrentIndex}
       />
     </>
   );

@@ -24,3 +24,32 @@
   -webkit-app-region: drag;
   app-region: drag;
 }
+
+@layer components {
+  .yarl__slide_image {
+    border-radius: var(--radius-2xl);
+  }
+
+  .yarl__thumbnails_thumbnail {
+    transition:
+      border-color 180ms ease,
+      box-shadow 180ms ease,
+      background-color 180ms ease,
+      filter 180ms ease;
+  }
+
+  .yarl__thumbnails_thumbnail:hover {
+    border-color: color-mix(in oklch, var(--color-primary) 45%, transparent);
+    background-color: color-mix(in oklch, var(--color-primary) 8%, transparent);
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--color-primary) 22%, transparent);
+    filter: saturate(1.04) brightness(1.03);
+  }
+
+  .yarl__thumbnails_thumbnail.yarl__thumbnails_thumbnail_active,
+  .yarl__thumbnails_thumbnail.yarl__thumbnails_thumbnail_active:hover {
+    border-color: var(--color-primary);
+    box-shadow: 0 0 0 1px color-mix(in oklch, var(--color-primary) 40%, transparent);
+    background-color: transparent;
+    filter: none;
+  }
+}
