@@ -3,11 +3,8 @@ use crate::accounts::keyring::{
     delete_credentials, get_password, get_token, save_password, save_token,
 };
 use crate::miniflux::AuthConfig;
+use crate::utils::serde_helpers::{deserialize_i64_from_string_or_number, serialize_i64_as_string};
 use crate::AppState;
-use crate::utils::serde_helpers::{
-    deserialize_i64_from_string_or_number,
-    serialize_i64_as_string,
-};
 use chrono::Utc;
 use serde::{Deserialize, Serialize};
 use sqlx::SqlitePool;

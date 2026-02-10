@@ -1,12 +1,18 @@
 import { motion } from 'motion/react';
 import { CountingNumber } from '@/components/animate-ui/primitives/texts/counting-number';
+import { cn } from '@/lib/utils';
 
 interface AnimatedBadgeProps {
   count: number;
   className?: string;
+  animateOnMount?: boolean;
 }
 
-export function AnimatedBadge({ count, className = '' }: AnimatedBadgeProps) {
+export function AnimatedBadge({
+  count,
+  className = '',
+  animateOnMount = true,
+}: AnimatedBadgeProps) {
   if (count <= 0) {
     return null;
   }
@@ -16,18 +22,20 @@ export function AnimatedBadge({ count, className = '' }: AnimatedBadgeProps) {
 
   return (
     <motion.span
-      className={className}
-      initial={{ opacity: 0, scale: 0.8, y: 5 }}
+      className={cn(
+        'font-sans tabular-nums lining-nums bg-sidebar-accent/70 text-sidebar-foreground rounded-md px-1.5 pt-[3px] pb-[2px] leading-none',
+        className
+      )}
+      initial={animateOnMount ? { opacity: 0, scale: 0.8, y: 5 } : false}
       animate={{ scale: 1, opacity: 1, y: 0 }}
       exit={{ opacity: 0, scale: 0.8, y: 0 }}
       style={{
         display: 'inline-flex',
         alignItems: 'center',
         minWidth: `${minWidth}em`,
-        height: '20px',
       }}
     >
-      <CountingNumber number={count} />
+      <CountingNumber number={count} initiallyStable={!animateOnMount} />
     </motion.span>
   );
 }

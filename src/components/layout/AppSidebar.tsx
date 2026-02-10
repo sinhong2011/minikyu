@@ -15,6 +15,7 @@ import {
   Collapsible,
   CollapsiblePanel,
   CollapsibleTrigger,
+  useCollapsible,
 } from '@/components/animate-ui/primitives/base/collapsible';
 import { FeedAvatar, UserNav } from '@/components/miniflux';
 import { AnimatedBadge } from '@/components/ui/badge-count';
@@ -41,6 +42,7 @@ import {
   useCategories,
   useCategoryFeeds,
   useCategoryUnreadCount,
+  useFeedUnreadCount,
   useIsConnected,
   useUnreadCounts,
 } from '@/services/miniflux';
@@ -52,22 +54,31 @@ interface AppSidebarProps {
 
 const categorySkeletonKeys = Array.from({ length: 5 }, (_, index) => `category-skeleton-${index}`);
 
+function CategoryChevron() {
+  const { isOpen } = useCollapsible();
+
+  return (
+    <HugeiconsIcon
+      icon={ArrowRight01Icon}
+      className={cn('transition-transform duration-300', isOpen && 'rotate-90')}
+    />
+  );
+}
+
 function CategoryItem({ category, index }: { category: any; index: number }) {
   const unreadCount = useCategoryUnreadCount(Number(category.id));
 
   return (
     <Collapsible key={category.id} defaultOpen={index === 0} className="group/collapsible">
-      <SidebarMenuItem className="">
-        <Link to="/" search={{ categoryId: category.id.toString() }}>
+      <SidebarMenuItem>
+        <Link to="/" search={{ categoryId: category.id.toString() }} className="min-w-0 flex-1">
           {({ isActive }) => (
-            <SidebarMenuButton asChild tooltip={category.title} isActive={isActive}>
-              <HugeiconsIcon
-                icon={Folder01Icon}
-                className={cn(
-                  'transition-colors duration-200',
-                  isActive ? 'text-primary' : 'text-sidebar-foreground/70'
-                )}
-              />
+            <SidebarMenuButton
+              asChild
+              tooltip={category.title}
+              isActive={isActive}
+              className="pl-8 pr-10"
+            >
               <span
                 className={cn(
                   'truncate transition-colors duration-200',
@@ -82,15 +93,41 @@ function CategoryItem({ category, index }: { category: any; index: number }) {
             </SidebarMenuButton>
           )}
         </Link>
-        <CollapsibleTrigger render={<SidebarMenuAction showOnHover />}>
-          <HugeiconsIcon
-            icon={ArrowRight01Icon}
-            className="transition-transform duration-300 group-data-[state=open]/collapsible:rotate-90"
-          />
+        <CollapsibleTrigger
+          render={
+            <SidebarMenuAction
+              aria-label={`Toggle ${category.title}`}
+              className="left-1 right-auto data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            />
+          }
+        >
+          <CategoryChevron />
         </CollapsibleTrigger>
         <CategoryFeeds categoryId={category.id} />
       </SidebarMenuItem>
     </Collapsible>
+  );
+}
+
+function FeedItem({ feed }: { feed: any }) {
+  const unreadCount = useFeedUnreadCount(Number(feed.id));
+
+  return (
+    <SidebarMenuSubItem key={feed.id}>
+      <Link to="/" search={{ feedId: feed.id.toString() }} className="block w-full">
+        {({ isActive }) => (
+          <SidebarMenuSubButton asChild isActive={isActive} className="w-full pr-[10px]">
+            <div className="flex w-full min-w-0 items-center gap-2">
+              <FeedAvatar className="size-5!" domain={feed.site_url} title={feed.title} />
+              <span className="min-w-0 flex-1 truncate text-md">{feed.title}</span>
+              <span className="shrink-0 text-xs tabular-nums">
+                <AnimatedBadge count={unreadCount} animateOnMount={false} />
+              </span>
+            </div>
+          </SidebarMenuSubButton>
+        )}
+      </Link>
+    </SidebarMenuSubItem>
   );
 }
 
@@ -136,20 +173,9 @@ function CategoryFeeds({ categoryId }: { categoryId: string }) {
 
   return (
     <CollapsiblePanel>
-      <SidebarMenuSub className="space-y-1 pt-1">
+      <SidebarMenuSub className="space-y-1 pt-1 ml-3.5 mr-0 pl-2.5 pr-0">
         {filteredFeeds.map((feed) => (
-          <SidebarMenuSubItem key={feed.id}>
-            <Link to="/" search={{ feedId: feed.id.toString() }}>
-              {({ isActive }) => (
-                <SidebarMenuSubButton asChild isActive={isActive}>
-                  <div className="flex items-center gap-2 w-full">
-                    <FeedAvatar className="size-5!" domain={feed.site_url} title={feed.title} />
-                    <span className="truncate text-md">{feed.title}</span>
-                  </div>
-                </SidebarMenuSubButton>
-              )}
-            </Link>
-          </SidebarMenuSubItem>
+          <FeedItem key={feed.id} feed={feed} />
         ))}
       </SidebarMenuSub>
     </CollapsiblePanel>
@@ -284,14 +310,16 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
         <SidebarSeparator className="mx-0 sticky top-0 z-10 bg-background" />
 
         <SidebarGroup>
-          <SidebarGroupLabel>{_(msg`Categories`)}</SidebarGroupLabel>
+          <SidebarGroupLabel className="gap-2 text-sm font-normal text-sidebar-foreground/80">
+            <HugeiconsIcon icon={Folder01Icon} />
+            <span className="leading-none">{_(msg`Categories`)}</span>
+          </SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
               {categoriesLoading ? (
                 categorySkeletonKeys.map((key) => (
                   <SidebarMenuItem key={key}>
                     <SidebarMenuButton disabled>
-                      <HugeiconsIcon icon={Folder01Icon} className="opacity-50" />
                       <div className="bg-muted h-3 w-20 animate-pulse rounded" />
                     </SidebarMenuButton>
                   </SidebarMenuItem>
@@ -299,7 +327,6 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
               ) : !isConnected ? (
                 <SidebarMenuItem>
                   <SidebarMenuButton disabled>
-                    <HugeiconsIcon icon={Folder01Icon} />
                     <span>{_(msg`Not Connected`)}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>

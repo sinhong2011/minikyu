@@ -244,8 +244,8 @@ export function EntryList({ filters = {}, selectedEntryId, onEntrySelect }: Entr
                     )}
                   >
                     <ItemHeader>
-                      <div className="flex items-center gap-2 text-xs text-muted-foreground/60 w-full justify-between">
-                        <div className="flex gap-2 items-center">
+                      <div className="flex w-full items-center justify-between gap-2 text-xs text-muted-foreground/60">
+                        <div className="flex min-w-0 items-center gap-2">
                           {entry.feed.site_url && (
                             <FeedAvatar
                               className="size-4!"
@@ -253,9 +253,9 @@ export function EntryList({ filters = {}, selectedEntryId, onEntrySelect }: Entr
                               title={entry.feed.title}
                             />
                           )}
-                          <span className="truncate max-w-[120px]">{entry.feed.title}</span>
+                          <span className="max-w-[120px] truncate">{entry.feed.title}</span>
                         </div>
-                        <div className="flex gap-2 items-center">
+                        <div className="flex shrink-0 items-center gap-2">
                           {entry.reading_time && <span>{entry.reading_time} min</span>}
                           <span className="text-border">•</span>
                           <span className="text-xs text-muted-foreground/70">
@@ -267,10 +267,10 @@ export function EntryList({ filters = {}, selectedEntryId, onEntrySelect }: Entr
                         </div>
                       </div>
                     </ItemHeader>
-                    <ItemContent className="space-y-1 basis-full">
+                    <ItemContent className="basis-full min-w-0 space-y-1">
                       <ItemTitle
                         className={cn(
-                          'font-semibold text-base leading-snug tracking-tight transition-colors',
+                          'w-full break-words font-semibold text-base leading-snug tracking-tight transition-colors line-clamp-2',
                           entry.status === 'unread' ? 'text-foreground' : 'text-muted-foreground'
                         )}
                       >
@@ -288,7 +288,7 @@ export function EntryList({ filters = {}, selectedEntryId, onEntrySelect }: Entr
                         </div>
                       )}
 
-                      <ItemDescription className="mt-3">
+                      <ItemDescription className="mt-3 line-clamp-3 break-all whitespace-pre-wrap">
                         {entry.content?.replace(/<[^>]*>/g, '')}
                       </ItemDescription>
                     </ItemContent>

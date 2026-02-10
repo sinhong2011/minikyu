@@ -7,8 +7,11 @@ import { SidebarProvider } from '@/components/ui/sidebar';
 import {
   useCategories,
   useCategoryFeeds,
+  useCategoryUnreadCount,
+  useFeedUnreadCount,
   useIsConnected,
   useRefreshAllFeeds,
+  useUnreadCounts,
 } from '@/services/miniflux';
 import { AppSidebar } from './AppSidebar';
 
@@ -41,8 +44,11 @@ i18n.activate('en');
 vi.mock('@/services/miniflux', () => ({
   useCategories: vi.fn(),
   useCategoryFeeds: vi.fn(),
+  useCategoryUnreadCount: vi.fn(),
+  useFeedUnreadCount: vi.fn(),
   useIsConnected: vi.fn(),
   useRefreshAllFeeds: vi.fn(),
+  useUnreadCounts: vi.fn(),
 }));
 
 vi.mock('@tanstack/react-router', () => ({
@@ -154,6 +160,14 @@ describe('AppSidebar', () => {
     vi.clearAllMocks();
 
     (useIsConnected as any).mockReturnValue({ data: true, isLoading: false });
+    (useUnreadCounts as any).mockReturnValue({
+      data: {
+        total: 0,
+        today: 0,
+      },
+    });
+    (useCategoryUnreadCount as any).mockReturnValue(0);
+    (useFeedUnreadCount as any).mockReturnValue(0);
     (useCategories as any).mockReturnValue({
       data: mockCategories,
       isLoading: false,

@@ -66,6 +66,4 @@ mod tests {
         assert!(!row.2.is_empty(), "created_at should be set");
         assert!(!row.3.is_empty(), "updated_at should be set");
     }
-
-
 }

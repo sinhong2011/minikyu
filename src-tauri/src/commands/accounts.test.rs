@@ -536,11 +536,12 @@ mod tests {
         );
 
         // Verify account is deleted from database
-        let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM miniflux_connections WHERE id = ?")
-            .bind(account_id)
-            .fetch_one(&pool)
-            .await
-            .expect("Failed to count accounts");
+        let count: i64 =
+            sqlx::query_scalar("SELECT COUNT(*) FROM miniflux_connections WHERE id = ?")
+                .bind(account_id)
+                .fetch_one(&pool)
+                .await
+                .expect("Failed to count accounts");
 
         assert_eq!(count, 0, "Account should be deleted from database");
 
@@ -638,11 +639,12 @@ mod tests {
         assert!(result.is_ok(), "Should be able to delete active account");
 
         // Verify account is deleted
-        let count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM miniflux_connections WHERE id = ?")
-            .bind(account_id)
-            .fetch_one(&pool)
-            .await
-            .expect("Failed to count accounts");
+        let count: i64 =
+            sqlx::query_scalar("SELECT COUNT(*) FROM miniflux_connections WHERE id = ?")
+                .bind(account_id)
+                .fetch_one(&pool)
+                .await
+                .expect("Failed to count accounts");
 
         assert_eq!(count, 0, "Account should be deleted");
 

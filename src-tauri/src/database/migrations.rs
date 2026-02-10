@@ -262,8 +262,8 @@ pub(crate) async fn apply_initial_schema(pool: &SqlitePool) -> Result<(), sqlx::
         .execute(pool)
         .await?;
 
-        sqlx::query(
-            r#"
+    sqlx::query(
+        r#"
         CREATE TABLE IF NOT EXISTS sync_state (
             id INTEGER PRIMARY KEY,
             last_sync_at TEXT,
@@ -331,7 +331,7 @@ pub(crate) async fn apply_initial_schema(pool: &SqlitePool) -> Result<(), sqlx::
         "CREATE INDEX IF NOT EXISTS idx_entries_published_at ON entries(published_at DESC)",
     )
     .execute(pool)
-        .await?;
+    .await?;
 
     sqlx::query("CREATE INDEX IF NOT EXISTS idx_entries_user_status ON entries(user_id, status)")
         .execute(pool)

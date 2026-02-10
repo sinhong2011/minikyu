@@ -11,9 +11,13 @@ use crate::AppState;
 #[serde(tag = "event")]
 pub enum SyncProgressEvent {
     CategoriesStarted,
-    CategoriesCompleted { count: u32 },
+    CategoriesCompleted {
+        count: u32,
+    },
     FeedsStarted,
-    FeedsCompleted { count: u32 },
+    FeedsCompleted {
+        count: u32,
+    },
     EntriesStarted,
     EntriesProgress {
         pulled: u32,
@@ -173,9 +177,12 @@ pub async fn sync_miniflux_impl(
     upsert_categories(pool, &categories, &now).await?;
     summary.categories_pulled = categories.len() as u32;
 
-    let _ = app_handle.emit("sync-progress", &SyncProgressEvent::CategoriesCompleted {
-        count: summary.categories_pulled,
-    });
+    let _ = app_handle.emit(
+        "sync-progress",
+        &SyncProgressEvent::CategoriesCompleted {
+            count: summary.categories_pulled,
+        },
+    );
 
     let _ = app_handle.emit("sync-progress", &SyncProgressEvent::FeedsStarted);
 
@@ -184,9 +191,12 @@ pub async fn sync_miniflux_impl(
     upsert_feeds(pool, &feeds, &now).await?;
     summary.feeds_pulled = feeds.len() as u32;
 
-    let _ = app_handle.emit("sync-progress", &SyncProgressEvent::FeedsCompleted {
-        count: summary.feeds_pulled,
-    });
+    let _ = app_handle.emit(
+        "sync-progress",
+        &SyncProgressEvent::FeedsCompleted {
+            count: summary.feeds_pulled,
+        },
+    );
 
     let _ = app_handle.emit("sync-progress", &SyncProgressEvent::EntriesStarted);
 
@@ -203,7 +213,8 @@ pub async fn sync_miniflux_impl(
     if is_full_sync {
         sync_full_entries(pool, client, &window, &mut summary, app_handle).await?;
     } else {
-        sync_incremental_entries(pool, client, &window, &mut summary, &sync_state, app_handle).await?;
+        sync_incremental_entries(pool, client, &window, &mut summary, &sync_state, app_handle)
+            .await?;
     }
 
     let _ = app_handle.emit("sync-progress", &SyncProgressEvent::EntriesCompleted);
@@ -488,11 +499,14 @@ async fn sync_full_entries(
             100.0
         };
 
-        let _ = app_handle.emit("sync-progress", &SyncProgressEvent::EntriesProgress {
-            pulled: summary.entries_pulled,
-            total: response.total as u32,
-            percentage,
-        });
+        let _ = app_handle.emit(
+            "sync-progress",
+            &SyncProgressEvent::EntriesProgress {
+                pulled: summary.entries_pulled,
+                total: response.total as u32,
+                percentage,
+            },
+        );
 
         if total_seen >= response.total {
             break;
@@ -514,8 +528,16 @@ async fn sync_incremental_entries(
     app_handle: &AppHandle,
 ) -> Result<(), String> {
     let mut window = *window;
-    let mut offset = if state.sync_in_progress { state.entries_offset } else { 0 };
-    let mut total_seen = if state.sync_in_progress { state.entries_pulled } else { 0 };
+    let mut offset = if state.sync_in_progress {
+        state.entries_offset
+    } else {
+        0
+    };
+    let mut total_seen = if state.sync_in_progress {
+        state.entries_pulled
+    } else {
+        0
+    };
 
     // Restore pulled count if resuming
     if state.sync_in_progress {
@@ -567,11 +589,14 @@ async fn sync_incremental_entries(
             .await;
         }
 
-        let _ = app_handle.emit("sync-progress", &SyncProgressEvent::EntriesProgress {
-            pulled: summary.entries_pulled,
-            total: response.total as u32,
-            percentage,
-        });
+        let _ = app_handle.emit(
+            "sync-progress",
+            &SyncProgressEvent::EntriesProgress {
+                pulled: summary.entries_pulled,
+                total: response.total as u32,
+                percentage,
+            },
+        );
 
         if total_seen >= response.total {
             break;

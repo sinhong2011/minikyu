@@ -171,7 +171,7 @@ pub async fn get_entries(
 #[specta::specta]
 pub async fn get_entry(
     state: State<'_, AppState>,
-    id: String,
+    entry_id: String,
 ) -> Result<crate::miniflux::Entry, String> {
     let pool = state
         .db_pool
@@ -181,7 +181,7 @@ pub async fn get_entry(
         .ok_or("Database not initialized")?
         .clone();
 
-    let id_parsed = id
+    let id_parsed = entry_id
         .parse::<i64>()
         .map_err(|e| format!("Invalid entry ID: {}", e))?;
 
@@ -199,7 +199,9 @@ pub async fn mark_entry_read(state: State<'_, AppState>, id: String) -> Result<(
         .parse::<i64>()
         .map_err(|e| format!("Invalid entry ID: {}", e))?;
 
-    client.update_entries(vec![id_parsed], "read".to_string()).await
+    client
+        .update_entries(vec![id_parsed], "read".to_string())
+        .await
 }
 
 /// Mark multiple entries as read
@@ -211,7 +213,10 @@ pub async fn mark_entries_read(state: State<'_, AppState>, ids: Vec<String>) -> 
 
     let ids_parsed: Vec<i64> = ids
         .iter()
-        .map(|id| id.parse::<i64>().map_err(|e| format!("Invalid entry ID: {}", e)))
+        .map(|id| {
+            id.parse::<i64>()
+                .map_err(|e| format!("Invalid entry ID: {}", e))
+        })
         .collect::<Result<Vec<_>, _>>()?;
 
     client.update_entries(ids_parsed, "read".to_string()).await
@@ -285,7 +290,10 @@ pub async fn create_feed(
     let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
 
     let category_id_parsed = category_id
-        .map(|id| id.parse::<i64>().map_err(|e| format!("Invalid category ID: {}", e)))
+        .map(|id| {
+            id.parse::<i64>()
+                .map_err(|e| format!("Invalid category ID: {}", e))
+        })
         .transpose()?;
 
     client.create_feed(feed_url, category_id_parsed).await
