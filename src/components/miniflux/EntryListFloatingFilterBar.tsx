@@ -81,7 +81,7 @@ export function EntryListFloatingFilterBar({
       >
         <div className="relative grid grid-cols-3 items-center">
           <motion.div
-            className="absolute inset-y-0 left-0 z-0 w-1/3 px-0.5"
+            className="absolute -top-0.5 bottom-0 left-0 z-0 w-1/3 px-0.5"
             animate={{
               x: `${activeTabIndex * 100}%`,
               scale: [1, 1.02, 1],
@@ -91,7 +91,7 @@ export function EntryListFloatingFilterBar({
               scale: { duration: 0.24, ease: 'easeOut' },
             }}
           >
-            <div className="h-full w-full rounded-[1rem] border border-white/8 bg-white/5 shadow-[inset_0_1px_0_color-mix(in_oklch,var(--color-background)_72%,transparent)]" />
+            <div className="h-full w-full rounded-[1rem] bg-white/5 shadow-[inset_0_1px_0_color-mix(in_oklch,var(--color-background)_72%,transparent)]" />
           </motion.div>
           {tabs.map((tab) => {
             const isActive = currentStatus === tab.value;
