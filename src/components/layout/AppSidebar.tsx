@@ -73,12 +73,7 @@ function CategoryItem({ category, index }: { category: any; index: number }) {
       <SidebarMenuItem>
         <Link to="/" search={{ categoryId: category.id.toString() }} className="min-w-0 flex-1">
           {({ isActive }) => (
-            <SidebarMenuButton
-              asChild
-              tooltip={category.title}
-              isActive={isActive}
-              className="pl-8 pr-10"
-            >
+            <SidebarMenuButton tooltip={category.title} isActive={isActive} className="pl-8 pr-10">
               <span
                 className={cn(
                   'truncate transition-colors duration-200',
@@ -116,7 +111,7 @@ function FeedItem({ feed }: { feed: any }) {
     <SidebarMenuSubItem key={feed.id}>
       <Link to="/" search={{ feedId: feed.id.toString() }} className="block w-full">
         {({ isActive }) => (
-          <SidebarMenuSubButton asChild isActive={isActive} className="w-full pr-[10px]">
+          <SidebarMenuSubButton isActive={isActive} className="w-full pr-[10px]">
             <div className="flex w-full min-w-0 items-center gap-2">
               <FeedAvatar className="size-5!" domain={feed.site_url} title={feed.title} />
               <span className="min-w-0 flex-1 truncate text-md">{feed.title}</span>
@@ -223,7 +218,6 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
                       {({ isActive }) => (
                         <SidebarMenuButton
                           className="flex"
-                          asChild
                           tooltip={_(msg`All`)}
                           isActive={isActive}
                         >
@@ -247,7 +241,7 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
                   <SidebarMenuItem>
                     <Link to="/" search={{ filter: 'today' }}>
                       {({ isActive }) => (
-                        <SidebarMenuButton asChild tooltip={_(msg`Today`)} isActive={isActive}>
+                        <SidebarMenuButton tooltip={_(msg`Today`)} isActive={isActive}>
                           <HugeiconsIcon
                             icon={Calendar01Icon}
                             className={cn(
@@ -268,7 +262,7 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
                   <SidebarMenuItem>
                     <Link to="/" search={{ filter: 'starred' }}>
                       {({ isActive }) => (
-                        <SidebarMenuButton asChild tooltip={_(msg`Starred`)} isActive={isActive}>
+                        <SidebarMenuButton tooltip={_(msg`Starred`)} isActive={isActive}>
                           <HugeiconsIcon
                             icon={FavouriteIcon}
                             className={cn(
@@ -286,7 +280,7 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
                   <SidebarMenuItem>
                     <Link to="/" search={{ filter: 'history' }}>
                       {({ isActive }) => (
-                        <SidebarMenuButton asChild tooltip={_(msg`History`)} isActive={isActive}>
+                        <SidebarMenuButton tooltip={_(msg`History`)} isActive={isActive}>
                           <HugeiconsIcon
                             icon={Timer01Icon}
                             className={cn(

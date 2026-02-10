@@ -487,7 +487,6 @@ function SidebarMenuButton({
 }: useRender.ComponentProps<'button'> &
   React.ComponentProps<'button'> & {
     isActive?: boolean;
-    asChild?: boolean;
     tooltip?: string | React.ComponentProps<typeof TooltipPanel>;
   } & VariantProps<typeof sidebarMenuButtonVariants>) {
   const { isMobile, state } = useSidebar();
@@ -643,7 +642,6 @@ function SidebarMenuSubButton({
   React.ComponentProps<'a'> & {
     size?: 'sm' | 'md';
     isActive?: boolean;
-    asChild?: boolean;
   }) {
   return useRender({
     defaultTagName: 'a',
