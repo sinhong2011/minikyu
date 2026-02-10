@@ -99,7 +99,7 @@ export function EntryReadingHeader({
 
   return (
     <motion.header
-      className="sticky top-0 z-10 border-b border-border/40 bg-background/60 backdrop-blur-xl supports-[backdrop-filter]:bg-background/40 shrink-0 shadow-sm"
+      className="sticky top-0 z-10 shrink-0 border-b border-border/50 bg-gradient-to-b from-background/75 via-background/58 to-background/45 shadow-[0_10px_28px_-24px_hsl(var(--foreground)/0.65)] supports-[backdrop-filter]:bg-background/35 backdrop-blur-2xl"
       style={{
         paddingLeft: 24,
         paddingRight: 24,
@@ -285,7 +285,14 @@ export function EntryReadingHeader({
           </a>
           <div className="flex items-center gap-2 text-sm text-muted-foreground">
             <FeedAvatar title={entry.feed.title} domain={entry.feed.site_url} className="size-4!" />
-            <span>{entry.feed.title}</span>
+            <a
+              href={entry.feed.site_url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="font-medium text-foreground/85 transition-colors hover:text-foreground hover:underline decoration-primary/40 underline-offset-4"
+            >
+              {entry.feed.title}
+            </a>
             {entry.author && (
               <>
                 <span>•</span>
