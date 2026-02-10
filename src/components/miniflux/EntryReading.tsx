@@ -22,6 +22,7 @@ interface EntryReadingProps {
   onNavigateNext?: () => void;
   hasPrev?: boolean;
   hasNext?: boolean;
+  transitionDirection?: 'forward' | 'backward';
 }
 
 export function EntryReading({
@@ -30,6 +31,7 @@ export function EntryReading({
   onNavigateNext,
   hasPrev = false,
   hasNext = false,
+  transitionDirection = 'forward',
 }: EntryReadingProps) {
   const { _ } = useLingui();
   const {
@@ -90,6 +92,34 @@ export function EntryReading({
   const canJumpNext = activeTocIndex >= 0 && activeTocIndex < readingContent.tocItems.length - 1;
   const prefersReducedMotion =
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const articleSlideDistance = 12;
+  const articleEnterOpacity = 0.94;
+  const articleExitOpacity = 0.08;
+  const verticalEnterOffset =
+    transitionDirection === 'backward' ? -articleSlideDistance : articleSlideDistance;
+  const meteorExitY = Math.round(-verticalEnterOffset * 7);
+  const meteorExitX = transitionDirection === 'backward' ? -18 : 18;
+  const meteorExitRotate = transitionDirection === 'backward' ? -1.5 : 1.5;
+  const articleEnterTransition = prefersReducedMotion
+    ? { duration: 0 }
+    : {
+        y: {
+          type: 'spring' as const,
+          stiffness: 340,
+          damping: 40,
+          mass: 0.6,
+        },
+        opacity: { duration: 0.09, ease: [0.25, 1, 0.5, 1] as const },
+      };
+  const articleExitTransition = prefersReducedMotion
+    ? { duration: 0 }
+    : {
+        y: { duration: 0.16, ease: [0.22, 0, 1, 1] as const },
+        x: { duration: 0.16, ease: [0.22, 0, 1, 1] as const },
+        rotate: { duration: 0.16, ease: [0.22, 0, 1, 1] as const },
+        filter: { duration: 0.14, ease: [0.4, 0, 1, 1] as const },
+        opacity: { duration: 0.12, ease: [0.55, 0, 1, 1] as const },
+      };
 
   const cancelScrollAnimation = useCallback(() => {
     if (scrollAnimationFrameRef.current !== null) {
@@ -342,14 +372,22 @@ export function EntryReading({
 
       <div className="relative flex-1 min-h-0">
         <ScrollArea className="h-full min-h-0" ref={scrollRef}>
-          <AnimatePresence mode="wait">
+          <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={entry.id}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -10 }}
-              transition={{ duration: 0.2 }}
-              className="bg-background/40 px-4 py-8 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
+              initial={{ opacity: articleEnterOpacity, y: verticalEnterOffset, x: 0, rotate: 0 }}
+              animate={{ opacity: 1, y: 0, x: 0, rotate: 0, filter: 'blur(0px)' }}
+              exit={{
+                opacity: articleExitOpacity,
+                x: meteorExitX,
+                y: meteorExitY,
+                rotate: meteorExitRotate,
+                filter: 'blur(2.4px)',
+                transition: articleExitTransition,
+              }}
+              transition={articleEnterTransition}
+              className="bg-background px-4 py-8 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
+              style={{ willChange: 'transform, opacity, filter' }}
             >
               {entry.content ? (
                 <SafeHtml

@@ -40,6 +40,9 @@ export function MinifluxLayout() {
   const toggleSearchFilters = useUIStore((state) => state.toggleSearchFilters);
   const [localFilters, setLocalFilters] = useState<EntryFilters>({});
   const [hasInteractedBottomFilter, setHasInteractedBottomFilter] = useState(false);
+  const [entryTransitionDirection, setEntryTransitionDirection] = useState<'forward' | 'backward'>(
+    'forward'
+  );
   const syncMiniflux = useSyncMiniflux();
   const syncing = useSyncStore((state) => state.syncing);
   const hasAutoSyncedRef = useRef(false);
@@ -101,6 +104,15 @@ export function MinifluxLayout() {
 
   // Handle entry selection with logging - logs entry details when user selects an entry
   const handleEntrySelect = (entryId: string) => {
+    if (entriesData?.entries && selectedEntryId && selectedEntryId !== entryId) {
+      const previousIndex = entriesData.entries.findIndex((entry) => entry.id === selectedEntryId);
+      const nextIndex = entriesData.entries.findIndex((entry) => entry.id === entryId);
+
+      if (previousIndex !== -1 && nextIndex !== -1) {
+        setEntryTransitionDirection(nextIndex > previousIndex ? 'forward' : 'backward');
+      }
+    }
+
     const entry = entriesData?.entries?.find((e) => e.id === entryId);
 
     if (entry) {
@@ -147,6 +159,7 @@ export function MinifluxLayout() {
         (e) => String(e.id) === lastReadingEntry.entry_id
       );
       if (entryExists) {
+        setEntryTransitionDirection('forward');
         logger.info('Auto-selecting last reading entry', {
           entryId: lastReadingEntry.entry_id,
           timestamp: lastReadingEntry.timestamp,
@@ -232,6 +245,7 @@ export function MinifluxLayout() {
       onNavigateNext={handleNavigateNext}
       hasPrev={hasPrev}
       hasNext={hasNext}
+      entryTransitionDirection={entryTransitionDirection}
     >
       <div className="flex flex-col h-full relative">
         <div className="px-2.5 py-3 flex items-center justify-between">

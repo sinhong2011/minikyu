@@ -12,6 +12,7 @@ interface MainWindowContentProps {
   onNavigateNext?: () => void;
   hasPrev?: boolean;
   hasNext?: boolean;
+  entryTransitionDirection?: 'forward' | 'backward';
 }
 
 export function MainWindowContent({
@@ -21,6 +22,7 @@ export function MainWindowContent({
   onNavigateNext,
   hasPrev = false,
   hasNext = false,
+  entryTransitionDirection = 'forward',
 }: MainWindowContentProps) {
   const { _ } = useLingui();
   const lastQuickPaneEntry = useUIStore((state) => state.lastQuickPaneEntry);
@@ -43,6 +45,7 @@ export function MainWindowContent({
                   onNavigateNext={onNavigateNext}
                   hasPrev={hasPrev}
                   hasNext={hasNext}
+                  transitionDirection={entryTransitionDirection}
                 />
               ) : (
                 <div className="flex flex-1 flex-col items-center justify-center bg-muted/10">
