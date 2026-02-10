@@ -28,6 +28,30 @@ if (result.status === "ok") {
 }
 ```
 
+### Reader Chinese Conversion Pattern
+
+`getEntry` accepts a conversion mode for query-key consistency, but entry conversion is applied in frontend JavaScript after fetch:
+
+```typescript
+import { commands, type ChineseConversionMode } from "@/lib/tauri-bindings"
+
+const mode: ChineseConversionMode = "s2tw"
+const result = await commands.getEntry("123", mode)
+```
+
+Custom term replacements are persisted in preferences and applied after OpenCC conversion:
+
+```typescript
+await commands.savePreferences({
+  ...prefs,
+  reader_custom_conversions: [{ from: "開放", to: "开放" }],
+})
+```
+
+Notes:
+- Keep the query key mode-aware (e.g. `["entry", id, mode]`) so mode switching refetches correctly.
+- Frontend owns HTML-safe conversion (text nodes only), so Rust returns source HTML.
+
 ### Result Type Pattern
 
 Commands that can fail return a `Result<T, E>` type:

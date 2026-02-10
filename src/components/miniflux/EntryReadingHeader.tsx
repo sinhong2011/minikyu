@@ -3,17 +3,35 @@ import {
   ArrowRight02Icon,
   HeartAddIcon,
   HeartCheckIcon,
+  TextIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { format, parseISO } from 'date-fns';
 import { type MotionValue, motion } from 'motion/react';
+import { Switch } from '@/components/animate-ui/components/base/switch';
 import { FeedAvatar } from '@/components/miniflux/FeedAvatar';
 import { Button } from '@/components/ui/button';
-import { Separator } from '@/components/ui/separator';
+import {
+  Popover,
+  PopoverContent,
+  PopoverHeader,
+  PopoverTitle,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from '@/components/ui/select';
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
+import { useReaderSettings } from '@/hooks/use-reader-settings';
 import type { Entry } from '@/lib/bindings';
+import { type ReaderCodeTheme, readerCodeThemeOptions } from '@/lib/shiki-highlight';
+import type { ChineseConversionMode } from '@/lib/tauri-bindings';
 import { ReaderSettings } from './ReaderSettings';
 
 interface EntryReadingHeaderProps {
@@ -48,6 +66,36 @@ export function EntryReadingHeader({
   titleMaxHeight,
 }: EntryReadingHeaderProps) {
   const { _ } = useLingui();
+  const {
+    chineseConversionMode,
+    bionicReading,
+    codeTheme,
+    setChineseConversionMode,
+    setBionicReading,
+    setCodeTheme,
+    isLoading,
+  } = useReaderSettings();
+
+  const conversionOptions: Array<{
+    value: ChineseConversionMode;
+    label: string;
+  }> = [
+    { value: 'off', label: _(msg`Off`) },
+    { value: 's2hk', label: _(msg`繁體中文（香港）`) },
+    { value: 's2tw', label: _(msg`繁體中文（台灣）`) },
+    { value: 't2s', label: _(msg`簡體中文`) },
+  ];
+
+  const formatCodeThemeLabel = (theme: ReaderCodeTheme) => {
+    if (theme === 'auto') {
+      return _(msg`Auto`);
+    }
+
+    return theme
+      .split('-')
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+  };
 
   return (
     <motion.header
@@ -102,9 +150,86 @@ export function EntryReadingHeader({
             <TooltipPanel>{_(msg`Next entry (l or →)`)}</TooltipPanel>
           </Tooltip>
 
-          <Separator orientation="vertical" className="h-5 mx-1 place-self-center rounded-2xl" />
-
           <ReaderSettings />
+
+          <Popover>
+            <PopoverTrigger
+              render={
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-9 w-9"
+                  aria-label={_(msg`Chinese conversion`)}
+                  disabled={isLoading}
+                >
+                  <HugeiconsIcon icon={TextIcon} className="h-5 w-5" strokeWidth={2} />
+                </Button>
+              }
+            />
+            <PopoverContent className="w-64 space-y-3 p-3" side="bottom" align="start">
+              <PopoverHeader>
+                <PopoverTitle>{_(msg`Reading display`)}</PopoverTitle>
+              </PopoverHeader>
+              <div className="space-y-1.5">
+                <p className="text-xs text-muted-foreground">{_(msg`中文顯示`)}</p>
+                <Select
+                  value={chineseConversionMode}
+                  onValueChange={(value) =>
+                    setChineseConversionMode(value as ChineseConversionMode)
+                  }
+                  disabled={isLoading}
+                >
+                  <SelectTrigger className="h-8 w-full text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {conversionOptions.map((option) => (
+                      <SelectItem key={option.value} value={option.value}>
+                        {option.label}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="space-y-1.5">
+                <p className="text-xs text-muted-foreground">{_(msg`Code theme`)}</p>
+                <Select
+                  value={codeTheme}
+                  onValueChange={(value) => {
+                    if ((readerCodeThemeOptions as readonly string[]).includes(value)) {
+                      setCodeTheme(value as ReaderCodeTheme);
+                    }
+                  }}
+                  disabled={isLoading}
+                >
+                  <SelectTrigger className="h-8 w-full text-xs">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="max-h-80">
+                    {readerCodeThemeOptions.map((themeOption) => (
+                      <SelectItem key={themeOption} value={themeOption}>
+                        {formatCodeThemeLabel(themeOption)}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
+                <div className="space-y-0.5">
+                  <p className="text-xs font-medium">{_(msg`Bionic Reading`)}</p>
+                  <p className="text-[11px] text-muted-foreground">{_(msg`English only`)}</p>
+                </div>
+                <Switch
+                  checked={bionicReading}
+                  onCheckedChange={(checked) => setBionicReading(Boolean(checked))}
+                  disabled={isLoading}
+                />
+              </div>
+            </PopoverContent>
+          </Popover>
 
           <Tooltip>
             <TooltipTrigger

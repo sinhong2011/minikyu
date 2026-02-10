@@ -22,9 +22,41 @@ pub static FILENAME_PATTERN: LazyLock<Regex> = LazyLock::new(|| {
 // Preferences
 // ============================================================================
 
+/// Chinese conversion mode for the reading panel.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Type, Default, PartialEq, Eq, Hash)]
+pub enum ChineseConversionMode {
+    /// Keep source content unchanged.
+    #[serde(rename = "off")]
+    #[specta(rename = "off")]
+    Off,
+    /// Convert Simplified Chinese to Traditional Chinese (Taiwan).
+    #[default]
+    #[serde(rename = "s2tw")]
+    #[specta(rename = "s2tw")]
+    S2tw,
+    /// Convert Simplified Chinese to Traditional Chinese (Hong Kong).
+    #[serde(rename = "s2hk")]
+    #[specta(rename = "s2hk")]
+    S2hk,
+    /// Convert Traditional Chinese to Simplified Chinese.
+    #[serde(rename = "t2s")]
+    #[specta(rename = "t2s")]
+    T2s,
+}
+
+/// Custom rule for Chinese term conversion.
+#[derive(Debug, Clone, Serialize, Deserialize, Type, Default, PartialEq, Eq, Hash)]
+pub struct ChineseConversionRule {
+    /// Source term to match.
+    pub from: String,
+    /// Replacement term to apply.
+    pub to: String,
+}
+
 /// Application preferences that persist to disk.
 /// Only contains settings that should be saved between sessions.
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
+#[serde(default)]
 pub struct AppPreferences {
     pub theme: String,
     /// Global shortcut for quick pane (e.g., "CommandOrControl+Shift+.")
@@ -45,6 +77,15 @@ pub struct AppPreferences {
     pub reader_line_width: u32,
     /// Reader font family (sans-serif, serif, monospace)
     pub reader_font_family: String,
+    /// Reader code block syntax highlight theme.
+    pub reader_code_theme: String,
+    /// Chinese conversion mode for reading content.
+    pub reader_chinese_conversion: ChineseConversionMode,
+    /// Enable bionic reading emphasis for English text.
+    pub reader_bionic_reading: bool,
+    /// User-defined term conversion rules applied after Chinese conversion.
+    #[serde(default)]
+    pub reader_custom_conversions: Vec<ChineseConversionRule>,
     /// Default download path for images (null = ask every time)
     pub image_download_path: Option<String>,
     /// Default download path for videos (null = ask every time)
@@ -63,6 +104,10 @@ impl Default for AppPreferences {
             reader_font_size: 16,
             reader_line_width: 65,
             reader_font_family: "sans-serif".to_string(),
+            reader_code_theme: "auto".to_string(),
+            reader_chinese_conversion: ChineseConversionMode::S2tw,
+            reader_bionic_reading: false,
+            reader_custom_conversions: vec![],
             image_download_path: None,
             video_download_path: None,
         }
@@ -211,6 +256,63 @@ pub fn validate_reader_settings(
         "sans-serif" | "serif" | "monospace" => Ok(()),
         _ => Err("Invalid font family: must be 'sans-serif', 'serif', or 'monospace'".to_string()),
     }
+}
+
+/// Validates chinese conversion mode value.
+pub fn validate_chinese_conversion_mode(mode: ChineseConversionMode) -> Result<(), String> {
+    match mode {
+        ChineseConversionMode::Off
+        | ChineseConversionMode::S2tw
+        | ChineseConversionMode::S2hk
+        | ChineseConversionMode::T2s => Ok(()),
+    }
+}
+
+/// Validates custom Chinese conversion rules.
+pub fn validate_custom_chinese_conversions(rules: &[ChineseConversionRule]) -> Result<(), String> {
+    const MAX_RULES: usize = 200;
+    const MAX_TERM_LENGTH: usize = 100;
+
+    if rules.len() > MAX_RULES {
+        return Err(format!(
+            "Too many custom conversion rules (max {MAX_RULES})"
+        ));
+    }
+
+    for rule in rules {
+        let from = rule.from.trim();
+        let to = rule.to.trim();
+
+        if from.is_empty() {
+            return Err("Custom conversion 'from' term cannot be empty".to_string());
+        }
+        if from.chars().count() > MAX_TERM_LENGTH {
+            return Err(format!(
+                "Custom conversion 'from' term too long (max {MAX_TERM_LENGTH} characters)"
+            ));
+        }
+        if to.chars().count() > MAX_TERM_LENGTH {
+            return Err(format!(
+                "Custom conversion 'to' term too long (max {MAX_TERM_LENGTH} characters)"
+            ));
+        }
+    }
+
+    Ok(())
+}
+
+/// Validates reader code theme identifier.
+pub fn validate_reader_code_theme(theme: &str) -> Result<(), String> {
+    let trimmed = theme.trim();
+    if trimmed.is_empty() {
+        return Err("Invalid reader code theme: cannot be empty".to_string());
+    }
+
+    if trimmed.chars().count() > 64 {
+        return Err("Invalid reader code theme: maximum length is 64 characters".to_string());
+    }
+
+    Ok(())
 }
 
 /// Validates download path.

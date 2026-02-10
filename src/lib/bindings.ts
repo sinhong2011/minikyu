@@ -432,9 +432,9 @@ export const commands = {
   /**
    * Get a single entry
    */
-  async getEntry(id: string): Promise<Result<Entry, string>> {
+  async getEntry(entryId: string): Promise<Result<Entry, string>> {
     try {
-      return { status: 'ok', data: await TAURI_INVOKE('get_entry', { id }) };
+      return { status: 'ok', data: await TAURI_INVOKE('get_entry', { entryId }) };
     } catch (e) {
       if (e instanceof Error) throw e;
       else return { status: 'error', error: e as any };
@@ -696,6 +696,22 @@ export type AppPreferences = {
    */
   reader_font_family: string;
   /**
+   * Reader code block syntax highlight theme.
+   */
+  reader_code_theme: string;
+  /**
+   * Chinese conversion mode for reading content.
+   */
+  reader_chinese_conversion: ChineseConversionMode;
+  /**
+   * Enable bionic reading emphasis for English text.
+   */
+  reader_bionic_reading: boolean;
+  /**
+   * User-defined term conversion rules applied after Chinese conversion.
+   */
+  reader_custom_conversions?: ChineseConversionRule[];
+  /**
    * Default download path for images (null = ask every time)
    */
   image_download_path: string | null;
@@ -728,6 +744,39 @@ export type Category = {
  * Per-category unread count
  */
 export type CategoryUnread = { category_id: string; unread_count: string };
+/**
+ * Chinese conversion mode for the reading panel.
+ */
+export type ChineseConversionMode =
+  /**
+   * Keep source content unchanged.
+   */
+  | 'off'
+  /**
+   * Convert Simplified Chinese to Traditional Chinese (Taiwan).
+   */
+  | 's2tw'
+  /**
+   * Convert Simplified Chinese to Traditional Chinese (Hong Kong).
+   */
+  | 's2hk'
+  /**
+   * Convert Traditional Chinese to Simplified Chinese.
+   */
+  | 't2s';
+/**
+ * Custom rule for Chinese term conversion.
+ */
+export type ChineseConversionRule = {
+  /**
+   * Source term to match.
+   */
+  from: string;
+  /**
+   * Replacement term to apply.
+   */
+  to: string;
+};
 /**
  * Window close behavior options
  */
@@ -1017,15 +1066,15 @@ export type User = {
 /** tauri-specta globals **/
 
 import { Channel as TAURI_CHANNEL, invoke as TAURI_INVOKE } from '@tauri-apps/api/core';
-import * as TauriApiEvent from '@tauri-apps/api/event';
+import * as TAURI_API_EVENT from '@tauri-apps/api/event';
 import type { WebviewWindow as __WebviewWindow__ } from '@tauri-apps/api/webviewWindow';
 
 type __EventObj__<T> = {
-  listen: (cb: TauriApiEvent.EventCallback<T>) => ReturnType<typeof TauriApiEvent.listen<T>>;
-  once: (cb: TauriApiEvent.EventCallback<T>) => ReturnType<typeof TauriApiEvent.once<T>>;
+  listen: (cb: TAURI_API_EVENT.EventCallback<T>) => ReturnType<typeof TAURI_API_EVENT.listen<T>>;
+  once: (cb: TAURI_API_EVENT.EventCallback<T>) => ReturnType<typeof TAURI_API_EVENT.once<T>>;
   emit: null extends T
-    ? (payload?: T) => ReturnType<typeof TauriApiEvent.emit>
-    : (payload: T) => ReturnType<typeof TauriApiEvent.emit>;
+    ? (payload?: T) => ReturnType<typeof TAURI_API_EVENT.emit>
+    : (payload: T) => ReturnType<typeof TAURI_API_EVENT.emit>;
 };
 
 export type Result<T, E> = { status: 'ok'; data: T } | { status: 'error'; error: E };
@@ -1048,11 +1097,11 @@ function __makeEvents__<T extends Record<string, any>>(mappings: Record<keyof T,
           get: (_, command: keyof __EventObj__<any>) => {
             switch (command) {
               case 'listen':
-                return (arg: any) => TauriApiEvent.listen(name, arg);
+                return (arg: any) => TAURI_API_EVENT.listen(name, arg);
               case 'once':
-                return (arg: any) => TauriApiEvent.once(name, arg);
+                return (arg: any) => TAURI_API_EVENT.once(name, arg);
               case 'emit':
-                return (arg: any) => TauriApiEvent.emit(name, arg);
+                return (arg: any) => TAURI_API_EVENT.emit(name, arg);
             }
           },
         });

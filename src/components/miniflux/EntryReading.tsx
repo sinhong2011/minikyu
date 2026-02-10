@@ -28,9 +28,17 @@ export function EntryReading({
   hasNext = false,
 }: EntryReadingProps) {
   const { _ } = useLingui();
+  const {
+    chineseConversionMode,
+    customConversionRules,
+    bionicReading,
+    fontSize,
+    lineWidth,
+    fontFamily,
+    codeTheme,
+  } = useReaderSettings();
   const { data: entry, isLoading, error } = useEntry(entryId);
   const toggleStar = useToggleEntryStar();
-  const { fontSize, lineWidth, fontFamily } = useReaderSettings();
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollY = useMotionValue(0);
 
@@ -153,13 +161,28 @@ export function EntryReading({
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.2 }}
-            className="px-8 py-10 bg-background/30"
+            className="bg-background/40 px-4 py-8 sm:px-6 sm:py-10 lg:px-10"
           >
             {entry.content ? (
               <SafeHtml
                 html={entry.content}
+                bionicEnglish={bionicReading}
+                chineseConversionMode={chineseConversionMode}
+                customConversionRules={customConversionRules}
+                codeTheme={codeTheme}
                 className={cn(
-                  'prose prose-slate max-w-none dark:prose-invert mx-auto transition-all duration-300',
+                  'mx-auto max-w-none break-words prose prose-slate dark:prose-invert transition-all duration-300',
+                  '[&_h1]:mb-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold',
+                  '[&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:leading-snug [&_h2]:font-semibold',
+                  '[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:leading-snug [&_h3]:font-semibold',
+                  '[&_p]:my-5 [&_p]:leading-[1.85] [&_p]:tracking-[0.01em]',
+                  '[&_ul]:my-5 [&_ol]:my-5 [&_li]:my-1.5',
+                  '[&_a]:break-all [&_a]:underline [&_a]:decoration-primary/40 [&_a]:underline-offset-4',
+                  '[&_blockquote]:my-8 [&_blockquote]:rounded-r-xl [&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:bg-primary/5 [&_blockquote]:px-4 [&_blockquote]:py-2 [&_blockquote]:text-foreground/90',
+                  '[&_hr]:my-8 [&_hr]:border-border/60',
+                  '[&_table]:text-sm [&_table]:leading-relaxed',
+                  '[&_img]:my-8',
+                  '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0',
                   fontFamily === 'serif'
                     ? 'font-serif'
                     : fontFamily === 'monospace'
@@ -169,7 +192,7 @@ export function EntryReading({
                 style={{
                   maxWidth: `${lineWidth}ch`,
                   fontSize: `${fontSize}px`,
-                  lineHeight: '1.6',
+                  lineHeight: '1.75',
                 }}
               />
             ) : (
