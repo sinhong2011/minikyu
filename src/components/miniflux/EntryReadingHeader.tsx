@@ -96,6 +96,8 @@ export function EntryReadingHeader({
       .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
       .join(' ');
   };
+  const toolbarButtonClass =
+    'h-9 w-9 rounded-xl border border-transparent text-muted-foreground/90 hover:bg-accent/70 hover:text-foreground data-[state=open]:border-border/60 data-[state=open]:bg-accent/70 data-[state=open]:text-foreground';
 
   return (
     <motion.header
@@ -110,8 +112,11 @@ export function EntryReadingHeader({
         backdropFilter: 'blur(24px)',
       }}
     >
-      <div className="flex flex-col gap-2">
-        <div className="flex gap-1" role="toolbar">
+      <div className="flex flex-col gap-3">
+        <div
+          className="flex w-fit items-center gap-1.5 rounded-2xl bg-background/65 px-1.5 py-1 shadow-sm supports-[backdrop-filter]:bg-background/50"
+          role="toolbar"
+        >
           <Tooltip>
             <TooltipTrigger
               render={
@@ -119,7 +124,7 @@ export function EntryReadingHeader({
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9"
+                  className={toolbarButtonClass}
                   onClick={onNavigatePrev}
                   disabled={!hasPrev}
                   aria-label={_(msg`Previous entry (h or ←)`)}
@@ -138,7 +143,7 @@ export function EntryReadingHeader({
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9"
+                  className={toolbarButtonClass}
                   onClick={onNavigateNext}
                   disabled={!hasNext}
                   aria-label={_(msg`Next entry (l or →)`)}
@@ -159,7 +164,7 @@ export function EntryReadingHeader({
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9"
+                  className={toolbarButtonClass}
                   aria-label={_(msg`Chinese conversion`)}
                   disabled={isLoading}
                 >
@@ -167,7 +172,11 @@ export function EntryReadingHeader({
                 </Button>
               }
             />
-            <PopoverContent className="w-64 space-y-3 p-3" side="bottom" align="start">
+            <PopoverContent
+              className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/95 p-3.5 shadow-xl"
+              side="bottom"
+              align="start"
+            >
               <PopoverHeader>
                 <PopoverTitle>{_(msg`Reading display`)}</PopoverTitle>
               </PopoverHeader>
@@ -238,7 +247,7 @@ export function EntryReadingHeader({
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-9 w-9"
+                  className={toolbarButtonClass}
                   onClick={onToggleStar}
                   aria-label={entry.starred ? _(msg`Unstar`) : _(msg`Star`)}
                 />
@@ -272,7 +281,7 @@ export function EntryReadingHeader({
           originY: 0,
           overflow: 'hidden',
         }}
-        className="flex items-start justify-between space-y-3 px-3"
+        className="mt-1 flex items-start justify-between px-3"
       >
         <div className="flex flex-col flex-1 space-y-2 pb-2">
           <a

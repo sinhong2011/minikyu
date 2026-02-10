@@ -1,8 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { useVirtualizer } from '@tanstack/react-virtual';
+import { defaultRangeExtractor, type Range, useVirtualizer } from '@tanstack/react-virtual';
+import { format } from 'date-fns';
 import { motion } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { FeedAvatar } from '@/components/miniflux';
 import {
   Item,
@@ -15,8 +16,12 @@ import {
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { extractThumbnail } from '@/lib/media-utils';
-import { formatRelativeTime } from '@/lib/miniflux-utils';
-import type { EntryFilters } from '@/lib/tauri-bindings';
+import {
+  formatRelativeTime,
+  getEntryDateSectionType,
+  groupEntriesByCalendarDate,
+} from '@/lib/miniflux-utils';
+import type { Entry, EntryFilters } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
 import { useEntries, usePrefetchEntry } from '@/services/miniflux';
 import { useUIStore } from '@/store/ui-store';
@@ -32,6 +37,19 @@ interface EntryListProps {
   currentStatus?: EntryListFilterStatus;
   onStatusChange?: (status: EntryListFilterStatus) => void;
 }
+
+type EntryListRow =
+  | {
+      type: 'section';
+      key: string;
+      title: string;
+    }
+  | {
+      type: 'entry';
+      key: string;
+      entry: Entry;
+      showSeparator: boolean;
+    };
 
 export function EntryList({
   filters = {},
@@ -54,13 +72,100 @@ export function EntryList({
   const removalTimersRef = useRef<Map<string, number>>(new Map());
   const lastScrollTopRef = useRef(0);
   const scrollStopTimerRef = useRef<number | null>(null);
+  const activeStickyIndexRef = useRef(0);
+
+  // Build list rows with section headers
+  const listRows = useMemo(() => {
+    const rows: EntryListRow[] = [];
+    const entrySections = groupEntriesByCalendarDate(entriesData?.entries ?? []);
+
+    entrySections.forEach((section) => {
+      const sectionType = getEntryDateSectionType(section.date);
+      const sectionTitle =
+        sectionType === 'today'
+          ? _(msg`Today`)
+          : sectionType === 'yesterday'
+            ? _(msg`Yesterday`)
+            : format(section.date, 'EEEE, MMMM d, yyyy');
+
+      rows.push({
+        type: 'section',
+        key: `section-${section.key}`,
+        title: sectionTitle,
+      });
+
+      section.entries.forEach((entry, index) => {
+        rows.push({
+          type: 'entry',
+          key: entry.id,
+          entry,
+          showSeparator: index < section.entries.length - 1,
+        });
+      });
+    });
+
+    return rows;
+  }, [_, entriesData?.entries]);
+
+  // Track which rows are sticky section headers
+  const stickyIndexes = useMemo(
+    () =>
+      listRows.flatMap((row, index) => {
+        return row.type === 'section' ? [index] : [];
+      }),
+    [listRows]
+  );
+
+  // Range extractor: ensures active sticky header stays in viewport
+  const rangeExtractor = useCallback(
+    (range: Range) => {
+      if (stickyIndexes.length === 0) {
+        return defaultRangeExtractor(range);
+      }
+
+      activeStickyIndexRef.current =
+        [...stickyIndexes].reverse().find((index) => range.startIndex >= index) ??
+        stickyIndexes[0] ??
+        0;
+
+      const next = new Set([activeStickyIndexRef.current, ...defaultRangeExtractor(range)]);
+      return [...next].sort((a, b) => a - b);
+    },
+    [stickyIndexes]
+  );
+
+  const estimateEntrySize = (index: number) => {
+    const row = listRows[index];
+    if (!row) return 200;
+
+    if (row.type === 'section') {
+      return 28;
+    }
+
+    const entry = row.entry;
+    let estimatedHeight = 120;
+
+    if (extractThumbnail(entry)) {
+      estimatedHeight += 132;
+    }
+
+    const contentLength = entry.content?.replace(/<[^>]*>/g, '').length || 0;
+    estimatedHeight += Math.min(contentLength / 15, 60);
+
+    estimatedHeight += 32;
+
+    estimatedHeight += 16;
+
+    return Math.round(estimatedHeight);
+  };
 
   // Virtualizer configuration
   const virtualizer = useVirtualizer({
-    count: entriesData?.entries?.length ?? 0,
+    count: listRows.length,
     getScrollElement: () => parentRef.current,
-    estimateSize: () => 200, // Initial estimate for entry card height
-    overscan: 5, // Render 5 extra items above/below viewport
+    estimateSize: estimateEntrySize,
+    overscan: 5,
+    rangeExtractor,
   });
 
   const virtualItems = virtualizer.getVirtualItems();
@@ -278,7 +383,7 @@ export function EntryList({
     <div className="relative h-full">
       <div
         ref={parentRef}
-        className={cn('mx-auto h-full w-full overflow-auto py-3', showFloatingFilterBar && 'pb-20')}
+        className={cn('mx-auto h-full w-full overflow-auto pb-3', showFloatingFilterBar && 'pb-20')}
         style={{
           contain: 'strict',
           maxWidth: '822px',
@@ -291,107 +396,140 @@ export function EntryList({
             position: 'relative',
           }}
         >
-          <div
-            style={{
-              position: 'absolute',
-              top: 0,
-              left: 0,
-              width: '100%',
-              transform: `translateY(${virtualItems[0]?.start ?? 0}px)`,
-            }}
-          >
-            {virtualItems.map((virtualItem) => {
-              const entry = entriesData.entries?.[virtualItem.index];
-              if (!entry) return null;
-              const isNew = newEntryIds.has(entry.id);
+          {virtualItems.map((virtualItem) => {
+            const row = listRows[virtualItem.index];
+            if (!row) return null;
 
+            if (row.type === 'section') {
+              const isActiveSticky = activeStickyIndexRef.current === virtualItem.index;
               return (
                 <motion.div
-                  key={entry.id}
+                  key={row.key}
+                  data-index={virtualItem.index}
                   ref={virtualizer.measureElement}
-                  className="px-3"
-                  initial={isNew ? { opacity: 0, y: -6 } : false}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.2, ease: 'easeOut' }}
+                  className="py-0"
+                  style={{
+                    position: isActiveSticky ? 'sticky' : 'absolute',
+                    top: isActiveSticky ? 0 : virtualItem.start,
+                    left: 0,
+                    width: '100%',
+                    zIndex: isActiveSticky ? 20 : 'auto',
+                  }}
+                  animate={{
+                    opacity: isActiveSticky ? 1 : 0.6,
+                    scale: isActiveSticky ? 1 : 0.98,
+                  }}
+                  transition={{
+                    duration: 0.15,
+                    ease: 'easeOut',
+                  }}
                 >
-                  <button
-                    type="button"
-                    onClick={() => handleEntryClick(entry.id)}
-                    onKeyDown={handleKeyDown(entry.id)}
-                    onMouseEnter={() => handleEntryHover(entry.id)}
-                    className="w-full cursor-pointer border-none bg-transparent text-left focus:outline-none"
-                  >
-                    <Item
-                      variant={selectedEntryId === entry.id ? 'outline' : 'default'}
-                      className={cn(
-                        'relative group p-4 transition-all duration-300 ease-out',
-                        'hover:border-border/50 hover:bg-accent/40',
-                        selectedEntryId === entry.id && 'bg-accent shadow-md',
-                        selectionMode && 'pl-12',
-                        isNew && 'border-primary/40 bg-primary/5'
-                      )}
-                    >
-                      <ItemHeader>
-                        <div className="flex w-full items-center justify-between gap-2 text-xs text-muted-foreground/60">
-                          <div className="flex min-w-0 items-center gap-2">
-                            {entry.feed.site_url && (
-                              <FeedAvatar
-                                className="size-4!"
-                                domain={entry.feed.site_url}
-                                title={entry.feed.title}
-                              />
-                            )}
-                            <span className="max-w-[120px] truncate">{entry.feed.title}</span>
-                          </div>
-                          <div className="flex shrink-0 items-center gap-2">
-                            {entry.reading_time && <span>{entry.reading_time} min</span>}
-                            <span className="text-border">•</span>
-                            <span className="text-xs text-muted-foreground/70">
-                              {formatRelativeTime(entry.published_at)}
-                            </span>
-                            {entry.status === 'unread' && (
-                              <div className="h-2.5 w-2.5 rounded-full bg-primary/70 shadow-sm" />
-                            )}
-                          </div>
-                        </div>
-                      </ItemHeader>
-                      <ItemContent className="basis-full min-w-0 space-y-1">
-                        <ItemTitle
-                          className={cn(
-                            'line-clamp-2 w-full break-words font-semibold text-base leading-snug tracking-tight transition-colors',
-                            entry.status === 'unread' ? 'text-foreground' : 'text-muted-foreground'
-                          )}
-                        >
-                          {entry.title}
-                        </ItemTitle>
-
-                        {extractThumbnail(entry) && (
-                          <div className="relative mt-3 h-32 w-full shrink-0 overflow-hidden rounded-lg border border-border/30 bg-muted">
-                            <img
-                              src={extractThumbnail(entry) ?? ''}
-                              alt=""
-                              className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                              loading="lazy"
-                            />
-                          </div>
-                        )}
-
-                        <ItemDescription className="mt-3 line-clamp-3 break-all whitespace-pre-wrap">
-                          {entry.content?.replace(/<[^>]*>/g, '')}
-                        </ItemDescription>
-                      </ItemContent>
-
-                      <ItemActions></ItemActions>
-                    </Item>
-                  </button>
-
-                  {virtualItem.index < (entriesData.entries?.length ?? 0) - 1 && (
-                    <Separator className="my-2" />
-                  )}
+                  <div className="rounded-lg bg-background px-2 pt-0.5 pb-2 transition-colors duration-200">
+                    <h2 className="px-1 text-[0.68rem] font-semibold tracking-[0.1em] text-muted-foreground/75 uppercase">
+                      {row.title}
+                    </h2>
+                  </div>
                 </motion.div>
               );
-            })}
-          </div>
+            }
+
+            const entry = row.entry;
+            const isNew = newEntryIds.has(entry.id);
+
+            return (
+              <motion.div
+                key={entry.id}
+                data-index={virtualItem.index}
+                ref={virtualizer.measureElement}
+                className="px-3"
+                style={{
+                  position: 'absolute',
+                  top: virtualItem.start,
+                  left: 0,
+                  width: '100%',
+                }}
+                initial={isNew ? { opacity: 0, y: -6 } : false}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+              >
+                <button
+                  type="button"
+                  onClick={() => handleEntryClick(entry.id)}
+                  onKeyDown={handleKeyDown(entry.id)}
+                  onMouseEnter={() => handleEntryHover(entry.id)}
+                  className="w-full cursor-pointer border-none bg-transparent text-left focus:outline-none"
+                >
+                  <Item
+                    variant={selectedEntryId === entry.id ? 'outline' : 'default'}
+                    className={cn(
+                      'relative group p-4 transition-all duration-300 ease-out',
+                      'hover:border-border/50 hover:bg-accent/40',
+                      selectedEntryId === entry.id && 'bg-accent shadow-md',
+                      selectionMode && 'pl-12',
+                      isNew && 'border-primary/40 bg-primary/5'
+                    )}
+                  >
+                    <ItemHeader>
+                      <div className="flex w-full items-center justify-between gap-2 text-xs text-muted-foreground/60">
+                        <div className="flex min-w-0 items-center gap-2">
+                          {entry.feed.site_url && (
+                            <FeedAvatar
+                              className="size-4!"
+                              domain={entry.feed.site_url}
+                              title={entry.feed.title}
+                            />
+                          )}
+                          <span className="max-w-[120px] truncate">{entry.feed.title}</span>
+                        </div>
+                        <div className="flex shrink-0 items-center gap-2">
+                          {entry.reading_time && <span>{entry.reading_time} min</span>}
+                          <span className="text-border">•</span>
+                          <span className="text-xs text-muted-foreground/70">
+                            {formatRelativeTime(entry.published_at)}
+                          </span>
+                          {entry.status === 'unread' && (
+                            <div className="h-2.5 w-2.5 rounded-full bg-primary/70 shadow-sm" />
+                          )}
+                        </div>
+                      </div>
+                    </ItemHeader>
+                    <ItemContent className="basis-full min-w-0 space-y-1">
+                      <ItemTitle
+                        className={cn(
+                          'line-clamp-2 w-full break-words font-semibold text-base leading-snug tracking-tight transition-colors',
+                          entry.status === 'unread' ? 'text-foreground' : 'text-muted-foreground'
+                        )}
+                      >
+                        {entry.title}
+                      </ItemTitle>
+
+                      {extractThumbnail(entry) && (
+                        <div className="relative mt-3 h-32 w-full shrink-0 overflow-hidden rounded-lg border border-border/30 bg-muted">
+                          <img
+                            src={extractThumbnail(entry) ?? ''}
+                            alt=""
+                            className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                            loading="lazy"
+                            onLoad={() => {
+                              virtualizer.measure();
+                            }}
+                          />
+                        </div>
+                      )}
+
+                      <ItemDescription className="mt-3 line-clamp-3 break-all whitespace-pre-wrap">
+                        {entry.content?.replace(/<[^>]*>/g, '')}
+                      </ItemDescription>
+                    </ItemContent>
+
+                    <ItemActions></ItemActions>
+                  </Item>
+                </button>
+
+                {row.showSeparator && <Separator className="my-2" />}
+              </motion.div>
+            );
+          })}
         </div>
       </div>
       {showFloatingFilterBar && currentStatus && onStatusChange && (

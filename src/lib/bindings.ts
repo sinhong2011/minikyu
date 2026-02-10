@@ -692,7 +692,8 @@ export type AppPreferences = {
    */
   reader_line_width: number;
   /**
-   * Reader font family (sans-serif, serif, monospace)
+   * Reader font family
+   * (sans-serif, raleway, system-ui, humanist, serif, georgia, book-serif, monospace)
    */
   reader_font_family: string;
   /**

@@ -75,7 +75,8 @@ pub struct AppPreferences {
     pub reader_font_size: u32,
     /// Reader line width (45-80)
     pub reader_line_width: u32,
-    /// Reader font family (sans-serif, serif, monospace)
+    /// Reader font family
+    /// (sans-serif, raleway, system-ui, humanist, serif, georgia, book-serif, monospace)
     pub reader_font_family: String,
     /// Reader code block syntax highlight theme.
     pub reader_code_theme: String,
@@ -253,8 +254,9 @@ pub fn validate_reader_settings(
         return Err("Line width must be between 45 and 80".to_string());
     }
     match font_family {
-        "sans-serif" | "serif" | "monospace" => Ok(()),
-        _ => Err("Invalid font family: must be 'sans-serif', 'serif', or 'monospace'".to_string()),
+        "sans-serif" | "raleway" | "system-ui" | "humanist" | "serif" | "georgia"
+        | "book-serif" | "monospace" => Ok(()),
+        _ => Err("Invalid font family: must be one of 'sans-serif', 'raleway', 'system-ui', 'humanist', 'serif', 'georgia', 'book-serif', or 'monospace'".to_string()),
     }
 }
 

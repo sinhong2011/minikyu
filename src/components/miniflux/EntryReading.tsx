@@ -8,6 +8,7 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import { logger } from '@/lib/logger';
+import { getReaderFontStack } from '@/lib/reader-fonts';
 import { cn } from '@/lib/utils';
 import { useEntry } from '@/services/miniflux';
 import { useToggleEntryStar } from '@/services/miniflux/entries';
@@ -369,17 +370,13 @@ export function EntryReading({
                     '[&_hr]:my-8 [&_hr]:border-border/60',
                     '[&_table]:text-sm [&_table]:leading-relaxed',
                     '[&_img]:my-8',
-                    '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0',
-                    fontFamily === 'serif'
-                      ? 'font-serif'
-                      : fontFamily === 'monospace'
-                        ? 'font-mono'
-                        : 'font-sans'
+                    '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0'
                   )}
                   style={{
                     maxWidth: `${lineWidth}ch`,
                     fontSize: `${fontSize}px`,
                     lineHeight: '1.75',
+                    fontFamily: getReaderFontStack(fontFamily),
                   }}
                 />
               ) : (

@@ -234,7 +234,7 @@ export function MinifluxLayout() {
       hasNext={hasNext}
     >
       <div className="flex flex-col h-full relative">
-        <div className="border-b px-4 py-3 flex items-center justify-between">
+        <div className="px-2.5 py-3 flex items-center justify-between">
           <div className="flex items-center gap-2">
             <h1 className="text-xl font-semibold">{getFilterTitle()}</h1>
           </div>
