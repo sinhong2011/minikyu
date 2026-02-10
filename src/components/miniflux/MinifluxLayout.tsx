@@ -1,10 +1,4 @@
-import {
-  CheckmarkCircle01Icon,
-  InboxIcon,
-  RefreshIcon,
-  Search01Icon,
-  StarIcon,
-} from '@hugeicons/core-free-icons';
+import { RefreshIcon, Search01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
@@ -27,7 +21,7 @@ import { useSyncStore } from '@/store/sync-store';
 import { useUIStore } from '@/store/ui-store';
 import { ConnectionDialog } from './ConnectionDialog';
 import { EntryFiltersUI } from './EntryFilters';
-import { EntryList } from './EntryList';
+import { EntryList, type EntryListFilterStatus } from './EntryList';
 
 type FilterType = 'all' | 'starred' | 'today' | 'history';
 
@@ -45,11 +39,22 @@ export function MinifluxLayout() {
   const searchFiltersVisible = useUIStore((state) => state.searchFiltersVisible);
   const toggleSearchFilters = useUIStore((state) => state.toggleSearchFilters);
   const [localFilters, setLocalFilters] = useState<EntryFilters>({});
+  const [hasInteractedBottomFilter, setHasInteractedBottomFilter] = useState(false);
   const syncMiniflux = useSyncMiniflux();
   const syncing = useSyncStore((state) => state.syncing);
   const hasAutoSyncedRef = useRef(false);
   useSyncProgressListener();
-  const currentStatus = localFilters.starred ? 'starred' : localFilters.status || 'all';
+  const hasExplicitStatusFilter = localFilters.starred != null || localFilters.status != null;
+  const shouldDefaultToUnread =
+    !hasInteractedBottomFilter &&
+    !hasExplicitStatusFilter &&
+    filter !== 'starred' &&
+    filter !== 'history';
+  const currentStatus = localFilters.starred
+    ? 'starred'
+    : localFilters.status === 'unread' || shouldDefaultToUnread
+      ? 'unread'
+      : 'all';
   const prefetchEntry = usePrefetchEntry();
   const { data: lastReadingEntry } = useLastReadingEntry();
   const saveLastReading = useSaveLastReading();
@@ -62,6 +67,7 @@ export function MinifluxLayout() {
     ...(feedId ? { feed_id: Number(feedId) } : {}),
     ...(filter === 'starred' ? { starred: true } : {}),
     ...(filter === 'history' ? { status: 'read' } : {}),
+    ...(shouldDefaultToUnread ? { status: 'unread' as const } : {}),
     order: 'published_at',
     direction: 'desc',
     ...localFilters,
@@ -211,6 +217,15 @@ export function MinifluxLayout() {
     }
   };
 
+  const handleBottomFilterChange = (status: EntryListFilterStatus) => {
+    setHasInteractedBottomFilter(true);
+    setLocalFilters({
+      ...localFilters,
+      status: status === 'all' || status === 'starred' ? null : status,
+      starred: status === 'starred' ? true : null,
+    });
+  };
+
   return (
     <MainWindowContent
       onNavigatePrev={handleNavigatePrev}
@@ -275,42 +290,9 @@ export function MinifluxLayout() {
             filters={mergedFilters}
             selectedEntryId={selectedEntryId}
             onEntrySelect={handleEntrySelect}
+            currentStatus={currentStatus}
+            onStatusChange={handleBottomFilterChange}
           />
-        </div>
-        <div className="border-t px-4 py-2 flex gap-1 justify-center bg-background">
-          <Button
-            variant={currentStatus === 'all' ? 'secondary' : 'ghost'}
-            size="sm"
-            className="h-8 text-xs px-3 gap-1.5"
-            onClick={() => setLocalFilters({ ...localFilters, status: null, starred: null })}
-          >
-            <HugeiconsIcon icon={InboxIcon} className="h-3 w-3" />
-            {_(msg`All`)}
-          </Button>
-          <Button
-            variant={currentStatus === 'unread' ? 'secondary' : 'ghost'}
-            size="sm"
-            className="h-8 text-xs px-3 gap-1.5"
-            onClick={() =>
-              setLocalFilters({
-                ...localFilters,
-                status: 'unread',
-                starred: null,
-              })
-            }
-          >
-            <HugeiconsIcon icon={CheckmarkCircle01Icon} className="h-3 w-3" />
-            {_(msg`Unread`)}
-          </Button>
-          <Button
-            variant={currentStatus === 'starred' ? 'secondary' : 'ghost'}
-            size="sm"
-            className="h-8 text-xs px-3 gap-1.5"
-            onClick={() => setLocalFilters({ ...localFilters, status: null, starred: true })}
-          >
-            <HugeiconsIcon icon={StarIcon} className="h-3 w-3" />
-            {_(msg`Starred`)}
-          </Button>
         </div>
       </div>
     </MainWindowContent>
