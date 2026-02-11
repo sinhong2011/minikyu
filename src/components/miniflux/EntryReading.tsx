@@ -92,33 +92,26 @@ export function EntryReading({
   const canJumpNext = activeTocIndex >= 0 && activeTocIndex < readingContent.tocItems.length - 1;
   const prefersReducedMotion =
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
-  const articleSlideDistance = 12;
-  const articleEnterOpacity = 0.94;
-  const articleExitOpacity = 0.08;
-  const verticalEnterOffset =
+  const articleSlideDistance = 18;
+  const articleLiftOffset = 8;
+  const articleEnterOpacity = 0;
+  const articleExitOpacity = 0;
+  const directionalEnterY =
     transitionDirection === 'backward' ? -articleSlideDistance : articleSlideDistance;
-  const meteorExitY = Math.round(-verticalEnterOffset * 7);
-  const meteorExitX = transitionDirection === 'backward' ? -18 : 18;
-  const meteorExitRotate = transitionDirection === 'backward' ? -1.5 : 1.5;
+  const directionalExitY = -articleLiftOffset;
   const articleEnterTransition = prefersReducedMotion
     ? { duration: 0 }
     : {
-        y: {
-          type: 'spring' as const,
-          stiffness: 340,
-          damping: 40,
-          mass: 0.6,
-        },
-        opacity: { duration: 0.09, ease: [0.25, 1, 0.5, 1] as const },
+        y: { duration: 0.42, ease: [0.22, 1, 0.36, 1] as const },
+        filter: { duration: 0.38, ease: [0.22, 1, 0.36, 1] as const },
+        opacity: { duration: 0.32, ease: [0.2, 0.95, 0.35, 1] as const },
       };
   const articleExitTransition = prefersReducedMotion
     ? { duration: 0 }
     : {
-        y: { duration: 0.16, ease: [0.22, 0, 1, 1] as const },
-        x: { duration: 0.16, ease: [0.22, 0, 1, 1] as const },
-        rotate: { duration: 0.16, ease: [0.22, 0, 1, 1] as const },
-        filter: { duration: 0.14, ease: [0.4, 0, 1, 1] as const },
-        opacity: { duration: 0.12, ease: [0.55, 0, 1, 1] as const },
+        y: { duration: 0.3, ease: [0.35, 0, 0.9, 1] as const },
+        filter: { duration: 0.28, ease: [0.35, 0, 0.9, 1] as const },
+        opacity: { duration: 0.24, ease: [0.45, 0, 1, 1] as const },
       };
 
   const cancelScrollAnimation = useCallback(() => {
@@ -375,14 +368,16 @@ export function EntryReading({
           <AnimatePresence initial={false} mode="wait">
             <motion.div
               key={entry.id}
-              initial={{ opacity: articleEnterOpacity, y: verticalEnterOffset, x: 0, rotate: 0 }}
-              animate={{ opacity: 1, y: 0, x: 0, rotate: 0, filter: 'blur(0px)' }}
+              initial={{
+                opacity: articleEnterOpacity,
+                y: directionalEnterY,
+                filter: 'blur(0.8px)',
+              }}
+              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
               exit={{
                 opacity: articleExitOpacity,
-                x: meteorExitX,
-                y: meteorExitY,
-                rotate: meteorExitRotate,
-                filter: 'blur(2.4px)',
+                y: directionalExitY,
+                filter: 'blur(0.8px)',
                 transition: articleExitTransition,
               }}
               transition={articleEnterTransition}
