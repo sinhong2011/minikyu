@@ -2,15 +2,18 @@ import { MinusSignIcon, PlusSignIcon, TextFontIcon, TextIcon } from '@hugeicons/
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { useEffect, useState } from 'react';
 import { buttonVariants } from '@/components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '@/components/ui/combobox';
+import { Input } from '@/components/ui/input';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Separator } from '@/components/ui/separator';
 import { Slider } from '@/components/ui/slider';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
@@ -22,11 +25,61 @@ import {
 } from '@/lib/reader-fonts';
 import { cn } from '@/lib/utils';
 
+const MIN_FONT_SIZE = 14;
+const MAX_FONT_SIZE = 24;
+const MIN_LINE_WIDTH = 45;
+const MAX_LINE_WIDTH = 80;
+
+type SliderValue = number | readonly number[];
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
+
+function normalizeSliderValue(value: SliderValue) {
+  if (Array.isArray(value)) {
+    return Number(value[0] ?? 0);
+  }
+  return Number(value);
+}
+
 export function ReaderSettings() {
   const { _ } = useLingui();
-  const { fontSize, setFontSize, lineWidth, setLineWidth, fontFamily, setFontFamily } =
+  const { fontSize, setFontSize, lineWidth, setLineWidth, fontFamily, setFontFamily, isLoading } =
     useReaderSettings();
   const selectedFontFamily = normalizeReaderFontFamily(fontFamily);
+  const [fontSizeValue, setFontSizeValue] = useState(fontSize);
+  const [lineWidthValue, setLineWidthValue] = useState(lineWidth);
+  const [fontSizeInput, setFontSizeInput] = useState(String(fontSize));
+  const [lineWidthInput, setLineWidthInput] = useState(String(lineWidth));
+
+  useEffect(() => {
+    setFontSizeValue(fontSize);
+    setFontSizeInput(String(fontSize));
+  }, [fontSize]);
+
+  useEffect(() => {
+    setLineWidthValue(lineWidth);
+    setLineWidthInput(String(lineWidth));
+  }, [lineWidth]);
+
+  const commitFontSize = (nextValue: number) => {
+    const normalizedValue = clamp(Math.round(nextValue), MIN_FONT_SIZE, MAX_FONT_SIZE);
+    setFontSizeValue(normalizedValue);
+    setFontSizeInput(String(normalizedValue));
+    if (normalizedValue !== fontSize) {
+      setFontSize(normalizedValue);
+    }
+  };
+
+  const commitLineWidth = (nextValue: number) => {
+    const normalizedValue = clamp(Math.round(nextValue), MIN_LINE_WIDTH, MAX_LINE_WIDTH);
+    setLineWidthValue(normalizedValue);
+    setLineWidthInput(String(normalizedValue));
+    if (normalizedValue !== lineWidth) {
+      setLineWidth(normalizedValue);
+    }
+  };
 
   const getFontLabel = (family: ReaderFontFamily) => {
     switch (family) {
@@ -94,21 +147,61 @@ export function ReaderSettings() {
         </div>
 
         <div className="space-y-3 rounded-xl border border-border/60 bg-muted/20 p-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
             <span className="text-sm font-medium">{_(msg`Font Size`)}</span>
-            <span className="rounded-md bg-background/80 px-2 py-0.5 text-xs text-muted-foreground">
-              {fontSize}px
-            </span>
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                min={MIN_FONT_SIZE}
+                max={MAX_FONT_SIZE}
+                step={1}
+                inputMode="numeric"
+                className="h-8 w-20 bg-background/80 px-2 text-right text-xs tabular-nums"
+                aria-label={_(msg`Font Size`)}
+                value={fontSizeInput}
+                onChange={(event) => setFontSizeInput(event.target.value)}
+                onBlur={() => {
+                  const parsedValue = Number(fontSizeInput);
+                  if (Number.isNaN(parsedValue)) {
+                    setFontSizeInput(String(fontSizeValue));
+                    return;
+                  }
+                  commitFontSize(parsedValue);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.currentTarget.blur();
+                  }
+                  if (event.key === 'Escape') {
+                    setFontSizeInput(String(fontSizeValue));
+                    event.currentTarget.blur();
+                  }
+                }}
+                disabled={isLoading}
+              />
+              <span className="text-xs text-muted-foreground">px</span>
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <HugeiconsIcon icon={MinusSignIcon} className="h-4 w-4 text-muted-foreground" />
             <Slider
-              value={[fontSize]}
-              min={14}
-              max={24}
+              className="flex-1"
+              value={fontSizeValue}
+              min={MIN_FONT_SIZE}
+              max={MAX_FONT_SIZE}
               step={1}
+              disabled={isLoading}
               onValueChange={(val) => {
-                if (Array.isArray(val)) setFontSize(val[0]);
+                const nextValue = clamp(
+                  Math.round(normalizeSliderValue(val)),
+                  MIN_FONT_SIZE,
+                  MAX_FONT_SIZE
+                );
+                setFontSizeValue(nextValue);
+                setFontSizeInput(String(nextValue));
+              }}
+              onValueCommitted={(val) => {
+                commitFontSize(normalizeSliderValue(val));
               }}
             />
             <HugeiconsIcon icon={PlusSignIcon} className="h-4 w-4 shrink-0 text-muted-foreground" />
@@ -118,21 +211,61 @@ export function ReaderSettings() {
         <Separator />
 
         <div className="space-y-3 rounded-xl border border-border/60 bg-muted/20 p-3">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between gap-3">
             <span className="text-sm font-medium">{_(msg`Line Width`)}</span>
-            <span className="rounded-md bg-background/80 px-2 py-0.5 text-xs text-muted-foreground">
-              {lineWidth}ch
-            </span>
+            <div className="flex items-center gap-2">
+              <Input
+                type="number"
+                min={MIN_LINE_WIDTH}
+                max={MAX_LINE_WIDTH}
+                step={1}
+                inputMode="numeric"
+                className="h-8 w-20 bg-background/80 px-2 text-right text-xs tabular-nums"
+                aria-label={_(msg`Line Width`)}
+                value={lineWidthInput}
+                onChange={(event) => setLineWidthInput(event.target.value)}
+                onBlur={() => {
+                  const parsedValue = Number(lineWidthInput);
+                  if (Number.isNaN(parsedValue)) {
+                    setLineWidthInput(String(lineWidthValue));
+                    return;
+                  }
+                  commitLineWidth(parsedValue);
+                }}
+                onKeyDown={(event) => {
+                  if (event.key === 'Enter') {
+                    event.currentTarget.blur();
+                  }
+                  if (event.key === 'Escape') {
+                    setLineWidthInput(String(lineWidthValue));
+                    event.currentTarget.blur();
+                  }
+                }}
+                disabled={isLoading}
+              />
+              <span className="text-xs text-muted-foreground">ch</span>
+            </div>
           </div>
           <div className="flex items-center gap-4">
             <HugeiconsIcon icon={TextIcon} className="h-5 w-5" strokeWidth={2} />
             <Slider
-              value={[lineWidth]}
-              min={45}
-              max={80}
-              step={5}
+              className="flex-1"
+              value={lineWidthValue}
+              min={MIN_LINE_WIDTH}
+              max={MAX_LINE_WIDTH}
+              step={1}
+              disabled={isLoading}
               onValueChange={(val) => {
-                if (Array.isArray(val)) setLineWidth(val[0]);
+                const nextValue = clamp(
+                  Math.round(normalizeSliderValue(val)),
+                  MIN_LINE_WIDTH,
+                  MAX_LINE_WIDTH
+                );
+                setLineWidthValue(nextValue);
+                setLineWidthInput(String(nextValue));
+              }}
+              onValueCommitted={(val) => {
+                commitLineWidth(normalizeSliderValue(val));
               }}
             />
             <HugeiconsIcon icon={TextIcon} className="h-4 w-4 text-muted-foreground shrink-0" />
@@ -143,38 +276,41 @@ export function ReaderSettings() {
 
         <div className="space-y-3 rounded-xl border border-border/60 bg-muted/20 p-3">
           <span className="text-sm font-medium">{_(msg`Font Family`)}</span>
-          <Select value={selectedFontFamily} onValueChange={(value) => setFontFamily(value)}>
-            <SelectTrigger className="h-9 w-full bg-background/70">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent className="max-h-80">
-              {readerFontFamilies.map((family) => (
-                <SelectItem key={family} value={family}>
-                  <span className="flex flex-col items-start gap-0.5 leading-tight">
-                    <span style={{ fontFamily: getReaderFontStack(family) }}>
-                      {getFontLabel(family)}
-                    </span>
-                    <span
-                      className="text-[11px] text-muted-foreground"
-                      style={{ fontFamily: getReaderFontStack(family) }}
-                    >
-                      {getFontTone(family)}
-                    </span>
-                  </span>
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-          <div className="rounded-lg border border-dashed border-border/60 bg-background/70 px-3 py-2">
-            <p className="text-[11px] uppercase tracking-[0.08em] text-muted-foreground">
-              {_(msg`Preview`)}
-            </p>
-            <p
-              className="mt-1 text-sm leading-7 text-foreground/90"
-              style={{ fontFamily: getReaderFontStack(selectedFontFamily) }}
+          <div className="pt-1">
+            <Combobox
+              value={selectedFontFamily}
+              onValueChange={(value) => {
+                if (value && typeof value === 'string') {
+                  setFontFamily(value);
+                }
+              }}
+              disabled={isLoading}
             >
-              {_(msg`The quick brown fox jumps over the lazy dog.`)}
-            </p>
+              <ComboboxInput
+                placeholder={_(msg`Search fonts...`)}
+                className="w-full bg-background/70"
+              />
+              <ComboboxContent>
+                <ComboboxList>
+                  <ComboboxEmpty>{_(msg`No fonts found.`)}</ComboboxEmpty>
+                  {readerFontFamilies.map((family) => (
+                    <ComboboxItem key={family} value={family}>
+                      <span className="flex flex-col items-start gap-0.5 leading-tight">
+                        <span style={{ fontFamily: getReaderFontStack(family) }}>
+                          {getFontLabel(family)}
+                        </span>
+                        <span
+                          className="text-[11px] text-muted-foreground"
+                          style={{ fontFamily: getReaderFontStack(family) }}
+                        >
+                          {getFontTone(family)}
+                        </span>
+                      </span>
+                    </ComboboxItem>
+                  ))}
+                </ComboboxList>
+              </ComboboxContent>
+            </Combobox>
           </div>
         </div>
       </PopoverContent>
