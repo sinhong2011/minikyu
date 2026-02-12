@@ -13,6 +13,52 @@ msgstr ""
 "Language-Team: \n"
 "Plural-Forms: \n"
 
+#. placeholder {0}: stage.progress.pulled
+#. placeholder {1}: stage.progress.total
+#: src/components/sync/SyncProgressPopover.tsx:93
+msgid "{0} / {1} entries"
+msgstr "{0} / {1} entries"
+
+#. placeholder {0}: stage.count
+#: src/components/sync/SyncProgressPopover.tsx:101
+msgid "{0} categories"
+msgstr "{0} categories"
+
+#. placeholder {0}: stage.count
+#: src/components/sync/SyncProgressPopover.tsx:131
+msgid "{0} categories synced"
+msgstr "{0} categories synced"
+
+#. placeholder {0}: stage.progress.total
+#: src/components/sync/SyncProgressPopover.tsx:137
+msgid "{0} entries synced"
+msgstr "{0} entries synced"
+
+#. placeholder {0}: stage.count
+#: src/components/sync/SyncProgressPopover.tsx:109
+msgid "{0} feeds"
+msgstr "{0} feeds"
+
+#. placeholder {0}: stage.count
+#: src/components/sync/SyncProgressPopover.tsx:134
+msgid "{0} feeds synced"
+msgstr "{0} feeds synced"
+
+#. placeholder {0}: stage.progress.pulled
+#. placeholder {1}: stage.progress.total
+#: src/components/sync/SyncProgressPopover.tsx:123
+msgid "{0} of {1} entries downloaded"
+msgstr "{0} of {1} entries downloaded"
+
+#. placeholder {0}: table.getFilteredRowModel().rows.length
+#: src/components/ui/data-table.tsx:130
+msgid "{0} total"
+msgstr "{0} total"
+
+#: src/lib/menu.ts:106
+msgid "A calm, focused space for your Miniflux reading. Catch up faster, stay organized, and enjoy every feed."
+msgstr "Minifluxを落ち着いて読める、集中しやすい空間。すばやく追いつき、整理しながら、すべてのフィードを心地よく楽しめます。"
+
 #: src/pages/HomePage.tsx:73
 msgid "A modern, production-ready template for building cross-platform desktop applications with React, TypeScript, and Rust."
 msgstr "React、TypeScript、Rust を使用したクロスプラットフォームデスクトップアプリケーションを構築するための、モダンで本番環境に対応したテンプレート。"
@@ -21,120 +67,310 @@ msgstr "React、TypeScript、Rust を使用したクロスプラットフォー�
 msgid "About {APP_NAME}"
 msgstr "{APP_NAME} について"
 
-#: src/pages/ComponentsPage.tsx:286
-#~ msgid "Access advanced configuration options and developer tools. Built with Radix UI primitives for accessibility."
-#~ msgstr ""
+#: src/components/miniflux/UserNav.tsx:160
+msgid "Accounts"
+msgstr "Accounts"
 
-#: src/pages/ComponentsPage.tsx:249
-#~ msgid "Account"
-#~ msgstr ""
+#: src/components/downloads/DownloadManagerDialog.tsx:360
+msgid "Actions"
+msgstr "Actions"
 
-#: src/pages/ComponentsPage.tsx:263
-#~ msgid "Account Information"
-#~ msgstr ""
+#: src/components/downloads/DownloadManagerDialog.tsx:315
+msgid "Active"
+msgstr "Active"
 
-#: src/pages/ComponentsPage.tsx:74
-#~ msgid "Active Users"
-#~ msgstr ""
+#: src/components/miniflux/settings/CategoriesPane.tsx:47
+#: src/components/miniflux/settings/CategoryFormDialog.tsx:57
+msgid "Add category"
+msgstr "Add category"
+
+#: src/components/layout/AppSidebar.tsx:458
+msgid "Add Category"
+msgstr "Add Category"
+
+#: src/components/miniflux/settings/FeedFormDialog.tsx:260
+#: src/components/miniflux/settings/FeedsPane.tsx:60
+msgid "Add feed"
+msgstr "Add feed"
+
+#: src/components/layout/AppSidebar.tsx:450
+#: src/components/miniflux/AddFeedDialog.tsx:362
+#: src/components/miniflux/AddFeedDialog.tsx:835
+msgid "Add Feed"
+msgstr "Add Feed"
+
+#: src/components/miniflux/AddCategoryDialog.tsx:58
+msgid "Add New Category"
+msgstr "Add New Category"
+
+#: src/components/miniflux/AddFeedDialog.tsx:341
+msgid "Add New Feed"
+msgstr "Add New Feed"
+
+#: src/components/preferences/panes/AppearancePane.tsx:264
+msgid "Add Rule"
+msgstr "Add Rule"
+
+#: src/components/miniflux/settings/UserFormDialog.tsx:64
+#: src/components/miniflux/settings/UsersPane.tsx:46
+msgid "Add user"
+msgstr "Add user"
+
+#: src/components/miniflux/AddFeedDialog.tsx:835
+msgid "Adding..."
+msgstr "Adding..."
+
+#: src/components/miniflux/settings/UsersPane.tsx:59
+#: src/components/miniflux/UserNav.tsx:115
+msgid "Admin"
+msgstr "Admin"
+
+#: src/components/miniflux/settings/UserFormDialog.tsx:141
+#: src/components/miniflux/UserNav.tsx:139
+msgid "Administrator"
+msgstr "Administrator"
 
 #: src/components/preferences/PreferencesDialog.tsx:45
 msgid "Advanced"
 msgstr "詳細"
 
-#: src/pages/ComponentsPage.tsx:283
-#~ msgid "Advanced Options"
-#~ msgstr ""
+#: src/components/miniflux/AddFeedDialog.tsx:618
+#: src/components/miniflux/EditFeedDialog.tsx:246
+#: src/components/miniflux/settings/FeedFormDialog.tsx:417
+msgid "Advanced settings"
+msgstr "Advanced settings"
 
-#: src/pages/ComponentsPage.tsx:191
-#~ msgid "Alert Examples"
-#~ msgstr ""
-
-#: src/components/layout/AppSidebar.tsx:91
-#: src/components/layout/AppSidebar.tsx:100
-#: src/components/layout/AppSidebar.tsx:227
-#: src/components/miniflux/MinifluxLayout.tsx:55
-#: src/components/miniflux/MinifluxLayout.tsx:63
+#: src/components/layout/AppSidebar.tsx:349
+#: src/components/layout/AppSidebar.tsx:360
+#: src/components/miniflux/EntryFilters.tsx:99
+#: src/components/miniflux/EntryListFloatingFilterBar.tsx:33
+#: src/components/miniflux/MinifluxLayout.tsx:283
+#: src/components/miniflux/MinifluxLayout.tsx:297
 msgid "All"
 msgstr "すべて"
 
-#: src/pages/ComponentsPage.tsx:335
-#~ msgid "Animated Collapsible"
-#~ msgstr ""
+#: src/components/sync/SyncProgressPopover.tsx:178
+msgid "All categories, feeds, and entries are synced"
+msgstr "All categories, feeds, and entries are synced"
 
-#: src/pages/ComponentsPage.tsx:300
-#~ msgid "Animated Dropdown"
-#~ msgstr ""
+#: src/services/miniflux/feeds.ts:318
+msgid "All feeds refreshed"
+msgstr "All feeds refreshed"
 
-#: src/pages/ComponentsPage.tsx:238
-#~ msgid "Animated Tabs"
-#~ msgstr ""
+#: src/components/miniflux/EntryFilters.tsx:76
+msgid "Any time"
+msgstr "Any time"
 
-#: src/components/miniflux/ConnectionDialog.tsx:282
-#: src/components/miniflux/ConnectionDialog.tsx:294
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:89
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:507
+msgid "API token"
+msgstr "API token"
+
+#: src/components/miniflux/ConnectionDialog.tsx:240
+#: src/components/miniflux/ConnectionDialog.tsx:249
 msgid "API Token"
 msgstr "API トークン"
 
-#: src/components/miniflux/ConnectionDialog.tsx:95
+#: src/components/miniflux/ConnectionDialog.tsx:74
 msgid "API Token is required"
 msgstr "API トークンが必要です"
+
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:363
+msgid "API token updated"
+msgstr "API token updated"
 
 #: src/components/preferences/PreferencesDialog.tsx:40
 msgid "Appearance"
 msgstr "外観"
 
-#: src/pages/ComponentsPage.tsx:222
-#~ msgid "Badges & Labels"
-#~ msgstr ""
+#: src/components/layout/AppSidebar.tsx:224
+msgid "Are you sure you want to delete this category and all its feeds?"
+msgstr "Are you sure you want to delete this category and all its feeds?"
+
+#: src/components/layout/AppSidebar.tsx:98
+msgid "Are you sure you want to unsubscribe from this feed?"
+msgstr "Are you sure you want to unsubscribe from this feed?"
+
+#: src/components/miniflux/EntryReading.tsx:93
+msgid "Article table of contents"
+msgstr "Article table of contents"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:105
+msgid "Auto"
+msgstr "Auto"
 
 #: src/pages/HomePage.tsx:49
 msgid "Beautiful, accessible components"
 msgstr "美しく使いやすいコンポーネント"
 
-#: src/pages/ComponentsPage.tsx:157
-#~ msgid "Bio"
-#~ msgstr ""
+#: src/components/miniflux/EntryReadingHeader.tsx:273
+msgid "Bionic Reading"
+msgstr "Bionic Reading"
 
-#: src/components/miniflux/ConnectionDialog.tsx:422
+#: src/components/miniflux/AddFeedDialog.tsx:782
+#: src/components/miniflux/EditFeedDialog.tsx:410
+#: src/components/miniflux/settings/FeedFormDialog.tsx:585
+msgid "Blocklist rules"
+msgstr "Blocklist rules"
+
+#: src/components/miniflux/ReaderSettings.tsx:97
+msgid "Book Serif"
+msgstr "Book Serif"
+
+#: src/components/miniflux/ReaderSettings.tsx:118
+msgid "Book-like rhythm"
+msgstr "Book-like rhythm"
+
+#: src/components/miniflux/AddFeedDialog.tsx:592
+msgid "Can’t find a category? Create a new one."
+msgstr "Can’t find a category? Create a new one."
+
+#: src/components/downloads/DownloadManagerDialog.tsx:421
+#: src/components/miniflux/AddCategoryDialog.tsx:98
+#: src/components/miniflux/AddFeedDialog.tsx:822
+#: src/components/miniflux/ConnectionDialog.tsx:359
+#: src/components/miniflux/EditCategoryDialog.tsx:106
+#: src/components/miniflux/EditFeedDialog.tsx:446
+#: src/components/miniflux/SearchSourceDialog.tsx:155
+#: src/components/miniflux/settings/CategoryFormDialog.tsx:103
+#: src/components/miniflux/settings/DeleteEntityDialog.tsx:51
+#: src/components/miniflux/settings/FeedFormDialog.tsx:628
+#: src/components/miniflux/settings/UserFormDialog.tsx:155
+#: src/components/preferences/panes/AdvancedPane.tsx:137
 msgid "Cancel"
 msgstr "キャンセル"
 
-#: src/components/layout/AppSidebar.tsx:170
+#: src/components/downloads/DownloadManagerDialog.tsx:221
+msgid "Cancelled"
+msgstr "Cancelled"
+
+#: src/components/layout/AppSidebar.tsx:438
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:74
+#: src/components/sync/SyncProgressPopover.tsx:45
 msgid "Categories"
 msgstr "カテゴリー"
 
-#: src/components/miniflux/MinifluxLayout.tsx:50
+#: src/components/miniflux/AddFeedDialog.tsx:542
+#: src/components/miniflux/EditFeedDialog.tsx:220
+#: src/components/miniflux/MinifluxLayout.tsx:273
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:191
+#: src/components/miniflux/settings/FeedFormDialog.tsx:377
 msgid "Category"
 msgstr "カテゴリー"
+
+#: src/components/layout/AppSidebar.tsx:442
+msgid "Category actions"
+msgstr "Category actions"
+
+#: src/services/miniflux/categories.ts:85
+msgid "Category created"
+msgstr "Category created"
+
+#: src/services/miniflux/categories.ts:148
+msgid "Category deleted"
+msgstr "Category deleted"
+
+#: src/components/miniflux/AddFeedDialog.tsx:207
+msgid "Category is required"
+msgstr "Category is required"
+
+#: src/components/miniflux/settings/CategoryFormDialog.tsx:76
+msgid "Category name"
+msgstr "Category name"
+
+#: src/components/miniflux/settings/CategoryFormDialog.tsx:37
+msgid "Category name is required"
+msgstr "Category name is required"
+
+#: src/components/miniflux/AddCategoryDialog.tsx:74
+#: src/components/miniflux/EditCategoryDialog.tsx:83
+msgid "Category Title"
+msgstr "Category Title"
+
+#: src/services/miniflux/categories.ts:117
+msgid "Category updated"
+msgstr "Category updated"
 
 #: src/lib/menu.ts:26
 msgid "Check for Updates..."
 msgstr "更新を確認..."
 
-#: src/pages/TemplatesPage.tsx:96
-#~ msgid "Choose a template to kickstart your Tauri application. Each template is optimized for different use cases and includes pre-configured tools and patterns."
-#~ msgstr ""
+#: src/components/miniflux/EntryReadingHeader.tsx:210
+msgid "Chinese conversion"
+msgstr "Chinese conversion"
 
-#: src/components/preferences/panes/GeneralPane.tsx:142
+#: src/components/preferences/panes/AppearancePane.tsx:214
+msgid "Chinese Conversion"
+msgstr "Chinese Conversion"
+
+#: src/components/miniflux/EntryEmptyState.tsx:279
+msgid "Choose a story from the list and your reading companion will guide the focus."
+msgstr "Choose a story from the list and your reading companion will guide the focus."
+
+#: src/components/preferences/panes/GeneralPane.tsx:153
 msgid "Choose what happens when you click the window close button"
 msgstr "ウィンドウの閉じるボタンをクリックしたときの動作を選択"
 
-#: src/components/preferences/panes/AppearancePane.tsx:113
+#: src/components/preferences/panes/AppearancePane.tsx:195
 msgid "Choose your preferred color theme"
 msgstr "お好みのカラーテーマを選択"
 
-#: src/components/preferences/panes/AppearancePane.tsx:88
+#: src/components/preferences/panes/AppearancePane.tsx:170
 msgid "Choose your preferred display language"
 msgstr "お好みの表示言語を選択"
 
-#: src/pages/TemplatesPage.tsx:74
-#~ msgid "Clone the Repository"
-#~ msgstr ""
+#: src/components/miniflux/ReaderSettings.tsx:114
+msgid "Classic reading"
+msgstr "Classic reading"
 
-#: src/components/preferences/panes/GeneralPane.tsx:92
+#: src/components/miniflux/ReaderSettings.tsx:108
+#: src/components/miniflux/ReaderSettings.tsx:122
+msgid "Clean and balanced"
+msgstr "Clean and balanced"
+
+#: src/components/sync/SyncProgressPopover.tsx:64
+msgid "Clean up local items removed from server"
+msgstr "Clean up local items removed from server"
+
+#: src/components/sync/SyncProgressPopover.tsx:63
+msgid "Cleanup"
+msgstr "Cleanup"
+
+#: src/components/sync/SyncProgressPopover.tsx:139
+msgid "Cleanup complete"
+msgstr "Cleanup complete"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:326
+msgid "Clear Completed"
+msgstr "Clear Completed"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:143
+msgid "Clear data"
+msgstr "Clear data"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:116
+#: src/components/preferences/panes/AdvancedPane.tsx:125
+msgid "Clear local data"
+msgstr "Clear local data"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:131
+msgid "Clear local data?"
+msgstr "Clear local data?"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:125
+msgid "Clearing..."
+msgstr "Clearing..."
+
+#: src/components/miniflux/EntryReadingHeader.tsx:150
+#: src/components/miniflux/EntryReadingHeader.tsx:156
+msgid "Close"
+msgstr "Close"
+
+#: src/components/preferences/panes/GeneralPane.tsx:40
 msgid "Close behavior updated"
 msgstr "閉じる動作を更新しました"
 
-#: src/components/preferences/panes/GeneralPane.tsx:141
+#: src/components/preferences/panes/GeneralPane.tsx:152
 msgid "Close Button Behavior"
 msgstr "閉じるボタンの動作"
 
@@ -146,7 +382,15 @@ msgstr "現在のウィンドウを閉じる"
 msgid "Close Window"
 msgstr "ウィンドウを閉じる"
 
-#: src/components/preferences/panes/AppearancePane.tsx:112
+#: src/components/miniflux/ReaderSettings.tsx:120
+msgid "Code and precision"
+msgstr "Code and precision"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:248
+msgid "Code theme"
+msgstr "Code theme"
+
+#: src/components/preferences/panes/AppearancePane.tsx:194
 msgid "Color Theme"
 msgstr "カラーテーマ"
 
@@ -155,53 +399,91 @@ msgstr "カラーテーマ"
 msgid "Command Palette"
 msgstr "コマンドパレット"
 
-#: src/pages/TemplatesPage.tsx:212
-#~ msgid "Community"
-#~ msgstr ""
+#: src/components/downloads/DownloadManagerDialog.tsx:209
+msgid "Completed"
+msgstr "Completed"
 
-#: src/pages/TemplatesPage.tsx:46
-#~ msgid "Complete setup with all features enabled. Best for production apps."
-#~ msgstr ""
-
-#: src/pages/ComponentsPage.tsx:54
-#~ msgid "Component Showcase"
-#~ msgstr ""
-
-#: src/pages/ComponentsPage.tsx:276
-#~ msgid "Configure application settings and customize your experience. The highlight effect follows the active tab smoothly."
-#~ msgstr ""
-
-#: src/components/miniflux/ConnectionDialog.tsx:431
+#: src/components/miniflux/ConnectionDialog.tsx:368
 msgid "Connect"
 msgstr "接続"
 
-#: src/components/miniflux/ConnectionDialog.tsx:197
+#: src/components/miniflux/ConnectionDialog.tsx:169
 msgid "Connect to Miniflux"
 msgstr "Miniflux に接続"
 
-#: src/components/miniflux/MinifluxLayout.tsx:40
+#: src/components/miniflux/MinifluxLayout.tsx:221
 msgid "Connect to Server"
 msgstr "サーバーに接続"
 
-#: src/components/miniflux/MinifluxLayout.tsx:38
+#: src/components/miniflux/MinifluxLayout.tsx:219
 msgid "Connect to your Miniflux server to get started"
 msgstr "Miniflux サーバーに接続して開始"
 
-#: src/components/miniflux/ConnectionDialog.tsx:428
+#: src/components/miniflux/ConnectionDialog.tsx:365
 msgid "Connecting..."
 msgstr "接続中..."
 
-#: src/components/ui/sonner.tsx:42
+#: src/components/miniflux/AddFeedDialog.tsx:827
+msgid "Continue to Add Feed"
+msgstr "Continue to Add Feed"
+
+#: src/components/ui/sonner.tsx:49
 msgid "Copied!"
 msgstr "コピーしました！"
 
-#: src/components/ui/sonner.tsx:51
+#: src/components/miniflux/SafeHtml.tsx:592
+msgid "Copy code"
+msgstr "Copy code"
+
+#: src/components/ui/sonner.tsx:58
 msgid "Copy message"
 msgstr "メッセージをコピー"
 
-#: src/components/miniflux/ConnectionDialog.tsx:208
+#: src/components/downloads/DownloadManagerDialog.tsx:463
+msgid "Copy URL"
+msgstr "Copy URL"
+
+#: src/components/miniflux/ConnectionDialog.tsx:177
 msgid "Could not connect to saved account. Please update your credentials."
 msgstr "保存されたアカウントに接続できませんでした。認証情報を更新してください。"
+
+#: src/components/miniflux/settings/UserFormDialog.tsx:67
+msgid "Create a Miniflux user account."
+msgstr "Create a Miniflux user account."
+
+#: src/components/miniflux/AddCategoryDialog.tsx:61
+#: src/components/miniflux/settings/CategoryFormDialog.tsx:61
+msgid "Create a new category to organize your feeds."
+msgstr "Create a new category to organize your feeds."
+
+#: src/components/miniflux/settings/CategoryFormDialog.tsx:106
+msgid "Create category"
+msgstr "Create category"
+
+#: src/components/miniflux/AddCategoryDialog.tsx:101
+#: src/components/miniflux/AddFeedDialog.tsx:602
+msgid "Create Category"
+msgstr "Create Category"
+
+#: src/components/miniflux/settings/FeedFormDialog.tsx:631
+msgid "Create feed"
+msgstr "Create feed"
+
+#: src/components/miniflux/settings/UserFormDialog.tsx:158
+msgid "Create user"
+msgstr "Create user"
+
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:287
+msgid "Create, rename, and delete categories."
+msgstr "Create, rename, and delete categories."
+
+#: src/components/miniflux/AddCategoryDialog.tsx:101
+msgid "Creating..."
+msgstr "Creating..."
+
+#: src/components/preferences/panes/AppearancePane.tsx:216
+msgid "Custom Term Conversion"
+msgstr "Custom Term Conversion"
 
 #: src/pages/HomePage.tsx:39
 msgid "Customizable keyboard shortcuts"
@@ -211,38 +493,71 @@ msgstr "カスタマイズ可能なキーボードショートカット"
 msgid "Customize your application preferences here."
 msgstr "ここでアプリケーションの設定をカスタマイズします。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:125
+#: src/components/preferences/panes/AppearancePane.tsx:207
 msgid "Dark"
 msgstr "ダーク"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:114
+msgid "Data"
+msgstr "Data"
+
+#: src/components/miniflux/EntryFilters.tsx:73
+msgid "Date Range"
+msgstr "Date Range"
 
 #: src/components/command-palette/CommandPalette.tsx:74
 msgid "Debug"
 msgstr "デバッグ"
 
-#: src/pages/ComponentsPage.tsx:225
-#~ msgid "Default"
-#~ msgstr ""
+#: src/components/preferences/panes/GeneralPane.tsx:210
+msgid "Default folder for saving images. Leave empty to ask every time."
+msgstr "Default folder for saving images. Leave empty to ask every time."
 
-#: src/pages/ComponentsPage.tsx:228
-#~ msgid "Destructive"
-#~ msgstr ""
+#: src/components/preferences/panes/GeneralPane.tsx:233
+msgid "Default folder for saving videos. Leave empty to ask every time."
+msgstr "Default folder for saving videos. Leave empty to ask every time."
 
-#: src/components/preferences/panes/AdvancedPane.tsx:34
-#: src/components/preferences/panes/GeneralPane.tsx:173
-#: src/components/preferences/panes/GeneralPane.tsx:190
-#: src/components/preferences/panes/GeneralPane.tsx:235
+#: src/components/layout/AppSidebar.tsx:272
+msgid "Delete"
+msgstr "Delete"
+
+#: src/components/miniflux/settings/DeleteEntityDialog.tsx:58
+msgid "Delete category"
+msgstr "Delete category"
+
+#: src/components/miniflux/settings/DeleteEntityDialog.tsx:36
+msgid "Delete category?"
+msgstr "Delete category?"
+
+#: src/components/miniflux/settings/DeleteEntityDialog.tsx:60
+msgid "Delete feed"
+msgstr "Delete feed"
+
+#: src/components/miniflux/settings/DeleteEntityDialog.tsx:38
+msgid "Delete feed?"
+msgstr "Delete feed?"
+
+#: src/components/miniflux/settings/DeleteEntityDialog.tsx:61
+msgid "Delete user"
+msgstr "Delete user"
+
+#: src/components/miniflux/settings/DeleteEntityDialog.tsx:39
+msgid "Delete user?"
+msgstr "Delete user?"
+
+#: src/components/miniflux/AddFeedDialog.tsx:699
+#: src/components/miniflux/EditFeedDialog.tsx:327
+#: src/components/miniflux/settings/FeedFormDialog.tsx:501
+msgid "Disable feed"
+msgstr "Disable feed"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:92
+#: src/components/preferences/panes/GeneralPane.tsx:184
+#: src/components/preferences/panes/GeneralPane.tsx:201
 msgid "Disabled"
 msgstr "無効"
 
-#: src/components/layout/AppSidebar.tsx:268
-msgid "Disconnect"
-msgstr "切断"
-
-#: src/pages/ComponentsPage.tsx:148
-#~ msgid "Display Name"
-#~ msgstr ""
-
-#: src/components/preferences/panes/GeneralPane.tsx:162
+#: src/components/preferences/panes/GeneralPane.tsx:173
 msgid "Display the application icon in the system tray. Requires restart to take effect when disabled."
 msgstr "システムトレイにアプリケーションアイコンを表示します。無効にした場合は再起動が必要です。"
 
@@ -250,28 +565,94 @@ msgstr "システムトレイにアプリケーションアイコンを表示し
 msgid "Documentation"
 msgstr "ドキュメント"
 
-#: src/pages/ComponentsPage.tsx:302
-#~ msgid "Dropdown menu with smooth animations and highlight effects."
-#~ msgstr ""
+#: src/components/sync/SyncProgressPopover.tsx:114
+msgid "Done"
+msgstr "Done"
 
-#: src/pages/ComponentsPage.tsx:152
-#~ msgid "Email"
-#~ msgstr ""
+#: src/components/downloads/DownloadManagerDialog.tsx:109
+msgid "Download Completed"
+msgstr "Download Completed"
 
-#: src/pages/ComponentsPage.tsx:163
-#~ msgid "Email Notifications"
-#~ msgstr ""
+#: src/components/downloads/DownloadManagerDialog.tsx:120
+msgid "Download Failed"
+msgstr "Download Failed"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:34
-#: src/components/preferences/panes/GeneralPane.tsx:173
-#: src/components/preferences/panes/GeneralPane.tsx:190
-#: src/components/preferences/panes/GeneralPane.tsx:235
+#: src/components/downloads/DownloadManagerDialog.tsx:311
+msgid "Download Manager"
+msgstr "Download Manager"
+
+#: src/components/preferences/panes/GeneralPane.tsx:207
+msgid "Download Settings"
+msgstr "Download Settings"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:350
+msgid "Downloaded files will appear here"
+msgstr "Downloaded files will appear here"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:203
+msgid "Downloading"
+msgstr "Downloading"
+
+#: src/components/sync/SyncProgressPopover.tsx:125
+msgid "Downloading recent entries from server"
+msgstr "Downloading recent entries from server"
+
+#: src/components/titlebar/WindowTitleBar.tsx:154
+msgid "Downloads"
+msgstr "Downloads"
+
+#: src/components/miniflux/AddFeedDialog.tsx:387
+#: src/components/miniflux/SearchSourceDialog.tsx:137
+#: src/components/miniflux/settings/FeedFormDialog.tsx:291
+msgid "e.g. blog.example.com"
+msgstr "e.g. blog.example.com"
+
+#: src/components/miniflux/settings/CategoryFormDialog.tsx:83
+msgid "e.g. Technology"
+msgstr "e.g. Technology"
+
+#: src/components/miniflux/AddCategoryDialog.tsx:81
+msgid "e.g. Technology, News"
+msgstr "e.g. Technology, News"
+
+#: src/components/preferences/panes/AppearancePane.tsx:253
+msgid "Each rule must include a non-empty \"From\" value"
+msgstr "Each rule must include a non-empty \"From\" value"
+
+#: src/components/layout/AppSidebar.tsx:136
+#: src/components/layout/AppSidebar.tsx:268
+msgid "Edit"
+msgstr "Edit"
+
+#: src/components/miniflux/settings/CategoryFormDialog.tsx:57
+msgid "Edit category"
+msgstr "Edit category"
+
+#: src/components/miniflux/EditCategoryDialog.tsx:67
+msgid "Edit Category"
+msgstr "Edit Category"
+
+#: src/components/miniflux/settings/FeedFormDialog.tsx:260
+msgid "Edit feed"
+msgstr "Edit feed"
+
+#: src/components/miniflux/EditFeedDialog.tsx:160
+msgid "Edit Feed"
+msgstr "Edit Feed"
+
+#: src/components/miniflux/settings/UserFormDialog.tsx:64
+msgid "Edit user"
+msgstr "Edit user"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:92
+#: src/components/preferences/panes/GeneralPane.tsx:184
+#: src/components/preferences/panes/GeneralPane.tsx:201
 msgid "Enabled"
 msgstr "有効"
 
-#: src/components/preferences/panes/GeneralPane.tsx:220
-msgid "Enter example text"
-msgstr "サンプルテキストを入力"
+#: src/components/miniflux/EntryReadingHeader.tsx:274
+msgid "English only"
+msgstr "English only"
 
 #: src/lib/commands/window-commands.ts:59
 msgid "Enter Fullscreen"
@@ -281,65 +662,57 @@ msgstr "全画面表示"
 msgid "Enter fullscreen mode"
 msgstr "全画面モードに入る"
 
-#: src/components/miniflux/ConnectionDialog.tsx:304
+#: src/components/miniflux/ConnectionDialog.tsx:256
 msgid "Enter your API token"
 msgstr "API トークンを入力"
 
-#: src/components/miniflux/ConnectionDialog.tsx:200
+#: src/components/miniflux/ConnectionDialog.tsx:171
 msgid "Enter your Miniflux server details to connect and sync your feeds."
 msgstr "Miniflux サーバーの詳細を入力して、フィードに接続・同期します。"
 
-#: src/components/miniflux/ConnectionDialog.tsx:378
+#: src/components/miniflux/ConnectionDialog.tsx:316
 msgid "Enter your password"
 msgstr "パスワードを入力"
 
-#: src/components/miniflux/ConnectionDialog.tsx:345
+#: src/components/miniflux/ConnectionDialog.tsx:288
 msgid "Enter your username"
 msgstr "ユーザー名を入力"
 
-#: src/pages/ComponentsPage.tsx:204
-#~ msgid "Error"
-#~ msgstr ""
+#: src/components/sync/SyncProgressPopover.tsx:57
+msgid "Entries"
+msgstr "Entries"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:22
+#: src/components/miniflux/EntryReading.tsx:346
+msgid "Entry not found"
+msgstr "Entry not found"
+
+#: src/components/sync/SyncProgressPopover.tsx:164
+msgid "Everything is up to date"
+msgstr "Everything is up to date"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:80
 msgid "Example Advanced Settings"
 msgstr "詳細設定の例"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:24
+#: src/components/preferences/panes/AdvancedPane.tsx:82
 msgid "Example Advanced Toggle"
 msgstr "詳細切り替えの例"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:40
+#: src/components/preferences/panes/AdvancedPane.tsx:98
 msgid "Example Dropdown Setting"
 msgstr "ドロップダウン設定の例"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:48
+#: src/components/preferences/panes/AdvancedPane.tsx:106
 msgid "Example Option 1"
 msgstr "オプション 1"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:49
+#: src/components/preferences/panes/AdvancedPane.tsx:107
 msgid "Example Option 2"
 msgstr "オプション 2"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:50
+#: src/components/preferences/panes/AdvancedPane.tsx:108
 msgid "Example Option 3"
 msgstr "オプション 3"
-
-#: src/components/preferences/panes/GeneralPane.tsx:212
-msgid "Example Settings"
-msgstr "設定の例"
-
-#: src/components/preferences/panes/GeneralPane.tsx:214
-msgid "Example Text Setting"
-msgstr "テキスト設定の例"
-
-#: src/components/preferences/panes/GeneralPane.tsx:225
-msgid "Example Toggle Setting"
-msgstr "切り替え設定の例"
-
-#: src/pages/TemplatesPage.tsx:66
-#~ msgid "Examples"
-#~ msgstr ""
 
 #: src/lib/commands/window-commands.ts:76
 msgid "Exit Fullscreen"
@@ -353,13 +726,42 @@ msgstr "全画面モードを終了"
 msgid "Explore Features"
 msgstr "機能を探索"
 
-#: src/pages/ComponentsPage.tsx:56
-#~ msgid "Explore the UI components available in this template."
-#~ msgstr ""
+#: src/components/downloads/DownloadManagerDialog.tsx:215
+#: src/components/sync/SyncProgressPopover.tsx:112
+msgid "Failed"
+msgstr "Failed"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:70
+msgid "Failed to clear local data"
+msgstr "Failed to clear local data"
 
 #: src/lib/commands/window-commands.ts:19
 msgid "Failed to close window: {message}"
 msgstr "ウィンドウを閉じるのに失敗しました：{message}"
+
+#: src/services/miniflux/categories.ts:74
+msgid "Failed to create category"
+msgstr "Failed to create category"
+
+#: src/services/miniflux/feeds.ts:124
+msgid "Failed to create feed"
+msgstr "Failed to create feed"
+
+#: src/services/miniflux/users.ts:107
+msgid "Failed to create user"
+msgstr "Failed to create user"
+
+#: src/services/miniflux/categories.ts:138
+msgid "Failed to delete category"
+msgstr "Failed to delete category"
+
+#: src/services/miniflux/feeds.ts:212
+msgid "Failed to delete feed"
+msgstr "Failed to delete feed"
+
+#: src/services/miniflux/users.ts:178
+msgid "Failed to delete user"
+msgstr "Failed to delete user"
 
 #: src/lib/commands/window-commands.ts:69
 msgid "Failed to enter fullscreen: {message}"
@@ -369,74 +771,200 @@ msgstr "全画面表示に失敗しました：{message}"
 msgid "Failed to exit fullscreen: {message}"
 msgstr "全画面表示の終了に失敗しました：{message}"
 
+#: src/services/miniflux/categories.ts:41
+msgid "Failed to load categories"
+msgstr "Failed to load categories"
+
+#: src/components/miniflux/EntryList.tsx:370
+msgid "Failed to load entries"
+msgstr "Failed to load entries"
+
+#: src/components/layout/AppSidebar.tsx:185
+#: src/services/miniflux/feeds.ts:63
+#: src/services/miniflux/feeds.ts:93
+msgid "Failed to load feeds"
+msgstr "Failed to load feeds"
+
+#: src/components/miniflux/settings/UsersPane.tsx:40
+msgid "Failed to load users"
+msgstr "Failed to load users"
+
 #: src/lib/commands/window-commands.ts:36
 msgid "Failed to minimize window: {message}"
 msgstr "ウィンドウの最小化に失敗しました：{message}"
 
-#: src/components/preferences/panes/GeneralPane.tsx:49
-msgid "Failed to register shortcut"
-msgstr "ショートカットの登録に失敗しました"
+#: src/services/miniflux/feeds.ts:278
+msgid "Failed to refresh feed"
+msgstr "Failed to refresh feed"
 
-#: src/components/preferences/panes/GeneralPane.tsx:73
-msgid "Failed to restore previous shortcut"
-msgstr "以前のショートカットの復元に失敗しました"
+#: src/services/miniflux/feeds.ts:309
+msgid "Failed to refresh feeds"
+msgstr "Failed to refresh feeds"
+
+#: src/services/miniflux/feeds.ts:249
+msgid "Failed to search sources"
+msgstr "Failed to search sources"
+
+#: src/components/preferences/panes/GeneralPane.tsx:108
+msgid "Failed to select folder"
+msgstr "Failed to select folder"
 
 #: src/lib/commands/window-commands.ts:52
 msgid "Failed to toggle maximize: {message}"
 msgstr "最大化の切り替えに失敗しました：{message}"
 
-#: src/components/preferences/panes/GeneralPane.tsx:95
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:355
+msgid "Failed to update API token"
+msgstr "Failed to update API token"
+
+#: src/services/miniflux/categories.ts:106
+msgid "Failed to update category"
+msgstr "Failed to update category"
+
+#: src/components/preferences/panes/GeneralPane.tsx:43
 msgid "Failed to update close behavior"
 msgstr "閉じる動作の更新に失敗しました"
 
-#: src/components/preferences/panes/GeneralPane.tsx:133
+#: src/services/miniflux/feeds.ts:170
+msgid "Failed to update feed"
+msgstr "Failed to update feed"
+
+#: src/components/preferences/panes/GeneralPane.tsx:126
+msgid "Failed to update image download path"
+msgstr "Failed to update image download path"
+
+#: src/components/preferences/panes/GeneralPane.tsx:83
 msgid "Failed to update start minimized setting"
 msgstr "最小化起動設定の更新に失敗しました"
 
-#: src/components/preferences/panes/GeneralPane.tsx:116
+#: src/components/preferences/panes/GeneralPane.tsx:65
 msgid "Failed to update tray icon setting"
 msgstr "トレイアイコン設定の更新に失敗しました"
 
-#: src/components/miniflux/ConnectionDialog.tsx:413
+#: src/services/miniflux/users.ts:149
+msgid "Failed to update user"
+msgstr "Failed to update user"
+
+#: src/components/preferences/panes/GeneralPane.tsx:144
+msgid "Failed to update video download path"
+msgstr "Failed to update video download path"
+
+#: src/components/miniflux/MinifluxLayout.tsx:278
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:150
+msgid "Feed"
+msgstr "Feed"
+
+#: src/services/miniflux/feeds.ts:149
+msgid "Feed created"
+msgstr "Feed created"
+
+#: src/services/miniflux/feeds.ts:135
+msgid "Feed created with partial settings"
+msgstr "Feed created with partial settings"
+
+#: src/services/miniflux/feeds.ts:230
+msgid "Feed deleted"
+msgstr "Feed deleted"
+
+#: src/services/miniflux/feeds.ts:289
+msgid "Feed refreshed"
+msgstr "Feed refreshed"
+
+#: src/components/miniflux/settings/FeedFormDialog.tsx:359
+msgid "Feed title"
+msgstr "Feed title"
+
+#: src/components/miniflux/EditFeedDialog.tsx:198
+msgid "Feed Title"
+msgstr "Feed Title"
+
+#: src/services/miniflux/feeds.ts:183
+msgid "Feed updated"
+msgstr "Feed updated"
+
+#: src/components/miniflux/AddFeedDialog.tsx:505
+#: src/components/miniflux/EditFeedDialog.tsx:176
+#: src/components/miniflux/settings/FeedFormDialog.tsx:334
+msgid "Feed URL"
+msgstr "Feed URL"
+
+#: src/components/miniflux/settings/FeedFormDialog.tsx:164
+msgid "Feed URL is required"
+msgstr "Feed URL is required"
+
+#: src/components/miniflux/settings/FeedFormDialog.tsx:165
+msgid "Feed URL must be a valid URL"
+msgstr "Feed URL must be a valid URL"
+
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:79
+#: src/components/sync/SyncProgressPopover.tsx:51
+msgid "Feeds"
+msgstr "Feeds"
+
+#: src/components/miniflux/AddFeedDialog.tsx:733
+#: src/components/miniflux/EditFeedDialog.tsx:361
+#: src/components/miniflux/settings/FeedFormDialog.tsx:535
+msgid "Fetch via proxy"
+msgstr "Fetch via proxy"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:356
+msgid "File Name"
+msgstr "File Name"
+
+#: src/components/miniflux/ConnectionDialog.tsx:350
 msgid "Fill from .env"
 msgstr ".env から入力"
 
-#: src/pages/ComponentsPage.tsx:69
-#: src/pages/ComponentsPage.tsx:78
-#: src/pages/ComponentsPage.tsx:87
-#~ msgid "from last month"
-#~ msgstr ""
+#: src/components/miniflux/ReaderSettings.tsx:274
+msgid "Font Family"
+msgstr "Font Family"
 
-#: src/pages/TemplatesPage.tsx:45
-#~ msgid "Full-Featured Template"
-#~ msgstr ""
+#: src/components/miniflux/ReaderSettings.tsx:147
+#: src/components/miniflux/ReaderSettings.tsx:156
+msgid "Font Size"
+msgstr "Font Size"
+
+#: src/components/miniflux/AddFeedDialog.tsx:420
+#: src/components/miniflux/AddFeedDialog.tsx:441
+#: src/components/miniflux/SearchSourceDialog.tsx:175
+#: src/components/miniflux/settings/FeedFormDialog.tsx:311
+msgid "Found sources"
+msgstr "Found sources"
+
+#: src/components/preferences/panes/AppearancePane.tsx:230
+msgid "From"
+msgstr "From"
 
 #: src/components/preferences/PreferencesDialog.tsx:35
 msgid "General"
 msgstr "一般"
 
-#: src/pages/TemplatesPage.tsx:160
-#~ msgid "Get started with the template in three simple steps."
-#~ msgstr ""
+#: src/components/miniflux/ReaderSettings.tsx:95
+msgid "Georgia"
+msgstr "Georgia"
 
-#: src/components/preferences/panes/GeneralPane.tsx:200
-msgid "Global keyboard shortcut to toggle the quick pane from any application"
-msgstr "任意のアプリケーションからクイックペインを切り替えるグローバルキーボードショートカット"
+#: src/components/ui/data-table.tsx:164
+msgid "Go to first page"
+msgstr "Go to first page"
 
-#: src/pages/ComponentsPage.tsx:196
-#~ msgid "Heads up!"
-#~ msgstr ""
+#: src/components/ui/data-table.tsx:191
+msgid "Go to last page"
+msgstr "Go to last page"
 
-#: src/pages/ComponentsPage.tsx:350
-#~ msgid "Hidden Content"
-#~ msgstr ""
+#: src/components/ui/data-table.tsx:182
+msgid "Go to next page"
+msgstr "Go to next page"
+
+#: src/components/ui/data-table.tsx:173
+msgid "Go to previous page"
+msgstr "Go to previous page"
 
 #: src/lib/menu.ts:39
 msgid "Hide {APP_NAME}"
 msgstr "{APP_NAME} を非表示"
 
 #: src/components/titlebar/LinuxTitleBar.tsx:34
-#: src/components/titlebar/WindowTitleBar.tsx:52
+#: src/components/titlebar/WindowTitleBar.tsx:91
 #: src/lib/commands/navigation-commands.ts:16
 msgid "Hide Left Sidebar"
 msgstr "左サイドバーを非表示"
@@ -445,99 +973,144 @@ msgstr "左サイドバーを非表示"
 msgid "Hide Others"
 msgstr "他を非表示"
 
-#: src/components/titlebar/TitleBarContent.tsx:62
-#: src/lib/commands/navigation-commands.ts:34
-#~ msgid "Hide Right Sidebar"
-#~ msgstr "右サイドバーを非表示"
-
 #: src/lib/commands/navigation-commands.ts:17
 msgid "Hide the left sidebar"
 msgstr "左サイドバーを非表示"
 
-#: src/lib/commands/navigation-commands.ts:35
-#~ msgid "Hide the right sidebar"
-#~ msgstr "右サイドバーを非表示"
-
-#: src/components/layout/AppSidebar.tsx:145
-#: src/components/layout/AppSidebar.tsx:154
-#: src/components/miniflux/MinifluxLayout.tsx:61
+#: src/components/layout/AppSidebar.tsx:411
+#: src/components/layout/AppSidebar.tsx:420
+#: src/components/miniflux/MinifluxLayout.tsx:293
 msgid "History"
 msgstr "履歴"
 
-#: src/pages/TemplatesPage.tsx:51
-#~ msgid "i18n (Lingui)"
-#~ msgstr ""
+#: src/components/miniflux/AddFeedDialog.tsx:661
+#: src/components/miniflux/EditFeedDialog.tsx:289
+#: src/components/miniflux/settings/FeedFormDialog.tsx:462
+msgid "HTTP password"
+msgstr "HTTP password"
 
-#: src/pages/ComponentsPage.tsx:230
-#~ msgid "Info"
-#~ msgstr ""
+#: src/components/miniflux/AddFeedDialog.tsx:646
+#: src/components/miniflux/EditFeedDialog.tsx:274
+#: src/components/miniflux/settings/FeedFormDialog.tsx:446
+msgid "HTTP username"
+msgstr "HTTP username"
 
-#: src/pages/TemplatesPage.tsx:79
-#~ msgid "Install Dependencies"
-#~ msgstr ""
+#: src/components/miniflux/AddFeedDialog.tsx:512
+msgid "https://example.com/feed.xml"
+msgstr "https://example.com/feed.xml"
 
-#: src/pages/TemplatesPage.tsx:219
-#~ msgid "Join Discord"
-#~ msgstr ""
+#: src/components/miniflux/settings/FeedFormDialog.tsx:341
+msgid "https://example.com/rss.xml"
+msgstr "https://example.com/rss.xml"
 
-#: src/pages/TemplatesPage.tsx:214
-#~ msgid "Join the community to get help and share your projects."
-#~ msgstr ""
+#: src/components/miniflux/ReaderSettings.tsx:91
+msgid "Humanist"
+msgstr "Humanist"
 
-#: src/components/preferences/panes/GeneralPane.tsx:196
-msgid "Keyboard Shortcuts"
-msgstr "キーボードショートカット"
+#: src/components/miniflux/AddFeedDialog.tsx:716
+#: src/components/miniflux/EditFeedDialog.tsx:344
+#: src/components/miniflux/settings/FeedFormDialog.tsx:518
+msgid "Ignore HTTP cache"
+msgstr "Ignore HTTP cache"
 
-#: src/components/preferences/panes/AppearancePane.tsx:85
-#: src/components/preferences/panes/AppearancePane.tsx:87
+#: src/components/miniflux/SafeHtml.tsx:594
+msgid "Image"
+msgstr "Image"
+
+#: src/components/preferences/panes/GeneralPane.tsx:209
+msgid "Image Download Path"
+msgstr "Image Download Path"
+
+#: src/components/preferences/panes/GeneralPane.tsx:123
+msgid "Image download path updated"
+msgstr "Image download path updated"
+
+#: src/components/miniflux/AddFeedDialog.tsx:799
+#: src/components/miniflux/EditFeedDialog.tsx:427
+#: src/components/miniflux/settings/FeedFormDialog.tsx:602
+msgid "Keeplist rules"
+msgstr "Keeplist rules"
+
+#: src/components/miniflux/SafeHtml.tsx:593
+#: src/components/miniflux/UserNav.tsx:143
+#: src/components/preferences/panes/AppearancePane.tsx:167
+#: src/components/preferences/panes/AppearancePane.tsx:169
 msgid "Language"
 msgstr "言語"
+
+#: src/components/miniflux/EntryFilters.tsx:85
+msgid "Last 24 hours"
+msgstr "Last 24 hours"
+
+#. placeholder {0}: formatSyncTime(lastSyncedAt)
+#: src/components/sync/SyncProgressPopover.tsx:176
+msgid "Last synced at {0}"
+msgstr "Last synced at {0}"
 
 #: src/pages/HomePage.tsx:29
 msgid "Latest React with concurrent features"
 msgstr "最新の React 並列機能"
 
-#: src/pages/TemplatesPage.tsx:200
-#~ msgid "Learn more about the template architecture and patterns."
-#~ msgstr ""
-
-#: src/components/preferences/panes/AppearancePane.tsx:124
+#: src/components/preferences/panes/AppearancePane.tsx:206
 msgid "Light"
 msgstr "ライト"
 
-#: src/components/miniflux/MinifluxLayout.tsx:26
+#: src/components/miniflux/ReaderSettings.tsx:211
+#: src/components/miniflux/ReaderSettings.tsx:220
+msgid "Line Width"
+msgstr "Line Width"
+
+#: src/components/layout/AppSidebar.tsx:339
+#: src/components/miniflux/EntryList.tsx:548
+#: src/components/miniflux/MinifluxLayout.tsx:207
 msgid "Loading..."
 msgstr "読み込み中..."
 
-#: src/pages/ComponentsPage.tsx:266
-#~ msgid "Manage your account details and preferences here. The animated tabs provide a smooth visual transition between sections."
-#~ msgstr ""
+#: src/components/preferences/panes/AdvancedPane.tsx:64
+msgid "Local data cleared"
+msgstr "Local data cleared"
 
-#: src/pages/ComponentsPage.tsx:142
-#~ msgid "Manage your profile information and preferences."
-#~ msgstr ""
+#: src/components/miniflux/UserNav.tsx:194
+msgid "Log out"
+msgstr "Log out"
 
-#: src/pages/ComponentsPage.tsx:172
-#~ msgid "Marketing Emails"
-#~ msgstr ""
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:375
+msgid "Manage categories, feeds, user accounts, and API token in one place."
+msgstr "Manage categories, feeds, user accounts, and API token in one place."
 
-#: src/components/miniflux/ConnectionDialog.tsx:127
-#~ msgid "miniflux.example.com"
-#~ msgstr ""
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:291
+msgid "Manage feeds and discover subscriptions from source URLs."
+msgstr "Manage feeds and discover subscriptions from source URLs."
 
-#: src/components/layout/AppSidebar.tsx:69
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:295
+msgid "Manage Miniflux user accounts."
+msgstr "Manage Miniflux user accounts."
+
+#: src/components/miniflux/EntryReadingHeader.tsx:317
+#: src/components/miniflux/EntryReadingHeader.tsx:326
+msgid "Mark as read"
+msgstr "Mark as read"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:317
+#: src/components/miniflux/EntryReadingHeader.tsx:326
+msgid "Marked as read"
+msgstr "Marked as read"
+
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:373
+#: src/components/miniflux/UserNav.tsx:185
+msgid "Miniflux settings"
+msgstr "Miniflux settings"
+
+#: src/components/brand/AppLogo.tsx:31
+#: src/components/brand/AppLogo.tsx:115
 msgid "Minikyu"
 msgstr "Minikyu"
-
-#: src/pages/TemplatesPage.tsx:33
-#~ msgid "Minimal setup with essential features. Perfect for new projects."
-#~ msgstr ""
 
 #: src/lib/commands/window-commands.ts:27
 msgid "Minimize the current window"
 msgstr "現在のウィンドウを最小化"
 
-#: src/components/preferences/panes/GeneralPane.tsx:153
+#: src/components/preferences/panes/GeneralPane.tsx:164
 msgid "Minimize to tray"
 msgstr "トレイに最小化"
 
@@ -549,33 +1122,119 @@ msgstr "ウィンドウを最小化"
 msgid "Modern Rust-powered desktop framework"
 msgstr "モダンな Rust 駆動のデスクトップフレームワーク"
 
-#: src/pages/ComponentsPage.tsx:325
-#~ msgid "More Options"
-#~ msgstr ""
+#: src/components/miniflux/ReaderSettings.tsx:99
+msgid "Monospace"
+msgstr "Monospace"
+
+#: src/components/miniflux/ReaderSettings.tsx:110
+msgid "Native platform feel"
+msgstr "Native platform feel"
 
 #: src/components/command-palette/CommandPalette.tsx:72
 msgid "Navigation"
 msgstr "ナビゲーション"
 
-#: src/components/miniflux/AccountSwitcher.tsx:79
-msgid "No accounts yet"
-msgstr "アカウントがありません"
+#: src/components/miniflux/settings/UserFormDialog.tsx:106
+msgid "New password (optional)"
+msgstr "New password (optional)"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:189
+#: src/components/miniflux/EntryReadingHeader.tsx:195
+msgid "Next entry (j or →)"
+msgstr "Next entry (j or →)"
+
+#: src/components/miniflux/EntryReading.tsx:92
+msgid "Next section"
+msgstr "Next section"
+
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:512
+msgid "No active account"
+msgstr "No active account"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:348
+msgid "No active downloads"
+msgstr "No active downloads"
+
+#: src/components/miniflux/AddFeedDialog.tsx:572
+#: src/components/miniflux/settings/CategoriesPane.tsx:54
+#: src/components/miniflux/settings/FeedFormDialog.tsx:397
+msgid "No categories found"
+msgstr "No categories found"
+
+#: src/components/miniflux/settings/CategoriesPane.tsx:52
+msgid "No categories yet"
+msgstr "No categories yet"
+
+#: src/components/miniflux/EditFeedDialog.tsx:228
+#: src/components/miniflux/settings/FeedFormDialog.tsx:150
+msgid "No category"
+msgstr "No category"
+
+#: src/components/miniflux/EntryReading.tsx:424
+msgid "No content available"
+msgstr "No content available"
+
+#: src/components/preferences/panes/AppearancePane.tsx:223
+msgid "No custom rules yet"
+msgstr "No custom rules yet"
+
+#: src/components/miniflux/EntryList.tsx:385
+msgid "No entries found"
+msgstr "No entries found"
+
+#: src/components/miniflux/settings/FeedsPane.tsx:68
+msgid "No feeds found"
+msgstr "No feeds found"
+
+#: src/components/miniflux/settings/FeedsPane.tsx:66
+msgid "No feeds yet"
+msgstr "No feeds yet"
+
+#: src/components/miniflux/ReaderSettings.tsx:291
+msgid "No fonts found."
+msgstr "No fonts found."
 
 #: src/components/command-palette/CommandPalette.tsx:99
 msgid "No results found."
 msgstr "結果が見つかりません。"
 
-#: src/components/miniflux/ConnectionDialog.tsx:247
+#: src/components/ui/data-table.tsx:120
+msgid "No results."
+msgstr "No results."
+
+#: src/components/miniflux/ConnectionDialog.tsx:210
 msgid "No server URL found."
 msgstr "サーバー URL が見つかりません。"
 
-#: src/components/layout/AppSidebar.tsx:186
-msgid "Not Connected"
-msgstr "未接続"
+#: src/components/miniflux/AddFeedDialog.tsx:486
+#: src/components/miniflux/SearchSourceDialog.tsx:199
+msgid "No sources found"
+msgstr "No sources found"
 
-#: src/pages/ComponentsPage.tsx:309
-#~ msgid "Open Menu"
-#~ msgstr ""
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:380
+msgid "Not connected to Miniflux API"
+msgstr "Not connected to Miniflux API"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:97
+msgid "Off"
+msgstr "Off"
+
+#: src/components/layout/AppSidebar.tsx:476
+#: src/components/miniflux/UserNav.tsx:124
+msgid "Offline cached data"
+msgstr "オフラインキャッシュデータ"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:113
+msgid "Open"
+msgstr "Open"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:444
+msgid "Open File"
+msgstr "Open File"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:452
+msgid "Open Folder"
+msgstr "Open Folder"
 
 #: src/lib/commands/navigation-commands.ts:25
 msgid "Open Preferences"
@@ -585,33 +1244,51 @@ msgstr "設定を開く"
 msgid "Open the application preferences"
 msgstr "アプリケーションの設定を開く"
 
-#: src/components/command-palette/CommandPalette.tsx:84
-#~ msgid "Other"
-#~ msgstr "その他"
-
 #: src/components/command-palette/CommandPalette.tsx:80
 msgid "Others"
 msgstr "その他"
 
-#: src/pages/ComponentsPage.tsx:227
-#~ msgid "Outline"
-#~ msgstr ""
+#: src/components/sync/SyncProgressPopover.tsx:204
+msgid "Overall progress"
+msgstr "Overall progress"
 
-#: src/components/miniflux/ConnectionDialog.tsx:368
+#. placeholder {0}: table.getState().pagination.pageIndex + 1
+#. placeholder {1}: table.getPageCount()
+#: src/components/ui/data-table.tsx:155
+msgid "Page {0} of {1}"
+msgstr "Page {0} of {1}"
+
+#: src/components/miniflux/ConnectionDialog.tsx:309
+#: src/components/miniflux/settings/UserFormDialog.tsx:106
 msgid "Password"
 msgstr "パスワード"
 
-#: src/components/miniflux/ConnectionDialog.tsx:110
+#: src/components/miniflux/ConnectionDialog.tsx:89
+#: src/components/miniflux/settings/UserFormDialog.tsx:38
 msgid "Password is required"
 msgstr "パスワードが必要です"
 
-#: src/pages/TemplatesPage.tsx:63
-#~ msgid "Plugin Architecture"
-#~ msgstr ""
+#: src/components/miniflux/AddFeedDialog.tsx:370
+msgid "Paste a website URL to discover available RSS/Atom feeds."
+msgstr "Paste a website URL to discover available RSS/Atom feeds."
 
-#: src/pages/TemplatesPage.tsx:58
-#~ msgid "Plugin Template"
-#~ msgstr ""
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:519
+msgid "Paste new API token"
+msgstr "Paste new API token"
+
+#: src/components/miniflux/AddFeedDialog.tsx:276
+#: src/components/miniflux/SearchSourceDialog.tsx:67
+msgid "Please enter a valid source URL"
+msgstr "Please enter a valid source URL"
+
+#: src/components/miniflux/AddFeedDialog.tsx:206
+#: src/components/miniflux/EditFeedDialog.tsx:84
+msgid "Please enter a valid URL"
+msgstr "Please enter a valid URL"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:65
+msgid "Please restart the app to complete cleanup."
+msgstr "Please restart the app to complete cleanup."
 
 #: src/components/preferences/PreferencesDialog.tsx:64
 #: src/components/preferences/PreferencesDialog.tsx:99
@@ -622,43 +1299,52 @@ msgstr "設定"
 msgid "Preferences..."
 msgstr "設定..."
 
+#: src/components/sync/SyncProgressPopover.tsx:174
+msgid "Preparing sync stages"
+msgstr "Preparing sync stages"
+
 #: src/pages/HomePage.tsx:108
 msgid "Press"
 msgstr "押す"
 
-#: src/pages/ComponentsPage.tsx:316
-#~ msgid "Profile"
-#~ msgstr ""
+#: src/components/miniflux/EntryReadingHeader.tsx:170
+#: src/components/miniflux/EntryReadingHeader.tsx:176
+msgid "Previous entry (h or ←)"
+msgstr "Previous entry (h or ←)"
 
-#: src/pages/ComponentsPage.tsx:140
-#~ msgid "Profile Settings"
-#~ msgstr ""
+#: src/components/miniflux/EntryReading.tsx:91
+msgid "Previous section"
+msgstr "Previous section"
 
-#: src/pages/TemplatesPage.tsx:93
-#~ msgid "Project Templates"
-#~ msgstr ""
+#: src/components/downloads/DownloadManagerDialog.tsx:358
+msgid "Progress"
+msgstr "Progress"
+
+#: src/components/sync/SyncProgressPopover.tsx:120
+msgid "Pulling category groups from server"
+msgstr "Pulling category groups from server"
+
+#: src/components/sync/SyncProgressPopover.tsx:121
+msgid "Pulling feed subscriptions from server"
+msgstr "Pulling feed subscriptions from server"
 
 #: src/pages/HomePage.tsx:34
 msgid "Query, Router, and Table integration"
 msgstr "Query、Router、Table の統合"
 
+#: src/components/sync/SyncProgressPopover.tsx:115
+msgid "Queued"
+msgstr "Queued"
+
 #: src/pages/HomePage.tsx:44
 msgid "Quick access to all features"
 msgstr "すべての機能へのクイックアクセス"
-
-#: src/components/preferences/panes/GeneralPane.tsx:198
-msgid "Quick Pane Shortcut"
-msgstr "クイックペインショートカット"
-
-#: src/pages/TemplatesPage.tsx:158
-#~ msgid "Quick Start"
-#~ msgstr ""
 
 #: src/lib/menu.ts:52
 msgid "Quit {APP_NAME}"
 msgstr "{APP_NAME} を終了"
 
-#: src/components/preferences/panes/GeneralPane.tsx:154
+#: src/components/preferences/panes/GeneralPane.tsx:165
 msgid "Quit application"
 msgstr "アプリケーションを終了"
 
@@ -666,86 +1352,232 @@ msgstr "アプリケーションを終了"
 msgid "React 19"
 msgstr "React 19"
 
-#: src/pages/TemplatesPage.tsx:37
-#~ msgid "React 19 + TypeScript"
-#~ msgstr ""
+#: src/components/miniflux/EntryEmptyState.tsx:19
+msgid "Reader companion illustration"
+msgstr "Reader companion illustration"
 
-#: src/pages/TemplatesPage.tsx:205
-#~ msgid "Read Docs"
-#~ msgstr ""
+#: src/components/miniflux/ReaderSettings.tsx:133
+msgid "Reader typography settings"
+msgstr "Reader typography settings"
 
-#: src/pages/ComponentsPage.tsx:174
-#~ msgid "Receive emails about new products and features."
-#~ msgstr ""
+#: src/components/miniflux/EntryReadingHeader.tsx:223
+msgid "Reading display"
+msgstr "Reading display"
 
-#: src/pages/ComponentsPage.tsx:165
-#~ msgid "Receive emails about your account activity."
-#~ msgstr ""
+#: src/components/miniflux/settings/FeedsPane.tsx:56
+msgid "Refresh all"
+msgstr "Refresh all"
 
-#: src/pages/ComponentsPage.tsx:96
-#~ msgid "Recent Activity"
-#~ msgstr ""
+#: src/components/miniflux/settings/FeedsPane.tsx:56
+msgid "Refreshing..."
+msgstr "Refreshing..."
 
+#: src/components/preferences/panes/AppearancePane.tsx:246
+msgid "Remove"
+msgstr "Remove"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:472
+msgid "Remove from list"
+msgstr "Remove from list"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:118
+msgid "Removes the local database, preferences, reading state, and recovery files. Downloaded files are not deleted."
+msgstr "Removes the local database, preferences, reading state, and recovery files. Downloaded files are not deleted."
+
+#: src/components/sync/SyncProgressPopover.tsx:126
+msgid "Removing stale local records"
+msgstr "Removing stale local records"
+
+#: src/components/preferences/panes/AppearancePane.tsx:272
 #: src/components/preferences/ShortcutPicker.tsx:231
 msgid "Reset"
 msgstr "リセット"
 
-#: src/pages/TemplatesPage.tsx:84
-#~ msgid "Run Development Server"
-#~ msgstr ""
+#: src/components/downloads/DownloadManagerDialog.tsx:432
+msgid "Retry"
+msgstr "Retry"
 
-#: src/pages/TemplatesPage.tsx:64
-#~ msgid "Rust Commands"
-#~ msgstr ""
+#: src/components/miniflux/AddFeedDialog.tsx:764
+#: src/components/miniflux/EditFeedDialog.tsx:392
+#: src/components/miniflux/settings/FeedFormDialog.tsx:567
+msgid "Rewrite rules"
+msgstr "Rewrite rules"
 
-#: src/pages/ComponentsPage.tsx:83
-#~ msgid "Sales"
-#~ msgstr ""
+#: src/components/miniflux/settings/UserFormDialog.tsx:132
+#: src/components/miniflux/UserNav.tsx:138
+msgid "Role"
+msgstr "Role"
 
-#: src/pages/ComponentsPage.tsx:182
-#~ msgid "Save Changes"
-#~ msgstr ""
+#: src/components/ui/data-table.tsx:134
+msgid "Rows per page"
+msgstr "Rows per page"
+
+#: src/components/brand/AppLogo.tsx:118
+msgid "RSS Reader"
+msgstr "RSS Reader"
+
+#: src/components/sync/SyncProgressPopover.tsx:179
+msgid "Run sync to refresh categories, feeds, and entries"
+msgstr "Run sync to refresh categories, feeds, and entries"
+
+#: src/components/sync/SyncProgressPopover.tsx:113
+msgid "Running"
+msgstr "Running"
+
+#: src/components/miniflux/ReaderSettings.tsx:87
+#: src/components/miniflux/ReaderSettings.tsx:101
+msgid "Sans"
+msgstr "Sans"
+
+#: src/components/miniflux/settings/CategoryFormDialog.tsx:106
+#: src/components/miniflux/settings/FeedFormDialog.tsx:631
+#: src/components/miniflux/settings/UserFormDialog.tsx:158
+msgid "Save changes"
+msgstr "Save changes"
+
+#: src/components/miniflux/EditCategoryDialog.tsx:109
+#: src/components/miniflux/EditFeedDialog.tsx:449
+msgid "Save Changes"
+msgstr "Save Changes"
+
+#: src/components/preferences/panes/AppearancePane.tsx:284
+msgid "Save Rules"
+msgstr "Save Rules"
+
+#: src/components/miniflux/EditCategoryDialog.tsx:109
+#: src/components/miniflux/EditFeedDialog.tsx:449
+#: src/components/preferences/panes/AppearancePane.tsx:284
+msgid "Saving..."
+msgstr "Saving..."
+
+#: src/components/miniflux/AddFeedDialog.tsx:748
+#: src/components/miniflux/EditFeedDialog.tsx:376
+#: src/components/miniflux/settings/FeedFormDialog.tsx:550
+msgid "Scraper rules"
+msgstr "Scraper rules"
+
+#: src/components/miniflux/MinifluxLayout.tsx:346
+#: src/components/miniflux/SearchSourceDialog.tsx:163
+#: src/components/miniflux/settings/FeedFormDialog.tsx:301
+msgid "Search"
+msgstr "Search"
+
+#: src/components/miniflux/settings/FeedFormDialog.tsx:263
+msgid "Search a source URL or paste a direct feed URL."
+msgstr "Search a source URL or paste a direct feed URL."
+
+#: src/components/miniflux/AddFeedDialog.tsx:489
+msgid "Search a website first, then select one source to continue."
+msgstr "Search a website first, then select one source to continue."
+
+#: src/components/miniflux/AddFeedDialog.tsx:563
+#: src/components/miniflux/settings/FeedFormDialog.tsx:391
+msgid "Search categories"
+msgstr "Search categories"
+
+#: src/components/miniflux/settings/CategoriesPane.tsx:41
+msgid "Search categories..."
+msgstr "Search categories..."
+
+#: src/components/miniflux/EntryFilters.tsx:59
+msgid "Search entries..."
+msgstr "Search entries..."
+
+#: src/components/miniflux/settings/FeedsPane.tsx:46
+msgid "Search feeds..."
+msgstr "Search feeds..."
+
+#: src/components/miniflux/ReaderSettings.tsx:286
+msgid "Search fonts..."
+msgstr "Search fonts..."
+
+#: src/components/miniflux/SearchSourceDialog.tsx:118
+msgid "Search for websites or blog URLs to discover available feeds."
+msgstr "Search for websites or blog URLs to discover available feeds."
 
 #: src/components/titlebar/CommandSearchButton.tsx:21
 msgid "Search or type a command..."
 msgstr "検索またはコマンドを入力..."
 
-#: src/pages/ComponentsPage.tsx:226
-#~ msgid "Secondary"
-#~ msgstr ""
+#: src/components/layout/AppSidebar.tsx:454
+#: src/components/miniflux/AddFeedDialog.tsx:356
+#: src/components/miniflux/AddFeedDialog.tsx:412
+#: src/components/miniflux/SearchSourceDialog.tsx:115
+msgid "Search Source"
+msgstr "Search Source"
 
-#: src/components/miniflux/AccountSwitcher.tsx:60
-msgid "Select account"
-msgstr "アカウントを選択"
+#: src/components/miniflux/AddFeedDialog.tsx:344
+msgid "Search source first, then confirm feed details before subscribing."
+msgstr "Search source first, then confirm feed details before subscribing."
 
-#: src/components/miniflux/ConnectionDialog.tsx:235
+#: src/components/miniflux/AddFeedDialog.tsx:381
+#: src/components/miniflux/SearchSourceDialog.tsx:131
+#: src/components/miniflux/settings/FeedFormDialog.tsx:283
+msgid "Search source URL"
+msgstr "Search source URL"
+
+#: src/components/miniflux/SearchSourceDialog.tsx:171
+msgid "Searching sources..."
+msgstr "Searching sources..."
+
+#: src/components/miniflux/AddFeedDialog.tsx:412
+#: src/components/miniflux/SearchSourceDialog.tsx:163
+msgid "Searching..."
+msgstr "Searching..."
+
+#: src/components/miniflux/EditFeedDialog.tsx:225
+msgid "Select a category"
+msgstr "Select a category"
+
+#: src/components/miniflux/EntryEmptyState.tsx:276
+msgid "Select an entry to read"
+msgstr "Select an entry to read"
+
+#: src/components/preferences/panes/GeneralPane.tsx:94
+msgid "Select Image Download Folder"
+msgstr "Select Image Download Folder"
+
+#: src/components/miniflux/ConnectionDialog.tsx:201
 msgid "Select or enter server URL"
 msgstr "サーバー URL を選択または入力"
 
-#: src/components/preferences/panes/AppearancePane.tsx:121
+#: src/components/preferences/panes/AppearancePane.tsx:203
 msgid "Select theme"
 msgstr "テーマを選択"
 
-#: src/components/miniflux/ConnectionDialog.tsx:226
+#: src/components/preferences/panes/GeneralPane.tsx:95
+msgid "Select Video Download Folder"
+msgstr "Select Video Download Folder"
+
+#: src/components/miniflux/ReaderSettings.tsx:93
+msgid "Serif"
+msgstr "Serif"
+
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:511
+msgid "Server"
+msgstr "Server"
+
+#: src/components/miniflux/ConnectionDialog.tsx:193
 msgid "Server URL"
 msgstr "サーバー URL"
 
-#: src/components/miniflux/ConnectionDialog.tsx:84
+#: src/components/miniflux/ConnectionDialog.tsx:63
 msgid "Server URL is required"
 msgstr "サーバー URL が必要です"
 
 #: src/components/command-palette/CommandPalette.tsx:76
-#: src/components/titlebar/WindowTitleBar.tsx:65
+#: src/components/titlebar/WindowTitleBar.tsx:105
 msgid "Settings"
 msgstr "設定"
-
-#: src/pages/ComponentsPage.tsx:273
-#~ msgid "Settings Panel"
-#~ msgstr ""
 
 #: src/pages/HomePage.tsx:48
 msgid "shadcn/ui"
 msgstr "shadcn/ui"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:338
+#: src/components/miniflux/EntryReadingHeader.tsx:344
+msgid "Share"
+msgstr "Share"
 
 #: src/pages/HomePage.tsx:38
 msgid "Shortcuts"
@@ -760,106 +1592,146 @@ msgid "Show All"
 msgstr "すべて表示"
 
 #: src/components/titlebar/LinuxTitleBar.tsx:34
-#: src/components/titlebar/WindowTitleBar.tsx:52
+#: src/components/titlebar/WindowTitleBar.tsx:91
 #: src/lib/commands/navigation-commands.ts:7
 msgid "Show Left Sidebar"
 msgstr "左サイドバーを表示"
-
-#: src/components/titlebar/TitleBarContent.tsx:62
-#: src/lib/commands/navigation-commands.ts:25
-#~ msgid "Show Right Sidebar"
-#~ msgstr "右サイドバーを表示"
 
 #: src/lib/commands/navigation-commands.ts:8
 msgid "Show the left sidebar"
 msgstr "左サイドバーを表示"
 
-#: src/lib/commands/navigation-commands.ts:26
-#~ msgid "Show the right sidebar"
-#~ msgstr "右サイドバーを表示"
-
-#: src/components/preferences/panes/GeneralPane.tsx:160
+#: src/components/preferences/panes/GeneralPane.tsx:171
 msgid "Show Tray Icon"
 msgstr "トレイアイコンを表示"
 
-#: src/pages/ComponentsPage.tsx:240
-#~ msgid "Smooth animated tabs from animate-ui with highlight effect."
-#~ msgstr ""
+#: src/components/downloads/DownloadManagerDialog.tsx:359
+msgid "Size"
+msgstr "Size"
 
-#: src/pages/ComponentsPage.tsx:337
-#~ msgid "Smooth expand/collapse animation with AnimatePresence."
-#~ msgstr ""
-
-#: src/components/preferences/panes/AppearancePane.tsx:72
+#: src/components/preferences/panes/AppearancePane.tsx:124
 msgid "Something went wrong"
 msgstr "エラーが発生しました"
 
-#: src/components/layout/AppSidebar.tsx:127
-#: src/components/layout/AppSidebar.tsx:136
-#: src/components/miniflux/MinifluxLayout.tsx:57
+#: src/components/miniflux/AddFeedDialog.tsx:275
+#: src/components/miniflux/SearchSourceDialog.tsx:66
+msgid "Source URL is required"
+msgstr "Source URL is required"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:294
+#: src/components/miniflux/EntryReadingHeader.tsx:304
+msgid "Star"
+msgstr "Star"
+
+#: src/components/layout/AppSidebar.tsx:393
+#: src/components/layout/AppSidebar.tsx:402
+#: src/components/miniflux/EntryFilters.tsx:115
+#: src/components/miniflux/EntryListFloatingFilterBar.tsx:44
+#: src/components/miniflux/MinifluxLayout.tsx:286
 msgid "Starred"
 msgstr "スター付き"
 
-#: src/components/preferences/panes/GeneralPane.tsx:179
+#: src/components/preferences/panes/GeneralPane.tsx:190
 msgid "Start Minimized"
 msgstr "最小化して起動"
 
-#: src/components/preferences/panes/GeneralPane.tsx:130
+#: src/components/preferences/panes/GeneralPane.tsx:80
 msgid "Start minimized setting updated"
 msgstr "最小化起動設定を更新しました"
 
-#: src/components/preferences/panes/GeneralPane.tsx:180
+#: src/components/preferences/panes/GeneralPane.tsx:191
 msgid "Start the application minimized to the system tray"
 msgstr "アプリケーションをシステムトレイに最小化して起動"
 
-#: src/pages/TemplatesPage.tsx:32
-#~ msgid "Starter Template"
-#~ msgstr ""
+#: src/components/downloads/DownloadManagerDialog.tsx:357
+msgid "Status"
+msgstr "Status"
 
-#: src/pages/ComponentsPage.tsx:212
-#: src/pages/ComponentsPage.tsx:229
-#~ msgid "Success"
-#~ msgstr ""
+#. placeholder {0}: stageOrder.indexOf(activeStage.id) + 1
+#. placeholder {1}: activeStage.label
+#: src/components/sync/SyncProgressPopover.tsx:171
+msgid "Step {0} of {totalSteps}: {1}"
+msgstr "Step {0} of {totalSteps}: {1}"
 
-#: src/components/layout/AppSidebar.tsx:260
+#: src/components/miniflux/ReaderSettings.tsx:116
+msgid "Strong newspaper tone"
+msgstr "Strong newspaper tone"
+
+#: src/components/miniflux/MinifluxLayout.tsx:334
 msgid "Sync"
 msgstr "同期"
 
-#: src/components/preferences/panes/AppearancePane.tsx:126
+#: src/components/sync/SyncProgressPopover.tsx:58
+msgid "Sync article content and metadata"
+msgstr "Sync article content and metadata"
+
+#: src/components/titlebar/WindowTitleBar.tsx:72
+msgid "Sync completed"
+msgstr "Sync completed"
+
+#: src/components/sync/SyncProgressPopover.tsx:160
+#: src/components/titlebar/WindowTitleBar.tsx:70
+#: src/services/miniflux/feeds.ts:357
+msgid "Sync failed"
+msgstr "Sync failed"
+
+#: src/components/sync/SyncProgressPopover.tsx:52
+msgid "Sync feed sources in each category"
+msgstr "Sync feed sources in each category"
+
+#: src/components/sync/SyncProgressPopover.tsx:165
+msgid "Sync is idle"
+msgstr "Sync is idle"
+
+#: src/components/titlebar/WindowTitleBar.tsx:73
+msgid "Sync Progress"
+msgstr "Sync Progress"
+
+#: src/components/sync/SyncProgressPopover.tsx:188
+msgid "Sync Status"
+msgstr "Sync Status"
+
+#: src/components/sync/SyncProgressPopover.tsx:46
+msgid "Sync your category folders"
+msgstr "Sync your category folders"
+
+#: src/components/sync/SyncProgressPopover.tsx:162
+msgid "Syncing your Miniflux data"
+msgstr "Syncing your Miniflux data"
+
+#: src/components/miniflux/MinifluxLayout.tsx:334
+#: src/components/titlebar/WindowTitleBar.tsx:68
+msgid "Syncing..."
+msgstr "Syncing..."
+
+#: src/components/preferences/panes/AppearancePane.tsx:208
 msgid "System"
 msgstr "システム"
 
-#: src/components/preferences/panes/AppearancePane.tsx:99
+#: src/components/preferences/panes/AppearancePane.tsx:181
 msgid "System Default"
 msgstr "システムデフォルト"
 
-#: src/components/preferences/panes/GeneralPane.tsx:139
+#: src/components/preferences/panes/GeneralPane.tsx:216
+#: src/components/preferences/panes/GeneralPane.tsx:239
+msgid "System default (ask every time)"
+msgstr "System default (ask every time)"
+
+#: src/components/preferences/panes/GeneralPane.tsx:150
 msgid "System Tray"
 msgstr "システムトレイ"
 
-#: src/pages/TemplatesPage.tsx:39
-#~ msgid "Tailwind CSS"
-#~ msgstr ""
+#: src/components/miniflux/ReaderSettings.tsx:89
+msgid "System UI"
+msgstr "System UI"
 
 #: src/pages/HomePage.tsx:33
 msgid "TanStack"
 msgstr "TanStack"
 
-#: src/pages/TemplatesPage.tsx:50
-#~ msgid "TanStack Query + Router"
-#~ msgstr ""
-
-#: src/components/titlebar/TitleBar.tsx:18
-#~ msgid "Tauri App"
-#~ msgstr "Tauri アプリ"
-
 #: src/pages/HomePage.tsx:23
 msgid "Tauri v2"
 msgstr "Tauri v2"
-
-#: src/pages/TemplatesPage.tsx:59
-#~ msgid "Template for building Tauri plugins with example implementations."
-#~ msgstr ""
 
 #: src/lib/commands/notification-commands.ts:15
 msgid "Test Toast"
@@ -869,63 +1741,90 @@ msgstr "テスト通知"
 msgid "Test Toast Notification"
 msgstr "テスト通知"
 
-#: src/components/preferences/panes/GeneralPane.tsx:74
-msgid "The shortcut may be out of sync. Please restart the app or try again."
-msgstr "ショートカットが同期されていない可能性があります。アプリを再起動するか、もう一度お試しください。"
-
-#: src/components/miniflux/ConnectionDialog.tsx:266
+#: src/components/miniflux/ConnectionDialog.tsx:227
 msgid "The URL of your Miniflux server (e.g., miniflux.example.com)"
 msgstr "Miniflux サーバーの URL（例：miniflux.example.com）"
 
-#: src/components/preferences/panes/AppearancePane.tsx:110
+#: src/components/preferences/panes/AppearancePane.tsx:192
 msgid "Theme"
 msgstr "テーマ"
 
-#: src/pages/TemplatesPage.tsx:53
-#~ msgid "Theme Support"
-#~ msgstr ""
-
-#: src/pages/ComponentsPage.tsx:353
-#~ msgid "This content smoothly animates in and out when toggled. The collapsible uses Framer Motion's AnimatePresence for smooth enter/exit animations."
-#~ msgstr ""
+#: src/components/preferences/panes/AppearancePane.tsx:218
+msgid "These replacements are applied after built-in Chinese conversion in the reading panel."
+msgstr "These replacements are applied after built-in Chinese conversion in the reading panel."
 
 #: src/lib/commands/notification-commands.ts:16
 msgid "This is a test notification"
 msgstr "これはテスト通知です"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:25
+#: src/components/preferences/panes/AdvancedPane.tsx:83
 msgid "This is an example advanced toggle setting (not persisted)"
 msgstr "これは詳細切り替え設定の例です（保存されません）"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:41
+#: src/components/preferences/panes/AdvancedPane.tsx:99
 msgid "This is an example dropdown/select setting (not persisted)"
 msgstr "これはドロップダウン/選択設定の例です（保存されません）"
 
-#: src/components/preferences/panes/GeneralPane.tsx:226
-msgid "This is an example switch/toggle setting (not persisted)"
-msgstr "これはスイッチ/切り替え設定の例です（保存されません）"
+#: src/components/sync/SyncProgressPopover.tsx:142
+msgid "This step did not finish"
+msgstr "This step did not finish"
 
-#: src/components/preferences/panes/GeneralPane.tsx:215
-msgid "This is an example text input setting (not persisted)"
-msgstr "これはテキスト入力設定の例です（保存されません）"
+#: src/components/miniflux/settings/DeleteEntityDialog.tsx:46
+msgid "This user will be permanently removed from Miniflux."
+msgstr "This user will be permanently removed from Miniflux."
+
+#: src/components/miniflux/settings/DeleteEntityDialog.tsx:45
+msgid "This will permanently remove the feed from Miniflux."
+msgstr "This will permanently remove the feed from Miniflux."
+
+#: src/components/preferences/panes/AdvancedPane.tsx:133
+msgid "This will remove all locally stored data and disconnect your account."
+msgstr "This will remove all locally stored data and disconnect your account."
+
+#: src/components/miniflux/settings/DeleteEntityDialog.tsx:43
+msgid "This will remove the category from Miniflux."
+msgstr "This will remove the category from Miniflux."
+
+#: src/components/miniflux/UserNav.tsx:149
+msgid "Timezone"
+msgstr "Timezone"
 
 #: src/pages/HomePage.tsx:108
 msgid "Tip:"
 msgstr "ヒント："
 
+#: src/components/sync/SyncProgressPopover.tsx:306
+msgid "Tip: \"Categories\" means folders, \"Feeds\" means subscriptions, and \"Entries\" means articles."
+msgstr "Tip: \"Categories\" means folders, \"Feeds\" means subscriptions, and \"Entries\" means articles."
+
+#: src/components/miniflux/EntryEmptyState.tsx:282
+msgid "Tip: Use h / j to jump between entries quickly."
+msgstr "Tip: Use h / j to jump between entries quickly."
+
+#: src/components/miniflux/AddCategoryDialog.tsx:37
+#: src/components/miniflux/EditCategoryDialog.tsx:38
+#: src/components/miniflux/EditFeedDialog.tsx:85
+msgid "Title is required"
+msgstr "Title is required"
+
+#: src/components/preferences/panes/AppearancePane.tsx:236
+msgid "To"
+msgstr "To"
+
 #: src/pages/HomePage.tsx:111
 msgid "to open the command palette and explore available commands."
 msgstr "コマンドパレットを開いて利用可能なコマンドを探索します。"
 
-#: src/components/layout/AppSidebar.tsx:109
-#: src/components/layout/AppSidebar.tsx:118
-#: src/components/miniflux/MinifluxLayout.tsx:59
+#: src/components/layout/AppSidebar.tsx:372
+#: src/components/layout/AppSidebar.tsx:381
+#: src/components/miniflux/EntryList.tsx:93
+#: src/components/miniflux/MinifluxLayout.tsx:290
 msgid "Today"
 msgstr "今日"
 
-#: src/pages/ComponentsPage.tsx:344
-#~ msgid "Toggle Content"
-#~ msgstr ""
+#: src/components/layout/AppSidebar.tsx:281
+msgid "Toggle category feeds"
+msgstr "Toggle category feeds"
 
 #: src/lib/menu.ts:62
 msgid "Toggle Left Sidebar"
@@ -935,64 +1834,178 @@ msgstr "左サイドバーの切り替え"
 msgid "Toggle Maximize"
 msgstr "最大化の切り替え"
 
-#: src/lib/menu.ts:68
-#~ msgid "Toggle Right Sidebar"
-#~ msgstr "右サイドバーの切り替え"
-
 #: src/lib/commands/window-commands.ts:44
 msgid "Toggle window maximize state"
 msgstr "ウィンドウの最大化状態を切り替え"
 
-#: src/pages/ComponentsPage.tsx:65
-#~ msgid "Total Revenue"
-#~ msgstr ""
-
-#: src/components/preferences/panes/GeneralPane.tsx:112
+#: src/components/preferences/panes/GeneralPane.tsx:61
 msgid "Tray icon disabled. Changes will take effect on restart."
 msgstr "トレイアイコンを無効にしました。変更は再起動後に有効になります。"
 
-#: src/components/preferences/panes/GeneralPane.tsx:111
+#: src/components/preferences/panes/GeneralPane.tsx:60
 msgid "Tray icon enabled"
 msgstr "トレイアイコンを有効にしました"
+
+#: src/components/miniflux/ReaderSettings.tsx:141
+msgid "Tune the reading layout for long-form comfort."
+msgstr "Tune the reading layout for long-form comfort."
 
 #: src/components/command-palette/CommandPalette.tsx:91
 #: src/components/command-palette/CommandPalette.tsx:94
 msgid "Type a command or search..."
 msgstr "コマンドを入力または検索..."
 
-#: src/pages/TemplatesPage.tsx:65
-#~ msgid "TypeScript Bindings"
-#~ msgstr ""
+#: src/components/miniflux/ReaderSettings.tsx:139
+msgid "Typography"
+msgstr "Typography"
 
-#: src/pages/TemplatesPage.tsx:140
-#~ msgid "Use Template"
-#~ msgstr ""
+#: src/components/miniflux/EntryFilters.tsx:107
+#: src/components/miniflux/EntryListFloatingFilterBar.tsx:38
+msgid "Unread"
+msgstr "Unread"
 
-#: src/components/miniflux/ConnectionDialog.tsx:335
+#: src/components/miniflux/EntryReadingHeader.tsx:294
+#: src/components/miniflux/EntryReadingHeader.tsx:304
+msgid "Unstar"
+msgstr "Unstar"
+
+#: src/components/layout/AppSidebar.tsx:140
+msgid "Unsubscribe"
+msgstr "Unsubscribe"
+
+#: src/components/miniflux/settings/FeedFormDialog.tsx:264
+msgid "Update feed details and category."
+msgstr "Update feed details and category."
+
+#: src/components/miniflux/EditFeedDialog.tsx:163
+msgid "Update feed URL, category, and advanced feed settings."
+msgstr "Update feed URL, category, and advanced feed settings."
+
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:298
+msgid "Update the API token used by the current account."
+msgstr "Update the API token used by the current account."
+
+#: src/components/miniflux/EditCategoryDialog.tsx:70
+msgid "Update the title of your category."
+msgstr "Update the title of your category."
+
+#: src/components/miniflux/settings/CategoryFormDialog.tsx:62
+msgid "Update this category name."
+msgstr "Update this category name."
+
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:526
+msgid "Update token"
+msgstr "Update token"
+
+#: src/components/miniflux/settings/UserFormDialog.tsx:68
+msgid "Update username or password."
+msgstr "Update username or password."
+
+#: src/components/downloads/DownloadManagerDialog.tsx:246
+msgid "URL copied to clipboard"
+msgstr "URL copied to clipboard"
+
+#: src/components/miniflux/AddFeedDialog.tsx:525
+msgid "URL selected from discovered sources"
+msgstr "URL selected from discovered sources"
+
+#: src/components/miniflux/AddFeedDialog.tsx:682
+#: src/components/miniflux/EditFeedDialog.tsx:310
+#: src/components/miniflux/settings/FeedFormDialog.tsx:484
+msgid "Use custom crawler"
+msgstr "Use custom crawler"
+
+#: src/components/miniflux/SearchSourceDialog.tsx:193
+msgid "Use in Add Feed"
+msgstr "Use in Add Feed"
+
+#: src/components/miniflux/settings/FeedFormDialog.tsx:366
+msgid "Use source title"
+msgstr "Use source title"
+
+#: src/components/miniflux/AddFeedDialog.tsx:480
+msgid "Use URL"
+msgstr "Use URL"
+
+#: src/components/miniflux/settings/UserFormDialog.tsx:140
+#: src/components/miniflux/UserNav.tsx:139
+msgid "User"
+msgstr "User"
+
+#: src/components/miniflux/AddFeedDialog.tsx:631
+#: src/components/miniflux/EditFeedDialog.tsx:259
+#: src/components/miniflux/settings/FeedFormDialog.tsx:430
+msgid "User agent"
+msgstr "User agent"
+
+#: src/services/miniflux/users.ts:115
+msgid "User created"
+msgstr "User created"
+
+#: src/services/miniflux/users.ts:184
+msgid "User deleted"
+msgstr "User deleted"
+
+#: src/components/miniflux/settings/UsersPane.tsx:37
+msgid "User management requires an administrator account."
+msgstr "User management requires an administrator account."
+
+#: src/components/miniflux/UserNav.tsx:134
+msgid "User Profile"
+msgstr "User Profile"
+
+#: src/services/miniflux/users.ts:157
+msgid "User updated"
+msgstr "User updated"
+
+#: src/components/miniflux/ConnectionDialog.tsx:281
+#: src/components/miniflux/settings/UserFormDialog.tsx:82
 msgid "Username"
 msgstr "ユーザー名"
 
-#: src/components/miniflux/ConnectionDialog.tsx:103
+#: src/components/miniflux/ConnectionDialog.tsx:82
+#: src/components/miniflux/settings/UserFormDialog.tsx:37
 msgid "Username is required"
 msgstr "ユーザー名が必要です"
 
-#: src/components/miniflux/ConnectionDialog.tsx:284
+#: src/components/miniflux/ConnectionDialog.tsx:241
 msgid "Username/Password"
 msgstr "ユーザー名/パスワード"
+
+#: src/components/miniflux/MinifluxSettingsDialog.tsx:84
+#: src/components/miniflux/settings/UsersPane.tsx:32
+msgid "Users"
+msgstr "Users"
+
+#: src/lib/menu.ts:106
+msgid "Version: {__APP_VERSION__}"
+msgstr "バージョン: {__APP_VERSION__}"
+
+#: src/components/preferences/panes/GeneralPane.tsx:232
+msgid "Video Download Path"
+msgstr "Video Download Path"
+
+#: src/components/preferences/panes/GeneralPane.tsx:141
+msgid "Video download path updated"
+msgstr "Video download path updated"
 
 #: src/lib/menu.ts:58
 msgid "View"
 msgstr "表示"
 
-#: src/pages/TemplatesPage.tsx:185
-#~ msgid "View on GitHub"
-#~ msgstr ""
+#: src/components/downloads/DownloadManagerDialog.tsx:339
+msgid "View and manage your downloads"
+msgstr "View and manage your downloads"
 
-#: src/components/layout/AppSidebar.tsx:76
+#: src/components/layout/AppSidebar.tsx:332
 msgid "Views"
 msgstr "ビュー"
 
-#: src/components/miniflux/MinifluxLayout.tsx:36
+#: src/components/miniflux/ReaderSettings.tsx:112
+msgid "Warm and friendly"
+msgstr "Warm and friendly"
+
+#: src/components/miniflux/MinifluxLayout.tsx:217
 msgid "Welcome to Miniflux"
 msgstr "Miniflux へようこそ"
 
@@ -1004,22 +2017,26 @@ msgstr "Tauri テンプレートへようこそ"
 msgid "Window"
 msgstr "ウィンドウ"
 
-#: src/pages/ComponentsPage.tsx:198
-#~ msgid "You can add components to your app using the shadcn CLI."
-#~ msgstr ""
+#: src/components/miniflux/EntryList.tsx:95
+msgid "Yesterday"
+msgstr "Yesterday"
 
-#: src/components/miniflux/ConnectionDialog.tsx:322
+#: src/components/miniflux/ConnectionDialog.tsx:270
 msgid "You can find your API token in Miniflux Settings → API Keys"
 msgstr "Miniflux 設定 → API キーで API トークンを見つけることができます"
 
-#: src/pages/ComponentsPage.tsx:97
-#~ msgid "You have 3 unread messages."
-#~ msgstr ""
+#: src/components/miniflux/EntryReadingHeader.tsx:226
+msgid "中文顯示"
+msgstr "中文顯示"
 
-#: src/pages/ComponentsPage.tsx:214
-#~ msgid "Your changes have been saved successfully."
-#~ msgstr ""
+#: src/components/miniflux/EntryReadingHeader.tsx:100
+msgid "簡體中文"
+msgstr "簡體中文"
 
-#: src/pages/ComponentsPage.tsx:206
-#~ msgid "Your session has expired. Please log in again."
-#~ msgstr ""
+#: src/components/miniflux/EntryReadingHeader.tsx:99
+msgid "繁體中文（台灣）"
+msgstr "繁體中文（台灣）"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:98
+msgid "繁體中文（香港）"
+msgstr "繁體中文（香港）"
