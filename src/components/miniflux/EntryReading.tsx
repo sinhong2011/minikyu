@@ -11,7 +11,7 @@ import { logger } from '@/lib/logger';
 import { getReaderFontStack } from '@/lib/reader-fonts';
 import { cn } from '@/lib/utils';
 import { useEntry } from '@/services/miniflux';
-import { useToggleEntryStar } from '@/services/miniflux/entries';
+import { useMarkEntryRead, useToggleEntryStar } from '@/services/miniflux/entries';
 import { EntryReadingHeader } from './EntryReadingHeader';
 import { buildEntryContentWithToc } from './entry-toc';
 import { SafeHtml } from './SafeHtml';
@@ -20,6 +20,7 @@ interface EntryReadingProps {
   entryId: string;
   onNavigatePrev?: () => void;
   onNavigateNext?: () => void;
+  onClose?: () => void;
   hasPrev?: boolean;
   hasNext?: boolean;
   transitionDirection?: 'forward' | 'backward';
@@ -29,6 +30,7 @@ export function EntryReading({
   entryId,
   onNavigatePrev,
   onNavigateNext,
+  onClose,
   hasPrev = false,
   hasNext = false,
   transitionDirection = 'forward',
@@ -45,6 +47,7 @@ export function EntryReading({
   } = useReaderSettings();
   const { data: entry, isLoading, error } = useEntry(entryId);
   const toggleStar = useToggleEntryStar();
+  const markEntryRead = useMarkEntryRead();
   const scrollRef = useRef<HTMLDivElement>(null);
   const scrollViewportRef = useRef<HTMLElement | null>(null);
   const scrollAnimationFrameRef = useRef<number | null>(null);
@@ -296,7 +299,7 @@ export function EntryReading({
           e.preventDefault();
           onNavigatePrev();
         }
-      } else if (e.key === 'l' || e.key === 'ArrowRight') {
+      } else if (e.key === 'j' || e.key === 'ArrowRight') {
         if (hasNext && onNavigateNext) {
           e.preventDefault();
           onNavigateNext();
@@ -351,9 +354,13 @@ export function EntryReading({
         entry={entry}
         onNavigatePrev={onNavigatePrev}
         onNavigateNext={onNavigateNext}
+        onClose={onClose}
         hasPrev={hasPrev}
         hasNext={hasNext}
         onToggleStar={() => toggleStar.mutate(entry.id)}
+        onMarkAsRead={() => markEntryRead.mutate(entry.id)}
+        isRead={entry.status === 'read'}
+        isMarkingAsRead={markEntryRead.isPending}
         headerPadding={headerPadding}
         smallTitleOpacity={smallTitleOpacity}
         smallTitleHeight={smallTitleHeight}
@@ -365,7 +372,7 @@ export function EntryReading({
 
       <div className="relative flex-1 min-h-0">
         <ScrollArea className="h-full min-h-0" ref={scrollRef}>
-          <AnimatePresence initial={false} mode="wait">
+          <AnimatePresence mode="wait">
             <motion.div
               key={entry.id}
               initial={{

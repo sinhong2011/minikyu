@@ -6,7 +6,6 @@ import { useSearch } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { MainWindowContent } from '@/components/layout/MainWindowContent';
-import { SyncProgressPopover } from '@/components/sync/SyncProgressPopover';
 import { Button } from '@/components/ui/button';
 import { useSyncProgressListener } from '@/hooks/use-sync-progress-listener';
 import { logger } from '@/lib/logger';
@@ -14,6 +13,7 @@ import type { EntryFilters } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
 import { useIsConnected } from '@/services/miniflux/auth';
 import { useCategories } from '@/services/miniflux/categories';
+import { useUnreadCounts } from '@/services/miniflux/counters';
 import { useEntries, usePrefetchEntry } from '@/services/miniflux/entries';
 import { useSyncMiniflux } from '@/services/miniflux/feeds';
 import { useLastReadingEntry, useSaveLastReading } from '@/services/reading-state';
@@ -33,6 +33,7 @@ export function MinifluxLayout() {
   const feedId = search.feedId;
   const { data: isConnected, isLoading } = useIsConnected();
   const { data: categories } = useCategories(isConnected ?? false);
+  const { data: unreadCounts } = useUnreadCounts();
   const [showConnectionDialog, setShowConnectionDialog] = useState(false);
   const selectedEntryId = useUIStore((state) => state.selectedEntryId);
   const setSelectedEntryId = useUIStore((state) => state.setSelectedEntryId);
@@ -46,6 +47,7 @@ export function MinifluxLayout() {
   const syncMiniflux = useSyncMiniflux();
   const syncing = useSyncStore((state) => state.syncing);
   const hasAutoSyncedRef = useRef(false);
+  const suppressAutoSelectRef = useRef(false);
   useSyncProgressListener();
   const hasExplicitStatusFilter = localFilters.starred != null || localFilters.status != null;
   const shouldDefaultToUnread =
@@ -58,6 +60,7 @@ export function MinifluxLayout() {
     : localFilters.status === 'unread' || shouldDefaultToUnread
       ? 'unread'
       : 'all';
+  const showBottomFilterTab = filter !== 'starred' && filter !== 'history';
   const prefetchEntry = usePrefetchEntry();
   const { data: lastReadingEntry } = useLastReadingEntry();
   const saveLastReading = useSaveLastReading();
@@ -102,8 +105,15 @@ export function MinifluxLayout() {
     }
   };
 
+  const handleClose = () => {
+    suppressAutoSelectRef.current = true;
+    setSelectedEntryId(undefined);
+  };
+
   // Handle entry selection with logging - logs entry details when user selects an entry
   const handleEntrySelect = (entryId: string) => {
+    suppressAutoSelectRef.current = false;
+
     if (entriesData?.entries && selectedEntryId && selectedEntryId !== entryId) {
       const previousIndex = entriesData.entries.findIndex((entry) => entry.id === selectedEntryId);
       const nextIndex = entriesData.entries.findIndex((entry) => entry.id === entryId);
@@ -154,7 +164,16 @@ export function MinifluxLayout() {
   };
 
   useEffect(() => {
-    if (lastReadingEntry && entriesData?.entries && !selectedEntryId) {
+    if (selectedEntryId) {
+      suppressAutoSelectRef.current = false;
+      return;
+    }
+
+    if (suppressAutoSelectRef.current) {
+      return;
+    }
+
+    if (lastReadingEntry && entriesData?.entries) {
       const entryExists = entriesData.entries.find(
         (e) => String(e.id) === lastReadingEntry.entry_id
       );
@@ -206,25 +225,74 @@ export function MinifluxLayout() {
     );
   }
 
-  const getFilterTitle = () => {
+  const getFilterCount = () => {
+    if (!entriesData) {
+      return null;
+    }
+
+    const total = Number(entriesData.total);
+    if (Number.isNaN(total)) {
+      return null;
+    }
+
+    return total;
+  };
+
+  const getUnreadFilterCount = () => {
+    if (!unreadCounts) {
+      return null;
+    }
+
     if (categoryId) {
-      const category = categories?.find((c) => c.id.toString() === categoryId);
-      return category?.title || _(msg`Category`);
+      const categoryCount = unreadCounts.by_category?.find((c) => c.category_id === categoryId);
+      const unread = Number(categoryCount?.unread_count);
+      return Number.isNaN(unread) ? null : unread;
     }
 
     if (feedId) {
-      return _(msg`Feed`);
+      const feedCount = unreadCounts.by_feed?.find((f) => f.feed_id === feedId);
+      const unread = Number(feedCount?.unread_count);
+      return Number.isNaN(unread) ? null : unread;
+    }
+
+    if (filter === 'all' || filter === 'today') {
+      const unread = Number(filter === 'all' ? unreadCounts.total : unreadCounts.today);
+      return Number.isNaN(unread) ? null : unread;
+    }
+
+    return null;
+  };
+
+  const formatTitleWithCount = (label: string, count: number | null) => {
+    return count == null ? label : `${label}(${count})`;
+  };
+
+  const getFilterTitle = () => {
+    if (categoryId) {
+      const category = categories?.find((c) => c.id.toString() === categoryId);
+      const label = category?.title || _(msg`Category`);
+      return formatTitleWithCount(label, getUnreadFilterCount());
+    }
+
+    if (feedId) {
+      return formatTitleWithCount(_(msg`Feed`), getUnreadFilterCount());
     }
 
     switch (filter) {
       case 'all':
-        return _(msg`All`);
-      case 'starred':
-        return _(msg`Starred`);
+        return formatTitleWithCount(_(msg`All`), getUnreadFilterCount());
+      case 'starred': {
+        const count = getFilterCount();
+        const label = _(msg`Starred`);
+        return formatTitleWithCount(label, count);
+      }
       case 'today':
-        return _(msg`Today`);
-      case 'history':
-        return _(msg`History`);
+        return formatTitleWithCount(_(msg`Today`), getUnreadFilterCount());
+      case 'history': {
+        const count = getFilterCount();
+        const label = _(msg`History`);
+        return formatTitleWithCount(label, count);
+      }
       default:
         return _(msg`All`);
     }
@@ -243,6 +311,7 @@ export function MinifluxLayout() {
     <MainWindowContent
       onNavigatePrev={handleNavigatePrev}
       onNavigateNext={handleNavigateNext}
+      onClose={handleClose}
       hasPrev={hasPrev}
       hasNext={hasNext}
       entryTransitionDirection={entryTransitionDirection}
@@ -253,24 +322,22 @@ export function MinifluxLayout() {
             <h1 className="text-xl font-semibold">{getFilterTitle()}</h1>
           </div>
           <div className="flex items-center gap-2">
-            <SyncProgressPopover>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => {
-                  if (!syncing) {
-                    syncMiniflux.mutate();
-                  }
-                }}
-                title={syncing ? _(msg`Syncing...`) : _(msg`Sync`)}
-              >
-                <HugeiconsIcon
-                  icon={RefreshIcon}
-                  className={cn('h-4 w-4', syncing && 'animate-spin')}
-                />
-              </Button>
-            </SyncProgressPopover>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => {
+                if (!syncing) {
+                  syncMiniflux.mutate();
+                }
+              }}
+              title={syncing ? _(msg`Syncing...`) : _(msg`Sync`)}
+            >
+              <HugeiconsIcon
+                icon={RefreshIcon}
+                className={cn('h-4 w-4', syncing && 'animate-spin')}
+              />
+            </Button>
             <Button
               variant="ghost"
               size="icon"
@@ -304,8 +371,8 @@ export function MinifluxLayout() {
             filters={mergedFilters}
             selectedEntryId={selectedEntryId}
             onEntrySelect={handleEntrySelect}
-            currentStatus={currentStatus}
-            onStatusChange={handleBottomFilterChange}
+            currentStatus={showBottomFilterTab ? currentStatus : undefined}
+            onStatusChange={showBottomFilterTab ? handleBottomFilterChange : undefined}
           />
         </div>
       </div>

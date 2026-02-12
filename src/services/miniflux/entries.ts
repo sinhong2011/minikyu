@@ -1,4 +1,4 @@
-import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 import {
@@ -18,15 +18,47 @@ export const entryQueryKeys = {
   detail: (id: string) => [...entryQueryKeys.all, 'detail', id] as const,
 };
 
+const ENTRIES_PAGE_SIZE = 100;
+
+export function getNextEntriesOffset(
+  pages: Array<{ total: string; entries?: Array<unknown> | null }>
+): number | undefined {
+  const lastPageCount = pages[pages.length - 1]?.entries?.length ?? 0;
+  if (pages.length > 0 && lastPageCount === 0) {
+    return undefined;
+  }
+
+  const total = Number(pages[0]?.total ?? '0');
+
+  if (!Number.isFinite(total) || total <= 0) {
+    return undefined;
+  }
+
+  const loadedCount = pages.reduce((count, page) => count + (page.entries?.length ?? 0), 0);
+
+  if (loadedCount >= total) {
+    return undefined;
+  }
+
+  return loadedCount;
+}
+
 /**
  * Hook to get entries with filters
  */
 export function useEntries(filters: EntryFilters = {}) {
-  return useQuery({
+  return useInfiniteQuery({
     queryKey: entryQueryKeys.list(filters),
-    queryFn: async (): Promise<EntryResponse> => {
-      logger.debug('Fetching entries from Miniflux', { filters });
-      const result = await commands.getEntries(filters);
+    initialPageParam: 0,
+    queryFn: async ({ pageParam }): Promise<EntryResponse> => {
+      const paginationFilters: EntryFilters = {
+        ...filters,
+        limit: String(ENTRIES_PAGE_SIZE),
+        offset: String(pageParam),
+      };
+
+      logger.debug('Fetching entries from Miniflux', { filters: paginationFilters });
+      const result = await commands.getEntries(paginationFilters);
 
       if (result.status === 'error') {
         // Don't show toast for expected "not connected" state
@@ -35,12 +67,12 @@ export function useEntries(filters: EntryFilters = {}) {
         if (isNotConnected) {
           logger.debug('Miniflux not connected (expected on first launch)', {
             error: result.error,
-            filters,
+            filters: paginationFilters,
           });
         } else {
           logger.error('Failed to fetch entries', {
             error: result.error,
-            filters,
+            filters: paginationFilters,
           });
           toast.error('Failed to load entries', {
             description: result.error,
@@ -52,8 +84,19 @@ export function useEntries(filters: EntryFilters = {}) {
       logger.info('Entries fetched successfully', {
         count: result.data.entries?.length ?? 0,
         total: result.data.total,
+        offset: pageParam,
       });
       return result.data;
+    },
+    getNextPageParam: (_, allPages) => getNextEntriesOffset(allPages),
+    select: (data): EntryResponse => {
+      const entries = data.pages.flatMap((page) => page.entries ?? []);
+      const total = data.pages[0]?.total ?? '0';
+
+      return {
+        total,
+        entries,
+      };
     },
     staleTime: 1000 * 60 * 2, // 2 minutes
     gcTime: 1000 * 60 * 5, // 5 minutes

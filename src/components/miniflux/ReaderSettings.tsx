@@ -85,8 +85,6 @@ export function ReaderSettings() {
     switch (family) {
       case 'sans-serif':
         return _(msg`Sans`);
-      case 'raleway':
-        return _(msg`Raleway`);
       case 'system-ui':
         return _(msg`System UI`);
       case 'humanist':
@@ -108,8 +106,6 @@ export function ReaderSettings() {
     switch (family) {
       case 'sans-serif':
         return _(msg`Clean and balanced`);
-      case 'raleway':
-        return _(msg`Refined and airy`);
       case 'system-ui':
         return _(msg`Native platform feel`);
       case 'humanist':

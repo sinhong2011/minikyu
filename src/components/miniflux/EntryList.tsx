@@ -59,7 +59,14 @@ export function EntryList({
   onStatusChange,
 }: EntryListProps) {
   const { _ } = useLingui();
-  const { data: entriesData, isLoading, error } = useEntries(filters);
+  const {
+    data: entriesData,
+    isLoading,
+    error,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useEntries(filters);
   const prefetchEntry = usePrefetchEntry();
   const selectionMode = useUIStore((state) => state.selectionMode);
   const [newEntryIds, setNewEntryIds] = useState<Set<string>>(() => new Set());
@@ -295,6 +302,22 @@ export function EntryList({
     return () => window.removeEventListener('keydown', handleGlobalKeyDown);
   }, [entriesData, selectedEntryId, onEntrySelect, selectionMode]);
 
+  useEffect(() => {
+    if (!hasNextPage || isFetchingNextPage || listRows.length === 0) {
+      return;
+    }
+
+    const lastVisibleItem = virtualItems[virtualItems.length - 1];
+    if (!lastVisibleItem) {
+      return;
+    }
+
+    const prefetchThreshold = 6;
+    if (lastVisibleItem.index >= listRows.length - prefetchThreshold) {
+      fetchNextPage();
+    }
+  }, [fetchNextPage, hasNextPage, isFetchingNextPage, listRows.length, virtualItems]);
+
   const handleEntryClick = (entryId: string) => {
     onEntrySelect?.(entryId);
   };
@@ -521,6 +544,9 @@ export function EntryList({
           })}
         </div>
       </div>
+      {isFetchingNextPage && (
+        <div className="px-4 pb-3 text-xs text-muted-foreground">{_(msg`Loading...`)}</div>
+      )}
       {showFloatingFilterBar && currentStatus && onStatusChange && (
         <EntryListFloatingFilterBar
           currentStatus={currentStatus}
