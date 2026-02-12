@@ -115,6 +115,51 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn test_composite_index_creation() {
+        // Arrange: Create in-memory database
+        let pool = SqlitePool::connect("sqlite::memory:").await.unwrap();
+
+        // Act: Run migrations
+        run_migrations(&pool).await.unwrap();
+
+        // Assert: Verify composite index exists
+        let indexes: Vec<(String, String)> = sqlx::query_as(
+            "SELECT name, sql FROM sqlite_master WHERE type='index' AND tbl_name='entries' ORDER BY name"
+        )
+        .fetch_all(&pool)
+        .await
+        .unwrap();
+
+        let composite_index = indexes.iter().find(|(name, _)| name == "idx_entries_feed_status");
+        assert!(
+            composite_index.is_some(),
+            "Composite index idx_entries_feed_status should exist"
+        );
+
+        // Verify index is on correct columns
+        let (_, sql) = composite_index.unwrap();
+        assert!(
+            sql.contains("feed_id") && sql.contains("status"),
+            "Index should be on feed_id and status columns, got: {}",
+            sql
+        );
+
+        // Verify migration was tracked
+        let migrations: Vec<(i32, String)> =
+            sqlx::query_as("SELECT version, migration_name FROM schema_versions ORDER BY version")
+                .fetch_all(&pool)
+                .await
+                .unwrap();
+
+        assert!(
+            migrations
+                .iter()
+                .any(|(v, n)| *v == 2 && n == "add_composite_index"),
+            "Migration 2 (add_composite_index) should be tracked"
+        );
+    }
+
+    #[tokio::test]
     async fn test_miniflux_connections_table_creation() {
         let pool = SqlitePool::connect("sqlite::memory:").await.unwrap();
         run_migrations(&pool).await.unwrap();
