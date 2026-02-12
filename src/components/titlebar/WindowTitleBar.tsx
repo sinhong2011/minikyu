@@ -1,7 +1,16 @@
-import { PanelLeftCloseIcon, PanelLeftIcon, Settings01Icon } from '@hugeicons/core-free-icons';
+import {
+  Alert01Icon,
+  ArrowReloadHorizontalIcon,
+  CheckmarkCircle01Icon,
+  DatabaseSync01Icon,
+  PanelLeftCloseIcon,
+  PanelLeftIcon,
+  Settings01Icon,
+} from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { SyncProgressPopover } from '@/components/sync/SyncProgressPopover';
 import { CommandSearchButton } from '@/components/titlebar/CommandSearchButton';
 import { MacOSWindowControls } from '@/components/titlebar/MacOSWindowControls';
 import { WindowsWindowControls } from '@/components/titlebar/WindowsWindowControls';
@@ -10,6 +19,8 @@ import { useCommandContext } from '@/hooks/use-command-context';
 import type { AppPlatform } from '@/hooks/use-platform';
 import { executeCommand } from '@/lib/commands';
 import { cn } from '@/lib/utils';
+import { useIsConnected } from '@/services/miniflux/auth';
+import { useSyncStore } from '@/store/sync-store';
 import { useUIStore } from '@/store/ui-store';
 
 interface WindowTitleBarProps {
@@ -23,6 +34,10 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
   const leftSidebarVisible = useUIStore((state) => state.leftSidebarVisible);
   const toggleLeftSidebar = useUIStore((state) => state.toggleLeftSidebar);
   const toggleDownloads = useUIStore((state) => state.toggleDownloads);
+  const { data: isConnected } = useIsConnected();
+  const syncing = useSyncStore((state) => state.syncing);
+  const syncError = useSyncStore((state) => state.error);
+  const syncStage = useSyncStore((state) => state.currentStage);
   const commandContext = useCommandContext();
 
   const handleOpenSettings = async () => {
@@ -33,6 +48,29 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
   };
 
   const isMacOS = platform === 'macos';
+  const syncStatus = syncing
+    ? 'syncing'
+    : syncError || syncStage === 'failed'
+      ? 'failed'
+      : syncStage === 'completed'
+        ? 'completed'
+        : 'idle';
+  const syncIcon =
+    syncStatus === 'syncing'
+      ? ArrowReloadHorizontalIcon
+      : syncStatus === 'failed'
+        ? Alert01Icon
+        : syncStatus === 'completed'
+          ? CheckmarkCircle01Icon
+          : DatabaseSync01Icon;
+  const syncTitle =
+    syncStatus === 'syncing'
+      ? _(msg`Syncing...`)
+      : syncStatus === 'failed'
+        ? _(msg`Sync failed`)
+        : syncStatus === 'completed'
+          ? _(msg`Sync completed`)
+          : _(msg`Sync Progress`);
 
   return (
     <div
@@ -77,6 +115,37 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
 
       {/* Right section */}
       <div data-tauri-drag-region className="flex items-center gap-2 pr-2">
+        {isConnected && (
+          <SyncProgressPopover>
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                'h-8 w-8 shrink-0 hover:text-foreground',
+                syncStatus === 'failed' ? 'text-destructive' : 'text-foreground/70'
+              )}
+              title={syncTitle}
+            >
+              <span
+                className={cn(
+                  'relative inline-flex items-center justify-center isolate',
+                  syncStatus === 'syncing' && 'sync-indicator-ring'
+                )}
+              >
+                <HugeiconsIcon
+                  icon={syncIcon}
+                  className={cn(
+                    'h-4 w-4 transition-[transform,color,opacity] duration-200',
+                    syncStatus === 'syncing' && 'sync-indicator-syncing text-primary',
+                    syncStatus === 'completed' &&
+                      'sync-indicator-completed text-emerald-600 dark:text-emerald-400',
+                    syncStatus === 'failed' && 'sync-indicator-failed text-destructive'
+                  )}
+                />
+              </span>
+            </Button>
+          </SyncProgressPopover>
+        )}
         <Button
           onClick={toggleDownloads}
           variant="ghost"

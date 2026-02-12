@@ -44,7 +44,18 @@ export const useSyncStore = create<SyncState>()(
           set(error !== null ? { error, syncing: false } : { error }, undefined, 'setError'),
 
         startSync: () =>
-          set({ syncing: true, error: null, currentStage: 'idle' }, undefined, 'startSync'),
+          set(
+            {
+              syncing: true,
+              error: null,
+              currentStage: 'idle',
+              categoriesCount: undefined,
+              feedsCount: undefined,
+              entriesProgress: undefined,
+            },
+            undefined,
+            'startSync'
+          ),
 
         completeSync: () =>
           set(

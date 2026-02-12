@@ -223,6 +223,7 @@ pub async fn sync_miniflux_impl(
 
     if is_full_sync {
         delete_stale_entries(pool, user_id).await?;
+        delete_stale_icons(pool, user_id).await?;
         delete_stale_feeds(pool, user_id).await?;
         delete_stale_categories(pool, user_id).await?;
     } else {
@@ -627,6 +628,17 @@ async fn delete_stale_feeds(pool: &SqlitePool, user_id: i64) -> Result<(), Strin
     Ok(())
 }
 
+async fn delete_stale_icons(pool: &SqlitePool, user_id: i64) -> Result<(), String> {
+    sqlx::query(
+        "DELETE FROM icons WHERE feed_id IN (SELECT id FROM feeds WHERE user_id = ? AND sync_status = 'stale')",
+    )
+    .bind(user_id)
+    .execute(pool)
+    .await
+    .map_err(|e| format!("Failed to delete stale icons: {e}"))?;
+    Ok(())
+}
+
 async fn delete_stale_entries(pool: &SqlitePool, user_id: i64) -> Result<(), String> {
     sqlx::query("DELETE FROM entries WHERE user_id = ? AND sync_status = 'stale'")
         .bind(user_id)
@@ -673,14 +685,70 @@ async fn delete_removed_feeds(
     user_id: i64,
     feed_ids: &[i64],
 ) -> Result<(), String> {
+    let mut transaction = pool
+        .begin()
+        .await
+        .map_err(|e| format!("Failed to start removed feed cleanup transaction: {e}"))?;
+
     if feed_ids.is_empty() {
+        sqlx::query("DELETE FROM entries WHERE user_id = ?")
+            .bind(user_id)
+            .execute(&mut *transaction)
+            .await
+            .map_err(|e| format!("Failed to clear entries for removed feeds: {e}"))?;
+
+        sqlx::query("DELETE FROM icons WHERE feed_id IN (SELECT id FROM feeds WHERE user_id = ?)")
+            .bind(user_id)
+            .execute(&mut *transaction)
+            .await
+            .map_err(|e| format!("Failed to clear icons for removed feeds: {e}"))?;
+
         sqlx::query("DELETE FROM feeds WHERE user_id = ?")
             .bind(user_id)
-            .execute(pool)
+            .execute(&mut *transaction)
             .await
             .map_err(|e| format!("Failed to clear feeds: {e}"))?;
+
+        transaction
+            .commit()
+            .await
+            .map_err(|e| format!("Failed to commit removed feed cleanup transaction: {e}"))?;
+
         return Ok(());
     }
+
+    let mut entries_builder: QueryBuilder<sqlx::Sqlite> =
+        QueryBuilder::new("DELETE FROM entries WHERE user_id = ");
+    entries_builder.push_bind(user_id);
+    entries_builder.push(" AND feed_id NOT IN (");
+    let mut entries_separated = entries_builder.separated(",");
+    for id in feed_ids {
+        entries_separated.push_bind(id);
+    }
+    entries_builder.push(")");
+
+    entries_builder
+        .build()
+        .execute(&mut *transaction)
+        .await
+        .map_err(|e| format!("Failed to delete entries for removed feeds: {e}"))?;
+
+    let mut icons_builder: QueryBuilder<sqlx::Sqlite> = QueryBuilder::new(
+        "DELETE FROM icons WHERE feed_id IN (SELECT id FROM feeds WHERE user_id = ",
+    );
+    icons_builder.push_bind(user_id);
+    icons_builder.push(" AND id NOT IN (");
+    let mut icons_separated = icons_builder.separated(",");
+    for id in feed_ids {
+        icons_separated.push_bind(id);
+    }
+    icons_builder.push("))");
+
+    icons_builder
+        .build()
+        .execute(&mut *transaction)
+        .await
+        .map_err(|e| format!("Failed to delete icons for removed feeds: {e}"))?;
 
     let mut builder: QueryBuilder<sqlx::Sqlite> =
         QueryBuilder::new("DELETE FROM feeds WHERE user_id = ");
@@ -694,9 +762,15 @@ async fn delete_removed_feeds(
 
     builder
         .build()
-        .execute(pool)
+        .execute(&mut *transaction)
         .await
         .map_err(|e| format!("Failed to delete removed feeds: {e}"))?;
+
+    transaction
+        .commit()
+        .await
+        .map_err(|e| format!("Failed to commit removed feed cleanup transaction: {e}"))?;
+
     Ok(())
 }
 

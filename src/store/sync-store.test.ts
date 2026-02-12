@@ -8,6 +8,10 @@ describe('SyncStore', () => {
       syncing: false,
       lastSyncedAt: null,
       error: null,
+      currentStage: 'idle',
+      categoriesCount: undefined,
+      feedsCount: undefined,
+      entriesProgress: undefined,
     });
   });
 
@@ -90,12 +94,24 @@ describe('SyncStore', () => {
 
   describe('startSync action', () => {
     it('sets syncing true and clears error', () => {
-      useSyncStore.setState({ syncing: false, error: 'Previous error' });
+      useSyncStore.setState({
+        syncing: false,
+        error: 'Previous error',
+        currentStage: 'entries',
+        categoriesCount: 10,
+        feedsCount: 55,
+        entriesProgress: { pulled: 30, total: 100, percentage: 30 },
+      });
       const { startSync } = useSyncStore.getState();
 
       startSync();
-      expect(useSyncStore.getState().syncing).toBe(true);
-      expect(useSyncStore.getState().error).toBeNull();
+      const state = useSyncStore.getState();
+      expect(state.syncing).toBe(true);
+      expect(state.error).toBeNull();
+      expect(state.currentStage).toBe('idle');
+      expect(state.categoriesCount).toBeUndefined();
+      expect(state.feedsCount).toBeUndefined();
+      expect(state.entriesProgress).toBeUndefined();
     });
   });
 
