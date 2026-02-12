@@ -18,10 +18,38 @@ export const feedQueryKeys = {
   detail: (id: string) => [...feedQueryKeys.all, 'detail', id] as const,
 };
 
+function isNotFoundApiError(errorMessage: string): boolean {
+  const normalized = errorMessage.toLowerCase();
+  return (
+    normalized.includes('404 not found') ||
+    normalized.includes('api error: 404') ||
+    normalized.includes('status code: 404')
+  );
+}
+
+async function syncMinifluxCache() {
+  const syncResult = await commands.syncMiniflux();
+  if (syncResult.status === 'error') {
+    logger.warn('Feed mutation succeeded but follow-up sync failed', {
+      error: syncResult.error,
+    });
+  }
+}
+
+function hasDefinedFeedUpdateValue(updates: FeedUpdate): boolean {
+  return Object.values(updates).some((value) => value !== undefined);
+}
+
+export interface CreateFeedInput {
+  feedUrl: string;
+  categoryId: string | null;
+  updates?: FeedUpdate;
+}
+
 /**
  * Hook to get all feeds
  */
-export function useFeeds() {
+export function useFeeds(enabled: boolean = true) {
   return useQuery({
     queryKey: feedQueryKeys.list(),
     queryFn: async (): Promise<Feed[]> => {
@@ -41,6 +69,7 @@ export function useFeeds() {
       });
       return result.data;
     },
+    enabled,
     staleTime: 1000 * 60 * 5, // 5 minutes
     gcTime: 1000 * 60 * 10, // 10 minutes
   });
@@ -83,8 +112,8 @@ export function useCreateFeed() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async ({ feedUrl, categoryId }: { feedUrl: string; categoryId: string | null }) => {
-      logger.debug('Creating feed', { feedUrl, categoryId });
+    mutationFn: async ({ feedUrl, categoryId, updates }: CreateFeedInput) => {
+      logger.debug('Creating feed', { feedUrl, categoryId, hasUpdates: !!updates });
       const result = await commands.createFeed(feedUrl, categoryId);
 
       if (result.status === 'error') {
@@ -96,12 +125,27 @@ export function useCreateFeed() {
         throw new Error(result.error);
       }
 
-      logger.info('Feed created successfully', { feedId: result.data });
+      if (updates && hasDefinedFeedUpdateValue(updates)) {
+        const updateResult = await commands.updateFeed(result.data, updates);
+        if (updateResult.status === 'error') {
+          logger.warn('Feed created but failed to apply advanced fields', {
+            feedId: result.data,
+            error: updateResult.error,
+          });
+          toast.warning(translate(msg`Feed created with partial settings`), {
+            description: updateResult.error,
+          });
+        }
+      }
+
+      logger.info('Feed created successfully', { feedId: result.data, hasUpdates: !!updates });
       return result.data;
     },
-    onSuccess: () => {
+    onSuccess: async () => {
+      await syncMinifluxCache();
       // Invalidate feeds queries
-      queryClient.invalidateQueries({ queryKey: feedQueryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+      queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
       toast.success(translate(msg`Feed created`));
     },
   });
@@ -130,10 +174,12 @@ export function useUpdateFeed() {
       logger.info('Feed updated successfully', { id });
       return result.data;
     },
-    onSuccess: (_, { id }) => {
+    onSuccess: async (_, { id }) => {
+      await syncMinifluxCache();
       // Invalidate feeds queries
-      queryClient.invalidateQueries({ queryKey: feedQueryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
       queryClient.invalidateQueries({ queryKey: feedQueryKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
       toast.success(translate(msg`Feed updated`));
     },
   });
@@ -151,6 +197,14 @@ export function useDeleteFeed() {
       const result = await commands.deleteFeed(id);
 
       if (result.status === 'error') {
+        if (isNotFoundApiError(result.error)) {
+          logger.warn('Feed not found during deletion, treating as already deleted', {
+            id,
+            error: result.error,
+          });
+          return { id, alreadyDeleted: true as const };
+        }
+
         logger.error('Failed to delete feed', {
           error: result.error,
           id,
@@ -160,12 +214,47 @@ export function useDeleteFeed() {
       }
 
       logger.info('Feed deleted successfully', { id });
+      return { id, alreadyDeleted: false as const };
     },
-    onSuccess: (_, id) => {
+    onSuccess: async (result, id) => {
+      await syncMinifluxCache();
       // Invalidate feeds queries
-      queryClient.invalidateQueries({ queryKey: feedQueryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
       queryClient.invalidateQueries({ queryKey: feedQueryKeys.detail(id) });
+      queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
+
+      if (result.alreadyDeleted) {
+        logger.info('Feed was already removed on server; local state refreshed', { id });
+      }
+
       toast.success(translate(msg`Feed deleted`));
+    },
+  });
+}
+
+/**
+ * Hook to discover subscriptions from a source URL
+ */
+export function useSearchSources() {
+  return useMutation({
+    mutationFn: async (url: string) => {
+      logger.debug('Searching sources from URL', { url });
+      const result = await commands.discoverSubscriptions(url);
+
+      if (result.status === 'error') {
+        logger.error('Failed to discover sources', {
+          error: result.error,
+          url,
+        });
+        toast.error(translate(msg`Failed to search sources`), { description: result.error });
+        throw new Error(result.error);
+      }
+
+      logger.info('Sources discovered successfully', {
+        url,
+        count: result.data.length,
+      });
+      return result.data;
     },
   });
 }
@@ -262,7 +351,6 @@ export function useSyncMiniflux() {
       // Invalidate all Miniflux queries
       queryClient.invalidateQueries({ queryKey: ['miniflux'] });
       queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
-      toast.success(translate(msg`Sync completed`));
     },
     onError: (error: Error) => {
       failSync(error.message);

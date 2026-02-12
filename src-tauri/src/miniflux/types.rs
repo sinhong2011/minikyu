@@ -1,4 +1,7 @@
-use crate::utils::serde_helpers::{deserialize_i64_from_string_or_number, serialize_i64_as_string};
+use crate::utils::serde_helpers::{
+    deserialize_i64_from_string_or_number, deserialize_option_i64_from_string_or_number,
+    serialize_i64_as_string,
+};
 use serde::{Deserialize, Serialize};
 use specta::Type;
 
@@ -274,37 +277,73 @@ pub struct Subscription {
 pub struct EntryFilters {
     #[serde(default)]
     pub status: Option<String>,
-    #[serde(default)]
+    #[serde(
+        default,
+        deserialize_with = "deserialize_option_i64_from_string_or_number"
+    )]
     pub offset: Option<i64>,
-    #[serde(default)]
+    #[serde(
+        default,
+        deserialize_with = "deserialize_option_i64_from_string_or_number"
+    )]
     pub limit: Option<i64>,
     #[serde(default)]
     pub order: Option<String>,
     #[serde(default)]
     pub direction: Option<String>,
-    #[serde(default)]
+    #[serde(
+        default,
+        deserialize_with = "deserialize_option_i64_from_string_or_number"
+    )]
     pub before: Option<i64>,
-    #[serde(default)]
+    #[serde(
+        default,
+        deserialize_with = "deserialize_option_i64_from_string_or_number"
+    )]
     pub after: Option<i64>,
-    #[serde(default)]
+    #[serde(
+        default,
+        deserialize_with = "deserialize_option_i64_from_string_or_number"
+    )]
     pub published_before: Option<i64>,
-    #[serde(default)]
+    #[serde(
+        default,
+        deserialize_with = "deserialize_option_i64_from_string_or_number"
+    )]
     pub published_after: Option<i64>,
-    #[serde(default)]
+    #[serde(
+        default,
+        deserialize_with = "deserialize_option_i64_from_string_or_number"
+    )]
     pub changed_before: Option<i64>,
-    #[serde(default)]
+    #[serde(
+        default,
+        deserialize_with = "deserialize_option_i64_from_string_or_number"
+    )]
     pub changed_after: Option<i64>,
-    #[serde(default)]
+    #[serde(
+        default,
+        deserialize_with = "deserialize_option_i64_from_string_or_number"
+    )]
     pub before_entry_id: Option<i64>,
-    #[serde(default)]
+    #[serde(
+        default,
+        deserialize_with = "deserialize_option_i64_from_string_or_number"
+    )]
     pub after_entry_id: Option<i64>,
     #[serde(default)]
     pub starred: Option<bool>,
     #[serde(default)]
     pub search: Option<String>,
-    #[serde(default)]
+    #[serde(
+        default,
+        deserialize_with = "deserialize_option_i64_from_string_or_number"
+    )]
     pub category_id: Option<i64>,
-    #[serde(default)]
+    #[serde(
+        default,
+        deserialize_with = "deserialize_option_i64_from_string_or_number"
+    )]
     pub feed_id: Option<i64>,
     #[serde(default)]
     pub globally_visible: Option<bool>,
@@ -319,7 +358,10 @@ pub struct FeedUpdate {
     pub site_url: Option<String>,
     #[serde(default)]
     pub title: Option<String>,
-    #[serde(default)]
+    #[serde(
+        default,
+        deserialize_with = "deserialize_option_i64_from_string_or_number"
+    )]
     pub category_id: Option<i64>,
     #[serde(default)]
     pub scraper_rules: Option<String>,

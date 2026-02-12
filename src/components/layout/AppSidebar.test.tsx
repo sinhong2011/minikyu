@@ -1,5 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
@@ -8,10 +9,16 @@ import {
   useCategories,
   useCategoryFeeds,
   useCategoryUnreadCount,
+  useCreateCategory,
+  useCreateFeed,
+  useDeleteCategory,
+  useDeleteFeed,
   useFeedUnreadCount,
   useIsConnected,
-  useRefreshAllFeeds,
+  useSearchSources,
   useUnreadCounts,
+  useUpdateCategory,
+  useUpdateFeed,
 } from '@/services/miniflux';
 import { AppSidebar } from './AppSidebar';
 
@@ -28,6 +35,16 @@ i18n.load('en', {
   Categories: 'Categories',
   'Not Connected': 'Not Connected',
   'Failed to load feeds': 'Failed to load feeds',
+  'Add category': 'Add category',
+  'Add feed': 'Add feed',
+  'Edit category': 'Edit category',
+  'Delete category': 'Delete category',
+  'Edit feed': 'Edit feed',
+  'Delete feed': 'Delete feed',
+  'Category actions': 'Category actions',
+  'Search Source': 'Search Source',
+  'Search for websites or blog URLs to discover available feeds.':
+    'Search for websites or blog URLs to discover available feeds.',
   // biome-ignore lint/style/useNamingConvention: i18n key
   Sync: 'Sync',
   // biome-ignore lint/style/useNamingConvention: i18n key
@@ -41,14 +58,28 @@ i18n.load('en', {
 } as Record<string, string>);
 i18n.activate('en');
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      retry: false,
+    },
+  },
+});
+
 vi.mock('@/services/miniflux', () => ({
   useCategories: vi.fn(),
   useCategoryFeeds: vi.fn(),
   useCategoryUnreadCount: vi.fn(),
+  useCreateCategory: vi.fn(),
+  useCreateFeed: vi.fn(),
+  useDeleteCategory: vi.fn(),
+  useDeleteFeed: vi.fn(),
   useFeedUnreadCount: vi.fn(),
   useIsConnected: vi.fn(),
-  useRefreshAllFeeds: vi.fn(),
+  useSearchSources: vi.fn(),
   useUnreadCounts: vi.fn(),
+  useUpdateCategory: vi.fn(),
+  useUpdateFeed: vi.fn(),
 }));
 
 vi.mock('@tanstack/react-router', () => ({
@@ -134,8 +165,12 @@ const mockCategories = [
 
 const mockFeeds = [
   {
-    id: 101,
+    id: '101',
     title: 'TechCrunch',
+    // biome-ignore lint/style/useNamingConvention: API response format
+    site_url: 'https://techcrunch.com',
+    // biome-ignore lint/style/useNamingConvention: API response format
+    feed_url: 'https://techcrunch.com/rss',
     category: {
       id: '1',
       title: 'Tech',
@@ -144,8 +179,12 @@ const mockFeeds = [
     },
   },
   {
-    id: 102,
+    id: '102',
     title: 'Verge',
+    // biome-ignore lint/style/useNamingConvention: API response format
+    site_url: 'https://theverge.com',
+    // biome-ignore lint/style/useNamingConvention: API response format
+    feed_url: 'https://theverge.com/rss',
     category: {
       id: '1',
       title: 'Tech',
@@ -158,6 +197,7 @@ const mockFeeds = [
 describe('AppSidebar', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    queryClient.clear();
 
     (useIsConnected as any).mockReturnValue({ data: true, isLoading: false });
     (useUnreadCounts as any).mockReturnValue({
@@ -178,19 +218,45 @@ describe('AppSidebar', () => {
       }
       return { data: [], isLoading: false, error: null };
     });
-    (useRefreshAllFeeds as any).mockReturnValue({
-      mutate: vi.fn(),
+    (useCreateCategory as any).mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false,
+    });
+    (useUpdateCategory as any).mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false,
+    });
+    (useDeleteCategory as any).mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false,
+    });
+    (useCreateFeed as any).mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false,
+    });
+    (useUpdateFeed as any).mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false,
+    });
+    (useDeleteFeed as any).mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false,
+    });
+    (useSearchSources as any).mockReturnValue({
+      mutateAsync: vi.fn().mockResolvedValue([]),
       isPending: false,
     });
   });
 
   const renderComponent = () => {
     return render(
-      <I18nProvider i18n={i18n}>
-        <SidebarProvider>
-          <AppSidebar />
-        </SidebarProvider>
-      </I18nProvider>
+      <QueryClientProvider client={queryClient}>
+        <I18nProvider i18n={i18n}>
+          <SidebarProvider>
+            <AppSidebar />
+          </SidebarProvider>
+        </I18nProvider>
+      </QueryClientProvider>
     );
   };
 
@@ -267,5 +333,30 @@ describe('AppSidebar', () => {
     if (feedLink) {
       expect(feedLink).toHaveAttribute('href', '/?feedId=101');
     }
+  });
+
+  it('shows search source action in categories dropdown', () => {
+    renderComponent();
+
+    fireEvent.click(screen.getByLabelText('Category actions'));
+    expect(screen.getByText('Search Source')).toBeInTheDocument();
+  });
+
+  it('opens add feed dialog with feed tab by default from Add Feed action', () => {
+    renderComponent();
+
+    fireEvent.click(screen.getByLabelText('Category actions'));
+    fireEvent.click(screen.getByText('Add Feed'));
+
+    expect(screen.getByText('Create feed')).toBeInTheDocument();
+  });
+
+  it('opens add feed dialog with search tab from Search Source action', () => {
+    renderComponent();
+
+    fireEvent.click(screen.getByLabelText('Category actions'));
+    fireEvent.click(screen.getByText('Search Source'));
+
+    expect(screen.getByText('Create feed')).toBeInTheDocument();
   });
 });

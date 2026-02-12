@@ -5,6 +5,7 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import * as tauriBindings from '@/lib/tauri-bindings';
 import * as accountsService from '@/services/miniflux/accounts';
+import * as authService from '@/services/miniflux/auth';
 import * as usersService from '@/services/miniflux/users';
 import { UserNav } from './UserNav';
 
@@ -77,6 +78,12 @@ describe('UserNav', () => {
       accounts: mockAccounts,
     } as any);
 
+    vi.spyOn(authService, 'useIsConnected').mockReturnValue({
+      data: true,
+      isLoading: false,
+      isError: false,
+    } as any);
+
     // Mock useCurrentUser hook with default success state
     vi.spyOn(usersService, 'useCurrentUser').mockReturnValue({
       data: {
@@ -131,6 +138,17 @@ describe('UserNav', () => {
     expect(screen.getByText('server1.com')).toBeInTheDocument();
   });
 
+  it('shows offline cached data label when disconnected', () => {
+    vi.spyOn(authService, 'useIsConnected').mockReturnValue({
+      data: false,
+      isLoading: false,
+      isError: false,
+    } as any);
+
+    customRender(<UserNav />);
+    expect(screen.getByText('Offline cached data')).toBeInTheDocument();
+  });
+
   it('opens menu on click', async () => {
     customRender(<UserNav />);
     const trigger = screen.getByRole('button');
@@ -139,6 +157,32 @@ describe('UserNav', () => {
     await waitFor(() => {
       expect(screen.getByText('user2')).toBeInTheDocument();
       expect(screen.getByText('server2.com')).toBeInTheDocument();
+    });
+  });
+
+  it('shows Miniflux settings action when connected', async () => {
+    customRender(<UserNav />);
+    const trigger = screen.getByRole('button');
+    fireEvent.click(trigger);
+
+    await waitFor(() => {
+      expect(screen.getByText('Miniflux settings')).toBeInTheDocument();
+    });
+  });
+
+  it('hides Miniflux settings action when disconnected', async () => {
+    vi.spyOn(authService, 'useIsConnected').mockReturnValue({
+      data: false,
+      isLoading: false,
+      isError: false,
+    } as any);
+
+    customRender(<UserNav />);
+    const trigger = screen.getByRole('button');
+    fireEvent.click(trigger);
+
+    await waitFor(() => {
+      expect(screen.queryByText('Miniflux settings')).not.toBeInTheDocument();
     });
   });
 

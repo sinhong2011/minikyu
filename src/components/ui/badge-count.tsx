@@ -23,7 +23,7 @@ export function AnimatedBadge({
   return (
     <motion.span
       className={cn(
-        'font-sans tabular-nums lining-nums bg-sidebar-accent/70 text-sidebar-foreground rounded-md px-1.5 pt-[3px] pb-[2px] leading-none',
+        'font-sans tabular-nums lining-nums text-muted-foreground leading-none',
         className
       )}
       initial={animateOnMount ? { opacity: 0, scale: 0.8, y: 5 } : false}

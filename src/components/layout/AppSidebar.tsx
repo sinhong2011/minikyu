@@ -1,9 +1,14 @@
 import {
+  Add01Icon,
   ArrowRight01Icon,
   Calendar01Icon,
+  Delete02Icon,
   FavouriteIcon,
   Folder01Icon,
+  MoreVerticalIcon,
+  PencilEdit02Icon,
   RssIcon,
+  Search01Icon,
   Timer01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -12,12 +17,21 @@ import { useLingui } from '@lingui/react';
 import { Link } from '@tanstack/react-router';
 import * as React from 'react';
 import {
+  Menu,
+  MenuItem,
+  MenuPanel,
+  MenuTrigger,
+} from '@/components/animate-ui/components/base/menu';
+import {
   Collapsible,
   CollapsiblePanel,
   CollapsibleTrigger,
   useCollapsible,
 } from '@/components/animate-ui/primitives/base/collapsible';
+import { AppLogo } from '@/components/brand/AppLogo';
 import { FeedAvatar, UserNav } from '@/components/miniflux';
+import { FeedCategoryDialogProvider } from '@/components/miniflux/settings/FeedCategoryDialogProvider';
+import { useMinifluxSettingsDialogStore } from '@/components/miniflux/settings/store';
 import { AnimatedBadge } from '@/components/ui/badge-count';
 import {
   Sidebar,
@@ -37,11 +51,14 @@ import {
   SidebarMenuSubItem,
   SidebarSeparator,
 } from '@/components/ui/sidebar';
+import type { Category, Feed } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
 import {
   useCategories,
   useCategoryFeeds,
   useCategoryUnreadCount,
+  useDeleteCategory,
+  useDeleteFeed,
   useFeedUnreadCount,
   useIsConnected,
   useUnreadCounts,
@@ -65,68 +82,79 @@ function CategoryChevron() {
   );
 }
 
-function CategoryItem({ category, index }: { category: any; index: number }) {
-  const unreadCount = useCategoryUnreadCount(Number(category.id));
-
-  return (
-    <Collapsible key={category.id} defaultOpen={index === 0} className="group/collapsible">
-      <SidebarMenuItem>
-        <Link to="/" search={{ categoryId: category.id.toString() }} className="min-w-0 flex-1">
-          {({ isActive }) => (
-            <SidebarMenuButton tooltip={category.title} isActive={isActive} className="pl-8 pr-10">
-              <span
-                className={cn(
-                  'truncate transition-colors duration-200',
-                  isActive ? 'font-semibold text-sidebar-foreground' : 'text-sidebar-foreground/80'
-                )}
-              >
-                {category.title}
-              </span>
-              <SidebarMenuBadge>
-                <AnimatedBadge count={unreadCount} />
-              </SidebarMenuBadge>
-            </SidebarMenuButton>
-          )}
-        </Link>
-        <CollapsibleTrigger
-          render={
-            <SidebarMenuAction
-              aria-label={`Toggle ${category.title}`}
-              className="left-1 right-auto data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            />
-          }
-        >
-          <CategoryChevron />
-        </CollapsibleTrigger>
-        <CategoryFeeds categoryId={category.id} />
-      </SidebarMenuItem>
-    </Collapsible>
-  );
+interface FeedItemProps {
+  feed: Feed;
 }
 
-function FeedItem({ feed }: { feed: any }) {
+function FeedItem({ feed }: FeedItemProps) {
+  const { _ } = useLingui();
   const unreadCount = useFeedUnreadCount(Number(feed.id));
+  const { mutateAsync: deleteFeed } = useDeleteFeed();
+  const setFeedDialogState = useMinifluxSettingsDialogStore((state) => state.setFeedDialogState);
+
+  const handleDelete = async (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (confirm(_(msg`Are you sure you want to unsubscribe from this feed?`))) {
+      try {
+        await deleteFeed(feed.id);
+      } catch {
+        // Error toast is handled in mutation hook; prevent unhandled rejections in event handler
+      }
+    }
+  };
 
   return (
     <SidebarMenuSubItem key={feed.id}>
       <Link to="/" search={{ feedId: feed.id.toString() }} className="block w-full">
         {({ isActive }) => (
-          <SidebarMenuSubButton isActive={isActive} className="w-full pr-[10px]">
-            <div className="flex w-full min-w-0 items-center gap-2">
-              <FeedAvatar className="size-5!" domain={feed.site_url} title={feed.title} />
-              <span className="min-w-0 flex-1 truncate text-md">{feed.title}</span>
-              <span className="shrink-0 text-xs tabular-nums">
+          <div className="group/feed-item relative">
+            <SidebarMenuSubButton isActive={isActive} className="w-full pr-8">
+              <div className="flex w-full min-w-0 items-center gap-2">
+                <FeedAvatar className="size-5!" domain={feed.site_url} title={feed.title} />
+                <span className="min-w-0 flex-1 truncate text-md">{feed.title}</span>
+              </div>
+            </SidebarMenuSubButton>
+            <div className="pointer-events-none absolute right-2 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center">
+              <div className="flex items-center justify-center transition-all duration-200 group-hover/feed-item:scale-50 group-hover/feed-item:opacity-0">
                 <AnimatedBadge count={unreadCount} animateOnMount={false} />
-              </span>
+              </div>
+              <div className="pointer-events-auto absolute inset-0 flex items-center justify-center scale-50 opacity-0 transition-all duration-200 group-hover/feed-item:scale-100 group-hover/feed-item:opacity-100">
+                <Menu>
+                  <MenuTrigger
+                    className="size-6 flex items-center justify-center rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent-foreground/10 hover:text-sidebar-foreground"
+                    onClick={(event) => {
+                      event.preventDefault();
+                      event.stopPropagation();
+                    }}
+                  >
+                    <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
+                  </MenuTrigger>
+                  <MenuPanel side="right" align="start">
+                    <MenuItem onClick={() => setFeedDialogState({ mode: 'edit', feed })}>
+                      <HugeiconsIcon icon={PencilEdit02Icon} />
+                      {_(msg`Edit`)}
+                    </MenuItem>
+                    <MenuItem variant="destructive" onClick={handleDelete}>
+                      <HugeiconsIcon icon={Delete02Icon} />
+                      {_(msg`Unsubscribe`)}
+                    </MenuItem>
+                  </MenuPanel>
+                </Menu>
+              </div>
             </div>
-          </SidebarMenuSubButton>
+          </div>
         )}
       </Link>
     </SidebarMenuSubItem>
   );
 }
 
-function CategoryFeeds({ categoryId }: { categoryId: string }) {
+interface CategoryFeedsProps {
+  categoryId: string;
+}
+
+function CategoryFeeds({ categoryId }: CategoryFeedsProps) {
   const { _ } = useLingui();
   const { data: feeds, isLoading, error } = useCategoryFeeds(categoryId);
 
@@ -139,7 +167,7 @@ function CategoryFeeds({ categoryId }: { categoryId: string }) {
       <CollapsiblePanel>
         <SidebarMenuSub>
           <SidebarMenuSubItem>
-            <div className="ml-4 h-7 flex items-center px-2">
+            <div className="ml-4 flex h-7 items-center px-2">
               <div className="bg-muted h-3 w-16 animate-pulse rounded" />
             </div>
           </SidebarMenuSubItem>
@@ -153,7 +181,7 @@ function CategoryFeeds({ categoryId }: { categoryId: string }) {
       <CollapsiblePanel>
         <SidebarMenuSub>
           <SidebarMenuSubItem>
-            <div className="ml-4 text-xs text-destructive px-2 py-1.5">
+            <div className="ml-4 px-2 py-1.5 text-xs text-destructive">
               {_(msg`Failed to load feeds`)}
             </div>
           </SidebarMenuSubItem>
@@ -168,7 +196,7 @@ function CategoryFeeds({ categoryId }: { categoryId: string }) {
 
   return (
     <CollapsiblePanel>
-      <SidebarMenuSub className="space-y-1 pt-1 ml-3.5 mr-0 pl-2.5 pr-0">
+      <SidebarMenuSub className="ml-3.5 mr-0 space-y-1 pl-2.5 pr-0 pt-1">
         {filteredFeeds.map((feed) => (
           <FeedItem key={feed.id} feed={feed} />
         ))}
@@ -177,29 +205,129 @@ function CategoryFeeds({ categoryId }: { categoryId: string }) {
   );
 }
 
-export function AppSidebar({ children, className }: AppSidebarProps) {
+interface CategoryItemProps {
+  category: Category;
+  index: number;
+}
+
+function CategoryItem({ category, index }: CategoryItemProps) {
+  const { _ } = useLingui();
+  const unreadCount = useCategoryUnreadCount(Number(category.id));
+  const { mutateAsync: deleteCategory } = useDeleteCategory();
+  const setCategoryDialogState = useMinifluxSettingsDialogStore(
+    (state) => state.setCategoryDialogState
+  );
+
+  const handleDelete = async (event: React.MouseEvent) => {
+    event.preventDefault();
+    event.stopPropagation();
+    if (confirm(_(msg`Are you sure you want to delete this category and all its feeds?`))) {
+      try {
+        await deleteCategory(category.id);
+      } catch {
+        // Error toast is handled in mutation hook; prevent unhandled rejections in event handler
+      }
+    }
+  };
+
+  return (
+    <Collapsible key={category.id} defaultOpen={index === 0} className="group/collapsible">
+      <SidebarMenuItem className="group/category-item relative">
+        <Link to="/" search={{ categoryId: category.id.toString() }} className="min-w-0 flex-1">
+          {({ isActive }) => (
+            <SidebarMenuButton tooltip={category.title} isActive={isActive} className="pl-8 pr-10">
+              <span
+                className={cn(
+                  'truncate transition-colors duration-200',
+                  isActive ? 'font-semibold text-sidebar-foreground' : 'text-sidebar-foreground/80'
+                )}
+              >
+                {category.title}
+              </span>
+            </SidebarMenuButton>
+          )}
+        </Link>
+        <div className="pointer-events-none absolute right-2 top-1.5 flex size-6 items-center justify-center">
+          <div className="flex items-center justify-center transition-all duration-200 group-hover/category-item:scale-50 group-hover/category-item:opacity-0">
+            <AnimatedBadge count={unreadCount} />
+          </div>
+          <div className="pointer-events-auto absolute inset-0 flex items-center justify-center scale-50 opacity-0 transition-all duration-200 group-hover/category-item:scale-100 group-hover/category-item:opacity-100">
+            <Menu>
+              <MenuTrigger
+                className="size-6 flex items-center justify-center rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent-foreground/10 hover:text-sidebar-foreground"
+                onClick={(event) => {
+                  event.preventDefault();
+                  event.stopPropagation();
+                }}
+              >
+                <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
+              </MenuTrigger>
+              <MenuPanel side="right" align="start">
+                <MenuItem onClick={() => setCategoryDialogState({ mode: 'edit', category })}>
+                  <HugeiconsIcon icon={PencilEdit02Icon} />
+                  {_(msg`Edit`)}
+                </MenuItem>
+                <MenuItem variant="destructive" onClick={handleDelete}>
+                  <HugeiconsIcon icon={Delete02Icon} />
+                  {_(msg`Delete`)}
+                </MenuItem>
+              </MenuPanel>
+            </Menu>
+          </div>
+        </div>
+        <CollapsibleTrigger
+          render={
+            <SidebarMenuAction
+              aria-label={_(msg`Toggle category feeds`)}
+              className="left-1 right-auto data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+            />
+          }
+        >
+          <CategoryChevron />
+        </CollapsibleTrigger>
+        <CategoryFeeds categoryId={category.id} />
+      </SidebarMenuItem>
+    </Collapsible>
+  );
+}
+
+function AppSidebarContent({ children, className }: AppSidebarProps) {
   const { _ } = useLingui();
   const { data: isConnected, isLoading: connectionLoading } = useIsConnected();
   const { data: categories, isLoading: categoriesLoading } = useCategories(isConnected ?? false);
   const { data: unreadCounts } = useUnreadCounts();
+  const setCategoryDialogState = useMinifluxSettingsDialogStore(
+    (state) => state.setCategoryDialogState
+  );
+  const setFeedDialogState = useMinifluxSettingsDialogStore((state) => state.setFeedDialogState);
+
+  const openAddFeedDialog = React.useCallback(
+    (initialUrl?: string) => {
+      setFeedDialogState({
+        mode: 'create',
+        defaultCategoryId: null,
+        initialFeedUrl: initialUrl?.trim() ?? '',
+      });
+    },
+    [setFeedDialogState]
+  );
 
   return (
     <Sidebar
       side="left"
       variant="sidebar"
       collapsible="icon"
-      className={cn(className, 'h-full relative')}
+      className={cn(className, 'relative h-full')}
     >
-      <SidebarHeader className="flex flex-row items-center justify-between px-4 py-2">
-        <div className="flex items-center gap-2.5">
-          <div className="bg-primary/10 flex size-6 items-center justify-center rounded-md"></div>
-          <span className="font-semibold tracking-tight group-data-[collapsible=icon]:hidden">
-            {_(msg`Minikyu`)}
-          </span>
-        </div>
+      <SidebarHeader className="px-3 py-2 group-data-[collapsible=icon]:px-0">
+        <AppLogo
+          className="w-full justify-start group-data-[collapsible=icon]:justify-center"
+          markClassName="size-7"
+          wordmarkClassName="group-data-[collapsible=icon]:hidden"
+        />
       </SidebarHeader>
 
-      <SidebarContent className="gap-0 flex flex-col min-h-0">
+      <SidebarContent className="flex min-h-0 flex-col gap-0">
         <SidebarGroup className="sticky top-0 z-10 bg-background">
           <SidebarGroupLabel>{_(msg`Views`)}</SidebarGroupLabel>
           <SidebarGroupContent>
@@ -208,7 +336,7 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
                 <SidebarMenuItem>
                   <SidebarMenuButton disabled>
                     <HugeiconsIcon icon={RssIcon} className="animate-pulse" />
-                    <span>Loading...</span>
+                    <span>{_(msg`Loading...`)}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ) : (
@@ -304,10 +432,34 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
         <SidebarSeparator className="mx-0 sticky top-0 z-10 bg-background" />
 
         <SidebarGroup>
-          <SidebarGroupLabel className="gap-2 text-sm font-normal text-sidebar-foreground/80">
-            <HugeiconsIcon icon={Folder01Icon} />
-            <span className="leading-none">{_(msg`Categories`)}</span>
-          </SidebarGroupLabel>
+          <div className="flex items-center justify-between pr-2">
+            <SidebarGroupLabel className="gap-2 text-sm font-normal text-sidebar-foreground/80">
+              <HugeiconsIcon icon={Folder01Icon} />
+              <span className="leading-none">{_(msg`Categories`)}</span>
+            </SidebarGroupLabel>
+            <Menu>
+              <MenuTrigger
+                aria-label={_(msg`Category actions`)}
+                className="flex size-5 items-center justify-center rounded-sm text-sidebar-foreground/70 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground"
+              >
+                <HugeiconsIcon icon={Add01Icon} className="size-3.5" />
+              </MenuTrigger>
+              <MenuPanel side="right" align="start">
+                <MenuItem onClick={() => openAddFeedDialog()}>
+                  <HugeiconsIcon icon={RssIcon} />
+                  {_(msg`Add Feed`)}
+                </MenuItem>
+                <MenuItem onClick={() => openAddFeedDialog('')}>
+                  <HugeiconsIcon icon={Search01Icon} />
+                  {_(msg`Search Source`)}
+                </MenuItem>
+                <MenuItem onClick={() => setCategoryDialogState({ mode: 'create' })}>
+                  <HugeiconsIcon icon={Folder01Icon} />
+                  {_(msg`Add Category`)}
+                </MenuItem>
+              </MenuPanel>
+            </Menu>
+          </div>
           <SidebarGroupContent>
             <SidebarMenu className="space-y-1">
               {categoriesLoading ? (
@@ -321,7 +473,7 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
               ) : !isConnected ? (
                 <SidebarMenuItem>
                   <SidebarMenuButton disabled>
-                    <span>{_(msg`Not Connected`)}</span>
+                    <span>{_(msg`Offline cached data`)}</span>
                   </SidebarMenuButton>
                 </SidebarMenuItem>
               ) : (
@@ -336,9 +488,17 @@ export function AppSidebar({ children, className }: AppSidebarProps) {
         {children}
       </SidebarContent>
 
-      <SidebarFooter className="mt-auto border-sidebar-border/50 p-3 shrink-0">
+      <SidebarFooter className="mt-auto shrink-0 border-sidebar-border/50 p-3">
         <UserNav />
       </SidebarFooter>
     </Sidebar>
+  );
+}
+
+export function AppSidebar(props: AppSidebarProps) {
+  return (
+    <FeedCategoryDialogProvider>
+      <AppSidebarContent {...props} />
+    </FeedCategoryDialogProvider>
   );
 }

@@ -397,6 +397,39 @@ export const commands = {
     }
   },
   /**
+   * Create a new category
+   */
+  async createCategory(title: string): Promise<Result<Category, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('create_category', { title }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Update a category
+   */
+  async updateCategory(id: string, title: string): Promise<Result<Category, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('update_category', { id, title }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Delete a category
+   */
+  async deleteCategory(id: string): Promise<Result<null, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('delete_category', { id }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
    * Get all feeds
    */
   async getFeeds(): Promise<Result<Feed[], string>> {
@@ -551,6 +584,50 @@ export const commands = {
     }
   },
   /**
+   * Get all users
+   */
+  async getUsers(): Promise<Result<User[], string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('get_users') };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Create a new user
+   */
+  async createUser(user: UserCreate): Promise<Result<User, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('create_user', { user }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Update a user
+   */
+  async updateUser(id: string, updates: UserUpdate): Promise<Result<User, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('update_user', { id, updates }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
+   * Delete a user
+   */
+  async deleteUser(id: string): Promise<Result<null, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('delete_user', { id }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
    * Get counters
    */
   async getCounters(): Promise<Result<Counters, string>> {
@@ -693,7 +770,7 @@ export type AppPreferences = {
   reader_line_width: number;
   /**
    * Reader font family
-   * (sans-serif, raleway, system-ui, humanist, serif, georgia, book-serif, monospace)
+   * (sans-serif, system-ui, humanist, serif, georgia, book-serif, monospace)
    */
   reader_font_family: string;
   /**
@@ -1062,6 +1139,27 @@ export type User = {
   last_login_at?: string | null;
   created_at?: string | null;
   updated_at?: string | null;
+};
+/**
+ * User Create
+ */
+export type UserCreate = { username: string; password: string; is_admin?: boolean | null };
+/**
+ * User Update
+ */
+export type UserUpdate = {
+  username?: string | null;
+  password?: string | null;
+  theme?: string | null;
+  language?: string | null;
+  timezone?: string | null;
+  entry_sorting_direction?: string | null;
+  entries_per_page?: number | null;
+  keyboard_shortcuts?: boolean | null;
+  display_mode?: string | null;
+  show_reading_time?: boolean | null;
+  entry_swipe?: boolean | null;
+  stylesheet?: string | null;
 };
 
 /** tauri-specta globals **/

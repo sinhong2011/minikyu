@@ -111,6 +111,61 @@ pub async fn get_categories(
     get_categories_from_db(&pool).await
 }
 
+/// Create a new category
+#[tauri::command]
+#[specta::specta]
+pub async fn create_category(
+    state: State<'_, AppState>,
+    title: String,
+) -> Result<crate::miniflux::Category, String> {
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    let trimmed_title = title.trim().to_string();
+    if trimmed_title.is_empty() {
+        return Err("Category title cannot be empty".to_string());
+    }
+
+    client.create_category(trimmed_title).await
+}
+
+/// Update a category
+#[tauri::command]
+#[specta::specta]
+pub async fn update_category(
+    state: State<'_, AppState>,
+    id: String,
+    title: String,
+) -> Result<crate::miniflux::Category, String> {
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid category ID: {}", e))?;
+
+    let trimmed_title = title.trim().to_string();
+    if trimmed_title.is_empty() {
+        return Err("Category title cannot be empty".to_string());
+    }
+
+    client.update_category(id_parsed, trimmed_title).await
+}
+
+/// Delete a category
+#[tauri::command]
+#[specta::specta]
+pub async fn delete_category(state: State<'_, AppState>, id: String) -> Result<(), String> {
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid category ID: {}", e))?;
+
+    client.delete_category(id_parsed).await
+}
+
 /// Get all feeds
 #[tauri::command]
 #[specta::specta]
@@ -362,6 +417,69 @@ pub async fn get_current_user(state: State<'_, AppState>) -> Result<crate::minif
     }
 
     result
+}
+
+/// Get all users
+#[tauri::command]
+#[specta::specta]
+pub async fn get_users(state: State<'_, AppState>) -> Result<Vec<crate::miniflux::User>, String> {
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    client.get_users().await
+}
+
+/// Create a new user
+#[tauri::command]
+#[specta::specta]
+pub async fn create_user(
+    state: State<'_, AppState>,
+    user: crate::miniflux::UserCreate,
+) -> Result<crate::miniflux::User, String> {
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    if user.username.trim().is_empty() {
+        return Err("Username cannot be empty".to_string());
+    }
+
+    if user.password.trim().is_empty() {
+        return Err("Password cannot be empty".to_string());
+    }
+
+    client.create_user(user).await
+}
+
+/// Update a user
+#[tauri::command]
+#[specta::specta]
+pub async fn update_user(
+    state: State<'_, AppState>,
+    id: String,
+    updates: crate::miniflux::UserUpdate,
+) -> Result<crate::miniflux::User, String> {
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid user ID: {}", e))?;
+
+    client.update_user(id_parsed, updates).await
+}
+
+/// Delete a user
+#[tauri::command]
+#[specta::specta]
+pub async fn delete_user(state: State<'_, AppState>, id: String) -> Result<(), String> {
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid user ID: {}", e))?;
+
+    client.delete_user(id_parsed).await
 }
 
 /// Get counters

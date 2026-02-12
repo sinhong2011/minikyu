@@ -1,7 +1,8 @@
-import { Logout01Icon, Tick01Icon } from '@hugeicons/core-free-icons';
+import { Logout01Icon, PreferenceVerticalIcon, Tick01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { useState } from 'react';
 
 import {
   Menu,
@@ -12,18 +13,22 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from '@/components/animate-ui/components/base/menu';
+import { MinifluxSettingsDialog } from '@/components/miniflux/MinifluxSettingsDialog';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { logger } from '@/lib/logger';
 import { queryClient } from '@/lib/query-client';
 import { commands } from '@/lib/tauri-bindings';
 import { useAccounts, useActiveAccount } from '@/services/miniflux/accounts';
+import { useIsConnected } from '@/services/miniflux/auth';
 import { useCurrentUser } from '@/services/miniflux/users';
 
 export function UserNav() {
   const { _ } = useLingui();
+  const [settingsOpen, setSettingsOpen] = useState(false);
   const { data: accounts = [] } = useAccounts();
   const { data: currentAccount } = useActiveAccount();
+  const { data: isConnected } = useIsConnected();
   const { data: currentUser, isLoading: isUserLoading, isError: isUserError } = useCurrentUser();
 
   logger.info('[UserNav] Component rendering', {
@@ -38,6 +43,7 @@ export function UserNav() {
       : null,
     isUserLoading,
     isUserError,
+    isConnected,
   });
 
   if (!currentAccount) {
@@ -92,86 +98,106 @@ export function UserNav() {
   };
 
   return (
-    <Menu>
-      <MenuTrigger className="w-full outline-none">
-        <div className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent transition-colors text-left">
-          <Avatar className="h-8 w-8 rounded-lg">
-            <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-medium">
-              {getInitials(currentAccount.username)}
-            </AvatarFallback>
-          </Avatar>
-          <div className="grid flex-1 text-left text-sm leading-tight">
-            <div className="flex items-center gap-2">
-              <span className="truncate font-semibold">{currentAccount.username}</span>
-              {!isUserLoading && !isUserError && currentUser?.is_admin && (
-                <Badge variant="secondary" className="text-xs px-1.5 py-0">
-                  {_(msg`Admin`)}
-                </Badge>
+    <>
+      <Menu>
+        <MenuTrigger className="w-full outline-none">
+          <div className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent transition-colors text-left">
+            <Avatar className="h-8 w-8 rounded-lg">
+              <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-medium">
+                {getInitials(currentAccount.username)}
+              </AvatarFallback>
+            </Avatar>
+            <div className="grid flex-1 text-left text-sm leading-tight">
+              <div className="flex items-center gap-2">
+                <span className="truncate font-semibold">{currentAccount.username}</span>
+                {!isUserLoading && !isUserError && currentUser?.is_admin && (
+                  <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                    {_(msg`Admin`)}
+                  </Badge>
+                )}
+              </div>
+              <span className="truncate text-xs text-muted-foreground">
+                {getDomain(currentAccount.server_url)}
+              </span>
+              {!isConnected && (
+                <span className="text-[11px] text-muted-foreground">
+                  {_(msg`Offline cached data`)}
+                </span>
               )}
             </div>
-            <span className="truncate text-xs text-muted-foreground">
-              {getDomain(currentAccount.server_url)}
-            </span>
           </div>
-        </div>
-      </MenuTrigger>
-      <MenuPanel className="w-56" side="top" align="start" sideOffset={4}>
-        {!isUserLoading && !isUserError && currentUser && (
-          <>
-            <MenuGroup>
-              <MenuGroupLabel>{_(msg`User Profile`)}</MenuGroupLabel>
-              <div className="px-2 py-1.5 text-sm">
-                <div className="flex flex-col gap-1">
-                  <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">{_(msg`Role`)}</span>
-                    <span>{currentUser.is_admin ? _(msg`Administrator`) : _(msg`User`)}</span>
+        </MenuTrigger>
+        <MenuPanel className="w-56" side="top" align="start" sideOffset={4}>
+          {!isUserLoading && !isUserError && currentUser && (
+            <>
+              <MenuGroup>
+                <MenuGroupLabel>{_(msg`User Profile`)}</MenuGroupLabel>
+                <div className="px-2 py-1.5 text-sm">
+                  <div className="flex flex-col gap-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-muted-foreground">{_(msg`Role`)}</span>
+                      <span>{currentUser.is_admin ? _(msg`Administrator`) : _(msg`User`)}</span>
+                    </div>
+                    {currentUser.language && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">{_(msg`Language`)}</span>
+                        <span className="uppercase">{currentUser.language}</span>
+                      </div>
+                    )}
+                    {currentUser.timezone && (
+                      <div className="flex items-center justify-between">
+                        <span className="text-muted-foreground">{_(msg`Timezone`)}</span>
+                        <span className="text-xs">{currentUser.timezone}</span>
+                      </div>
+                    )}
                   </div>
-                  {currentUser.language && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">{_(msg`Language`)}</span>
-                      <span className="uppercase">{currentUser.language}</span>
-                    </div>
-                  )}
-                  {currentUser.timezone && (
-                    <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">{_(msg`Timezone`)}</span>
-                      <span className="text-xs">{currentUser.timezone}</span>
-                    </div>
-                  )}
                 </div>
-              </div>
-            </MenuGroup>
-            <MenuSeparator />
-          </>
-        )}
-        <MenuGroup>
-          <MenuGroupLabel>{_(msg`Accounts`)}</MenuGroupLabel>
-          {accounts.map((account) => (
-            <MenuItem
-              key={account.id}
-              onClick={() => handleSwitchAccount(account.id)}
-              className="justify-between"
-            >
-              <div className="flex flex-col gap-0.5 overflow-hidden">
-                <span className="truncate font-medium">{account.username}</span>
-                <span className="truncate text-xs text-muted-foreground">
-                  {getDomain(account.server_url)}
-                </span>
-              </div>
-              {account.id === currentAccount.id && (
-                <HugeiconsIcon icon={Tick01Icon} className="size-4 text-primary shrink-0" />
-              )}
+              </MenuGroup>
+              <MenuSeparator />
+            </>
+          )}
+          <MenuGroup>
+            <MenuGroupLabel>{_(msg`Accounts`)}</MenuGroupLabel>
+            {accounts.map((account) => (
+              <MenuItem
+                key={account.id}
+                onClick={() => handleSwitchAccount(account.id)}
+                className="justify-between"
+              >
+                <div className="flex flex-col gap-0.5 overflow-hidden">
+                  <span className="truncate font-medium">{account.username}</span>
+                  <span className="truncate text-xs text-muted-foreground">
+                    {getDomain(account.server_url)}
+                  </span>
+                </div>
+                {account.id === currentAccount.id && (
+                  <HugeiconsIcon icon={Tick01Icon} className="size-4 text-primary shrink-0" />
+                )}
+              </MenuItem>
+            ))}
+          </MenuGroup>
+          {isConnected && (
+            <>
+              <MenuSeparator />
+              <MenuGroup>
+                <MenuItem onClick={() => setSettingsOpen(true)}>
+                  <HugeiconsIcon icon={PreferenceVerticalIcon} className="mr-2 size-4" />
+                  {_(msg`Miniflux settings`)}
+                </MenuItem>
+              </MenuGroup>
+            </>
+          )}
+          <MenuSeparator />
+          <MenuGroup>
+            <MenuItem variant="destructive" onClick={handleLogout}>
+              <HugeiconsIcon icon={Logout01Icon} className="mr-2 size-4" />
+              {_(msg`Log out`)}
             </MenuItem>
-          ))}
-        </MenuGroup>
-        <MenuSeparator />
-        <MenuGroup>
-          <MenuItem variant="destructive" onClick={handleLogout}>
-            <HugeiconsIcon icon={Logout01Icon} className="mr-2 size-4" />
-            {_(msg`Log out`)}
-          </MenuItem>
-        </MenuGroup>
-      </MenuPanel>
-    </Menu>
+          </MenuGroup>
+        </MenuPanel>
+      </Menu>
+
+      <MinifluxSettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
+    </>
   );
 }
