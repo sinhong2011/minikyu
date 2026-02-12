@@ -224,22 +224,31 @@ pub fn run() {
             // Load saved preferences and register the quick pane shortcut
             #[cfg(desktop)]
             {
-                let saved_shortcut = commands::preferences::load_quick_pane_shortcut(app.handle());
-                let shortcut_to_register = saved_shortcut
-                    .as_deref()
-                    .unwrap_or(DEFAULT_QUICK_PANE_SHORTCUT);
+                if commands::quick_pane::is_quick_pane_enabled() {
+                    let saved_shortcut =
+                        commands::preferences::load_quick_pane_shortcut(app.handle());
+                    let shortcut_to_register = saved_shortcut
+                        .as_deref()
+                        .unwrap_or(DEFAULT_QUICK_PANE_SHORTCUT);
 
-                log::info!("Registering quick pane shortcut: {shortcut_to_register}");
-                commands::quick_pane::register_quick_pane_shortcut(
-                    app.handle(),
-                    shortcut_to_register,
-                )?;
+                    log::info!("Registering quick pane shortcut: {shortcut_to_register}");
+                    commands::quick_pane::register_quick_pane_shortcut(
+                        app.handle(),
+                        shortcut_to_register,
+                    )?;
+                } else {
+                    log::info!("Quick pane is disabled; skipping shortcut registration");
+                }
             }
 
             // Create the quick pane window (hidden) - must be done on main thread
-            if let Err(e) = commands::quick_pane::init_quick_pane(app.handle()) {
-                log::error!("Failed to create quick pane: {e}");
-                // Non-fatal: app can still run without quick pane
+            if commands::quick_pane::is_quick_pane_enabled() {
+                if let Err(e) = commands::quick_pane::init_quick_pane(app.handle()) {
+                    log::error!("Failed to create quick pane: {e}");
+                    // Non-fatal: app can still run without quick pane
+                }
+            } else {
+                log::info!("Quick pane is disabled; skipping window initialization");
             }
 
             // Initialize system tray icon (desktop only)

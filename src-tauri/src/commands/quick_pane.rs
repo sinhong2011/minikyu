@@ -19,6 +19,9 @@ const QUICK_PANE_LABEL: &str = "quick-pane";
 const QUICK_PANE_WIDTH: f64 = 500.0;
 const QUICK_PANE_HEIGHT: f64 = 72.0;
 
+/// Feature flag for quick pane behavior.
+const QUICK_PANE_ENABLED: bool = false;
+
 /// Tracks the currently registered quick pane shortcut for selective unregistration.
 /// This allows us to unregister only our shortcut without affecting other shortcuts.
 static CURRENT_QUICK_PANE_SHORTCUT: Mutex<Option<String>> = Mutex::new(None);
@@ -52,6 +55,11 @@ tauri_panel! {
 /// Must be called from the main thread (e.g., in setup()).
 /// The window starts hidden and is shown via show_quick_pane command.
 pub fn init_quick_pane(app: &AppHandle) -> Result<(), String> {
+    if !is_quick_pane_enabled() {
+        log::info!("Quick pane is disabled; skipping window initialization");
+        return Ok(());
+    }
+
     #[cfg(target_os = "macos")]
     {
         init_quick_pane_macos(app)
@@ -89,6 +97,7 @@ fn init_quick_pane_macos(app: &AppHandle) -> Result<(), String> {
             w.decorations(false)
                 .transparent(true)
                 .skip_taskbar(true)
+                .visible(false)
                 .resizable(false)
                 .center()
         })
@@ -232,6 +241,11 @@ fn is_quick_pane_visible(app: &AppHandle) -> bool {
 #[tauri::command]
 #[specta::specta]
 pub fn show_quick_pane(app: AppHandle) -> Result<(), String> {
+    if !is_quick_pane_enabled() {
+        log::debug!("Quick pane is disabled; ignoring show request");
+        return Ok(());
+    }
+
     log::info!("Showing quick pane window");
 
     position_quick_pane_on_cursor_monitor(&app);
@@ -267,6 +281,11 @@ pub fn show_quick_pane(app: AppHandle) -> Result<(), String> {
 #[tauri::command]
 #[specta::specta]
 pub fn dismiss_quick_pane(app: AppHandle) -> Result<(), String> {
+    if !is_quick_pane_enabled() {
+        log::debug!("Quick pane is disabled; ignoring dismiss request");
+        return Ok(());
+    }
+
     #[cfg(target_os = "macos")]
     {
         if let Ok(panel) = app.get_webview_panel(QUICK_PANE_LABEL) {
@@ -306,6 +325,11 @@ pub fn dismiss_quick_pane(app: AppHandle) -> Result<(), String> {
 #[tauri::command]
 #[specta::specta]
 pub fn toggle_quick_pane(app: AppHandle) -> Result<(), String> {
+    if !is_quick_pane_enabled() {
+        log::debug!("Quick pane is disabled; ignoring toggle request");
+        return Ok(());
+    }
+
     log::info!("Toggling quick pane window");
 
     if is_quick_pane_visible(&app) {
@@ -323,6 +347,11 @@ pub fn toggle_quick_pane(app: AppHandle) -> Result<(), String> {
 /// This helper is used by both setup() and update_quick_pane_shortcut() for consistency.
 #[cfg(desktop)]
 pub fn register_quick_pane_shortcut(app: &AppHandle, shortcut: &str) -> Result<(), String> {
+    if !is_quick_pane_enabled() {
+        log::info!("Quick pane is disabled; skipping shortcut registration");
+        return Ok(());
+    }
+
     use tauri_plugin_global_shortcut::{GlobalShortcutExt, Shortcut};
 
     let global_shortcut = app.global_shortcut();
@@ -383,6 +412,12 @@ pub fn get_default_quick_pane_shortcut() -> String {
 #[tauri::command]
 #[specta::specta]
 pub fn update_quick_pane_shortcut(app: AppHandle, shortcut: Option<String>) -> Result<(), String> {
+    if !is_quick_pane_enabled() {
+        log::info!("Quick pane is disabled; ignoring shortcut update");
+        let _ = (&app, &shortcut);
+        return Ok(());
+    }
+
     #[cfg(desktop)]
     {
         let new_shortcut = shortcut.as_deref().unwrap_or(DEFAULT_QUICK_PANE_SHORTCUT);
@@ -400,4 +435,9 @@ pub fn update_quick_pane_shortcut(app: AppHandle, shortcut: Option<String>) -> R
     }
 
     Ok(())
+}
+
+/// Returns whether quick pane feature is enabled.
+pub fn is_quick_pane_enabled() -> bool {
+    QUICK_PANE_ENABLED
 }

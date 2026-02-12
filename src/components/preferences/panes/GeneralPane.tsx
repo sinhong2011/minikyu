@@ -2,7 +2,6 @@ import { FolderOpenIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { useQuery } from '@tanstack/react-query';
 import { open } from '@tauri-apps/plugin-dialog';
 import { Switch } from '@/components/animate-ui/components/base/switch';
 import { Button } from '@/components/ui/button';
@@ -17,9 +16,8 @@ import {
 } from '@/components/ui/select';
 import { showToast } from '@/components/ui/sonner';
 import { logger } from '@/lib/logger';
-import { type CloseBehavior, commands } from '@/lib/tauri-bindings';
+import type { CloseBehavior } from '@/lib/tauri-bindings';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
-import { ShortcutPicker } from '../ShortcutPicker';
 import { SettingsField, SettingsSection } from '../shared/SettingsComponents';
 
 export function GeneralPane() {
@@ -27,59 +25,6 @@ export function GeneralPane() {
 
   const { data: preferences } = usePreferences();
   const savePreferences = useSavePreferences();
-
-  const { data: defaultShortcut } = useQuery({
-    queryKey: ['default-quick-pane-shortcut'],
-    queryFn: async () => {
-      return await commands.getDefaultQuickPaneShortcut();
-    },
-    staleTime: Infinity,
-  });
-
-  const handleShortcutChange = async (newShortcut: string | null) => {
-    if (!preferences) return;
-
-    const oldShortcut = preferences.quick_pane_shortcut;
-
-    logger.info('Updating quick pane shortcut', { oldShortcut, newShortcut });
-
-    const result = await commands.updateQuickPaneShortcut(newShortcut);
-
-    if (result.status === 'error') {
-      logger.error('Failed to register shortcut', { error: result.error });
-      showToast.error(_(msg`Failed to register shortcut`), result.error);
-      return;
-    }
-
-    try {
-      await savePreferences.mutateAsync({
-        ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
-        quick_pane_shortcut: newShortcut,
-      });
-    } catch {
-      logger.warn('Save failed, rolling back shortcut registration', {
-        oldShortcut,
-        newShortcut,
-      });
-
-      const rollbackResult = await commands.updateQuickPaneShortcut(oldShortcut);
-
-      if (rollbackResult.status === 'error') {
-        logger.error('Rollback failed - backend and preferences are out of sync', {
-          error: rollbackResult.error,
-          attemptedShortcut: newShortcut,
-          originalShortcut: oldShortcut,
-        });
-        showToast.error(
-          _(msg`Failed to restore previous shortcut`),
-          _(msg`The shortcut may be out of sync. Please restart the app or try again.`)
-        );
-      } else {
-        logger.info('Successfully rolled back shortcut registration');
-      }
-    }
-  };
 
   const handleCloseBehaviorChange = async (value: CloseBehavior) => {
     if (!preferences) return;
@@ -256,22 +201,6 @@ export function GeneralPane() {
               {(preferences?.start_minimized ?? false) ? _(msg`Enabled`) : _(msg`Disabled`)}
             </Label>
           </div>
-        </SettingsField>
-      </SettingsSection>
-
-      <SettingsSection title={_(msg`Keyboard Shortcuts`)}>
-        <SettingsField
-          label={_(msg`Quick Pane Shortcut`)}
-          description={_(
-            msg`Global keyboard shortcut to toggle the quick pane from any application`
-          )}
-        >
-          <ShortcutPicker
-            value={preferences?.quick_pane_shortcut ?? null}
-            defaultValue={defaultShortcut ?? 'CommandOrControl+Shift+.'}
-            onChange={handleShortcutChange}
-            disabled={!preferences || savePreferences.isPending}
-          />
         </SettingsField>
       </SettingsSection>
 
