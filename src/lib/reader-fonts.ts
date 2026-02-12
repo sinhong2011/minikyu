@@ -1,6 +1,5 @@
 export const readerFontFamilies = [
   'sans-serif',
-  'raleway',
   'system-ui',
   'humanist',
   'serif',
@@ -18,8 +17,6 @@ const READER_FONT_FAMILY_SET = new Set<string>(readerFontFamilies);
 const READER_FONT_STACKS: Record<ReaderFontFamily, string> = {
   'sans-serif':
     'Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, sans-serif',
-  raleway:
-    '"Raleway Variable", "Avenir Next", "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, sans-serif',
   'system-ui':
     'system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans", "Helvetica Neue", Arial, sans-serif',
   humanist:

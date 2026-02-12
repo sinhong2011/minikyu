@@ -6,7 +6,7 @@ import { logger } from '@/lib/logger';
 import { notifications } from '@/lib/notifications';
 import { useUIStore } from '@/store/ui-store';
 
-const APP_NAME = 'Tauri Template';
+const APP_NAME = 'Minikyu';
 
 export async function buildAppMenu(): Promise<Menu> {
   const _ = i18n._.bind(i18n);
@@ -101,7 +101,10 @@ export function setupMenuLanguageListener(): () => void {
 
 function handleAbout(): void {
   logger.info('About menu item clicked');
-  alert(`${APP_NAME}\n\nVersion: ${__APP_VERSION__}\n\nBuilt with Tauri v2 + React + TypeScript`);
+  const _ = i18n._.bind(i18n);
+  alert(
+    `${_(msg`Version: ${__APP_VERSION__}`)}\n\n${_(msg`A calm, focused space for your Miniflux reading. Catch up faster, stay organized, and enjoy every feed.`)}`
+  );
 }
 
 async function handleCheckForUpdates(): Promise<void> {
