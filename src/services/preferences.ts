@@ -38,13 +38,19 @@ export function usePreferences() {
           // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_line_width: 65,
           // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_line_height: 1.75,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_font_family: 'sans-serif',
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_theme: 'default',
           // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_code_theme: 'auto',
           // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_chinese_conversion: 's2tw',
           // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_bionic_reading: false,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_status_bar: false,
           // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_custom_conversions: [],
           // biome-ignore lint/style/useNamingConvention: preferences field name
