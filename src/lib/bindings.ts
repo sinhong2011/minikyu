@@ -496,9 +496,20 @@ export const commands = {
     }
   },
   /**
+   * Toggle entry read status between "read" and "unread"
+   */
+  async toggleEntryRead(id: string): Promise<Result<string, string>> {
+    try {
+      return { status: 'ok', data: await TAURI_INVOKE('toggle_entry_read', { id }) };
+    } catch (e) {
+      if (e instanceof Error) throw e;
+      else return { status: 'error', error: e as any };
+    }
+  },
+  /**
    * Toggle entry star
    */
-  async toggleEntryStar(id: string): Promise<Result<null, string>> {
+  async toggleEntryStar(id: string): Promise<Result<boolean, string>> {
     try {
       return { status: 'ok', data: await TAURI_INVOKE('toggle_entry_star', { id }) };
     } catch (e) {
