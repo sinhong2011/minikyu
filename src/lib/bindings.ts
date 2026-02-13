@@ -769,10 +769,19 @@ export type AppPreferences = {
    */
   reader_line_width: number;
   /**
+   * Reader line height (1.4-2.2)
+   */
+  reader_line_height: number;
+  /**
    * Reader font family
    * (sans-serif, system-ui, humanist, serif, georgia, book-serif, monospace)
    */
   reader_font_family: string;
+  /**
+   * Reader surface theme
+   * (default, paper, sepia, slate, oled)
+   */
+  reader_theme: string;
   /**
    * Reader code block syntax highlight theme.
    */
@@ -785,6 +794,10 @@ export type AppPreferences = {
    * Enable bionic reading emphasis for English text.
    */
   reader_bionic_reading: boolean;
+  /**
+   * Whether to show the compact reading status bar.
+   */
+  reader_status_bar: boolean;
   /**
    * User-defined term conversion rules applied after Chinese conversion.
    */

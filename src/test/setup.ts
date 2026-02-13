@@ -66,6 +66,8 @@ vi.mock('@/lib/tauri-bindings', () => ({
         // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_bionic_reading: false,
         // biome-ignore lint/style/useNamingConvention: preferences field name
+        reader_status_bar: false,
+        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_custom_conversions: [],
         // biome-ignore lint/style/useNamingConvention: preferences field name
         image_download_path: null,

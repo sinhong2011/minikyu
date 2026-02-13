@@ -23,6 +23,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
       </AppProviders>
       {import.meta.env.DEV && (
         <TanStackDevtools
+          config={{
+            hideUntilHover: true,
+          }}
           plugins={[
             { name: 'Query', render: <ReactQueryDevtoolsPanel /> },
             {
