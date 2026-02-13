@@ -175,7 +175,13 @@ impl MinifluxClient {
             .map_err(|e| format!("Network error: {}", e))?;
 
         if !response.status().is_success() {
-            return Err(format!("API error: {}", response.status()));
+            let status = response.status();
+            // Try to get error details from response body
+            let body_text = response.text().await.unwrap_or_default();
+            if body_text.is_empty() {
+                return Err(format!("API error: {}", status));
+            }
+            return Err(format!("API error: {} - {}", status, body_text));
         }
 
         response
@@ -201,13 +207,41 @@ impl MinifluxClient {
             .map_err(|e| format!("Network error: {}", e))?;
 
         if !response.status().is_success() {
-            return Err(format!("API error: {}", response.status()));
+            let status = response.status();
+            // Try to get error details from response body
+            let body_text = response.text().await.unwrap_or_default();
+            if body_text.is_empty() {
+                return Err(format!("API error: {}", status));
+            }
+            return Err(format!("API error: {} - {}", status, body_text));
         }
 
         response
             .json()
             .await
             .map_err(|e| format!("Parse error: {}", e))
+    }
+
+    /// Execute PUT request without expecting a response body
+    async fn put_empty<B: serde::Serialize>(&self, path: &str, body: &B) -> Result<(), String> {
+        let request = self.build_put_request(path).json(body);
+
+        let response = request
+            .send()
+            .await
+            .map_err(|e| format!("Network error: {}", e))?;
+
+        if !response.status().is_success() {
+            let status = response.status();
+            // Try to get error details from response body
+            let body_text = response.text().await.unwrap_or_default();
+            if body_text.is_empty() {
+                return Err(format!("API error: {}", status));
+            }
+            return Err(format!("API error: {} - {}", status, body_text));
+        }
+
+        Ok(())
     }
 
     /// Execute DELETE request
@@ -439,19 +473,21 @@ impl MinifluxClient {
             entry_ids: Vec<i64>,
         }
 
-        self.put(
+        self.put_empty(
             "entries",
-            Some(&UpdateEntries {
+            &UpdateEntries {
                 status,
                 entry_ids: ids,
-            }),
+            },
         )
         .await
     }
 
     /// Toggle entry bookmark
     pub async fn toggle_bookmark(&self, id: i64) -> Result<(), String> {
-        self.post(&format!("entries/{}/bookmark", id), &()).await
+        // Miniflux API requires PUT (not POST) for bookmark toggle
+        // Returns 204 No Content
+        self.put_empty(&format!("entries/{}/bookmark", id), &()).await
     }
 
     /// Fetch original article content
