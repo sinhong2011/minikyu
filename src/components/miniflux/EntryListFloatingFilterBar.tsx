@@ -1,4 +1,4 @@
-import { FavouriteIcon, InboxIcon, InboxUnreadIcon } from '@hugeicons/core-free-icons';
+import { InboxIcon, InboxUnreadIcon, StarIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
@@ -40,7 +40,7 @@ export function EntryListFloatingFilterBar({
     },
     {
       value: 'starred',
-      icon: FavouriteIcon,
+      icon: StarIcon,
       label: _(msg`Starred`),
     },
   ];

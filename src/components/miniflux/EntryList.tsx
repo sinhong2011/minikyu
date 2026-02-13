@@ -1,3 +1,5 @@
+import { Refresh04Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { defaultRangeExtractor, type Range, useVirtualizer } from '@tanstack/react-virtual';
@@ -36,6 +38,8 @@ interface EntryListProps {
   onEntrySelect?: (entryId: string) => void;
   currentStatus?: EntryListFilterStatus;
   onStatusChange?: (status: EntryListFilterStatus) => void;
+  onPullToRefresh?: () => void;
+  isRefreshing?: boolean;
 }
 
 type EntryListRow =
@@ -51,12 +55,25 @@ type EntryListRow =
       showSeparator: boolean;
     };
 
+const PULL_TO_REFRESH_TRIGGER_DISTANCE = 128;
+const PULL_TO_REFRESH_MAX_DISTANCE = 176;
+const PULL_TO_REFRESH_HOLD_DISTANCE = 48;
+const PULL_TO_REFRESH_PULL_GAIN = 0.78;
+const PULL_TO_REFRESH_RELEASE_GAIN = 0.22;
+const PULL_TO_REFRESH_DAMPING = 0.62;
+const PULL_TO_REFRESH_TOP_TOLERANCE = 6;
+const PULL_TO_REFRESH_RELEASE_DELAY_MS = 96;
+const PULL_TO_REFRESH_SOFT_LIMIT = 72;
+const PULL_TO_REFRESH_OVERFLOW_DAMPING = 0.24;
+
 export function EntryList({
   filters = {},
   selectedEntryId,
   onEntrySelect,
   currentStatus,
   onStatusChange,
+  onPullToRefresh,
+  isRefreshing = false,
 }: EntryListProps) {
   const { _ } = useLingui();
   const {
@@ -71,6 +88,10 @@ export function EntryList({
   const selectionMode = useUIStore((state) => state.selectionMode);
   const [newEntryIds, setNewEntryIds] = useState<Set<string>>(() => new Set());
   const [listScrolling, setListScrolling] = useState(false);
+  const [pullDistance, setPullDistance] = useState(0);
+  const [pullReady, setPullReady] = useState(false);
+  const [isPulling, setIsPulling] = useState(false);
+  const [pullRefreshPending, setPullRefreshPending] = useState(false);
   const showFloatingFilterBar = Boolean(currentStatus && onStatusChange);
 
   const parentRef = useRef<HTMLDivElement>(null);
@@ -80,6 +101,45 @@ export function EntryList({
   const lastScrollTopRef = useRef(0);
   const scrollStopTimerRef = useRef<number | null>(null);
   const activeStickyIndexRef = useRef(0);
+  const pullDistanceRef = useRef(0);
+  const pullReadyRef = useRef(false);
+  const isPullingRef = useRef(false);
+  const pullReleaseTimerRef = useRef<number | null>(null);
+  const onPullToRefreshRef = useRef(onPullToRefresh);
+
+  const updatePullProgress = useCallback((nextDistance: number) => {
+    const clamped = Math.max(0, Math.min(PULL_TO_REFRESH_MAX_DISTANCE, nextDistance));
+    const ready = clamped >= PULL_TO_REFRESH_TRIGGER_DISTANCE;
+
+    pullDistanceRef.current = clamped;
+    pullReadyRef.current = ready;
+    setPullDistance(clamped);
+    setPullReady(ready);
+  }, []);
+
+  const resetPullGesture = useCallback(() => {
+    isPullingRef.current = false;
+    pullDistanceRef.current = 0;
+    pullReadyRef.current = false;
+    setIsPulling(false);
+    setPullDistance(0);
+    setPullReady(false);
+  }, []);
+
+  const releasePullGesture = useCallback(() => {
+    if (!isPullingRef.current) {
+      return;
+    }
+
+    const shouldRefresh =
+      pullReadyRef.current && !isRefreshing && typeof onPullToRefreshRef.current === 'function';
+    if (shouldRefresh) {
+      setPullRefreshPending(true);
+      onPullToRefreshRef.current?.();
+    }
+
+    resetPullGesture();
+  }, [isRefreshing, resetPullGesture]);
 
   // Build list rows with section headers
   const listRows = useMemo(() => {
@@ -227,6 +287,90 @@ export function EntryList({
   }, [entriesData?.entries]);
 
   useEffect(() => {
+    onPullToRefreshRef.current = onPullToRefresh;
+  }, [onPullToRefresh]);
+
+  useEffect(() => {
+    if (!isRefreshing && pullRefreshPending) {
+      setPullRefreshPending(false);
+    }
+  }, [isRefreshing, pullRefreshPending]);
+
+  useEffect(() => {
+    if (!onPullToRefresh) {
+      return;
+    }
+
+    const scrollEl = parentRef.current;
+    if (!scrollEl) {
+      return;
+    }
+
+    const scheduleRelease = () => {
+      if (pullReleaseTimerRef.current) {
+        window.clearTimeout(pullReleaseTimerRef.current);
+      }
+
+      pullReleaseTimerRef.current = window.setTimeout(() => {
+        releasePullGesture();
+      }, PULL_TO_REFRESH_RELEASE_DELAY_MS);
+    };
+
+    const onWheel = (event: WheelEvent) => {
+      if (event.ctrlKey || event.deltaY === 0 || isRefreshing) {
+        return;
+      }
+
+      const atTop = scrollEl.scrollTop <= PULL_TO_REFRESH_TOP_TOLERANCE;
+      const pullingFromTop = event.deltaY < 0 && (atTop || isPullingRef.current);
+
+      if (pullingFromTop) {
+        const dampingFactor =
+          1 -
+          Math.min(
+            0.86,
+            (pullDistanceRef.current / PULL_TO_REFRESH_MAX_DISTANCE) * PULL_TO_REFRESH_DAMPING
+          );
+        const nextDistance =
+          pullDistanceRef.current +
+          Math.abs(event.deltaY) * PULL_TO_REFRESH_PULL_GAIN * Math.max(0.2, dampingFactor);
+        if (!isPullingRef.current) {
+          isPullingRef.current = true;
+          setIsPulling(true);
+        }
+        updatePullProgress(nextDistance);
+        event.preventDefault();
+        scheduleRelease();
+        return;
+      }
+
+      if (!isPullingRef.current) {
+        return;
+      }
+
+      const nextDistance =
+        pullDistanceRef.current - Math.abs(event.deltaY) * PULL_TO_REFRESH_RELEASE_GAIN;
+      updatePullProgress(nextDistance);
+      if (nextDistance <= 0) {
+        isPullingRef.current = false;
+        setIsPulling(false);
+      }
+      event.preventDefault();
+      scheduleRelease();
+    };
+
+    scrollEl.addEventListener('wheel', onWheel, { passive: false });
+    return () => {
+      scrollEl.removeEventListener('wheel', onWheel);
+      if (pullReleaseTimerRef.current) {
+        window.clearTimeout(pullReleaseTimerRef.current);
+        pullReleaseTimerRef.current = null;
+      }
+      resetPullGesture();
+    };
+  }, [isRefreshing, onPullToRefresh, releasePullGesture, resetPullGesture, updatePullProgress]);
+
+  useEffect(() => {
     return () => {
       removalTimersRef.current.forEach((timeoutId) => {
         window.clearTimeout(timeoutId);
@@ -235,6 +379,10 @@ export function EntryList({
       if (scrollStopTimerRef.current) {
         window.clearTimeout(scrollStopTimerRef.current);
         scrollStopTimerRef.current = null;
+      }
+      if (pullReleaseTimerRef.current) {
+        window.clearTimeout(pullReleaseTimerRef.current);
+        pullReleaseTimerRef.current = null;
       }
     };
   }, []);
@@ -334,6 +482,24 @@ export function EntryList({
   };
 
   const skeletonKeys = ['one', 'two', 'three', 'four', 'five', 'six'];
+  const showPullIndicator = Boolean(onPullToRefresh) && (isPulling || pullRefreshPending);
+  const pullOffset = isPulling
+    ? pullDistance
+    : pullRefreshPending
+      ? PULL_TO_REFRESH_HOLD_DISTANCE
+      : 0;
+  const pullVisualOffset =
+    pullOffset <= PULL_TO_REFRESH_SOFT_LIMIT
+      ? pullOffset
+      : PULL_TO_REFRESH_SOFT_LIMIT +
+        (pullOffset - PULL_TO_REFRESH_SOFT_LIMIT) * PULL_TO_REFRESH_OVERFLOW_DAMPING;
+  const pullProgress = Math.min(1, pullVisualOffset / PULL_TO_REFRESH_TRIGGER_DISTANCE);
+  const pullLabel =
+    isRefreshing || pullRefreshPending
+      ? _(msg`Refreshing...`)
+      : pullReady
+        ? _(msg`Release to refresh`)
+        : _(msg`Pull to refresh`);
 
   if (isLoading) {
     return (
@@ -404,11 +570,62 @@ export function EntryList({
           maxWidth: '822px',
         }}
       >
+        {onPullToRefresh && (
+          <>
+            <div
+              className="pointer-events-none sticky top-0 z-20 bg-background"
+              style={{
+                height: showPullIndicator ? `${pullVisualOffset}px` : '0px',
+                transition: isPulling
+                  ? 'height 72ms linear'
+                  : 'height 280ms cubic-bezier(0.175, 0.885, 0.32, 1.08)',
+              }}
+            />
+            <div className="pointer-events-none sticky top-0 z-30 flex h-0 justify-center overflow-visible">
+              <div
+                className={cn(
+                  'inline-flex items-center gap-2 rounded-full bg-background/90 px-3 py-1.5 text-xs text-muted-foreground shadow-sm backdrop-blur-sm',
+                  pullReady && !isRefreshing && !pullRefreshPending && 'text-foreground'
+                )}
+                style={{
+                  transform: `translateY(${Math.max(0, pullVisualOffset - 24)}px) scale(${
+                    showPullIndicator ? 1 : 0.95
+                  })`,
+                  opacity: showPullIndicator ? 1 : 0,
+                  transition: isPulling
+                    ? 'transform 72ms linear, opacity 90ms linear'
+                    : 'transform 280ms cubic-bezier(0.175, 0.885, 0.32, 1.08), opacity 220ms ease',
+                }}
+              >
+                <HugeiconsIcon
+                  icon={Refresh04Icon}
+                  className={cn(
+                    'h-3.5 w-3.5 transition-transform duration-200',
+                    (isRefreshing || pullRefreshPending) && 'animate-spin'
+                  )}
+                  style={
+                    isRefreshing || pullRefreshPending
+                      ? undefined
+                      : {
+                          transform: `rotate(${Math.round(pullProgress * 260)}deg)`,
+                        }
+                  }
+                />
+                <span>{pullLabel}</span>
+              </div>
+            </div>
+          </>
+        )}
         <div
           style={{
             height: `${virtualizer.getTotalSize()}px`,
             width: '100%',
             position: 'relative',
+            transform: pullOffset > 0 ? `translateY(${pullVisualOffset}px)` : undefined,
+            transition: isPulling
+              ? 'transform 72ms linear'
+              : 'transform 280ms cubic-bezier(0.175, 0.885, 0.32, 1.08)',
+            willChange: 'transform',
           }}
         >
           {virtualItems.map((virtualItem) => {
@@ -418,33 +635,34 @@ export function EntryList({
             if (row.type === 'section') {
               const isActiveSticky = activeStickyIndexRef.current === virtualItem.index;
               return (
-                <motion.div
+                <div
                   key={row.key}
                   data-index={virtualItem.index}
                   ref={virtualizer.measureElement}
-                  className="py-0"
+                  className="overflow-hidden"
                   style={{
                     position: isActiveSticky ? 'sticky' : 'absolute',
                     top: isActiveSticky ? 0 : virtualItem.start,
                     left: 0,
                     width: '100%',
-                    zIndex: isActiveSticky ? 20 : 'auto',
-                  }}
-                  animate={{
-                    opacity: isActiveSticky ? 1 : 0.6,
-                    scale: isActiveSticky ? 1 : 0.98,
-                  }}
-                  transition={{
-                    duration: 0.15,
-                    ease: 'easeOut',
+                    zIndex: isActiveSticky ? 20 : 10,
                   }}
                 >
-                  <div className="rounded-lg bg-background px-2 pt-2 pb-2 transition-colors duration-200">
+                  <div
+                    className="bg-background px-2 pt-2 pb-2"
+                    style={{
+                      transform: isActiveSticky ? 'translateY(0)' : 'translateY(-100%)',
+                      opacity: isActiveSticky ? 1 : 0,
+                      transition: isActiveSticky
+                        ? 'none'
+                        : 'transform 0.12s ease-in, opacity 0.06s ease-in',
+                    }}
+                  >
                     <h2 className="px-1 text-[0.68rem] font-semibold tracking-[0.1em] text-muted-foreground/75 uppercase">
                       {row.title}
                     </h2>
                   </div>
-                </motion.div>
+                </div>
               );
             }
 
@@ -463,9 +681,14 @@ export function EntryList({
                   left: 0,
                   width: '100%',
                 }}
-                initial={isNew ? { opacity: 0, y: -6 } : false}
+                initial={isNew ? { opacity: 0, y: -6 } : { opacity: 0, y: 8 }}
                 animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.2, ease: 'easeOut' }}
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{
+                  duration: 0.25,
+                  ease: 'easeOut',
+                  delay: isNew ? 0 : Math.min(virtualItem.index * 0.02, 0.15),
+                }}
               >
                 <button
                   type="button"
@@ -509,14 +732,24 @@ export function EntryList({
                       </div>
                     </ItemHeader>
                     <ItemContent className="basis-full min-w-0 space-y-1">
-                      <ItemTitle
-                        className={cn(
-                          'line-clamp-2 w-full break-words font-semibold text-base leading-snug tracking-tight transition-colors',
-                          entry.status === 'unread' ? 'text-foreground' : 'text-muted-foreground'
-                        )}
+                      <motion.div
+                        initial={{ opacity: 0, y: 4 }}
+                        animate={{ opacity: 1, y: 0 }}
+                        transition={{
+                          duration: 0.3,
+                          delay: Math.min(virtualItem.index * 0.03, 0.2),
+                          ease: 'easeOut',
+                        }}
                       >
-                        {entry.title}
-                      </ItemTitle>
+                        <ItemTitle
+                          className={cn(
+                            'line-clamp-2 w-full break-words font-semibold text-base leading-snug tracking-tight transition-colors',
+                            entry.status === 'unread' ? 'text-foreground' : 'text-muted-foreground'
+                          )}
+                        >
+                          {entry.title}
+                        </ItemTitle>
+                      </motion.div>
 
                       {extractThumbnail(entry) && (
                         <div className="relative mt-3 h-32 w-full shrink-0 overflow-hidden rounded-lg border border-border/30 bg-muted">
