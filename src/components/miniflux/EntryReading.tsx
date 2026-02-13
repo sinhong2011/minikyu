@@ -16,8 +16,7 @@ import {
   readerThemeOptions,
 } from '@/lib/reader-theme';
 import { cn } from '@/lib/utils';
-import { useEntry } from '@/services/miniflux';
-import { useMarkEntryRead, useToggleEntryStar } from '@/services/miniflux/entries';
+import { useEntry, useToggleEntryRead, useToggleEntryStar } from '@/services/miniflux/entries';
 import { EntryReadingHeader } from './EntryReadingHeader';
 import { buildEntryContentWithToc } from './entry-toc';
 import { SafeHtml } from './SafeHtml';
@@ -69,8 +68,13 @@ export function EntryReading({
   } = useReaderSettings();
   const { data: entry, isLoading, error } = useEntry(entryId);
   const toggleStar = useToggleEntryStar();
-  const markEntryRead = useMarkEntryRead();
+  const toggleEntryRead = useToggleEntryRead();
+  const toggleEntryReadRef = useRef(toggleEntryRead);
+  toggleEntryReadRef.current = toggleEntryRead;
+  const entryRef = useRef(entry);
+  entryRef.current = entry;
   const scrollRef = useRef<HTMLDivElement>(null);
+  const hasAutoMarkedAsRead = useRef(false);
   const scrollViewportRef = useRef<HTMLElement | null>(null);
   const scrollAnimationFrameRef = useRef<number | null>(null);
   const scrollY = useMotionValue(0);
@@ -332,6 +336,7 @@ export function EntryReading({
     if (entry) {
       logger.info('Entry loaded for reading', { id: entry.id, title: entry.title });
     }
+    hasAutoMarkedAsRead.current = false;
   }, [entry]);
 
   useEffect(() => {
@@ -347,6 +352,10 @@ export function EntryReading({
     setReadingProgress(0);
     setActiveHeadingId(readingContent.tocItems[0]?.id ?? null);
 
+    requestAnimationFrame(() => {
+      viewport.focus({ preventScroll: true });
+    });
+
     const handleScroll = () => {
       scrollY.set(viewport.scrollTop);
       const maxScrollable = viewport.scrollHeight - viewport.clientHeight;
@@ -354,6 +363,17 @@ export function EntryReading({
         maxScrollable <= 0 ? 100 : Math.round((viewport.scrollTop / maxScrollable) * 100);
       const normalizedProgress = Math.max(0, Math.min(100, progress));
       setReadingProgress((prev) => (prev === normalizedProgress ? prev : normalizedProgress));
+
+      const currentEntry = entryRef.current;
+      if (
+        currentEntry &&
+        currentEntry.status !== 'read' &&
+        !hasAutoMarkedAsRead.current &&
+        normalizedProgress >= 20
+      ) {
+        hasAutoMarkedAsRead.current = true;
+        toggleEntryReadRef.current.mutate(currentEntry.id);
+      }
 
       if (!showToc) {
         return;
@@ -387,13 +407,13 @@ export function EntryReading({
 
   useEffect(() => {
     const handleKeyDown = (e: KeyboardEvent) => {
-      if (
+      const isInputTarget =
         e.target instanceof HTMLInputElement ||
         e.target instanceof HTMLTextAreaElement ||
         e.target instanceof HTMLSelectElement ||
-        (e.target instanceof HTMLElement && e.target.isContentEditable) ||
-        e.defaultPrevented
-      ) {
+        (e.target instanceof HTMLElement && e.target.isContentEditable);
+
+      if (isInputTarget || e.defaultPrevented) {
         return;
       }
       if (e.metaKey || e.ctrlKey) {
@@ -441,15 +461,21 @@ export function EntryReading({
         if (nextTheme) {
           setReaderTheme(nextTheme);
         }
-      } else if (e.key === 'h' || e.key === 'ArrowLeft') {
+      } else if (e.key === 'h') {
         if (hasPrev && onNavigatePrev) {
           e.preventDefault();
           onNavigatePrev();
         }
-      } else if (e.key === 'j' || e.key === 'ArrowRight') {
+      } else if (e.key === 'j') {
         if (hasNext && onNavigateNext) {
           e.preventDefault();
           onNavigateNext();
+        }
+      } else if (e.key.toLowerCase() === 'm') {
+        const currentEntry = entryRef.current;
+        if (currentEntry && !toggleEntryReadRef.current.isPending) {
+          e.preventDefault();
+          toggleEntryReadRef.current.mutate(currentEntry.id);
         }
       }
     };
@@ -519,9 +545,9 @@ export function EntryReading({
         hasPrev={hasPrev}
         hasNext={hasNext}
         onToggleStar={() => toggleStar.mutate(entry.id)}
-        onMarkAsRead={() => markEntryRead.mutate(entry.id)}
+        onToggleRead={() => toggleEntryRead.mutate(entry.id)}
         isRead={entry.status === 'read'}
-        isMarkingAsRead={markEntryRead.isPending}
+        isTogglingRead={toggleEntryRead.isPending}
         headerPadding={headerPadding}
         smallTitleOpacity={smallTitleOpacity}
         smallTitleHeight={smallTitleHeight}
