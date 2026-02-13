@@ -52,6 +52,7 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         miniflux::get_entry,
         miniflux::mark_entry_read,
         miniflux::mark_entries_read,
+        miniflux::toggle_entry_read,
         miniflux::toggle_entry_star,
         miniflux::update_entry,
         miniflux::refresh_feed,

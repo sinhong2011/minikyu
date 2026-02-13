@@ -280,15 +280,146 @@ pub async fn mark_entries_read(state: State<'_, AppState>, ids: Vec<String>) -> 
 /// Toggle entry star
 #[tauri::command]
 #[specta::specta]
-pub async fn toggle_entry_star(state: State<'_, AppState>, id: String) -> Result<(), String> {
-    let guard = state.miniflux.client.lock().await;
-    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+pub async fn toggle_entry_star(state: State<'_, AppState>, id: String) -> Result<bool, String> {
+    let pool = state
+        .db_pool
+        .lock()
+        .await
+        .as_ref()
+        .ok_or("Database not initialized")?
+        .clone();
 
     let id_parsed = id
         .parse::<i64>()
         .map_err(|e| format!("Invalid entry ID: {}", e))?;
 
-    client.toggle_bookmark(id_parsed).await
+    // Get current starred status from local database
+    let current_starred: bool = sqlx::query_scalar("SELECT starred FROM entries WHERE id = ?")
+        .bind(id_parsed)
+        .fetch_one(&pool)
+        .await
+        .map_err(|e| format!("Failed to get entry starred status: {e}"))?;
+
+    let new_starred = !current_starred;
+
+    // Update local database first (local-first approach)
+    sqlx::query("UPDATE entries SET starred = ? WHERE id = ?")
+        .bind(new_starred)
+        .bind(id_parsed)
+        .execute(&pool)
+        .await
+        .map_err(|e| format!("Failed to update entry starred status in database: {e}"))?;
+
+    log::info!(
+        "Toggled entry {} starred status: {} -> {}",
+        id_parsed,
+        current_starred,
+        new_starred
+    );
+
+    // Try to sync with Miniflux API
+    let api_result = {
+        let guard = state.miniflux.client.lock().await;
+        if let Some(client) = guard.as_ref() {
+            client.toggle_bookmark(id_parsed).await
+        } else {
+            Ok(())
+        }
+    };
+
+    if let Err(e) = api_result {
+        let error_lower = e.to_lowercase();
+        let is_not_found = error_lower.contains("404") || error_lower.contains("not found");
+
+        if is_not_found {
+            sqlx::query("DELETE FROM entries WHERE id = ?")
+                .bind(id_parsed)
+                .execute(&pool)
+                .await
+                .ok();
+
+            log::info!(
+                "Entry {} deleted from local database (not found on server)",
+                id_parsed
+            );
+            return Err(format!(
+                "Entry not found on server (may have been deleted). ID: {}",
+                id_parsed
+            ));
+        }
+
+        log::warn!(
+            "Failed to sync entry {} starred status with Miniflux API: {}. Local DB updated successfully.",
+            id_parsed,
+            e
+        );
+    }
+
+    Ok(new_starred)
+}
+
+/// Toggle entry read status between "read" and "unread"
+#[tauri::command]
+#[specta::specta]
+pub async fn toggle_entry_read(state: State<'_, AppState>, id: String) -> Result<String, String> {
+    let pool = state
+        .db_pool
+        .lock()
+        .await
+        .as_ref()
+        .ok_or("Database not initialized")?
+        .clone();
+
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid entry ID: {}", e))?;
+
+    let current_status: String = sqlx::query_scalar("SELECT status FROM entries WHERE id = ?")
+        .bind(id_parsed)
+        .fetch_one(&pool)
+        .await
+        .map_err(|e| format!("Failed to get entry status: {e}"))?;
+
+    let new_status = if current_status == "read" {
+        "unread"
+    } else {
+        "read"
+    };
+
+    sqlx::query("UPDATE entries SET status = ? WHERE id = ?")
+        .bind(new_status)
+        .bind(id_parsed)
+        .execute(&pool)
+        .await
+        .map_err(|e| format!("Failed to update entry status in database: {e}"))?;
+
+    log::info!(
+        "Toggled entry {} read status: {} -> {}",
+        id_parsed,
+        current_status,
+        new_status
+    );
+
+    let api_result = {
+        let guard = state.miniflux.client.lock().await;
+        if let Some(client) = guard.as_ref() {
+            client
+                .update_entries(vec![id_parsed], new_status.to_string())
+                .await
+        } else {
+            Ok(())
+        }
+    };
+
+    if let Err(e) = api_result {
+        log::warn!(
+            "Failed to sync entry {} status with Miniflux API: {}. Local DB updated successfully.",
+            id_parsed,
+            e
+        );
+    }
+
+    Ok(new_status.to_string())
 }
 
 /// Update entry
