@@ -71,14 +71,45 @@ pub async fn save_miniflux_account(
     let auth_method = if has_token { "token" } else { "password" };
     let now = Utc::now().to_rfc3339();
 
-    let existing_account: Option<(i64,)> =
-        sqlx::query_as("SELECT id FROM miniflux_connections WHERE username = ?")
+    let existing_account: Option<(i64, String)> =
+        sqlx::query_as("SELECT id, server_url FROM miniflux_connections WHERE username = ?")
             .bind(username)
             .fetch_optional(&pool)
             .await?;
 
-    let account_id = if let Some((id,)) = existing_account {
+    // Check if we're switching to a different server
+    let (is_new_server, old_server_url) = if let Some((_, ref server_url)) = existing_account {
+        (server_url != &config.server_url, Some(server_url.clone()))
+    } else {
+        (false, None)
+    };
+
+    let account_id = if let Some((id, _)) = existing_account {
         log::info!("Updating existing account with ID: {}", id);
+
+        // If switching to a different server, clear all synced data
+        if is_new_server {
+            log::warn!(
+                "Server URL changed from {} to {}. Clearing old synced data...",
+                old_server_url.as_deref().unwrap_or("unknown"),
+                config.server_url
+            );
+            // Clear entries first (due to foreign key constraints)
+            sqlx::query("DELETE FROM entries").execute(&pool).await?;
+            // Clear enclosures
+            sqlx::query("DELETE FROM enclosures").execute(&pool).await?;
+            // Clear feeds
+            sqlx::query("DELETE FROM feeds").execute(&pool).await?;
+            // Clear categories
+            sqlx::query("DELETE FROM categories").execute(&pool).await?;
+            // Clear sync state to force a full resync
+            sqlx::query(
+                "UPDATE sync_state SET last_sync_at = NULL, last_full_sync_at = NULL, entries_offset = 0, entries_pulled = 0, entries_total = 0",
+            )
+            .execute(&pool)
+            .await?;
+            log::info!("Old synced data cleared successfully");
+        }
 
         sqlx::query(
             r#"
