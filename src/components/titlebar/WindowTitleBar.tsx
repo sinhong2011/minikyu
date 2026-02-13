@@ -108,13 +108,11 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
         </Button>
       </div>
 
-      {/* Center: Command search */}
-      <div data-tauri-drag-region className="flex flex-1 items-center justify-center">
-        <CommandSearchButton onClick={onOpenCommandPalette} />
-      </div>
-
-      {/* Right section */}
-      <div data-tauri-drag-region className="flex items-center gap-2 pr-2">
+      {/* Center: Command search + quick actions */}
+      <div data-tauri-drag-region className="flex flex-1 items-center justify-center gap-2">
+        <div className="min-w-0 w-full max-w-xl">
+          <CommandSearchButton onClick={onOpenCommandPalette} />
+        </div>
         {isConnected && (
           <SyncProgressPopover>
             <Button
@@ -150,11 +148,15 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
           onClick={toggleDownloads}
           variant="ghost"
           size="icon"
-          className="h-8 w-8 shrink-0 text-foreground/70 hover:text-foreground"
+          className="pt-0.5 h-8 w-8 shrink-0 text-foreground/70 hover:text-foreground"
           title={_(msg`Downloads`)}
         >
           ↓
         </Button>
+      </div>
+
+      {/* Right section */}
+      <div data-tauri-drag-region className="flex items-center pr-2">
         {!isMacOS && <WindowsWindowControls />}
       </div>
     </div>

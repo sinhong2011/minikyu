@@ -1,4 +1,6 @@
+import { useLingui } from '@lingui/react';
 import { motion } from 'motion/react';
+import { useMemo } from 'react';
 import { CountingNumber } from '@/components/animate-ui/primitives/texts/counting-number';
 import { cn } from '@/lib/utils';
 
@@ -13,12 +15,18 @@ export function AnimatedBadge({
   className = '',
   animateOnMount = true,
 }: AnimatedBadgeProps) {
+  const { i18n } = useLingui();
+  const numberFormatter = useMemo(
+    () => new Intl.NumberFormat(i18n.locale, { maximumFractionDigits: 0 }),
+    [i18n.locale]
+  );
+
   if (count <= 0) {
     return null;
   }
 
-  const digitCount = Math.max(Math.floor(Math.log10(Math.abs(count))).toString().length, 1);
-  const minWidth = digitCount * 0.75;
+  const formattedCount = numberFormatter.format(count);
+  const minWidth = formattedCount.length * 0.6;
 
   return (
     <motion.span
@@ -35,7 +43,11 @@ export function AnimatedBadge({
         minWidth: `${minWidth}em`,
       }}
     >
-      <CountingNumber number={count} initiallyStable={!animateOnMount} />
+      <CountingNumber
+        number={count}
+        initiallyStable={!animateOnMount}
+        formatter={(value) => numberFormatter.format(value)}
+      />
     </motion.span>
   );
 }

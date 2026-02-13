@@ -19,11 +19,16 @@ import { Badge } from '@/components/ui/badge';
 import { logger } from '@/lib/logger';
 import { queryClient } from '@/lib/query-client';
 import { commands } from '@/lib/tauri-bindings';
+import { cn } from '@/lib/utils';
 import { useAccounts, useActiveAccount } from '@/services/miniflux/accounts';
 import { useIsConnected } from '@/services/miniflux/auth';
 import { useCurrentUser } from '@/services/miniflux/users';
 
-export function UserNav() {
+interface UserNavProps {
+  compact?: boolean;
+}
+
+export function UserNav({ compact = false }: UserNavProps = {}) {
   const { _ } = useLingui();
   const [settingsOpen, setSettingsOpen] = useState(false);
   const { data: accounts = [] } = useAccounts();
@@ -100,32 +105,45 @@ export function UserNav() {
   return (
     <>
       <Menu>
-        <MenuTrigger className="w-full outline-none">
-          <div className="flex items-center gap-3 rounded-lg p-2 hover:bg-accent transition-colors text-left">
-            <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-medium">
-                {getInitials(currentAccount.username)}
-              </AvatarFallback>
-            </Avatar>
-            <div className="grid flex-1 text-left text-sm leading-tight">
-              <div className="flex items-center gap-2">
-                <span className="truncate font-semibold">{currentAccount.username}</span>
-                {!isUserLoading && !isUserError && currentUser?.is_admin && (
-                  <Badge variant="secondary" className="text-xs px-1.5 py-0">
-                    {_(msg`Admin`)}
-                  </Badge>
+        <MenuTrigger className={cn('w-full outline-none', compact && 'flex justify-center')}>
+          {compact ? (
+            <div
+              className="flex items-center justify-center rounded-lg p-1.5 text-left transition-colors hover:bg-accent"
+              title={currentAccount.username}
+            >
+              <Avatar className="h-8 w-8 rounded-lg">
+                <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-medium">
+                  {getInitials(currentAccount.username)}
+                </AvatarFallback>
+              </Avatar>
+            </div>
+          ) : (
+            <div className="flex items-center gap-3 rounded-lg p-2 text-left transition-colors hover:bg-accent">
+              <Avatar className="h-8 w-8 rounded-lg">
+                <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-medium">
+                  {getInitials(currentAccount.username)}
+                </AvatarFallback>
+              </Avatar>
+              <div className="grid flex-1 text-left text-sm leading-tight">
+                <div className="flex items-center gap-2">
+                  <span className="truncate font-semibold">{currentAccount.username}</span>
+                  {!isUserLoading && !isUserError && currentUser?.is_admin && (
+                    <Badge variant="secondary" className="text-xs px-1.5 py-0">
+                      {_(msg`Admin`)}
+                    </Badge>
+                  )}
+                </div>
+                <span className="truncate text-xs text-muted-foreground">
+                  {getDomain(currentAccount.server_url)}
+                </span>
+                {!isConnected && (
+                  <span className="text-[11px] text-muted-foreground">
+                    {_(msg`Offline cached data`)}
+                  </span>
                 )}
               </div>
-              <span className="truncate text-xs text-muted-foreground">
-                {getDomain(currentAccount.server_url)}
-              </span>
-              {!isConnected && (
-                <span className="text-[11px] text-muted-foreground">
-                  {_(msg`Offline cached data`)}
-                </span>
-              )}
             </div>
-          </div>
+          )}
         </MenuTrigger>
         <MenuPanel className="w-56" side="top" align="start" sideOffset={4}>
           {!isUserLoading && !isUserError && currentUser && (
