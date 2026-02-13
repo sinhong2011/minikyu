@@ -11,6 +11,7 @@ type CountingNumberProps = Omit<React.ComponentProps<'span'>, 'children'> & {
   padStart?: boolean;
   decimalSeparator?: string;
   decimalPlaces?: number;
+  formatter?: (value: number) => string;
   transition?: SpringOptions;
   delay?: number;
   initiallyStable?: boolean;
@@ -25,6 +26,7 @@ function CountingNumber({
   inViewMargin = '0px',
   inViewOnce = true,
   decimalSeparator = '.',
+  formatter,
   transition = { stiffness: 90, damping: 50 },
   decimalPlaces = 0,
   delay = 0,
@@ -59,7 +61,14 @@ function CountingNumber({
   React.useEffect(() => {
     const unsubscribe = springVal.on('change', (latest) => {
       if (localRef.current) {
-        let formatted = decimals > 0 ? latest.toFixed(decimals) : Math.round(latest).toString();
+        const roundedLatest = decimals > 0 ? Number(latest.toFixed(decimals)) : Math.round(latest);
+
+        if (formatter) {
+          localRef.current.textContent = formatter(roundedLatest);
+          return;
+        }
+
+        let formatted = decimals > 0 ? latest.toFixed(decimals) : roundedLatest.toString();
 
         if (decimals > 0) {
           formatted = formatted.replace('.', decimalSeparator);
@@ -76,11 +85,16 @@ function CountingNumber({
       }
     });
     return () => unsubscribe();
-  }, [springVal, decimals, padStart, number, decimalSeparator, localRef]);
+  }, [springVal, decimals, padStart, number, decimalSeparator, formatter, localRef]);
 
   const finalIntLength = Math.floor(Math.abs(number)).toString().length;
 
   const formatValue = (val: number) => {
+    if (formatter) {
+      const roundedValue = decimals > 0 ? Number(val.toFixed(decimals)) : Math.round(val);
+      return formatter(roundedValue);
+    }
+
     let out = decimals > 0 ? val.toFixed(decimals) : Math.round(val).toString();
     if (decimals > 0) out = out.replace('.', decimalSeparator);
     if (padStart) {
@@ -91,10 +105,12 @@ function CountingNumber({
     return out;
   };
 
-  const zeroText = padStart
-    ? '0'.padStart(finalIntLength, '0') +
-      (decimals > 0 ? decimalSeparator + '0'.repeat(decimals) : '')
-    : `0${decimals > 0 ? decimalSeparator + '0'.repeat(decimals) : ''}`;
+  const zeroText = formatter
+    ? formatter(0)
+    : padStart
+      ? '0'.padStart(finalIntLength, '0') +
+        (decimals > 0 ? decimalSeparator + '0'.repeat(decimals) : '')
+      : `0${decimals > 0 ? decimalSeparator + '0'.repeat(decimals) : ''}`;
 
   const initialText = initiallyStable ? formatValue(number) : zeroText;
 
