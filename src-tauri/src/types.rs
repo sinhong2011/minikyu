@@ -75,15 +75,22 @@ pub struct AppPreferences {
     pub reader_font_size: u32,
     /// Reader line width (45-80)
     pub reader_line_width: u32,
+    /// Reader line height (1.4-2.2)
+    pub reader_line_height: f32,
     /// Reader font family
     /// (sans-serif, system-ui, humanist, serif, georgia, book-serif, monospace)
     pub reader_font_family: String,
+    /// Reader surface theme
+    /// (default, paper, sepia, slate, oled)
+    pub reader_theme: String,
     /// Reader code block syntax highlight theme.
     pub reader_code_theme: String,
     /// Chinese conversion mode for reading content.
     pub reader_chinese_conversion: ChineseConversionMode,
     /// Enable bionic reading emphasis for English text.
     pub reader_bionic_reading: bool,
+    /// Whether to show the compact reading status bar.
+    pub reader_status_bar: bool,
     /// User-defined term conversion rules applied after Chinese conversion.
     #[serde(default)]
     pub reader_custom_conversions: Vec<ChineseConversionRule>,
@@ -104,10 +111,13 @@ impl Default for AppPreferences {
             start_minimized: false,
             reader_font_size: 16,
             reader_line_width: 65,
+            reader_line_height: 1.75,
             reader_font_family: "sans-serif".to_string(),
+            reader_theme: "default".to_string(),
             reader_code_theme: "auto".to_string(),
             reader_chinese_conversion: ChineseConversionMode::S2tw,
             reader_bionic_reading: false,
+            reader_status_bar: false,
             reader_custom_conversions: vec![],
             image_download_path: None,
             video_download_path: None,
@@ -245,6 +255,7 @@ pub fn validate_close_behavior(behavior: &str) -> Result<(), String> {
 pub fn validate_reader_settings(
     font_size: u32,
     line_width: u32,
+    line_height: f32,
     font_family: &str,
 ) -> Result<(), String> {
     if !(14..=24).contains(&font_size) {
@@ -253,10 +264,24 @@ pub fn validate_reader_settings(
     if !(45..=80).contains(&line_width) {
         return Err("Line width must be between 45 and 80".to_string());
     }
+    if !line_height.is_finite() || !(1.4..=2.2).contains(&line_height) {
+        return Err("Line height must be between 1.4 and 2.2".to_string());
+    }
     match font_family {
         "sans-serif" | "system-ui" | "humanist" | "serif" | "georgia" | "book-serif"
         | "monospace" => Ok(()),
         _ => Err("Invalid font family: must be one of 'sans-serif', 'system-ui', 'humanist', 'serif', 'georgia', 'book-serif', or 'monospace'".to_string()),
+    }
+}
+
+/// Validates reader theme value.
+pub fn validate_reader_theme(theme: &str) -> Result<(), String> {
+    match theme {
+        "default" | "paper" | "sepia" | "slate" | "oled" => Ok(()),
+        _ => Err(
+            "Invalid reader theme: must be one of 'default', 'paper', 'sepia', 'slate', or 'oled'"
+                .to_string(),
+        ),
     }
 }
 
