@@ -73,6 +73,12 @@ export async function buildAppMenu(): Promise<Menu> {
 }
 
 function handleOpenPreferences(): void {
+  useUIStore.getState().setPreferencesActivePane('general');
+  useUIStore.getState().setPreferencesOpen(true);
+}
+
+function handleAbout(): void {
+  useUIStore.getState().setPreferencesActivePane('about');
   useUIStore.getState().setPreferencesOpen(true);
 }
 ```

@@ -1,9 +1,9 @@
 import { msg } from '@lingui/core/macro';
 import { Menu, MenuItem, PredefinedMenuItem, Submenu } from '@tauri-apps/api/menu';
-import { check } from '@tauri-apps/plugin-updater';
 import { i18n } from '@/i18n';
 import { logger } from '@/lib/logger';
 import { notifications } from '@/lib/notifications';
+import { checkLatestVersion } from '@/lib/updates';
 import { useUIStore } from '@/store/ui-store';
 
 const APP_NAME = 'Minikyu';
@@ -101,29 +101,33 @@ export function setupMenuLanguageListener(): () => void {
 
 function handleAbout(): void {
   logger.info('About menu item clicked');
-  const _ = i18n._.bind(i18n);
-  alert(
-    `${_(msg`Version: ${__APP_VERSION__}`)}\n\n${_(msg`A calm, focused space for your Miniflux reading. Catch up faster, stay organized, and enjoy every feed.`)}`
-  );
+  useUIStore.getState().setPreferencesActivePane('about');
+  useUIStore.getState().setPreferencesOpen(true);
 }
 
 async function handleCheckForUpdates(): Promise<void> {
   logger.info('Check for Updates menu item clicked');
+  const _ = i18n._.bind(i18n);
   try {
-    const update = await check();
-    if (update) {
-      notifications.info('Update Available', `Version ${update.version} is available`);
+    const latestVersion = await checkLatestVersion();
+
+    if (latestVersion.status === 'available') {
+      notifications.info(
+        _(msg`Update Available`),
+        _(msg`Version ${latestVersion.version} is available`)
+      );
     } else {
-      notifications.success('Up to Date', 'You are running the latest version');
+      notifications.success(_(msg`Up to Date`), _(msg`You are running the latest version`));
     }
   } catch (error) {
     logger.error('Update check failed', { error });
-    notifications.error('Update Check Failed', 'Could not check for updates');
+    notifications.error(_(msg`Update Check Failed`), _(msg`Could not check for updates`));
   }
 }
 
 function handleOpenPreferences(): void {
   logger.info('Preferences menu item clicked');
+  useUIStore.getState().setPreferencesActivePane('general');
   useUIStore.getState().setPreferencesOpen(true);
 }
 
