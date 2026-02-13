@@ -1,20 +1,34 @@
-import { ArrowDown01Icon, ArrowUp01Icon } from '@hugeicons/core-free-icons';
+import { ArrowDown01Icon, ArrowUp01Icon, ViewIcon, ViewOffIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { AnimatePresence, motion, useMotionValue, useTransform } from 'motion/react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { Button } from '@/components/ui/button';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import { logger } from '@/lib/logger';
 import { getReaderFontStack } from '@/lib/reader-fonts';
+import {
+  getReaderThemePalette,
+  normalizeReaderTheme,
+  readerThemeOptions,
+} from '@/lib/reader-theme';
 import { cn } from '@/lib/utils';
 import { useEntry } from '@/services/miniflux';
 import { useMarkEntryRead, useToggleEntryStar } from '@/services/miniflux/entries';
 import { EntryReadingHeader } from './EntryReadingHeader';
 import { buildEntryContentWithToc } from './entry-toc';
 import { SafeHtml } from './SafeHtml';
+
+const MIN_FONT_SIZE = 14;
+const MAX_FONT_SIZE = 24;
+const MIN_LINE_WIDTH = 45;
+const MAX_LINE_WIDTH = 80;
+const MIN_LINE_HEIGHT = 1.4;
+const MAX_LINE_HEIGHT = 2.2;
+const LINE_HEIGHT_STEP = 0.05;
 
 interface EntryReadingProps {
   entryId: string;
@@ -42,8 +56,16 @@ export function EntryReading({
     bionicReading,
     fontSize,
     lineWidth,
+    lineHeight,
     fontFamily,
+    readerTheme,
     codeTheme,
+    statusBarVisible,
+    setFontSize,
+    setLineWidth,
+    setLineHeight,
+    setReaderTheme,
+    setStatusBarVisible,
   } = useReaderSettings();
   const { data: entry, isLoading, error } = useEntry(entryId);
   const toggleStar = useToggleEntryStar();
@@ -54,6 +76,7 @@ export function EntryReading({
   const scrollY = useMotionValue(0);
   const [activeHeadingId, setActiveHeadingId] = useState<string | null>(null);
   const [hoveredHeadingId, setHoveredHeadingId] = useState<string | null>(null);
+  const [readingProgress, setReadingProgress] = useState(0);
 
   const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 
@@ -116,6 +139,81 @@ export function EntryReading({
         filter: { duration: 0.28, ease: [0.35, 0, 0.9, 1] as const },
         opacity: { duration: 0.24, ease: [0.45, 0, 1, 1] as const },
       };
+  const readerThemePalette = useMemo(() => getReaderThemePalette(readerTheme), [readerTheme]);
+  const useInvertedProse = readerTheme === 'slate' || readerTheme === 'oled';
+  const estimatedTotalMinutes = useMemo(() => {
+    if (!entry) {
+      return 1;
+    }
+
+    if (entry.reading_time && entry.reading_time > 0) {
+      return entry.reading_time;
+    }
+
+    const plainText = entry.content?.replace(/<[^>]*>/g, ' ') ?? '';
+    const wordCount = plainText
+      .trim()
+      .split(/\s+/)
+      .filter((word) => word.length > 0).length;
+
+    return Math.max(1, Math.ceil(wordCount / 220));
+  }, [entry]);
+  const minutesLeft = useMemo(() => {
+    const remaining = estimatedTotalMinutes * (1 - readingProgress / 100);
+    return Math.max(0, Math.ceil(remaining));
+  }, [estimatedTotalMinutes, readingProgress]);
+  const progressPercent = Math.max(0, Math.min(100, Math.round(readingProgress)));
+  const progressLabel = _(msg`${progressPercent}% read`);
+  const minutesLeftLabel = _(msg`${minutesLeft} min left`);
+  const hideReadingStatusLabel = _(msg`Hide reading status`);
+  const showReadingStatusLabel = _(msg`Show reading status`);
+  const scrollToTopLabel = _(msg`Scroll to top`);
+  const floatingToolbarButtonClass =
+    'h-9 w-9 rounded-xl border border-transparent text-muted-foreground hover:bg-accent/70 hover:text-muted-foreground focus-visible:text-muted-foreground active:text-muted-foreground aria-expanded:text-muted-foreground';
+  const readerSurfaceStyle = useMemo(
+    () => ({
+      willChange: 'transform, opacity, filter',
+      backgroundColor: readerThemePalette.surface,
+      color: readerThemePalette.text,
+    }),
+    [readerThemePalette.surface, readerThemePalette.text]
+  );
+  const readerProseStyle = useMemo(
+    () =>
+      ({
+        maxWidth: `${lineWidth}ch`,
+        fontSize: `${fontSize}px`,
+        lineHeight,
+        fontFamily: getReaderFontStack(fontFamily),
+        '--reader-link': readerThemePalette.link,
+        '--tw-prose-body': readerThemePalette.text,
+        '--tw-prose-headings': readerThemePalette.text,
+        '--tw-prose-lead': readerThemePalette.muted,
+        '--tw-prose-links': readerThemePalette.link,
+        '--tw-prose-bold': readerThemePalette.text,
+        '--tw-prose-counters': readerThemePalette.muted,
+        '--tw-prose-bullets': readerThemePalette.muted,
+        '--tw-prose-hr': readerThemePalette.border,
+        '--tw-prose-quotes': readerThemePalette.text,
+        '--tw-prose-quote-borders': readerThemePalette.border,
+        '--tw-prose-captions': readerThemePalette.muted,
+        '--tw-prose-code': readerThemePalette.text,
+        '--tw-prose-pre-code': readerThemePalette.text,
+        '--tw-prose-pre-bg': 'color-mix(in oklch, var(--reader-link) 10%, transparent)',
+        '--tw-prose-th-borders': readerThemePalette.border,
+        '--tw-prose-td-borders': readerThemePalette.border,
+      }) as CSSProperties,
+    [
+      fontFamily,
+      fontSize,
+      lineHeight,
+      lineWidth,
+      readerThemePalette.border,
+      readerThemePalette.link,
+      readerThemePalette.muted,
+      readerThemePalette.text,
+    ]
+  );
 
   const cancelScrollAnimation = useCallback(() => {
     if (scrollAnimationFrameRef.current !== null) {
@@ -222,6 +320,13 @@ export function EntryReading({
     },
     [activeTocIndex, handleTocNavigation, readingContent.tocItems]
   );
+  const handleScrollToTop = useCallback(() => {
+    const viewport = scrollViewportRef.current;
+    if (!viewport) {
+      return;
+    }
+    animateViewportScrollTo(viewport, 0);
+  }, [animateViewportScrollTo]);
 
   useEffect(() => {
     if (entry) {
@@ -239,10 +344,16 @@ export function EntryReading({
     cancelScrollAnimation();
     viewport.scrollTop = 0;
     scrollY.set(0);
+    setReadingProgress(0);
     setActiveHeadingId(readingContent.tocItems[0]?.id ?? null);
 
     const handleScroll = () => {
       scrollY.set(viewport.scrollTop);
+      const maxScrollable = viewport.scrollHeight - viewport.clientHeight;
+      const progress =
+        maxScrollable <= 0 ? 100 : Math.round((viewport.scrollTop / maxScrollable) * 100);
+      const normalizedProgress = Math.max(0, Math.min(100, progress));
+      setReadingProgress((prev) => (prev === normalizedProgress ? prev : normalizedProgress));
 
       if (!showToc) {
         return;
@@ -279,8 +390,13 @@ export function EntryReading({
       if (
         e.target instanceof HTMLInputElement ||
         e.target instanceof HTMLTextAreaElement ||
+        e.target instanceof HTMLSelectElement ||
+        (e.target instanceof HTMLElement && e.target.isContentEditable) ||
         e.defaultPrevented
       ) {
+        return;
+      }
+      if (e.metaKey || e.ctrlKey) {
         return;
       }
 
@@ -294,6 +410,37 @@ export function EntryReading({
         const scrollAmount = viewport.clientHeight * 0.8;
         const nextScrollTop = viewport.scrollTop + (e.shiftKey ? -scrollAmount : scrollAmount);
         animateViewportScrollTo(viewport, nextScrollTop);
+      } else if (e.altKey && e.key === 'ArrowUp') {
+        e.preventDefault();
+        setLineHeight(
+          Math.min(MAX_LINE_HEIGHT, Number((lineHeight + LINE_HEIGHT_STEP).toFixed(2)))
+        );
+      } else if (e.altKey && e.key === 'ArrowDown') {
+        e.preventDefault();
+        setLineHeight(
+          Math.max(MIN_LINE_HEIGHT, Number((lineHeight - LINE_HEIGHT_STEP).toFixed(2)))
+        );
+      } else if (e.key === '=' || e.key === '+') {
+        e.preventDefault();
+        setFontSize(Math.min(MAX_FONT_SIZE, fontSize + 1));
+      } else if (e.key === '-') {
+        e.preventDefault();
+        setFontSize(Math.max(MIN_FONT_SIZE, fontSize - 1));
+      } else if (e.key === '[') {
+        e.preventDefault();
+        setLineWidth(Math.max(MIN_LINE_WIDTH, lineWidth - 2));
+      } else if (e.key === ']') {
+        e.preventDefault();
+        setLineWidth(Math.min(MAX_LINE_WIDTH, lineWidth + 2));
+      } else if (e.shiftKey && e.key.toLowerCase() === 't') {
+        e.preventDefault();
+        const currentTheme = normalizeReaderTheme(readerTheme);
+        const currentIndex = readerThemeOptions.indexOf(currentTheme);
+        const nextIndex = (currentIndex + 1) % readerThemeOptions.length;
+        const nextTheme = readerThemeOptions[nextIndex];
+        if (nextTheme) {
+          setReaderTheme(nextTheme);
+        }
       } else if (e.key === 'h' || e.key === 'ArrowLeft') {
         if (hasPrev && onNavigatePrev) {
           e.preventDefault();
@@ -309,7 +456,21 @@ export function EntryReading({
 
     window.addEventListener('keydown', handleKeyDown);
     return () => window.removeEventListener('keydown', handleKeyDown);
-  }, [animateViewportScrollTo, onNavigatePrev, onNavigateNext, hasPrev, hasNext]);
+  }, [
+    animateViewportScrollTo,
+    fontSize,
+    hasNext,
+    hasPrev,
+    lineHeight,
+    lineWidth,
+    onNavigateNext,
+    onNavigatePrev,
+    readerTheme,
+    setFontSize,
+    setLineHeight,
+    setLineWidth,
+    setReaderTheme,
+  ]);
 
   useEffect(() => {
     if (!showToc) {
@@ -388,8 +549,8 @@ export function EntryReading({
                 transition: articleExitTransition,
               }}
               transition={articleEnterTransition}
-              className="bg-background px-4 py-8 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
-              style={{ willChange: 'transform, opacity, filter' }}
+              className="px-4 py-8 transition-colors duration-300 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
+              style={readerSurfaceStyle}
             >
               {entry.content ? (
                 <SafeHtml
@@ -399,25 +560,21 @@ export function EntryReading({
                   customConversionRules={customConversionRules}
                   codeTheme={codeTheme}
                   className={cn(
-                    'mx-auto max-w-none break-words prose prose-slate dark:prose-invert transition-all duration-300',
+                    'mx-auto max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
+                    useInvertedProse && 'prose-invert',
                     '[&_h1]:mb-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold',
                     '[&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:leading-snug [&_h2]:font-semibold',
                     '[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:leading-snug [&_h3]:font-semibold',
-                    '[&_p]:my-5 [&_p]:leading-[1.85] [&_p]:tracking-[0.01em]',
+                    '[&_p]:my-5 [&_p]:tracking-[0.01em]',
                     '[&_ul]:my-5 [&_ol]:my-5 [&_li]:my-1.5',
-                    '[&_a]:break-all [&_a]:underline [&_a]:decoration-primary/40 [&_a]:underline-offset-4',
+                    '[&_a]:break-all [&_a]:underline [&_a]:decoration-[color:var(--reader-link)] [&_a]:underline-offset-4',
                     '[&_blockquote]:my-8 [&_blockquote]:rounded-r-xl [&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:bg-primary/5 [&_blockquote]:px-4 [&_blockquote]:py-2 [&_blockquote]:text-foreground/90',
                     '[&_hr]:my-8 [&_hr]:border-border/60',
                     '[&_table]:text-sm [&_table]:leading-relaxed',
                     '[&_img]:my-8',
                     '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0'
                   )}
-                  style={{
-                    maxWidth: `${lineWidth}ch`,
-                    fontSize: `${fontSize}px`,
-                    lineHeight: '1.75',
-                    fontFamily: getReaderFontStack(fontFamily),
-                  }}
+                  style={readerProseStyle}
                 />
               ) : (
                 <p className="text-muted-foreground italic text-center py-20">
@@ -551,6 +708,80 @@ export function EntryReading({
                 </div>
               </fieldset>
             </motion.aside>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {readingProgress > 8 && (
+            <motion.div
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="absolute right-4 bottom-14 z-20"
+            >
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className={floatingToolbarButtonClass}
+                aria-label={scrollToTopLabel}
+                onClick={handleScrollToTop}
+              >
+                <HugeiconsIcon icon={ArrowUp01Icon} className="h-4 w-4" strokeWidth={2} />
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence mode="wait">
+          {statusBarVisible ? (
+            <motion.footer
+              key="reading-status"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="pointer-events-none absolute bottom-2 left-2 z-20"
+            >
+              <div className="pointer-events-auto flex items-center gap-1.5 rounded-md border border-border/60 bg-background/92 px-2 py-1 text-[10px] leading-none text-muted-foreground shadow-sm">
+                <span className="font-medium tracking-wide">{progressLabel}</span>
+                <span aria-hidden className="opacity-50">
+                  •
+                </span>
+                <span>{minutesLeftLabel}</span>
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className="h-5 w-5 rounded-sm border border-transparent text-muted-foreground hover:bg-accent/70 hover:text-muted-foreground focus-visible:text-muted-foreground active:text-muted-foreground aria-expanded:text-muted-foreground"
+                  aria-label={hideReadingStatusLabel}
+                  onClick={() => setStatusBarVisible(false)}
+                >
+                  <HugeiconsIcon icon={ViewOffIcon} className="h-3.5 w-3.5" strokeWidth={2} />
+                </Button>
+              </div>
+            </motion.footer>
+          ) : (
+            <motion.div
+              key="reading-status-toggle"
+              initial={{ opacity: 0, y: 12 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 12 }}
+              transition={{ duration: 0.2, ease: 'easeOut' }}
+              className="absolute bottom-2 left-2 z-20"
+            >
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className={floatingToolbarButtonClass}
+                aria-label={showReadingStatusLabel}
+                onClick={() => setStatusBarVisible(true)}
+              >
+                <HugeiconsIcon icon={ViewIcon} className="h-4 w-4" strokeWidth={2} />
+              </Button>
+            </motion.div>
           )}
         </AnimatePresence>
       </div>

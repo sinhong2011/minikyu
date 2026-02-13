@@ -3,9 +3,8 @@ import {
   ArrowRight02Icon,
   Cancel01Icon,
   CheckmarkCircle01Icon,
-  HeartAddIcon,
-  HeartCheckIcon,
   Share02Icon,
+  StarIcon,
   TextIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -34,6 +33,7 @@ import {
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import type { Entry } from '@/lib/bindings';
+import { normalizeReaderTheme, type ReaderTheme, readerThemeOptions } from '@/lib/reader-theme';
 import { type ReaderCodeTheme, readerCodeThemeOptions } from '@/lib/shiki-highlight';
 import type { ChineseConversionMode } from '@/lib/tauri-bindings';
 import { ReaderSettings } from './ReaderSettings';
@@ -84,11 +84,16 @@ export function EntryReadingHeader({
     chineseConversionMode,
     bionicReading,
     codeTheme,
+    readerTheme,
+    statusBarVisible,
     setChineseConversionMode,
     setBionicReading,
     setCodeTheme,
+    setReaderTheme,
+    setStatusBarVisible,
     isLoading,
   } = useReaderSettings();
+  const selectedReaderTheme = normalizeReaderTheme(readerTheme);
 
   const conversionOptions: Array<{
     value: ChineseConversionMode;
@@ -109,6 +114,22 @@ export function EntryReadingHeader({
       .split('-')
       .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
       .join(' ');
+  };
+  const getReaderThemeLabel = (theme: ReaderTheme) => {
+    switch (theme) {
+      case 'default':
+        return _(msg`Default`);
+      case 'paper':
+        return _(msg`Paper`);
+      case 'sepia':
+        return _(msg`Sepia`);
+      case 'slate':
+        return _(msg`Slate`);
+      case 'oled':
+        return _(msg`OLED`);
+      default:
+        return _(msg`Default`);
+    }
   };
   const toolbarButtonClass =
     'h-9 w-9 rounded-xl border border-transparent text-muted-foreground/90 hover:bg-accent/70 hover:text-foreground data-[state=open]:border-border/60 data-[state=open]:bg-accent/70 data-[state=open]:text-foreground';
@@ -268,6 +289,26 @@ export function EntryReadingHeader({
                   </Select>
                 </div>
 
+                <div className="space-y-1.5">
+                  <p className="text-xs text-muted-foreground">{_(msg`Reading theme`)}</p>
+                  <Select
+                    value={selectedReaderTheme}
+                    onValueChange={(value) => setReaderTheme(value)}
+                    disabled={isLoading}
+                  >
+                    <SelectTrigger className="h-8 w-full text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {readerThemeOptions.map((themeOption) => (
+                        <SelectItem key={themeOption} value={themeOption}>
+                          {getReaderThemeLabel(themeOption)}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
                 <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
                   <div className="space-y-0.5">
                     <p className="text-xs font-medium">{_(msg`Bionic Reading`)}</p>
@@ -276,6 +317,20 @@ export function EntryReadingHeader({
                   <Switch
                     checked={bionicReading}
                     onCheckedChange={(checked) => setBionicReading(Boolean(checked))}
+                    disabled={isLoading}
+                  />
+                </div>
+
+                <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
+                  <div className="space-y-0.5">
+                    <p className="text-xs font-medium">{_(msg`Status Bar`)}</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      {_(msg`Show reading progress at bottom-left`)}
+                    </p>
+                  </div>
+                  <Switch
+                    checked={statusBarVisible}
+                    onCheckedChange={(checked) => setStatusBarVisible(Boolean(checked))}
                     disabled={isLoading}
                   />
                 </div>
@@ -295,11 +350,10 @@ export function EntryReadingHeader({
                   />
                 }
               >
-                {entry.starred ? (
-                  <HugeiconsIcon icon={HeartCheckIcon} className="h-5 w-5 fill-primary" />
-                ) : (
-                  <HugeiconsIcon icon={HeartAddIcon} className="h-5 w-5" />
-                )}
+                <HugeiconsIcon
+                  icon={StarIcon}
+                  className={entry.starred ? 'h-5 w-5 fill-primary text-primary' : 'h-5 w-5'}
+                />
               </TooltipTrigger>
               <TooltipPanel>{entry.starred ? _(msg`Unstar`) : _(msg`Star`)}</TooltipPanel>
             </Tooltip>
