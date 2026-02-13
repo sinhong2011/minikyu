@@ -66,7 +66,6 @@
     "@tanstack/react-query": "^5.90.12",
     "@tanstack/react-router": "^1.154.12",
     "@tanstack/react-table": "^8.21.3",
-    "@tanstack/react-virtual": "^3.13.18",
     "@tanstack/zod-form-adapter": "^0.42.1",
     "@tauri-apps/api": "^2.9.1",
     "@tauri-apps/plugin-clipboard-manager": "^2.3.2",
