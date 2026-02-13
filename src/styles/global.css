@@ -10,6 +10,35 @@
   * {
     @apply border-border outline-ring/50;
   }
+  :where(*):not(.no-scrollbar) {
+    scrollbar-width: thin;
+    scrollbar-color: var(--scrollbar-thumb) transparent;
+  }
+  :where(*):not(.no-scrollbar)::-webkit-scrollbar {
+    width: var(--scrollbar-size);
+    height: var(--scrollbar-size);
+  }
+  :where(*):not(.no-scrollbar)::-webkit-scrollbar-track {
+    background: transparent;
+  }
+  :where(*):not(.no-scrollbar)::-webkit-scrollbar-thumb {
+    min-height: 24px;
+    border: 3px solid transparent;
+    border-radius: 999px;
+    background: var(--scrollbar-thumb);
+    background-clip: padding-box;
+  }
+  :where(*):not(.no-scrollbar)::-webkit-scrollbar-thumb:hover {
+    background: var(--scrollbar-thumb-hover);
+    background-clip: padding-box;
+  }
+  :where(*):not(.no-scrollbar)::-webkit-scrollbar-thumb:active {
+    background: var(--scrollbar-thumb-active);
+    background-clip: padding-box;
+  }
+  :where(*):not(.no-scrollbar)::-webkit-scrollbar-corner {
+    background: transparent;
+  }
   body {
     @apply font-sans bg-background text-foreground;
   }

@@ -36,6 +36,10 @@
   --sidebar-accent-foreground: oklch(0.21 0.006 285.885);
   --sidebar-border: oklch(0.92 0.004 286.32);
   --sidebar-ring: oklch(0.705 0.015 286.067);
+  --scrollbar-size: 10px;
+  --scrollbar-thumb: color-mix(in oklch, var(--foreground) 26%, transparent);
+  --scrollbar-thumb-hover: color-mix(in oklch, var(--primary) 42%, var(--foreground) 18%);
+  --scrollbar-thumb-active: color-mix(in oklch, var(--primary) 58%, var(--foreground) 12%);
 }
 
 .dark {
@@ -70,6 +74,9 @@
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
   --sidebar-ring: oklch(0.552 0.016 285.938);
+  --scrollbar-thumb: color-mix(in oklch, var(--foreground) 32%, transparent);
+  --scrollbar-thumb-hover: color-mix(in oklch, var(--primary) 54%, var(--foreground) 10%);
+  --scrollbar-thumb-active: color-mix(in oklch, var(--primary) 68%, var(--foreground) 6%);
 }
 
 @theme inline {
