@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { useSearch } from '@tanstack/react-router';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { useIsConnected } from '@/services/miniflux/auth';
@@ -92,7 +93,14 @@ i18n.load('en', {
   // biome-ignore lint/style/useNamingConvention: i18n key
   All: 'All',
   // biome-ignore lint/style/useNamingConvention: i18n key
+  Starred: 'Starred',
+  // biome-ignore lint/style/useNamingConvention: i18n key
+  History: 'History',
+  // biome-ignore lint/style/useNamingConvention: i18n key
   Loading: 'Loading',
+  'unread items': 'unread items',
+  'starred items': 'starred items',
+  'history items': 'history items',
 } as Record<string, string>);
 i18n.activate('en');
 
@@ -119,6 +127,7 @@ describe('MinifluxLayout', () => {
       selectedEntryId: undefined,
       searchFiltersVisible: false,
     });
+    (useSearch as any).mockReturnValue({});
 
     (useIsConnected as any).mockReturnValue({
       data: true,
@@ -181,5 +190,70 @@ describe('MinifluxLayout', () => {
     });
 
     expect(useUIStore.getState().selectedEntryId).toBeUndefined();
+  });
+
+  it('shows unread count below the title on all entries view', () => {
+    (useUnreadCounts as any).mockReturnValue({
+      data: {
+        total: 23,
+        today: 3,
+        // biome-ignore lint/style/useNamingConvention: API response format
+        by_category: [],
+        // biome-ignore lint/style/useNamingConvention: API response format
+        by_feed: [],
+      },
+    });
+
+    render(<MinifluxLayout />, { wrapper: TestWrapper });
+
+    expect(screen.getByRole('heading', { name: 'All' })).toBeInTheDocument();
+    expect(screen.getByText('23 unread items')).toBeInTheDocument();
+  });
+
+  it('shows starred count below the title on starred entries view', () => {
+    (useSearch as any).mockReturnValue({ filter: 'starred' });
+    (useEntries as any).mockReturnValue({
+      data: {
+        entries: [{ id: '1536612' }],
+        total: '7',
+      },
+    });
+
+    render(<MinifluxLayout />, { wrapper: TestWrapper });
+
+    expect(screen.getByRole('heading', { name: 'Starred' })).toBeInTheDocument();
+    expect(screen.getByText('7 starred items')).toBeInTheDocument();
+  });
+
+  it('shows history count below the title on history entries view', () => {
+    (useSearch as any).mockReturnValue({ filter: 'history' });
+    (useEntries as any).mockReturnValue({
+      data: {
+        entries: [{ id: '1536612' }],
+        total: '11',
+      },
+    });
+
+    render(<MinifluxLayout />, { wrapper: TestWrapper });
+
+    expect(screen.getByRole('heading', { name: 'History' })).toBeInTheDocument();
+    expect(screen.getByText('11 history items')).toBeInTheDocument();
+  });
+
+  it('formats large unread count with locale separators', () => {
+    (useUnreadCounts as any).mockReturnValue({
+      data: {
+        total: 12345,
+        today: 3,
+        // biome-ignore lint/style/useNamingConvention: API response format
+        by_category: [],
+        // biome-ignore lint/style/useNamingConvention: API response format
+        by_feed: [],
+      },
+    });
+
+    render(<MinifluxLayout />, { wrapper: TestWrapper });
+
+    expect(screen.getByText('12,345 unread items')).toBeInTheDocument();
   });
 });

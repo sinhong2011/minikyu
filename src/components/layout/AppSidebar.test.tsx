@@ -16,10 +16,12 @@ import {
   useFeedUnreadCount,
   useIsConnected,
   useSearchSources,
+  useSyncMiniflux,
   useUnreadCounts,
   useUpdateCategory,
   useUpdateFeed,
 } from '@/services/miniflux';
+import { useSyncStore } from '@/store/sync-store';
 import { AppSidebar } from './AppSidebar';
 
 vi.mock('@lingui/core/macro', () => ({
@@ -77,9 +79,13 @@ vi.mock('@/services/miniflux', () => ({
   useFeedUnreadCount: vi.fn(),
   useIsConnected: vi.fn(),
   useSearchSources: vi.fn(),
+  useSyncMiniflux: vi.fn(),
   useUnreadCounts: vi.fn(),
   useUpdateCategory: vi.fn(),
   useUpdateFeed: vi.fn(),
+}));
+vi.mock('@/store/sync-store', () => ({
+  useSyncStore: vi.fn(),
 }));
 
 vi.mock('@tanstack/react-router', () => ({
@@ -206,6 +212,14 @@ describe('AppSidebar', () => {
         today: 0,
       },
     });
+    (useSyncMiniflux as any).mockReturnValue({
+      mutate: vi.fn(),
+    });
+    (useSyncStore as any).mockImplementation((selector: any) =>
+      selector({
+        syncing: false,
+      })
+    );
     (useCategoryUnreadCount as any).mockReturnValue(0);
     (useFeedUnreadCount as any).mockReturnValue(0);
     (useCategories as any).mockReturnValue({
@@ -248,11 +262,11 @@ describe('AppSidebar', () => {
     });
   });
 
-  const renderComponent = () => {
+  const renderComponent = (defaultOpen = true) => {
     return render(
       <QueryClientProvider client={queryClient}>
         <I18nProvider i18n={i18n}>
-          <SidebarProvider>
+          <SidebarProvider defaultOpen={defaultOpen}>
             <AppSidebar />
           </SidebarProvider>
         </I18nProvider>
@@ -358,5 +372,23 @@ describe('AppSidebar', () => {
     fireEvent.click(screen.getByText('Search Source'));
 
     expect(screen.getByText('Create feed')).toBeInTheDocument();
+  });
+
+  it('triggers sync from sidebar header refresh button', () => {
+    const mutate = vi.fn();
+    (useSyncMiniflux as any).mockReturnValue({ mutate });
+
+    renderComponent();
+
+    fireEvent.click(screen.getByTitle('Sync'));
+    expect(mutate).toHaveBeenCalledTimes(1);
+  });
+
+  it('shows icon-only minimized sidebar without categories', () => {
+    renderComponent(false);
+
+    expect(screen.queryByText('Tech')).not.toBeInTheDocument();
+    expect(screen.queryByText('News')).not.toBeInTheDocument();
+    expect(screen.queryByText('TechCrunch')).not.toBeInTheDocument();
   });
 });

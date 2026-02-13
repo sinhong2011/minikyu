@@ -1,10 +1,10 @@
-import { RefreshIcon, Search01Icon } from '@hugeicons/core-free-icons';
+import { Search01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useSearch } from '@tanstack/react-router';
 import { AnimatePresence, motion } from 'motion/react';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { MainWindowContent } from '@/components/layout/MainWindowContent';
 import { Button } from '@/components/ui/button';
 import { useSyncProgressListener } from '@/hooks/use-sync-progress-listener';
@@ -26,7 +26,7 @@ import { EntryList, type EntryListFilterStatus } from './EntryList';
 type FilterType = 'all' | 'starred' | 'today' | 'history';
 
 export function MinifluxLayout() {
-  const { _ } = useLingui();
+  const { _, i18n } = useLingui();
   const search = useSearch({ from: '/' });
   const filter: FilterType = search.filter || 'all';
   const categoryId = search.categoryId;
@@ -64,6 +64,9 @@ export function MinifluxLayout() {
   const prefetchEntry = usePrefetchEntry();
   const { data: lastReadingEntry } = useLastReadingEntry();
   const saveLastReading = useSaveLastReading();
+  const countFormatter = new Intl.NumberFormat(i18n.locale, {
+    maximumFractionDigits: 0,
+  });
 
   // Merge router filters with local filters
   const mergedFilters: EntryFilters = {
@@ -136,7 +139,7 @@ export function MinifluxLayout() {
         publishedAt: entry.published_at,
       });
 
-      // Save last reading entry (no scroll position)
+      // Save last reading entry.
       saveLastReading.mutate({
         // biome-ignore lint/style/useNamingConvention: API field name
         entry_id: String(entry.id),
@@ -198,6 +201,14 @@ export function MinifluxLayout() {
       hasAutoSyncedRef.current = true;
       syncMiniflux.mutate();
     }
+  }, [isConnected, syncing, syncMiniflux]);
+
+  const handlePullToRefresh = useCallback(() => {
+    if (!isConnected || syncing) {
+      return;
+    }
+
+    syncMiniflux.mutate();
   }, [isConnected, syncing, syncMiniflux]);
 
   if (isLoading) {
@@ -263,39 +274,52 @@ export function MinifluxLayout() {
     return null;
   };
 
-  const formatTitleWithCount = (label: string, count: number | null) => {
-    return count == null ? label : `${label}(${count})`;
-  };
-
   const getFilterTitle = () => {
     if (categoryId) {
       const category = categories?.find((c) => c.id.toString() === categoryId);
-      const label = category?.title || _(msg`Category`);
-      return formatTitleWithCount(label, getUnreadFilterCount());
+      return category?.title || _(msg`Category`);
     }
 
     if (feedId) {
-      return formatTitleWithCount(_(msg`Feed`), getUnreadFilterCount());
+      return _(msg`Feed`);
     }
 
     switch (filter) {
       case 'all':
-        return formatTitleWithCount(_(msg`All`), getUnreadFilterCount());
-      case 'starred': {
-        const count = getFilterCount();
-        const label = _(msg`Starred`);
-        return formatTitleWithCount(label, count);
-      }
+        return _(msg`All`);
+      case 'starred':
+        return _(msg`Starred`);
       case 'today':
-        return formatTitleWithCount(_(msg`Today`), getUnreadFilterCount());
-      case 'history': {
-        const count = getFilterCount();
-        const label = _(msg`History`);
-        return formatTitleWithCount(label, count);
-      }
+        return _(msg`Today`);
+      case 'history':
+        return _(msg`History`);
       default:
         return _(msg`All`);
     }
+  };
+
+  const formatCountSummary = (count: number | null, label: string) => {
+    if (count == null) {
+      return null;
+    }
+
+    return `${countFormatter.format(count)} ${label}`;
+  };
+
+  const getFilterCountSummary = () => {
+    if (categoryId || feedId || filter === 'all' || filter === 'today') {
+      return formatCountSummary(getUnreadFilterCount(), _(msg`unread items`));
+    }
+
+    if (filter === 'starred') {
+      return formatCountSummary(getFilterCount(), _(msg`starred items`));
+    }
+
+    if (filter === 'history') {
+      return formatCountSummary(getFilterCount(), _(msg`history items`));
+    }
+
+    return null;
   };
 
   const handleBottomFilterChange = (status: EntryListFilterStatus) => {
@@ -306,6 +330,8 @@ export function MinifluxLayout() {
       starred: status === 'starred' ? true : null,
     });
   };
+  const filterTitle = getFilterTitle();
+  const filterCountSummary = getFilterCountSummary();
 
   return (
     <MainWindowContent
@@ -317,27 +343,43 @@ export function MinifluxLayout() {
       entryTransitionDirection={entryTransitionDirection}
     >
       <div className="flex flex-col h-full relative">
-        <div className="px-2.5 py-3 flex items-center justify-between">
-          <div className="flex items-center gap-2">
-            <h1 className="text-xl font-semibold">{getFilterTitle()}</h1>
+        <div className="px-2.5 py-3 flex items-center justify-between border-b">
+          <div className="flex flex-col overflow-hidden">
+            <AnimatePresence mode="wait">
+              <motion.h1
+                key={filterTitle}
+                className="text-xl font-semibold"
+                initial={{ opacity: 0, x: -30, scale: 0.96 }}
+                animate={{ opacity: 1, x: 0, scale: 1 }}
+                exit={{ opacity: 0, x: 30, scale: 0.96 }}
+                transition={{
+                  duration: 0.35,
+                  ease: [0.22, 1, 0.36, 1],
+                }}
+              >
+                {filterTitle}
+              </motion.h1>
+            </AnimatePresence>
+            <AnimatePresence mode="wait">
+              {filterCountSummary && (
+                <motion.p
+                  key={filterCountSummary}
+                  className="text-xs text-muted-foreground"
+                  initial={{ opacity: 0, y: -8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 8 }}
+                  transition={{
+                    duration: 0.3,
+                    delay: 0.1,
+                    ease: 'easeOut',
+                  }}
+                >
+                  {filterCountSummary}
+                </motion.p>
+              )}
+            </AnimatePresence>
           </div>
           <div className="flex items-center gap-2">
-            <Button
-              variant="ghost"
-              size="icon"
-              className="h-8 w-8"
-              onClick={() => {
-                if (!syncing) {
-                  syncMiniflux.mutate();
-                }
-              }}
-              title={syncing ? _(msg`Syncing...`) : _(msg`Sync`)}
-            >
-              <HugeiconsIcon
-                icon={RefreshIcon}
-                className={cn('h-4 w-4', syncing && 'animate-spin')}
-              />
-            </Button>
             <Button
               variant="ghost"
               size="icon"
@@ -373,6 +415,8 @@ export function MinifluxLayout() {
             onEntrySelect={handleEntrySelect}
             currentStatus={showBottomFilterTab ? currentStatus : undefined}
             onStatusChange={showBottomFilterTab ? handleBottomFilterChange : undefined}
+            onPullToRefresh={handlePullToRefresh}
+            isRefreshing={syncing}
           />
         </div>
       </div>
