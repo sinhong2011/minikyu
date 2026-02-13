@@ -8,6 +8,7 @@ describe('UIStore', () => {
       leftSidebarVisible: true,
       commandPaletteOpen: false,
       preferencesOpen: false,
+      preferencesActivePane: 'general',
     });
   });
 
@@ -16,6 +17,7 @@ describe('UIStore', () => {
     expect(state.leftSidebarVisible).toBe(true);
     expect(state.commandPaletteOpen).toBe(false);
     expect(state.preferencesOpen).toBe(false);
+    expect(state.preferencesActivePane).toBe('general');
   });
 
   it('toggles left sidebar visibility', () => {
@@ -56,5 +58,15 @@ describe('UIStore', () => {
 
     toggleCommandPalette();
     expect(useUIStore.getState().commandPaletteOpen).toBe(false);
+  });
+
+  it('sets active preferences pane', () => {
+    const { setPreferencesActivePane } = useUIStore.getState();
+
+    setPreferencesActivePane('about');
+    expect(useUIStore.getState().preferencesActivePane).toBe('about');
+
+    setPreferencesActivePane('advanced');
+    expect(useUIStore.getState().preferencesActivePane).toBe('advanced');
   });
 });
