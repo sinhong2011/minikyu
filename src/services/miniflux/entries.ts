@@ -231,7 +231,6 @@ export function useToggleEntryRead() {
         }
       );
 
-      queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
       queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
     },
   });
@@ -267,8 +266,29 @@ export function useMarkEntryRead() {
       logger.info('Entry marked as read', { id });
     },
     onSuccess: (_, id) => {
-      queryClient.invalidateQueries({ queryKey: entryQueryKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
+      queryClient.setQueryData(entryQueryKeys.detail(id), (old: Entry | undefined) => {
+        if (old) {
+          return { ...old, status: 'read' };
+        }
+        return old;
+      });
+
+      queryClient.setQueriesData<{ pages: EntryResponse[] }>(
+        { queryKey: entryQueryKeys.lists() },
+        (data) => {
+          if (!data?.pages) return data;
+          return {
+            ...data,
+            pages: data.pages.map((page) => ({
+              ...page,
+              entries: page.entries?.map((entry) =>
+                entry.id === id ? { ...entry, status: 'read' } : entry
+              ),
+            })),
+          };
+        }
+      );
+
       queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
     },
   });
@@ -300,9 +320,31 @@ export function useMarkEntriesRead() {
     },
     onSuccess: (_, ids) => {
       ids.forEach((id) => {
-        queryClient.invalidateQueries({ queryKey: entryQueryKeys.detail(id) });
+        queryClient.setQueryData(entryQueryKeys.detail(id), (old: Entry | undefined) => {
+          if (old) {
+            return { ...old, status: 'read' };
+          }
+          return old;
+        });
       });
-      queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
+
+      queryClient.setQueriesData<{ pages: EntryResponse[] }>(
+        { queryKey: entryQueryKeys.lists() },
+        (data) => {
+          if (!data?.pages) return data;
+          const idSet = new Set(ids);
+          return {
+            ...data,
+            pages: data.pages.map((page) => ({
+              ...page,
+              entries: page.entries?.map((entry) =>
+                idSet.has(entry.id) ? { ...entry, status: 'read' } : entry
+              ),
+            })),
+          };
+        }
+      );
+
       queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
       toast.success(`${ids.length} entries marked as read`);
     },
@@ -316,7 +358,7 @@ export function useToggleEntryStar() {
   const queryClient = useQueryClient();
 
   return useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (id: string): Promise<boolean> => {
       logger.debug('Toggling entry star', { id });
       const result = await commands.toggleEntryStar(id);
 
@@ -335,12 +377,34 @@ export function useToggleEntryStar() {
         throw new Error(result.error);
       }
 
-      logger.info('Entry star toggled', { id });
+      logger.info('Entry star toggled', { id, newStatus: result.data });
+      return result.data;
     },
-    onSuccess: (_, id) => {
-      // Invalidate entry queries
-      queryClient.invalidateQueries({ queryKey: entryQueryKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
+    onSuccess: (newStatus, id) => {
+      queryClient.setQueryData(entryQueryKeys.detail(id), (old: Entry | undefined) => {
+        if (old) {
+          return { ...old, starred: newStatus };
+        }
+        return old;
+      });
+
+      queryClient.setQueriesData<{ pages: EntryResponse[] }>(
+        { queryKey: entryQueryKeys.lists() },
+        (data) => {
+          if (!data?.pages) return data;
+          return {
+            ...data,
+            pages: data.pages.map((page) => ({
+              ...page,
+              entries: page.entries?.map((entry) =>
+                entry.id === id ? { ...entry, starred: newStatus } : entry
+              ),
+            })),
+          };
+        }
+      );
+
+      queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
     },
   });
 }
