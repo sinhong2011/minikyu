@@ -179,7 +179,67 @@ export function usePrefetchEntry() {
 }
 
 /**
+ * Hook to toggle entry read status
+ */
+export function useToggleEntryRead() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string): Promise<string> => {
+      logger.debug('Toggling entry read status', { id });
+      const result = await commands.toggleEntryRead(id);
+
+      if (result.status === 'error') {
+        const isNotConnected = result.error === 'Not connected to Miniflux server';
+
+        if (!isNotConnected) {
+          logger.error('Failed to toggle entry read status', {
+            error: result.error,
+            id,
+          });
+          toast.error('Failed to update read status', {
+            description: result.error,
+          });
+        }
+        throw new Error(result.error);
+      }
+
+      logger.info('Entry read status toggled', { id, newStatus: result.data });
+      return result.data;
+    },
+    onSuccess: (newStatus, id) => {
+      queryClient.setQueryData(entryQueryKeys.detail(id), (old: Entry | undefined) => {
+        if (old) {
+          return { ...old, status: newStatus };
+        }
+        return old;
+      });
+
+      queryClient.setQueriesData<{ pages: EntryResponse[] }>(
+        { queryKey: entryQueryKeys.lists() },
+        (data) => {
+          if (!data?.pages) return data;
+          return {
+            ...data,
+            pages: data.pages.map((page) => ({
+              ...page,
+              entries: page.entries?.map((entry) =>
+                entry.id === id ? { ...entry, status: newStatus } : entry
+              ),
+            })),
+          };
+        }
+      );
+
+      queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
+      queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
+    },
+  });
+}
+
+/**
  * Hook to mark entry as read
+ * @deprecated Use useToggleEntryRead instead
  */
 export function useMarkEntryRead() {
   const queryClient = useQueryClient();
@@ -207,10 +267,8 @@ export function useMarkEntryRead() {
       logger.info('Entry marked as read', { id });
     },
     onSuccess: (_, id) => {
-      // Invalidate entry queries
       queryClient.invalidateQueries({ queryKey: entryQueryKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
-      // Invalidate counters
       queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
     },
   });
@@ -241,12 +299,10 @@ export function useMarkEntriesRead() {
       logger.info('Entries marked as read', { count: ids.length });
     },
     onSuccess: (_, ids) => {
-      // Invalidate entry queries
       ids.forEach((id) => {
         queryClient.invalidateQueries({ queryKey: entryQueryKeys.detail(id) });
       });
       queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
-      // Invalidate counters
       queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
       toast.success(`${ids.length} entries marked as read`);
     },
