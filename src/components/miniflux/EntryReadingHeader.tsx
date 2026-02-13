@@ -2,7 +2,11 @@ import {
   ArrowLeft02Icon,
   ArrowRight02Icon,
   Cancel01Icon,
-  CheckmarkCircle01Icon,
+  CheckmarkCircle02Icon,
+  Copy01Icon,
+  Globe02Icon,
+  Mail01Icon,
+  MailOpen01Icon,
   Share02Icon,
   StarIcon,
   TextIcon,
@@ -12,7 +16,8 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { format, parseISO } from 'date-fns';
-import { type MotionValue, motion } from 'motion/react';
+import { AnimatePresence, type MotionValue, motion } from 'motion/react';
+import { useState } from 'react';
 import { Switch } from '@/components/animate-ui/components/base/switch';
 import { FeedAvatar } from '@/components/miniflux/FeedAvatar';
 import { Button } from '@/components/ui/button';
@@ -45,11 +50,11 @@ interface EntryReadingHeaderProps {
   hasPrev: boolean;
   hasNext: boolean;
   onToggleStar: () => void;
-  onMarkAsRead: () => void;
+  onToggleRead: () => void;
   onShare?: () => void;
   onClose?: () => void;
   isRead: boolean;
-  isMarkingAsRead: boolean;
+  isTogglingRead: boolean;
   headerPadding: MotionValue<number>;
   smallTitleOpacity: MotionValue<number>;
   smallTitleHeight: MotionValue<number>;
@@ -66,11 +71,11 @@ export function EntryReadingHeader({
   hasPrev,
   hasNext,
   onToggleStar,
-  onMarkAsRead,
+  onToggleRead,
   onShare,
   onClose,
   isRead,
-  isMarkingAsRead,
+  isTogglingRead,
   headerPadding,
   smallTitleOpacity,
   smallTitleHeight,
@@ -134,9 +139,27 @@ export function EntryReadingHeader({
   const toolbarButtonClass =
     'h-9 w-9 rounded-xl border border-transparent text-muted-foreground/90 hover:bg-accent/70 hover:text-foreground data-[state=open]:border-border/60 data-[state=open]:bg-accent/70 data-[state=open]:text-foreground';
 
-  const handleShare = async () => {
+  const [copiedUrl, setCopiedUrl] = useState(false);
+  const [copiedShareCode, setCopiedShareCode] = useState(false);
+
+  const handleCopyUrl = async () => {
     await writeText(entry.url);
+    setCopiedUrl(true);
     onShare?.();
+    setTimeout(() => setCopiedUrl(false), 2000);
+  };
+
+  const handleCopyShareCode = async () => {
+    if (entry.share_code) {
+      const shareUrl = `${entry.feed.site_url}/share/${entry.share_code}`;
+      await writeText(shareUrl);
+      setCopiedShareCode(true);
+      setTimeout(() => setCopiedShareCode(false), 2000);
+    }
+  };
+
+  const handleOpenInBrowser = () => {
+    window.open(entry.url, '_blank', 'noopener,noreferrer');
   };
 
   return (
@@ -366,37 +389,89 @@ export function EntryReadingHeader({
                     variant="ghost"
                     size="icon"
                     className={toolbarButtonClass}
-                    onClick={onMarkAsRead}
-                    disabled={isRead || isMarkingAsRead}
-                    aria-label={isRead ? _(msg`Marked as read`) : _(msg`Mark as read`)}
+                    onClick={onToggleRead}
+                    disabled={isTogglingRead}
+                    aria-label={isRead ? _(msg`Mark as unread`) : _(msg`Mark as read`)}
                   />
                 }
               >
-                <HugeiconsIcon
-                  icon={CheckmarkCircle01Icon}
-                  className={isRead ? 'h-5 w-5 fill-primary' : 'h-5 w-5'}
-                />
+                <AnimatePresence mode="wait" initial={false}>
+                  <motion.div
+                    key={isRead ? 'read' : 'unread'}
+                    initial={{ scale: 0.6, opacity: 0, rotate: -90 }}
+                    animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                    exit={{ scale: 0.6, opacity: 0, rotate: 90 }}
+                    transition={{ duration: 0.2, ease: 'backOut' }}
+                  >
+                    <HugeiconsIcon
+                      icon={isRead ? MailOpen01Icon : Mail01Icon}
+                      className="h-5 w-5"
+                    />
+                  </motion.div>
+                </AnimatePresence>
               </TooltipTrigger>
-              <TooltipPanel>{isRead ? _(msg`Marked as read`) : _(msg`Mark as read`)}</TooltipPanel>
+              <TooltipPanel>{isRead ? _(msg`Mark as unread`) : _(msg`Mark as read`)}</TooltipPanel>
             </Tooltip>
 
-            <Tooltip>
-              <TooltipTrigger
+            <Popover>
+              <PopoverTrigger
                 render={
                   <Button
                     type="button"
                     variant="ghost"
                     size="icon"
                     className={toolbarButtonClass}
-                    onClick={handleShare}
                     aria-label={_(msg`Share`)}
                   />
                 }
               >
                 <HugeiconsIcon icon={Share02Icon} className="h-5 w-5" />
-              </TooltipTrigger>
-              <TooltipPanel>{_(msg`Share`)}</TooltipPanel>
-            </Tooltip>
+              </PopoverTrigger>
+              <PopoverContent
+                className="w-56 p-1.5 rounded-xl border-border/60 bg-popover/95 shadow-xl"
+                side="bottom"
+                align="end"
+              >
+                <button
+                  type="button"
+                  onClick={handleCopyUrl}
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent cursor-pointer"
+                >
+                  <HugeiconsIcon
+                    icon={copiedUrl ? CheckmarkCircle02Icon : Copy01Icon}
+                    className={copiedUrl ? 'h-4 w-4 text-primary' : 'h-4 w-4 text-muted-foreground'}
+                  />
+                  <span className={copiedUrl ? 'text-primary' : ''}>
+                    {copiedUrl ? _(msg`URL copied!`) : _(msg`Copy article URL`)}
+                  </span>
+                </button>
+                {entry.share_code && (
+                  <button
+                    type="button"
+                    onClick={handleCopyShareCode}
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent cursor-pointer"
+                  >
+                    <HugeiconsIcon
+                      icon={copiedShareCode ? CheckmarkCircle02Icon : Share02Icon}
+                      className={
+                        copiedShareCode ? 'h-4 w-4 text-primary' : 'h-4 w-4 text-muted-foreground'
+                      }
+                    />
+                    <span className={copiedShareCode ? 'text-primary' : ''}>
+                      {copiedShareCode ? _(msg`Share link copied!`) : _(msg`Copy share link`)}
+                    </span>
+                  </button>
+                )}
+                <button
+                  type="button"
+                  onClick={handleOpenInBrowser}
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent cursor-pointer"
+                >
+                  <HugeiconsIcon icon={Globe02Icon} className="h-4 w-4 text-muted-foreground" />
+                  <span>{_(msg`Open in browser`)}</span>
+                </button>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
 

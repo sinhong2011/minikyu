@@ -22,6 +22,7 @@
     "opener:allow-open-path",
     "opener:allow-reveal-item-in-dir",
     "clipboard-manager:default",
+    "clipboard-manager:allow-write-text",
     "dialog:default",
     "fs:default",
     "log:default",
