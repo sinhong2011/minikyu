@@ -57,8 +57,8 @@ export function EntryListFloatingFilterBar({
           visible
             ? {
                 opacity: 1,
-                y: scrolling ? 2 : 0,
-                scale: scrolling ? 0.97 : 1,
+                y: 0,
+                scale: 1,
                 filter: scrolling ? 'saturate(0.96)' : 'saturate(1)',
               }
             : {
