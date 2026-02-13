@@ -1029,10 +1029,10 @@ export function SafeHtml({
       replace: (domNode) => {
         if (!(domNode instanceof Element)) return;
 
-        if (domNode.name === 'a' && domNode.children.length === 1) {
-          const child = domNode.children[0];
-          if (child instanceof Element && child.name === 'img') {
-            const imgProps = attributesToProps(child.attribs);
+        if (domNode.name === 'a') {
+          const imgInLink = findFirstDescendant(domNode, (element) => element.name === 'img');
+          if (imgInLink) {
+            const imgProps = attributesToProps(imgInLink.attribs);
             const src = typeof imgProps.src === 'string' ? imgProps.src : '';
             const alt = typeof imgProps.alt === 'string' ? imgProps.alt : imageFallbackAlt;
 
