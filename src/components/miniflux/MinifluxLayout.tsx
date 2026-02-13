@@ -14,7 +14,7 @@ import { cn } from '@/lib/utils';
 import { useIsConnected } from '@/services/miniflux/auth';
 import { useCategories } from '@/services/miniflux/categories';
 import { useUnreadCounts } from '@/services/miniflux/counters';
-import { useEntries, usePrefetchEntry } from '@/services/miniflux/entries';
+import { useEntries, usePrefetchEntry, useToggleEntryRead } from '@/services/miniflux/entries';
 import { useSyncMiniflux } from '@/services/miniflux/feeds';
 import { useLastReadingEntry, useSaveLastReading } from '@/services/reading-state';
 import { useSyncStore } from '@/store/sync-store';
@@ -62,6 +62,7 @@ export function MinifluxLayout() {
       : 'all';
   const showBottomFilterTab = filter !== 'starred' && filter !== 'history';
   const prefetchEntry = usePrefetchEntry();
+  const toggleEntryRead = useToggleEntryRead();
   const { data: lastReadingEntry } = useLastReadingEntry();
   const saveLastReading = useSaveLastReading();
   const countFormatter = new Intl.NumberFormat(i18n.locale, {
@@ -150,6 +151,10 @@ export function MinifluxLayout() {
     }
 
     setSelectedEntryId(entryId);
+
+    if (entry?.status === 'unread') {
+      toggleEntryRead.mutate(entryId);
+    }
 
     if (entriesData?.entries) {
       const idx = entriesData.entries.findIndex((e) => e.id === entryId);
