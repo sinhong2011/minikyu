@@ -310,11 +310,12 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
   const setFeedDialogState = useMinifluxSettingsDialogStore((state) => state.setFeedDialogState);
 
   const openAddFeedDialog = React.useCallback(
-    (initialUrl?: string) => {
+    (options?: { initialUrl?: string; openSearchTab?: boolean }) => {
       setFeedDialogState({
         mode: 'create',
         defaultCategoryId: null,
-        initialFeedUrl: initialUrl?.trim() ?? '',
+        initialFeedUrl: options?.initialUrl?.trim() ?? '',
+        initialSearchOpen: options?.openSearchTab ?? false,
       });
     },
     [setFeedDialogState]
@@ -381,7 +382,7 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
                   <HugeiconsIcon icon={RssIcon} />
                   {_(msg`Add Feed`)}
                 </MenuItem>
-                <MenuItem onClick={() => openAddFeedDialog('')}>
+                <MenuItem onClick={() => openAddFeedDialog({ openSearchTab: true })}>
                   <HugeiconsIcon icon={Search01Icon} />
                   {_(msg`Search Source`)}
                 </MenuItem>

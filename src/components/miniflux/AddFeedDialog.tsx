@@ -2,7 +2,8 @@ import { Add01Icon, ArrowDown01Icon, Search01Icon } from '@hugeicons/core-free-i
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { useForm } from '@tanstack/react-form';
+import { useForm, useStore } from '@tanstack/react-form';
+import { AnimatePresence, motion } from 'motion/react';
 import * as React from 'react';
 import { z } from 'zod';
 import {
@@ -170,6 +171,7 @@ export function AddFeedDialog({
   const [discoveredSources, setDiscoveredSources] = React.useState<Subscription[]>([]);
   const [hasSearchedSource, setHasSearchedSource] = React.useState(false);
   const [selectedDiscoveredUrl, setSelectedDiscoveredUrl] = React.useState('');
+  const [categorySearchQuery, setCategorySearchQuery] = React.useState('');
   const feedUrlInputRef = React.useRef<HTMLInputElement>(null);
 
   const categoryOptions = React.useMemo<CategoryOption[]>(() => {
@@ -184,6 +186,24 @@ export function AddFeedDialog({
     }
     return [...merged.values()];
   }, [categories, createdOptions]);
+
+  const areCategoryOptionsEqual = React.useCallback(
+    (a: CategoryOption | null, b: CategoryOption | null) => {
+      if (a === null || b === null) {
+        return a === b;
+      }
+      return a.value === b.value;
+    },
+    []
+  );
+
+  const filteredCategoryOptions = React.useMemo<CategoryOption[]>(() => {
+    const query = categorySearchQuery.trim().toLowerCase();
+    if (!query) {
+      return categoryOptions;
+    }
+    return categoryOptions.filter((option) => option.label.toLowerCase().includes(query));
+  }, [categoryOptions, categorySearchQuery]);
 
   const form = useForm({
     defaultValues: {
@@ -259,6 +279,7 @@ export function AddFeedDialog({
         return [...prev, nextOption];
       });
       form.setFieldValue('categoryId', String(category.id));
+      setCategorySearchQuery(category.title);
     },
     [form]
   );
@@ -300,6 +321,7 @@ export function AddFeedDialog({
       setDiscoveredSources([]);
       setHasSearchedSource(false);
       setSelectedDiscoveredUrl('');
+      setCategorySearchQuery('');
       form.reset();
       sourceSearchForm.reset();
     }
@@ -328,13 +350,14 @@ export function AddFeedDialog({
   }, [open, initialSearchOpen]);
 
   const isPending = createFeed.isPending;
-  const hasRequiredFeedFields =
-    form.getFieldValue('url').trim().length > 0 &&
-    form.getFieldValue('categoryId').trim().length > 0;
+  const formValues = useStore(form.store, (state) => state.values);
+  const urlValue = formValues.url?.trim() ?? '';
+  const categoryIdValue = formValues.categoryId?.trim() ?? '';
+  const hasRequiredFeedFields = urlValue.length > 0 && categoryIdValue.length > 0;
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[680px] h-[calc(86vh-100px)] max-h-[calc(86vh-100px)] overflow-hidden p-6 gap-4 flex flex-col duration-200 data-open:slide-in-from-bottom-2 data-closed:slide-out-to-bottom-2">
+      <DialogContent className="sm:max-w-[680px] h-[calc(86vh-350px)] max-h-[calc(86vh-350px)] overflow-hidden p-6 gap-4 flex flex-col duration-200 data-open:slide-in-from-bottom-2 data-closed:slide-out-to-bottom-2">
         <DialogHeader className="shrink-0">
           <DialogTitle className="flex items-center gap-2 text-lg">
             <HugeiconsIcon icon={Add01Icon} className="size-5" />
@@ -436,7 +459,7 @@ export function AddFeedDialog({
                   ))}
                 </div>
               ) : discoveredSources.length > 0 ? (
-                <div className="space-y-2 rounded-md border p-2">
+                <div className="space-y-2 rounded-md border p-2 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-200">
                   <div className="text-xs font-medium text-muted-foreground">
                     {_(msg`Found sources`)}
                   </div>
@@ -555,7 +578,12 @@ export function AddFeedDialog({
                                 return;
                               }
                               field.handleChange(value.value);
+                              setCategorySearchQuery(value.label);
                             }}
+                            inputValue={categorySearchQuery}
+                            onInputValueChange={setCategorySearchQuery}
+                            itemToStringLabel={(option) => option.label}
+                            isItemEqualToValue={areCategoryOptionsEqual}
                             disabled={isPending}
                           >
                             <ComboboxInput
@@ -570,7 +598,7 @@ export function AddFeedDialog({
                             <ComboboxContent>
                               <ComboboxList>
                                 <ComboboxEmpty>{_(msg`No categories found`)}</ComboboxEmpty>
-                                {categoryOptions.map((option) => (
+                                {filteredCategoryOptions.map((option) => (
                                   <ComboboxItem key={option.value} value={option}>
                                     {option.label}
                                   </ComboboxItem>
@@ -623,7 +651,7 @@ export function AddFeedDialog({
                   </button>
 
                   {showAdvanced ? (
-                    <div className="space-y-4 border-t px-3 py-3">
+                    <div className="space-y-4 border-t px-3 py-3 motion-safe:animate-in motion-safe:fade-in-0 motion-safe:slide-in-from-bottom-1 motion-safe:duration-200">
                       <div className="grid gap-3 sm:grid-cols-2">
                         <form.Field name="userAgent">
                           {(field) => (
@@ -818,7 +846,12 @@ export function AddFeedDialog({
         </Tabs>
 
         <DialogFooter className="shrink-0 border-t border-border/50 pt-3">
-          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
+          <Button
+            type="button"
+            variant="outline"
+            className={'w-20'}
+            onClick={() => onOpenChange(false)}
+          >
             {_(msg`Cancel`)}
           </Button>
           {activeTab === 'search' ? (
@@ -827,13 +860,52 @@ export function AddFeedDialog({
               {_(msg`Continue to Add Feed`)}
             </Button>
           ) : (
-            <Button
-              type="submit"
-              form="add-feed-form"
-              disabled={isPending || !hasRequiredFeedFields}
+            <motion.div
+              whileHover={{ scale: 1.02 }}
+              whileTap={{ scale: 0.98 }}
+              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
             >
-              {isPending ? _(msg`Adding...`) : _(msg`Add Feed`)}
-            </Button>
+              <Button
+                type="submit"
+                form="add-feed-form"
+                className="relative min-w-[5rem] overflow-hidden"
+                disabled={isPending || !hasRequiredFeedFields}
+              >
+                <AnimatePresence mode="wait">
+                  {isPending ? (
+                    <motion.div
+                      key="loading"
+                      initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.8, y: -10 }}
+                      transition={{ duration: 0.15 }}
+                      className="flex items-center justify-center"
+                    >
+                      <motion.div
+                        animate={{ rotate: 360 }}
+                        transition={{
+                          duration: 1,
+                          repeat: Number.POSITIVE_INFINITY,
+                          ease: 'linear',
+                        }}
+                      >
+                        <Spinner className="size-4" />
+                      </motion.div>
+                    </motion.div>
+                  ) : (
+                    <motion.span
+                      key="idle"
+                      initial={{ opacity: 0, scale: 0.8, y: 10 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.8, y: -10 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      {_(msg`Add Feed`)}
+                    </motion.span>
+                  )}
+                </AnimatePresence>
+              </Button>
+            </motion.div>
           )}
         </DialogFooter>
       </DialogContent>
