@@ -7,7 +7,7 @@ import {
   Globe02Icon,
   Mail01Icon,
   MailOpen01Icon,
-  Share02Icon,
+  Share01Icon,
   StarIcon,
   TextIcon,
 } from '@hugeicons/core-free-icons';
@@ -49,6 +49,7 @@ interface EntryReadingHeaderProps {
   onNavigateNext?: () => void;
   hasPrev: boolean;
   hasNext: boolean;
+  hideNavigation?: boolean;
   onToggleStar: () => void;
   onToggleRead: () => void;
   onShare?: () => void;
@@ -70,6 +71,7 @@ export function EntryReadingHeader({
   onNavigateNext,
   hasPrev,
   hasNext,
+  hideNavigation = false,
   onToggleStar,
   onToggleRead,
   onShare,
@@ -201,43 +203,47 @@ export function EntryReadingHeader({
               </Tooltip>
             )}
 
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className={toolbarButtonClass}
-                    onClick={onNavigatePrev}
-                    disabled={!hasPrev}
-                    aria-label={_(msg`Previous entry (h or ←)`)}
-                  />
-                }
-              >
-                <HugeiconsIcon icon={ArrowLeft02Icon} className="h-5 w-5" strokeWidth={2} />
-              </TooltipTrigger>
-              <TooltipPanel>{_(msg`Previous entry (h or ←)`)}</TooltipPanel>
-            </Tooltip>
+            {!hideNavigation && (
+              <>
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className={toolbarButtonClass}
+                        onClick={onNavigatePrev}
+                        disabled={!hasPrev}
+                        aria-label={_(msg`Previous entry (h or ←)`)}
+                      />
+                    }
+                  >
+                    <HugeiconsIcon icon={ArrowLeft02Icon} className="h-5 w-5" strokeWidth={2} />
+                  </TooltipTrigger>
+                  <TooltipPanel>{_(msg`Previous entry (h or ←)`)}</TooltipPanel>
+                </Tooltip>
 
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className={toolbarButtonClass}
-                    onClick={onNavigateNext}
-                    disabled={!hasNext}
-                    aria-label={_(msg`Next entry (j or →)`)}
-                  />
-                }
-              >
-                <HugeiconsIcon icon={ArrowRight02Icon} className="h-5 w-5" strokeWidth={2} />
-              </TooltipTrigger>
-              <TooltipPanel>{_(msg`Next entry (j or →)`)}</TooltipPanel>
-            </Tooltip>
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className={toolbarButtonClass}
+                        onClick={onNavigateNext}
+                        disabled={!hasNext}
+                        aria-label={_(msg`Next entry (j or →)`)}
+                      />
+                    }
+                  >
+                    <HugeiconsIcon icon={ArrowRight02Icon} className="h-5 w-5" strokeWidth={2} />
+                  </TooltipTrigger>
+                  <TooltipPanel>{_(msg`Next entry (j or →)`)}</TooltipPanel>
+                </Tooltip>
+              </>
+            )}
           </div>
 
           <div className="flex items-center gap-1.5">
@@ -425,7 +431,7 @@ export function EntryReadingHeader({
                   />
                 }
               >
-                <HugeiconsIcon icon={Share02Icon} className="h-5 w-5" />
+                <HugeiconsIcon icon={Share01Icon} className="h-5 w-5" />
               </PopoverTrigger>
               <PopoverContent
                 className="w-56 p-1.5 rounded-xl border-border/60 bg-popover/95 shadow-xl"
@@ -452,7 +458,7 @@ export function EntryReadingHeader({
                     className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent cursor-pointer"
                   >
                     <HugeiconsIcon
-                      icon={copiedShareCode ? CheckmarkCircle02Icon : Share02Icon}
+                      icon={copiedShareCode ? CheckmarkCircle02Icon : Share01Icon}
                       className={
                         copiedShareCode ? 'h-4 w-4 text-primary' : 'h-4 w-4 text-muted-foreground'
                       }

@@ -90,6 +90,7 @@ export function MinifluxLayout() {
   const currentIndex = entriesData?.entries?.findIndex((e) => e.id === selectedEntryId) ?? -1;
   const hasPrev = currentIndex > 0;
   const hasNext = currentIndex >= 0 && currentIndex < (entriesData?.entries?.length ?? 0) - 1;
+  const nextEntryTitle = hasNext ? entriesData?.entries?.[currentIndex + 1]?.title : undefined;
 
   const handleNavigatePrev = () => {
     if (hasPrev && entriesData?.entries) {
@@ -345,6 +346,7 @@ export function MinifluxLayout() {
       onClose={handleClose}
       hasPrev={hasPrev}
       hasNext={hasNext}
+      nextEntryTitle={nextEntryTitle}
       entryTransitionDirection={entryTransitionDirection}
     >
       <div className="flex flex-col h-full relative">

@@ -1,4 +1,10 @@
-import { ArrowDown01Icon, ArrowUp01Icon, ViewIcon, ViewOffIcon } from '@hugeicons/core-free-icons';
+import {
+  ArrowDown01Icon,
+  ArrowRightIcon,
+  ArrowUp01Icon,
+  ViewIcon,
+  ViewOffIcon,
+} from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
@@ -34,9 +40,17 @@ interface EntryReadingProps {
   onNavigatePrev?: () => void;
   onNavigateNext?: () => void;
   onClose?: () => void;
+  onScroll?: (scrollData: {
+    scrollTop: number;
+    scrollHeight: number;
+    clientHeight: number;
+    isAtBottom: boolean;
+  }) => void;
   hasPrev?: boolean;
   hasNext?: boolean;
+  nextEntryTitle?: string;
   transitionDirection?: 'forward' | 'backward';
+  hideNavigation?: boolean;
 }
 
 export function EntryReading({
@@ -44,9 +58,12 @@ export function EntryReading({
   onNavigatePrev,
   onNavigateNext,
   onClose,
+  onScroll,
   hasPrev = false,
   hasNext = false,
+  nextEntryTitle,
   transitionDirection = 'forward',
+  hideNavigation = false,
 }: EntryReadingProps) {
   const { _ } = useLingui();
   const {
@@ -71,6 +88,8 @@ export function EntryReading({
   const toggleEntryRead = useToggleEntryRead();
   const toggleEntryReadRef = useRef(toggleEntryRead);
   toggleEntryReadRef.current = toggleEntryRead;
+  const onScrollRef = useRef(onScroll);
+  onScrollRef.current = onScroll;
   const entryRef = useRef(entry);
   entryRef.current = entry;
   const scrollRef = useRef<HTMLDivElement>(null);
@@ -81,6 +100,7 @@ export function EntryReading({
   const [activeHeadingId, setActiveHeadingId] = useState<string | null>(null);
   const [hoveredHeadingId, setHoveredHeadingId] = useState<string | null>(null);
   const [readingProgress, setReadingProgress] = useState(0);
+  const [isAtBottom, setIsAtBottom] = useState(false);
 
   const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 
@@ -364,6 +384,19 @@ export function EntryReading({
       const normalizedProgress = Math.max(0, Math.min(100, progress));
       setReadingProgress((prev) => (prev === normalizedProgress ? prev : normalizedProgress));
 
+      const distanceFromBottom = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight;
+      const atBottom = distanceFromBottom < 200;
+      setIsAtBottom(atBottom);
+
+      if (onScrollRef.current) {
+        onScrollRef.current({
+          scrollTop: viewport.scrollTop,
+          scrollHeight: viewport.scrollHeight,
+          clientHeight: viewport.clientHeight,
+          isAtBottom: atBottom,
+        });
+      }
+
       const currentEntry = entryRef.current;
       if (
         currentEntry &&
@@ -544,6 +577,7 @@ export function EntryReading({
         onClose={onClose}
         hasPrev={hasPrev}
         hasNext={hasNext}
+        hideNavigation={hideNavigation}
         onToggleStar={() => toggleStar.mutate(entry.id)}
         onToggleRead={() => toggleEntryRead.mutate(entry.id)}
         isRead={entry.status === 'read'}
@@ -755,6 +789,33 @@ export function EntryReading({
                 onClick={handleScrollToTop}
               >
                 <HugeiconsIcon icon={ArrowUp01Icon} className="h-4 w-4" strokeWidth={2} />
+              </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {isAtBottom && hasNext && nextEntryTitle && (
+            <motion.div
+              initial={{ opacity: 0, y: 10 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 5 }}
+              transition={{ duration: 0.2 }}
+              className="absolute bottom-2 left-1/2 -translate-x-1/2"
+            >
+              <Button
+                type="button"
+                variant="ghost"
+                size="sm"
+                className="gap-1.5 text-sm opacity-50 hover:opacity-80"
+                onClick={() => {
+                  if (onNavigateNext) {
+                    onNavigateNext();
+                  }
+                }}
+              >
+                <span className="max-w-48 truncate">{nextEntryTitle}</span>
+                <HugeiconsIcon icon={ArrowRightIcon} className="h-3 w-3" />
               </Button>
             </motion.div>
           )}

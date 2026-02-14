@@ -13,6 +13,7 @@ interface MainWindowContentProps {
   onClose?: () => void;
   hasPrev?: boolean;
   hasNext?: boolean;
+  nextEntryTitle?: string;
   entryTransitionDirection?: 'forward' | 'backward';
 }
 
@@ -24,6 +25,7 @@ export function MainWindowContent({
   onClose,
   hasPrev = false,
   hasNext = false,
+  nextEntryTitle,
   entryTransitionDirection = 'forward',
 }: MainWindowContentProps) {
   const lastQuickPaneEntry = useUIStore((state) => state.lastQuickPaneEntry);
@@ -59,6 +61,7 @@ export function MainWindowContent({
                       onClose={onClose}
                       hasPrev={hasPrev}
                       hasNext={hasNext}
+                      nextEntryTitle={nextEntryTitle}
                       transitionDirection={entryTransitionDirection}
                     />
                   </motion.div>
