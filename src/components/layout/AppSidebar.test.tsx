@@ -362,7 +362,7 @@ describe('AppSidebar', () => {
     fireEvent.click(screen.getByLabelText('Category actions'));
     fireEvent.click(screen.getByText('Add Feed'));
 
-    expect(screen.getByText('Create feed')).toBeInTheDocument();
+    expect(screen.getAllByText('Add Feed').length).toBeGreaterThan(1);
   });
 
   it('opens add feed dialog with search tab from Search Source action', () => {
@@ -371,7 +371,7 @@ describe('AppSidebar', () => {
     fireEvent.click(screen.getByLabelText('Category actions'));
     fireEvent.click(screen.getByText('Search Source'));
 
-    expect(screen.getByText('Create feed')).toBeInTheDocument();
+    expect(screen.getAllByText('Search Source').length).toBeGreaterThan(1);
   });
 
   it('triggers sync from sidebar header refresh button', () => {

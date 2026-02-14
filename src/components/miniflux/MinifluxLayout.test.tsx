@@ -41,6 +41,7 @@ vi.mock('@/services/miniflux/counters', () => ({
 vi.mock('@/services/miniflux/entries', () => ({
   useEntries: vi.fn(),
   usePrefetchEntry: vi.fn(),
+  useToggleEntryRead: vi.fn(),
 }));
 
 vi.mock('@/services/miniflux/feeds', () => ({
