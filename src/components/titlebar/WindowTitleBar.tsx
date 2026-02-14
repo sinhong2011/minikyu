@@ -1,11 +1,13 @@
 import {
   Alert01Icon,
   ArrowReloadHorizontalIcon,
+  CenterFocusIcon,
   CheckmarkCircle01Icon,
   DatabaseSync01Icon,
   PanelLeftCloseIcon,
   PanelLeftIcon,
   Settings01Icon,
+  ViewOffIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
@@ -34,6 +36,8 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
   const leftSidebarVisible = useUIStore((state) => state.leftSidebarVisible);
   const toggleLeftSidebar = useUIStore((state) => state.toggleLeftSidebar);
   const toggleDownloads = useUIStore((state) => state.toggleDownloads);
+  const zenModeEnabled = useUIStore((state) => state.zenModeEnabled);
+  const toggleZenMode = useUIStore((state) => state.toggleZenMode);
   const { data: isConnected } = useIsConnected();
   const syncing = useSyncStore((state) => state.syncing);
   const syncError = useSyncStore((state) => state.error);
@@ -106,6 +110,24 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
         >
           <HugeiconsIcon icon={Settings01Icon} className="h-4 w-4" />
         </Button>
+
+        {isConnected && (
+          <Button
+            onClick={toggleZenMode}
+            variant="ghost"
+            size="icon"
+            className={cn(
+              'h-8 w-8 shrink-0 hover:text-foreground',
+              zenModeEnabled ? 'text-primary' : 'text-foreground/70'
+            )}
+            title={_(zenModeEnabled ? msg`Exit Zen Mode` : msg`Enter Zen Mode`)}
+          >
+            <HugeiconsIcon
+              icon={zenModeEnabled ? ViewOffIcon : CenterFocusIcon}
+              className="h-4 w-4"
+            />
+          </Button>
+        )}
       </div>
 
       {/* Center: Command search + quick actions */}

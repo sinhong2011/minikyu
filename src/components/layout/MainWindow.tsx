@@ -4,6 +4,7 @@ import { PreferencesDialog } from '@/components/preferences/PreferencesDialog';
 import { TitleBar } from '@/components/titlebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { Toaster } from '@/components/ui/sonner';
+import { ZenModeView } from '@/components/zen-mode';
 import { useTheme } from '@/hooks/use-theme';
 import { useMainWindowEventListeners } from '@/hooks/useMainWindowEventListeners';
 import { useUIStore } from '@/store/ui-store';
@@ -17,12 +18,13 @@ export function MainWindow({ children }: MainWindowProps = {}) {
   const { theme } = useTheme();
   const leftSidebarVisible = useUIStore((state) => state.leftSidebarVisible);
   const setLeftSidebarVisible = useUIStore((state) => state.setLeftSidebarVisible);
+  const zenModeEnabled = useUIStore((state) => state.zenModeEnabled);
 
   useMainWindowEventListeners();
 
   return (
     <div className="relative flex h-screen w-full flex-col overflow-hidden rounded-xl bg-background">
-      <TitleBar />
+      {!zenModeEnabled && <TitleBar />}
       <SidebarProvider
         open={leftSidebarVisible}
         onOpenChange={setLeftSidebarVisible}
@@ -49,6 +51,8 @@ export function MainWindow({ children }: MainWindowProps = {}) {
           },
         }}
       />
+
+      <ZenModeView />
     </div>
   );
 }

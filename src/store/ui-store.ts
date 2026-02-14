@@ -14,6 +14,8 @@ interface UIState {
   selectedEntryId: string | undefined;
   selectionMode: boolean;
   searchFiltersVisible: boolean;
+  zenModeEnabled: boolean;
+  zenModeEntryId: string | null;
 
   toggleLeftSidebar: () => void;
   setLeftSidebarVisible: (visible: boolean) => void;
@@ -31,6 +33,9 @@ interface UIState {
   clearSelection: () => void;
   setSearchFiltersVisible: (visible: boolean) => void;
   toggleSearchFilters: () => void;
+  toggleZenMode: () => void;
+  setZenModeEnabled: (enabled: boolean) => void;
+  setZenModeEntryId: (entryId: string | null) => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -48,6 +53,8 @@ export const useUIStore = create<UIState>()(
           selectedEntryId: undefined,
           selectionMode: false,
           searchFiltersVisible: false,
+          zenModeEnabled: false,
+          zenModeEntryId: null,
 
           toggleLeftSidebar: () => {
             console.log('[ui-store] toggleLeftSidebar called');
@@ -117,6 +124,21 @@ export const useUIStore = create<UIState>()(
               undefined,
               'toggleSearchFilters'
             ),
+
+          toggleZenMode: () =>
+            set(
+              (state: UIState) => ({
+                zenModeEnabled: !state.zenModeEnabled,
+              }),
+              undefined,
+              'toggleZenMode'
+            ),
+
+          setZenModeEnabled: (enabled: boolean) =>
+            set({ zenModeEnabled: enabled }, undefined, 'setZenModeEnabled'),
+
+          setZenModeEntryId: (entryId: string | null) =>
+            set({ zenModeEntryId: entryId }, undefined, 'setZenModeEntryId'),
         };
       },
       {
