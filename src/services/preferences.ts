@@ -95,7 +95,6 @@ export function useSavePreferences() {
       // Update the cache with the new preferences
       queryClient.setQueryData(preferencesQueryKeys.preferences(), preferences);
       logger.info('Preferences cache updated');
-      toast.success('Preferences saved');
     },
   });
 }
