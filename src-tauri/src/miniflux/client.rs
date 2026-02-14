@@ -487,7 +487,8 @@ impl MinifluxClient {
     pub async fn toggle_bookmark(&self, id: i64) -> Result<(), String> {
         // Miniflux API requires PUT (not POST) for bookmark toggle
         // Returns 204 No Content
-        self.put_empty(&format!("entries/{}/bookmark", id), &()).await
+        self.put_empty(&format!("entries/{}/bookmark", id), &())
+            .await
     }
 
     /// Fetch original article content

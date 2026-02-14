@@ -55,7 +55,15 @@ msgstr "{0} of {1} entries downloaded"
 msgid "{0} total"
 msgstr "{0} total"
 
-#: src/lib/menu.ts:106
+#: src/components/miniflux/EntryReading.tsx:171
+msgid "{minutesLeft} min left"
+msgstr ""
+
+#: src/components/miniflux/EntryReading.tsx:170
+msgid "{progressPercent}% read"
+msgstr ""
+
+#: src/components/preferences/panes/AboutPane.tsx:95
 msgid "A calm, focused space for your Miniflux reading. Catch up faster, stay organized, and enjoy every feed."
 msgstr "Miniflux 읽기에 맞춘 차분하고 집중되는 공간입니다. 더 빠르게 따라잡고, 깔끔하게 정리하며, 모든 피드를 편안하게 즐기세요."
 
@@ -63,11 +71,15 @@ msgstr "Miniflux 읽기에 맞춘 차분하고 집중되는 공간입니다. 더
 msgid "A modern, production-ready template for building cross-platform desktop applications with React, TypeScript, and Rust."
 msgstr "React, TypeScript, Rust를 사용하여 크로스 플랫폼 데스크톱 애플리케이션을 구축하기 위한 현대적이고 프로덕션 준비가 된 템플릿입니다."
 
+#: src/components/preferences/PreferencesDialog.tsx:53
+msgid "About"
+msgstr ""
+
 #: src/lib/menu.ts:20
 msgid "About {APP_NAME}"
 msgstr "{APP_NAME} 정보"
 
-#: src/components/miniflux/UserNav.tsx:160
+#: src/components/miniflux/UserNav.tsx:178
 msgid "Accounts"
 msgstr "Accounts"
 
@@ -84,7 +96,7 @@ msgstr "Active"
 msgid "Add category"
 msgstr "Add category"
 
-#: src/components/layout/AppSidebar.tsx:458
+#: src/components/layout/AppSidebar.tsx:391
 msgid "Add Category"
 msgstr "Add Category"
 
@@ -93,9 +105,11 @@ msgstr "Add Category"
 msgid "Add feed"
 msgstr "Add feed"
 
-#: src/components/layout/AppSidebar.tsx:450
+#: src/components/layout/AppSidebar.tsx:383
+#: src/components/layout/AppSidebar.tsx:524
+#: src/components/layout/AppSidebar.tsx:528
 #: src/components/miniflux/AddFeedDialog.tsx:362
-#: src/components/miniflux/AddFeedDialog.tsx:835
+#: src/components/miniflux/AddFeedDialog.tsx:841
 msgid "Add Feed"
 msgstr "Add Feed"
 
@@ -116,36 +130,36 @@ msgstr "Add Rule"
 msgid "Add user"
 msgstr "Add user"
 
-#: src/components/miniflux/AddFeedDialog.tsx:835
+#: src/components/miniflux/AddFeedDialog.tsx:841
 msgid "Adding..."
 msgstr "Adding..."
 
 #: src/components/miniflux/settings/UsersPane.tsx:59
-#: src/components/miniflux/UserNav.tsx:115
+#: src/components/miniflux/UserNav.tsx:132
 msgid "Admin"
 msgstr "Admin"
 
 #: src/components/miniflux/settings/UserFormDialog.tsx:141
-#: src/components/miniflux/UserNav.tsx:139
+#: src/components/miniflux/UserNav.tsx:157
 msgid "Administrator"
 msgstr "Administrator"
 
-#: src/components/preferences/PreferencesDialog.tsx:45
+#: src/components/preferences/PreferencesDialog.tsx:48
 msgid "Advanced"
 msgstr "고급"
 
-#: src/components/miniflux/AddFeedDialog.tsx:618
+#: src/components/miniflux/AddFeedDialog.tsx:624
 #: src/components/miniflux/EditFeedDialog.tsx:246
 #: src/components/miniflux/settings/FeedFormDialog.tsx:417
 msgid "Advanced settings"
 msgstr "Advanced settings"
 
-#: src/components/layout/AppSidebar.tsx:349
-#: src/components/layout/AppSidebar.tsx:360
+#: src/components/layout/AppSidebar.tsx:418
+#: src/components/layout/AppSidebar.tsx:429
 #: src/components/miniflux/EntryFilters.tsx:99
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:33
-#: src/components/miniflux/MinifluxLayout.tsx:283
-#: src/components/miniflux/MinifluxLayout.tsx:297
+#: src/components/miniflux/MinifluxLayout.tsx:294
+#: src/components/miniflux/MinifluxLayout.tsx:302
 msgid "All"
 msgstr "모두"
 
@@ -179,23 +193,23 @@ msgstr "API 토큰이 필요합니다"
 msgid "API token updated"
 msgstr "API token updated"
 
-#: src/components/preferences/PreferencesDialog.tsx:40
+#: src/components/preferences/PreferencesDialog.tsx:43
 msgid "Appearance"
 msgstr "외관"
 
-#: src/components/layout/AppSidebar.tsx:224
+#: src/components/layout/AppSidebar.tsx:229
 msgid "Are you sure you want to delete this category and all its feeds?"
 msgstr "Are you sure you want to delete this category and all its feeds?"
 
-#: src/components/layout/AppSidebar.tsx:98
+#: src/components/layout/AppSidebar.tsx:103
 msgid "Are you sure you want to unsubscribe from this feed?"
 msgstr "Are you sure you want to unsubscribe from this feed?"
 
-#: src/components/miniflux/EntryReading.tsx:93
+#: src/components/miniflux/EntryReading.tsx:120
 msgid "Article table of contents"
 msgstr "Article table of contents"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:105
+#: src/components/miniflux/EntryReadingHeader.tsx:115
 msgid "Auto"
 msgstr "Auto"
 
@@ -203,33 +217,43 @@ msgstr "Auto"
 msgid "Beautiful, accessible components"
 msgstr "아름답고 접근하기 쉬운 컴포넌트"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:273
+#: src/components/miniflux/EntryReadingHeader.tsx:337
 msgid "Bionic Reading"
 msgstr "Bionic Reading"
 
-#: src/components/miniflux/AddFeedDialog.tsx:782
+#: src/components/miniflux/AddFeedDialog.tsx:788
 #: src/components/miniflux/EditFeedDialog.tsx:410
 #: src/components/miniflux/settings/FeedFormDialog.tsx:585
 msgid "Blocklist rules"
 msgstr "Blocklist rules"
 
-#: src/components/miniflux/ReaderSettings.tsx:97
+#: src/components/miniflux/ReaderSettings.tsx:154
 msgid "Book Serif"
 msgstr "Book Serif"
 
-#: src/components/miniflux/ReaderSettings.tsx:118
+#: src/components/miniflux/ReaderSettings.tsx:175
 msgid "Book-like rhythm"
 msgstr "Book-like rhythm"
 
-#: src/components/miniflux/AddFeedDialog.tsx:592
+#: src/components/layout/AppSidebar.tsx:515
+#: src/components/layout/AppSidebar.tsx:519
+msgid "Browse categories"
+msgstr ""
+
+#. placeholder {0}: currentEntry.author
+#: src/components/zen-mode/ZenModeView.tsx:207
+msgid "By {0}"
+msgstr ""
+
+#: src/components/miniflux/AddFeedDialog.tsx:598
 msgid "Can’t find a category? Create a new one."
 msgstr "Can’t find a category? Create a new one."
 
 #: src/components/downloads/DownloadManagerDialog.tsx:421
-#: src/components/miniflux/AddCategoryDialog.tsx:98
-#: src/components/miniflux/AddFeedDialog.tsx:822
+#: src/components/miniflux/AddCategoryDialog.tsx:97
+#: src/components/miniflux/AddFeedDialog.tsx:828
 #: src/components/miniflux/ConnectionDialog.tsx:359
-#: src/components/miniflux/EditCategoryDialog.tsx:106
+#: src/components/miniflux/EditCategoryDialog.tsx:103
 #: src/components/miniflux/EditFeedDialog.tsx:446
 #: src/components/miniflux/SearchSourceDialog.tsx:155
 #: src/components/miniflux/settings/CategoryFormDialog.tsx:103
@@ -244,21 +268,22 @@ msgstr "취소"
 msgid "Cancelled"
 msgstr "Cancelled"
 
-#: src/components/layout/AppSidebar.tsx:438
+#: src/components/layout/AppSidebar.tsx:544
 #: src/components/miniflux/MinifluxSettingsDialog.tsx:74
 #: src/components/sync/SyncProgressPopover.tsx:45
 msgid "Categories"
 msgstr "카테고리"
 
-#: src/components/miniflux/AddFeedDialog.tsx:542
+#: src/components/miniflux/AddFeedDialog.tsx:548
 #: src/components/miniflux/EditFeedDialog.tsx:220
-#: src/components/miniflux/MinifluxLayout.tsx:273
+#: src/components/miniflux/MinifluxLayout.tsx:285
 #: src/components/miniflux/MinifluxSettingsDialog.tsx:191
 #: src/components/miniflux/settings/FeedFormDialog.tsx:377
 msgid "Category"
 msgstr "카테고리"
 
-#: src/components/layout/AppSidebar.tsx:442
+#: src/components/layout/AppSidebar.tsx:373
+#: src/components/layout/AppSidebar.tsx:374
 msgid "Category actions"
 msgstr "Category actions"
 
@@ -283,7 +308,7 @@ msgid "Category name is required"
 msgstr "Category name is required"
 
 #: src/components/miniflux/AddCategoryDialog.tsx:74
-#: src/components/miniflux/EditCategoryDialog.tsx:83
+#: src/components/miniflux/EditCategoryDialog.tsx:81
 msgid "Category Title"
 msgstr "Category Title"
 
@@ -295,7 +320,23 @@ msgstr "Category updated"
 msgid "Check for Updates..."
 msgstr "업데이트 확인..."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:210
+#: src/components/preferences/panes/AboutPane.tsx:116
+msgid "Check latest version"
+msgstr ""
+
+#: src/components/preferences/panes/AboutPane.tsx:60
+msgid "Check whether a newer release is available."
+msgstr ""
+
+#: src/components/preferences/panes/AboutPane.tsx:52
+msgid "Checking for updates..."
+msgstr ""
+
+#: src/components/preferences/panes/AboutPane.tsx:116
+msgid "Checking..."
+msgstr ""
+
+#: src/components/miniflux/EntryReadingHeader.tsx:254
 msgid "Chinese conversion"
 msgstr "Chinese conversion"
 
@@ -319,12 +360,12 @@ msgstr "선호하는 색상 테마를 선택하세요"
 msgid "Choose your preferred display language"
 msgstr "선호하는 표시 언어를 선택하세요"
 
-#: src/components/miniflux/ReaderSettings.tsx:114
+#: src/components/miniflux/ReaderSettings.tsx:171
 msgid "Classic reading"
 msgstr "Classic reading"
 
-#: src/components/miniflux/ReaderSettings.tsx:108
-#: src/components/miniflux/ReaderSettings.tsx:122
+#: src/components/miniflux/ReaderSettings.tsx:165
+#: src/components/miniflux/ReaderSettings.tsx:179
 msgid "Clean and balanced"
 msgstr "Clean and balanced"
 
@@ -361,8 +402,9 @@ msgstr "Clear local data?"
 msgid "Clearing..."
 msgstr "Clearing..."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:150
-#: src/components/miniflux/EntryReadingHeader.tsx:156
+#: src/components/miniflux/EntryReadingHeader.tsx:194
+#: src/components/miniflux/EntryReadingHeader.tsx:200
+#: src/components/miniflux/ReaderSettings.tsx:226
 msgid "Close"
 msgstr "Close"
 
@@ -382,11 +424,11 @@ msgstr "현재 창 닫기"
 msgid "Close Window"
 msgstr "창 닫기"
 
-#: src/components/miniflux/ReaderSettings.tsx:120
+#: src/components/miniflux/ReaderSettings.tsx:177
 msgid "Code and precision"
 msgstr "Code and precision"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:248
+#: src/components/miniflux/EntryReadingHeader.tsx:292
 msgid "Code theme"
 msgstr "Code theme"
 
@@ -411,11 +453,11 @@ msgstr "연결"
 msgid "Connect to Miniflux"
 msgstr "Miniflux에 연결"
 
-#: src/components/miniflux/MinifluxLayout.tsx:221
+#: src/components/miniflux/MinifluxLayout.tsx:237
 msgid "Connect to Server"
 msgstr "서버에 연결"
 
-#: src/components/miniflux/MinifluxLayout.tsx:219
+#: src/components/miniflux/MinifluxLayout.tsx:235
 msgid "Connect to your Miniflux server to get started"
 msgstr "시작하려면 Miniflux 서버에 연결하세요"
 
@@ -423,13 +465,17 @@ msgstr "시작하려면 Miniflux 서버에 연결하세요"
 msgid "Connecting..."
 msgstr "연결 중..."
 
-#: src/components/miniflux/AddFeedDialog.tsx:827
+#: src/components/miniflux/AddFeedDialog.tsx:833
 msgid "Continue to Add Feed"
 msgstr "Continue to Add Feed"
 
 #: src/components/ui/sonner.tsx:49
 msgid "Copied!"
 msgstr "복사됨!"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:445
+msgid "Copy article URL"
+msgstr ""
 
 #: src/components/miniflux/SafeHtml.tsx:592
 msgid "Copy code"
@@ -439,9 +485,21 @@ msgstr "Copy code"
 msgid "Copy message"
 msgstr "메시지 복사"
 
+#: src/components/miniflux/EntryReadingHeader.tsx:461
+msgid "Copy share link"
+msgstr ""
+
 #: src/components/downloads/DownloadManagerDialog.tsx:463
 msgid "Copy URL"
 msgstr "Copy URL"
+
+#: src/lib/menu.ts:124
+msgid "Could not check for updates"
+msgstr ""
+
+#: src/components/preferences/panes/AboutPane.tsx:58
+msgid "Could not check for updates. Please try again."
+msgstr ""
 
 #: src/components/miniflux/ConnectionDialog.tsx:177
 msgid "Could not connect to saved account. Please update your credentials."
@@ -460,8 +518,8 @@ msgstr "Create a new category to organize your feeds."
 msgid "Create category"
 msgstr "Create category"
 
-#: src/components/miniflux/AddCategoryDialog.tsx:101
-#: src/components/miniflux/AddFeedDialog.tsx:602
+#: src/components/miniflux/AddCategoryDialog.tsx:100
+#: src/components/miniflux/AddFeedDialog.tsx:608
 msgid "Create Category"
 msgstr "Create Category"
 
@@ -477,9 +535,13 @@ msgstr "Create user"
 msgid "Create, rename, and delete categories."
 msgstr "Create, rename, and delete categories."
 
-#: src/components/miniflux/AddCategoryDialog.tsx:101
+#: src/components/miniflux/AddCategoryDialog.tsx:100
 msgid "Creating..."
 msgstr "Creating..."
+
+#: src/components/preferences/panes/AboutPane.tsx:102
+msgid "Current version"
+msgstr ""
 
 #: src/components/preferences/panes/AppearancePane.tsx:216
 msgid "Custom Term Conversion"
@@ -489,7 +551,7 @@ msgstr "Custom Term Conversion"
 msgid "Customizable keyboard shortcuts"
 msgstr "사용자 정의 가능한 키보드 단축키"
 
-#: src/components/preferences/PreferencesDialog.tsx:66
+#: src/components/preferences/PreferencesDialog.tsx:75
 msgid "Customize your application preferences here."
 msgstr "여기에서 애플리케이션 설정을 사용자 지정하세요."
 
@@ -509,6 +571,11 @@ msgstr "Date Range"
 msgid "Debug"
 msgstr "디버그"
 
+#: src/components/miniflux/EntryReadingHeader.tsx:126
+#: src/components/miniflux/EntryReadingHeader.tsx:136
+msgid "Default"
+msgstr ""
+
 #: src/components/preferences/panes/GeneralPane.tsx:210
 msgid "Default folder for saving images. Leave empty to ask every time."
 msgstr "Default folder for saving images. Leave empty to ask every time."
@@ -517,7 +584,7 @@ msgstr "Default folder for saving images. Leave empty to ask every time."
 msgid "Default folder for saving videos. Leave empty to ask every time."
 msgstr "Default folder for saving videos. Leave empty to ask every time."
 
-#: src/components/layout/AppSidebar.tsx:272
+#: src/components/layout/AppSidebar.tsx:277
 msgid "Delete"
 msgstr "Delete"
 
@@ -545,7 +612,7 @@ msgstr "Delete user"
 msgid "Delete user?"
 msgstr "Delete user?"
 
-#: src/components/miniflux/AddFeedDialog.tsx:699
+#: src/components/miniflux/AddFeedDialog.tsx:705
 #: src/components/miniflux/EditFeedDialog.tsx:327
 #: src/components/miniflux/settings/FeedFormDialog.tsx:501
 msgid "Disable feed"
@@ -597,11 +664,11 @@ msgstr "Downloading"
 msgid "Downloading recent entries from server"
 msgstr "Downloading recent entries from server"
 
-#: src/components/titlebar/WindowTitleBar.tsx:154
+#: src/components/titlebar/WindowTitleBar.tsx:171
 msgid "Downloads"
 msgstr "Downloads"
 
-#: src/components/miniflux/AddFeedDialog.tsx:387
+#: src/components/miniflux/AddFeedDialog.tsx:390
 #: src/components/miniflux/SearchSourceDialog.tsx:137
 #: src/components/miniflux/settings/FeedFormDialog.tsx:291
 msgid "e.g. blog.example.com"
@@ -611,7 +678,7 @@ msgstr "e.g. blog.example.com"
 msgid "e.g. Technology"
 msgstr "e.g. Technology"
 
-#: src/components/miniflux/AddCategoryDialog.tsx:81
+#: src/components/miniflux/AddCategoryDialog.tsx:80
 msgid "e.g. Technology, News"
 msgstr "e.g. Technology, News"
 
@@ -619,8 +686,8 @@ msgstr "e.g. Technology, News"
 msgid "Each rule must include a non-empty \"From\" value"
 msgstr "Each rule must include a non-empty \"From\" value"
 
-#: src/components/layout/AppSidebar.tsx:136
-#: src/components/layout/AppSidebar.tsx:268
+#: src/components/layout/AppSidebar.tsx:141
+#: src/components/layout/AppSidebar.tsx:273
 msgid "Edit"
 msgstr "Edit"
 
@@ -650,7 +717,7 @@ msgstr "Edit user"
 msgid "Enabled"
 msgstr "활성화됨"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:274
+#: src/components/miniflux/EntryReadingHeader.tsx:338
 msgid "English only"
 msgstr "English only"
 
@@ -678,11 +745,15 @@ msgstr "비밀번호를 입력하세요"
 msgid "Enter your username"
 msgstr "사용자 이름을 입력하세요"
 
+#: src/components/titlebar/WindowTitleBar.tsx:123
+msgid "Enter Zen Mode"
+msgstr ""
+
 #: src/components/sync/SyncProgressPopover.tsx:57
 msgid "Entries"
 msgstr "Entries"
 
-#: src/components/miniflux/EntryReading.tsx:346
+#: src/components/miniflux/EntryReading.tsx:533
 msgid "Entry not found"
 msgstr "Entry not found"
 
@@ -721,6 +792,15 @@ msgstr "전체 화면 종료"
 #: src/lib/commands/window-commands.ts:77
 msgid "Exit fullscreen mode"
 msgstr "전체 화면 모드 종료"
+
+#: src/components/titlebar/WindowTitleBar.tsx:123
+#: src/components/zen-mode/ZenModeView.tsx:184
+msgid "Exit Zen Mode"
+msgstr ""
+
+#: src/components/zen-mode/ZenModeView.tsx:149
+msgid "Exit Zen Mode (Esc)"
+msgstr ""
 
 #: src/pages/HomePage.tsx:61
 msgid "Explore Features"
@@ -775,11 +855,11 @@ msgstr "전체 화면을 종료하는 데 실패했습니다: {message}"
 msgid "Failed to load categories"
 msgstr "Failed to load categories"
 
-#: src/components/miniflux/EntryList.tsx:370
+#: src/components/miniflux/EntryList.tsx:482
 msgid "Failed to load entries"
 msgstr "Failed to load entries"
 
-#: src/components/layout/AppSidebar.tsx:185
+#: src/components/layout/AppSidebar.tsx:190
 #: src/services/miniflux/feeds.ts:63
 #: src/services/miniflux/feeds.ts:93
 msgid "Failed to load feeds"
@@ -849,7 +929,7 @@ msgstr "Failed to update user"
 msgid "Failed to update video download path"
 msgstr "Failed to update video download path"
 
-#: src/components/miniflux/MinifluxLayout.tsx:278
+#: src/components/miniflux/MinifluxLayout.tsx:289
 #: src/components/miniflux/MinifluxSettingsDialog.tsx:150
 msgid "Feed"
 msgstr "Feed"
@@ -882,7 +962,7 @@ msgstr "Feed Title"
 msgid "Feed updated"
 msgstr "Feed updated"
 
-#: src/components/miniflux/AddFeedDialog.tsx:505
+#: src/components/miniflux/AddFeedDialog.tsx:511
 #: src/components/miniflux/EditFeedDialog.tsx:176
 #: src/components/miniflux/settings/FeedFormDialog.tsx:334
 msgid "Feed URL"
@@ -901,7 +981,7 @@ msgstr "Feed URL must be a valid URL"
 msgid "Feeds"
 msgstr "Feeds"
 
-#: src/components/miniflux/AddFeedDialog.tsx:733
+#: src/components/miniflux/AddFeedDialog.tsx:739
 #: src/components/miniflux/EditFeedDialog.tsx:361
 #: src/components/miniflux/settings/FeedFormDialog.tsx:535
 msgid "Fetch via proxy"
@@ -915,17 +995,17 @@ msgstr "File Name"
 msgid "Fill from .env"
 msgstr ".env에서 채우기"
 
-#: src/components/miniflux/ReaderSettings.tsx:274
+#: src/components/miniflux/ReaderSettings.tsx:450
 msgid "Font Family"
 msgstr "Font Family"
 
-#: src/components/miniflux/ReaderSettings.tsx:147
-#: src/components/miniflux/ReaderSettings.tsx:156
+#: src/components/miniflux/ReaderSettings.tsx:246
+#: src/components/miniflux/ReaderSettings.tsx:257
 msgid "Font Size"
 msgstr "Font Size"
 
-#: src/components/miniflux/AddFeedDialog.tsx:420
-#: src/components/miniflux/AddFeedDialog.tsx:441
+#: src/components/miniflux/AddFeedDialog.tsx:423
+#: src/components/miniflux/AddFeedDialog.tsx:444
 #: src/components/miniflux/SearchSourceDialog.tsx:175
 #: src/components/miniflux/settings/FeedFormDialog.tsx:311
 msgid "Found sources"
@@ -935,11 +1015,11 @@ msgstr "Found sources"
 msgid "From"
 msgstr "From"
 
-#: src/components/preferences/PreferencesDialog.tsx:35
+#: src/components/preferences/PreferencesDialog.tsx:38
 msgid "General"
 msgstr "일반"
 
-#: src/components/miniflux/ReaderSettings.tsx:95
+#: src/components/miniflux/ReaderSettings.tsx:152
 msgid "Georgia"
 msgstr "Georgia"
 
@@ -964,7 +1044,7 @@ msgid "Hide {APP_NAME}"
 msgstr "{APP_NAME} 숨기기"
 
 #: src/components/titlebar/LinuxTitleBar.tsx:34
-#: src/components/titlebar/WindowTitleBar.tsx:91
+#: src/components/titlebar/WindowTitleBar.tsx:95
 #: src/lib/commands/navigation-commands.ts:16
 msgid "Hide Left Sidebar"
 msgstr "왼쪽 사이드바 숨기기"
@@ -973,29 +1053,37 @@ msgstr "왼쪽 사이드바 숨기기"
 msgid "Hide Others"
 msgstr "기타 숨기기"
 
+#: src/components/miniflux/EntryReading.tsx:172
+msgid "Hide reading status"
+msgstr ""
+
 #: src/lib/commands/navigation-commands.ts:17
 msgid "Hide the left sidebar"
 msgstr "왼쪽 사이드바 숨기기"
 
-#: src/components/layout/AppSidebar.tsx:411
-#: src/components/layout/AppSidebar.tsx:420
-#: src/components/miniflux/MinifluxLayout.tsx:293
+#: src/components/layout/AppSidebar.tsx:486
+#: src/components/layout/AppSidebar.tsx:495
+#: src/components/miniflux/MinifluxLayout.tsx:300
 msgid "History"
 msgstr "히스토리"
 
-#: src/components/miniflux/AddFeedDialog.tsx:661
+#: src/components/miniflux/MinifluxLayout.tsx:324
+msgid "history items"
+msgstr ""
+
+#: src/components/miniflux/AddFeedDialog.tsx:667
 #: src/components/miniflux/EditFeedDialog.tsx:289
 #: src/components/miniflux/settings/FeedFormDialog.tsx:462
 msgid "HTTP password"
 msgstr "HTTP password"
 
-#: src/components/miniflux/AddFeedDialog.tsx:646
+#: src/components/miniflux/AddFeedDialog.tsx:652
 #: src/components/miniflux/EditFeedDialog.tsx:274
 #: src/components/miniflux/settings/FeedFormDialog.tsx:446
 msgid "HTTP username"
 msgstr "HTTP username"
 
-#: src/components/miniflux/AddFeedDialog.tsx:512
+#: src/components/miniflux/AddFeedDialog.tsx:518
 msgid "https://example.com/feed.xml"
 msgstr "https://example.com/feed.xml"
 
@@ -1003,11 +1091,11 @@ msgstr "https://example.com/feed.xml"
 msgid "https://example.com/rss.xml"
 msgstr "https://example.com/rss.xml"
 
-#: src/components/miniflux/ReaderSettings.tsx:91
+#: src/components/miniflux/ReaderSettings.tsx:148
 msgid "Humanist"
 msgstr "Humanist"
 
-#: src/components/miniflux/AddFeedDialog.tsx:716
+#: src/components/miniflux/AddFeedDialog.tsx:722
 #: src/components/miniflux/EditFeedDialog.tsx:344
 #: src/components/miniflux/settings/FeedFormDialog.tsx:518
 msgid "Ignore HTTP cache"
@@ -1025,14 +1113,18 @@ msgstr "Image Download Path"
 msgid "Image download path updated"
 msgstr "Image download path updated"
 
-#: src/components/miniflux/AddFeedDialog.tsx:799
+#: src/components/preferences/panes/AboutPane.tsx:103
+msgid "Installed version of Minikyu."
+msgstr ""
+
+#: src/components/miniflux/AddFeedDialog.tsx:805
 #: src/components/miniflux/EditFeedDialog.tsx:427
 #: src/components/miniflux/settings/FeedFormDialog.tsx:602
 msgid "Keeplist rules"
 msgstr "Keeplist rules"
 
 #: src/components/miniflux/SafeHtml.tsx:593
-#: src/components/miniflux/UserNav.tsx:143
+#: src/components/miniflux/UserNav.tsx:161
 #: src/components/preferences/panes/AppearancePane.tsx:167
 #: src/components/preferences/panes/AppearancePane.tsx:169
 msgid "Language"
@@ -1051,18 +1143,26 @@ msgstr "Last synced at {0}"
 msgid "Latest React with concurrent features"
 msgstr "동시성 기능이 있는 최신 React"
 
+#: src/components/preferences/panes/AboutPane.tsx:108
+msgid "Latest version"
+msgstr ""
+
 #: src/components/preferences/panes/AppearancePane.tsx:206
 msgid "Light"
 msgstr "라이트"
 
-#: src/components/miniflux/ReaderSettings.tsx:211
-#: src/components/miniflux/ReaderSettings.tsx:220
+#: src/components/miniflux/ReaderSettings.tsx:383
+#: src/components/miniflux/ReaderSettings.tsx:394
+msgid "Line Height"
+msgstr ""
+
+#: src/components/miniflux/ReaderSettings.tsx:316
+#: src/components/miniflux/ReaderSettings.tsx:327
 msgid "Line Width"
 msgstr "Line Width"
 
-#: src/components/layout/AppSidebar.tsx:339
-#: src/components/miniflux/EntryList.tsx:548
-#: src/components/miniflux/MinifluxLayout.tsx:207
+#: src/components/layout/AppSidebar.tsx:408
+#: src/components/miniflux/MinifluxLayout.tsx:223
 msgid "Loading..."
 msgstr "로딩 중..."
 
@@ -1070,7 +1170,7 @@ msgstr "로딩 중..."
 msgid "Local data cleared"
 msgstr "Local data cleared"
 
-#: src/components/miniflux/UserNav.tsx:194
+#: src/components/miniflux/UserNav.tsx:212
 msgid "Log out"
 msgstr "Log out"
 
@@ -1086,23 +1186,29 @@ msgstr "Manage feeds and discover subscriptions from source URLs."
 msgid "Manage Miniflux user accounts."
 msgstr "Manage Miniflux user accounts."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:317
-#: src/components/miniflux/EntryReadingHeader.tsx:326
+#: src/components/miniflux/EntryReadingHeader.tsx:394
+#: src/components/miniflux/EntryReadingHeader.tsx:413
 msgid "Mark as read"
 msgstr "Mark as read"
 
+#: src/components/miniflux/EntryReadingHeader.tsx:394
+#: src/components/miniflux/EntryReadingHeader.tsx:413
+msgid "Mark as unread"
+msgstr ""
+
 #: src/components/miniflux/EntryReadingHeader.tsx:317
 #: src/components/miniflux/EntryReadingHeader.tsx:326
-msgid "Marked as read"
-msgstr "Marked as read"
+#~ msgid "Marked as read"
+#~ msgstr "Marked as read"
 
 #: src/components/miniflux/MinifluxSettingsDialog.tsx:373
-#: src/components/miniflux/UserNav.tsx:185
+#: src/components/miniflux/UserNav.tsx:203
 msgid "Miniflux settings"
 msgstr "Miniflux settings"
 
 #: src/components/brand/AppLogo.tsx:31
 #: src/components/brand/AppLogo.tsx:115
+#: src/components/preferences/panes/AboutPane.tsx:89
 msgid "Minikyu"
 msgstr "Minikyu"
 
@@ -1122,11 +1228,11 @@ msgstr "창 최소화"
 msgid "Modern Rust-powered desktop framework"
 msgstr "현대적인 Rust 기반 데스크톱 프레임워크"
 
-#: src/components/miniflux/ReaderSettings.tsx:99
+#: src/components/miniflux/ReaderSettings.tsx:156
 msgid "Monospace"
 msgstr "Monospace"
 
-#: src/components/miniflux/ReaderSettings.tsx:110
+#: src/components/miniflux/ReaderSettings.tsx:167
 msgid "Native platform feel"
 msgstr "Native platform feel"
 
@@ -1138,12 +1244,16 @@ msgstr "탐색"
 msgid "New password (optional)"
 msgstr "New password (optional)"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:189
-#: src/components/miniflux/EntryReadingHeader.tsx:195
+#: src/components/zen-mode/ZenModeView.tsx:252
+msgid "Next Article"
+msgstr ""
+
+#: src/components/miniflux/EntryReadingHeader.tsx:233
+#: src/components/miniflux/EntryReadingHeader.tsx:239
 msgid "Next entry (j or →)"
 msgstr "Next entry (j or →)"
 
-#: src/components/miniflux/EntryReading.tsx:92
+#: src/components/miniflux/EntryReading.tsx:119
 msgid "Next section"
 msgstr "Next section"
 
@@ -1155,7 +1265,7 @@ msgstr "No active account"
 msgid "No active downloads"
 msgstr "No active downloads"
 
-#: src/components/miniflux/AddFeedDialog.tsx:572
+#: src/components/miniflux/AddFeedDialog.tsx:578
 #: src/components/miniflux/settings/CategoriesPane.tsx:54
 #: src/components/miniflux/settings/FeedFormDialog.tsx:397
 msgid "No categories found"
@@ -1170,7 +1280,7 @@ msgstr "No categories yet"
 msgid "No category"
 msgstr "No category"
 
-#: src/components/miniflux/EntryReading.tsx:424
+#: src/components/miniflux/EntryReading.tsx:607
 msgid "No content available"
 msgstr "No content available"
 
@@ -1178,7 +1288,7 @@ msgstr "No content available"
 msgid "No custom rules yet"
 msgstr "No custom rules yet"
 
-#: src/components/miniflux/EntryList.tsx:385
+#: src/components/miniflux/EntryList.tsx:497
 msgid "No entries found"
 msgstr "No entries found"
 
@@ -1190,7 +1300,7 @@ msgstr "No feeds found"
 msgid "No feeds yet"
 msgstr "No feeds yet"
 
-#: src/components/miniflux/ReaderSettings.tsx:291
+#: src/components/miniflux/ReaderSettings.tsx:466
 msgid "No fonts found."
 msgstr "No fonts found."
 
@@ -1206,23 +1316,31 @@ msgstr "No results."
 msgid "No server URL found."
 msgstr "서버 URL을 찾을 수 없습니다."
 
-#: src/components/miniflux/AddFeedDialog.tsx:486
+#: src/components/miniflux/AddFeedDialog.tsx:489
 #: src/components/miniflux/SearchSourceDialog.tsx:199
 msgid "No sources found"
 msgstr "No sources found"
+
+#: src/components/zen-mode/ZenModeView.tsx:174
+msgid "No unread entries available"
+msgstr ""
 
 #: src/components/miniflux/MinifluxSettingsDialog.tsx:380
 msgid "Not connected to Miniflux API"
 msgstr "Not connected to Miniflux API"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:97
+#: src/components/miniflux/EntryReadingHeader.tsx:107
 msgid "Off"
 msgstr "Off"
 
-#: src/components/layout/AppSidebar.tsx:476
-#: src/components/miniflux/UserNav.tsx:124
+#: src/components/layout/AppSidebar.tsx:559
+#: src/components/miniflux/UserNav.tsx:141
 msgid "Offline cached data"
 msgstr "오프라인 캐시 데이터"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:134
+msgid "OLED"
+msgstr ""
 
 #: src/components/downloads/DownloadManagerDialog.tsx:113
 msgid "Open"
@@ -1235,6 +1353,10 @@ msgstr "Open File"
 #: src/components/downloads/DownloadManagerDialog.tsx:452
 msgid "Open Folder"
 msgstr "Open Folder"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:471
+msgid "Open in browser"
+msgstr ""
 
 #: src/lib/commands/navigation-commands.ts:25
 msgid "Open Preferences"
@@ -1258,6 +1380,10 @@ msgstr "Overall progress"
 msgid "Page {0} of {1}"
 msgstr "Page {0} of {1}"
 
+#: src/components/miniflux/EntryReadingHeader.tsx:128
+msgid "Paper"
+msgstr ""
+
 #: src/components/miniflux/ConnectionDialog.tsx:309
 #: src/components/miniflux/settings/UserFormDialog.tsx:106
 msgid "Password"
@@ -1268,7 +1394,7 @@ msgstr "비밀번호"
 msgid "Password is required"
 msgstr "비밀번호가 필요합니다"
 
-#: src/components/miniflux/AddFeedDialog.tsx:370
+#: src/components/miniflux/AddFeedDialog.tsx:373
 msgid "Paste a website URL to discover available RSS/Atom feeds."
 msgstr "Paste a website URL to discover available RSS/Atom feeds."
 
@@ -1290,8 +1416,8 @@ msgstr "Please enter a valid URL"
 msgid "Please restart the app to complete cleanup."
 msgstr "Please restart the app to complete cleanup."
 
-#: src/components/preferences/PreferencesDialog.tsx:64
-#: src/components/preferences/PreferencesDialog.tsx:99
+#: src/components/preferences/PreferencesDialog.tsx:73
+#: src/components/preferences/PreferencesDialog.tsx:108
 msgid "Preferences"
 msgstr "설정"
 
@@ -1307,18 +1433,22 @@ msgstr "Preparing sync stages"
 msgid "Press"
 msgstr "누르기"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:170
-#: src/components/miniflux/EntryReadingHeader.tsx:176
+#: src/components/miniflux/EntryReadingHeader.tsx:214
+#: src/components/miniflux/EntryReadingHeader.tsx:220
 msgid "Previous entry (h or ←)"
 msgstr "Previous entry (h or ←)"
 
-#: src/components/miniflux/EntryReading.tsx:91
+#: src/components/miniflux/EntryReading.tsx:118
 msgid "Previous section"
 msgstr "Previous section"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:358
 msgid "Progress"
 msgstr "Progress"
+
+#: src/components/miniflux/EntryList.tsx:448
+msgid "Pull to refresh"
+msgstr ""
 
 #: src/components/sync/SyncProgressPopover.tsx:120
 msgid "Pulling category groups from server"
@@ -1356,21 +1486,30 @@ msgstr "React 19"
 msgid "Reader companion illustration"
 msgstr "Reader companion illustration"
 
-#: src/components/miniflux/ReaderSettings.tsx:133
+#: src/components/miniflux/ReaderSettings.tsx:196
 msgid "Reader typography settings"
 msgstr "Reader typography settings"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:223
+#: src/components/miniflux/EntryReadingHeader.tsx:267
 msgid "Reading display"
 msgstr "Reading display"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:316
+msgid "Reading theme"
+msgstr ""
 
 #: src/components/miniflux/settings/FeedsPane.tsx:56
 msgid "Refresh all"
 msgstr "Refresh all"
 
+#: src/components/miniflux/EntryList.tsx:445
 #: src/components/miniflux/settings/FeedsPane.tsx:56
 msgid "Refreshing..."
 msgstr "Refreshing..."
+
+#: src/components/miniflux/EntryList.tsx:447
+msgid "Release to refresh"
+msgstr ""
 
 #: src/components/preferences/panes/AppearancePane.tsx:246
 msgid "Remove"
@@ -1388,6 +1527,7 @@ msgstr "Removes the local database, preferences, reading state, and recovery fil
 msgid "Removing stale local records"
 msgstr "Removing stale local records"
 
+#: src/components/miniflux/ReaderSettings.tsx:217
 #: src/components/preferences/panes/AppearancePane.tsx:272
 #: src/components/preferences/ShortcutPicker.tsx:231
 msgid "Reset"
@@ -1397,14 +1537,14 @@ msgstr "재설정"
 msgid "Retry"
 msgstr "Retry"
 
-#: src/components/miniflux/AddFeedDialog.tsx:764
+#: src/components/miniflux/AddFeedDialog.tsx:770
 #: src/components/miniflux/EditFeedDialog.tsx:392
 #: src/components/miniflux/settings/FeedFormDialog.tsx:567
 msgid "Rewrite rules"
 msgstr "Rewrite rules"
 
 #: src/components/miniflux/settings/UserFormDialog.tsx:132
-#: src/components/miniflux/UserNav.tsx:138
+#: src/components/miniflux/UserNav.tsx:156
 msgid "Role"
 msgstr "Role"
 
@@ -1413,6 +1553,7 @@ msgid "Rows per page"
 msgstr "Rows per page"
 
 #: src/components/brand/AppLogo.tsx:118
+#: src/components/preferences/panes/AboutPane.tsx:90
 msgid "RSS Reader"
 msgstr "RSS Reader"
 
@@ -1424,8 +1565,8 @@ msgstr "Run sync to refresh categories, feeds, and entries"
 msgid "Running"
 msgstr "Running"
 
-#: src/components/miniflux/ReaderSettings.tsx:87
-#: src/components/miniflux/ReaderSettings.tsx:101
+#: src/components/miniflux/ReaderSettings.tsx:144
+#: src/components/miniflux/ReaderSettings.tsx:158
 msgid "Sans"
 msgstr "Sans"
 
@@ -1435,7 +1576,7 @@ msgstr "Sans"
 msgid "Save changes"
 msgstr "Save changes"
 
-#: src/components/miniflux/EditCategoryDialog.tsx:109
+#: src/components/miniflux/EditCategoryDialog.tsx:106
 #: src/components/miniflux/EditFeedDialog.tsx:449
 msgid "Save Changes"
 msgstr "Save Changes"
@@ -1444,19 +1585,23 @@ msgstr "Save Changes"
 msgid "Save Rules"
 msgstr "Save Rules"
 
-#: src/components/miniflux/EditCategoryDialog.tsx:109
+#: src/components/miniflux/EditCategoryDialog.tsx:106
 #: src/components/miniflux/EditFeedDialog.tsx:449
 #: src/components/preferences/panes/AppearancePane.tsx:284
 msgid "Saving..."
 msgstr "Saving..."
 
-#: src/components/miniflux/AddFeedDialog.tsx:748
+#: src/components/miniflux/AddFeedDialog.tsx:754
 #: src/components/miniflux/EditFeedDialog.tsx:376
 #: src/components/miniflux/settings/FeedFormDialog.tsx:550
 msgid "Scraper rules"
 msgstr "Scraper rules"
 
-#: src/components/miniflux/MinifluxLayout.tsx:346
+#: src/components/miniflux/EntryReading.tsx:174
+msgid "Scroll to top"
+msgstr ""
+
+#: src/components/miniflux/MinifluxLayout.tsx:393
 #: src/components/miniflux/SearchSourceDialog.tsx:163
 #: src/components/miniflux/settings/FeedFormDialog.tsx:301
 msgid "Search"
@@ -1466,11 +1611,11 @@ msgstr "Search"
 msgid "Search a source URL or paste a direct feed URL."
 msgstr "Search a source URL or paste a direct feed URL."
 
-#: src/components/miniflux/AddFeedDialog.tsx:489
+#: src/components/miniflux/AddFeedDialog.tsx:492
 msgid "Search a website first, then select one source to continue."
 msgstr "Search a website first, then select one source to continue."
 
-#: src/components/miniflux/AddFeedDialog.tsx:563
+#: src/components/miniflux/AddFeedDialog.tsx:569
 #: src/components/miniflux/settings/FeedFormDialog.tsx:391
 msgid "Search categories"
 msgstr "Search categories"
@@ -1487,7 +1632,7 @@ msgstr "Search entries..."
 msgid "Search feeds..."
 msgstr "Search feeds..."
 
-#: src/components/miniflux/ReaderSettings.tsx:286
+#: src/components/miniflux/ReaderSettings.tsx:461
 msgid "Search fonts..."
 msgstr "Search fonts..."
 
@@ -1499,9 +1644,9 @@ msgstr "Search for websites or blog URLs to discover available feeds."
 msgid "Search or type a command..."
 msgstr "검색 또는 명령 입력..."
 
-#: src/components/layout/AppSidebar.tsx:454
+#: src/components/layout/AppSidebar.tsx:387
 #: src/components/miniflux/AddFeedDialog.tsx:356
-#: src/components/miniflux/AddFeedDialog.tsx:412
+#: src/components/miniflux/AddFeedDialog.tsx:415
 #: src/components/miniflux/SearchSourceDialog.tsx:115
 msgid "Search Source"
 msgstr "Search Source"
@@ -1510,7 +1655,7 @@ msgstr "Search Source"
 msgid "Search source first, then confirm feed details before subscribing."
 msgstr "Search source first, then confirm feed details before subscribing."
 
-#: src/components/miniflux/AddFeedDialog.tsx:381
+#: src/components/miniflux/AddFeedDialog.tsx:384
 #: src/components/miniflux/SearchSourceDialog.tsx:131
 #: src/components/miniflux/settings/FeedFormDialog.tsx:283
 msgid "Search source URL"
@@ -1520,7 +1665,7 @@ msgstr "Search source URL"
 msgid "Searching sources..."
 msgstr "Searching sources..."
 
-#: src/components/miniflux/AddFeedDialog.tsx:412
+#: src/components/miniflux/AddFeedDialog.tsx:415
 #: src/components/miniflux/SearchSourceDialog.tsx:163
 msgid "Searching..."
 msgstr "Searching..."
@@ -1549,7 +1694,11 @@ msgstr "테마 선택"
 msgid "Select Video Download Folder"
 msgstr "Select Video Download Folder"
 
-#: src/components/miniflux/ReaderSettings.tsx:93
+#: src/components/miniflux/EntryReadingHeader.tsx:130
+msgid "Sepia"
+msgstr ""
+
+#: src/components/miniflux/ReaderSettings.tsx:150
 msgid "Serif"
 msgstr "Serif"
 
@@ -1566,7 +1715,7 @@ msgid "Server URL is required"
 msgstr "서버 URL이 필요합니다"
 
 #: src/components/command-palette/CommandPalette.tsx:76
-#: src/components/titlebar/WindowTitleBar.tsx:105
+#: src/components/titlebar/WindowTitleBar.tsx:109
 msgid "Settings"
 msgstr "설정"
 
@@ -1574,10 +1723,13 @@ msgstr "설정"
 msgid "shadcn/ui"
 msgstr "shadcn/ui"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:338
-#: src/components/miniflux/EntryReadingHeader.tsx:344
+#: src/components/miniflux/EntryReadingHeader.tsx:424
 msgid "Share"
 msgstr "Share"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:461
+msgid "Share link copied!"
+msgstr ""
 
 #: src/pages/HomePage.tsx:38
 msgid "Shortcuts"
@@ -1592,10 +1744,18 @@ msgid "Show All"
 msgstr "모두 표시"
 
 #: src/components/titlebar/LinuxTitleBar.tsx:34
-#: src/components/titlebar/WindowTitleBar.tsx:91
+#: src/components/titlebar/WindowTitleBar.tsx:95
 #: src/lib/commands/navigation-commands.ts:7
 msgid "Show Left Sidebar"
 msgstr "왼쪽 사이드바 표시"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:351
+msgid "Show reading progress at bottom-left"
+msgstr ""
+
+#: src/components/miniflux/EntryReading.tsx:173
+msgid "Show reading status"
+msgstr ""
 
 #: src/lib/commands/navigation-commands.ts:8
 msgid "Show the left sidebar"
@@ -1609,6 +1769,10 @@ msgstr "트레이 아이콘 표시"
 msgid "Size"
 msgstr "Size"
 
+#: src/components/miniflux/EntryReadingHeader.tsx:132
+msgid "Slate"
+msgstr ""
+
 #: src/components/preferences/panes/AppearancePane.tsx:124
 msgid "Something went wrong"
 msgstr "문제가 발생했습니다"
@@ -1618,18 +1782,22 @@ msgstr "문제가 발생했습니다"
 msgid "Source URL is required"
 msgstr "Source URL is required"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:294
-#: src/components/miniflux/EntryReadingHeader.tsx:304
+#: src/components/miniflux/EntryReadingHeader.tsx:372
+#: src/components/miniflux/EntryReadingHeader.tsx:381
 msgid "Star"
 msgstr "Star"
 
-#: src/components/layout/AppSidebar.tsx:393
-#: src/components/layout/AppSidebar.tsx:402
+#: src/components/layout/AppSidebar.tsx:468
+#: src/components/layout/AppSidebar.tsx:477
 #: src/components/miniflux/EntryFilters.tsx:115
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:44
-#: src/components/miniflux/MinifluxLayout.tsx:286
+#: src/components/miniflux/MinifluxLayout.tsx:296
 msgid "Starred"
 msgstr "별표 표시됨"
+
+#: src/components/miniflux/MinifluxLayout.tsx:320
+msgid "starred items"
+msgstr ""
 
 #: src/components/preferences/panes/GeneralPane.tsx:190
 msgid "Start Minimized"
@@ -1647,17 +1815,21 @@ msgstr "시스템 트레이에 최소화된 상태로 애플리케이션 시작"
 msgid "Status"
 msgstr "Status"
 
+#: src/components/miniflux/EntryReadingHeader.tsx:349
+msgid "Status Bar"
+msgstr ""
+
 #. placeholder {0}: stageOrder.indexOf(activeStage.id) + 1
 #. placeholder {1}: activeStage.label
 #: src/components/sync/SyncProgressPopover.tsx:171
 msgid "Step {0} of {totalSteps}: {1}"
 msgstr "Step {0} of {totalSteps}: {1}"
 
-#: src/components/miniflux/ReaderSettings.tsx:116
+#: src/components/miniflux/ReaderSettings.tsx:173
 msgid "Strong newspaper tone"
 msgstr "Strong newspaper tone"
 
-#: src/components/miniflux/MinifluxLayout.tsx:334
+#: src/components/layout/AppSidebar.tsx:357
 msgid "Sync"
 msgstr "동기화"
 
@@ -1665,12 +1837,12 @@ msgstr "동기화"
 msgid "Sync article content and metadata"
 msgstr "Sync article content and metadata"
 
-#: src/components/titlebar/WindowTitleBar.tsx:72
+#: src/components/titlebar/WindowTitleBar.tsx:76
 msgid "Sync completed"
 msgstr "Sync completed"
 
 #: src/components/sync/SyncProgressPopover.tsx:160
-#: src/components/titlebar/WindowTitleBar.tsx:70
+#: src/components/titlebar/WindowTitleBar.tsx:74
 #: src/services/miniflux/feeds.ts:357
 msgid "Sync failed"
 msgstr "Sync failed"
@@ -1683,7 +1855,7 @@ msgstr "Sync feed sources in each category"
 msgid "Sync is idle"
 msgstr "Sync is idle"
 
-#: src/components/titlebar/WindowTitleBar.tsx:73
+#: src/components/titlebar/WindowTitleBar.tsx:77
 msgid "Sync Progress"
 msgstr "Sync Progress"
 
@@ -1699,8 +1871,8 @@ msgstr "Sync your category folders"
 msgid "Syncing your Miniflux data"
 msgstr "Syncing your Miniflux data"
 
-#: src/components/miniflux/MinifluxLayout.tsx:334
-#: src/components/titlebar/WindowTitleBar.tsx:68
+#: src/components/layout/AppSidebar.tsx:357
+#: src/components/titlebar/WindowTitleBar.tsx:72
 msgid "Syncing..."
 msgstr "Syncing..."
 
@@ -1721,7 +1893,7 @@ msgstr "System default (ask every time)"
 msgid "System Tray"
 msgstr "시스템 트레이"
 
-#: src/components/miniflux/ReaderSettings.tsx:89
+#: src/components/miniflux/ReaderSettings.tsx:146
 msgid "System UI"
 msgstr "System UI"
 
@@ -1785,7 +1957,7 @@ msgstr "This will remove all locally stored data and disconnect your account."
 msgid "This will remove the category from Miniflux."
 msgstr "This will remove the category from Miniflux."
 
-#: src/components/miniflux/UserNav.tsx:149
+#: src/components/miniflux/UserNav.tsx:167
 msgid "Timezone"
 msgstr "Timezone"
 
@@ -1801,6 +1973,10 @@ msgstr "Tip: \"Categories\" means folders, \"Feeds\" means subscriptions, and \"
 msgid "Tip: Use h / j to jump between entries quickly."
 msgstr "Tip: Use h / j to jump between entries quickly."
 
+#: src/components/miniflux/ReaderSettings.tsx:238
+msgid "Tips: +/- font size, [ ] line width, Alt+↑/↓ line height"
+msgstr ""
+
 #: src/components/miniflux/AddCategoryDialog.tsx:37
 #: src/components/miniflux/EditCategoryDialog.tsx:38
 #: src/components/miniflux/EditFeedDialog.tsx:85
@@ -1815,14 +1991,14 @@ msgstr "To"
 msgid "to open the command palette and explore available commands."
 msgstr "명령 팔레트를 열고 사용 가능한 명령을 탐색하려면"
 
-#: src/components/layout/AppSidebar.tsx:372
-#: src/components/layout/AppSidebar.tsx:381
-#: src/components/miniflux/EntryList.tsx:93
-#: src/components/miniflux/MinifluxLayout.tsx:290
+#: src/components/layout/AppSidebar.tsx:444
+#: src/components/layout/AppSidebar.tsx:453
+#: src/components/miniflux/EntryList.tsx:145
+#: src/components/miniflux/MinifluxLayout.tsx:298
 msgid "Today"
 msgstr "오늘"
 
-#: src/components/layout/AppSidebar.tsx:281
+#: src/components/layout/AppSidebar.tsx:286
 msgid "Toggle category feeds"
 msgstr "Toggle category feeds"
 
@@ -1846,7 +2022,7 @@ msgstr "트레이 아이콘이 비활성화되었습니다. 변경 사항은 재
 msgid "Tray icon enabled"
 msgstr "트레이 아이콘이 활성화되었습니다"
 
-#: src/components/miniflux/ReaderSettings.tsx:141
+#: src/components/miniflux/ReaderSettings.tsx:235
 msgid "Tune the reading layout for long-form comfort."
 msgstr "Tune the reading layout for long-form comfort."
 
@@ -1855,7 +2031,7 @@ msgstr "Tune the reading layout for long-form comfort."
 msgid "Type a command or search..."
 msgstr "명령을 입력하거나 검색..."
 
-#: src/components/miniflux/ReaderSettings.tsx:139
+#: src/components/miniflux/ReaderSettings.tsx:207
 msgid "Typography"
 msgstr "Typography"
 
@@ -1864,14 +2040,30 @@ msgstr "Typography"
 msgid "Unread"
 msgstr "Unread"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:294
-#: src/components/miniflux/EntryReadingHeader.tsx:304
+#: src/components/miniflux/MinifluxLayout.tsx:316
+msgid "unread items"
+msgstr ""
+
+#: src/components/miniflux/EntryReadingHeader.tsx:372
+#: src/components/miniflux/EntryReadingHeader.tsx:381
 msgid "Unstar"
 msgstr "Unstar"
 
-#: src/components/layout/AppSidebar.tsx:140
+#: src/components/layout/AppSidebar.tsx:145
 msgid "Unsubscribe"
 msgstr "Unsubscribe"
+
+#: src/lib/menu.ts:120
+msgid "Up to Date"
+msgstr ""
+
+#: src/lib/menu.ts:116
+msgid "Update Available"
+msgstr ""
+
+#: src/lib/menu.ts:124
+msgid "Update Check Failed"
+msgstr ""
 
 #: src/components/miniflux/settings/FeedFormDialog.tsx:264
 msgid "Update feed details and category."
@@ -1885,7 +2077,7 @@ msgstr "Update feed URL, category, and advanced feed settings."
 msgid "Update the API token used by the current account."
 msgstr "Update the API token used by the current account."
 
-#: src/components/miniflux/EditCategoryDialog.tsx:70
+#: src/components/miniflux/EditCategoryDialog.tsx:69
 msgid "Update the title of your category."
 msgstr "Update the title of your category."
 
@@ -1905,11 +2097,15 @@ msgstr "Update username or password."
 msgid "URL copied to clipboard"
 msgstr "URL copied to clipboard"
 
-#: src/components/miniflux/AddFeedDialog.tsx:525
+#: src/components/miniflux/EntryReadingHeader.tsx:445
+msgid "URL copied!"
+msgstr ""
+
+#: src/components/miniflux/AddFeedDialog.tsx:531
 msgid "URL selected from discovered sources"
 msgstr "URL selected from discovered sources"
 
-#: src/components/miniflux/AddFeedDialog.tsx:682
+#: src/components/miniflux/AddFeedDialog.tsx:688
 #: src/components/miniflux/EditFeedDialog.tsx:310
 #: src/components/miniflux/settings/FeedFormDialog.tsx:484
 msgid "Use custom crawler"
@@ -1923,16 +2119,16 @@ msgstr "Use in Add Feed"
 msgid "Use source title"
 msgstr "Use source title"
 
-#: src/components/miniflux/AddFeedDialog.tsx:480
+#: src/components/miniflux/AddFeedDialog.tsx:483
 msgid "Use URL"
 msgstr "Use URL"
 
 #: src/components/miniflux/settings/UserFormDialog.tsx:140
-#: src/components/miniflux/UserNav.tsx:139
+#: src/components/miniflux/UserNav.tsx:157
 msgid "User"
 msgstr "User"
 
-#: src/components/miniflux/AddFeedDialog.tsx:631
+#: src/components/miniflux/AddFeedDialog.tsx:637
 #: src/components/miniflux/EditFeedDialog.tsx:259
 #: src/components/miniflux/settings/FeedFormDialog.tsx:430
 msgid "User agent"
@@ -1950,7 +2146,7 @@ msgstr "User deleted"
 msgid "User management requires an administrator account."
 msgstr "User management requires an administrator account."
 
-#: src/components/miniflux/UserNav.tsx:134
+#: src/components/miniflux/UserNav.tsx:152
 msgid "User Profile"
 msgstr "User Profile"
 
@@ -1977,9 +2173,23 @@ msgstr "사용자 이름/비밀번호"
 msgid "Users"
 msgstr "Users"
 
+#: src/components/preferences/panes/AboutPane.tsx:100
+msgid "Version"
+msgstr ""
+
+#. placeholder {0}: latestVersion.version
+#: src/lib/menu.ts:117
+msgid "Version {0} is available"
+msgstr ""
+
+#. placeholder {0}: updateCheckState.version
+#: src/components/preferences/panes/AboutPane.tsx:56
+msgid "Version {0} is available."
+msgstr ""
+
 #: src/lib/menu.ts:106
-msgid "Version: {__APP_VERSION__}"
-msgstr "버전: {__APP_VERSION__}"
+#~ msgid "Version: {__APP_VERSION__}"
+#~ msgstr "버전: {__APP_VERSION__}"
 
 #: src/components/preferences/panes/GeneralPane.tsx:232
 msgid "Video Download Path"
@@ -1997,15 +2207,15 @@ msgstr "보기"
 msgid "View and manage your downloads"
 msgstr "View and manage your downloads"
 
-#: src/components/layout/AppSidebar.tsx:332
+#: src/components/layout/AppSidebar.tsx:401
 msgid "Views"
 msgstr "보기"
 
-#: src/components/miniflux/ReaderSettings.tsx:112
+#: src/components/miniflux/ReaderSettings.tsx:169
 msgid "Warm and friendly"
 msgstr "Warm and friendly"
 
-#: src/components/miniflux/MinifluxLayout.tsx:217
+#: src/components/miniflux/MinifluxLayout.tsx:233
 msgid "Welcome to Miniflux"
 msgstr "Miniflux에 오신 것을 환영합니다"
 
@@ -2017,26 +2227,34 @@ msgstr "Tauri 템플릿에 오신 것을 환영합니다"
 msgid "Window"
 msgstr "창"
 
-#: src/components/miniflux/EntryList.tsx:95
+#: src/components/miniflux/EntryList.tsx:147
 msgid "Yesterday"
 msgstr "Yesterday"
+
+#: src/lib/menu.ts:120
+msgid "You are running the latest version"
+msgstr ""
+
+#: src/components/preferences/panes/AboutPane.tsx:54
+msgid "You are running the latest version."
+msgstr ""
 
 #: src/components/miniflux/ConnectionDialog.tsx:270
 msgid "You can find your API token in Miniflux Settings → API Keys"
 msgstr "Miniflux 설정 → API 키에서 API 토큰을 찾을 수 있습니다"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:226
+#: src/components/miniflux/EntryReadingHeader.tsx:270
 msgid "中文顯示"
 msgstr "中文顯示"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:100
+#: src/components/miniflux/EntryReadingHeader.tsx:110
 msgid "簡體中文"
 msgstr "簡體中文"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:99
+#: src/components/miniflux/EntryReadingHeader.tsx:109
 msgid "繁體中文（台灣）"
 msgstr "繁體中文（台灣）"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:98
+#: src/components/miniflux/EntryReadingHeader.tsx:108
 msgid "繁體中文（香港）"
 msgstr "繁體中文（香港）"
