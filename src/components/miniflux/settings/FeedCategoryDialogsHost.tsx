@@ -5,6 +5,7 @@ import {
   useUpdateCategory,
 } from '@/services/miniflux/categories';
 import { useCreateFeed, useUpdateFeed } from '@/services/miniflux/feeds';
+import { AddFeedDialog } from '../AddFeedDialog';
 import { CategoryFormDialog } from './CategoryFormDialog';
 import {
   type FeedAdvancedValues,
@@ -138,59 +139,55 @@ export function FeedCategoryDialogsHost() {
         />
       )}
 
-      {feedDialogState && (
-        <FeedFormDialog
-          key={
-            feedDialogState.mode === 'create'
-              ? `create-feed-${feedDialogState.defaultCategoryId ?? 'none'}-${feedDialogState.initialFeedUrl ?? ''}`
-              : `edit-feed-${feedDialogState.feed.id}`
-          }
+      {feedDialogState && feedDialogState.mode === 'create' && (
+        <AddFeedDialog
+          key={`create-feed-${feedDialogState.defaultCategoryId ?? 'none'}-${feedDialogState.initialFeedUrl ?? ''}-${feedDialogState.initialSearchOpen ?? false}`}
           open
-          mode={feedDialogState.mode}
-          initialFeedUrl={
-            feedDialogState.mode === 'create'
-              ? feedDialogState.initialFeedUrl
-              : feedDialogState.feed.feed_url
-          }
-          initialTitle={feedDialogState.mode === 'create' ? '' : feedDialogState.feed.title}
-          initialCategoryId={
-            feedDialogState.mode === 'create'
-              ? feedDialogState.defaultCategoryId
-              : (feedDialogState.feed.category?.id ?? null)
-          }
-          initialAdvanced={
-            feedDialogState.mode === 'create'
-              ? undefined
-              : {
-                  userAgent: feedDialogState.feed.user_agent ?? '',
-                  username: feedDialogState.feed.username ?? '',
-                  password: feedDialogState.feed.password ?? '',
-                  scraperRules: feedDialogState.feed.scraper_rules ?? '',
-                  rewriteRules: feedDialogState.feed.rewrite_rules ?? '',
-                  blocklistRules: feedDialogState.feed.blocklist_rules ?? '',
-                  keeplistRules: feedDialogState.feed.keeplist_rules ?? '',
-                  crawler: feedDialogState.feed.crawler ?? false,
-                  disabled: feedDialogState.feed.disabled ?? false,
-                  ignoreHttpCache: feedDialogState.feed.ignore_http_cache ?? false,
-                  fetchViaProxy: feedDialogState.feed.fetch_via_proxy ?? false,
-                }
-          }
-          showAdvancedByDefault={
-            feedDialogState.mode === 'edit' &&
-            hasAdvancedDefaults({
-              userAgent: feedDialogState.feed.user_agent ?? '',
-              username: feedDialogState.feed.username ?? '',
-              password: feedDialogState.feed.password ?? '',
-              scraperRules: feedDialogState.feed.scraper_rules ?? '',
-              rewriteRules: feedDialogState.feed.rewrite_rules ?? '',
-              blocklistRules: feedDialogState.feed.blocklist_rules ?? '',
-              keeplistRules: feedDialogState.feed.keeplist_rules ?? '',
-              crawler: feedDialogState.feed.crawler ?? false,
-              disabled: feedDialogState.feed.disabled ?? false,
-              ignoreHttpCache: feedDialogState.feed.ignore_http_cache ?? false,
-              fetchViaProxy: feedDialogState.feed.fetch_via_proxy ?? false,
-            })
-          }
+          initialFeedUrl={feedDialogState.initialFeedUrl}
+          initialSearchOpen={feedDialogState.initialSearchOpen ?? false}
+          onOpenChange={(nextOpen) => {
+            if (!nextOpen) {
+              setFeedDialogState(null);
+            }
+          }}
+        />
+      )}
+
+      {feedDialogState && feedDialogState.mode === 'edit' && (
+        <FeedFormDialog
+          key={`edit-feed-${feedDialogState.feed.id}`}
+          open
+          mode="edit"
+          initialFeedUrl={feedDialogState.feed.feed_url}
+          initialTitle={feedDialogState.feed.title}
+          initialCategoryId={feedDialogState.feed.category?.id ?? null}
+          initialCategoryTitle={feedDialogState.feed.category?.title ?? undefined}
+          initialAdvanced={{
+            userAgent: feedDialogState.feed.user_agent ?? '',
+            username: feedDialogState.feed.username ?? '',
+            password: feedDialogState.feed.password ?? '',
+            scraperRules: feedDialogState.feed.scraper_rules ?? '',
+            rewriteRules: feedDialogState.feed.rewrite_rules ?? '',
+            blocklistRules: feedDialogState.feed.blocklist_rules ?? '',
+            keeplistRules: feedDialogState.feed.keeplist_rules ?? '',
+            crawler: feedDialogState.feed.crawler ?? false,
+            disabled: feedDialogState.feed.disabled ?? false,
+            ignoreHttpCache: feedDialogState.feed.ignore_http_cache ?? false,
+            fetchViaProxy: feedDialogState.feed.fetch_via_proxy ?? false,
+          }}
+          showAdvancedByDefault={hasAdvancedDefaults({
+            userAgent: feedDialogState.feed.user_agent ?? '',
+            username: feedDialogState.feed.username ?? '',
+            password: feedDialogState.feed.password ?? '',
+            scraperRules: feedDialogState.feed.scraper_rules ?? '',
+            rewriteRules: feedDialogState.feed.rewrite_rules ?? '',
+            blocklistRules: feedDialogState.feed.blocklist_rules ?? '',
+            keeplistRules: feedDialogState.feed.keeplist_rules ?? '',
+            crawler: feedDialogState.feed.crawler ?? false,
+            disabled: feedDialogState.feed.disabled ?? false,
+            ignoreHttpCache: feedDialogState.feed.ignore_http_cache ?? false,
+            fetchViaProxy: feedDialogState.feed.fetch_via_proxy ?? false,
+          })}
           categories={categories}
           pending={isFeedDialogPending}
           onOpenChange={(nextOpen) => {

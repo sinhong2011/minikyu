@@ -36,6 +36,7 @@ interface FeedFormDialogProps {
   initialFeedUrl: string;
   initialTitle: string;
   initialCategoryId: string | null;
+  initialCategoryTitle?: string;
   initialAdvanced?: FeedAdvancedValues;
   showAdvancedByDefault?: boolean;
   categories: Category[];
@@ -129,6 +130,7 @@ export function FeedFormDialog({
   initialFeedUrl,
   initialTitle,
   initialCategoryId,
+  initialCategoryTitle,
   initialAdvanced,
   showAdvancedByDefault,
   categories,
@@ -139,22 +141,56 @@ export function FeedFormDialog({
   const { _ } = useLingui();
   const searchSources = useSearchSources();
   const [discoveredSources, setDiscoveredSources] = React.useState<Subscription[]>([]);
+  const [categorySearchQuery, setCategorySearchQuery] = React.useState(
+    mode === 'edit' ? (initialCategoryTitle ?? _(msg`No category`)) : ''
+  );
 
   const advancedDefaults = initialAdvanced ?? EMPTY_ADVANCED_VALUES;
   const [showAdvanced, setShowAdvanced] = React.useState(
     mode === 'edit' && (showAdvancedByDefault ?? hasAdvancedDefaults(advancedDefaults))
   );
 
-  const categoryOptions = React.useMemo<CategoryOption[]>(
-    () => [
+  const categoryOptions = React.useMemo<CategoryOption[]>(() => {
+    const baseOptions: CategoryOption[] = [
       { value: 'none', label: _(msg`No category`) },
       ...categories.map((category) => ({
         value: String(category.id),
         label: category.title,
       })),
-    ],
-    [_, categories]
+    ];
+
+    if (
+      mode === 'edit' &&
+      initialCategoryId &&
+      initialCategoryTitle &&
+      !baseOptions.some((option) => option.value === initialCategoryId)
+    ) {
+      baseOptions.splice(1, 0, {
+        value: initialCategoryId,
+        label: initialCategoryTitle,
+      });
+    }
+
+    return baseOptions;
+  }, [categories, initialCategoryId, initialCategoryTitle, mode]);
+
+  const areCategoryOptionsEqual = React.useCallback(
+    (a: CategoryOption | null, b: CategoryOption | null) => {
+      if (a === null || b === null) {
+        return a === b;
+      }
+      return a.value === b.value;
+    },
+    []
   );
+
+  const filteredCategoryOptions = React.useMemo<CategoryOption[]>(() => {
+    const query = categorySearchQuery.trim().toLowerCase();
+    if (!query) {
+      return categoryOptions;
+    }
+    return categoryOptions.filter((option) => option.label.toLowerCase().includes(query));
+  }, [categoryOptions, categorySearchQuery]);
 
   const feedSchema = z.object({
     sourceUrl: z.string(),
@@ -372,39 +408,49 @@ export function FeedFormDialog({
           )}
 
           <form.Field name="categoryId">
-            {(field) => (
-              <Field>
-                <FieldLabel>{_(msg`Category`)}</FieldLabel>
-                <Combobox<CategoryOption>
-                  value={
-                    categoryOptions.find((option) => option.value === field.state.value) ?? null
-                  }
-                  onValueChange={(value) => {
-                    if (!value) {
-                      return;
-                    }
-                    field.handleChange(value.value);
-                  }}
-                  disabled={pending}
-                >
-                  <ComboboxInput
-                    placeholder={_(msg`Search categories`)}
-                    className="w-full"
+            {(field) => {
+              const selectedOption =
+                filteredCategoryOptions.find((option) => option.value === field.state.value) ??
+                categoryOptions.find((option) => option.value === field.state.value) ??
+                null;
+
+              return (
+                <Field>
+                  <FieldLabel>{_(msg`Category`)}</FieldLabel>
+                  <Combobox<CategoryOption>
+                    value={selectedOption}
+                    onValueChange={(value) => {
+                      if (!value) {
+                        return;
+                      }
+                      field.handleChange(value.value);
+                      setCategorySearchQuery(value.label);
+                    }}
+                    inputValue={categorySearchQuery}
+                    onInputValueChange={setCategorySearchQuery}
+                    itemToStringLabel={(option) => option.label}
+                    isItemEqualToValue={areCategoryOptionsEqual}
                     disabled={pending}
-                  />
-                  <ComboboxContent>
-                    <ComboboxList>
-                      <ComboboxEmpty>{_(msg`No categories found`)}</ComboboxEmpty>
-                      {categoryOptions.map((option) => (
-                        <ComboboxItem key={option.value} value={option}>
-                          {option.label}
-                        </ComboboxItem>
-                      ))}
-                    </ComboboxList>
-                  </ComboboxContent>
-                </Combobox>
-              </Field>
-            )}
+                  >
+                    <ComboboxInput
+                      placeholder={_(msg`Search categories`)}
+                      className="w-full"
+                      disabled={pending}
+                    />
+                    <ComboboxContent>
+                      <ComboboxList>
+                        <ComboboxEmpty>{_(msg`No categories found`)}</ComboboxEmpty>
+                        {filteredCategoryOptions.map((option) => (
+                          <ComboboxItem key={option.value} value={option}>
+                            {option.label}
+                          </ComboboxItem>
+                        ))}
+                      </ComboboxList>
+                    </ComboboxContent>
+                  </Combobox>
+                </Field>
+              );
+            }}
           </form.Field>
 
           {mode === 'edit' && (
