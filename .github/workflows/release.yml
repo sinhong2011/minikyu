@@ -16,7 +16,7 @@ env:
 
 jobs:
   publish-tauri:
-    environment: production
+    environment: ${{ (github.ref_name == 'main' || startsWith(github.ref_name, 'v')) && 'production' || '' }}
     permissions:
       contents: write
     strategy:
