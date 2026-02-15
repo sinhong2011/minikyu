@@ -54,6 +54,7 @@ Technical documentation for building and extending this app. These docs describe
 | Document                  | Description                            |
 | ------------------------- | -------------------------------------- |
 | [Releases](./releases.md) | Release process, signing, auto-updates |
+| [CI/CD Setup](./ci-cd-setup.md) | GitHub Secrets, signing, and notarization setup |
 
 ---
 
