@@ -24,6 +24,50 @@ This repository is a template with sensible defaults for building Tauri React ap
 5. **Batch Operations**: Use multiple tool calls in single responses
 6. **Match Code Style**: Follow existing formatting and patterns
 7. **Test Coverage**: Write comprehensive tests for business logic
+
+### Git Rules (CRITICAL)
+
+**Full guide:** `docs/developer/git-flow.md`
+
+When making commits, follow these rules:
+
+1. **Commit Message Format** (conventional commits + sentence case):
+   ```
+   <type>(<scope>): <Subject>
+   
+   ✅ feat: Add user authentication
+   ✅ fix(tauri): Handle window resize
+   ✅ docs: Update API documentation
+   ❌ feat: add user authentication  (lowercase subject)
+   ❌ Add user authentication.       (no type, period at end)
+   ```
+
+2. **Commit Types**:
+   - `feat` - New feature
+   - `fix` - Bug fix
+   - `docs` - Documentation only
+   - `refactor` - Code refactoring
+   - `test` - Adding/updating tests
+   - `chore` - Maintenance tasks
+   - `ci` - CI configuration
+   - `build` - Build/dependencies
+
+3. **Branch Naming**:
+   ```
+   feature/MKY-123-short-description
+   fix/MKY-456-short-description
+   docs/short-description
+   ```
+
+4. **Git Hooks** (Lefthook - cannot be bypassed):
+   - **pre-commit**: Biome auto-fix + TypeScript check
+   - **pre-push**: Tests + Tauri check
+   - **commit-msg**: Conventional commit validation
+
+5. **Never Commit Without Permission** unless explicitly requested by user
+
+6. **If Hook Fails**: Fix the issue and retry - do NOT use `--no-verify`
+
 ## Operational Rules (CRITICAL)
 
 After any code changes that could affect the application's ability to run:
@@ -384,6 +428,7 @@ Key documents:
 - `state-management.md` - State onion, getState() pattern details
 - `tauri-commands.md` - Adding new Rust commands
 - `static-analysis.md` - All linting tools and quality gates
+- `git-flow.md` - Branching strategy, commit conventions, PR workflow
 
 ## Claude Code Commands & Agents
 
