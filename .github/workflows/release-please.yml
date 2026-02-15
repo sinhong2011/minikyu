@@ -21,7 +21,7 @@ jobs:
         id: release
         with:
           release-type: node
-          package-name: tauri-template
+          package-name: minikyu
           token: ${{ secrets.GITHUB_TOKEN }}
 
   trigger-release:
