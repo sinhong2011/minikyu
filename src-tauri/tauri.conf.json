@@ -63,11 +63,9 @@
   "plugins": {
     "updater": {
       "active": true,
-      "endpoints": [
-        "https://github.com/YOUR_USERNAME/YOUR_REPO/releases/latest/download/latest.json"
-      ],
+      "endpoints": ["https://github.com/niskan516/minikyu/releases/latest/download/latest.json"],
       "dialog": true,
-      "pubkey": "YOUR_UPDATER_PUBLIC_KEY_HERE"
+      "pubkey": "GENERATE_WITH_bunx_tauri_signer_generate"
     }
   }
 }
