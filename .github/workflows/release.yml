@@ -1,4 +1,4 @@
-name: "Release Tauri Template App"
+name: "Release Tauri App"
 
 on:
   push:
@@ -22,12 +22,22 @@ jobs:
       fail-fast: false
       matrix:
         include:
+          # macOS ARM64 (Apple Silicon)
           - platform: "macos-latest"
-            args: "--bundles app,dmg"
+            args: "--target aarch64-apple-darwin"
+            target: "aarch64-apple-darwin"
+          # macOS x64 (Intel)
+          - platform: "macos-latest"
+            args: "--target x86_64-apple-darwin"
+            target: "x86_64-apple-darwin"
+          # Windows
           - platform: "windows-latest"
-            args: "--bundles msi"
+            args: ""
+            target: ""
+          # Linux
           - platform: "ubuntu-22.04"
-            args: "--bundles appimage"
+            args: ""
+            target: ""
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -40,6 +50,8 @@ jobs:
 
       - name: Install Rust stable
         uses: dtolnay/rust-toolchain@stable
+        with:
+          targets: ${{ matrix.platform == 'macos-latest' && 'aarch64-apple-darwin,x86_64-apple-darwin' || '' }}
 
       - name: Rust cache
         uses: swatinem/rust-cache@v2
@@ -52,20 +64,62 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
+      # Windows Code Signing
+      - name: Import Windows Certificate
+        if: matrix.platform == 'windows-latest'
+        env:
+          WINDOWS_CERTIFICATE: ${{ secrets.WINDOWS_CERTIFICATE }}
+          WINDOWS_CERTIFICATE_PASSWORD: ${{ secrets.WINDOWS_CERTIFICATE_PASSWORD }}
+        run: |
+          if (-not [string]::IsNullOrEmpty($env:WINDOWS_CERTIFICATE)) {
+            New-Item -ItemType directory -Path certificate -Force
+            Set-Content -Path certificate/tempCert.txt -Value $env:WINDOWS_CERTIFICATE
+            certutil -decode certificate/tempCert.txt certificate/certificate.pfx
+            Remove-Item -path certificate -include tempCert.txt -Force
+            $password = ConvertTo-SecureString -String $env:WINDOWS_CERTIFICATE_PASSWORD -Force -AsPlainText
+            Import-PfxCertificate -FilePath certificate/certificate.pfx -CertStoreLocation Cert:\CurrentUser\My -Password $password
+          } else {
+            Write-Host "WINDOWS_CERTIFICATE not configured, skipping code signing"
+          }
+        shell: pwsh
+
+      # macOS Code Signing
+      - name: Import Apple Certificate
+        if: matrix.platform == 'macos-latest'
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          if [ -n "$APPLE_CERTIFICATE" ]; then
+            echo "$APPLE_CERTIFICATE" | base64 --decode > certificate.p12
+            security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+            security default-keychain -s build.keychain
+            security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+            security set-keychain-settings -t 3600 -u build.keychain
+            security import certificate.p12 -k build.keychain -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+            security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+          else
+            echo "APPLE_CERTIFICATE not configured, skipping code signing"
+          fi
+
       - name: Install frontend dependencies
         run: bun install
 
       - name: Build and release
-        uses: tauri-apps/tauri-action@dev
+        uses: tauri-apps/tauri-action@v0
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_PRIVATE_KEY }}
+          TAURI_SIGNING_PRIVATE_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           TAURI_SIGNING_PRIVATE_KEY_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
         with:
           tagName: ${{ github.ref_name || inputs.version }}
-          releaseName: "Tauri Template App ${{ github.ref_name || inputs.version }}"
+          releaseName: "Minikyu ${{ github.ref_name || inputs.version }}"
           releaseBody: |
-            ## Tauri Template App ${{ github.ref_name || inputs.version }}
+            ## Minikyu ${{ github.ref_name || inputs.version }}
 
             ### Installation Instructions
             - **macOS**: Download the `.dmg` file and drag to Applications folder

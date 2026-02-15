@@ -12,6 +12,9 @@ permissions:
 jobs:
   release-please:
     runs-on: ubuntu-latest
+    outputs:
+      release_created: ${{ steps.release.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name }}
     steps:
       - name: Release please
         uses: googleapis/release-please-action@v4
@@ -21,27 +24,21 @@ jobs:
           package-name: tauri-template
           token: ${{ secrets.GITHUB_TOKEN }}
 
-      # Build Tauri app when release is created
-      - name: Check out code
-        if: ${{ steps.release.outputs.release_created }}
-        uses: actions/checkout@v4
-
-      - name: Setup Bun
-        if: ${{ steps.release.outputs.release_created }}
-        uses: oven-sh/setup-bun@v2
+  trigger-release:
+    needs: release-please
+    if: ${{ needs.release-please.outputs.release_created }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Trigger release workflow
+        uses: actions/github-script@v7
         with:
-          bun-version: latest
-
-      - name: Install dependencies
-        if: ${{ steps.release.outputs.release_created }}
-        run: bun install
-
-      - name: Type check
-        if: ${{ steps.release.outputs.release_created }}
-        run: bun run typecheck
-
-      - name: Build Tauri
-        if: ${{ steps.release.outputs.release_created }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: bun run tauri:build
+          script: |
+            await github.rest.actions.createWorkflowDispatch({
+              owner: context.repo.owner,
+              repo: context.repo.repo,
+              workflow_id: 'release.yml',
+              ref: '${{ needs.release-please.outputs.tag_name }}',
+              inputs: {
+                version: '${{ needs.release-please.outputs.tag_name }}'
+              }
+            })
