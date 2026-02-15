@@ -16,6 +16,7 @@ env:
 
 jobs:
   publish-tauri:
+    environment: production
     permissions:
       contents: write
     strategy:
