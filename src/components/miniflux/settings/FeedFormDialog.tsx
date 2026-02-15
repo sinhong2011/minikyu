@@ -172,7 +172,7 @@ export function FeedFormDialog({
     }
 
     return baseOptions;
-  }, [categories, initialCategoryId, initialCategoryTitle, mode]);
+  }, [categories, initialCategoryId, initialCategoryTitle, mode, _]);
 
   const areCategoryOptionsEqual = React.useCallback(
     (a: CategoryOption | null, b: CategoryOption | null) => {
