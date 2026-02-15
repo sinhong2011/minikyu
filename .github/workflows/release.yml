@@ -16,7 +16,7 @@ env:
 
 jobs:
   publish-tauri:
-    environment: ${{ (startsWith(github.ref_name, 'v') && !contains(github.ref_name, 'test')) && 'production' || '' }}
+    environment: production
     permissions:
       contents: write
     strategy:
@@ -132,5 +132,5 @@ jobs:
 
             **Full Changelog**: https://github.com/${{ github.repository }}/commits/${{ github.ref_name || inputs.version }}
           releaseDraft: true
-          prerelease: ${{ contains(github.ref_name || inputs.version, '-') }}
+          prerelease: false
           args: ${{ matrix.args }}
