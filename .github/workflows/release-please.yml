@@ -1,9 +1,12 @@
 name: release-please
 
 on:
-  push:
-    branches:
-      - main
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Force release creation"
+        required: false
+        default: "false"
 
 permissions:
   contents: write
