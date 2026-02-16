@@ -69,6 +69,15 @@
   },
   "overrides": [
     {
+      "includes": ["README.md", "**/README.md"],
+      "linter": {
+        "enabled": false
+      },
+      "formatter": {
+        "enabled": false
+      }
+    },
+    {
       "includes": ["*.test.ts", "*.test.tsx", "*.spec.ts", "*.spec.tsx"],
       "linter": {
         "rules": {

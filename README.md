@@ -1,129 +1,72 @@
-# Tauri React Template
+# Minikyu
 
-A "batteries-included" template for building production-ready desktop applications with **Tauri v2**, **React**, and **TypeScript**. Designed with opinionated patterns that help both human developers and AI coding agents build well-architected apps from the start.
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
+[![CI](https://github.com/sinhong2011/minikyu/actions/workflows/ci.yml/badge.svg)](https://github.com/sinhong2011/minikyu/actions/workflows/ci.yml)
+[![GitHub Stars](https://img.shields.io/github/stars/sinhong2011/minikyu.svg)](https://github.com/sinhong2011/minikyu/stargazers)
 
-## Why This Template?
+A modern RSS reader desktop application built with **Tauri v2**, **React 19**, and **TypeScript**. Fast, native, and cross-platform.
 
-Most Tauri starters give you a blank canvas. This template gives you a **working application** with patterns already established:
+## Features
 
-- **Type-safe Rust-TypeScript bridge** via tauri-specta
-- **Performance patterns enforced by tooling** - Biome (15-50x faster linting), ast-grep for architecture enforcement
-- **File-based routing** with TanStack Router (full type safety)
-- **Multi-window architecture** already working (quick pane with global shortcut as a demo)
-- **Cross-platform ready** with platform-specific title bars, window controls, and native menu integration
-- **i18n built-in** with RTL support (Lingui with compile-time extraction)
-- **Automated releases** via Release-Please (conventional commits → GitHub releases)
-- **Git hooks** with Lefthook + Commitlint (auto-fix, type checking)
+- 📰 **RSS Feed Management** - Subscribe to your favorite feeds and stay updated
+- ⌨️ **Keyboard Shortcuts** - Command Palette (`Cmd+K`), Preferences (`Cmd+,`), and more
+- 🪟 **Quick Pane** - Global shortcut floating window for quick access from anywhere
+- 🎨 **Theme Support** - Light, Dark, or System theme with automatic detection
+- 🌐 **Multi-language** - English, Chinese (Simplified/Traditional), Japanese, Korean
+- 🔄 **Auto-updates** - Automatic update checking from GitHub releases
+- 🖥️ **Cross-platform** - macOS, Windows, and Linux support
 
-## Stack
+## Screenshots
 
-| Layer    | Technologies                                               |
-| -------- | ---------------------------------------------------------- |
-| Frontend | React 19, TypeScript, Vite 7, Bun (package manager)        |
-| UI       | shadcn/ui v4, Tailwind CSS v4, Lucide React                |
-| Routing  | TanStack Router v1 (file-based, type-safe)                 |
-| State    | Zustand v5, TanStack Query v5                              |
-| DevTools | Unified TanStack DevTools (Query + Router)                 |
-| Backend  | Tauri v2, Rust                                             |
-| Testing  | Vitest v4, Testing Library                                 |
-| Quality  | Biome, ast-grep, knip, jscpd, clippy, Lefthook, Commitlint |
+> 📸 Screenshots coming soon
 
-## What's Already Built
+## Installation
 
-The template includes a working application with these features implemented:
+### Prerequisites
 
-### Core Features
-
-- **Command Palette** (`Cmd+K`) - Searchable command launcher with keyboard navigation
-- **Quick Pane** - Global shortcut (`Cmd+Shift+.`) opens a floating window from any app, even fullscreen. Uses native NSPanel on macOS for proper fullscreen overlay behavior.
-- **Keyboard Shortcuts** - Platform-aware shortcuts with automatic menu integration
-- **Native Menus** - File, Edit, View menus built from JavaScript with full i18n support
-- **Preferences System** - Settings dialog with Rust-side persistence, React hooks, and type-safe access throughout
-- **Collapsible Sidebars** - Empty left and right sidebars with state persistence via resizable panels
-- **Theme System** - Light/dark mode with system preference detection, synced across windows
-- **Notifications** - Toast notifications for in-app feedback, plus native system notifications
-- **Auto-updates** - Tauri updater plugin configured with GitHub Releases integration and update checking on launch
-- **Logging** - Structured logging utilities for both Rust and TypeScript with consistent formatting
-- **Crash Recovery** - Emergency data persistence for recovering unsaved work after unexpected exits
-
-### Architecture Patterns
-
-- **Three-layer state management** - Clear decision tree: `useState` (component) → `Zustand` (global UI) → `TanStack Query` (persistent data)
-- **File-based routing** - TanStack Router with full type safety for params, search params, loaders
-- **Event-driven Rust-React bridge** - Menus, shortcuts, and command palette all route through the same command system
-- **React Compiler** - Automatic memoization means no manual `useMemo`/`useCallback` needed
-
-### Cross-Platform
-
-| Platform | Title Bar            | Window Controls | Bundle Format |
-| -------- | -------------------- | --------------- | ------------- |
-| macOS    | Custom with vibrancy | Traffic lights  | `.dmg`        |
-| Windows  | Custom               | Right side      | `.msi`        |
-| Linux    | Native + toolbar     | Native          | `.AppImage`   |
-
-Platform detection utilities, platform-specific UI strings ("Reveal in Finder" vs "Show in Explorer"), and separate Tauri configs per platform are all set up.
-
-### Developer Experience
-
-- **Type-safe Tauri commands** - tauri-specta generates TypeScript bindings from Rust, with full autocomplete and compile-time checking
-- **Static analysis** - Biome (linting + formatting), ast-grep (architecture enforcement), knip (unused code), jscpd (duplication)
-- **Automated git hooks** - Lefthook + Commitlint (pre-commit: Biome + TypeScript, pre-push: tests, commit-msg: conventional commits)
-- **Automated releases** - Release-Please parses conventional commits, bumps versions, creates GitHub releases
-- **Single quality gate** - `bun run check:all` runs TypeScript, Biome, ast-grep, clippy, and all tests
-- **Testing patterns** - Vitest setup with Tauri command mocking
-
-## Tauri Plugins Included
-
-| Plugin            | Purpose                          |
-| ----------------- | -------------------------------- |
-| single-instance   | Prevent multiple app instances   |
-| window-state      | Remember window position/size    |
-| fs                | File system access               |
-| dialog            | Native open/save dialogs         |
-| notification      | System notifications             |
-| clipboard-manager | Clipboard access                 |
-| global-shortcut   | System-wide keyboard shortcuts   |
-| updater           | In-app auto-updates              |
-| opener            | Open URLs/files with default app |
-| tauri-nspanel     | macOS floating panel behavior    |
-
-## AI-Ready Development
-
-This template is designed to work well with AI coding agents like Claude Code:
-
-- **Comprehensive documentation** in `docs/developer/` covering all patterns. Human readable but really designed to explain the "why" of certain patterns to AI agents. Not slop.
-- **Claude Code integration** - Custom commands (`/check`, `/cleanup`) and a couple of specialized agents
-- **Sensible file organization** - React code in `src/` with clear separation (components, hooks, stores, services), Rust in `src-tauri/src/` with modular command organization. Predictable structure for both humans and AI.
-
-## Getting Started
-
-See **[Using This Template](docs/USING_THIS_TEMPLATE.md)** for setup instructions and workflow guidance.
+- [Bun](https://bun.sh) - Package manager
+- [Rust](https://www.rust-lang.org/) - Latest stable version
+- [Tauri dependencies](https://tauri.app/start/prerequisites/) - Platform-specific requirements
 
 ### Quick Start
 
 ```bash
-# Prerequisites: Bun, Rust (latest stable)
-# Install Bun: curl -fsSL https://bun.sh/install | bash
-# See https://tauri.app/start/prerequisites/ for Tauri/Rust deps
+# Clone the repository
+git clone https://github.com/sinhong2011/minikyu.git
+cd minikyu
 
-git clone <your-repo>
-cd your-app
+# Install dependencies
 bun install
-bun run lefthook  # Install git hooks
+
+# Install git hooks
+bun run lefthook
+
+# Start development server
 bun run dev
 ```
+
+### Build for Production
+
+```bash
+bun run tauri build
+```
+
+## Tech Stack
+
+| Layer    | Technologies                                      |
+| -------- | ------------------------------------------------- |
+| Frontend | React 19, TypeScript, Vite 7, Bun                 |
+| UI       | shadcn/ui v4, Tailwind CSS v4                     |
+| Routing  | TanStack Router v1 (file-based)                   |
+| State    | Zustand v5, TanStack Query v5                     |
+| Backend  | Tauri v2, Rust                                    |
+| Testing  | Vitest v4, Testing Library                        |
+| Quality  | Biome, ast-grep, clippy, Lefthook, Commitlint     |
 
 ## Documentation
 
 - **[Developer Docs](docs/developer/)** - Architecture, patterns, and detailed guides
-  - [Bun Usage Guide](docs/developer/bun-usage.md) - Package manager and known issues
-  - [TanStack Router Guide](docs/developer/routing-guide.md) - File-based routing patterns
-  - [Biome Usage](docs/developer/biome-usage.md) - Linting and formatting
-  - [Git Hooks](docs/developer/git-hooks.md) - Lefthook + Commitlint setup
-  - [Release Workflow](docs/developer/release-workflow.md) - Release-please automation
-  - [DevTools](docs/developer/devtools.md) - Unified TanStack devtools
-- **[User Guide](docs/userguide/)** - End-user documentation template
-- **[Using This Template](docs/USING_THIS_TEMPLATE.md)** - Setup and workflow guide
+- **[User Guide](docs/userguide/)** - End-user documentation
 
 ## License
 
