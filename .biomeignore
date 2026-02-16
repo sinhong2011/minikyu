@@ -7,3 +7,6 @@
 **/src/components/ui/**
 **/src/components/animate-ui/**
 **/src/lib/bindings.ts
+src/routeTree.gen.ts
+**/src/routeTree.gen.ts
+src/lib/bindings.ts
