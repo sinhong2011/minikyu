@@ -120,19 +120,7 @@ jobs:
       - name: Disable updater for non-production builds
         if: env.IS_PRODUCTION != 'true'
         shell: bash
-        run: |
-          # Disable updater plugin and artifact creation to avoid signing requirement
-          if [[ "${{ runner.os }}" == "macOS" ]]; then
-            # Disable updater plugin (6 spaces indentation matches plugins.updater.active)
-            sed -i '' 's/      "active": true,/      "active": false,/' src-tauri/tauri.conf.json
-            # Disable updater artifact creation (prevents signing key requirement)
-            sed -i '' 's/"createUpdaterArtifacts": true/"createUpdaterArtifacts": false/' src-tauri/tauri.conf.json
-          else
-            # Disable updater plugin (6 spaces indentation matches plugins.updater.active)
-            sed -i 's/      "active": true,/      "active": false,/' src-tauri/tauri.conf.json
-            # Disable updater artifact creation (prevents signing key requirement)
-            sed -i 's/"createUpdaterArtifacts": true/"createUpdaterArtifacts": false/' src-tauri/tauri.conf.json
-          fi
+        run: echo "EXTRA_ARGS=--config src-tauri/tauri.ci.json" >> $GITHUB_ENV
 
       - name: Configure signing environment
         if: env.IS_PRODUCTION == 'true'
@@ -173,4 +161,4 @@ jobs:
           releaseDraft: true
           prerelease: false
           includeUpdaterJson: ${{ env.IS_PRODUCTION == 'true' }}
-          args: ${{ matrix.args }}
+          args: ${{ matrix.args }} ${{ env.EXTRA_ARGS }}
