@@ -119,25 +119,37 @@ jobs:
 
       - name: Disable updater for non-production builds
         if: env.IS_PRODUCTION != 'true'
+        shell: bash
         run: |
-          # Disable updater plugin to avoid signing requirement
-          # Only change the active field within the updater block
+          # Disable updater plugin and artifact creation to avoid signing requirement
           if [[ "${{ runner.os }}" == "macOS" ]]; then
-            sed -i '' '/"updater"/,/"pubkey"/ s/"active": true/"active": false/' src-tauri/tauri.conf.json
+            # Disable updater plugin
+            sed -i '' 's/"active": true,/"active": false,/' src-tauri/tauri.conf.json
+            # Disable updater artifact creation (prevents signing key requirement)
+            sed -i '' 's/"createUpdaterArtifacts": true/"createUpdaterArtifacts": false/' src-tauri/tauri.conf.json
           else
-            sed -i '/"updater"/,/"pubkey"/ s/"active": true/"active": false/' src-tauri/tauri.conf.json
+            # Disable updater plugin
+            sed -i 's/"active": true,/"active": false,/' src-tauri/tauri.conf.json
+            # Disable updater artifact creation (prevents signing key requirement)
+            sed -i 's/"createUpdaterArtifacts": true/"createUpdaterArtifacts": false/' src-tauri/tauri.conf.json
           fi
 
       - name: Configure signing environment
         if: env.IS_PRODUCTION == 'true'
+        shell: bash
         run: |
           echo "TAURI_SIGNING_PRIVATE_KEY=${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}" >> $GITHUB_ENV
           echo "TAURI_SIGNING_PRIVATE_KEY_PASSWORD=${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}" >> $GITHUB_ENV
           echo "APPLE_ID=${{ secrets.APPLE_ID }}" >> $GITHUB_ENV
           echo "APPLE_PASSWORD=${{ secrets.APPLE_PASSWORD }}" >> $GITHUB_ENV
           echo "APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}" >> $GITHUB_ENV
-          sed -i '' "s/\"signingIdentity\": null/\"signingIdentity\": \"${{ secrets.APPLE_SIGNING_IDENTITY }}\"/" src-tauri/tauri.conf.json
-          sed -i '' "s/\"pubkey\": \"\"/\"pubkey\": \"${{ secrets.TAURI_UPDATER_PUBKEY }}\"/" src-tauri/tauri.conf.json
+          if [[ "${{ runner.os }}" == "macOS" ]]; then
+            sed -i '' "s/\"signingIdentity\": null/\"signingIdentity\": \"${{ secrets.APPLE_SIGNING_IDENTITY }}\"/" src-tauri/tauri.conf.json
+            sed -i '' "s/\"pubkey\": \"\"/\"pubkey\": \"${{ secrets.TAURI_UPDATER_PUBKEY }}\"/" src-tauri/tauri.conf.json
+          else
+            sed -i "s/\"signingIdentity\": null/\"signingIdentity\": \"${{ secrets.APPLE_SIGNING_IDENTITY }}\"/" src-tauri/tauri.conf.json
+            sed -i "s/\"pubkey\": \"\"/\"pubkey\": \"${{ secrets.TAURI_UPDATER_PUBKEY }}\"/" src-tauri/tauri.conf.json
+          fi
 
       - name: Build and release
         uses: tauri-apps/tauri-action@v0
