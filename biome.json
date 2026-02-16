@@ -90,7 +90,7 @@
       }
     },
     {
-      "includes": ["src/lib/bindings.ts", "src/routeTree.gen.ts"],
+      "includes": ["**/src/lib/bindings.ts", "**/src/routeTree.gen.ts"],
       "linter": {
         "enabled": false
       },
