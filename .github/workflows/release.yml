@@ -117,6 +117,17 @@ jobs:
       - name: Install frontend dependencies
         run: bun install
 
+      - name: Disable updater for non-production builds
+        if: env.IS_PRODUCTION != 'true'
+        run: |
+          # Disable updater plugin to avoid signing requirement
+          # Only change the active field within the updater block
+          if [[ "${{ runner.os }}" == "macOS" ]]; then
+            sed -i '' '/"updater"/,/"pubkey"/ s/"active": true/"active": false/' src-tauri/tauri.conf.json
+          else
+            sed -i '/"updater"/,/"pubkey"/ s/"active": true/"active": false/' src-tauri/tauri.conf.json
+          fi
+
       - name: Configure signing environment
         if: env.IS_PRODUCTION == 'true'
         run: |
