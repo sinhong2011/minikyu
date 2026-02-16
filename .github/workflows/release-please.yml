@@ -23,6 +23,8 @@ jobs:
           release-type: node
           package-name: minikyu
           token: ${{ secrets.GITHUB_TOKEN }}
+          prerelease: true
+          prerelease-type: beta
 
   trigger-release:
     needs: release-please
