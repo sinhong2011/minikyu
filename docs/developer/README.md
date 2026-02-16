@@ -49,11 +49,19 @@ Technical documentation for building and extending this app. These docs describe
 | [Logging](./logging.md)                               | Rust and TypeScript logging                             |
 | [Writing Docs](./writing-docs.md)                     | Guide for creating and maintaining these docs           |
 
+## Git & Version Control
+
+| Document                                  | Description                                       |
+| ----------------------------------------- | ------------------------------------------------- |
+| [Git Flow](./git-flow.md)                 | Branching strategy, commit conventions, PR workflow |
+| [Git Hooks](./git-hooks.md)               | Lefthook configuration and pre-commit checks      |
+
 ## Release & Distribution
 
 | Document                  | Description                            |
 | ------------------------- | -------------------------------------- |
 | [Releases](./releases.md) | Release process, signing, auto-updates |
+| [CI/CD Setup](./ci-cd-setup.md) | GitHub Secrets, signing, and notarization setup |
 
 ---
 

@@ -54,7 +54,7 @@
     "macOS": {
       "frameworks": [],
       "minimumSystemVersion": "10.15",
-      "signingIdentity": "-",
+      "signingIdentity": null,
       "providerShortName": null,
       "entitlements": null,
       "exceptionDomain": ""
@@ -63,11 +63,9 @@
   "plugins": {
     "updater": {
       "active": true,
-      "endpoints": [
-        "https://github.com/YOUR_USERNAME/YOUR_REPO/releases/latest/download/latest.json"
-      ],
+      "endpoints": ["https://github.com/niskan516/minikyu/releases/latest/download/latest.json"],
       "dialog": true,
-      "pubkey": "YOUR_UPDATER_PUBLIC_KEY_HERE"
+      "pubkey": ""
     }
   }
 }

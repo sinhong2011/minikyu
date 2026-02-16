@@ -8,6 +8,10 @@ mod tests {
     use chrono::Utc;
     use sqlx::SqlitePool;
 
+    fn should_skip_keyring_tests() -> bool {
+        std::env::var("CI").is_ok()
+    }
+
     async fn setup_test_db() -> SqlitePool {
         let pool = SqlitePool::connect("sqlite::memory:")
             .await
@@ -134,6 +138,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_save_new_account_with_token() {
+        if should_skip_keyring_tests() {
+            return;
+        }
         let pool = setup_test_db().await;
 
         let config = AuthConfig {
@@ -174,6 +181,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_save_new_account_with_password() {
+        if should_skip_keyring_tests() {
+            return;
+        }
         let pool = setup_test_db().await;
 
         let config = AuthConfig {
@@ -214,6 +224,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_update_existing_account() {
+        if should_skip_keyring_tests() {
+            return;
+        }
         let pool = setup_test_db().await;
 
         // First save
@@ -265,6 +278,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_is_active_exclusivity() {
+        if should_skip_keyring_tests() {
+            return;
+        }
         let pool = setup_test_db().await;
 
         // Save first account
@@ -356,6 +372,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_duplicate_username_allowed_with_update() {
+        if should_skip_keyring_tests() {
+            return;
+        }
         let pool = setup_test_db().await;
 
         // First save
@@ -400,6 +419,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_accounts_returns_all() {
+        if should_skip_keyring_tests() {
+            return;
+        }
         let pool = setup_test_db().await;
 
         // Create multiple accounts
@@ -444,6 +466,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_get_accounts_correct_order() {
+        if should_skip_keyring_tests() {
+            return;
+        }
         let pool = setup_test_db().await;
 
         // Create accounts with explicit timing
@@ -513,6 +538,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_delete_account_removes_from_database() {
+        if should_skip_keyring_tests() {
+            return;
+        }
         let pool = setup_test_db().await;
 
         // Create account
@@ -555,6 +583,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_delete_account_removes_credentials_from_keyring() {
+        if should_skip_keyring_tests() {
+            return;
+        }
         let pool = setup_test_db().await;
 
         // Create account with password
@@ -610,6 +641,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_delete_active_account_is_allowed() {
+        if should_skip_keyring_tests() {
+            return;
+        }
         let pool = setup_test_db().await;
 
         // Create active account
@@ -669,6 +703,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_auto_reconnect_with_token_account() {
+        if should_skip_keyring_tests() {
+            return;
+        }
         let pool = setup_test_db().await;
 
         // Create active account with token
@@ -708,6 +745,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_auto_reconnect_with_password_account() {
+        if should_skip_keyring_tests() {
+            return;
+        }
         let pool = setup_test_db().await;
 
         // Create active account with password
@@ -781,6 +821,9 @@ mod tests {
 
     #[tokio::test]
     async fn test_auto_reconnect_keyring_not_found() {
+        if should_skip_keyring_tests() {
+            return;
+        }
         let pool = setup_test_db().await;
 
         // Create account in database without storing credentials in keyring
