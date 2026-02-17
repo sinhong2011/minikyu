@@ -14,6 +14,9 @@ import { useLingui } from '@lingui/react';
 import type { ColumnDef } from '@tanstack/react-table';
 import * as React from 'react';
 import { toast } from 'sonner';
+import { CategoriesPane } from '@/components/preferences/panes/CategoriesPane';
+import { FeedsPane } from '@/components/preferences/panes/FeedsPane';
+import { UsersPane } from '@/components/preferences/panes/UsersPane';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
@@ -48,20 +51,17 @@ import {
   useUpdateMinifluxUser,
 } from '@/services/miniflux';
 import { useActiveAccount } from '@/services/miniflux/accounts';
-import { CategoriesPane } from './settings/CategoriesPane';
 import { DeleteEntityDialog } from './settings/DeleteEntityDialog';
 import type {
   DeleteDialogState,
   MinifluxSettingsPane,
   UserDialogState,
 } from './settings/dialog-state';
-import { FeedsPane } from './settings/FeedsPane';
 import {
   MinifluxSettingsDialogProviderBoundary,
   useMinifluxSettingsDialogStore,
 } from './settings/store';
 import { UserFormDialog } from './settings/UserFormDialog';
-import { UsersPane } from './settings/UsersPane';
 
 interface MinifluxSettingsDialogProps {
   open: boolean;
