@@ -2,7 +2,7 @@ pre-commit:
   parallel: true
   commands:
     biome-check:
-      glob: '*.{js,jsx,ts,tsx,json,css,md}'
+      glob: '**/*.{js,jsx,ts,tsx,json,css,md}'
       run: bun run biome check --write {staged_files}
       stage_fixed: true
 
