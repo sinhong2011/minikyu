@@ -11,8 +11,19 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import type { ColumnDef } from '@tanstack/react-table';
+import * as React from 'react';
+import { DeleteEntityDialog } from '@/components/miniflux/settings/DeleteEntityDialog';
+import type {
+  DeleteDialogState,
+  UserDialogState,
+} from '@/components/miniflux/settings/dialog-state';
 import { FeedCategoryDialogsHost } from '@/components/miniflux/settings/FeedCategoryDialogsHost';
-import { MinifluxSettingsDialogProvider } from '@/components/miniflux/settings/store';
+import {
+  MinifluxSettingsDialogProvider,
+  useMinifluxSettingsDialogStore,
+} from '@/components/miniflux/settings/store';
+import { UserFormDialog } from '@/components/miniflux/settings/UserFormDialog';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -34,13 +45,29 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from '@/components/ui/sidebar';
-import { useCurrentUser, useIsConnected } from '@/services/miniflux';
+import type { Feed } from '@/lib/tauri-bindings';
+import {
+  useCategories,
+  useCreateMinifluxUser,
+  useCurrentUser,
+  useDeleteCategory,
+  useDeleteFeed,
+  useDeleteMinifluxUser,
+  useFeeds,
+  useIsConnected,
+  useMinifluxUsers,
+  useRefreshAllFeeds,
+  useUpdateMinifluxUser,
+} from '@/services/miniflux';
 import { type PreferencesPane, useUIStore } from '@/store/ui-store';
 import { AboutPane } from './panes/AboutPane';
 import { AdvancedPane } from './panes/AdvancedPane';
 import { ApiTokenPane } from './panes/ApiTokenPane';
 import { AppearancePane } from './panes/AppearancePane';
+import { CategoriesPane } from './panes/CategoriesPane';
+import { FeedsPane } from './panes/FeedsPane';
 import { GeneralPane } from './panes/GeneralPane';
+import { UsersPane } from './panes/UsersPane';
 
 const appSettingsItems = [
   {
@@ -105,6 +132,126 @@ export function PreferencesDialog() {
   const setPreferencesActivePane = useUIStore((state) => state.setPreferencesActivePane);
   const { data: isConnected } = useIsConnected();
   const { data: currentUser } = useCurrentUser();
+
+  // Miniflux data fetching
+  const { data: categories = [] } = useCategories(isConnected);
+  const { data: feeds = [] } = useFeeds(isConnected);
+  const { data: users = [], isError: usersError } = useMinifluxUsers(
+    isConnected && (currentUser?.is_admin ?? false)
+  );
+
+  // Dialog state from MinifluxSettingsDialogStore
+  const setCategoryDialogState = useMinifluxSettingsDialogStore(
+    (state: { setCategoryDialogState: (value: any) => void }) => state.setCategoryDialogState
+  );
+  const setFeedDialogState = useMinifluxSettingsDialogStore(
+    (state: { setFeedDialogState: (value: any) => void }) => state.setFeedDialogState
+  );
+
+  // Local state for user and delete dialogs
+  const [userDialogState, setUserDialogState] = React.useState<UserDialogState | null>(null);
+  const [deleteDialogState, setDeleteDialogState] = React.useState<DeleteDialogState | null>(null);
+
+  // Local state for search queries
+  const [categorySearchQuery, setCategorySearchQuery] = React.useState('');
+  const [feedSearchQuery, setFeedSearchQuery] = React.useState('');
+
+  // Mutation hooks
+  const createUser = useCreateMinifluxUser();
+  const updateUser = useUpdateMinifluxUser();
+  const deleteUser = useDeleteMinifluxUser();
+  const deleteCategory = useDeleteCategory();
+  const deleteFeed = useDeleteFeed();
+  const refreshAllFeeds = useRefreshAllFeeds();
+
+  // Filtered data
+  const normalizedCategorySearchQuery = categorySearchQuery.trim().toLowerCase();
+  const normalizedFeedSearchQuery = feedSearchQuery.trim().toLowerCase();
+
+  const filteredCategories = React.useMemo(() => {
+    if (!normalizedCategorySearchQuery) {
+      return categories;
+    }
+    return categories.filter((category) =>
+      category.title.toLowerCase().includes(normalizedCategorySearchQuery)
+    );
+  }, [categories, normalizedCategorySearchQuery]);
+
+  const filteredFeeds = React.useMemo(() => {
+    if (!normalizedFeedSearchQuery) {
+      return feeds;
+    }
+    return feeds.filter((feed) => {
+      const titleMatches = feed.title.toLowerCase().includes(normalizedFeedSearchQuery);
+      const urlMatches = feed.feed_url.toLowerCase().includes(normalizedFeedSearchQuery);
+      const categoryMatches =
+        feed.category?.title.toLowerCase().includes(normalizedFeedSearchQuery) ?? false;
+      return titleMatches || urlMatches || categoryMatches;
+    });
+  }, [feeds, normalizedFeedSearchQuery]);
+
+  // Feed columns definition
+  const feedColumns = React.useMemo<ColumnDef<Feed>[]>(
+    () => [
+      {
+        accessorKey: 'title',
+        header: _(msg`Feed`),
+        size: 250,
+        cell: ({ row }) => {
+          const feed = row.original;
+          return (
+            <div className="flex flex-col items-start gap-1 overflow-hidden text-left">
+              <span className="block truncate font-medium">{feed.title}</span>
+              <span className="block truncate text-xs text-muted-foreground">{feed.feed_url}</span>
+            </div>
+          );
+        },
+      },
+      {
+        accessorKey: 'category',
+        header: _(msg`Category`),
+        cell: ({ row }) => {
+          const category = row.original.category;
+          if (!category) {
+            return null;
+          }
+          return <span className="text-sm">{category.title}</span>;
+        },
+      },
+    ],
+    [_]
+  );
+
+  // Handler functions
+  const handleConfirmDelete = async () => {
+    if (!deleteDialogState) return;
+    if (deleteDialogState.type === 'category') {
+      await deleteCategory.mutateAsync(deleteDialogState.id);
+    } else if (deleteDialogState.type === 'feed') {
+      await deleteFeed.mutateAsync(deleteDialogState.id);
+    } else {
+      await deleteUser.mutateAsync(deleteDialogState.id);
+    }
+    setDeleteDialogState(null);
+  };
+
+  const handleSubmitUser = async (input: {
+    username: string;
+    password: string;
+    isAdmin: boolean;
+  }) => {
+    if (!userDialogState) return;
+    if (userDialogState.mode === 'create') {
+      await createUser.mutateAsync(input);
+    } else {
+      await updateUser.mutateAsync({
+        id: userDialogState.user.id,
+        username: input.username,
+        password: input.password,
+      });
+    }
+    setUserDialogState(null);
+  };
 
   const getPaneTitle = (pane: PreferencesPane): string => {
     const allItems = [...appSettingsItems, ...serverSettingsItems];
@@ -266,10 +413,73 @@ export function PreferencesDialog() {
                 {activePane === 'token' &&
                   (isConnected ? <ApiTokenPane /> : <ConnectionStatePane />)}
 
-                {/* TODO: Add props handling in Task 5 for Categories, Feeds, Users panes */}
-                {activePane === 'categories' && <ConnectionStatePane />}
-                {activePane === 'feeds' && <ConnectionStatePane />}
-                {activePane === 'users' && <ConnectionStatePane />}
+                {/* Categories pane */}
+                {activePane === 'categories' &&
+                  (isConnected ? (
+                    <CategoriesPane
+                      categories={categories}
+                      filteredCategories={filteredCategories}
+                      searchQuery={categorySearchQuery}
+                      onSearchChange={setCategorySearchQuery}
+                      onAddCategory={() => setCategoryDialogState({ mode: 'create' })}
+                      onEditCategory={(category) =>
+                        setCategoryDialogState({ mode: 'edit', category })
+                      }
+                      onDeleteCategory={(category) =>
+                        setDeleteDialogState({
+                          type: 'category',
+                          id: category.id,
+                          title: category.title,
+                        })
+                      }
+                    />
+                  ) : (
+                    <ConnectionStatePane />
+                  ))}
+
+                {/* Feeds pane */}
+                {activePane === 'feeds' &&
+                  (isConnected ? (
+                    <FeedsPane
+                      feeds={feeds}
+                      filteredFeeds={filteredFeeds}
+                      searchQuery={feedSearchQuery}
+                      onSearchChange={setFeedSearchQuery}
+                      onAddFeed={() =>
+                        setFeedDialogState({
+                          mode: 'create',
+                          defaultCategoryId: null,
+                          initialFeedUrl: '',
+                        })
+                      }
+                      onRefreshAll={() => refreshAllFeeds.mutate()}
+                      isRefreshingAll={refreshAllFeeds.isPending}
+                      columns={feedColumns}
+                    />
+                  ) : (
+                    <ConnectionStatePane />
+                  ))}
+
+                {/* Users pane */}
+                {activePane === 'users' &&
+                  (isConnected ? (
+                    <UsersPane
+                      currentUser={currentUser ?? null}
+                      users={users}
+                      isError={usersError}
+                      onAddUser={() => setUserDialogState({ mode: 'create' })}
+                      onEditUser={(user) => setUserDialogState({ mode: 'edit', user })}
+                      onDeleteUser={(user) =>
+                        setDeleteDialogState({
+                          type: 'user',
+                          id: user.id,
+                          title: user.username,
+                        })
+                      }
+                    />
+                  ) : (
+                    <ConnectionStatePane />
+                  ))}
               </div>
             </main>
           </SidebarProvider>
@@ -277,6 +487,33 @@ export function PreferencesDialog() {
 
         {/* Nested dialogs for Miniflux entities */}
         <FeedCategoryDialogsHost />
+
+        {/* User form dialog */}
+        <UserFormDialog
+          key={
+            userDialogState?.mode === 'create'
+              ? 'create-user'
+              : `edit-user-${userDialogState?.user.id}`
+          }
+          open={!!userDialogState}
+          mode={userDialogState?.mode ?? 'create'}
+          initialUsername={userDialogState?.mode === 'edit' ? userDialogState?.user.username : ''}
+          pending={createUser.isPending || updateUser.isPending}
+          onOpenChange={(open: boolean) => {
+            if (!open) setUserDialogState(null);
+          }}
+          onSubmit={handleSubmitUser}
+        />
+
+        {/* Delete confirmation dialog */}
+        <DeleteEntityDialog
+          state={deleteDialogState}
+          pending={deleteCategory.isPending || deleteFeed.isPending || deleteUser.isPending}
+          onOpenChange={(open: boolean) => {
+            if (!open) setDeleteDialogState(null);
+          }}
+          onConfirm={handleConfirmDelete}
+        />
       </Dialog>
     </MinifluxSettingsDialogProvider>
   );
