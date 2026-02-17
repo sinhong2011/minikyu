@@ -7,7 +7,7 @@ pre-commit:
       stage_fixed: true
 
     type-check:
-      glob: '*.{ts,tsx}'
+      glob: '**/*.{ts,tsx}'
       run: bunx tsc --noEmit
 
 pre-push:
