@@ -2,7 +2,6 @@ import { Logout01Icon, PreferenceVerticalIcon, Tick01Icon } from '@hugeicons/cor
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { useState } from 'react';
 
 import {
   Menu,
@@ -13,7 +12,6 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from '@/components/animate-ui/components/base/menu';
-import { MinifluxSettingsDialog } from '@/components/miniflux/MinifluxSettingsDialog';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { logger } from '@/lib/logger';
@@ -23,6 +21,7 @@ import { cn } from '@/lib/utils';
 import { useAccounts, useActiveAccount } from '@/services/miniflux/accounts';
 import { useIsConnected } from '@/services/miniflux/auth';
 import { useCurrentUser } from '@/services/miniflux/users';
+import { useUIStore } from '@/store/ui-store';
 
 interface UserNavProps {
   compact?: boolean;
@@ -30,7 +29,8 @@ interface UserNavProps {
 
 export function UserNav({ compact = false }: UserNavProps = {}) {
   const { _ } = useLingui();
-  const [settingsOpen, setSettingsOpen] = useState(false);
+  const setPreferencesOpen = useUIStore((state) => state.setPreferencesOpen);
+  const setPreferencesActivePane = useUIStore((state) => state.setPreferencesActivePane);
   const { data: accounts = [] } = useAccounts();
   const { data: currentAccount } = useActiveAccount();
   const { data: isConnected } = useIsConnected();
@@ -100,6 +100,11 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
     } catch (error) {
       logger.error('Error logging out:', { error });
     }
+  };
+
+  const handleOpenSettings = () => {
+    setPreferencesActivePane('categories');
+    setPreferencesOpen(true);
   };
 
   return (
@@ -198,7 +203,7 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
             <>
               <MenuSeparator />
               <MenuGroup>
-                <MenuItem onClick={() => setSettingsOpen(true)}>
+                <MenuItem onClick={handleOpenSettings}>
                   <HugeiconsIcon icon={PreferenceVerticalIcon} className="mr-2 size-4" />
                   {_(msg`Miniflux settings`)}
                 </MenuItem>
@@ -214,8 +219,6 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
           </MenuGroup>
         </MenuPanel>
       </Menu>
-
-      <MinifluxSettingsDialog open={settingsOpen} onOpenChange={setSettingsOpen} />
     </>
   );
 }
