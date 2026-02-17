@@ -47,6 +47,9 @@ export function getNextEntriesOffset(
  * Hook to get entries with filters
  */
 export function useEntries(filters: EntryFilters = {}) {
+  // Check if this is a history query (read entries) - should always fetch fresh data
+  const isHistoryQuery = filters.status === 'read';
+
   return useInfiniteQuery({
     queryKey: entryQueryKeys.list(filters),
     initialPageParam: 0,
@@ -86,19 +89,61 @@ export function useEntries(filters: EntryFilters = {}) {
         total: result.data.total,
         offset: pageParam,
       });
+
+      // Debug logging for history sort order
+      if (filters.status === 'read' && filters.order) {
+        logger.info('History entries sorted by', {
+          order: filters.order,
+          sampleEntries: result.data.entries?.slice(0, 3).map((e) => ({
+            id: e.id,
+            title: e.title,
+            published_at: e.published_at,
+            changed_at: e.changed_at,
+          })),
+        });
+      }
+
       return result.data;
     },
     getNextPageParam: (_, allPages) => getNextEntriesOffset(allPages),
     select: (data): EntryResponse => {
-      const entries = data.pages.flatMap((page) => page.entries ?? []);
+      let entries = data.pages.flatMap((page) => page.entries ?? []);
       const total = data.pages[0]?.total ?? '0';
+
+      // Client-side sorting to ensure correct order and direction
+      // Miniflux API may not properly respect order/direction parameters
+      const sortField = filters.order || 'published_at';
+      const sortDirectionMultiplier = filters.direction === 'asc' ? 1 : -1;
+
+      entries = [...entries].sort((a, b) => {
+        let aTime: number;
+        let bTime: number;
+
+        if (sortField === 'changed_at') {
+          aTime = new Date(a.changed_at || a.published_at).getTime();
+          bTime = new Date(b.changed_at || b.published_at).getTime();
+        } else {
+          // published_at (default)
+          aTime = new Date(a.published_at).getTime();
+          bTime = new Date(b.published_at).getTime();
+        }
+
+        return sortDirectionMultiplier * (bTime - aTime);
+      });
+
+      logger.debug('Applied client-side sorting', {
+        field: sortField,
+        direction: filters.direction || 'desc',
+        entryCount: entries.length,
+      });
 
       return {
         total,
         entries,
       };
     },
-    staleTime: 1000 * 60 * 2, // 2 minutes
+    // History queries should always fetch fresh data (no cache)
+    staleTime: isHistoryQuery ? 0 : 1000 * 60 * 2, // 0 for history, 2 minutes for others
     gcTime: 1000 * 60 * 5, // 5 minutes
   });
 }

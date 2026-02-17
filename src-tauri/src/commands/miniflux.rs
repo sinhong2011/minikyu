@@ -656,6 +656,30 @@ pub async fn import_opml(state: State<'_, AppState>, opml_content: String) -> Re
     client.import_opml(opml_content).await
 }
 
+/// Get Miniflux version information
+#[tauri::command]
+#[specta::specta]
+pub async fn get_miniflux_version(
+    state: State<'_, AppState>,
+) -> Result<crate::miniflux::MinifluxVersion, String> {
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    client.get_version().await
+}
+
+/// Get user integration settings
+#[tauri::command]
+#[specta::specta]
+pub async fn get_integrations(
+    state: State<'_, AppState>,
+) -> Result<crate::miniflux::Integration, String> {
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    client.get_integrations().await
+}
+
 /// Fetch original article content
 #[tauri::command]
 #[specta::specta]
@@ -672,6 +696,17 @@ pub async fn fetch_entry_content(
         .map_err(|e| format!("Invalid entry ID: {}", e))?;
 
     client.fetch_content(id_parsed, update_content).await
+}
+
+/// Flush history (delete all read entries from Miniflux server)
+#[tauri::command]
+#[specta::specta]
+pub async fn flush_history(state: State<'_, AppState>) -> Result<(), String> {
+    log::info!("Flushing history from Miniflux server");
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    client.flush_history().await
 }
 
 pub async fn get_categories_from_db(

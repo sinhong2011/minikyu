@@ -14,10 +14,6 @@ import { useSyncStore } from '@/store/sync-store';
 import { useUIStore } from '@/store/ui-store';
 import { MinifluxLayout } from './MinifluxLayout';
 
-vi.mock('@lingui/core/macro', () => ({
-  msg: (descriptor: any) => descriptor,
-}));
-
 vi.mock('@tanstack/react-router', () => ({
   useSearch: vi.fn(() => ({})),
 }));

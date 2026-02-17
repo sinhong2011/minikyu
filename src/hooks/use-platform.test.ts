@@ -30,27 +30,27 @@ describe('Platform Detection', () => {
 
   describe('getPlatform', () => {
     it('returns macos when platform() returns macos', () => {
-      vi.mocked(platform).mockReturnValue('macos');
+      (platform as ReturnType<typeof vi.fn>).mockReturnValue('macos');
       expect(getPlatform()).toBe('macos');
     });
 
     it('returns windows when platform() returns windows', () => {
-      vi.mocked(platform).mockReturnValue('windows');
+      (platform as ReturnType<typeof vi.fn>).mockReturnValue('windows');
       expect(getPlatform()).toBe('windows');
     });
 
     it('returns linux when platform() returns linux', () => {
-      vi.mocked(platform).mockReturnValue('linux');
+      (platform as ReturnType<typeof vi.fn>).mockReturnValue('linux');
       expect(getPlatform()).toBe('linux');
     });
 
     it('returns linux for other unix-like platforms', () => {
-      vi.mocked(platform).mockReturnValue('freebsd');
+      (platform as ReturnType<typeof vi.fn>).mockReturnValue('freebsd');
       expect(getPlatform()).toBe('linux');
     });
 
     it('caches the platform value', () => {
-      vi.mocked(platform).mockReturnValue('macos');
+      (platform as ReturnType<typeof vi.fn>).mockReturnValue('macos');
       getPlatform();
       getPlatform();
       getPlatform();
@@ -60,7 +60,7 @@ describe('Platform Detection', () => {
     });
 
     it('falls back to macos when platform() throws', async () => {
-      vi.mocked(platform).mockImplementation(() => {
+      (platform as ReturnType<typeof vi.fn>).mockImplementation(() => {
         throw new Error('Not in Tauri context');
       });
 
@@ -74,7 +74,7 @@ describe('Platform Detection', () => {
 
   describe('usePlatform hook', () => {
     it('returns the current platform', () => {
-      vi.mocked(platform).mockReturnValue('windows');
+      (platform as ReturnType<typeof vi.fn>).mockReturnValue('windows');
 
       const { result } = renderHook(() => usePlatform());
 
@@ -84,7 +84,7 @@ describe('Platform Detection', () => {
 
   describe('convenience hooks', () => {
     it('useIsMacOS returns true on macOS', () => {
-      vi.mocked(platform).mockReturnValue('macos');
+      (platform as ReturnType<typeof vi.fn>).mockReturnValue('macos');
 
       const { result } = renderHook(() => useIsMacOS());
 
@@ -92,7 +92,7 @@ describe('Platform Detection', () => {
     });
 
     it('useIsMacOS returns false on other platforms', () => {
-      vi.mocked(platform).mockReturnValue('windows');
+      (platform as ReturnType<typeof vi.fn>).mockReturnValue('windows');
 
       const { result } = renderHook(() => useIsMacOS());
 
@@ -100,7 +100,7 @@ describe('Platform Detection', () => {
     });
 
     it('useIsWindows returns true on Windows', () => {
-      vi.mocked(platform).mockReturnValue('windows');
+      (platform as ReturnType<typeof vi.fn>).mockReturnValue('windows');
 
       const { result } = renderHook(() => useIsWindows());
 
@@ -108,7 +108,7 @@ describe('Platform Detection', () => {
     });
 
     it('useIsWindows returns false on other platforms', () => {
-      vi.mocked(platform).mockReturnValue('macos');
+      (platform as ReturnType<typeof vi.fn>).mockReturnValue('macos');
 
       const { result } = renderHook(() => useIsWindows());
 
@@ -116,7 +116,7 @@ describe('Platform Detection', () => {
     });
 
     it('useIsLinux returns true on Linux', () => {
-      vi.mocked(platform).mockReturnValue('linux');
+      (platform as ReturnType<typeof vi.fn>).mockReturnValue('linux');
 
       const { result } = renderHook(() => useIsLinux());
 
@@ -124,7 +124,7 @@ describe('Platform Detection', () => {
     });
 
     it('useIsLinux returns false on other platforms', () => {
-      vi.mocked(platform).mockReturnValue('macos');
+      (platform as ReturnType<typeof vi.fn>).mockReturnValue('macos');
 
       const { result } = renderHook(() => useIsLinux());
 

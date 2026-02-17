@@ -24,10 +24,6 @@ import {
 import { useSyncStore } from '@/store/sync-store';
 import { AppSidebar } from './AppSidebar';
 
-vi.mock('@lingui/core/macro', () => ({
-  msg: (descriptor: any) => descriptor,
-}));
-
 i18n.load('en', {
   // biome-ignore lint/style/useNamingConvention: i18n key
   Minikyu: 'Minikyu',

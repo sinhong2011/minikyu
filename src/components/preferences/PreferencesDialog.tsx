@@ -3,6 +3,7 @@ import {
   Folder01Icon,
   InformationCircleIcon,
   Key01Icon,
+  Link02Icon,
   RssIcon,
   Settings01Icon,
   UserGroupIcon,
@@ -51,6 +52,7 @@ import {
   useDeleteFeed,
   useDeleteMinifluxUser,
   useFeeds,
+  useIntegrations,
   useIsConnected,
   useMinifluxUsers,
   useRefreshAllFeeds,
@@ -64,6 +66,7 @@ import { AppearancePane } from './panes/AppearancePane';
 import { CategoriesPane } from './panes/CategoriesPane';
 import { FeedsPane } from './panes/FeedsPane';
 import { GeneralPane } from './panes/GeneralPane';
+import { IntegrationsPane } from './panes/IntegrationsPane';
 import { UsersPane } from './panes/UsersPane';
 
 const appSettingsItems = [
@@ -110,6 +113,11 @@ const serverSettingsItems = [
     label: msg`API token`,
     icon: Key01Icon,
   },
+  {
+    id: 'integrations' as const,
+    label: msg`Integrations`,
+    icon: Link02Icon,
+  },
 ] as const;
 
 function ConnectionStatePane() {
@@ -136,6 +144,7 @@ export function PreferencesDialog() {
   const { data: users = [], isError: usersError } = useMinifluxUsers(
     isConnected && (currentUser?.is_admin ?? false)
   );
+  const { data: integrations, isLoading: integrationsLoading } = useIntegrations();
 
   // Dialog state from MinifluxSettingsDialogStore
   const setCategoryDialogState = useMinifluxSettingsDialogStore(
@@ -481,6 +490,17 @@ export function PreferencesDialog() {
                         title: user.username,
                       })
                     }
+                  />
+                ) : (
+                  <ConnectionStatePane />
+                ))}
+
+              {/* Integrations pane */}
+              {activePane === 'integrations' &&
+                (isConnected ? (
+                  <IntegrationsPane
+                    integrations={integrations ?? null}
+                    isLoading={integrationsLoading}
                   />
                 ) : (
                   <ConnectionStatePane />

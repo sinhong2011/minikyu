@@ -458,3 +458,224 @@ pub struct AuthConfig {
     #[serde(default)]
     pub password: Option<String>,
 }
+
+/// Miniflux Version Information
+#[derive(Debug, Clone, Serialize, Deserialize, Type)]
+pub struct MinifluxVersion {
+    pub version: String,
+    #[serde(default)]
+    pub commit: Option<String>,
+    #[serde(default)]
+    pub build_date: Option<String>,
+    #[serde(default)]
+    pub go_version: Option<String>,
+    #[serde(default)]
+    pub arch: Option<String>,
+    #[serde(default)]
+    pub os: Option<String>,
+}
+
+/// Miniflux Integration Settings
+#[derive(Debug, Clone, Serialize, Deserialize, Type)]
+pub struct Integration {
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
+    pub user_id: i64,
+    #[serde(default)]
+    pub wallabag_enabled: bool,
+    #[serde(default)]
+    pub wallabag_url: Option<String>,
+    #[serde(default)]
+    pub wallabag_client_id: Option<String>,
+    #[serde(default)]
+    pub wallabag_client_secret: Option<String>,
+    #[serde(default)]
+    pub wallabag_username: Option<String>,
+    #[serde(default)]
+    pub wallabag_password: Option<String>,
+    #[serde(default)]
+    pub shiori_enabled: bool,
+    #[serde(default)]
+    pub shiori_url: Option<String>,
+    #[serde(default)]
+    pub shiori_username: Option<String>,
+    #[serde(default)]
+    pub shiori_password: Option<String>,
+    #[serde(default)]
+    pub pocket_enabled: bool,
+    #[serde(default)]
+    pub pocket_consumer_key: Option<String>,
+    #[serde(default)]
+    pub pocket_access_token: Option<String>,
+    #[serde(default)]
+    pub instapaper_enabled: bool,
+    #[serde(default)]
+    pub instapaper_url: Option<String>,
+    #[serde(default)]
+    pub instapaper_username: Option<String>,
+    #[serde(default)]
+    pub instapaper_password: Option<String>,
+    #[serde(default)]
+    pub pinboard_enabled: bool,
+    #[serde(default)]
+    pub pinboard_token: Option<String>,
+    #[serde(default)]
+    pub pinboard_tags: Option<String>,
+    #[serde(default)]
+    pub shaarli_enabled: bool,
+    #[serde(default)]
+    pub shaarli_url: Option<String>,
+    #[serde(default)]
+    pub shaarli_api_key: Option<String>,
+    #[serde(default)]
+    pub rainloop_enabled: bool,
+    #[serde(default)]
+    pub rainloop_url: Option<String>,
+    #[serde(default)]
+    pub rainloop_username: Option<String>,
+    #[serde(default)]
+    pub rainloop_password: Option<String>,
+    #[serde(default)]
+    pub raindrop_enabled: bool,
+    #[serde(default)]
+    pub raindrop_token: Option<String>,
+    #[serde(default)]
+    pub discord_enabled: bool,
+    #[serde(default)]
+    pub discord_webhook_url: Option<String>,
+    #[serde(default)]
+    pub discord_username: Option<String>,
+    #[serde(default)]
+    pub discord_avatar_url: Option<String>,
+    #[serde(default)]
+    pub telegram_bot_enabled: bool,
+    #[serde(default)]
+    pub telegram_bot_token: Option<String>,
+    #[serde(default)]
+    pub telegram_bot_chat_id: Option<String>,
+    #[serde(default)]
+    pub slack_enabled: bool,
+    #[serde(default)]
+    pub slack_webhook_url: Option<String>,
+    #[serde(default)]
+    pub slack_username: Option<String>,
+    #[serde(default)]
+    pub slack_icon_url: Option<String>,
+    #[serde(default)]
+    pub slack_channel: Option<String>,
+    #[serde(default)]
+    pub matrix_bot_enabled: bool,
+    #[serde(default)]
+    pub matrix_bot_url: Option<String>,
+    #[serde(default)]
+    pub matrix_bot_username: Option<String>,
+    #[serde(default)]
+    pub matrix_bot_password: Option<String>,
+    #[serde(default)]
+    pub matrix_bot_chat_id: Option<String>,
+    #[serde(default)]
+    pub ntfy_enabled: bool,
+    #[serde(default)]
+    pub ntfy_topic_url: Option<String>,
+    #[serde(default)]
+    pub ntfy_username: Option<String>,
+    #[serde(default)]
+    pub ntfy_password: Option<String>,
+    #[serde(default)]
+    pub pushover_enabled: bool,
+    #[serde(default)]
+    pub pushover_app_id: Option<String>,
+    #[serde(default)]
+    pub pushover_token: Option<String>,
+    #[serde(default)]
+    pub pushover_user_key: Option<String>,
+    #[serde(default)]
+    pub pushover_device: Option<String>,
+    #[serde(default)]
+    pub apprise_enabled: bool,
+    #[serde(default)]
+    pub apprise_service_url: Option<String>,
+    #[serde(default)]
+    pub apprise_script_url: Option<String>,
+    #[serde(default)]
+    pub webhook_enabled: bool,
+    #[serde(default)]
+    pub webhook_url: Option<String>,
+    #[serde(default)]
+    pub webhook_secret: Option<String>,
+    #[serde(default)]
+    pub notion_enabled: bool,
+    #[serde(default)]
+    pub notion_page_id: Option<String>,
+    #[serde(default)]
+    pub notion_token: Option<String>,
+    #[serde(default)]
+    pub linkace_enabled: bool,
+    #[serde(default)]
+    pub linkace_url: Option<String>,
+    #[serde(default)]
+    pub linkace_api_key: Option<String>,
+    #[serde(default)]
+    pub linkding_enabled: bool,
+    #[serde(default)]
+    pub linkding_url: Option<String>,
+    #[serde(default)]
+    pub linkding_api_key: Option<String>,
+    #[serde(default)]
+    pub linkwarden_enabled: bool,
+    #[serde(default)]
+    pub linkwarden_url: Option<String>,
+    #[serde(default)]
+    pub linkwarden_api_key: Option<String>,
+    #[serde(default)]
+    pub linkwarden_username: Option<String>,
+    #[serde(default)]
+    pub linkwarden_password: Option<String>,
+    #[serde(default)]
+    pub betula_enabled: bool,
+    #[serde(default)]
+    pub betula_url: Option<String>,
+    #[serde(default)]
+    pub betula_token: Option<String>,
+    #[serde(default)]
+    pub cubox_enabled: bool,
+    #[serde(default)]
+    pub cubox_api_key: Option<String>,
+    #[serde(default)]
+    pub omnivore_enabled: bool,
+    #[serde(default)]
+    pub omnivore_api_key: Option<String>,
+    #[serde(default)]
+    pub readeck_enabled: bool,
+    #[serde(default)]
+    pub readeck_url: Option<String>,
+    #[serde(default)]
+    pub readeck_api_key: Option<String>,
+    #[serde(default)]
+    pub readeck_username: Option<String>,
+    #[serde(default)]
+    pub readeck_password: Option<String>,
+    #[serde(default)]
+    pub readwise_reader_enabled: bool,
+    #[serde(default)]
+    pub readwise_reader_api_key: Option<String>,
+    #[serde(default)]
+    pub nunux_keeper_enabled: bool,
+    #[serde(default)]
+    pub nunux_keeper_url: Option<String>,
+    #[serde(default)]
+    pub nunux_keeper_api_key: Option<String>,
+    #[serde(default)]
+    pub espial_enabled: bool,
+    #[serde(default)]
+    pub espial_url: Option<String>,
+    #[serde(default)]
+    pub espial_api_key: Option<String>,
+    #[serde(default)]
+    pub rss_bridge_enabled: bool,
+    #[serde(default)]
+    pub rss_bridge_url: Option<String>,
+}

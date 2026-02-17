@@ -1,6 +1,6 @@
 import type { Category, Feed, User } from '@/lib/tauri-bindings';
 
-export type MinifluxSettingsPane = 'categories' | 'feeds' | 'users' | 'token';
+export type MinifluxSettingsPane = 'categories' | 'feeds' | 'users' | 'token' | 'integrations';
 
 export type CategoryDialogState = { mode: 'create' } | { mode: 'edit'; category: Category };
 

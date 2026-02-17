@@ -1,7 +1,15 @@
-import { Logout01Icon, Tick01Icon } from '@hugeicons/core-free-icons';
+import {
+  FileDownloadIcon,
+  FileUploadIcon,
+  Logout01Icon,
+  Tick01Icon,
+} from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
+import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
+import { toast } from 'sonner';
 
 import {
   Menu,
@@ -99,6 +107,97 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
     }
   };
 
+  const handleExportOpml = async () => {
+    try {
+      const date = new Date().toISOString().split('T')[0];
+      const filePath = await saveDialog({
+        title: _(msg`Export OPML`),
+        defaultPath: `miniflux-feeds-${date}.opml`,
+        filters: [
+          {
+            name: 'OPML',
+            extensions: ['opml'],
+          },
+          {
+            name: 'XML',
+            extensions: ['xml'],
+          },
+        ],
+      });
+
+      if (!filePath) {
+        return;
+      }
+
+      const result = await commands.exportOpml();
+
+      if (result.status === 'error') {
+        toast.error(_(msg`Failed to export OPML`), {
+          description: result.error,
+        });
+        return;
+      }
+
+      await writeTextFile(filePath, result.data);
+
+      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+
+      toast.success(_(msg`OPML exported successfully`));
+    } catch (error) {
+      logger.error('Failed to export OPML', { error });
+      toast.error(_(msg`Failed to export OPML`), {
+        description: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
+
+  const handleImportOpml = async () => {
+    try {
+      const filePath = await openDialog({
+        title: _(msg`Import OPML`),
+        multiple: false,
+        filters: [
+          {
+            name: 'OPML',
+            extensions: ['opml'],
+          },
+          {
+            name: 'XML',
+            extensions: ['xml'],
+          },
+          {
+            name: 'All Files',
+            extensions: ['*'],
+          },
+        ],
+      });
+
+      if (!filePath) {
+        return;
+      }
+
+      const opmlContent = await readTextFile(filePath);
+
+      const result = await commands.importOpml(opmlContent);
+
+      if (result.status === 'error') {
+        toast.error(_(msg`Failed to import OPML`), {
+          description: result.error,
+        });
+        return;
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+
+      toast.success(_(msg`OPML imported successfully`));
+    } catch (error) {
+      logger.error('Failed to import OPML', { error });
+      toast.error(_(msg`Failed to import OPML`), {
+        description: error instanceof Error ? error.message : String(error),
+      });
+    }
+  };
+
   return (
     <Menu>
       <MenuTrigger className={cn('w-full outline-none', compact && 'flex justify-center')}>
@@ -190,6 +289,22 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
             </MenuItem>
           ))}
         </MenuGroup>
+        {isConnected && (
+          <>
+            <MenuSeparator />
+            <MenuGroup>
+              <MenuGroupLabel>{_(msg`Manage`)}</MenuGroupLabel>
+              <MenuItem onClick={handleExportOpml}>
+                <HugeiconsIcon icon={FileDownloadIcon} className="mr-2 size-4" />
+                {_(msg`Export OPML`)}
+              </MenuItem>
+              <MenuItem onClick={handleImportOpml}>
+                <HugeiconsIcon icon={FileUploadIcon} className="mr-2 size-4" />
+                {_(msg`Import OPML`)}
+              </MenuItem>
+            </MenuGroup>
+          </>
+        )}
         <MenuSeparator />
         <MenuGroup>
           <MenuItem variant="destructive" onClick={handleLogout}>

@@ -1,20 +1,33 @@
-import { Search01Icon } from '@hugeicons/core-free-icons';
+import { Delete01Icon, Search01Icon, Sorting01Icon, WifiOffIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useSearch } from '@tanstack/react-router';
+import { confirm } from '@tauri-apps/plugin-dialog';
 import { AnimatePresence, motion } from 'motion/react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import {
+  Menu,
+  MenuGroup,
+  MenuGroupLabel,
+  MenuItem,
+  MenuPanel,
+  MenuSeparator,
+  MenuTrigger,
+} from '@/components/animate-ui/components/base/menu';
 import { MainWindowContent } from '@/components/layout/MainWindowContent';
 import { Button } from '@/components/ui/button';
 import { useSyncProgressListener } from '@/hooks/use-sync-progress-listener';
 import { logger } from '@/lib/logger';
+import { queryClient } from '@/lib/query-client';
 import type { EntryFilters } from '@/lib/tauri-bindings';
+import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
 import { useIsConnected } from '@/services/miniflux/auth';
 import { useCategories } from '@/services/miniflux/categories';
 import { useUnreadCounts } from '@/services/miniflux/counters';
-import { useEntries, usePrefetchEntry, useToggleEntryRead } from '@/services/miniflux/entries';
+import { useEntries, usePrefetchEntry } from '@/services/miniflux/entries';
 import { useSyncMiniflux } from '@/services/miniflux/feeds';
 import { useLastReadingEntry, useSaveLastReading } from '@/services/reading-state';
 import { useSyncStore } from '@/store/sync-store';
@@ -24,6 +37,9 @@ import { EntryFiltersUI } from './EntryFilters';
 import { EntryList, type EntryListFilterStatus } from './EntryList';
 
 type FilterType = 'all' | 'starred' | 'today' | 'history';
+
+type SortOrder = 'published_at' | 'changed_at';
+type SortDirection = 'asc' | 'desc';
 
 export function MinifluxLayout() {
   const { _, i18n } = useLingui();
@@ -44,6 +60,8 @@ export function MinifluxLayout() {
   const [entryTransitionDirection, setEntryTransitionDirection] = useState<'forward' | 'backward'>(
     'forward'
   );
+  const [sortOrder, setSortOrder] = useState<SortOrder>('published_at');
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   const syncMiniflux = useSyncMiniflux();
   const syncing = useSyncStore((state) => state.syncing);
   const hasAutoSyncedRef = useRef(false);
@@ -62,7 +80,6 @@ export function MinifluxLayout() {
       : 'all';
   const showBottomFilterTab = filter !== 'starred' && filter !== 'history';
   const prefetchEntry = usePrefetchEntry();
-  const toggleEntryRead = useToggleEntryRead();
   const { data: lastReadingEntry } = useLastReadingEntry();
   const saveLastReading = useSaveLastReading();
   const countFormatter = new Intl.NumberFormat(i18n.locale, {
@@ -70,18 +87,23 @@ export function MinifluxLayout() {
   });
 
   // Merge router filters with local filters
-  const mergedFilters: EntryFilters = {
-    // biome-ignore lint/style/useNamingConvention: API field name
-    ...(categoryId ? { category_id: Number(categoryId) } : {}),
-    // biome-ignore lint/style/useNamingConvention: API field name
-    ...(feedId ? { feed_id: Number(feedId) } : {}),
-    ...(filter === 'starred' ? { starred: true } : {}),
-    ...(filter === 'history' ? { status: 'read' } : {}),
-    ...(shouldDefaultToUnread ? { status: 'unread' as const } : {}),
-    order: 'published_at',
-    direction: 'desc',
-    ...localFilters,
-  } as EntryFilters;
+  const mergedFilters: EntryFilters = useMemo(
+    () =>
+      ({
+        // biome-ignore lint/style/useNamingConvention: API field name
+        ...(categoryId ? { category_id: Number(categoryId) } : {}),
+        // biome-ignore lint/style/useNamingConvention: API field name
+        ...(feedId ? { feed_id: Number(feedId) } : {}),
+        ...(filter === 'starred' ? { starred: true } : {}),
+        ...(filter === 'history' ? { status: 'read' } : {}),
+        ...(shouldDefaultToUnread ? { status: 'unread' as const } : {}),
+        ...localFilters, // <-- localFilters spreads first
+        // Use selected sort order and direction
+        order: sortOrder,
+        direction: sortDirection,
+      }) as EntryFilters,
+    [categoryId, feedId, filter, shouldDefaultToUnread, localFilters, sortOrder, sortDirection]
+  );
 
   // Get entries for logging - needed to log entry data on selection
   const { data: entriesData } = useEntries(mergedFilters);
@@ -153,9 +175,8 @@ export function MinifluxLayout() {
 
     setSelectedEntryId(entryId);
 
-    if (entry?.status === 'unread') {
-      toggleEntryRead.mutate(entryId);
-    }
+    // Note: We don't immediately mark as read here because EntryReading component
+    // handles auto-marking as read when the user scrolls through the content
 
     if (entriesData?.entries) {
       const idx = entriesData.entries.findIndex((e) => e.id === entryId);
@@ -217,11 +238,63 @@ export function MinifluxLayout() {
     syncMiniflux.mutate();
   }, [isConnected, syncing, syncMiniflux]);
 
+  const handleFlushHistory = async () => {
+    // Show confirmation dialog
+    const confirmed = await confirm(
+      _(
+        msg`Are you sure you want to flush history? This will delete all read entries from the Miniflux server.`
+      ),
+      { title: _(msg`Flush History`), kind: 'warning' }
+    );
+
+    if (!confirmed) {
+      return;
+    }
+
+    const result = await commands.flushHistory();
+
+    if (result.status === 'error') {
+      toast.error(_(msg`Failed to flush history`), {
+        description: result.error,
+      });
+      return;
+    }
+
+    queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+
+    toast.success(_(msg`History flushed`), {
+      description: _(msg`All read entries have been deleted`),
+    });
+  };
+
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="text-center">
           <div className="text-lg font-medium">{_(msg`Loading...`)}</div>
+        </div>
+      </div>
+    );
+  }
+
+  // History and starred pages require online mode
+  if (!isConnected && (filter === 'history' || filter === 'starred')) {
+    return (
+      <div className="flex h-full items-center justify-center">
+        <div className="text-center max-w-md">
+          <HugeiconsIcon
+            icon={WifiOffIcon}
+            className="mx-auto mb-4 size-12 text-muted-foreground"
+          />
+          <h2 className="text-2xl font-bold mb-2">{_(msg`Offline Mode`)}</h2>
+          <p className="text-muted-foreground mb-4">
+            {filter === 'history'
+              ? _(msg`History page is only available when connected to Miniflux server.`)
+              : _(msg`Starred items page is only available when connected to Miniflux server.`)}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            {_(msg`Please connect to your server to use this feature.`)}
+          </p>
         </div>
       </div>
     );
@@ -387,6 +460,58 @@ export function MinifluxLayout() {
             </AnimatePresence>
           </div>
           <div className="flex items-center gap-2">
+            {filter === 'history' && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={handleFlushHistory}
+                title={_(msg`Flush history`)}
+              >
+                <HugeiconsIcon icon={Delete01Icon} className="h-4 w-4" />
+              </Button>
+            )}
+            <Menu>
+              <MenuTrigger
+                className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-accent"
+                title={_(msg`Sort by`)}
+              >
+                <HugeiconsIcon icon={Sorting01Icon} className="h-4 w-4" />
+              </MenuTrigger>
+              <MenuPanel>
+                <MenuGroup>
+                  <MenuGroupLabel>{_(msg`Sort by`)}</MenuGroupLabel>
+                  <MenuItem
+                    onClick={() => setSortOrder('published_at')}
+                    className={cn(sortOrder === 'published_at' && 'bg-accent')}
+                  >
+                    {_(msg`Published date`)}
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => setSortOrder('changed_at')}
+                    className={cn(sortOrder === 'changed_at' && 'bg-accent')}
+                  >
+                    {_(msg`Last read date`)}
+                  </MenuItem>
+                </MenuGroup>
+                <MenuSeparator />
+                <MenuGroup>
+                  <MenuGroupLabel>{_(msg`Direction`)}</MenuGroupLabel>
+                  <MenuItem
+                    onClick={() => setSortDirection('asc')}
+                    className={cn(sortDirection === 'asc' && 'bg-accent')}
+                  >
+                    {_(msg`Ascending`)}
+                  </MenuItem>
+                  <MenuItem
+                    onClick={() => setSortDirection('desc')}
+                    className={cn(sortDirection === 'desc' && 'bg-accent')}
+                  >
+                    {_(msg`Descending`)}
+                  </MenuItem>
+                </MenuGroup>
+              </MenuPanel>
+            </Menu>
             <Button
               variant="ghost"
               size="icon"

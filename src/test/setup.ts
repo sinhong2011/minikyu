@@ -89,6 +89,3 @@ vi.mock('@/lib/tauri-bindings', () => ({
     throw result;
   }),
 }));
-
-// Mock Lingui macro
-vi.mock('@lingui/core/macro');
