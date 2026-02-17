@@ -142,11 +142,9 @@ export function PreferencesDialog() {
 
   // Dialog state from MinifluxSettingsDialogStore
   const setCategoryDialogState = useMinifluxSettingsDialogStore(
-    (state: { setCategoryDialogState: (value: any) => void }) => state.setCategoryDialogState
+    (state) => state.setCategoryDialogState
   );
-  const setFeedDialogState = useMinifluxSettingsDialogStore(
-    (state: { setFeedDialogState: (value: any) => void }) => state.setFeedDialogState
-  );
+  const setFeedDialogState = useMinifluxSettingsDialogStore((state) => state.setFeedDialogState);
 
   // Local state for user and delete dialogs
   const [userDialogState, setUserDialogState] = React.useState<UserDialogState | null>(null);
@@ -225,14 +223,20 @@ export function PreferencesDialog() {
   // Handler functions
   const handleConfirmDelete = async () => {
     if (!deleteDialogState) return;
-    if (deleteDialogState.type === 'category') {
-      await deleteCategory.mutateAsync(deleteDialogState.id);
-    } else if (deleteDialogState.type === 'feed') {
-      await deleteFeed.mutateAsync(deleteDialogState.id);
-    } else {
-      await deleteUser.mutateAsync(deleteDialogState.id);
+    try {
+      if (deleteDialogState.type === 'category') {
+        await deleteCategory.mutateAsync(deleteDialogState.id);
+      } else if (deleteDialogState.type === 'feed') {
+        await deleteFeed.mutateAsync(deleteDialogState.id);
+      } else {
+        await deleteUser.mutateAsync(deleteDialogState.id);
+      }
+      // Only close dialog if operation succeeded
+      setDeleteDialogState(null);
+    } catch {
+      // Error already handled by mutation hook with toast
+      // Dialog stays open so user can retry or cancel
     }
-    setDeleteDialogState(null);
   };
 
   const handleSubmitUser = async (input: {
@@ -241,16 +245,22 @@ export function PreferencesDialog() {
     isAdmin: boolean;
   }) => {
     if (!userDialogState) return;
-    if (userDialogState.mode === 'create') {
-      await createUser.mutateAsync(input);
-    } else {
-      await updateUser.mutateAsync({
-        id: userDialogState.user.id,
-        username: input.username,
-        password: input.password,
-      });
+    try {
+      if (userDialogState.mode === 'create') {
+        await createUser.mutateAsync(input);
+      } else {
+        await updateUser.mutateAsync({
+          id: userDialogState.user.id,
+          username: input.username,
+          password: input.password,
+        });
+      }
+      // Only close dialog if operation succeeded
+      setUserDialogState(null);
+    } catch {
+      // Error already handled by mutation hook with toast
+      // Dialog stays open so user can retry or cancel
     }
-    setUserDialogState(null);
   };
 
   const getPaneTitle = (pane: PreferencesPane): string => {
