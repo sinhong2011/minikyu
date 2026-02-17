@@ -1,5 +1,6 @@
 import { CommandPalette } from '@/components/command-palette/CommandPalette';
 import { DownloadManagerDialog } from '@/components/downloads/DownloadManagerDialog';
+import { MinifluxSettingsDialogProvider } from '@/components/miniflux/settings/store';
 import { PreferencesDialog } from '@/components/preferences/PreferencesDialog';
 import { TitleBar } from '@/components/titlebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
@@ -37,7 +38,9 @@ export function MainWindow({ children }: MainWindowProps = {}) {
 
       <CommandPalette />
       <DownloadManagerDialog />
-      <PreferencesDialog />
+      <MinifluxSettingsDialogProvider>
+        <PreferencesDialog />
+      </MinifluxSettingsDialogProvider>
       <Toaster
         position="top-center"
         theme={theme === 'dark' ? 'dark' : theme === 'light' ? 'light' : 'system'}
