@@ -19,7 +19,10 @@ import type {
   UserDialogState,
 } from '@/components/miniflux/settings/dialog-state';
 import { FeedCategoryDialogsHost } from '@/components/miniflux/settings/FeedCategoryDialogsHost';
-import { useMinifluxSettingsDialogStore } from '@/components/miniflux/settings/store';
+import {
+  MinifluxSettingsDialogProviderBoundary,
+  useMinifluxSettingsDialogStore,
+} from '@/components/miniflux/settings/store';
 import { UserFormDialog } from '@/components/miniflux/settings/UserFormDialog';
 import {
   Breadcrumb,
@@ -267,258 +270,261 @@ export function PreferencesDialog() {
   };
 
   return (
-    <Dialog open={preferencesOpen} onOpenChange={setPreferencesOpen}>
-      <DialogContent className="overflow-hidden p-0 md:max-h-150 md:max-w-225 lg:max-w-250 font-sans rounded-xl">
-        <DialogTitle className="sr-only">{_(msg`Preferences`)}</DialogTitle>
-        <DialogDescription className="sr-only">
-          {_(msg`Customize your application preferences here.`)}
-        </DialogDescription>
+    <MinifluxSettingsDialogProviderBoundary>
+      <Dialog open={preferencesOpen} onOpenChange={setPreferencesOpen}>
+        <DialogContent className="overflow-hidden p-0 md:max-h-150 md:max-w-225 lg:max-w-250 font-sans rounded-xl">
+          <DialogTitle className="sr-only">{_(msg`Preferences`)}</DialogTitle>
+          <DialogDescription className="sr-only">
+            {_(msg`Customize your application preferences here.`)}
+          </DialogDescription>
 
-        <SidebarProvider className="items-start">
-          <Sidebar collapsible="none" className="hidden md:flex bg-background py-4">
-            <SidebarContent>
-              {/* App Settings Section */}
-              <SidebarGroup>
-                <SidebarGroupLabel>{_(msg`App Settings`)}</SidebarGroupLabel>
-                <SidebarGroupContent>
-                  <SidebarMenu className="gap-1">
-                    {appSettingsItems.map((item) => (
-                      <SidebarMenuItem key={item.id}>
-                        <SidebarMenuButton
-                          isActive={activePane === item.id}
-                          onClick={() => setPreferencesActivePane(item.id)}
-                        >
-                          <HugeiconsIcon icon={item.icon} />
-                          <span>{_(item.label)}</span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
-              </SidebarGroup>
-
-              {/* Server Settings Section */}
-              {isConnected && (
+          <SidebarProvider className="items-start">
+            <Sidebar collapsible="none" className="hidden md:flex bg-background py-4">
+              <SidebarContent>
+                {/* App Settings Section */}
                 <SidebarGroup>
-                  <SidebarGroupLabel>{_(msg`Server Settings`)}</SidebarGroupLabel>
+                  <SidebarGroupLabel>{_(msg`App Settings`)}</SidebarGroupLabel>
                   <SidebarGroupContent>
                     <SidebarMenu className="gap-1">
-                      {serverSettingsItems
-                        .filter((item) => item.id !== 'users' || (currentUser?.is_admin ?? false))
-                        .map((item) => (
-                          <SidebarMenuItem key={item.id}>
-                            <SidebarMenuButton
-                              isActive={activePane === item.id}
-                              onClick={() => setPreferencesActivePane(item.id)}
-                            >
-                              <HugeiconsIcon icon={item.icon} />
-                              <span>{_(item.label)}</span>
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        ))}
+                      {appSettingsItems.map((item) => (
+                        <SidebarMenuItem key={item.id}>
+                          <SidebarMenuButton
+                            isActive={activePane === item.id}
+                            onClick={() => setPreferencesActivePane(item.id)}
+                          >
+                            <HugeiconsIcon icon={item.icon} />
+                            <span>{_(item.label)}</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
                     </SidebarMenu>
                   </SidebarGroupContent>
                 </SidebarGroup>
-              )}
-            </SidebarContent>
-          </Sidebar>
 
-          <main className="flex flex-1 flex-col overflow-hidden">
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b md:hidden">
-              <div className="flex flex-1 items-center gap-2 px-4">
-                <Breadcrumb>
-                  <BreadcrumbList>
-                    <BreadcrumbItem>
-                      <BreadcrumbLink asChild>
-                        <span>{_(msg`Preferences`)}</span>
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                      <BreadcrumbPage>{getPaneTitle(activePane)}</BreadcrumbPage>
-                    </BreadcrumbItem>
-                  </BreadcrumbList>
-                </Breadcrumb>
-              </div>
-            </header>
-
-            <div className="border-b p-2 md:hidden">
-              <div className="space-y-2">
-                {/* App Settings */}
-                <div className="text-xs font-semibold text-muted-foreground px-2">
-                  {_(msg`App Settings`)}
-                </div>
-                <div className="grid grid-cols-2 gap-1">
-                  {appSettingsItems.map((item) => (
-                    <Button
-                      key={item.id}
-                      size="sm"
-                      variant={activePane === item.id ? 'secondary' : 'ghost'}
-                      className="justify-start"
-                      onClick={() => setPreferencesActivePane(item.id)}
-                    >
-                      <HugeiconsIcon icon={item.icon} className="mr-1.5 size-4" />
-                      {_(item.label)}
-                    </Button>
-                  ))}
-                </div>
-
-                {/* Server Settings */}
+                {/* Server Settings Section */}
                 {isConnected && (
-                  <>
-                    <div className="text-xs font-semibold text-muted-foreground px-2 pt-2">
-                      {_(msg`Server Settings`)}
-                    </div>
-                    <div className="grid grid-cols-2 gap-1">
-                      {serverSettingsItems
-                        .filter((item) => item.id !== 'users' || (currentUser?.is_admin ?? false))
-                        .map((item) => (
-                          <Button
-                            key={item.id}
-                            size="sm"
-                            variant={activePane === item.id ? 'secondary' : 'ghost'}
-                            className="justify-start"
-                            onClick={() => setPreferencesActivePane(item.id)}
-                          >
-                            <HugeiconsIcon icon={item.icon} className="mr-1.5 size-4" />
-                            {_(item.label)}
-                          </Button>
-                        ))}
-                    </div>
-                  </>
+                  <SidebarGroup>
+                    <SidebarGroupLabel>{_(msg`Server Settings`)}</SidebarGroupLabel>
+                    <SidebarGroupContent>
+                      <SidebarMenu className="gap-1">
+                        {serverSettingsItems
+                          .filter((item) => item.id !== 'users' || (currentUser?.is_admin ?? false))
+                          .map((item) => (
+                            <SidebarMenuItem key={item.id}>
+                              <SidebarMenuButton
+                                isActive={activePane === item.id}
+                                onClick={() => setPreferencesActivePane(item.id)}
+                              >
+                                <HugeiconsIcon icon={item.icon} />
+                                <span>{_(item.label)}</span>
+                              </SidebarMenuButton>
+                            </SidebarMenuItem>
+                          ))}
+                      </SidebarMenu>
+                    </SidebarGroupContent>
+                  </SidebarGroup>
                 )}
+              </SidebarContent>
+            </Sidebar>
+
+            <main className="flex flex-1 flex-col overflow-hidden">
+              <header className="flex h-16 shrink-0 items-center gap-2 border-b md:hidden">
+                <div className="flex flex-1 items-center gap-2 px-4">
+                  <Breadcrumb>
+                    <BreadcrumbList>
+                      <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                          <span>{_(msg`Preferences`)}</span>
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                      <BreadcrumbSeparator />
+                      <BreadcrumbItem>
+                        <BreadcrumbPage>{getPaneTitle(activePane)}</BreadcrumbPage>
+                      </BreadcrumbItem>
+                    </BreadcrumbList>
+                  </Breadcrumb>
+                </div>
+              </header>
+
+              <div className="border-b p-2 md:hidden">
+                <div className="space-y-2">
+                  {/* App Settings */}
+                  <div className="text-xs font-semibold text-muted-foreground px-2">
+                    {_(msg`App Settings`)}
+                  </div>
+                  <div className="grid grid-cols-2 gap-1">
+                    {appSettingsItems.map((item) => (
+                      <Button
+                        key={item.id}
+                        size="sm"
+                        variant={activePane === item.id ? 'secondary' : 'ghost'}
+                        className="justify-start"
+                        onClick={() => setPreferencesActivePane(item.id)}
+                      >
+                        <HugeiconsIcon icon={item.icon} className="mr-1.5 size-4" />
+                        {_(item.label)}
+                      </Button>
+                    ))}
+                  </div>
+
+                  {/* Server Settings */}
+                  {isConnected && (
+                    <>
+                      <div className="text-xs font-semibold text-muted-foreground px-2 pt-2">
+                        {_(msg`Server Settings`)}
+                      </div>
+                      <div className="grid grid-cols-2 gap-1">
+                        {serverSettingsItems
+                          .filter((item) => item.id !== 'users' || (currentUser?.is_admin ?? false))
+                          .map((item) => (
+                            <Button
+                              key={item.id}
+                              size="sm"
+                              variant={activePane === item.id ? 'secondary' : 'ghost'}
+                              className="justify-start"
+                              onClick={() => setPreferencesActivePane(item.id)}
+                            >
+                              <HugeiconsIcon icon={item.icon} className="mr-1.5 size-4" />
+                              {_(item.label)}
+                            </Button>
+                          ))}
+                      </div>
+                    </>
+                  )}
+                </div>
               </div>
-            </div>
 
-            <header className="hidden md:flex h-16 shrink-0 items-center gap-2 border-b px-4">
-              <div className="flex items-center gap-2">
-                <Breadcrumb>
-                  <BreadcrumbList>
-                    <BreadcrumbItem>
-                      <BreadcrumbLink asChild>
-                        <span>{_(msg`Preferences`)}</span>
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                      <BreadcrumbPage>{getPaneTitle(activePane)}</BreadcrumbPage>
-                    </BreadcrumbItem>
-                  </BreadcrumbList>
-                </Breadcrumb>
+              <header className="hidden md:flex h-16 shrink-0 items-center gap-2 border-b px-4">
+                <div className="flex items-center gap-2">
+                  <Breadcrumb>
+                    <BreadcrumbList>
+                      <BreadcrumbItem>
+                        <BreadcrumbLink asChild>
+                          <span>{_(msg`Preferences`)}</span>
+                        </BreadcrumbLink>
+                      </BreadcrumbItem>
+                      <BreadcrumbSeparator />
+                      <BreadcrumbItem>
+                        <BreadcrumbPage>{getPaneTitle(activePane)}</BreadcrumbPage>
+                      </BreadcrumbItem>
+                    </BreadcrumbList>
+                  </Breadcrumb>
+                </div>
+              </header>
+
+              <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0 max-h-[calc(600px-4rem)]">
+                {/* App Settings */}
+                {activePane === 'general' && <GeneralPane />}
+                {activePane === 'appearance' && <AppearancePane />}
+                {activePane === 'advanced' && <AdvancedPane />}
+                {activePane === 'about' && <AboutPane />}
+
+                {/* Server Settings - shown when connected, otherwise show message */}
+                {activePane === 'token' &&
+                  (isConnected ? <ApiTokenPane /> : <ConnectionStatePane />)}
+
+                {/* Categories pane */}
+                {activePane === 'categories' &&
+                  (isConnected ? (
+                    <CategoriesPane
+                      categories={categories}
+                      filteredCategories={filteredCategories}
+                      searchQuery={categorySearchQuery}
+                      onSearchChange={setCategorySearchQuery}
+                      onAddCategory={() => setCategoryDialogState({ mode: 'create' })}
+                      onEditCategory={(category) =>
+                        setCategoryDialogState({ mode: 'edit', category })
+                      }
+                      onDeleteCategory={(category) =>
+                        setDeleteDialogState({
+                          type: 'category',
+                          id: category.id,
+                          title: category.title,
+                        })
+                      }
+                    />
+                  ) : (
+                    <ConnectionStatePane />
+                  ))}
+
+                {/* Feeds pane */}
+                {activePane === 'feeds' &&
+                  (isConnected ? (
+                    <FeedsPane
+                      feeds={feeds}
+                      filteredFeeds={filteredFeeds}
+                      searchQuery={feedSearchQuery}
+                      onSearchChange={setFeedSearchQuery}
+                      onAddFeed={() =>
+                        setFeedDialogState({
+                          mode: 'create',
+                          defaultCategoryId: null,
+                          initialFeedUrl: '',
+                        })
+                      }
+                      onRefreshAll={() => refreshAllFeeds.mutate()}
+                      isRefreshingAll={refreshAllFeeds.isPending}
+                      columns={feedColumns}
+                    />
+                  ) : (
+                    <ConnectionStatePane />
+                  ))}
+
+                {/* Users pane */}
+                {activePane === 'users' &&
+                  (isConnected ? (
+                    <UsersPane
+                      currentUser={currentUser ?? null}
+                      users={users}
+                      isError={usersError}
+                      onAddUser={() => setUserDialogState({ mode: 'create' })}
+                      onEditUser={(user) => setUserDialogState({ mode: 'edit', user })}
+                      onDeleteUser={(user) =>
+                        setDeleteDialogState({
+                          type: 'user',
+                          id: user.id,
+                          title: user.username,
+                        })
+                      }
+                    />
+                  ) : (
+                    <ConnectionStatePane />
+                  ))}
               </div>
-            </header>
+            </main>
+          </SidebarProvider>
+        </DialogContent>
 
-            <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0 max-h-[calc(600px-4rem)]">
-              {/* App Settings */}
-              {activePane === 'general' && <GeneralPane />}
-              {activePane === 'appearance' && <AppearancePane />}
-              {activePane === 'advanced' && <AdvancedPane />}
-              {activePane === 'about' && <AboutPane />}
+        {/* Nested dialogs for Miniflux entities */}
+        <FeedCategoryDialogsHost />
 
-              {/* Server Settings - shown when connected, otherwise show message */}
-              {activePane === 'token' && (isConnected ? <ApiTokenPane /> : <ConnectionStatePane />)}
+        {/* User form dialog */}
+        <UserFormDialog
+          key={
+            userDialogState?.mode === 'create'
+              ? 'create-user'
+              : `edit-user-${userDialogState?.user.id}`
+          }
+          open={!!userDialogState}
+          mode={userDialogState?.mode ?? 'create'}
+          initialUsername={userDialogState?.mode === 'edit' ? userDialogState?.user.username : ''}
+          pending={createUser.isPending || updateUser.isPending}
+          onOpenChange={(open: boolean) => {
+            if (!open) setUserDialogState(null);
+          }}
+          onSubmit={handleSubmitUser}
+        />
 
-              {/* Categories pane */}
-              {activePane === 'categories' &&
-                (isConnected ? (
-                  <CategoriesPane
-                    categories={categories}
-                    filteredCategories={filteredCategories}
-                    searchQuery={categorySearchQuery}
-                    onSearchChange={setCategorySearchQuery}
-                    onAddCategory={() => setCategoryDialogState({ mode: 'create' })}
-                    onEditCategory={(category) =>
-                      setCategoryDialogState({ mode: 'edit', category })
-                    }
-                    onDeleteCategory={(category) =>
-                      setDeleteDialogState({
-                        type: 'category',
-                        id: category.id,
-                        title: category.title,
-                      })
-                    }
-                  />
-                ) : (
-                  <ConnectionStatePane />
-                ))}
-
-              {/* Feeds pane */}
-              {activePane === 'feeds' &&
-                (isConnected ? (
-                  <FeedsPane
-                    feeds={feeds}
-                    filteredFeeds={filteredFeeds}
-                    searchQuery={feedSearchQuery}
-                    onSearchChange={setFeedSearchQuery}
-                    onAddFeed={() =>
-                      setFeedDialogState({
-                        mode: 'create',
-                        defaultCategoryId: null,
-                        initialFeedUrl: '',
-                      })
-                    }
-                    onRefreshAll={() => refreshAllFeeds.mutate()}
-                    isRefreshingAll={refreshAllFeeds.isPending}
-                    columns={feedColumns}
-                  />
-                ) : (
-                  <ConnectionStatePane />
-                ))}
-
-              {/* Users pane */}
-              {activePane === 'users' &&
-                (isConnected ? (
-                  <UsersPane
-                    currentUser={currentUser ?? null}
-                    users={users}
-                    isError={usersError}
-                    onAddUser={() => setUserDialogState({ mode: 'create' })}
-                    onEditUser={(user) => setUserDialogState({ mode: 'edit', user })}
-                    onDeleteUser={(user) =>
-                      setDeleteDialogState({
-                        type: 'user',
-                        id: user.id,
-                        title: user.username,
-                      })
-                    }
-                  />
-                ) : (
-                  <ConnectionStatePane />
-                ))}
-            </div>
-          </main>
-        </SidebarProvider>
-      </DialogContent>
-
-      {/* Nested dialogs for Miniflux entities */}
-      <FeedCategoryDialogsHost />
-
-      {/* User form dialog */}
-      <UserFormDialog
-        key={
-          userDialogState?.mode === 'create'
-            ? 'create-user'
-            : `edit-user-${userDialogState?.user.id}`
-        }
-        open={!!userDialogState}
-        mode={userDialogState?.mode ?? 'create'}
-        initialUsername={userDialogState?.mode === 'edit' ? userDialogState?.user.username : ''}
-        pending={createUser.isPending || updateUser.isPending}
-        onOpenChange={(open: boolean) => {
-          if (!open) setUserDialogState(null);
-        }}
-        onSubmit={handleSubmitUser}
-      />
-
-      {/* Delete confirmation dialog */}
-      <DeleteEntityDialog
-        state={deleteDialogState}
-        pending={deleteCategory.isPending || deleteFeed.isPending || deleteUser.isPending}
-        onOpenChange={(open: boolean) => {
-          if (!open) setDeleteDialogState(null);
-        }}
-        onConfirm={handleConfirmDelete}
-      />
-    </Dialog>
+        {/* Delete confirmation dialog */}
+        <DeleteEntityDialog
+          state={deleteDialogState}
+          pending={deleteCategory.isPending || deleteFeed.isPending || deleteUser.isPending}
+          onOpenChange={(open: boolean) => {
+            if (!open) setDeleteDialogState(null);
+          }}
+          onConfirm={handleConfirmDelete}
+        />
+      </Dialog>
+    </MinifluxSettingsDialogProviderBoundary>
   );
 }
