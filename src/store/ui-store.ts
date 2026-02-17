@@ -2,7 +2,15 @@ import { create } from 'zustand';
 import { devtools } from 'zustand/middleware';
 import { logger } from './logger-middleware';
 
-export type PreferencesPane = 'general' | 'appearance' | 'advanced' | 'about';
+export type PreferencesPane =
+  | 'general'
+  | 'appearance'
+  | 'advanced'
+  | 'about'
+  | 'categories'
+  | 'feeds'
+  | 'users'
+  | 'token';
 
 interface UIState {
   leftSidebarVisible: boolean;
@@ -24,6 +32,7 @@ interface UIState {
   togglePreferences: () => void;
   setPreferencesOpen: (open: boolean) => void;
   setPreferencesActivePane: (pane: PreferencesPane) => void;
+  openPreferencesToPane: (pane: PreferencesPane) => void;
   toggleDownloads: () => void;
   setDownloadsOpen: (open: boolean) => void;
   setLastQuickPaneEntry: (text: string) => void;
@@ -94,6 +103,13 @@ export const useUIStore = create<UIState>()(
 
           setPreferencesActivePane: (pane: PreferencesPane) =>
             set({ preferencesActivePane: pane }, undefined, 'setPreferencesActivePane'),
+
+          openPreferencesToPane: (pane: PreferencesPane) =>
+            set(
+              { preferencesActivePane: pane, preferencesOpen: true },
+              undefined,
+              'openPreferencesToPane'
+            ),
 
           toggleDownloads: () =>
             set(

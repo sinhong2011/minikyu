@@ -160,32 +160,6 @@ describe('UserNav', () => {
     });
   });
 
-  it('shows Miniflux settings action when connected', async () => {
-    customRender(<UserNav />);
-    const trigger = screen.getByRole('button');
-    fireEvent.click(trigger);
-
-    await waitFor(() => {
-      expect(screen.getByText('Miniflux settings')).toBeInTheDocument();
-    });
-  });
-
-  it('hides Miniflux settings action when disconnected', async () => {
-    vi.spyOn(authService, 'useIsConnected').mockReturnValue({
-      data: false,
-      isLoading: false,
-      isError: false,
-    } as any);
-
-    customRender(<UserNav />);
-    const trigger = screen.getByRole('button');
-    fireEvent.click(trigger);
-
-    await waitFor(() => {
-      expect(screen.queryByText('Miniflux settings')).not.toBeInTheDocument();
-    });
-  });
-
   it('calls switchMinifluxAccount when account is selected', async () => {
     // Mock successful switch
     vi.spyOn(tauriBindings.commands, 'switchMinifluxAccount').mockResolvedValue({
