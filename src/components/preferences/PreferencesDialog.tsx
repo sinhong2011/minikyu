@@ -268,7 +268,7 @@ export function PreferencesDialog() {
 
   return (
     <Dialog open={preferencesOpen} onOpenChange={setPreferencesOpen}>
-      <DialogContent className="overflow-hidden p-0 md:max-h-150 md:max-w-225 lg:max-w-250 font-sans rounded-xl">
+      <DialogContent className="overflow-hidden p-0 md:max-h-150 md:max-w-292 lg:max-w-325 font-sans rounded-xl">
         <DialogTitle className="sr-only">{_(msg`Preferences`)}</DialogTitle>
         <DialogDescription className="sr-only">
           {_(msg`Customize your application preferences here.`)}

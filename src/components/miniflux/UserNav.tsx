@@ -1,4 +1,4 @@
-import { Logout01Icon, PreferenceVerticalIcon, Tick01Icon } from '@hugeicons/core-free-icons';
+import { Logout01Icon, Tick01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
@@ -21,7 +21,6 @@ import { cn } from '@/lib/utils';
 import { useAccounts, useActiveAccount } from '@/services/miniflux/accounts';
 import { useIsConnected } from '@/services/miniflux/auth';
 import { useCurrentUser } from '@/services/miniflux/users';
-import { useUIStore } from '@/store/ui-store';
 
 interface UserNavProps {
   compact?: boolean;
@@ -29,8 +28,6 @@ interface UserNavProps {
 
 export function UserNav({ compact = false }: UserNavProps = {}) {
   const { _ } = useLingui();
-  const setPreferencesOpen = useUIStore((state) => state.setPreferencesOpen);
-  const setPreferencesActivePane = useUIStore((state) => state.setPreferencesActivePane);
   const { data: accounts = [] } = useAccounts();
   const { data: currentAccount } = useActiveAccount();
   const { data: isConnected } = useIsConnected();
@@ -100,11 +97,6 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
     } catch (error) {
       logger.error('Error logging out:', { error });
     }
-  };
-
-  const handleOpenSettings = () => {
-    setPreferencesActivePane('categories');
-    setPreferencesOpen(true);
   };
 
   return (
@@ -198,17 +190,6 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
             </MenuItem>
           ))}
         </MenuGroup>
-        {isConnected && (
-          <>
-            <MenuSeparator />
-            <MenuGroup>
-              <MenuItem onClick={handleOpenSettings}>
-                <HugeiconsIcon icon={PreferenceVerticalIcon} className="mr-2 size-4" />
-                {_(msg`Miniflux settings`)}
-              </MenuItem>
-            </MenuGroup>
-          </>
-        )}
         <MenuSeparator />
         <MenuGroup>
           <MenuItem variant="destructive" onClick={handleLogout}>
