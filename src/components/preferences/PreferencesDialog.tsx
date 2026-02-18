@@ -53,6 +53,7 @@ import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import { logger } from '@/lib/logger';
 import { queryClient } from '@/lib/query-client';
 import { commands, type Feed } from '@/lib/tauri-bindings';
+import { cn } from '@/lib/utils';
 import {
   useCategories,
   useCreateMinifluxUser,
@@ -440,13 +441,13 @@ export function PreferencesDialog() {
 
   return (
     <Dialog open={preferencesOpen} onOpenChange={setPreferencesOpen}>
-      <DialogContent className="overflow-hidden p-0 md:max-h-165 md:max-w-248 lg:max-w-276 font-sans rounded-xl">
+      <DialogContent className="flex min-h-0 flex-col gap-0 overflow-hidden p-0 max-h-[90vh] md:h-[50rem] md:max-w-248 lg:max-w-276 font-sans rounded-xl">
         <DialogTitle className="sr-only">{_(msg`Preferences`)}</DialogTitle>
         <DialogDescription className="sr-only">
           {_(msg`Customize your application preferences here.`)}
         </DialogDescription>
 
-        <SidebarProvider className="items-start">
+        <SidebarProvider className="flex-1 min-h-0">
           <Sidebar collapsible="none" className="hidden md:flex bg-background py-4">
             <SidebarContent>
               {/* App Settings Section */}
@@ -495,8 +496,8 @@ export function PreferencesDialog() {
             </SidebarContent>
           </Sidebar>
 
-          <main className="flex flex-1 flex-col overflow-hidden">
-            <header className="flex h-16 shrink-0 items-center gap-2 border-b md:hidden">
+          <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
+            <header className="flex h-16 shrink-0 items-center gap-2 md:hidden">
               <div className="flex flex-1 items-center gap-2 px-4">
                 <Breadcrumb>
                   <BreadcrumbList>
@@ -562,7 +563,7 @@ export function PreferencesDialog() {
               </div>
             </div>
 
-            <header className="hidden md:flex h-16 shrink-0 items-center gap-2 border-b px-4">
+            <header className="hidden md:flex h-16 shrink-0 items-center gap-2 px-4">
               <div className="flex items-center gap-2">
                 <Breadcrumb>
                   <BreadcrumbList>
@@ -580,7 +581,12 @@ export function PreferencesDialog() {
               </div>
             </header>
 
-            <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 max-h-[calc(600px-4rem)]">
+            <div
+              className={cn(
+                'flex min-h-0 flex-1 flex-col gap-4 px-4 py-2',
+                activePane === 'feeds' ? 'overflow-hidden' : 'overflow-y-auto'
+              )}
+            >
               {/* App Settings */}
               {activePane === 'general' && <GeneralPane />}
               {activePane === 'appearance' && <AppearancePane />}
