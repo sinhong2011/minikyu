@@ -1,5 +1,8 @@
 import {
+  AlertCircleIcon,
   ColorsIcon,
+  Delete02Icon,
+  Edit02Icon,
   Folder01Icon,
   InformationCircleIcon,
   Key01Icon,
@@ -12,6 +15,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import type { ColumnDef } from '@tanstack/react-table';
 import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import * as React from 'react';
@@ -45,9 +49,10 @@ import {
   SidebarMenuItem,
   SidebarProvider,
 } from '@/components/ui/sidebar';
+import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import { logger } from '@/lib/logger';
 import { queryClient } from '@/lib/query-client';
-import { commands } from '@/lib/tauri-bindings';
+import { commands, type Feed } from '@/lib/tauri-bindings';
 import {
   useCategories,
   useCreateMinifluxUser,
@@ -198,6 +203,128 @@ export function PreferencesDialog() {
     });
   }, [feeds, normalizedFeedSearchQuery]);
 
+  // Helper function to format relative time
+  const formatRelativeTime = React.useCallback((dateString: string | null | undefined): string => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      const now = new Date();
+      const diffMs = now.getTime() - date.getTime();
+      const diffMins = Math.floor(diffMs / 60000);
+      const diffHours = Math.floor(diffMs / 3600000);
+      const diffDays = Math.floor(diffMs / 86400000);
+
+      if (diffMins < 1) return 'Just now';
+      if (diffMins < 60) return `${diffMins}m ago`;
+      if (diffHours < 24) return `${diffHours}h ago`;
+      if (diffDays < 7) return `${diffDays}d ago`;
+      return date.toLocaleDateString();
+    } catch {
+      return '';
+    }
+  }, []);
+
+  // Feed columns definition
+  const feedColumns = React.useMemo<ColumnDef<Feed>[]>(
+    () => [
+      {
+        accessorKey: 'title',
+        header: _(msg`Feed`),
+        size: 250,
+        cell: ({ row }) => {
+          const feed = row.original;
+          const hasError = (feed.parsing_error_count ?? 0) > 0;
+          return (
+            <div className="flex flex-col items-start gap-1 overflow-hidden text-left">
+              <div className="flex items-center gap-2">
+                <span className="block truncate font-medium">{feed.title}</span>
+                {hasError && (
+                  <Tooltip>
+                    <TooltipTrigger>
+                      <HugeiconsIcon
+                        icon={AlertCircleIcon}
+                        className="size-4 shrink-0 text-destructive"
+                      />
+                    </TooltipTrigger>
+                    <TooltipPanel>
+                      {feed.parsing_error_message || _(msg`Parsing errors`)}
+                    </TooltipPanel>
+                  </Tooltip>
+                )}
+                {feed.disabled && (
+                  <span className="text-xs text-muted-foreground italic">(disabled)</span>
+                )}
+              </div>
+              <span className="block truncate text-xs text-muted-foreground">{feed.feed_url}</span>
+            </div>
+          );
+        },
+      },
+      {
+        accessorKey: 'category',
+        header: _(msg`Category`),
+        size: 120,
+        cell: ({ row }) => {
+          const category = row.original.category;
+          if (!category) {
+            return <span className="text-xs text-muted-foreground italic">{_(msg`None`)}</span>;
+          }
+          return <span className="text-sm">{category.title}</span>;
+        },
+      },
+      {
+        accessorKey: 'checked_at',
+        header: _(msg`Checked`),
+        size: 80,
+        cell: ({ row }) => {
+          const checkedAt = row.original.checked_at;
+          if (!checkedAt) return null;
+          return (
+            <span className="text-xs text-muted-foreground">{formatRelativeTime(checkedAt)}</span>
+          );
+        },
+      },
+      {
+        id: 'actions',
+        header: _(msg`Actions`),
+        size: 80,
+        cell: ({ row }) => {
+          const feed = row.original;
+          return (
+            <div className="flex items-center gap-1">
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() =>
+                  setFeedDialogState({
+                    mode: 'edit',
+                    feed,
+                  })
+                }
+              >
+                <HugeiconsIcon icon={Edit02Icon} className="size-4" />
+              </Button>
+              <Button
+                size="sm"
+                variant="ghost"
+                onClick={() =>
+                  setDeleteDialogState({
+                    type: 'feed',
+                    id: feed.id,
+                    title: feed.title,
+                  })
+                }
+              >
+                <HugeiconsIcon icon={Delete02Icon} className="size-4 text-destructive" />
+              </Button>
+            </div>
+          );
+        },
+      },
+    ],
+    [_, formatRelativeTime]
+  );
+
   // Handler functions
   const handleConfirmDelete = async () => {
     if (!deleteDialogState) return;
@@ -313,7 +440,7 @@ export function PreferencesDialog() {
 
   return (
     <Dialog open={preferencesOpen} onOpenChange={setPreferencesOpen}>
-      <DialogContent className="overflow-hidden p-0 md:max-h-150 md:max-w-292 lg:max-w-325 font-sans rounded-xl">
+      <DialogContent className="overflow-hidden p-0 md:max-h-165 md:max-w-248 lg:max-w-276 font-sans rounded-xl">
         <DialogTitle className="sr-only">{_(msg`Preferences`)}</DialogTitle>
         <DialogDescription className="sr-only">
           {_(msg`Customize your application preferences here.`)}
@@ -453,7 +580,7 @@ export function PreferencesDialog() {
               </div>
             </header>
 
-            <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 pt-0 max-h-[calc(600px-4rem)]">
+            <div className="flex flex-1 flex-col gap-4 overflow-y-auto p-4 max-h-[calc(600px-4rem)]">
               {/* App Settings */}
               {activePane === 'general' && <GeneralPane />}
               {activePane === 'appearance' && <AppearancePane />}
@@ -502,23 +629,11 @@ export function PreferencesDialog() {
                         initialFeedUrl: '',
                       })
                     }
-                    onEditFeed={(feed) =>
-                      setFeedDialogState({
-                        mode: 'edit',
-                        feed,
-                      })
-                    }
-                    onDeleteFeed={(feed) =>
-                      setDeleteDialogState({
-                        type: 'feed',
-                        id: feed.id,
-                        title: feed.title,
-                      })
-                    }
                     onRefreshAll={() => refreshAllFeeds.mutate()}
                     onExportOpml={handleExportOpml}
                     onImportOpml={handleImportOpml}
                     isRefreshingAll={refreshAllFeeds.isPending}
+                    columns={feedColumns}
                   />
                 ) : (
                   <ConnectionStatePane />
