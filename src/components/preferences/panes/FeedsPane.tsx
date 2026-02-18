@@ -44,7 +44,7 @@ export function FeedsPane({
   const { _ } = useLingui();
 
   return (
-    <section className="min-w-0 space-y-3 p-1">
+    <section className="flex h-full min-h-0 min-w-0 flex-col gap-3 p-1">
       <div className="flex items-center gap-2">
         <div className="relative min-w-0 flex-1">
           <HugeiconsIcon
@@ -106,13 +106,13 @@ export function FeedsPane({
           </Tooltip>
         </div>
       </div>
-      <div className="min-w-0 space-y-2">
+      <div className="flex min-h-0 flex-1 min-w-0 flex-col">
         {feeds.length === 0 ? (
           <div className="text-sm text-muted-foreground">{_(msg`No feeds yet`)}</div>
         ) : filteredFeeds.length === 0 ? (
           <div className="text-sm text-muted-foreground">{_(msg`No feeds found`)}</div>
         ) : (
-          <DataTable columns={columns} data={filteredFeeds} />
+          <DataTable columns={columns} data={filteredFeeds} className="h-full" />
         )}
       </div>
     </section>
