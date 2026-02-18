@@ -10,4 +10,6 @@ export * from './categories';
 export * from './counters';
 export * from './entries';
 export * from './feeds';
+export * from './integrations';
 export * from './users';
+export * from './version';

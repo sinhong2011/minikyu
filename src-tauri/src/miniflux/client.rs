@@ -391,6 +391,8 @@ impl MinifluxClient {
     pub async fn get_entries(&self, filters: &EntryFilters) -> Result<EntryResponse, String> {
         let mut query_params = Vec::new();
 
+        log::debug!("Fetching entries with filters: {:?}", filters);
+
         if let Some(status) = &filters.status {
             query_params.push(format!("status={}", status));
         }
@@ -451,6 +453,8 @@ impl MinifluxClient {
         } else {
             format!("entries?{}", query_params.join("&"))
         };
+
+        log::debug!("Query path: {}", path);
 
         self.get(&path).await
     }
@@ -583,6 +587,28 @@ impl MinifluxClient {
         }
 
         self.post("discover", &DiscoverUrl { url }).await
+    }
+
+    // ==================== Version ====================
+
+    /// Get Miniflux version information
+    pub async fn get_version(&self) -> Result<MinifluxVersion, String> {
+        self.get("version").await
+    }
+
+    // ==================== Integrations ====================
+
+    /// Get user integration settings
+    pub async fn get_integrations(&self) -> Result<Integration, String> {
+        self.get("integrations").await
+    }
+
+    // ==================== History Management ====================
+
+    /// Flush history (delete all read entries via API)
+    /// Changes status of all read entries to "removed" (except bookmarks)
+    pub async fn flush_history(&self) -> Result<(), String> {
+        self.delete("flush-history").await
     }
 }
 

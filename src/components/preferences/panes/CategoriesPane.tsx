@@ -4,6 +4,7 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Category } from '@/lib/tauri-bindings';
 
 interface CategoriesPaneProps {
@@ -28,7 +29,7 @@ export function CategoriesPane({
   const { _ } = useLingui();
 
   return (
-    <section className="min-w-0 space-y-3">
+    <section className="min-w-0 space-y-3 p-1">
       <div className="flex items-center gap-2">
         <div className="relative min-w-0 flex-1">
           <HugeiconsIcon
@@ -42,10 +43,14 @@ export function CategoriesPane({
             className="h-9 w-full pl-9"
           />
         </div>
-        <Button size="sm" variant="outline" onClick={onAddCategory}>
-          <HugeiconsIcon icon={Add01Icon} className="mr-1.5 size-4" />
-          {_(msg`Add category`)}
-        </Button>
+        <Tooltip>
+          <TooltipTrigger>
+            <Button className="h-9" variant="ghost" onClick={onAddCategory}>
+              <HugeiconsIcon icon={Add01Icon} className="size-4" />
+            </Button>
+          </TooltipTrigger>
+          <TooltipPanel>{_(msg`Add category`)}</TooltipPanel>
+        </Tooltip>
       </div>
       <div className="min-w-0 space-y-2">
         {categories.length === 0 ? (

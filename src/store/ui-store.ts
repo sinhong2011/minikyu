@@ -10,7 +10,8 @@ export type PreferencesPane =
   | 'categories'
   | 'feeds'
   | 'users'
-  | 'token';
+  | 'token'
+  | 'integrations';
 
 interface UIState {
   leftSidebarVisible: boolean;

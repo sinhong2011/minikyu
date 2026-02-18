@@ -30,7 +30,6 @@ export default defineConfig({
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
-      '@lingui/core/macro': path.resolve(__dirname, './__mocks__/@lingui/core/macro.ts'),
     },
   },
 });

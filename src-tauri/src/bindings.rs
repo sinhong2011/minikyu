@@ -69,7 +69,10 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         miniflux::discover_subscriptions,
         miniflux::export_opml,
         miniflux::import_opml,
+        miniflux::get_miniflux_version,
+        miniflux::get_integrations,
         miniflux::fetch_entry_content,
+        miniflux::flush_history,
         sync::sync_miniflux,
         counters::get_unread_counts,
     ])

@@ -14,6 +14,7 @@ import { Button } from '@/components/ui/button';
 import { logger } from '@/lib/logger';
 import { checkLatestVersion } from '@/lib/updates';
 import { cn } from '@/lib/utils';
+import { useMinifluxVersion } from '@/services/miniflux';
 import { SettingsField, SettingsSection } from '../shared/SettingsComponents';
 
 type UpdateCheckState =
@@ -25,6 +26,11 @@ type UpdateCheckState =
 
 export function AboutPane() {
   const { _ } = useLingui();
+  const {
+    data: minifluxVersion,
+    isLoading: versionLoading,
+    error: versionError,
+  } = useMinifluxVersion();
   const [updateCheckState, setUpdateCheckState] = useState<UpdateCheckState>({ status: 'idle' });
 
   const handleCheckForUpdates = async () => {
@@ -117,6 +123,70 @@ export function AboutPane() {
             </Button>
           </div>
         </SettingsField>
+      </SettingsSection>
+
+      <SettingsSection title={_(msg`Miniflux Server`)}>
+        {versionLoading ? (
+          <SettingsField
+            label={_(msg`Server version`)}
+            description={_(msg`Loading version information...`)}
+          >
+            <HugeiconsIcon
+              icon={Loading03Icon}
+              className="size-4 animate-spin text-muted-foreground"
+            />
+          </SettingsField>
+        ) : versionError ? (
+          <SettingsField
+            label={_(msg`Server version`)}
+            description={_(msg`Could not load server version information.`)}
+          >
+            <HugeiconsIcon icon={Alert01Icon} className="size-4 text-destructive" />
+          </SettingsField>
+        ) : !minifluxVersion ? (
+          <SettingsField
+            label={_(msg`Server version`)}
+            description={_(msg`Connect to Miniflux to see server version.`)}
+          >
+            <HugeiconsIcon icon={InformationCircleIcon} className="size-4 text-muted-foreground" />
+          </SettingsField>
+        ) : (
+          <>
+            <SettingsField label={_(msg`Version`)} description={_(msg`Miniflux server version.`)}>
+              <p className="text-sm font-medium">{minifluxVersion.version}</p>
+            </SettingsField>
+
+            {minifluxVersion.commit && (
+              <SettingsField label={_(msg`Commit`)} description={_(msg`Git commit hash.`)}>
+                <p className="text-sm font-medium font-mono">
+                  {minifluxVersion.commit.slice(0, 7)}
+                </p>
+              </SettingsField>
+            )}
+
+            {minifluxVersion.build_date && (
+              <SettingsField
+                label={_(msg`Build date`)}
+                description={_(msg`Server build timestamp.`)}
+              >
+                <p className="text-sm font-medium">{minifluxVersion.build_date}</p>
+              </SettingsField>
+            )}
+
+            {(minifluxVersion.go_version || minifluxVersion.os || minifluxVersion.arch) && (
+              <SettingsField
+                label={_(msg`Runtime`)}
+                description={_(msg`Server runtime environment.`)}
+              >
+                <p className="text-sm text-muted-foreground">
+                  {[minifluxVersion.go_version, minifluxVersion.os, minifluxVersion.arch]
+                    .filter(Boolean)
+                    .join(' · ')}
+                </p>
+              </SettingsField>
+            )}
+          </>
+        )}
       </SettingsSection>
     </div>
   );
