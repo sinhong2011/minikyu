@@ -29,7 +29,7 @@ export function CategoriesPane({
   const { _ } = useLingui();
 
   return (
-    <section className="min-w-0 space-y-3">
+    <section className="min-w-0 space-y-3 p-1">
       <div className="flex items-center gap-2">
         <div className="relative min-w-0 flex-1">
           <HugeiconsIcon

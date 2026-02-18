@@ -12,7 +12,6 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import type { ColumnDef } from '@tanstack/react-table';
 import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import * as React from 'react';
@@ -48,7 +47,7 @@ import {
 } from '@/components/ui/sidebar';
 import { logger } from '@/lib/logger';
 import { queryClient } from '@/lib/query-client';
-import { commands, type Feed } from '@/lib/tauri-bindings';
+import { commands } from '@/lib/tauri-bindings';
 import {
   useCategories,
   useCreateMinifluxUser,
@@ -198,38 +197,6 @@ export function PreferencesDialog() {
       return titleMatches || urlMatches || categoryMatches;
     });
   }, [feeds, normalizedFeedSearchQuery]);
-
-  // Feed columns definition
-  const feedColumns = React.useMemo<ColumnDef<Feed>[]>(
-    () => [
-      {
-        accessorKey: 'title',
-        header: _(msg`Feed`),
-        size: 250,
-        cell: ({ row }) => {
-          const feed = row.original;
-          return (
-            <div className="flex flex-col items-start gap-1 overflow-hidden text-left">
-              <span className="block truncate font-medium">{feed.title}</span>
-              <span className="block truncate text-xs text-muted-foreground">{feed.feed_url}</span>
-            </div>
-          );
-        },
-      },
-      {
-        accessorKey: 'category',
-        header: _(msg`Category`),
-        cell: ({ row }) => {
-          const category = row.original.category;
-          if (!category) {
-            return null;
-          }
-          return <span className="text-sm">{category.title}</span>;
-        },
-      },
-    ],
-    [_]
-  );
 
   // Handler functions
   const handleConfirmDelete = async () => {
@@ -535,11 +502,23 @@ export function PreferencesDialog() {
                         initialFeedUrl: '',
                       })
                     }
+                    onEditFeed={(feed) =>
+                      setFeedDialogState({
+                        mode: 'edit',
+                        feed,
+                      })
+                    }
+                    onDeleteFeed={(feed) =>
+                      setDeleteDialogState({
+                        type: 'feed',
+                        id: feed.id,
+                        title: feed.title,
+                      })
+                    }
                     onRefreshAll={() => refreshAllFeeds.mutate()}
                     onExportOpml={handleExportOpml}
                     onImportOpml={handleImportOpml}
                     isRefreshingAll={refreshAllFeeds.isPending}
-                    columns={feedColumns}
                   />
                 ) : (
                   <ConnectionStatePane />
