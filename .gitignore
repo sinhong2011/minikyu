@@ -210,3 +210,7 @@ storybook-static
 # =============================================================================
 .opencode/
 openspec/
+
+# Claude Code
+.claude/settings.json
+.claude/statusline-command.sh
