@@ -1,0 +1,221 @@
+/* Splash screen animations */
+
+/* === Entrance === */
+
+@keyframes splash-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes splash-window-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.88);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes splash-mascot-enter {
+  from {
+    opacity: 0;
+    transform: scale(0.8);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes splash-wordmark-enter {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* === Idle loops === */
+
+@keyframes splash-character-float {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-6px) rotate(-0.4deg);
+  }
+}
+
+@keyframes splash-book-bob {
+  0%,
+  100% {
+    transform: translateY(0) rotate(0deg);
+  }
+  50% {
+    transform: translateY(-3px) rotate(-0.9deg);
+  }
+}
+
+@keyframes splash-eye-blink {
+  0%,
+  46%,
+  50%,
+  100% {
+    transform: scaleY(1);
+  }
+  47%,
+  49% {
+    transform: scaleY(0.18);
+  }
+}
+
+@keyframes splash-aura-pulse {
+  0%,
+  100% {
+    transform: scale(0.96);
+    opacity: 0.5;
+  }
+  50% {
+    transform: scale(1.04);
+    opacity: 0.8;
+  }
+}
+
+@keyframes splash-orbit {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes splash-particle-glow {
+  0%,
+  100% {
+    opacity: 0.3;
+    transform: scale(0.8);
+  }
+  50% {
+    opacity: 1;
+    transform: scale(1.1);
+  }
+}
+
+/* === Exit === */
+
+@keyframes splash-backdrop-exit {
+  from {
+    opacity: 1;
+  }
+  to {
+    opacity: 0;
+  }
+}
+
+@keyframes splash-window-exit {
+  from {
+    opacity: 1;
+    transform: scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: scale(0.92);
+  }
+}
+
+/* === Classes === */
+
+.splash-backdrop {
+  background: rgba(0, 0, 0, 0.4);
+  animation: splash-fade-in 400ms ease-out both;
+}
+
+.splash-backdrop[data-exiting="true"] {
+  animation: splash-backdrop-exit 400ms ease-in both;
+}
+
+.splash-window {
+  animation: splash-window-enter 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.splash-backdrop[data-exiting="true"] .splash-window {
+  animation: splash-window-exit 350ms ease-in both;
+}
+
+.splash-mascot {
+  animation: splash-mascot-enter 600ms cubic-bezier(0.16, 1, 0.3, 1) 200ms both;
+}
+
+.splash-wordmark {
+  animation: splash-wordmark-enter 400ms ease-out 500ms both;
+}
+
+.splash-character {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: splash-character-float 3.3s ease-in-out infinite;
+  animation-delay: 600ms;
+}
+
+.splash-book {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: splash-book-bob 2.3s ease-in-out infinite;
+  animation-delay: 600ms;
+}
+
+.splash-eye {
+  transform-box: fill-box;
+  transform-origin: center;
+  animation: splash-eye-blink 4.4s ease-in-out infinite;
+  animation-delay: 600ms;
+}
+
+.splash-aura {
+  animation: splash-aura-pulse 2.7s ease-in-out infinite;
+  animation-delay: 600ms;
+}
+
+.splash-orbit-ring {
+  animation: splash-orbit var(--orbit-duration, 12s) linear infinite;
+}
+
+.splash-particle {
+  animation: splash-particle-glow var(--particle-duration, 2.5s) ease-in-out infinite;
+  animation-delay: var(--particle-delay, 0s);
+}
+
+/* Respect reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  .splash-backdrop,
+  .splash-window,
+  .splash-mascot,
+  .splash-wordmark {
+    animation-duration: 0.01ms !important;
+  }
+
+  .splash-character,
+  .splash-book,
+  .splash-eye,
+  .splash-aura,
+  .splash-orbit-ring,
+  .splash-particle {
+    animation: none;
+  }
+
+  .splash-backdrop[data-exiting="true"],
+  .splash-backdrop[data-exiting="true"] .splash-window {
+    animation-duration: 0.01ms !important;
+  }
+}
