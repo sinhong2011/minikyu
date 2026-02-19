@@ -54,14 +54,15 @@ export function useEntries(filters: EntryFilters = {}) {
     queryKey: entryQueryKeys.list(filters),
     initialPageParam: 0,
     queryFn: async ({ pageParam }): Promise<EntryResponse> => {
+      const requestStart = performance.now();
       const paginationFilters: EntryFilters = {
         ...filters,
         limit: String(ENTRIES_PAGE_SIZE),
         offset: String(pageParam),
       };
 
-      logger.debug('Fetching entries from Miniflux', { filters: paginationFilters });
-      const result = await commands.getEntries(paginationFilters);
+      logger.debug('Fetching entry list from Miniflux', { filters: paginationFilters });
+      const result = await commands.getEntriesList(paginationFilters);
 
       if (result.status === 'error') {
         // Don't show toast for expected "not connected" state
@@ -88,6 +89,7 @@ export function useEntries(filters: EntryFilters = {}) {
         count: result.data.entries?.length ?? 0,
         total: result.data.total,
         offset: pageParam,
+        durationMs: Number((performance.now() - requestStart).toFixed(2)),
       });
 
       // Debug logging for history sort order
@@ -107,6 +109,7 @@ export function useEntries(filters: EntryFilters = {}) {
     },
     getNextPageParam: (_, allPages) => getNextEntriesOffset(allPages),
     select: (data): EntryResponse => {
+      const sortStart = performance.now();
       let entries = data.pages.flatMap((page) => page.entries ?? []);
       const total = data.pages[0]?.total ?? '0';
 
@@ -135,6 +138,7 @@ export function useEntries(filters: EntryFilters = {}) {
         field: sortField,
         direction: filters.direction || 'desc',
         entryCount: entries.length,
+        durationMs: Number((performance.now() - sortStart).toFixed(2)),
       });
 
       return {

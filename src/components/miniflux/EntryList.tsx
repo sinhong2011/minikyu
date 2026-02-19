@@ -593,6 +593,7 @@ export function EntryList({
 
               const entry = row.entry;
               const isNew = newEntryIds.has(entry.id);
+              const thumbnailUrl = extractThumbnail(entry);
 
               return (
                 <motion.div
@@ -662,10 +663,10 @@ export function EntryList({
                           {entry.title}
                         </ItemTitle>
 
-                        {extractThumbnail(entry) && (
+                        {thumbnailUrl && (
                           <div className="relative mt-3 h-32 w-full shrink-0 overflow-hidden rounded-lg border border-border/30 bg-muted">
                             <img
-                              src={extractThumbnail(entry) ?? ''}
+                              src={thumbnailUrl}
                               alt=""
                               className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
                               loading="lazy"

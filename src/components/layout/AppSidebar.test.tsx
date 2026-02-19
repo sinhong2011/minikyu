@@ -387,4 +387,26 @@ describe('AppSidebar', () => {
     expect(screen.queryByText('News')).not.toBeInTheDocument();
     expect(screen.queryByText('TechCrunch')).not.toBeInTheDocument();
   });
+
+  it('shows cached categories when offline', () => {
+    (useIsConnected as any).mockReturnValue({ data: false, isLoading: false });
+
+    renderComponent();
+
+    expect(screen.getByText('Tech')).toBeInTheDocument();
+    expect(screen.getByText('News')).toBeInTheDocument();
+    expect(screen.queryByText('Offline cached data')).not.toBeInTheDocument();
+  });
+
+  it('shows offline cached hint when offline and no cached categories exist', () => {
+    (useIsConnected as any).mockReturnValue({ data: false, isLoading: false });
+    (useCategories as any).mockReturnValue({
+      data: [],
+      isLoading: false,
+    });
+
+    renderComponent();
+
+    expect(screen.getByText('Offline cached data')).toBeInTheDocument();
+  });
 });
