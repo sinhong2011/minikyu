@@ -33,8 +33,12 @@ export function AppProviders({ children }: AppProvidersProps) {
         await buildAppMenu();
         logger.debug('Application menu built');
         setupMenuLanguageListener();
+
+        window.dispatchEvent(new Event('app-init-complete'));
+        logger.debug('Dispatched app-init-complete event');
       } catch (error) {
         logger.warn('Failed to initialize language or menu', { error });
+        window.dispatchEvent(new Event('app-init-complete'));
       }
     };
 
