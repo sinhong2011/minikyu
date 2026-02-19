@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { logger } from '@/lib/logger';
 
 /** Minimum time (ms) splash screen must display to ensure entrance animation completes */
-const MIN_SPLASH_DURATION_MS = 2_000;
+const MIN_SPLASH_DURATION_MS = 1_000;
 
 /** Maximum time (ms) to wait before forcing ready state, prevents permanent splash hang */
 const SAFETY_TIMEOUT_MS = 15_000;
