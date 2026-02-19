@@ -3,18 +3,18 @@ import { useEffect, useState } from 'react';
 import { logger } from '@/lib/logger';
 
 /** Minimum time (ms) splash screen must display to ensure entrance animation completes */
-const MIN_SPLASH_DURATION_MS = 1_000;
+const MIN_SPLASH_DURATION_MS = 150;
 
 /** Maximum time (ms) to wait before forcing ready state, prevents permanent splash hang */
-const SAFETY_TIMEOUT_MS = 15_000;
+const SAFETY_TIMEOUT_MS = 2_500;
 
 /**
  * Tracks app initialization readiness. Returns true when all conditions are met:
  * 1. `database-ready` Tauri event received
  * 2. `app-init-complete` window event received (language + menu built)
- * 3. Minimum 2 seconds elapsed (animation floor)
+ * 3. Minimum splash floor elapsed (animation floor)
  *
- * Includes a 15s safety timeout that forces readiness if signals don't arrive.
+ * Includes a safety timeout that forces readiness if signals don't arrive.
  */
 export function useAppReady(): boolean {
   const [isReady, setIsReady] = useState(false);

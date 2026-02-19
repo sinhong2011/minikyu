@@ -448,6 +448,17 @@ async getEntries(filters: EntryFilters) : Promise<Result<EntryResponse, string>>
 }
 },
 /**
+ * Get lightweight entries for list UI with content preview
+ */
+async getEntriesList(filters: EntryFilters) : Promise<Result<EntryResponse, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_entries_list", { filters }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Get a single entry
  */
 async getEntry(entryId: string) : Promise<Result<Entry, string>> {

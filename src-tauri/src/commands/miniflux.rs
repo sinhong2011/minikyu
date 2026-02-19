@@ -221,6 +221,24 @@ pub async fn get_entries(
     get_entries_from_db(&pool, &filters).await
 }
 
+/// Get lightweight entries for list UI with content preview
+#[tauri::command]
+#[specta::specta]
+pub async fn get_entries_list(
+    state: State<'_, AppState>,
+    filters: EntryFilters,
+) -> Result<crate::miniflux::EntryResponse, String> {
+    let pool = state
+        .db_pool
+        .lock()
+        .await
+        .as_ref()
+        .ok_or("Database not initialized")?
+        .clone();
+
+    get_entries_list_from_db(&pool, &filters).await
+}
+
 /// Get a single entry
 #[tauri::command]
 #[specta::specta]
@@ -801,6 +819,21 @@ pub async fn get_entries_from_db(
     pool: &SqlitePool,
     filters: &EntryFilters,
 ) -> Result<crate::miniflux::EntryResponse, String> {
+    get_entries_from_db_with_projection(pool, filters, false).await
+}
+
+pub async fn get_entries_list_from_db(
+    pool: &SqlitePool,
+    filters: &EntryFilters,
+) -> Result<crate::miniflux::EntryResponse, String> {
+    get_entries_from_db_with_projection(pool, filters, true).await
+}
+
+async fn get_entries_from_db_with_projection(
+    pool: &SqlitePool,
+    filters: &EntryFilters,
+    use_content_preview: bool,
+) -> Result<crate::miniflux::EntryResponse, String> {
     let mut count_query: QueryBuilder<sqlx::Sqlite> = QueryBuilder::new(
         r#"
         SELECT COUNT(*)
@@ -828,11 +861,16 @@ pub async fn get_entries_from_db(
 
     let limit = filters.limit.unwrap_or(100);
     let offset = filters.offset.unwrap_or(0);
+    let content_select = if use_content_preview {
+        "substr(e.content, 1, 1200)"
+    } else {
+        "e.content"
+    };
 
-    let mut query: QueryBuilder<sqlx::Sqlite> = QueryBuilder::new(
+    let mut query: QueryBuilder<sqlx::Sqlite> = QueryBuilder::new(format!(
         r#"
         SELECT e.id, e.user_id, e.feed_id, e.title, e.url, e.comments_url, e.author,
-               e.content, e.hash, e.published_at, e.created_at, e.changed_at, e.status,
+               {content_select} as content, e.hash, e.published_at, e.created_at, e.changed_at, e.status,
                e.share_code, e.starred, e.reading_time,
                f.id as f_id, f.user_id as f_user_id, f.title as f_title, f.site_url as f_site_url,
                f.feed_url as f_feed_url, f.category_id as f_category_id, f.checked_at as f_checked_at,
@@ -855,7 +893,7 @@ pub async fn get_entries_from_db(
         LEFT JOIN categories c ON f.category_id = c.id
         WHERE 1=1
         "#,
-    );
+    ));
 
     apply_entry_filters(&mut query, filters);
 

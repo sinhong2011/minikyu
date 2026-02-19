@@ -24,6 +24,7 @@ import { queryClient } from '@/lib/query-client';
 import type { EntryFilters } from '@/lib/tauri-bindings';
 import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
+import { useActiveAccount } from '@/services/miniflux/accounts';
 import { useIsConnected } from '@/services/miniflux/auth';
 import { useCategories } from '@/services/miniflux/categories';
 import { useUnreadCounts } from '@/services/miniflux/counters';
@@ -48,7 +49,8 @@ export function MinifluxLayout() {
   const categoryId = search.categoryId;
   const feedId = search.feedId;
   const { data: isConnected, isLoading } = useIsConnected();
-  const { data: categories } = useCategories(isConnected ?? false);
+  const { data: activeAccount } = useActiveAccount();
+  const { data: categories } = useCategories();
   const { data: unreadCounts } = useUnreadCounts();
   const [showConnectionDialog, setShowConnectionDialog] = useState(false);
   const selectedEntryId = useUIStore((state) => state.selectedEntryId);
@@ -107,6 +109,17 @@ export function MinifluxLayout() {
 
   // Get entries for logging - needed to log entry data on selection
   const { data: entriesData } = useEntries(mergedFilters);
+  const totalEntries = Number(entriesData?.total ?? '0');
+  const hasCachedEntries = Number.isFinite(totalEntries) && totalEntries > 0;
+  const hasCachedCategories = (categories?.length ?? 0) > 0;
+  const hasCachedUnreadCounts =
+    Number(unreadCounts?.total ?? '0') > 0 ||
+    Number(unreadCounts?.today ?? '0') > 0 ||
+    (unreadCounts?.by_feed?.length ?? 0) > 0 ||
+    (unreadCounts?.by_category?.length ?? 0) > 0;
+  const hasActiveAccount = Boolean(activeAccount);
+  const hasCachedContent =
+    hasCachedEntries || hasCachedCategories || hasCachedUnreadCounts || hasActiveAccount;
 
   // Calculate prev/next navigation
   const currentIndex = entriesData?.entries?.findIndex((e) => e.id === selectedEntryId) ?? -1;
@@ -277,8 +290,8 @@ export function MinifluxLayout() {
     );
   }
 
-  // History and starred pages require online mode
-  if (!isConnected && (filter === 'history' || filter === 'starred')) {
+  // When offline and no local cache is available, history/starred cannot be shown
+  if (!isConnected && !hasCachedContent && (filter === 'history' || filter === 'starred')) {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="text-center max-w-md">
@@ -300,7 +313,7 @@ export function MinifluxLayout() {
     );
   }
 
-  if (!isConnected) {
+  if (!isConnected && !hasCachedContent) {
     return (
       <div className="flex h-full items-center justify-center">
         <div className="text-center max-w-md">

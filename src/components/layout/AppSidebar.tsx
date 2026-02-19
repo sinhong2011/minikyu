@@ -300,7 +300,7 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
   const { _ } = useLingui();
   const { state: sidebarState, setOpen } = useSidebar();
   const { data: isConnected, isLoading: connectionLoading } = useIsConnected();
-  const { data: categories, isLoading: categoriesLoading } = useCategories(isConnected ?? false);
+  const { data: categories, isLoading: categoriesLoading } = useCategories();
   const { data: unreadCounts } = useUnreadCounts();
   const syncMiniflux = useSyncMiniflux();
   const syncing = useSyncStore((state) => state.syncing);
@@ -553,17 +553,17 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
                         </SidebarMenuButton>
                       </SidebarMenuItem>
                     ))
+                  ) : categories && categories.length > 0 ? (
+                    categories.map((category, index) => (
+                      <CategoryItem key={category.id} category={category} index={index} />
+                    ))
                   ) : !isConnected ? (
                     <SidebarMenuItem>
                       <SidebarMenuButton disabled>
                         <span>{_(msg`Offline cached data`)}</span>
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  ) : (
-                    categories?.map((category, index) => (
-                      <CategoryItem key={category.id} category={category} index={index} />
-                    ))
-                  )}
+                  ) : null}
                 </SidebarMenu>
               </SidebarGroupContent>
             </SidebarGroup>

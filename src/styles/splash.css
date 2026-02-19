@@ -138,27 +138,27 @@
 
 .splash-backdrop {
   background: rgba(0, 0, 0, 0.4);
-  animation: splash-fade-in 400ms ease-out both;
+  animation: splash-fade-in 140ms ease-out both;
 }
 
 .splash-backdrop[data-exiting="true"] {
-  animation: splash-backdrop-exit 400ms ease-in both;
+  animation: splash-backdrop-exit 110ms ease-in both;
 }
 
 .splash-window {
-  animation: splash-window-enter 500ms cubic-bezier(0.16, 1, 0.3, 1) both;
+  animation: splash-window-enter 180ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
 
 .splash-backdrop[data-exiting="true"] .splash-window {
-  animation: splash-window-exit 350ms ease-in both;
+  animation: splash-window-exit 90ms ease-in both;
 }
 
 .splash-mascot {
-  animation: splash-mascot-enter 600ms cubic-bezier(0.16, 1, 0.3, 1) 200ms both;
+  animation: splash-mascot-enter 180ms cubic-bezier(0.16, 1, 0.3, 1) 20ms both;
 }
 
 .splash-wordmark {
-  animation: splash-wordmark-enter 400ms ease-out 500ms both;
+  animation: splash-wordmark-enter 120ms ease-out 60ms both;
 }
 
 .splash-character {

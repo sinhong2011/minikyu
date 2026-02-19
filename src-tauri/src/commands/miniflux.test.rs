@@ -269,6 +269,105 @@ mod tests {
         assert_eq!(entries[0].feed.title, "Tech News");
     }
 
+    #[tokio::test]
+    async fn test_get_entries_returns_full_content() {
+        let pool = setup_test_db().await;
+        let now = Utc::now().to_rfc3339();
+
+        insert_category(&pool, 1, "Technology", &now).await;
+        insert_feed(
+            &pool,
+            1,
+            "Tech News",
+            "https://tech.example.com",
+            "https://tech.example.com/rss",
+            1,
+            &now,
+        )
+        .await;
+
+        let long_content = "x".repeat(5000);
+        insert_entry(
+            &pool,
+            1,
+            1,
+            "Long Content Article",
+            "unread",
+            false,
+            &now,
+            Some(long_content.as_str()),
+        )
+        .await;
+
+        let response = super::super::get_entries_from_db(&pool, &EntryFilters::default())
+            .await
+            .expect("get_entries_from_db should not error");
+
+        let entries = response.entries.expect("Should have entries");
+        assert_eq!(entries.len(), 1, "Should return 1 entry");
+        let preview = entries[0]
+            .content
+            .as_ref()
+            .expect("Entry content should be present");
+        assert_eq!(
+            preview.len(),
+            5000,
+            "Full entries should include full content"
+        );
+        assert_eq!(preview, &long_content);
+    }
+
+    #[tokio::test]
+    async fn test_get_entries_list_returns_content_preview_only() {
+        let pool = setup_test_db().await;
+        let now = Utc::now().to_rfc3339();
+
+        insert_category(&pool, 1, "Technology", &now).await;
+        insert_feed(
+            &pool,
+            1,
+            "Tech News",
+            "https://tech.example.com",
+            "https://tech.example.com/rss",
+            1,
+            &now,
+        )
+        .await;
+
+        let long_content = "x".repeat(5000);
+        insert_entry(
+            &pool,
+            1,
+            1,
+            "Long Content Article",
+            "unread",
+            false,
+            &now,
+            Some(long_content.as_str()),
+        )
+        .await;
+
+        let response = super::super::get_entries_list_from_db(&pool, &EntryFilters::default())
+            .await
+            .expect("get_entries_list_from_db should not error");
+
+        let entries = response.entries.expect("Should have entries");
+        assert_eq!(entries.len(), 1, "Should return 1 entry");
+        let preview = entries[0]
+            .content
+            .as_ref()
+            .expect("Preview content should be present");
+        assert_eq!(
+            preview.len(),
+            1200,
+            "List preview should be capped at 1200 chars"
+        );
+        assert!(
+            long_content.starts_with(preview),
+            "Preview should preserve original prefix"
+        );
+    }
+
     // ==================== get_entry tests ====================
 
     #[tokio::test]

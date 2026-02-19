@@ -16,6 +16,11 @@ pub async fn run_migrations(pool: &SqlitePool) -> Result<(), sqlx::Error> {
         record_migration(pool, 2, "add_composite_index").await?;
     }
 
+    if !applied_migrations.contains(&3) {
+        apply_entries_sort_index_migration(pool).await?;
+        record_migration(pool, 3, "add_entries_status_published_at_index").await?;
+    }
+
     Ok(())
 }
 
@@ -73,6 +78,20 @@ pub(crate) async fn apply_composite_index_migration(pool: &SqlitePool) -> Result
         .await?;
 
     log::info!("Composite index migration applied (version 2)");
+
+    Ok(())
+}
+
+pub(crate) async fn apply_entries_sort_index_migration(
+    pool: &SqlitePool,
+) -> Result<(), sqlx::Error> {
+    sqlx::query(
+        "CREATE INDEX IF NOT EXISTS idx_entries_status_published_at ON entries(status, published_at DESC)",
+    )
+    .execute(pool)
+    .await?;
+
+    log::info!("Entries sort index migration applied (version 3)");
 
     Ok(())
 }

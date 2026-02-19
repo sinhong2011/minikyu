@@ -22,6 +22,23 @@ export function SplashScreen({ children }: SplashScreenProps) {
     }
   }, [isReady, isExiting]);
 
+  useEffect(() => {
+    if (!isVisible) {
+      return;
+    }
+
+    const handleKeyDown = (event: KeyboardEvent) => {
+      if (event.key === 'Escape') {
+        setIsExiting(true);
+      }
+    };
+
+    window.addEventListener('keydown', handleKeyDown);
+    return () => {
+      window.removeEventListener('keydown', handleKeyDown);
+    };
+  }, [isVisible]);
+
   const handleAnimationEnd = (e: React.AnimationEvent) => {
     if (isExiting && e.target === e.currentTarget) {
       setIsVisible(false);
@@ -37,6 +54,14 @@ export function SplashScreen({ children }: SplashScreenProps) {
           data-exiting={isExiting}
           onAnimationEnd={handleAnimationEnd}
         >
+          <button
+            type="button"
+            className="absolute inset-0 cursor-default border-none bg-transparent p-0"
+            aria-label="Dismiss splash screen"
+            onClick={() => {
+              setIsExiting(true);
+            }}
+          />
           <div
             className="splash-window relative flex flex-col items-center justify-center overflow-hidden"
             style={{

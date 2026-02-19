@@ -49,6 +49,7 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         miniflux::get_feeds,
         miniflux::get_category_feeds,
         miniflux::get_entries,
+        miniflux::get_entries_list,
         miniflux::get_entry,
         miniflux::mark_entry_read,
         miniflux::mark_entries_read,

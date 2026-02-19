@@ -189,6 +189,7 @@ CREATE INDEX IF NOT EXISTS idx_entries_starred ON entries(starred);
 CREATE INDEX IF NOT EXISTS idx_entries_published_at ON entries(published_at DESC);
 
 CREATE INDEX IF NOT EXISTS idx_entries_user_status ON entries(user_id, STATUS);
+CREATE INDEX IF NOT EXISTS idx_entries_status_published_at ON entries(STATUS, published_at DESC);
 
 CREATE INDEX IF NOT EXISTS idx_enclosures_entry_id ON enclosures(entry_id);
 

@@ -4,6 +4,7 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useActiveAccount } from '@/services/miniflux/accounts';
 import { useIsConnected } from '@/services/miniflux/auth';
 import { useCategories } from '@/services/miniflux/categories';
 import { useUnreadCounts } from '@/services/miniflux/counters';
@@ -24,6 +25,10 @@ vi.mock('@/hooks/use-sync-progress-listener', () => ({
 
 vi.mock('@/services/miniflux/auth', () => ({
   useIsConnected: vi.fn(),
+}));
+
+vi.mock('@/services/miniflux/accounts', () => ({
+  useActiveAccount: vi.fn(),
 }));
 
 vi.mock('@/services/miniflux/categories', () => ({
@@ -129,6 +134,9 @@ describe('MinifluxLayout', () => {
     (useIsConnected as any).mockReturnValue({
       data: true,
       isLoading: false,
+    });
+    (useActiveAccount as any).mockReturnValue({
+      data: { id: '1', username: 'minikyu_dev' },
     });
 
     (useCategories as any).mockReturnValue({ data: [] });
@@ -252,5 +260,90 @@ describe('MinifluxLayout', () => {
     render(<MinifluxLayout />, { wrapper: TestWrapper });
 
     expect(screen.getByText('12,345 unread items')).toBeInTheDocument();
+  });
+
+  it('renders cached content instead of welcome screen when offline', () => {
+    (useIsConnected as any).mockReturnValue({
+      data: false,
+      isLoading: false,
+    });
+    (useCategories as any).mockReturnValue({
+      data: [{ id: '1', title: 'Tech' }],
+    });
+    (useEntries as any).mockReturnValue({
+      data: {
+        entries: [{ id: '1536612' }],
+        total: '1',
+      },
+    });
+
+    render(<MinifluxLayout />, { wrapper: TestWrapper });
+
+    expect(screen.queryByText('Welcome to Miniflux')).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'All' })).toBeInTheDocument();
+  });
+
+  it('shows welcome screen when offline without cached content', () => {
+    (useIsConnected as any).mockReturnValue({
+      data: false,
+      isLoading: false,
+    });
+    (useActiveAccount as any).mockReturnValue({
+      data: null,
+    });
+    (useCategories as any).mockReturnValue({ data: [] });
+    (useUnreadCounts as any).mockReturnValue({
+      data: {
+        total: 0,
+        today: 0,
+        // biome-ignore lint/style/useNamingConvention: API response format
+        by_category: [],
+        // biome-ignore lint/style/useNamingConvention: API response format
+        by_feed: [],
+      },
+    });
+    (useEntries as any).mockReturnValue({
+      data: {
+        entries: [],
+        total: '0',
+      },
+    });
+
+    render(<MinifluxLayout />, { wrapper: TestWrapper });
+
+    expect(screen.getByText('Welcome to Miniflux')).toBeInTheDocument();
+    expect(screen.getByRole('button', { name: 'Connect to Server' })).toBeInTheDocument();
+  });
+
+  it('does not show welcome screen when offline with an active local account', () => {
+    (useIsConnected as any).mockReturnValue({
+      data: false,
+      isLoading: false,
+    });
+    (useActiveAccount as any).mockReturnValue({
+      data: { id: '1', username: 'minikyu_dev' },
+    });
+    (useCategories as any).mockReturnValue({ data: [] });
+    (useUnreadCounts as any).mockReturnValue({
+      data: {
+        total: 0,
+        today: 0,
+        // biome-ignore lint/style/useNamingConvention: API response format
+        by_category: [],
+        // biome-ignore lint/style/useNamingConvention: API response format
+        by_feed: [],
+      },
+    });
+    (useEntries as any).mockReturnValue({
+      data: {
+        entries: [],
+        total: '0',
+      },
+    });
+
+    render(<MinifluxLayout />, { wrapper: TestWrapper });
+
+    expect(screen.queryByText('Welcome to Miniflux')).not.toBeInTheDocument();
+    expect(screen.getByRole('heading', { name: 'All' })).toBeInTheDocument();
   });
 });
