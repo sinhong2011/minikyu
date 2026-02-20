@@ -317,9 +317,22 @@
   }
 }
 
-.reader-node-block:has([data-translation-loading]) {
-  border-radius: 12px;
+/* Shimmer lives on a ::before that is always running but normally invisible.
+   Fading opacity in/out gives smooth appearance and disappearance. */
+.reader-node-block::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 0.4s ease;
   animation: translation-loading-shimmer 2.4s ease-in-out infinite;
+}
+
+.reader-node-block:has([data-translation-loading])::before {
+  opacity: 1;
+  transition-duration: 0.18s;
 }
 
 @keyframes translation-appear {
@@ -338,9 +351,14 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .reader-node-block:has([data-translation-loading]) {
+  .reader-node-block::before {
     animation: none;
-    outline: 1.5px solid oklch(65% 0.18 264 / 0.5);
+    transition: none;
+  }
+
+  .reader-node-block:has([data-translation-loading])::before {
+    opacity: 1;
+    box-shadow: 0 0 0 1.5px oklch(65% 0.18 264 / 0.5);
   }
   .reader-translation-block {
     animation: none;
