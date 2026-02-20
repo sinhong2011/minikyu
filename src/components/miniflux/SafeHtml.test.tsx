@@ -1,8 +1,19 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { describe, expect, it, vi } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vitest';
 import { SafeHtml } from './SafeHtml';
+
+beforeAll(() => {
+  vi.stubGlobal(
+    'ResizeObserver',
+    class ResizeObserver {
+      observe = vi.fn();
+      unobserve = vi.fn();
+      disconnect = vi.fn();
+    }
+  );
+});
 
 vi.mock('dompurify', () => ({
   default: {
@@ -136,5 +147,23 @@ describe('SafeHtml reader node blocks', () => {
     expect(tableNode).toBeInTheDocument();
     expect(tableNode?.querySelector('[data-reader-node-menu-trigger="true"]')).toBeNull();
     expect((tableNode?.getAttribute('class') ?? '').includes('group/reader-node')).toBe(false);
+  });
+
+  it('renders ParticleColumn canvas when paragraph has data-translation-loading', () => {
+    render(
+      <TestWrapper>
+        <SafeHtml html='<p data-translation-loading="true">Translating paragraph</p>' />
+      </TestWrapper>
+    );
+    expect(document.querySelector('canvas')).toBeInTheDocument();
+  });
+
+  it('does not render ParticleColumn canvas for normal paragraphs', () => {
+    render(
+      <TestWrapper>
+        <SafeHtml html="<p>Normal paragraph</p>" />
+      </TestWrapper>
+    );
+    expect(document.querySelector('canvas')).not.toBeInTheDocument();
   });
 });

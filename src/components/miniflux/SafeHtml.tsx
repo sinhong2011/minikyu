@@ -43,6 +43,7 @@ import {
 import type { ChineseConversionMode, ChineseConversionRule } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
 import { ImageViewer } from './ImageViewer';
+import { ParticleColumn } from './ParticleColumn';
 
 interface Image {
   src: string;
@@ -621,7 +622,7 @@ export function sanitizeReaderHtml(html: string): string {
     // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
     USE_PROFILES: { html: true },
     // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
-    ADD_ATTR: ['target', 'rel'],
+    ADD_ATTR: ['target', 'rel', 'data-translation-loading'],
   });
 }
 
@@ -1120,12 +1121,14 @@ export function SafeHtml({
       nodeText,
       children,
       interactive = true,
+      showParticles = false,
     }: {
       nodeTag: string;
       textLength: number;
       nodeText: string;
       children: React.ReactNode;
       interactive?: boolean;
+      showParticles?: boolean;
     }) => {
       const shouldUseLayoutCenter = nodeTag !== 'pre' && nodeTag !== 'table';
       const nodeIndex = readerNodeIndex;
@@ -1144,6 +1147,7 @@ export function SafeHtml({
             shouldUseLayoutCenter && 'flex justify-center'
           )}
         >
+          {showParticles && <ParticleColumn />}
           {interactive && (
             <div className="absolute top-1 right-1 z-20">
               <Menu>
@@ -1387,11 +1391,15 @@ export function SafeHtml({
           );
           const isImageOnlyBlock = hasImageContent && blockText.length === 0;
 
+          const isTranslationLoading =
+            domNode.name === 'p' && domNode.attribs['data-translation-loading'] === 'true';
+
           return wrapReaderNodeBlock({
             nodeTag: domNode.name,
             textLength: blockText.length,
             nodeText: blockText,
             interactive: !isImageOnlyBlock,
+            showParticles: isTranslationLoading,
             children: createElement(
               domNode.name,
               normalizedProps,
