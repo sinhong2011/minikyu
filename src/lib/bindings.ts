@@ -743,17 +743,25 @@ async getUnreadCounts() : Promise<Result<UnreadCounts, string>> {
 },
 /**
  * Opens an in-app browser webview at the given logical-pixel bounds.
- * 
+ *
  * If a browser webview is already open, navigates it to the new URL and
  * updates its bounds. Otherwise creates a new child webview attached to
  * the main window.
- * 
+ *
  * `x`, `y`, `width`, `height` are CSS logical pixels from
  * `getBoundingClientRect()` — no devicePixelRatio scaling needed.
  */
 async openInAppBrowser(url: string, x: number, y: number, width: number, height: number, isDark: boolean) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("open_in_app_browser", { url, x, y, width, height, isDark }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async saveTranslationProviderKey(provider: string, profile: string, apiKey: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("save_translation_provider_key", { provider, profile, apiKey }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -770,14 +778,30 @@ async closeInAppBrowser() : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async deleteTranslationProviderKey(provider: string, profile: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("delete_translation_provider_key", { provider, profile }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 /**
  * Updates the position and size of the browser webview.
- * 
+ *
  * Called by the React ResizeObserver whenever the browser pane changes size.
  */
 async resizeBrowserWebview(x: number, y: number, width: number, height: number) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("resize_browser_webview", { x, y, width, height }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async getTranslationProviderKeyStatus(provider: string, profile: string) : Promise<Result<boolean, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_translation_provider_key_status", { provider, profile }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -796,13 +820,20 @@ async reloadBrowserWebview() : Promise<Result<null, string>> {
 },
 /**
  * Synchronises the browser webview's color scheme with the app theme.
- * 
- * Uses Tauri's Webview::eval() API to set colorScheme on the page root.
+ *
  * The injected value is always "dark" or "light" — no user input involved.
  */
 async syncBrowserTheme(isDark: boolean) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("sync_browser_theme", { isDark }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async translateReaderSegment(request: TranslationSegmentRequest) : Promise<Result<TranslationSegmentResponse, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("translate_reader_segment", { request }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -909,6 +940,42 @@ reader_status_bar: boolean;
  * User-defined term conversion rules applied after Chinese conversion.
  */
 reader_custom_conversions?: ChineseConversionRule[]; 
+/**
+ * Reader translation display mode.
+ */
+reader_translation_display_mode: ReaderTranslationDisplayMode; 
+/**
+ * Reader translation trigger mode.
+ */
+reader_translation_trigger_mode: ReaderTranslationTriggerMode; 
+/**
+ * Reader translation routing mode.
+ */
+reader_translation_route_mode: ReaderTranslationRouteMode; 
+/**
+ * Reader translation target language.
+ */
+reader_translation_target_language: string | null; 
+/**
+ * Reader translation primary engine identifier.
+ */
+reader_translation_primary_engine: string | null; 
+/**
+ * Reader translation engine fallback identifiers.
+ */
+reader_translation_engine_fallbacks?: string[]; 
+/**
+ * Reader translation LLM fallback identifiers.
+ */
+reader_translation_llm_fallbacks?: string[]; 
+/**
+ * Whether Apple built-in fallback is enabled.
+ */
+reader_translation_apple_fallback_enabled: boolean; 
+/**
+ * Translation provider runtime settings keyed by provider id.
+ */
+reader_translation_provider_settings?: Partial<{ [key in string]: ReaderTranslationProviderSettings }>; 
 /**
  * Default download path for images (null = ask every time)
  */
@@ -1045,6 +1112,43 @@ export type MinifluxConnection = { id: string; username: string; server_url: str
  */
 export type MinifluxVersion = { version: string; commit?: string | null; build_date?: string | null; go_version?: string | null; arch?: string | null; os?: string | null }
 /**
+ * Reader translation rendering mode.
+ */
+export type ReaderTranslationDisplayMode = "bilingual" | "translated_only"
+/**
+ * Runtime settings for one translation provider.
+ */
+export type ReaderTranslationProviderSettings = { 
+/**
+ * Whether this provider is allowed to be used.
+ */
+enabled: boolean; 
+/**
+ * Optional provider base URL override.
+ */
+base_url: string | null; 
+/**
+ * Optional model override. Required for LLM providers.
+ */
+model: string | null; 
+/**
+ * Optional timeout in milliseconds.
+ */
+timeout_ms: number | null; 
+/**
+ * Optional system prompt override for LLM providers.
+ * Supports {source_lang} and {target_lang} placeholders.
+ */
+system_prompt: string | null }
+/**
+ * Reader translation routing strategy mode.
+ */
+export type ReaderTranslationRouteMode = "engine_first" | "hybrid_auto"
+/**
+ * Reader translation trigger mode.
+ */
+export type ReaderTranslationTriggerMode = "manual" | "per_article_auto"
+/**
  * Error types for recovery operations (typed for frontend matching)
  */
 export type RecoveryError = 
@@ -1074,6 +1178,8 @@ export type RecoveryError =
 export type Subscription = { url: string; title: string; type: string }
 export type SyncSummary = { entries_pulled: number; entries_pushed: number; feeds_pulled: number; categories_pulled: number }
 export type SystemTime = { duration_since_epoch: string; duration_since_unix_epoch: number }
+export type TranslationSegmentRequest = { text: string; source_language: string | null; target_language: string; route_mode: string; primary_engine: string | null; engine_fallbacks: string[]; llm_fallbacks: string[]; apple_fallback_enabled: boolean }
+export type TranslationSegmentResponse = { translated_text: string; provider_used: string; fallback_chain: string[] }
 /**
  * Tray icon states for visual feedback
  */
