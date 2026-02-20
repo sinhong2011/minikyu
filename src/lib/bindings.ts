@@ -977,6 +977,10 @@ reader_translation_apple_fallback_enabled: boolean;
  */
 reader_translation_provider_settings?: Partial<{ [key in string]: ReaderTranslationProviderSettings }>; 
 /**
+ * Whether translation is automatically enabled for all entries.
+ */
+reader_translation_auto_enabled?: boolean; 
+/**
  * Default download path for images (null = ask every time)
  */
 image_download_path: string | null; 
