@@ -159,6 +159,9 @@ pub struct AppPreferences {
     /// Translation provider runtime settings keyed by provider id.
     #[serde(default)]
     pub reader_translation_provider_settings: HashMap<String, ReaderTranslationProviderSettings>,
+    /// Whether translation is automatically enabled for all entries.
+    #[serde(default)]
+    pub reader_translation_auto_enabled: bool,
     /// Default download path for images (null = ask every time)
     pub image_download_path: Option<String>,
     /// Default download path for videos (null = ask every time)
@@ -193,6 +196,7 @@ impl Default for AppPreferences {
             reader_translation_llm_fallbacks: vec![],
             reader_translation_apple_fallback_enabled: false,
             reader_translation_provider_settings: HashMap::new(),
+            reader_translation_auto_enabled: false,
             image_download_path: None,
             video_download_path: None,
         }
@@ -686,5 +690,18 @@ mod tests {
         );
         let result = validate_reader_translation_provider_settings(&provider_settings);
         assert!(result.is_ok());
+    }
+
+    #[test]
+    fn app_preferences_translation_auto_enabled_defaults_to_false() {
+        let prefs = AppPreferences::default();
+        assert!(!prefs.reader_translation_auto_enabled);
+    }
+
+    #[test]
+    fn app_preferences_translation_auto_enabled_deserializes_missing_field_as_false() {
+        let json = "{}";
+        let prefs: AppPreferences = serde_json::from_str(json).unwrap();
+        assert!(!prefs.reader_translation_auto_enabled);
     }
 }
