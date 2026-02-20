@@ -8,6 +8,7 @@ use tauri::{AppHandle, Manager};
 use crate::types::{
     validate_chinese_conversion_mode, validate_custom_chinese_conversions, validate_download_path,
     validate_language, validate_reader_code_theme, validate_reader_settings, validate_reader_theme,
+    validate_reader_translation_fallbacks, validate_reader_translation_provider_settings,
     validate_string_input, validate_theme, AppPreferences,
 };
 
@@ -120,6 +121,17 @@ pub async fn save_preferences(app: AppHandle, preferences: AppPreferences) -> Re
     validate_reader_code_theme(&preferences.reader_code_theme)?;
     validate_chinese_conversion_mode(preferences.reader_chinese_conversion)?;
     validate_custom_chinese_conversions(&preferences.reader_custom_conversions)?;
+    validate_reader_translation_fallbacks(
+        &preferences.reader_translation_engine_fallbacks,
+        "reader_translation_engine_fallbacks",
+    )?;
+    validate_reader_translation_fallbacks(
+        &preferences.reader_translation_llm_fallbacks,
+        "reader_translation_llm_fallbacks",
+    )?;
+    validate_reader_translation_provider_settings(
+        &preferences.reader_translation_provider_settings,
+    )?;
 
     // Validate download paths
     validate_download_path(&preferences.image_download_path)?;

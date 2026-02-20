@@ -19,6 +19,7 @@ Technical documentation for building and extending this app. These docs describe
 | [Keyboard Shortcuts](./keyboard-shortcuts.md) | Global shortcut handling, platform modifiers    |
 | [Menus](./menus.md)                           | Native menu building with i18n                  |
 | [Quick Panes](./quick-panes.md)               | Multi-window quick entry pattern                |
+| [Reader Immersive Translation](./reader-immersive-translation.md) | Reader translation routing, UI flow, keyring policy |
 | [Tauri Commands](./tauri-commands.md)         | Type-safe Rust-TypeScript bridge (tauri-specta) |
 | [Tauri Plugins](./tauri-plugins.md)           | Plugin usage and configuration                  |
 

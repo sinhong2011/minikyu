@@ -18,6 +18,10 @@ describe('preferences', () => {
         expect(result.data.reader_font_size).toBe(16);
         expect(result.data.reader_line_width).toBe(65);
         expect(result.data.reader_font_family).toBe('sans-serif');
+        expect(result.data.reader_translation_display_mode).toBeDefined();
+        expect(result.data.reader_translation_trigger_mode).toBeDefined();
+        expect(result.data.reader_translation_route_mode).toBeDefined();
+        expect(result.data.reader_translation_apple_fallback_enabled).toBeDefined();
       }
     });
   });

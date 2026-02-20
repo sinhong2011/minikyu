@@ -233,3 +233,24 @@ See [data-persistence.md](./data-persistence.md) for SQLite setup.
 | Type safety     | tauri-specta (same as local commands)    |
 | Error handling  | Result types, see error-handling.md      |
 | Offline support | Cache to SQLite, fallback on network err |
+
+## Immersive Translation Integration
+
+Reader immersive translation follows the same backend-first external API pattern:
+
+- Frontend calls a typed Tauri command (`translate_reader_segment`) instead of calling providers directly.
+- Backend performs deterministic fallback routing across configured providers.
+- Provider credentials are stored in OS keyring and never exposed to frontend.
+
+### Translation-specific keyring convention
+
+Translation provider keys use:
+
+- service: `minikyu:translation:{provider}:{profile}`
+- account: provider/profile combination resolved by backend command
+
+Only status (`configured` / `not configured`) is sent back to frontend.
+
+### Related docs
+
+- [Reader Immersive Translation](./reader-immersive-translation.md)
