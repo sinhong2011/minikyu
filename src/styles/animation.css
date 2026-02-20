@@ -289,7 +289,45 @@
   animation: entry-empty-signal 1.7s ease-in-out infinite;
 }
 
+@keyframes translation-loading-shimmer {
+  0% {
+    box-shadow:
+      0 0 0 1.5px oklch(65% 0.18 264 / 0.75),
+      0 0 10px 2px oklch(65% 0.18 264 / 0.18);
+  }
+  25% {
+    box-shadow:
+      0 0 0 1.5px oklch(65% 0.18 320 / 0.75),
+      0 0 10px 2px oklch(65% 0.18 320 / 0.18);
+  }
+  50% {
+    box-shadow:
+      0 0 0 1.5px oklch(65% 0.18 180 / 0.75),
+      0 0 10px 2px oklch(65% 0.18 180 / 0.18);
+  }
+  75% {
+    box-shadow:
+      0 0 0 1.5px oklch(65% 0.18 30 / 0.75),
+      0 0 10px 2px oklch(65% 0.18 30 / 0.18);
+  }
+  100% {
+    box-shadow:
+      0 0 0 1.5px oklch(65% 0.18 264 / 0.75),
+      0 0 10px 2px oklch(65% 0.18 264 / 0.18);
+  }
+}
+
+.reader-translation-loading {
+  border-radius: 4px;
+  animation: translation-loading-shimmer 2.4s ease-in-out infinite;
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .reader-translation-loading {
+    animation: none;
+    outline: 1.5px solid oklch(65% 0.18 264 / 0.5);
+  }
+
   .entry-empty-hero,
   .entry-empty-aura,
   .entry-empty-book,
