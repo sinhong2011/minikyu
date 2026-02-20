@@ -167,6 +167,7 @@ describe('useReaderSettings translation preferences', () => {
 
   it('defaults translationAutoEnabled to false when preference is not set', () => {
     (usePreferences as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      // biome-ignore lint/style/useNamingConvention: preferences field name
       data: createPreferences({ reader_translation_auto_enabled: undefined }),
       isLoading: false,
     });
@@ -178,6 +179,7 @@ describe('useReaderSettings translation preferences', () => {
 
   it('reads translationAutoEnabled from preferences', () => {
     (usePreferences as unknown as ReturnType<typeof vi.fn>).mockReturnValue({
+      // biome-ignore lint/style/useNamingConvention: preferences field name
       data: createPreferences({ reader_translation_auto_enabled: true }),
       isLoading: false,
     });
