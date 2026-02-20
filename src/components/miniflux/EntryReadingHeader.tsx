@@ -42,7 +42,8 @@ import { useReaderSettings } from '@/hooks/use-reader-settings';
 import type { Entry } from '@/lib/bindings';
 import { normalizeReaderTheme, type ReaderTheme, readerThemeOptions } from '@/lib/reader-theme';
 import { type ReaderCodeTheme, readerCodeThemeOptions } from '@/lib/shiki-highlight';
-import type { ChineseConversionMode } from '@/lib/tauri-bindings';
+import type { AppPreferences, ChineseConversionMode } from '@/lib/tauri-bindings';
+import { cn } from '@/lib/utils';
 import { ReaderSettings } from './ReaderSettings';
 
 interface EntryReadingHeaderProps {
@@ -69,6 +70,15 @@ interface EntryReadingHeaderProps {
   titleScale: MotionValue<number>;
   titleY: MotionValue<number>;
   titleMaxHeight: MotionValue<number>;
+  translationEnabled: boolean;
+  onTranslationEnabledChange: (enabled: boolean) => void;
+  translationDisplayMode: AppPreferences['reader_translation_display_mode'];
+  onTranslationDisplayModeChange: (mode: AppPreferences['reader_translation_display_mode']) => void;
+  translationTargetLanguage: AppPreferences['reader_translation_target_language'];
+  onTranslationTargetLanguageChange: (
+    language: AppPreferences['reader_translation_target_language']
+  ) => void;
+  activeTranslationProvider: string | null;
 }
 
 export function EntryReadingHeader({
@@ -95,6 +105,13 @@ export function EntryReadingHeader({
   titleScale,
   titleY,
   titleMaxHeight,
+  translationEnabled,
+  onTranslationEnabledChange,
+  translationDisplayMode,
+  onTranslationDisplayModeChange,
+  translationTargetLanguage,
+  onTranslationTargetLanguageChange,
+  activeTranslationProvider,
 }: EntryReadingHeaderProps) {
   const { _ } = useLingui();
   const {
@@ -121,6 +138,16 @@ export function EntryReadingHeader({
     { value: 's2tw', label: _(msg`繁體中文（台灣）`) },
     { value: 't2s', label: _(msg`簡體中文`) },
   ];
+  const translationTargetLanguageOptions = [
+    { value: 'en', label: _(msg`English`) },
+    { value: 'zh-CN', label: _(msg`Chinese (Simplified)`) },
+    { value: 'zh-TW', label: _(msg`Chinese (Traditional)`) },
+    { value: 'ja', label: _(msg`Japanese`) },
+    { value: 'ko', label: _(msg`Korean`) },
+    { value: 'es', label: _(msg`Spanish`) },
+    { value: 'fr', label: _(msg`French`) },
+    { value: 'de', label: _(msg`German`) },
+  ] as const;
 
   const formatCodeThemeLabel = (theme: ReaderCodeTheme) => {
     if (theme === 'auto') {
@@ -148,8 +175,20 @@ export function EntryReadingHeader({
         return _(msg`Default`);
     }
   };
+  const getTranslationProviderLabel = (provider: string) => {
+    if (provider === 'apple_built_in') {
+      return _(msg`Apple Built-in`);
+    }
+
+    return provider
+      .split('_')
+      .filter((part) => part.length > 0)
+      .map((part) => part.charAt(0).toUpperCase() + part.slice(1))
+      .join(' ');
+  };
   const toolbarButtonClass =
     'h-9 w-9 rounded-xl border border-transparent text-muted-foreground/90 hover:bg-accent/70 hover:text-foreground data-[state=open]:border-border/60 data-[state=open]:bg-accent/70 data-[state=open]:text-foreground';
+  const translationControlActive = translationEnabled;
 
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [copiedShareCode, setCopiedShareCode] = useState(false);
@@ -260,6 +299,117 @@ export function EntryReadingHeader({
           </div>
 
           <div className="flex items-center gap-1.5">
+            <Popover>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <PopoverTrigger
+                      render={
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className={cn(
+                            toolbarButtonClass,
+                            'relative',
+                            translationControlActive &&
+                              'border-border/60 bg-accent/70 text-foreground'
+                          )}
+                          aria-label={_(msg`Translation options`)}
+                        >
+                          <HugeiconsIcon icon={Globe02Icon} className="h-5 w-5" strokeWidth={2} />
+                          {translationControlActive && (
+                            <span
+                              className="absolute -end-0.5 -top-0.5 size-2 rounded-full bg-primary"
+                              aria-hidden="true"
+                            />
+                          )}
+                        </Button>
+                      }
+                    />
+                  }
+                />
+                <TooltipPanel>{_(msg`Translation`)}</TooltipPanel>
+              </Tooltip>
+              <PopoverContent
+                className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/95 p-3.5 shadow-xl"
+                side="bottom"
+                align="end"
+              >
+                <PopoverHeader>
+                  <PopoverTitle>{_(msg`Translation`)}</PopoverTitle>
+                  <p className="text-[11px] leading-snug text-muted-foreground">
+                    {_(msg`Translate this article and tune how translated text is shown.`)}
+                  </p>
+                </PopoverHeader>
+
+                <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
+                  <div className="space-y-0.5">
+                    <p className="text-xs font-medium">{_(msg`Translate now`)}</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      {_(msg`Applies to all articles when enabled`)}
+                    </p>
+                  </div>
+                  <Switch
+                    checked={translationEnabled}
+                    onCheckedChange={(checked) => onTranslationEnabledChange(Boolean(checked))}
+                    aria-label={_(msg`Translate now`)}
+                  />
+                </div>
+
+                <div className="space-y-1.5">
+                  <p className="text-xs text-muted-foreground">{_(msg`Target language`)}</p>
+                  <Select
+                    value={translationTargetLanguage ?? 'en'}
+                    onValueChange={(value) => onTranslationTargetLanguageChange(value)}
+                  >
+                    <SelectTrigger className="h-8 w-full text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {translationTargetLanguageOptions.map((option) => (
+                        <SelectItem key={option.value} value={option.value}>
+                          {option.label}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-1.5">
+                  <p className="text-xs text-muted-foreground">{_(msg`Display mode`)}</p>
+                  <Select
+                    value={translationDisplayMode}
+                    onValueChange={(value) =>
+                      onTranslationDisplayModeChange(
+                        value as AppPreferences['reader_translation_display_mode']
+                      )
+                    }
+                  >
+                    <SelectTrigger className="h-8 w-full text-xs">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="bilingual">{_(msg`Bilingual`)}</SelectItem>
+                      <SelectItem value="translated_only">{_(msg`Translated only`)}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {activeTranslationProvider && (
+                  <div
+                    className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2"
+                    data-testid="active-translation-provider-badge"
+                  >
+                    <p className="text-xs text-muted-foreground">{_(msg`Provider`)}</p>
+                    <p className="text-xs font-medium">
+                      {getTranslationProviderLabel(activeTranslationProvider)}
+                    </p>
+                  </div>
+                )}
+              </PopoverContent>
+            </Popover>
+
             <ReaderSettings />
 
             <Popover>

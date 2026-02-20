@@ -20,14 +20,14 @@ msgid "{0} / {1} entries"
 msgstr "{0} / {1} entries"
 
 #. placeholder {0}: selectedProviderDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1327
-#: src/components/preferences/panes/TranslationPane.tsx:1332
+#: src/components/preferences/panes/TranslationPane.tsx:1330
+#: src/components/preferences/panes/TranslationPane.tsx:1335
 msgid "{0} API key"
 msgstr ""
 
 #. placeholder {0}: selectedProviderDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1215
-#: src/components/preferences/panes/TranslationPane.tsx:1220
+#: src/components/preferences/panes/TranslationPane.tsx:1218
+#: src/components/preferences/panes/TranslationPane.tsx:1223
 msgid "{0} base URL"
 msgstr ""
 
@@ -57,8 +57,8 @@ msgid "{0} feeds synced"
 msgstr "{0} feeds synced"
 
 #. placeholder {0}: selectedProviderDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1244
-#: src/components/preferences/panes/TranslationPane.tsx:1249
+#: src/components/preferences/panes/TranslationPane.tsx:1247
+#: src/components/preferences/panes/TranslationPane.tsx:1252
 msgid "{0} model"
 msgstr ""
 
@@ -69,14 +69,14 @@ msgid "{0} of {1} entries downloaded"
 msgstr "{0} of {1} entries downloaded"
 
 #. placeholder {0}: selectedProviderDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1271
-#: src/components/preferences/panes/TranslationPane.tsx:1279
+#: src/components/preferences/panes/TranslationPane.tsx:1274
+#: src/components/preferences/panes/TranslationPane.tsx:1282
 msgid "{0} system prompt"
 msgstr ""
 
 #. placeholder {0}: selectedProviderDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1301
-#: src/components/preferences/panes/TranslationPane.tsx:1306
+#: src/components/preferences/panes/TranslationPane.tsx:1304
+#: src/components/preferences/panes/TranslationPane.tsx:1309
 msgid "{0} timeout (ms)"
 msgstr ""
 
@@ -85,11 +85,11 @@ msgstr ""
 msgid "{0} total"
 msgstr "{0} total"
 
-#: src/components/miniflux/EntryReading.tsx:204
+#: src/components/miniflux/EntryReading.tsx:208
 msgid "{minutesLeft} min left"
 msgstr ""
 
-#: src/components/miniflux/EntryReading.tsx:203
+#: src/components/miniflux/EntryReading.tsx:207
 msgid "{progressPercent}% read"
 msgstr ""
 
@@ -230,7 +230,7 @@ msgstr ""
 #~ msgid "Allow Apple built-in translation as fallback when other providers fail."
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:524
+#: src/components/preferences/panes/TranslationPane.tsx:527
 msgid "Anthropic"
 msgstr ""
 
@@ -238,10 +238,10 @@ msgstr ""
 msgid "Any time"
 msgstr "Any time"
 
-#: src/components/preferences/panes/TranslationPane.tsx:924
-#: src/components/preferences/panes/TranslationPane.tsx:984
-#: src/components/preferences/panes/TranslationPane.tsx:986
-#: src/components/preferences/panes/TranslationPane.tsx:990
+#: src/components/preferences/panes/TranslationPane.tsx:927
+#: src/components/preferences/panes/TranslationPane.tsx:987
+#: src/components/preferences/panes/TranslationPane.tsx:989
+#: src/components/preferences/panes/TranslationPane.tsx:993
 msgid "API key"
 msgstr ""
 
@@ -288,6 +288,10 @@ msgstr ""
 #~ msgid "Apple fallback setting updated"
 #~ msgstr ""
 
+#: src/components/miniflux/EntryReadingHeader.tsx:337
+msgid "Applies to all articles when enabled"
+msgstr ""
+
 #: src/components/layout/AppSidebar.tsx:229
 msgid "Are you sure you want to delete this category and all its feeds?"
 msgstr "Are you sure you want to delete this category and all its feeds?"
@@ -300,7 +304,7 @@ msgstr ""
 msgid "Are you sure you want to unsubscribe from this feed?"
 msgstr "Are you sure you want to unsubscribe from this feed?"
 
-#: src/components/miniflux/EntryReading.tsx:153
+#: src/components/miniflux/EntryReading.tsx:157
 msgid "Article table of contents"
 msgstr "Article table of contents"
 
@@ -321,7 +325,7 @@ msgstr "Auto"
 msgid "Available Services"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:518
+#: src/components/preferences/panes/TranslationPane.tsx:521
 msgid "Baidu Translate"
 msgstr ""
 
@@ -460,12 +464,12 @@ msgid "Checking..."
 msgstr ""
 
 #: src/components/miniflux/EntryReadingHeader.tsx:133
-#: src/components/preferences/panes/TranslationPane.tsx:1050
+#: src/components/preferences/panes/TranslationPane.tsx:1053
 msgid "Chinese (Simplified)"
 msgstr ""
 
 #: src/components/miniflux/EntryReadingHeader.tsx:134
-#: src/components/preferences/panes/TranslationPane.tsx:1051
+#: src/components/preferences/panes/TranslationPane.tsx:1054
 msgid "Chinese (Traditional)"
 msgstr ""
 
@@ -481,7 +485,7 @@ msgstr "Chinese Conversion"
 msgid "Choose a story from the list and your reading companion will guide the focus."
 msgstr "Choose a story from the list and your reading companion will guide the focus."
 
-#: src/components/preferences/panes/TranslationPane.tsx:1018
+#: src/components/preferences/panes/TranslationPane.tsx:1021
 msgid "Choose how translation requests are routed across engines and LLMs."
 msgstr ""
 
@@ -598,7 +602,7 @@ msgstr "Completed"
 msgid "Configure services in Miniflux server settings."
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1187
+#: src/components/preferences/panes/TranslationPane.tsx:1190
 msgid "Configured"
 msgstr ""
 
@@ -740,11 +744,11 @@ msgstr "Date Range"
 msgid "Debug"
 msgstr "除錯"
 
-#: src/components/preferences/panes/TranslationPane.tsx:508
+#: src/components/preferences/panes/TranslationPane.tsx:511
 msgid "DeepL"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:538
+#: src/components/preferences/panes/TranslationPane.tsx:541
 msgid "DeepSeek"
 msgstr ""
 
@@ -806,7 +810,7 @@ msgstr "Disable feed"
 #: src/components/preferences/panes/GeneralPane.tsx:184
 #: src/components/preferences/panes/GeneralPane.tsx:201
 #: src/components/preferences/panes/IntegrationsPane.tsx:293
-#: src/components/preferences/panes/TranslationPane.tsx:1177
+#: src/components/preferences/panes/TranslationPane.tsx:1180
 msgid "Disabled"
 msgstr "已停用"
 
@@ -902,7 +906,7 @@ msgid "Edit user"
 msgstr "Edit user"
 
 #. placeholder {0}: providerDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1119
+#: src/components/preferences/panes/TranslationPane.tsx:1122
 msgid "Enable {0}"
 msgstr ""
 
@@ -917,12 +921,16 @@ msgstr ""
 #: src/components/preferences/panes/GeneralPane.tsx:184
 #: src/components/preferences/panes/GeneralPane.tsx:201
 #: src/components/preferences/panes/IntegrationsPane.tsx:259
-#: src/components/preferences/panes/TranslationPane.tsx:1177
+#: src/components/preferences/panes/TranslationPane.tsx:1180
 msgid "Enabled"
 msgstr "已啟用"
 
 #: src/components/preferences/panes/IntegrationsPane.tsx:243
 msgid "Enabled Services"
+msgstr ""
+
+#: src/components/preferences/panes/TranslationPane.tsx:377
+msgid "Engine"
 msgstr ""
 
 #: src/components/preferences/panes/TranslationPane.tsx:503
@@ -933,12 +941,12 @@ msgstr ""
 #~ msgid "Engine fallback order updated"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1030
+#: src/components/preferences/panes/TranslationPane.tsx:1033
 msgid "Engine first"
 msgstr ""
 
 #: src/components/miniflux/EntryReadingHeader.tsx:132
-#: src/components/preferences/panes/TranslationPane.tsx:1049
+#: src/components/preferences/panes/TranslationPane.tsx:1052
 msgid "English"
 msgstr ""
 
@@ -978,7 +986,7 @@ msgstr ""
 msgid "Entries"
 msgstr "Entries"
 
-#: src/components/miniflux/EntryReading.tsx:619
+#: src/components/miniflux/EntryReading.tsx:628
 msgid "Entry not found"
 msgstr "Entry not found"
 
@@ -1135,11 +1143,11 @@ msgstr "Failed to refresh feeds"
 #~ msgid "Failed to remove provider key"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:807
+#: src/components/preferences/panes/TranslationPane.tsx:810
 msgid "Failed to resort providers"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:824
+#: src/components/preferences/panes/TranslationPane.tsx:827
 msgid "Failed to save provider key"
 msgstr ""
 
@@ -1191,12 +1199,12 @@ msgstr "Failed to update image download path"
 #~ msgid "Failed to update primary translation engine"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:739
+#: src/components/preferences/panes/TranslationPane.tsx:742
 msgid "Failed to update provider order"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:843
-#: src/components/preferences/panes/TranslationPane.tsx:879
+#: src/components/preferences/panes/TranslationPane.tsx:846
+#: src/components/preferences/panes/TranslationPane.tsx:882
 msgid "Failed to update provider runtime setting"
 msgstr ""
 
@@ -1204,11 +1212,11 @@ msgstr ""
 msgid "Failed to update start minimized setting"
 msgstr "更新啟動時最小化設定失敗"
 
-#: src/components/preferences/panes/TranslationPane.tsx:694
+#: src/components/preferences/panes/TranslationPane.tsx:697
 msgid "Failed to update translation route mode"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:708
+#: src/components/preferences/panes/TranslationPane.tsx:711
 msgid "Failed to update translation target language"
 msgstr ""
 
@@ -1315,7 +1323,7 @@ msgid "Found sources"
 msgstr "Found sources"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:138
-#: src/components/preferences/panes/TranslationPane.tsx:1055
+#: src/components/preferences/panes/TranslationPane.tsx:1058
 msgid "French"
 msgstr ""
 
@@ -1323,7 +1331,7 @@ msgstr ""
 msgid "From"
 msgstr "From"
 
-#: src/components/preferences/panes/TranslationPane.tsx:526
+#: src/components/preferences/panes/TranslationPane.tsx:529
 msgid "Gemini"
 msgstr ""
 
@@ -1336,7 +1344,7 @@ msgid "Georgia"
 msgstr "Georgia"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:139
-#: src/components/preferences/panes/TranslationPane.tsx:1056
+#: src/components/preferences/panes/TranslationPane.tsx:1059
 msgid "German"
 msgstr ""
 
@@ -1344,7 +1352,7 @@ msgstr ""
 msgid "Git commit hash."
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:530
+#: src/components/preferences/panes/TranslationPane.tsx:533
 msgid "GLM"
 msgstr ""
 
@@ -1364,7 +1372,7 @@ msgstr "Go to next page"
 msgid "Go to previous page"
 msgstr "Go to previous page"
 
-#: src/components/preferences/panes/TranslationPane.tsx:510
+#: src/components/preferences/panes/TranslationPane.tsx:513
 msgid "Google Translate"
 msgstr ""
 
@@ -1390,7 +1398,7 @@ msgstr "隱藏左側邊欄"
 msgid "Hide Others"
 msgstr "隱藏其他"
 
-#: src/components/miniflux/EntryReading.tsx:205
+#: src/components/miniflux/EntryReading.tsx:209
 msgid "Hide reading status"
 msgstr ""
 
@@ -1440,11 +1448,11 @@ msgstr "https://example.com/rss.xml"
 msgid "Humanist"
 msgstr "Humanist"
 
-#: src/components/preferences/panes/TranslationPane.tsx:516
+#: src/components/preferences/panes/TranslationPane.tsx:519
 msgid "Hunyuan-MT"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1031
+#: src/components/preferences/panes/TranslationPane.tsx:1034
 msgid "Hybrid auto"
 msgstr ""
 
@@ -1473,7 +1481,7 @@ msgstr "Image download path updated"
 msgid "Import OPML"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1203
+#: src/components/preferences/panes/TranslationPane.tsx:1206
 msgid "Inactive"
 msgstr ""
 
@@ -1491,7 +1499,7 @@ msgid "Integrations"
 msgstr ""
 
 #: src/components/miniflux/EntryReadingHeader.tsx:135
-#: src/components/preferences/panes/TranslationPane.tsx:1052
+#: src/components/preferences/panes/TranslationPane.tsx:1055
 msgid "Japanese"
 msgstr ""
 
@@ -1501,12 +1509,12 @@ msgstr ""
 msgid "Keeplist rules"
 msgstr "Keeplist rules"
 
-#: src/components/preferences/panes/TranslationPane.tsx:532
+#: src/components/preferences/panes/TranslationPane.tsx:535
 msgid "Kimi"
 msgstr ""
 
 #: src/components/miniflux/EntryReadingHeader.tsx:136
-#: src/components/preferences/panes/TranslationPane.tsx:1053
+#: src/components/preferences/panes/TranslationPane.tsx:1056
 msgid "Korean"
 msgstr ""
 
@@ -1517,7 +1525,7 @@ msgstr ""
 msgid "Language"
 msgstr "語言"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1038
+#: src/components/preferences/panes/TranslationPane.tsx:1041
 msgid "Language used for immersive translation output."
 msgstr ""
 
@@ -1542,7 +1550,7 @@ msgstr "Latest React with concurrent features"
 msgid "Latest version"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1295
+#: src/components/preferences/panes/TranslationPane.tsx:1298
 msgid "Leave empty to use default prompt"
 msgstr ""
 
@@ -1560,6 +1568,10 @@ msgstr ""
 msgid "Line Width"
 msgstr "Line Width"
 
+#: src/components/preferences/panes/TranslationPane.tsx:377
+msgid "LLM"
+msgstr ""
+
 #: src/components/preferences/panes/TranslationPane.tsx:516
 #~ msgid "LLM fallback order"
 #~ msgstr ""
@@ -1572,7 +1584,7 @@ msgstr "Line Width"
 #~ msgid "LLM provider"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1096
+#: src/components/preferences/panes/TranslationPane.tsx:1099
 msgid "LLM providers"
 msgstr ""
 
@@ -1636,7 +1648,7 @@ msgstr ""
 #~ msgid "Marked as read"
 #~ msgstr "Marked as read"
 
-#: src/components/preferences/panes/TranslationPane.tsx:512
+#: src/components/preferences/panes/TranslationPane.tsx:515
 msgid "Microsoft Translator"
 msgstr ""
 
@@ -1658,7 +1670,7 @@ msgstr ""
 msgid "Minikyu"
 msgstr "Minikyu"
 
-#: src/components/preferences/panes/TranslationPane.tsx:534
+#: src/components/preferences/panes/TranslationPane.tsx:537
 msgid "MiniMax"
 msgstr ""
 
@@ -1678,15 +1690,15 @@ msgstr "最小化視窗"
 #~ msgid "Missing fields"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:931
-#: src/components/preferences/panes/TranslationPane.tsx:1202
+#: src/components/preferences/panes/TranslationPane.tsx:934
+#: src/components/preferences/panes/TranslationPane.tsx:1205
 msgid "Missing required fields"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:927
-#: src/components/preferences/panes/TranslationPane.tsx:984
-#: src/components/preferences/panes/TranslationPane.tsx:985
-#: src/components/preferences/panes/TranslationPane.tsx:993
+#: src/components/preferences/panes/TranslationPane.tsx:930
+#: src/components/preferences/panes/TranslationPane.tsx:987
+#: src/components/preferences/panes/TranslationPane.tsx:988
+#: src/components/preferences/panes/TranslationPane.tsx:996
 msgid "Model"
 msgstr ""
 
@@ -1706,7 +1718,7 @@ msgstr "Native platform feel"
 msgid "Navigation"
 msgstr "導覽"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1112
+#: src/components/preferences/panes/TranslationPane.tsx:1115
 msgid "Needs setup"
 msgstr ""
 
@@ -1727,7 +1739,7 @@ msgstr ""
 msgid "Next entry (j or →)"
 msgstr "Next entry (j or →)"
 
-#: src/components/miniflux/EntryReading.tsx:152
+#: src/components/miniflux/EntryReading.tsx:156
 msgid "Next section"
 msgstr "Next section"
 
@@ -1755,7 +1767,7 @@ msgstr "No categories yet"
 msgid "No category"
 msgstr "No category"
 
-#: src/components/miniflux/EntryReading.tsx:707
+#: src/components/miniflux/EntryReading.tsx:716
 msgid "No content available"
 msgstr "No content available"
 
@@ -1808,7 +1820,7 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1188
+#: src/components/preferences/panes/TranslationPane.tsx:1191
 msgid "Not configured"
 msgstr ""
 
@@ -1841,7 +1853,7 @@ msgstr ""
 msgid "OLED"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:522
+#: src/components/preferences/panes/TranslationPane.tsx:525
 msgid "Ollama"
 msgstr ""
 
@@ -1869,7 +1881,7 @@ msgstr "開啟偏好設定"
 msgid "Open the application preferences"
 msgstr "開啟應用程式偏好設定"
 
-#: src/components/preferences/panes/TranslationPane.tsx:520
+#: src/components/preferences/panes/TranslationPane.tsx:523
 msgid "OpenAI"
 msgstr ""
 
@@ -1877,7 +1889,7 @@ msgstr ""
 #~ msgid "openai, anthropic, gemini"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:528
+#: src/components/preferences/panes/TranslationPane.tsx:531
 msgid "OpenRouter"
 msgstr ""
 
@@ -1891,11 +1903,11 @@ msgstr ""
 msgid "OPML imported successfully"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1237
+#: src/components/preferences/panes/TranslationPane.tsx:1240
 msgid "Optional endpoint override"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1321
+#: src/components/preferences/panes/TranslationPane.tsx:1324
 msgid "Optional timeout"
 msgstr ""
 
@@ -1907,7 +1919,7 @@ msgstr "其他"
 msgid "Overall progress"
 msgstr "Overall progress"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1274
+#: src/components/preferences/panes/TranslationPane.tsx:1277
 msgid "Override the default translation instruction. Supports {source_lang} and {target_lang} placeholders."
 msgstr ""
 
@@ -1939,7 +1951,7 @@ msgstr "需要提供密碼"
 msgid "Paste a website URL to discover available RSS/Atom feeds."
 msgstr "Paste a website URL to discover available RSS/Atom feeds."
 
-#: src/components/preferences/panes/TranslationPane.tsx:1345
+#: src/components/preferences/panes/TranslationPane.tsx:1348
 msgid "Paste key"
 msgstr ""
 
@@ -1996,7 +2008,7 @@ msgstr "Press"
 msgid "Previous entry (h or ←)"
 msgstr "Previous entry (h or ←)"
 
-#: src/components/miniflux/EntryReading.tsx:151
+#: src/components/miniflux/EntryReading.tsx:155
 msgid "Previous section"
 msgstr "Previous section"
 
@@ -2025,36 +2037,36 @@ msgstr ""
 #~ msgid "Provider key removed"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:830
+#: src/components/preferences/panes/TranslationPane.tsx:833
 msgid "Provider key saved"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:737
+#: src/components/preferences/panes/TranslationPane.tsx:740
 msgid "Provider order updated"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:840
+#: src/components/preferences/panes/TranslationPane.tsx:843
 msgid "Provider runtime setting updated"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1139
+#: src/components/preferences/panes/TranslationPane.tsx:1142
 msgid "Provider settings"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:910
-#: src/components/preferences/panes/TranslationPane.tsx:960
+#: src/components/preferences/panes/TranslationPane.tsx:913
+#: src/components/preferences/panes/TranslationPane.tsx:963
 msgid "Provider verification failed"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:964
+#: src/components/preferences/panes/TranslationPane.tsx:967
 msgid "Provider verification succeeded"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1067
+#: src/components/preferences/panes/TranslationPane.tsx:1070
 msgid "Providers"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:805
+#: src/components/preferences/panes/TranslationPane.tsx:808
 msgid "Providers resorted"
 msgstr ""
 
@@ -2094,11 +2106,11 @@ msgstr "退出 {APP_NAME}"
 msgid "Quit application"
 msgstr "退出應用程式"
 
-#: src/components/preferences/panes/TranslationPane.tsx:536
+#: src/components/preferences/panes/TranslationPane.tsx:539
 msgid "Qwen"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:514
+#: src/components/preferences/panes/TranslationPane.tsx:517
 msgid "Qwen-MT"
 msgstr ""
 
@@ -2110,7 +2122,7 @@ msgstr "React 19"
 msgid "Reader companion illustration"
 msgstr "Reader companion illustration"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1013
+#: src/components/preferences/panes/TranslationPane.tsx:1016
 msgid "Reader translation"
 msgstr ""
 
@@ -2126,7 +2138,7 @@ msgstr "Reading display"
 msgid "Reading theme"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1200
+#: src/components/preferences/panes/TranslationPane.tsx:1203
 msgid "Ready"
 msgstr ""
 
@@ -2160,7 +2172,7 @@ msgid "Removing stale local records"
 msgstr "Removing stale local records"
 
 #. placeholder {0}: providerDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1118
+#: src/components/preferences/panes/TranslationPane.tsx:1121
 msgid "Reorder {0}"
 msgstr ""
 
@@ -2168,7 +2180,7 @@ msgstr ""
 #~ msgid "Replace"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1345
+#: src/components/preferences/panes/TranslationPane.tsx:1348
 msgid "Replace key"
 msgstr ""
 
@@ -2176,11 +2188,11 @@ msgstr ""
 #~ msgid "Replace key for {providerName}"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1210
+#: src/components/preferences/panes/TranslationPane.tsx:1213
 msgid "Required fields"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1264
+#: src/components/preferences/panes/TranslationPane.tsx:1267
 msgid "Required for LLM providers"
 msgstr ""
 
@@ -2190,7 +2202,7 @@ msgstr ""
 msgid "Reset"
 msgstr "重置"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1073
+#: src/components/preferences/panes/TranslationPane.tsx:1076
 msgid "Resort providers"
 msgstr ""
 
@@ -2210,7 +2222,7 @@ msgstr "Rewrite rules"
 msgid "Role"
 msgstr "Role"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1016
+#: src/components/preferences/panes/TranslationPane.tsx:1019
 msgid "Route strategy"
 msgstr ""
 
@@ -2279,7 +2291,7 @@ msgstr "Saving..."
 msgid "Scraper rules"
 msgstr "Scraper rules"
 
-#: src/components/miniflux/EntryReading.tsx:207
+#: src/components/miniflux/EntryReading.tsx:211
 msgid "Scroll to top"
 msgstr ""
 
@@ -2462,7 +2474,7 @@ msgstr "顯示左側邊欄"
 msgid "Show reading progress at bottom-left"
 msgstr ""
 
-#: src/components/miniflux/EntryReading.tsx:206
+#: src/components/miniflux/EntryReading.tsx:210
 msgid "Show reading status"
 msgstr ""
 
@@ -2497,7 +2509,7 @@ msgid "Source URL is required"
 msgstr "Source URL is required"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:137
-#: src/components/preferences/panes/TranslationPane.tsx:1054
+#: src/components/preferences/panes/TranslationPane.tsx:1057
 msgid "Spanish"
 msgstr ""
 
@@ -2625,7 +2637,7 @@ msgid "TanStack"
 msgstr "TanStack"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:348
-#: src/components/preferences/panes/TranslationPane.tsx:1037
+#: src/components/preferences/panes/TranslationPane.tsx:1040
 msgid "Target language"
 msgstr ""
 
@@ -2685,7 +2697,7 @@ msgstr "This will remove all locally stored data and disconnect your account."
 msgid "This will remove the category from Miniflux."
 msgstr "This will remove the category from Miniflux."
 
-#: src/components/preferences/panes/TranslationPane.tsx:863
+#: src/components/preferences/panes/TranslationPane.tsx:866
 msgid "Timeout must be a positive number"
 msgstr ""
 
@@ -2764,7 +2776,6 @@ msgid "Translate selection"
 msgstr ""
 
 #: src/components/miniflux/EntryReadingHeader.tsx:329
-#: src/components/miniflux/EntryReadingHeader.tsx:337
 msgid "Translate this article and tune how translated text is shown."
 msgstr ""
 
@@ -2773,8 +2784,8 @@ msgid "Translated only"
 msgstr ""
 
 #: src/components/miniflux/ImmersiveTranslationLayer.tsx:275
-msgid "Translating..."
-msgstr ""
+#~ msgid "Translating..."
+#~ msgstr ""
 
 #: src/components/miniflux/EntryReadingHeader.tsx:319
 #: src/components/miniflux/EntryReadingHeader.tsx:327
@@ -2791,7 +2802,7 @@ msgstr ""
 #~ msgid "Translation engine"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1096
+#: src/components/preferences/panes/TranslationPane.tsx:1099
 msgid "Translation engines"
 msgstr ""
 
@@ -2805,23 +2816,23 @@ msgstr ""
 msgid "Translation options"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1063
+#: src/components/preferences/panes/TranslationPane.tsx:1066
 msgid "Translation Providers"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1026
+#: src/components/preferences/panes/TranslationPane.tsx:1029
 msgid "Translation route mode"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:692
+#: src/components/preferences/panes/TranslationPane.tsx:695
 msgid "Translation route mode updated"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1045
+#: src/components/preferences/panes/TranslationPane.tsx:1048
 msgid "Translation target language"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:706
+#: src/components/preferences/panes/TranslationPane.tsx:709
 msgid "Translation target language updated"
 msgstr ""
 
@@ -2984,11 +2995,11 @@ msgstr "使用者名稱/密碼"
 msgid "Users"
 msgstr "Users"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1162
+#: src/components/preferences/panes/TranslationPane.tsx:1165
 msgid "Verify"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1161
+#: src/components/preferences/panes/TranslationPane.tsx:1164
 msgid "Verifying..."
 msgstr ""
 
