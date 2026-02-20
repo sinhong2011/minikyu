@@ -317,15 +317,33 @@
   }
 }
 
-.reader-translation-loading {
-  border-radius: 4px;
+.reader-node-block:has([data-translation-loading]) {
+  border-radius: 12px;
   animation: translation-loading-shimmer 2.4s ease-in-out infinite;
 }
 
+@keyframes translation-appear {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reader-translation-block {
+  animation: translation-appear 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .reader-translation-loading {
+  .reader-node-block:has([data-translation-loading]) {
     animation: none;
     outline: 1.5px solid oklch(65% 0.18 264 / 0.5);
+  }
+  .reader-translation-block {
+    animation: none;
   }
 
   .entry-empty-hero,

@@ -838,6 +838,22 @@ async translateReaderSegment(request: TranslationSegmentRequest) : Promise<Resul
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+async getTranslationCacheEntry(key: string) : Promise<Result<TranslationCacheEntry | null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_translation_cache_entry", { key }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async setTranslationCacheEntry(key: string, entry: TranslationCacheEntry) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("set_translation_cache_entry", { key, entry }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -1182,6 +1198,10 @@ export type RecoveryError =
 export type Subscription = { url: string; title: string; type: string }
 export type SyncSummary = { entries_pulled: number; entries_pushed: number; feeds_pulled: number; categories_pulled: number }
 export type SystemTime = { duration_since_epoch: string; duration_since_unix_epoch: number }
+/**
+ * Cached translation entry stored on disk.
+ */
+export type TranslationCacheEntry = { translated_text: string; provider_used: string; cached_at: string }
 export type TranslationSegmentRequest = { text: string; source_language: string | null; target_language: string; route_mode: string; primary_engine: string | null; engine_fallbacks: string[]; llm_fallbacks: string[]; apple_fallback_enabled: boolean }
 export type TranslationSegmentResponse = { translated_text: string; provider_used: string; fallback_chain: string[] }
 /**

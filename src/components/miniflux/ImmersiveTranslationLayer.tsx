@@ -85,7 +85,9 @@ function buildTranslatedHtml({
 
     // Show shimmer border on loading paragraph (all display modes)
     if (state.status === 'loading') {
-      paragraphNode.classList.add('reader-translation-loading');
+      paragraphNode.setAttribute('data-translation-loading', 'true');
+    } else {
+      paragraphNode.removeAttribute('data-translation-loading');
     }
 
     if (translationDisplayMode === 'translated_only' && state.status === 'success') {
