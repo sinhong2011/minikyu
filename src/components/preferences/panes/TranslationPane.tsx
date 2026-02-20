@@ -310,6 +310,7 @@ function SortableProviderRow({
   runtimeEnabled,
   selected,
 }: SortableProviderRowProps) {
+  const { _ } = useLingui();
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({
     id: providerId,
     data: {
@@ -342,7 +343,7 @@ function SortableProviderRow({
           transform: CSS.Transform.toString(transform),
           transition,
         }}
-        className={`group relative min-h-[78px] overflow-hidden rounded-xl border p-3 transition-colors duration-200 ${cardClassName} ${
+        className={`group relative overflow-hidden rounded-xl border p-2.5 transition-colors duration-200 ${cardClassName} ${
           isDragging ? 'z-10 ring-1 ring-primary/35 shadow-lg' : ''
         }`}
         data-testid={`translation-provider-row-${providerId}`}
@@ -361,10 +362,8 @@ function SortableProviderRow({
                 className="mt-0.5 size-8 shrink-0 rounded-lg"
               />
               <div className="min-w-0">
-                <p className="truncate text-[1.04rem] leading-tight font-semibold">
-                  {providerName}
-                </p>
-                <div className="mt-1 flex min-h-5 flex-wrap items-center gap-1.5">
+                <p className="truncate text-sm leading-tight font-semibold">{providerName}</p>
+                <div className="mt-1 flex flex-wrap items-center gap-1.5">
                   {hasMissingRequiredFields ? (
                     <span
                       className="inline-flex items-center rounded-full bg-amber-500/15 px-2 py-0.5 text-[11px] font-semibold text-amber-700 dark:text-amber-300"
@@ -373,7 +372,11 @@ function SortableProviderRow({
                     >
                       {issueLabel}
                     </span>
-                  ) : null}
+                  ) : (
+                    <span className="text-[11px] text-muted-foreground/70">
+                      {kind === 'llm' ? _(msg`LLM`) : _(msg`Engine`)}
+                    </span>
+                  )}
                 </div>
               </div>
             </button>
