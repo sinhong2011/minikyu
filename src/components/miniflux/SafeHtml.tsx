@@ -1,4 +1,4 @@
-import { CheckmarkCircle01Icon, CopyIcon } from '@hugeicons/core-free-icons';
+import { CheckmarkCircle01Icon, CopyIcon, MoreVerticalIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
@@ -9,7 +9,17 @@ import parse, {
   Element,
   type HTMLReactParserOptions,
 } from 'html-react-parser';
-import { useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import { createElement, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import {
+  Menu,
+  MenuGroup,
+  MenuGroupLabel,
+  MenuItem,
+  MenuPanel,
+  MenuSeparator,
+  MenuShortcut,
+  MenuTrigger,
+} from '@/components/animate-ui/components/base/menu';
 import { Button } from '@/components/ui/button';
 import {
   Table,
@@ -47,6 +57,7 @@ interface SafeHtmlProps {
   codeTheme?: ReaderCodeTheme;
   className?: string;
   style?: React.CSSProperties;
+  onTranslateNode?: (text: string) => void;
 }
 
 interface TransitionRect {
@@ -60,6 +71,21 @@ const SHARED_IMAGE_ANIMATION_DURATION_MS = 280;
 const SHARED_IMAGE_ANIMATION_EASING = 'cubic-bezier(0.2, 0.72, 0.18, 1)';
 const VIEWER_CLOSE_ANIMATION_DURATION_MS = 360;
 const VIEWER_CLOSE_ANIMATION_EASING = 'cubic-bezier(0.22, 1, 0.36, 1)';
+const WRAPPABLE_READER_BLOCK_TAGS = new Set([
+  'article',
+  'blockquote',
+  'figure',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'ol',
+  'p',
+  'section',
+  'ul',
+]);
 
 function toTransitionRect(rect: DOMRect): TransitionRect {
   return {
@@ -210,7 +236,7 @@ function CodeBlock({
       </div>
 
       {isHighlighting && (
-        <div className="pointer-events-none absolute inset-0 rounded-xl border border-primary/20" />
+        <div className="pointer-events-none absolute inset-0 rounded-xl border border-border/50" />
       )}
     </div>
   );
@@ -222,12 +248,33 @@ function getTextContent(node: any): string {
   return '';
 }
 
+function isElementNode(node: unknown): node is Element {
+  if (node instanceof Element) {
+    return true;
+  }
+
+  if (typeof node !== 'object' || node === null) {
+    return false;
+  }
+
+  const candidate = node as {
+    name?: unknown;
+    attribs?: unknown;
+    children?: unknown;
+  };
+  return (
+    typeof candidate.name === 'string' &&
+    typeof candidate.attribs === 'object' &&
+    Array.isArray(candidate.children)
+  );
+}
+
 function getTextContentWithLineBreaks(node: any): string {
   if (node.type === 'text') {
     return node.data;
   }
 
-  if (!(node instanceof Element)) {
+  if (!isElementNode(node)) {
     if (node.children) {
       return node.children.map(getTextContentWithLineBreaks).join('');
     }
@@ -260,7 +307,7 @@ function extractCodeTextFromCell(cell: Element): string {
     cell;
 
   const lineElements = codeOrPre.children.filter(
-    (child): child is Element => child instanceof Element && getClassTokens(child).includes('line')
+    (child): child is Element => isElementNode(child) && getClassTokens(child).includes('line')
   );
 
   if (lineElements.length > 0) {
@@ -275,7 +322,7 @@ function findFirstDescendant(
   matcher: (element: Element) => boolean
 ): Element | null {
   for (const child of node.children) {
-    if (!(child instanceof Element)) {
+    if (!isElementNode(child)) {
       continue;
     }
 
@@ -304,7 +351,7 @@ function collectDescendantsByName(node: Element, tagName: string): Element[] {
   const elements: Element[] = [];
 
   for (const child of node.children) {
-    if (!(child instanceof Element)) {
+    if (!isElementNode(child)) {
       continue;
     }
 
@@ -342,7 +389,7 @@ function extractCodeBlockFromTable(
 
   const numericFirstColumnRows = rows.filter((row) => {
     const cells = row.children.filter(
-      (child): child is Element => child instanceof Element && child.name === 'td'
+      (child): child is Element => isElementNode(child) && child.name === 'td'
     );
     const firstCell = cells[0];
     const secondCell = cells[1];
@@ -373,7 +420,7 @@ function extractCodeBlockFromTable(
 
   for (const row of rows) {
     const cells = row.children.filter(
-      (child): child is Element => child instanceof Element && child.name === 'td'
+      (child): child is Element => isElementNode(child) && child.name === 'td'
     );
 
     if (!cells.length) {
@@ -471,7 +518,7 @@ function detectCodeLanguageFromPre(node: Element): SupportedCodeLanguage {
   }
 
   for (const child of node.children) {
-    if (child instanceof Element && child.name === 'code') {
+    if (isElementNode(child) && child.name === 'code') {
       const codeClassLanguage = detectCodeLanguageFromClassTokens(getClassTokens(child));
       if (codeClassLanguage !== 'text') {
         return codeClassLanguage;
@@ -569,6 +616,15 @@ function applyBionicReadingToHtml(html: string): string {
   return doc.body.innerHTML;
 }
 
+export function sanitizeReaderHtml(html: string): string {
+  return DOMPurify.sanitize(html, {
+    // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
+    USE_PROFILES: { html: true },
+    // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
+    ADD_ATTR: ['target', 'rel'],
+  });
+}
+
 export function SafeHtml({
   html,
   bionicEnglish = false,
@@ -577,8 +633,10 @@ export function SafeHtml({
   codeTheme = 'auto',
   className,
   style,
+  onTranslateNode,
 }: SafeHtmlProps) {
   const { _ } = useLingui();
+  const { copy: copyReaderNodeText } = useClipboard();
   const [viewerImages, setViewerImages] = useState<Image[]>([]);
   const [viewerIndex, setViewerIndex] = useState(0);
   const [viewerCurrentIndex, setViewerCurrentIndex] = useState(0);
@@ -590,6 +648,13 @@ export function SafeHtml({
   const isViewerClosingRef = useRef(false);
   const clearViewerStateTimerRef = useRef<number | null>(null);
   const copyCodeLabel = _(msg`Copy code`);
+  const phraseActionsLabel = _(msg`Phrase`);
+  const translationActionsLabel = _(msg`Translation`);
+  const selectPhraseTextLabel = _(msg`Select phrase text`);
+  const copyPhraseTextLabel = _(msg`Copy phrase text`);
+  const translationToolbarHintLabel = _(msg`Translation controls in top bar`);
+  const translateParagraphLabel = _(msg`Translate this paragraph`);
+  const topBarLabel = _(msg`Top bar`);
   const codeLanguageLabel = _(msg`Language`);
   const imageFallbackAlt = _(msg`Image`);
 
@@ -1009,6 +1074,28 @@ export function SafeHtml({
     viewerImages,
   ]);
 
+  const selectReaderNodeText = useCallback((nodeIndex: number) => {
+    const contentContainer = document.querySelector(
+      `[data-reader-node-index="${String(nodeIndex)}"] [data-reader-node-content="true"]`
+    );
+    if (!(contentContainer instanceof HTMLElement)) {
+      return;
+    }
+
+    const selection = window.getSelection();
+    if (!selection) {
+      return;
+    }
+
+    const range = document.createRange();
+    range.selectNodeContents(contentContainer);
+    selection.removeAllRanges();
+    selection.addRange(range);
+
+    document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
+    document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', bubbles: true }));
+  }, []);
+
   useEffect(
     () => () => {
       clearOpenViewerTransitionFrame();
@@ -1025,9 +1112,118 @@ export function SafeHtml({
   );
 
   const options = useMemo<HTMLReactParserOptions>(() => {
+    let readerNodeIndex = 0;
+
+    const wrapReaderNodeBlock = ({
+      nodeTag,
+      textLength,
+      nodeText,
+      children,
+      interactive = true,
+    }: {
+      nodeTag: string;
+      textLength: number;
+      nodeText: string;
+      children: React.ReactNode;
+      interactive?: boolean;
+    }) => {
+      const shouldUseLayoutCenter = nodeTag !== 'pre' && nodeTag !== 'table';
+      const nodeIndex = readerNodeIndex;
+      readerNodeIndex += 1;
+
+      return (
+        <div
+          data-reader-node="true"
+          data-reader-node-index={String(nodeIndex)}
+          data-reader-node-tag={nodeTag}
+          data-reader-node-text-length={String(textLength)}
+          className={cn(
+            'reader-node-block relative rounded-xl bg-transparent px-2.5 pt-1 pb-0 shadow-none',
+            interactive &&
+              'group/reader-node transition-[background-color,box-shadow,transform] duration-180 hover:-translate-y-px hover:bg-muted/65 hover:shadow-[0_16px_32px_-22px_hsl(var(--foreground)/0.56),0_8px_16px_-12px_hsl(var(--foreground)/0.34)] focus-within:-translate-y-px focus-within:bg-muted/65 focus-within:shadow-[0_16px_32px_-22px_hsl(var(--foreground)/0.56),0_8px_16px_-12px_hsl(var(--foreground)/0.34)]',
+            shouldUseLayoutCenter && 'flex justify-center'
+          )}
+        >
+          {interactive && (
+            <div className="absolute top-1 right-1 z-20">
+              <Menu>
+                <MenuTrigger
+                  data-reader-node-menu-trigger="true"
+                  className="inline-flex h-7 w-7 items-center justify-center rounded-md text-muted-foreground opacity-0 transition-[opacity,background-color,color] duration-150 hover:bg-foreground/10 hover:text-foreground focus-visible:opacity-100 group-hover/reader-node:opacity-100 group-focus-within/reader-node:opacity-100"
+                >
+                  <HugeiconsIcon icon={MoreVerticalIcon} className="h-4 w-4" strokeWidth={2} />
+                </MenuTrigger>
+                <MenuPanel
+                  side="bottom"
+                  align="end"
+                  sideOffset={8}
+                  className="w-64 rounded-2xl border-border/60 bg-popover/95 p-1.5 shadow-[0_24px_48px_-28px_hsl(var(--foreground)/0.7),0_14px_32px_-24px_hsl(var(--foreground)/0.55)] backdrop-blur-xl"
+                >
+                  <MenuGroup>
+                    <MenuGroupLabel className="px-2.5 pb-1 pt-1 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground/90">
+                      {phraseActionsLabel}
+                    </MenuGroupLabel>
+                    <MenuItem
+                      onClick={() => selectReaderNodeText(nodeIndex)}
+                      className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
+                    >
+                      <span>{selectPhraseTextLabel}</span>
+                      <MenuShortcut className="text-[11px] font-medium tracking-[0.08em] text-muted-foreground/75">
+                        ⌥ S
+                      </MenuShortcut>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => copyReaderNodeText(nodeText)}
+                      className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
+                    >
+                      <span>{copyPhraseTextLabel}</span>
+                      <MenuShortcut className="text-[11px] font-medium tracking-[0.08em] text-muted-foreground/75">
+                        ⌘ C
+                      </MenuShortcut>
+                    </MenuItem>
+                  </MenuGroup>
+                  <MenuSeparator className="my-1.5 bg-border/70" />
+                  <MenuGroup>
+                    <MenuGroupLabel className="px-2.5 pb-1 pt-1 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground/90">
+                      {translationActionsLabel}
+                    </MenuGroupLabel>
+                    {onTranslateNode ? (
+                      <MenuItem
+                        onClick={() => onTranslateNode(nodeText)}
+                        className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
+                      >
+                        <span>{translateParagraphLabel}</span>
+                      </MenuItem>
+                    ) : (
+                      <MenuItem
+                        disabled
+                        className="rounded-lg px-2.5 py-2 text-[0.85rem] font-medium text-muted-foreground"
+                      >
+                        <span>{translationToolbarHintLabel}</span>
+                        <MenuShortcut className="text-[10px] font-medium tracking-[0.08em] text-muted-foreground/70">
+                          {topBarLabel}
+                        </MenuShortcut>
+                      </MenuItem>
+                    )}
+                  </MenuGroup>
+                </MenuPanel>
+              </Menu>
+            </div>
+          )}
+          {shouldUseLayoutCenter ? (
+            <div className="w-fit max-w-full" data-reader-node-content="true">
+              {children}
+            </div>
+          ) : (
+            <div data-reader-node-content="true">{children}</div>
+          )}
+        </div>
+      );
+    };
+
     const parserOptions: HTMLReactParserOptions = {
       replace: (domNode) => {
-        if (!(domNode instanceof Element)) return;
+        if (!isElementNode(domNode)) return;
 
         if (domNode.name === 'a') {
           const imgInLink = findFirstDescendant(domNode, (element) => element.name === 'img');
@@ -1053,7 +1249,7 @@ export function SafeHtml({
                   src={src}
                   alt={alt}
                   className={cn(
-                    'block h-auto max-w-full rounded-2xl mx-auto transition-all group-hover/img:ring-4 group-hover/img:ring-primary/10',
+                    'block h-auto max-w-full rounded-2xl mx-auto transition-all group-hover/img:ring-4 group-hover/img:ring-border/70',
                     imgProps.className as string
                   )}
                 />
@@ -1084,7 +1280,7 @@ export function SafeHtml({
                 src={src}
                 alt={alt}
                 className={cn(
-                  'block h-auto max-w-full rounded-2xl mx-auto transition-all group-hover/img:ring-4 group-hover/img:ring-primary/10',
+                  'block h-auto max-w-full rounded-2xl mx-auto transition-all group-hover/img:ring-4 group-hover/img:ring-border/70',
                   props.className as string
                 )}
               />
@@ -1096,38 +1292,56 @@ export function SafeHtml({
           const textContent = getTextContent(domNode);
           const defaultLanguage = detectCodeLanguageFromPre(domNode);
 
-          return (
-            <CodeBlock
-              text={textContent}
-              copyLabel={copyCodeLabel}
-              languageLabel={codeLanguageLabel}
-              defaultLanguage={defaultLanguage}
-              codeTheme={codeTheme}
-            />
-          );
+          return wrapReaderNodeBlock({
+            nodeTag: 'pre',
+            textLength: textContent.trim().length,
+            nodeText: textContent.trim(),
+            interactive: false,
+            children: (
+              <CodeBlock
+                text={textContent}
+                copyLabel={copyCodeLabel}
+                languageLabel={codeLanguageLabel}
+                defaultLanguage={defaultLanguage}
+                codeTheme={codeTheme}
+              />
+            ),
+          });
         }
 
         if (domNode.name === 'table') {
           const codeTable = extractCodeBlockFromTable(domNode);
           if (codeTable) {
-            return (
-              <CodeBlock
-                text={codeTable.codeText}
-                copyLabel={copyCodeLabel}
-                languageLabel={codeLanguageLabel}
-                defaultLanguage={codeTable.defaultLanguage}
-                codeTheme={codeTheme}
-              />
-            );
+            return wrapReaderNodeBlock({
+              nodeTag: 'pre',
+              textLength: codeTable.codeText.trim().length,
+              nodeText: codeTable.codeText.trim(),
+              interactive: false,
+              children: (
+                <CodeBlock
+                  text={codeTable.codeText}
+                  copyLabel={copyCodeLabel}
+                  languageLabel={codeLanguageLabel}
+                  defaultLanguage={codeTable.defaultLanguage}
+                  codeTheme={codeTheme}
+                />
+              ),
+            });
           }
 
-          return (
-            <div className="my-6 overflow-hidden rounded-xl border border-border/60 bg-muted/20">
-              <Table className="text-sm">
-                {domToReact(domNode.children as any, parserOptions)}
-              </Table>
-            </div>
-          );
+          return wrapReaderNodeBlock({
+            nodeTag: 'table',
+            textLength: getTextContentWithLineBreaks(domNode).trim().length,
+            nodeText: getTextContentWithLineBreaks(domNode).replace(/\s+/g, ' ').trim(),
+            interactive: false,
+            children: (
+              <div className="my-6 overflow-hidden rounded-xl border border-border/60 bg-muted/20">
+                <Table className="text-sm">
+                  {domToReact(domNode.children as any, parserOptions)}
+                </Table>
+              </div>
+            ),
+          });
         }
 
         if (domNode.name === 'thead') {
@@ -1158,21 +1372,58 @@ export function SafeHtml({
           );
         }
 
+        if (WRAPPABLE_READER_BLOCK_TAGS.has(domNode.name)) {
+          const props = attributesToProps(domNode.attribs);
+          const normalizedProps = {
+            ...props,
+            className: cn('my-0', props.className as string | undefined),
+          };
+          const blockText = getTextContentWithLineBreaks(domNode).replace(/\s+/g, ' ').trim();
+          const hasImageContent = Boolean(
+            findFirstDescendant(
+              domNode,
+              (element) => element.name === 'img' || element.name === 'picture'
+            )
+          );
+          const isImageOnlyBlock = hasImageContent && blockText.length === 0;
+
+          return wrapReaderNodeBlock({
+            nodeTag: domNode.name,
+            textLength: blockText.length,
+            nodeText: blockText,
+            interactive: !isImageOnlyBlock,
+            children: createElement(
+              domNode.name,
+              normalizedProps,
+              domToReact(domNode.children as any, parserOptions)
+            ),
+          });
+        }
+
         return undefined;
       },
     };
 
     return parserOptions;
-  }, [codeLanguageLabel, codeTheme, copyCodeLabel, imageFallbackAlt, openImageViewer]);
+  }, [
+    codeLanguageLabel,
+    codeTheme,
+    copyPhraseTextLabel,
+    copyReaderNodeText,
+    copyCodeLabel,
+    imageFallbackAlt,
+    onTranslateNode,
+    openImageViewer,
+    phraseActionsLabel,
+    selectPhraseTextLabel,
+    selectReaderNodeText,
+    topBarLabel,
+    translateParagraphLabel,
+    translationActionsLabel,
+    translationToolbarHintLabel,
+  ]);
 
-  const sanitizedHtml = useMemo(() => {
-    return DOMPurify.sanitize(html, {
-      // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
-      USE_PROFILES: { html: true },
-      // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
-      ADD_ATTR: ['target', 'rel'],
-    });
-  }, [html]);
+  const sanitizedHtml = useMemo(() => sanitizeReaderHtml(html), [html]);
 
   const normalizedCustomConversionRules = useMemo(
     () => normalizeCustomConversionRules(customConversionRules),
@@ -1198,7 +1449,7 @@ export function SafeHtml({
 
   return (
     <>
-      <div className={cn('safe-html-content', className)} style={style}>
+      <div className={cn('safe-html-content space-y-1.5', className)} style={style}>
         {parsedHtml}
       </div>
 

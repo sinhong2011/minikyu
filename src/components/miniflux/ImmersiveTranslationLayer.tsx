@@ -332,6 +332,17 @@ export function ImmersiveTranslationLayer({
     await translateSegment(segment, requestId, sourceLanguage, translationPreferences);
   };
 
+  const handleTranslateNode = useCallback(
+    (text: string) => {
+      const segment = segments.find((s) => s.text === text);
+      if (!segment) return;
+      const requestId = activeRequestIdRef.current + 1;
+      activeRequestIdRef.current = requestId;
+      void translateSegment(segment, requestId, sourceLanguage, translationPreferences);
+    },
+    [segments, translateSegment, sourceLanguage, translationPreferences]
+  );
+
   const translatedHtml = buildTranslatedHtml({
     html: safeSourceHtml,
     segments,
@@ -353,6 +364,7 @@ export function ImmersiveTranslationLayer({
         codeTheme={codeTheme}
         className={className}
         style={style}
+        onTranslateNode={handleTranslateNode}
       />
 
       {failedSegments.length > 0 && (
