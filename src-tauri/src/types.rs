@@ -601,6 +601,24 @@ mod tests {
     }
 
     #[test]
+    fn validate_provider_settings_rejects_whitespace_only_system_prompt() {
+        let mut provider_settings = HashMap::new();
+        provider_settings.insert(
+            "openai".to_string(),
+            ReaderTranslationProviderSettings {
+                enabled: true,
+                base_url: None,
+                model: Some("gpt-4o".to_string()),
+                timeout_ms: None,
+                system_prompt: Some("   ".to_string()),
+            },
+        );
+        let result = validate_reader_translation_provider_settings(&provider_settings);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("system_prompt"));
+    }
+
+    #[test]
     fn validate_provider_settings_rejects_empty_system_prompt() {
         let mut provider_settings = HashMap::new();
         provider_settings.insert(
