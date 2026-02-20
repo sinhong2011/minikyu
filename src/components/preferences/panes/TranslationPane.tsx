@@ -40,6 +40,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { showToast } from '@/components/ui/sonner';
+import { Textarea } from '@/components/ui/textarea';
 import {
   commands,
   type ReaderTranslationProviderSettings,
@@ -1261,6 +1262,37 @@ export function TranslationPane() {
                         void handleProviderRuntimeBlur(selectedProvider);
                       }}
                       placeholder={_(msg`Required for LLM providers`)}
+                    />
+                  </SettingsRow>
+                )}
+
+                {selectedProvider.kind === 'llm' && (
+                  <SettingsRow
+                    label={_(msg`${selectedProviderDisplay.providerName} system prompt`)}
+                    htmlFor={`provider-system-prompt-${selectedProvider.id}`}
+                    description={_(
+                      msg`Override the default translation instruction. Supports {source_lang} and {target_lang} placeholders.`
+                    )}
+                  >
+                    <Textarea
+                      id={`provider-system-prompt-${selectedProvider.id}`}
+                      aria-label={_(msg`${selectedProviderDisplay.providerName} system prompt`)}
+                      value={selectedProviderDisplay.runtimeInput.systemPrompt}
+                      rows={4}
+                      onChange={(event) =>
+                        setProviderRuntimeInputs((previous) => ({
+                          ...previous,
+                          [selectedProvider.id]: {
+                            ...(previous[selectedProvider.id] ??
+                              toRuntimeInputState(selectedProviderDisplay.runtimeSettings)),
+                            systemPrompt: event.target.value,
+                          },
+                        }))
+                      }
+                      onBlur={() => {
+                        void handleProviderRuntimeBlur(selectedProvider);
+                      }}
+                      placeholder={_(msg`Leave empty to use default prompt`)}
                     />
                   </SettingsRow>
                 )}
