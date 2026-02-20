@@ -155,20 +155,21 @@ On returning to a partially-translated article, the cache provides completed seg
 
 ### Translation Progress Indicator
 
-A floating pill fixed to `bottom-4 left-4`, animated:
+A floating circular progress ring fixed to `bottom-4 left-4`, animated:
 
-**Appearance:** Small `rounded-full` pill, `bg-background/95 border border-border/60 shadow-lg`
+**Appearance:** `48×48px` circle. SVG with two rings — background track ring (muted) and foreground arc (primary color) driven by `stroke-dashoffset`. Center displays the completed count as a number (e.g. `7`), no denominator shown, keeps it minimal.
 
-**Content:**
-- While translating: `3 / 12` with the numerator animating (counter flip) as each segment completes
-- On completion: briefly shows a `✓` checkmark, then fades out
+**States:**
+- Translating: arc grows clockwise as each segment completes; center number increments with a small scale-bounce
+- Complete: arc reaches 360° → center swaps to `✓` with a scale-in animation → entire indicator fades out after 1.2s
 
 **Motion:**
-- Enters: slide up + fade in (`translateY(8px) → 0`, `opacity 0 → 1`)
-- Number update: individual digit flip animation
-- Exits: fade out after 1.2s delay on completion
+- Enters: slide up + fade in (`translateY(10px) → 0`, `opacity 0 → 1`, 240ms ease-out)
+- Arc progress: CSS transition on `stroke-dashoffset` (300ms ease)
+- Center number update: brief `scale(1.3) → scale(1)` bounce (120ms)
+- Exits: `opacity → 0` (400ms ease-in) after 1.2s completion delay
 
-**Implementation:** `TranslationProgressPill` component, receives `completed: number` and `total: number` props. Renders with `framer-motion` `AnimatePresence` for enter/exit.
+**Implementation:** `TranslationProgressRing` component, receives `completed: number` and `total: number` props. Uses `AnimatePresence` for mount/unmount. SVG `stroke-dasharray` = circumference, `stroke-dashoffset` = `circumference * (1 - completed/total)`.
 
 ### Short Paragraph Skip
 
@@ -191,5 +192,5 @@ Segments resolved from cache never show the shimmer animation — they appear di
 | `src/styles/animation.css` | Shimmer on `:has()`, `translation-appear`, progress pill animations |
 | `src/components/miniflux/ImmersiveTranslationLayer.tsx` | Cache integration, AbortController, per-node callback, progress state |
 | `src/components/miniflux/SafeHtml.tsx` | `onTranslateNode` prop, enable Translation menu item |
-| `src/components/miniflux/TranslationProgressPill.tsx` | New: floating progress indicator |
+| `src/components/miniflux/TranslationProgressRing.tsx` | New: floating circular progress indicator |
 | `src/components/miniflux/EntryReading.tsx` | Wire `ReaderSelectionTranslatePopover`, pass progress state |
