@@ -7,6 +7,7 @@ import { commands } from '@/lib/tauri-bindings';
 import type { TranslationRoutingPreferences } from '@/services/translation';
 import { translateReaderSegmentWithPreferences } from '@/services/translation';
 import { SafeHtml, sanitizeReaderHtml } from './SafeHtml';
+import { TranslationProgressRing } from './TranslationProgressRing';
 
 async function computeTranslationCacheKey(text: string, targetLanguage: string): Promise<string> {
   const data = new TextEncoder().encode(text.trim());
@@ -353,6 +354,9 @@ export function ImmersiveTranslationLayer({
   const failedSegments = segments.filter(
     (segment) => segmentStates[segment.id]?.status === 'error'
   );
+  const completedCount = Object.values(segmentStates).filter(
+    (s) => s.status === 'success' || s.status === 'error'
+  ).length;
 
   return (
     <div data-testid="immersive-translation-layer">
@@ -366,6 +370,10 @@ export function ImmersiveTranslationLayer({
         style={style}
         onTranslateNode={handleTranslateNode}
       />
+
+      {translationEnabled && (
+        <TranslationProgressRing completed={completedCount} total={segments.length} />
+      )}
 
       {failedSegments.length > 0 && (
         <div className="mx-auto mt-4 space-y-2 px-2" style={{ maxWidth: '80ch' }}>

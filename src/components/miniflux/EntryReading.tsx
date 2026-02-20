@@ -27,6 +27,7 @@ import type { TranslationRoutingPreferences } from '@/services/translation';
 import { EntryReadingHeader } from './EntryReadingHeader';
 import { buildEntryContentWithToc } from './entry-toc';
 import { ImmersiveTranslationLayer } from './ImmersiveTranslationLayer';
+import { ReaderSelectionTranslatePopover } from './ReaderSelectionTranslatePopover';
 
 const MIN_FONT_SIZE = 14;
 const MAX_FONT_SIZE = 24;
@@ -682,35 +683,37 @@ export function EntryReading({
               style={readerSurfaceStyle}
             >
               {entry.content ? (
-                <ImmersiveTranslationLayer
-                  entryId={entry.id}
-                  html={readingContent.html}
-                  translationEnabled={translationEnabled}
-                  translationDisplayMode={translationDisplayMode}
-                  translateRequestToken={translateRequestToken}
-                  translationPreferences={translationPreferences}
-                  bionicEnglish={bionicReading}
-                  chineseConversionMode={chineseConversionMode}
-                  customConversionRules={customConversionRules}
-                  codeTheme={codeTheme}
-                  onActiveProviderChange={setActiveTranslationProvider}
-                  className={cn(
-                    'mx-auto max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
-                    useInvertedProse && 'prose-invert',
-                    '[&_h1]:mb-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold',
-                    '[&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:leading-snug [&_h2]:font-semibold',
-                    '[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:leading-snug [&_h3]:font-semibold',
-                    '[&_p]:my-5 [&_p]:tracking-[0.01em]',
-                    '[&_ul]:my-5 [&_ol]:my-5 [&_li]:my-1.5',
-                    '[&_a]:break-all [&_a]:underline [&_a]:decoration-[color:var(--reader-link)] [&_a]:underline-offset-4',
-                    '[&_blockquote]:my-8 [&_blockquote]:rounded-r-xl [&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:bg-primary/5 [&_blockquote]:px-4 [&_blockquote]:py-2 [&_blockquote]:text-foreground/90',
-                    '[&_hr]:my-8 [&_hr]:border-border/60',
-                    '[&_table]:text-sm [&_table]:leading-relaxed',
-                    '[&_img]:my-8',
-                    '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0'
-                  )}
-                  style={readerProseStyle}
-                />
+                <ReaderSelectionTranslatePopover translationPreferences={translationPreferences}>
+                  <ImmersiveTranslationLayer
+                    entryId={entry.id}
+                    html={readingContent.html}
+                    translationEnabled={translationEnabled}
+                    translationDisplayMode={translationDisplayMode}
+                    translateRequestToken={translateRequestToken}
+                    translationPreferences={translationPreferences}
+                    bionicEnglish={bionicReading}
+                    chineseConversionMode={chineseConversionMode}
+                    customConversionRules={customConversionRules}
+                    codeTheme={codeTheme}
+                    onActiveProviderChange={setActiveTranslationProvider}
+                    className={cn(
+                      'mx-auto max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
+                      useInvertedProse && 'prose-invert',
+                      '[&_h1]:mb-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold',
+                      '[&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:leading-snug [&_h2]:font-semibold',
+                      '[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:leading-snug [&_h3]:font-semibold',
+                      '[&_p]:my-5 [&_p]:tracking-[0.01em]',
+                      '[&_ul]:my-5 [&_ol]:my-5 [&_li]:my-1.5',
+                      '[&_a]:break-all [&_a]:underline [&_a]:decoration-[color:var(--reader-link)] [&_a]:underline-offset-4',
+                      '[&_blockquote]:my-8 [&_blockquote]:rounded-r-xl [&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:bg-primary/5 [&_blockquote]:px-4 [&_blockquote]:py-2 [&_blockquote]:text-foreground/90',
+                      '[&_hr]:my-8 [&_hr]:border-border/60',
+                      '[&_table]:text-sm [&_table]:leading-relaxed',
+                      '[&_img]:my-8',
+                      '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0'
+                    )}
+                    style={readerProseStyle}
+                  />
+                </ReaderSelectionTranslatePopover>
               ) : (
                 <p className="text-muted-foreground italic text-center py-20">
                   {_(msg`No content available`)}
