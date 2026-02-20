@@ -14,5 +14,7 @@ pub mod quick_pane;
 pub mod reading_state;
 pub mod recovery;
 pub mod sync;
+pub mod translation;
+pub mod translation_cache;
 pub mod tray;
 pub mod in_app_browser;

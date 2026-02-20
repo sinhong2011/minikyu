@@ -3,7 +3,7 @@ use tauri_specta::{collect_commands, Builder};
 pub fn generate_bindings() -> Builder<tauri::Wry> {
     use crate::commands::{
         accounts, counters, data, downloads, in_app_browser, miniflux, notifications, preferences,
-        quick_pane, reading_state, recovery, sync, tray,
+        quick_pane, reading_state, recovery, sync, translation, translation_cache, tray,
     };
 
     Builder::<tauri::Wry>::new().commands(collect_commands![
@@ -81,6 +81,12 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         in_app_browser::resize_browser_webview,
         in_app_browser::reload_browser_webview,
         in_app_browser::sync_browser_theme,
+        translation::save_translation_provider_key,
+        translation::delete_translation_provider_key,
+        translation::get_translation_provider_key_status,
+        translation::translate_reader_segment,
+        translation_cache::get_translation_cache_entry,
+        translation_cache::set_translation_cache_entry,
     ])
 }
 

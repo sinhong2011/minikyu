@@ -536,6 +536,14 @@ pub fn validate_reader_code_theme(theme: &str) -> Result<(), String> {
     Ok(())
 }
 
+/// Cached translation entry stored on disk.
+#[derive(Debug, Clone, Serialize, Deserialize, Type)]
+pub struct TranslationCacheEntry {
+    pub translated_text: String,
+    pub provider_used: String,
+    pub cached_at: i64,
+}
+
 /// Validates download path.
 pub fn validate_download_path(path: &Option<String>) -> Result<(), String> {
     if let Some(p) = path {
