@@ -3,6 +3,7 @@
 use regex::Regex;
 use serde::{Deserialize, Serialize};
 use specta::Type;
+use std::collections::HashMap;
 use std::sync::LazyLock;
 
 /// Default shortcut for the quick pane
@@ -53,6 +54,49 @@ pub struct ChineseConversionRule {
     pub to: String,
 }
 
+/// Reader translation rendering mode.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Type, Default, PartialEq, Eq, Hash)]
+#[serde(rename_all = "snake_case")]
+pub enum ReaderTranslationDisplayMode {
+    #[default]
+    Bilingual,
+    TranslatedOnly,
+}
+
+/// Reader translation trigger mode.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Type, Default, PartialEq, Eq, Hash)]
+#[serde(rename_all = "snake_case")]
+pub enum ReaderTranslationTriggerMode {
+    #[default]
+    Manual,
+    PerArticleAuto,
+}
+
+/// Reader translation routing strategy mode.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Type, Default, PartialEq, Eq, Hash)]
+#[serde(rename_all = "snake_case")]
+pub enum ReaderTranslationRouteMode {
+    #[default]
+    EngineFirst,
+    HybridAuto,
+}
+
+/// Runtime settings for one translation provider.
+#[derive(Debug, Clone, Serialize, Deserialize, Type, Default, PartialEq, Eq, Hash)]
+pub struct ReaderTranslationProviderSettings {
+    /// Whether this provider is allowed to be used.
+    pub enabled: bool,
+    /// Optional provider base URL override.
+    pub base_url: Option<String>,
+    /// Optional model override. Required for LLM providers.
+    pub model: Option<String>,
+    /// Optional timeout in milliseconds.
+    pub timeout_ms: Option<u32>,
+    /// Optional system prompt override for LLM providers.
+    /// Supports {source_lang} and {target_lang} placeholders.
+    pub system_prompt: Option<String>,
+}
+
 /// Application preferences that persist to disk.
 /// Only contains settings that should be saved between sessions.
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
@@ -94,6 +138,27 @@ pub struct AppPreferences {
     /// User-defined term conversion rules applied after Chinese conversion.
     #[serde(default)]
     pub reader_custom_conversions: Vec<ChineseConversionRule>,
+    /// Reader translation display mode.
+    pub reader_translation_display_mode: ReaderTranslationDisplayMode,
+    /// Reader translation trigger mode.
+    pub reader_translation_trigger_mode: ReaderTranslationTriggerMode,
+    /// Reader translation routing mode.
+    pub reader_translation_route_mode: ReaderTranslationRouteMode,
+    /// Reader translation target language.
+    pub reader_translation_target_language: Option<String>,
+    /// Reader translation primary engine identifier.
+    pub reader_translation_primary_engine: Option<String>,
+    /// Reader translation engine fallback identifiers.
+    #[serde(default)]
+    pub reader_translation_engine_fallbacks: Vec<String>,
+    /// Reader translation LLM fallback identifiers.
+    #[serde(default)]
+    pub reader_translation_llm_fallbacks: Vec<String>,
+    /// Whether Apple built-in fallback is enabled.
+    pub reader_translation_apple_fallback_enabled: bool,
+    /// Translation provider runtime settings keyed by provider id.
+    #[serde(default)]
+    pub reader_translation_provider_settings: HashMap<String, ReaderTranslationProviderSettings>,
     /// Default download path for images (null = ask every time)
     pub image_download_path: Option<String>,
     /// Default download path for videos (null = ask every time)
@@ -119,6 +184,15 @@ impl Default for AppPreferences {
             reader_bionic_reading: false,
             reader_status_bar: false,
             reader_custom_conversions: vec![],
+            reader_translation_display_mode: ReaderTranslationDisplayMode::Bilingual,
+            reader_translation_trigger_mode: ReaderTranslationTriggerMode::Manual,
+            reader_translation_route_mode: ReaderTranslationRouteMode::EngineFirst,
+            reader_translation_target_language: None,
+            reader_translation_primary_engine: Some("deepl".to_string()),
+            reader_translation_engine_fallbacks: vec!["google_translate".to_string()],
+            reader_translation_llm_fallbacks: vec![],
+            reader_translation_apple_fallback_enabled: false,
+            reader_translation_provider_settings: HashMap::new(),
             image_download_path: None,
             video_download_path: None,
         }
@@ -328,6 +402,122 @@ pub fn validate_custom_chinese_conversions(rules: &[ChineseConversionRule]) -> R
     Ok(())
 }
 
+/// Validates reader translation fallback lists and fallback item lengths.
+pub fn validate_reader_translation_fallbacks(
+    fallbacks: &[String],
+    field_name: &str,
+) -> Result<(), String> {
+    const MAX_READER_TRANSLATION_FALLBACK_ITEMS: usize = 8;
+    const MAX_READER_TRANSLATION_FALLBACK_ITEM_LENGTH: usize = 64;
+
+    if fallbacks.len() > MAX_READER_TRANSLATION_FALLBACK_ITEMS {
+        return Err(format!(
+            "{field_name} has too many items (max {MAX_READER_TRANSLATION_FALLBACK_ITEMS})"
+        ));
+    }
+
+    for fallback in fallbacks {
+        if fallback.trim().is_empty() {
+            return Err(format!("{field_name} cannot contain empty items"));
+        }
+
+        let fallback_len = fallback.chars().count();
+        if fallback_len > MAX_READER_TRANSLATION_FALLBACK_ITEM_LENGTH {
+            return Err(format!(
+                "{field_name} item too long (max {MAX_READER_TRANSLATION_FALLBACK_ITEM_LENGTH} characters)"
+            ));
+        }
+    }
+
+    Ok(())
+}
+
+/// Validates translation provider runtime settings.
+pub fn validate_reader_translation_provider_settings(
+    provider_settings: &HashMap<String, ReaderTranslationProviderSettings>,
+) -> Result<(), String> {
+    const MAX_PROVIDER_SETTINGS_ITEMS: usize = 32;
+    const MAX_PROVIDER_ID_LENGTH: usize = 64;
+    const MAX_PROVIDER_BASE_URL_LENGTH: usize = 2_048;
+    const MAX_PROVIDER_MODEL_LENGTH: usize = 128;
+    const MIN_PROVIDER_TIMEOUT_MS: u32 = 500;
+    const MAX_PROVIDER_TIMEOUT_MS: u32 = 120_000;
+    const MAX_PROVIDER_SYSTEM_PROMPT_LENGTH: usize = 2_048;
+
+    if provider_settings.len() > MAX_PROVIDER_SETTINGS_ITEMS {
+        return Err(format!(
+            "reader_translation_provider_settings has too many items (max {MAX_PROVIDER_SETTINGS_ITEMS})"
+        ));
+    }
+
+    for (provider_id, settings) in provider_settings {
+        let provider_id_trimmed = provider_id.trim();
+        if provider_id_trimmed.is_empty() {
+            return Err(
+                "reader_translation_provider_settings contains an empty provider id".to_string(),
+            );
+        }
+
+        if provider_id_trimmed.chars().count() > MAX_PROVIDER_ID_LENGTH {
+            return Err(format!(
+                "reader_translation_provider_settings provider id too long (max {MAX_PROVIDER_ID_LENGTH} characters)"
+            ));
+        }
+
+        if let Some(base_url) = &settings.base_url {
+            let base_url_trimmed = base_url.trim();
+            if base_url_trimmed.is_empty() {
+                return Err(format!(
+                    "reader_translation_provider_settings[{provider_id_trimmed}].base_url cannot be empty when set"
+                ));
+            }
+            if base_url_trimmed.chars().count() > MAX_PROVIDER_BASE_URL_LENGTH {
+                return Err(format!(
+                    "reader_translation_provider_settings[{provider_id_trimmed}].base_url too long (max {MAX_PROVIDER_BASE_URL_LENGTH} characters)"
+                ));
+            }
+        }
+
+        if let Some(model) = &settings.model {
+            let model_trimmed = model.trim();
+            if model_trimmed.is_empty() {
+                return Err(format!(
+                    "reader_translation_provider_settings[{provider_id_trimmed}].model cannot be empty when set"
+                ));
+            }
+            if model_trimmed.chars().count() > MAX_PROVIDER_MODEL_LENGTH {
+                return Err(format!(
+                    "reader_translation_provider_settings[{provider_id_trimmed}].model too long (max {MAX_PROVIDER_MODEL_LENGTH} characters)"
+                ));
+            }
+        }
+
+        if let Some(timeout_ms) = settings.timeout_ms {
+            if !(MIN_PROVIDER_TIMEOUT_MS..=MAX_PROVIDER_TIMEOUT_MS).contains(&timeout_ms) {
+                return Err(format!(
+                    "reader_translation_provider_settings[{provider_id_trimmed}].timeout_ms out of range ({MIN_PROVIDER_TIMEOUT_MS}-{MAX_PROVIDER_TIMEOUT_MS})"
+                ));
+            }
+        }
+
+        if let Some(system_prompt) = &settings.system_prompt {
+            let prompt_trimmed = system_prompt.trim();
+            if prompt_trimmed.is_empty() {
+                return Err(format!(
+                    "reader_translation_provider_settings[{provider_id_trimmed}].system_prompt cannot be empty when set"
+                ));
+            }
+            if prompt_trimmed.chars().count() > MAX_PROVIDER_SYSTEM_PROMPT_LENGTH {
+                return Err(format!(
+                    "reader_translation_provider_settings[{provider_id_trimmed}].system_prompt too long (max {MAX_PROVIDER_SYSTEM_PROMPT_LENGTH} characters)"
+                ));
+            }
+        }
+    }
+
+    Ok(())
+}
+
 /// Validates reader code theme identifier.
 pub fn validate_reader_code_theme(theme: &str) -> Result<(), String> {
     let trimmed = theme.trim();
@@ -356,4 +546,127 @@ pub fn validate_download_path(path: &Option<String>) -> Result<(), String> {
         }
     }
     Ok(())
+}
+
+#[cfg(test)]
+mod tests {
+    use super::*;
+
+    #[test]
+    fn app_preferences_defaults_include_reader_translation_preferences() {
+        let preferences = AppPreferences::default();
+
+        assert!(matches!(
+            preferences.reader_translation_display_mode,
+            ReaderTranslationDisplayMode::Bilingual
+        ));
+        assert!(matches!(
+            preferences.reader_translation_trigger_mode,
+            ReaderTranslationTriggerMode::Manual
+        ));
+        assert!(matches!(
+            preferences.reader_translation_route_mode,
+            ReaderTranslationRouteMode::EngineFirst
+        ));
+        assert_eq!(preferences.reader_translation_target_language, None);
+        assert_eq!(
+            preferences.reader_translation_primary_engine,
+            Some("deepl".to_string())
+        );
+        assert_eq!(
+            preferences.reader_translation_engine_fallbacks,
+            vec!["google_translate".to_string()]
+        );
+        assert!(preferences.reader_translation_llm_fallbacks.is_empty());
+        assert!(!preferences.reader_translation_apple_fallback_enabled);
+        assert!(preferences.reader_translation_provider_settings.is_empty());
+    }
+
+    #[test]
+    fn validate_reader_translation_provider_settings_rejects_invalid_timeout() {
+        let mut provider_settings = HashMap::new();
+        provider_settings.insert(
+            "openai".to_string(),
+            ReaderTranslationProviderSettings {
+                enabled: true,
+                base_url: Some("https://api.openai.com/v1".to_string()),
+                model: Some("gpt-4o-mini".to_string()),
+                timeout_ms: Some(200),
+                system_prompt: None,
+            },
+        );
+
+        let result = validate_reader_translation_provider_settings(&provider_settings);
+        assert!(result.is_err());
+    }
+
+    #[test]
+    fn validate_provider_settings_rejects_empty_system_prompt() {
+        let mut provider_settings = HashMap::new();
+        provider_settings.insert(
+            "openai".to_string(),
+            ReaderTranslationProviderSettings {
+                enabled: true,
+                base_url: None,
+                model: Some("gpt-4o".to_string()),
+                timeout_ms: None,
+                system_prompt: Some("".to_string()),
+            },
+        );
+        let result = validate_reader_translation_provider_settings(&provider_settings);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("system_prompt"));
+    }
+
+    #[test]
+    fn validate_provider_settings_rejects_system_prompt_too_long() {
+        let mut provider_settings = HashMap::new();
+        provider_settings.insert(
+            "openai".to_string(),
+            ReaderTranslationProviderSettings {
+                enabled: true,
+                base_url: None,
+                model: Some("gpt-4o".to_string()),
+                timeout_ms: None,
+                system_prompt: Some("x".repeat(2049)),
+            },
+        );
+        let result = validate_reader_translation_provider_settings(&provider_settings);
+        assert!(result.is_err());
+        assert!(result.unwrap_err().contains("system_prompt"));
+    }
+
+    #[test]
+    fn validate_provider_settings_accepts_valid_system_prompt() {
+        let mut provider_settings = HashMap::new();
+        provider_settings.insert(
+            "openai".to_string(),
+            ReaderTranslationProviderSettings {
+                enabled: true,
+                base_url: None,
+                model: Some("gpt-4o".to_string()),
+                timeout_ms: None,
+                system_prompt: Some("You are a translator.".to_string()),
+            },
+        );
+        let result = validate_reader_translation_provider_settings(&provider_settings);
+        assert!(result.is_ok());
+    }
+
+    #[test]
+    fn validate_provider_settings_accepts_none_system_prompt() {
+        let mut provider_settings = HashMap::new();
+        provider_settings.insert(
+            "openai".to_string(),
+            ReaderTranslationProviderSettings {
+                enabled: true,
+                base_url: None,
+                model: Some("gpt-4o".to_string()),
+                timeout_ms: None,
+                system_prompt: None,
+            },
+        );
+        let result = validate_reader_translation_provider_settings(&provider_settings);
+        assert!(result.is_ok());
+    }
 }
