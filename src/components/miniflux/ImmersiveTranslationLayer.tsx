@@ -3,9 +3,18 @@ import { useLingui } from '@lingui/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import type { ReaderCodeTheme } from '@/lib/shiki-highlight';
+import { commands } from '@/lib/tauri-bindings';
 import type { TranslationRoutingPreferences } from '@/services/translation';
 import { translateReaderSegmentWithPreferences } from '@/services/translation';
 import { SafeHtml, sanitizeReaderHtml } from './SafeHtml';
+
+async function computeTranslationCacheKey(text: string, targetLanguage: string): Promise<string> {
+  const data = new TextEncoder().encode(text.trim());
+  const hashBuffer = await crypto.subtle.digest('SHA-256', data);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  const hashHex = hashArray.map((b) => b.toString(16).padStart(2, '0')).join('');
+  return `${targetLanguage}:${hashHex}`;
+}
 
 type TranslationSegment = {
   id: string;
@@ -144,6 +153,10 @@ export function ImmersiveTranslationLayer({
   const safeSourceHtml = useMemo(() => sanitizeReaderHtml(html), [html]);
   const segments = useMemo(() => extractParagraphSegments(safeSourceHtml), [safeSourceHtml]);
   const [segmentStates, setSegmentStates] = useState<Record<string, SegmentState>>({});
+  const segmentStatesRef = useRef(segmentStates);
+  segmentStatesRef.current = segmentStates;
+  const translationPreferencesRef = useRef(translationPreferences);
+  translationPreferencesRef.current = translationPreferences;
   const activeRequestIdRef = useRef(0);
 
   useEffect(() => {
@@ -171,13 +184,38 @@ export function ImmersiveTranslationLayer({
       sourceLanguageValue: string | null,
       translationPreferencesValue: TranslationRoutingPreferences
     ) => {
+      // Early exit before any async work if request is already stale
+      if (requestId !== activeRequestIdRef.current) {
+        return;
+      }
+
+      const targetLanguage = translationPreferencesValue.reader_translation_target_language ?? '';
+
+      // Check cache first (skip shimmer if cache hit)
+      let cacheKey: string | null = null;
+      if (targetLanguage) {
+        cacheKey = await computeTranslationCacheKey(segment.text, targetLanguage);
+        const cacheResult = await commands.getTranslationCacheEntry(cacheKey);
+        if (cacheResult.status === 'ok' && cacheResult.data) {
+          const cachedData = cacheResult.data;
+          if (requestId !== activeRequestIdRef.current) return;
+          setSegmentStates((previousState) => ({
+            ...previousState,
+            [segment.id]: {
+              status: 'success',
+              translatedText: cachedData.translated_text,
+              providerUsed: cachedData.provider_used,
+            },
+          }));
+          onActiveProviderChange?.(cachedData.provider_used);
+          return;
+        }
+      }
+
+      // No cache hit — show shimmer and call API
       setSegmentStates((previousState) => ({
         ...previousState,
-        [segment.id]: {
-          status: 'loading',
-          translatedText: null,
-          providerUsed: null,
-        },
+        [segment.id]: { status: 'loading', translatedText: null, providerUsed: null },
       }));
 
       try {
@@ -199,8 +237,19 @@ export function ImmersiveTranslationLayer({
             providerUsed: translationResult.providerUsed,
           },
         }));
-
         onActiveProviderChange?.(translationResult.providerUsed);
+
+        // Write to cache
+        if (cacheKey) {
+          void commands.setTranslationCacheEntry(cacheKey, {
+            // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+            translated_text: translationResult.translatedText,
+            // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+            provider_used: translationResult.providerUsed,
+            // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+            cached_at: String(Math.floor(Date.now() / 1000)),
+          });
+        }
       } catch {
         if (requestId !== activeRequestIdRef.current) {
           return;
@@ -218,6 +267,33 @@ export function ImmersiveTranslationLayer({
     },
     [onActiveProviderChange]
   );
+
+  // Flush completed translations to cache when switching entries
+  useEffect(() => {
+    return () => {
+      const statesToFlush = segmentStatesRef.current;
+      const prefsValue = translationPreferencesRef.current;
+      const targetLanguage = prefsValue.reader_translation_target_language ?? '';
+      if (!targetLanguage) return;
+
+      for (const [segmentId, state] of Object.entries(statesToFlush)) {
+        if (state.status !== 'success' || !state.translatedText) continue;
+        const segment = segments.find((s) => s.id === segmentId);
+        if (!segment) continue;
+        void (async () => {
+          const key = await computeTranslationCacheKey(segment.text, targetLanguage);
+          void commands.setTranslationCacheEntry(key, {
+            // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+            translated_text: state.translatedText!,
+            // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+            provider_used: state.providerUsed ?? '',
+            // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+            cached_at: String(Math.floor(Date.now() / 1000)),
+          });
+        })();
+      }
+    };
+  }, [segments, entryId]);
 
   useEffect(() => {
     if (!translationEnabled) {
@@ -255,20 +331,6 @@ export function ImmersiveTranslationLayer({
     activeRequestIdRef.current = requestId;
     await translateSegment(segment, requestId, sourceLanguage, translationPreferences);
   };
-
-  if (!translationEnabled) {
-    return (
-      <SafeHtml
-        html={html}
-        bionicEnglish={bionicEnglish}
-        chineseConversionMode={chineseConversionMode}
-        customConversionRules={customConversionRules}
-        codeTheme={codeTheme}
-        className={className}
-        style={style}
-      />
-    );
-  }
 
   const translatedHtml = buildTranslatedHtml({
     html: safeSourceHtml,
