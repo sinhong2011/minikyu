@@ -58,7 +58,7 @@ function extractParagraphSegments(html: string): TranslationSegment[] {
       id: String(index),
       text: paragraphNode.textContent?.trim() ?? '',
     }))
-    .filter((segment) => segment.text.length > 0);
+    .filter((segment) => segment.text.length >= 20);
 }
 
 function buildTranslatedHtml({

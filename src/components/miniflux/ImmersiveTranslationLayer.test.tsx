@@ -238,6 +238,36 @@ describe('ImmersiveTranslationLayer', () => {
     });
   });
 
+  it('skips paragraphs shorter than 20 characters from auto-translation', async () => {
+    const htmlWithShortParagraph =
+      '<p>Hi</p><p>Paragraph one original text that is long enough to translate</p>';
+
+    renderWithI18n(
+      <ImmersiveTranslationLayer
+        entryId="entry-short-para"
+        html={htmlWithShortParagraph}
+        translationEnabled
+        translationDisplayMode="bilingual"
+        translateRequestToken={1}
+        translationPreferences={baseTranslationPreferences}
+        bionicEnglish={false}
+        chineseConversionMode="s2tw"
+        customConversionRules={[]}
+        codeTheme="auto"
+      />
+    );
+
+    await waitFor(() => {
+      expect(translateReaderSegmentWithPreferences).toHaveBeenCalledTimes(1);
+    });
+
+    const calls = (translateReaderSegmentWithPreferences as unknown as ReturnType<typeof vi.fn>)
+      .mock.calls as Array<[{ text: string }]>;
+    expect(calls[0]?.[0]?.text).toBe(
+      'Paragraph one original text that is long enough to translate'
+    );
+  });
+
   it('sanitizes html before building translation segments', async () => {
     renderWithI18n(
       <ImmersiveTranslationLayer
