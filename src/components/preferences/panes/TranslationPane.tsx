@@ -247,6 +247,7 @@ type ProviderRuntimeInputState = {
   baseUrl: string;
   model: string;
   timeoutMs: string;
+  systemPrompt: string;
 };
 
 function toRuntimeInputState(
@@ -256,6 +257,7 @@ function toRuntimeInputState(
     baseUrl: settings?.base_url ?? '',
     model: settings?.model ?? '',
     timeoutMs: settings?.timeout_ms ? String(settings.timeout_ms) : '',
+    systemPrompt: settings?.system_prompt ?? '',
   };
 }
 
@@ -850,6 +852,7 @@ export function TranslationPane() {
       baseUrl: '',
       model: '',
       timeoutMs: '',
+      systemPrompt: '',
     };
     const timeoutValue = input.timeoutMs.trim();
     const parsedTimeout = timeoutValue.length > 0 ? Number(timeoutValue) : null;
@@ -867,6 +870,8 @@ export function TranslationPane() {
         model: input.model.trim().length > 0 ? input.model.trim() : null,
         // biome-ignore lint/style/useNamingConvention: backend preference field name
         timeout_ms: parsedTimeout === null ? null : Math.round(parsedTimeout),
+        // biome-ignore lint/style/useNamingConvention: backend preference field name
+        system_prompt: input.systemPrompt.trim().length > 0 ? input.systemPrompt.trim() : null,
       });
     } catch {
       showToast.error(
