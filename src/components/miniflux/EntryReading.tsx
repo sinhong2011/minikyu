@@ -22,7 +22,12 @@ import {
   readerThemeOptions,
 } from '@/lib/reader-theme';
 import { cn } from '@/lib/utils';
-import { useEntry, useToggleEntryRead, useToggleEntryStar } from '@/services/miniflux/entries';
+import {
+  useEntry,
+  useFetchEntryContent,
+  useToggleEntryRead,
+  useToggleEntryStar,
+} from '@/services/miniflux/entries';
 import { EntryReadingHeader } from './EntryReadingHeader';
 import { buildEntryContentWithToc } from './entry-toc';
 import { SafeHtml } from './SafeHtml';
@@ -84,6 +89,7 @@ export function EntryReading({
     setStatusBarVisible,
   } = useReaderSettings();
   const { data: entry, isLoading, error } = useEntry(entryId);
+  const fetchEntryContent = useFetchEntryContent();
   const toggleStar = useToggleEntryStar();
   const toggleEntryRead = useToggleEntryRead();
   const toggleEntryReadRef = useRef(toggleEntryRead);
@@ -101,6 +107,11 @@ export function EntryReading({
   const [hoveredHeadingId, setHoveredHeadingId] = useState<string | null>(null);
   const [readingProgress, setReadingProgress] = useState(0);
   const [isAtBottom, setIsAtBottom] = useState(false);
+  const [isOriginalContentDownloaded, setIsOriginalContentDownloaded] = useState(false);
+  const [contentRevision, setContentRevision] = useState(0);
+  const previousEntryIdRef = useRef<string | null>(null);
+  const previousContentRef = useRef<string | null>(null);
+  const previousDownloadStatusEntryIdRef = useRef<string | null>(null);
 
   const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 
@@ -162,6 +173,13 @@ export function EntryReading({
         y: { duration: 0.3, ease: [0.35, 0, 0.9, 1] as const },
         filter: { duration: 0.28, ease: [0.35, 0, 0.9, 1] as const },
         opacity: { duration: 0.24, ease: [0.45, 0, 1, 1] as const },
+      };
+  const contentSwapTransition = prefersReducedMotion
+    ? { duration: 0 }
+    : {
+        y: { duration: 0.26, ease: [0.22, 1, 0.36, 1] as const },
+        opacity: { duration: 0.24, ease: [0.2, 0.95, 0.35, 1] as const },
+        filter: { duration: 0.24, ease: [0.22, 1, 0.36, 1] as const },
       };
   const readerThemePalette = useMemo(() => getReaderThemePalette(readerTheme), [readerTheme]);
   const useInvertedProse = readerTheme === 'slate' || readerTheme === 'oled';
@@ -357,6 +375,49 @@ export function EntryReading({
       logger.info('Entry loaded for reading', { id: entry.id, title: entry.title });
     }
     hasAutoMarkedAsRead.current = false;
+  }, [entry]);
+
+  useEffect(() => {
+    const currentEntryId = entry?.id ?? null;
+    if (previousDownloadStatusEntryIdRef.current !== currentEntryId) {
+      previousDownloadStatusEntryIdRef.current = currentEntryId;
+      setIsOriginalContentDownloaded(false);
+    }
+  }, [entry]);
+
+  const handleFetchOriginalContent = useCallback(() => {
+    if (!entry) {
+      return;
+    }
+
+    fetchEntryContent.mutate(
+      { id: entry.id, updateContent: true },
+      {
+        onSuccess: () => {
+          setIsOriginalContentDownloaded(true);
+        },
+      }
+    );
+  }, [entry, fetchEntryContent]);
+
+  useEffect(() => {
+    if (!entry) {
+      return;
+    }
+
+    const currentContent = entry.content ?? '';
+
+    if (previousEntryIdRef.current !== entry.id) {
+      previousEntryIdRef.current = entry.id;
+      previousContentRef.current = currentContent;
+      setContentRevision(0);
+      return;
+    }
+
+    if (previousContentRef.current !== currentContent) {
+      previousContentRef.current = currentContent;
+      setContentRevision((value) => value + 1);
+    }
   }, [entry]);
 
   useEffect(() => {
@@ -580,6 +641,9 @@ export function EntryReading({
         hideNavigation={hideNavigation}
         onToggleStar={() => toggleStar.mutate(entry.id)}
         onToggleRead={() => toggleEntryRead.mutate(entry.id)}
+        onFetchOriginalContent={handleFetchOriginalContent}
+        isFetchingOriginalContent={fetchEntryContent.isPending}
+        isOriginalContentDownloaded={isOriginalContentDownloaded}
         isRead={entry.status === 'read'}
         isTogglingRead={toggleEntryRead.isPending}
         headerPadding={headerPadding}
@@ -612,35 +676,45 @@ export function EntryReading({
               className="px-4 py-8 transition-colors duration-300 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
               style={readerSurfaceStyle}
             >
-              {entry.content ? (
-                <SafeHtml
-                  html={readingContent.html}
-                  bionicEnglish={bionicReading}
-                  chineseConversionMode={chineseConversionMode}
-                  customConversionRules={customConversionRules}
-                  codeTheme={codeTheme}
-                  className={cn(
-                    'mx-auto max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
-                    useInvertedProse && 'prose-invert',
-                    '[&_h1]:mb-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold',
-                    '[&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:leading-snug [&_h2]:font-semibold',
-                    '[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:leading-snug [&_h3]:font-semibold',
-                    '[&_p]:my-5 [&_p]:tracking-[0.01em]',
-                    '[&_ul]:my-5 [&_ol]:my-5 [&_li]:my-1.5',
-                    '[&_a]:break-all [&_a]:underline [&_a]:decoration-[color:var(--reader-link)] [&_a]:underline-offset-4',
-                    '[&_blockquote]:my-8 [&_blockquote]:rounded-r-xl [&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:bg-primary/5 [&_blockquote]:px-4 [&_blockquote]:py-2 [&_blockquote]:text-foreground/90',
-                    '[&_hr]:my-8 [&_hr]:border-border/60',
-                    '[&_table]:text-sm [&_table]:leading-relaxed',
-                    '[&_img]:my-8',
-                    '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0'
+              <AnimatePresence initial={false}>
+                <motion.div
+                  key={`${entry.id}:${contentRevision}`}
+                  initial={{ opacity: 0, y: 8, filter: 'blur(1px)' }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{ opacity: 0, y: -6, filter: 'blur(1px)' }}
+                  transition={contentSwapTransition}
+                >
+                  {entry.content ? (
+                    <SafeHtml
+                      html={readingContent.html}
+                      bionicEnglish={bionicReading}
+                      chineseConversionMode={chineseConversionMode}
+                      customConversionRules={customConversionRules}
+                      codeTheme={codeTheme}
+                      className={cn(
+                        'mx-auto max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
+                        useInvertedProse && 'prose-invert',
+                        '[&_h1]:mb-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold',
+                        '[&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:leading-snug [&_h2]:font-semibold',
+                        '[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:leading-snug [&_h3]:font-semibold',
+                        '[&_p]:my-5 [&_p]:tracking-[0.01em]',
+                        '[&_ul]:my-5 [&_ol]:my-5 [&_li]:my-1.5',
+                        '[&_a]:break-all [&_a]:underline [&_a]:decoration-[color:var(--reader-link)] [&_a]:underline-offset-4',
+                        '[&_blockquote]:my-8 [&_blockquote]:rounded-r-xl [&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:bg-primary/5 [&_blockquote]:px-4 [&_blockquote]:py-2 [&_blockquote]:text-foreground/90',
+                        '[&_hr]:my-8 [&_hr]:border-border/60',
+                        '[&_table]:text-sm [&_table]:leading-relaxed',
+                        '[&_img]:my-8',
+                        '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0'
+                      )}
+                      style={readerProseStyle}
+                    />
+                  ) : (
+                    <p className="text-muted-foreground italic text-center py-20">
+                      {_(msg`No content available`)}
+                    </p>
                   )}
-                  style={readerProseStyle}
-                />
-              ) : (
-                <p className="text-muted-foreground italic text-center py-20">
-                  {_(msg`No content available`)}
-                </p>
-              )}
+                </motion.div>
+              </AnimatePresence>
             </motion.div>
           </AnimatePresence>
         </ScrollArea>

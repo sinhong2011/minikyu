@@ -1,3 +1,5 @@
+import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
@@ -9,6 +11,8 @@ import {
   type EntryUpdate,
 } from '@/lib/tauri-bindings';
 import { counterQueryKeys } from './counters';
+
+const translate = i18n._.bind(i18n);
 
 // Query keys for entries
 export const entryQueryKeys = {
@@ -508,7 +512,7 @@ export function useFetchEntryContent() {
           error: result.error,
           id,
         });
-        toast.error('Failed to fetch content', {
+        toast.error(translate(msg`Failed to download original content`), {
           description: result.error,
         });
         throw new Error(result.error);
@@ -521,6 +525,7 @@ export function useFetchEntryContent() {
       // Invalidate entry queries
       queryClient.invalidateQueries({ queryKey: entryQueryKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
+      toast.success(translate(msg`Original content downloaded`));
     },
   });
 }
