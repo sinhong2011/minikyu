@@ -25,6 +25,7 @@ interface UIState {
   searchFiltersVisible: boolean;
   zenModeEnabled: boolean;
   zenModeEntryId: string | null;
+  inAppBrowserUrl: string | null;
 
   toggleLeftSidebar: () => void;
   setLeftSidebarVisible: (visible: boolean) => void;
@@ -46,6 +47,7 @@ interface UIState {
   toggleZenMode: () => void;
   setZenModeEnabled: (enabled: boolean) => void;
   setZenModeEntryId: (entryId: string | null) => void;
+  setInAppBrowserUrl: (url: string | null) => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -65,6 +67,7 @@ export const useUIStore = create<UIState>()(
           searchFiltersVisible: false,
           zenModeEnabled: false,
           zenModeEntryId: null,
+          inAppBrowserUrl: null,
 
           toggleLeftSidebar: () => {
             console.log('[ui-store] toggleLeftSidebar called');
@@ -156,6 +159,9 @@ export const useUIStore = create<UIState>()(
 
           setZenModeEntryId: (entryId: string | null) =>
             set({ zenModeEntryId: entryId }, undefined, 'setZenModeEntryId'),
+
+          setInAppBrowserUrl: (url: string | null) =>
+            set({ inAppBrowserUrl: url }, undefined, 'setInAppBrowserUrl'),
         };
       },
       {

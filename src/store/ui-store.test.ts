@@ -70,3 +70,24 @@ describe('UIStore', () => {
     expect(useUIStore.getState().preferencesActivePane).toBe('advanced');
   });
 });
+
+describe('useUIStore — inAppBrowserUrl', () => {
+  beforeEach(() => {
+    useUIStore.setState({ inAppBrowserUrl: null });
+  });
+
+  it('starts with null inAppBrowserUrl', () => {
+    expect(useUIStore.getState().inAppBrowserUrl).toBeNull();
+  });
+
+  it('setInAppBrowserUrl sets a URL', () => {
+    useUIStore.getState().setInAppBrowserUrl('https://example.com');
+    expect(useUIStore.getState().inAppBrowserUrl).toBe('https://example.com');
+  });
+
+  it('setInAppBrowserUrl(null) clears the URL', () => {
+    useUIStore.getState().setInAppBrowserUrl('https://example.com');
+    useUIStore.getState().setInAppBrowserUrl(null);
+    expect(useUIStore.getState().inAppBrowserUrl).toBeNull();
+  });
+});
