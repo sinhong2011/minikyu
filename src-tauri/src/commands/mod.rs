@@ -15,3 +15,4 @@ pub mod reading_state;
 pub mod recovery;
 pub mod sync;
 pub mod tray;
+pub mod in_app_browser;
