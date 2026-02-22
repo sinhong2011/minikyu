@@ -422,6 +422,63 @@ mod tests {
     }
 
     #[tokio::test]
+    async fn test_update_entry_content_in_db_updates_existing_entry() {
+        let pool = setup_test_db().await;
+        let now = Utc::now().to_rfc3339();
+
+        insert_category(&pool, 1, "Technology", &now).await;
+        insert_feed(
+            &pool,
+            1,
+            "Tech News",
+            "https://tech.example.com",
+            "https://tech.example.com/rss",
+            1,
+            &now,
+        )
+        .await;
+        insert_entry(
+            &pool,
+            1,
+            1,
+            "Test Article",
+            "unread",
+            false,
+            &now,
+            Some("summary content"),
+        )
+        .await;
+
+        super::super::update_entry_content_in_db(&pool, 1, "<p>Original article content</p>")
+            .await
+            .expect("update_entry_content_in_db should not error");
+
+        let entry = super::super::get_entry_from_db(&pool, 1)
+            .await
+            .expect("get_entry_from_db should not error");
+
+        assert_eq!(
+            entry.content,
+            Some("<p>Original article content</p>".to_string())
+        );
+    }
+
+    #[tokio::test]
+    async fn test_update_entry_content_in_db_fails_for_missing_entry() {
+        let pool = setup_test_db().await;
+
+        let result = super::super::update_entry_content_in_db(&pool, 999, "new content").await;
+
+        assert!(result.is_err(), "Missing entry should return an error");
+        assert!(
+            result
+                .err()
+                .is_some_and(|error| error.contains("not found in local database")),
+            "Error should explain local entry is missing"
+        );
+    }
+
+    #[tokio::test]
     async fn test_get_entries_filters_by_status() {
         let pool = setup_test_db().await;
         let now = Utc::now().to_rfc3339();

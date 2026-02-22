@@ -2,6 +2,7 @@ use crate::miniflux::types::*;
 use base64::{prelude::BASE64_STANDARD, Engine};
 use reqwest::{header, Client};
 use serde::de::DeserializeOwned;
+use serde_json::Value;
 use std::time::Duration;
 
 /// Miniflux API Client
@@ -501,7 +502,8 @@ impl MinifluxClient {
             "entries/{}/fetch-content?update_content={}",
             id, update_content
         );
-        self.get(&path).await
+        let response: Value = self.get(&path).await?;
+        parse_fetch_content_response(response)
     }
 
     // ==================== Enclosures ====================
@@ -612,6 +614,32 @@ impl MinifluxClient {
     }
 }
 
+fn parse_fetch_content_response(response: Value) -> Result<String, String> {
+    match response {
+        Value::String(content) => Ok(content),
+        Value::Object(map) => {
+            if let Some(content) = map.get("content").and_then(Value::as_str) {
+                return Ok(content.to_string());
+            }
+
+            if let Some(content) = map
+                .get("entry")
+                .and_then(Value::as_object)
+                .and_then(|entry| entry.get("content"))
+                .and_then(Value::as_str)
+            {
+                return Ok(content.to_string());
+            }
+
+            Err("Parse error: fetch-content response missing content string".to_string())
+        }
+        other => Err(format!(
+            "Parse error: invalid fetch-content response type: {}",
+            other
+        )),
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use super::*;
@@ -635,5 +663,41 @@ mod tests {
             .with_credentials("user".to_string(), "pass".to_string());
         assert_eq!(client.username, Some("user".to_string()));
         assert_eq!(client.password, Some("pass".to_string()));
+    }
+
+    #[test]
+    fn test_parse_fetch_content_response_accepts_string_payload() {
+        let parsed = parse_fetch_content_response(Value::String("<p>full content</p>".to_string()))
+            .expect("string payload should parse");
+        assert_eq!(parsed, "<p>full content</p>");
+    }
+
+    #[test]
+    fn test_parse_fetch_content_response_accepts_object_payload() {
+        let parsed = parse_fetch_content_response(serde_json::json!({
+            "content": "<article>full content</article>"
+        }))
+        .expect("object payload should parse");
+        assert_eq!(parsed, "<article>full content</article>");
+    }
+
+    #[test]
+    fn test_parse_fetch_content_response_accepts_nested_entry_payload() {
+        let parsed = parse_fetch_content_response(serde_json::json!({
+            "entry": {
+                "content": "<div>nested content</div>"
+            }
+        }))
+        .expect("nested payload should parse");
+        assert_eq!(parsed, "<div>nested content</div>");
+    }
+
+    #[test]
+    fn test_parse_fetch_content_response_rejects_invalid_payload() {
+        let error = parse_fetch_content_response(serde_json::json!({
+            "content": null
+        }))
+        .expect_err("invalid payload should fail");
+        assert!(error.contains("missing content string"));
     }
 }

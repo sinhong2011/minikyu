@@ -4,6 +4,7 @@ import {
   Cancel01Icon,
   CheckmarkCircle02Icon,
   Copy01Icon,
+  Download01Icon,
   Globe02Icon,
   Mail01Icon,
   MailOpen01Icon,
@@ -35,6 +36,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Spinner } from '@/components/ui/spinner';
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import type { Entry } from '@/lib/bindings';
@@ -52,10 +54,13 @@ interface EntryReadingHeaderProps {
   hideNavigation?: boolean;
   onToggleStar: () => void;
   onToggleRead: () => void;
+  onFetchOriginalContent: () => void;
   onShare?: () => void;
   onClose?: () => void;
   isRead: boolean;
   isTogglingRead: boolean;
+  isFetchingOriginalContent: boolean;
+  isOriginalContentDownloaded: boolean;
   headerPadding: MotionValue<number>;
   smallTitleOpacity: MotionValue<number>;
   smallTitleHeight: MotionValue<number>;
@@ -74,10 +79,13 @@ export function EntryReadingHeader({
   hideNavigation = false,
   onToggleStar,
   onToggleRead,
+  onFetchOriginalContent,
   onShare,
   onClose,
   isRead,
   isTogglingRead,
+  isFetchingOriginalContent,
+  isOriginalContentDownloaded,
   headerPadding,
   smallTitleOpacity,
   smallTitleHeight,
@@ -163,6 +171,9 @@ export function EntryReadingHeader({
   const handleOpenInBrowser = () => {
     window.open(entry.url, '_blank', 'noopener,noreferrer');
   };
+  const fetchOriginalContentLabel = _(msg`Download original content`);
+  const fetchingOriginalContentLabel = _(msg`Fetching original content...`);
+  const originalContentDownloadedLabel = _(msg`Original content downloaded`);
 
   return (
     <motion.header
@@ -417,6 +428,43 @@ export function EntryReadingHeader({
                 </AnimatePresence>
               </TooltipTrigger>
               <TooltipPanel>{isRead ? _(msg`Mark as unread`) : _(msg`Mark as read`)}</TooltipPanel>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className={toolbarButtonClass}
+                    onClick={onFetchOriginalContent}
+                    disabled={isFetchingOriginalContent}
+                    aria-label={
+                      isFetchingOriginalContent
+                        ? fetchingOriginalContentLabel
+                        : isOriginalContentDownloaded
+                          ? originalContentDownloadedLabel
+                          : fetchOriginalContentLabel
+                    }
+                  />
+                }
+              >
+                {isFetchingOriginalContent ? (
+                  <Spinner className="h-5 w-5" />
+                ) : isOriginalContentDownloaded ? (
+                  <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-5 w-5 text-primary" />
+                ) : (
+                  <HugeiconsIcon icon={Download01Icon} className="h-5 w-5" />
+                )}
+              </TooltipTrigger>
+              <TooltipPanel>
+                {isFetchingOriginalContent
+                  ? fetchingOriginalContentLabel
+                  : isOriginalContentDownloaded
+                    ? originalContentDownloadedLabel
+                    : fetchOriginalContentLabel}
+              </TooltipPanel>
             </Tooltip>
 
             <Popover>

@@ -307,7 +307,14 @@ export function EditFeedDialog({ feed, open, onOpenChange }: EditFeedDialogProps
                           htmlFor="edit-feed-crawler"
                           className="flex items-center justify-between rounded-md border px-3 py-2"
                         >
-                          <span className="text-sm">{_(msg`Use custom crawler`)}</span>
+                          <span className="flex flex-col gap-0.5">
+                            <span className="text-sm">
+                              {_(msg`Download original content (crawler)`)}
+                            </span>
+                            <span className="text-xs text-muted-foreground">
+                              {_(msg`Useful for summary-only feeds`)}
+                            </span>
+                          </span>
                           <Switch
                             id="edit-feed-crawler"
                             checked={field.state.value}

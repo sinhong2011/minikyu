@@ -706,14 +706,31 @@ pub async fn fetch_entry_content(
     id: String,
     update_content: bool,
 ) -> Result<String, String> {
-    let guard = state.miniflux.client.lock().await;
-    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+    let client = {
+        let guard = state.miniflux.client.lock().await;
+        guard
+            .as_ref()
+            .cloned()
+            .ok_or("Not connected to Miniflux server")?
+    };
 
     let id_parsed = id
         .parse::<i64>()
-        .map_err(|e| format!("Invalid entry ID: {}", e))?;
+        .map_err(|e| format!("Invalid entry ID: {e}"))?;
 
-    client.fetch_content(id_parsed, update_content).await
+    let fetched_content = client.fetch_content(id_parsed, update_content).await?;
+
+    let pool = state
+        .db_pool
+        .lock()
+        .await
+        .as_ref()
+        .ok_or("Database not initialized")?
+        .clone();
+
+    update_entry_content_in_db(&pool, id_parsed, &fetched_content).await?;
+
+    Ok(fetched_content)
 }
 
 /// Flush history (delete all read entries from Miniflux server)
@@ -1002,6 +1019,27 @@ pub async fn get_entry_from_db(
     .ok_or_else(|| format!("Entry with id {id} not found"))?;
 
     Ok(build_entry_from_row(&row))
+}
+
+async fn update_entry_content_in_db(
+    pool: &SqlitePool,
+    entry_id: i64,
+    content: &str,
+) -> Result<(), String> {
+    let result = sqlx::query("UPDATE entries SET content = ? WHERE id = ?")
+        .bind(content)
+        .bind(entry_id)
+        .execute(pool)
+        .await
+        .map_err(|e| format!("Failed to update entry content in database: {e}"))?;
+
+    if result.rows_affected() == 0 {
+        return Err(format!(
+            "Entry with id {entry_id} not found in local database"
+        ));
+    }
+
+    Ok(())
 }
 
 fn build_feed_from_row(row: &sqlx::sqlite::SqliteRow) -> crate::miniflux::Feed {
