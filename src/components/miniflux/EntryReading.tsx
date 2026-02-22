@@ -56,6 +56,7 @@ interface EntryReadingProps {
   nextEntryTitle?: string;
   transitionDirection?: 'forward' | 'backward';
   hideNavigation?: boolean;
+  onOpenInAppBrowser?: (url: string) => void;
 }
 
 export function EntryReading({
@@ -69,6 +70,7 @@ export function EntryReading({
   nextEntryTitle,
   transitionDirection = 'forward',
   hideNavigation = false,
+  onOpenInAppBrowser,
 }: EntryReadingProps) {
   const { _ } = useLingui();
   const {
@@ -641,6 +643,7 @@ export function EntryReading({
         hideNavigation={hideNavigation}
         onToggleStar={() => toggleStar.mutate(entry.id)}
         onToggleRead={() => toggleEntryRead.mutate(entry.id)}
+        onOpenInAppBrowser={onOpenInAppBrowser}
         onFetchOriginalContent={handleFetchOriginalContent}
         isFetchingOriginalContent={fetchEntryContent.isPending}
         isOriginalContentDownloaded={isOriginalContentDownloaded}
