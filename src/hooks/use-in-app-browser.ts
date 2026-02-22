@@ -11,9 +11,9 @@ export function useInAppBrowser() {
   const setLeftSidebarVisible = useUIStore((state) => state.setLeftSidebarVisible);
   const inAppBrowserUrl = useUIStore((state) => state.inAppBrowserUrl);
 
-  // Ref to the browser content pane div. InAppBrowserPane assigns this ref
+  // Ref to the browser content pane element. InAppBrowserPane assigns this ref
   // so we can read its getBoundingClientRect() after the sidebar animates.
-  const browserContentRef = useRef<HTMLDivElement | null>(null);
+  const browserContentRef = useRef<HTMLElement | null>(null);
 
   /**
    * Opens the browser for the given URL.
