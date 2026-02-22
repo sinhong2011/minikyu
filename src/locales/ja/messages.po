@@ -55,11 +55,11 @@ msgstr "{0} of {1} entries downloaded"
 msgid "{0} total"
 msgstr "{0} total"
 
-#: src/components/miniflux/EntryReading.tsx:197
+#: src/components/miniflux/EntryReading.tsx:211
 msgid "{minutesLeft} min left"
 msgstr ""
 
-#: src/components/miniflux/EntryReading.tsx:196
+#: src/components/miniflux/EntryReading.tsx:210
 msgid "{progressPercent}% read"
 msgstr ""
 
@@ -219,7 +219,7 @@ msgstr ""
 msgid "Are you sure you want to unsubscribe from this feed?"
 msgstr "Are you sure you want to unsubscribe from this feed?"
 
-#: src/components/miniflux/EntryReading.tsx:146
+#: src/components/miniflux/EntryReading.tsx:153
 msgid "Article table of contents"
 msgstr "Article table of contents"
 
@@ -227,7 +227,7 @@ msgstr "Article table of contents"
 msgid "Ascending"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:123
+#: src/components/miniflux/EntryReadingHeader.tsx:127
 msgid "Auto"
 msgstr "Auto"
 
@@ -239,13 +239,13 @@ msgstr ""
 msgid "Beautiful, accessible components"
 msgstr "美しく使いやすいコンポーネント"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:351
+#: src/components/miniflux/EntryReadingHeader.tsx:356
 msgid "Bionic Reading"
 msgstr "Bionic Reading"
 
 #: src/components/miniflux/AddFeedDialog.tsx:817
-#: src/components/miniflux/EditFeedDialog.tsx:415
-#: src/components/miniflux/settings/FeedFormDialog.tsx:636
+#: src/components/miniflux/EditFeedDialog.tsx:417
+#: src/components/miniflux/settings/FeedFormDialog.tsx:638
 msgid "Blocklist rules"
 msgstr "Blocklist rules"
 
@@ -260,6 +260,10 @@ msgstr "Book-like rhythm"
 #: src/components/layout/AppSidebar.tsx:515
 #: src/components/layout/AppSidebar.tsx:519
 msgid "Browse categories"
+msgstr ""
+
+#: src/components/miniflux/InAppBrowserPane.tsx:71
+msgid "Browser content"
 msgstr ""
 
 #: src/components/preferences/panes/AboutPane.tsx:169
@@ -279,11 +283,11 @@ msgstr "Can’t find a category? Create a new one."
 #: src/components/miniflux/AddFeedDialog.tsx:862
 #: src/components/miniflux/ConnectionDialog.tsx:359
 #: src/components/miniflux/EditCategoryDialog.tsx:103
-#: src/components/miniflux/EditFeedDialog.tsx:451
+#: src/components/miniflux/EditFeedDialog.tsx:453
 #: src/components/miniflux/SearchSourceDialog.tsx:155
 #: src/components/miniflux/settings/CategoryFormDialog.tsx:103
 #: src/components/miniflux/settings/DeleteEntityDialog.tsx:51
-#: src/components/miniflux/settings/FeedFormDialog.tsx:679
+#: src/components/miniflux/settings/FeedFormDialog.tsx:681
 #: src/components/miniflux/settings/UserFormDialog.tsx:155
 #: src/components/preferences/panes/AdvancedPane.tsx:137
 msgid "Cancel"
@@ -365,7 +369,7 @@ msgstr ""
 msgid "Checking..."
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:268
+#: src/components/miniflux/EntryReadingHeader.tsx:273
 msgid "Chinese conversion"
 msgstr "Chinese conversion"
 
@@ -431,8 +435,8 @@ msgstr "Clear local data?"
 msgid "Clearing..."
 msgstr "Clearing..."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:204
-#: src/components/miniflux/EntryReadingHeader.tsx:210
+#: src/components/miniflux/EntryReadingHeader.tsx:209
+#: src/components/miniflux/EntryReadingHeader.tsx:215
 #: src/components/miniflux/ReaderSettings.tsx:226
 msgid "Close"
 msgstr "Close"
@@ -440,6 +444,11 @@ msgstr "Close"
 #: src/components/preferences/panes/GeneralPane.tsx:40
 msgid "Close behavior updated"
 msgstr "閉じる動作を更新しました"
+
+#: src/components/miniflux/InAppBrowserPane.tsx:58
+#: src/components/miniflux/InAppBrowserPane.tsx:64
+msgid "Close browser"
+msgstr ""
 
 #: src/components/preferences/panes/GeneralPane.tsx:152
 msgid "Close Button Behavior"
@@ -457,7 +466,7 @@ msgstr "ウィンドウを閉じる"
 msgid "Code and precision"
 msgstr "Code and precision"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:306
+#: src/components/miniflux/EntryReadingHeader.tsx:311
 msgid "Code theme"
 msgstr "Code theme"
 
@@ -514,7 +523,7 @@ msgstr "Continue to Add Feed"
 msgid "Copied!"
 msgstr "コピーしました！"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:490
+#: src/components/miniflux/EntryReadingHeader.tsx:501
 msgid "Copy article URL"
 msgstr ""
 
@@ -526,7 +535,7 @@ msgstr "Copy code"
 msgid "Copy message"
 msgstr "メッセージをコピー"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:506
+#: src/components/miniflux/EntryReadingHeader.tsx:517
 msgid "Copy share link"
 msgstr ""
 
@@ -568,7 +577,7 @@ msgstr "Create category"
 msgid "Create Category"
 msgstr "Create Category"
 
-#: src/components/miniflux/settings/FeedFormDialog.tsx:682
+#: src/components/miniflux/settings/FeedFormDialog.tsx:684
 msgid "Create feed"
 msgstr "Create feed"
 
@@ -616,8 +625,8 @@ msgstr "Date Range"
 msgid "Debug"
 msgstr "デバッグ"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:134
-#: src/components/miniflux/EntryReadingHeader.tsx:144
+#: src/components/miniflux/EntryReadingHeader.tsx:138
+#: src/components/miniflux/EntryReadingHeader.tsx:148
 msgid "Default"
 msgstr ""
 
@@ -666,8 +675,8 @@ msgid "Direction"
 msgstr ""
 
 #: src/components/miniflux/AddFeedDialog.tsx:734
-#: src/components/miniflux/EditFeedDialog.tsx:332
-#: src/components/miniflux/settings/FeedFormDialog.tsx:552
+#: src/components/miniflux/EditFeedDialog.tsx:334
+#: src/components/miniflux/settings/FeedFormDialog.tsx:554
 msgid "Disable feed"
 msgstr "Disable feed"
 
@@ -702,13 +711,13 @@ msgstr "Download Failed"
 msgid "Download Manager"
 msgstr "Download Manager"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:172
+#: src/components/miniflux/EntryReadingHeader.tsx:176
 msgid "Download original content"
 msgstr ""
 
 #: src/components/miniflux/AddFeedDialog.tsx:712
-#: src/components/miniflux/EditFeedDialog.tsx:311
-#: src/components/miniflux/settings/FeedFormDialog.tsx:531
+#: src/components/miniflux/EditFeedDialog.tsx:312
+#: src/components/miniflux/settings/FeedFormDialog.tsx:532
 msgid "Download original content (crawler)"
 msgstr ""
 
@@ -790,7 +799,7 @@ msgstr "有効"
 msgid "Enabled Services"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:352
+#: src/components/miniflux/EntryReadingHeader.tsx:357
 msgid "English only"
 msgstr "English only"
 
@@ -826,7 +835,7 @@ msgstr ""
 msgid "Entries"
 msgstr "Entries"
 
-#: src/components/miniflux/EntryReading.tsx:572
+#: src/components/miniflux/EntryReading.tsx:629
 msgid "Entry not found"
 msgstr "Entry not found"
 
@@ -1084,12 +1093,12 @@ msgid "Feeds"
 msgstr "Feeds"
 
 #: src/components/miniflux/AddFeedDialog.tsx:768
-#: src/components/miniflux/EditFeedDialog.tsx:366
-#: src/components/miniflux/settings/FeedFormDialog.tsx:586
+#: src/components/miniflux/EditFeedDialog.tsx:368
+#: src/components/miniflux/settings/FeedFormDialog.tsx:588
 msgid "Fetch via proxy"
 msgstr "Fetch via proxy"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:173
+#: src/components/miniflux/EntryReadingHeader.tsx:177
 msgid "Fetching original content..."
 msgstr ""
 
@@ -1171,7 +1180,7 @@ msgstr "左サイドバーを非表示"
 msgid "Hide Others"
 msgstr "他を非表示"
 
-#: src/components/miniflux/EntryReading.tsx:198
+#: src/components/miniflux/EntryReading.tsx:212
 msgid "Hide reading status"
 msgstr ""
 
@@ -1222,8 +1231,8 @@ msgid "Humanist"
 msgstr "Humanist"
 
 #: src/components/miniflux/AddFeedDialog.tsx:751
-#: src/components/miniflux/EditFeedDialog.tsx:349
-#: src/components/miniflux/settings/FeedFormDialog.tsx:569
+#: src/components/miniflux/EditFeedDialog.tsx:351
+#: src/components/miniflux/settings/FeedFormDialog.tsx:571
 msgid "Ignore HTTP cache"
 msgstr "Ignore HTTP cache"
 
@@ -1260,8 +1269,8 @@ msgid "Integrations"
 msgstr ""
 
 #: src/components/miniflux/AddFeedDialog.tsx:834
-#: src/components/miniflux/EditFeedDialog.tsx:432
-#: src/components/miniflux/settings/FeedFormDialog.tsx:653
+#: src/components/miniflux/EditFeedDialog.tsx:434
+#: src/components/miniflux/settings/FeedFormDialog.tsx:655
 msgid "Keeplist rules"
 msgstr "Keeplist rules"
 
@@ -1348,13 +1357,13 @@ msgstr ""
 msgid "Manage third-party service integrations. Configure services in Miniflux settings."
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:408
-#: src/components/miniflux/EntryReadingHeader.tsx:427
+#: src/components/miniflux/EntryReadingHeader.tsx:413
+#: src/components/miniflux/EntryReadingHeader.tsx:432
 msgid "Mark as read"
 msgstr "Mark as read"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:408
-#: src/components/miniflux/EntryReadingHeader.tsx:427
+#: src/components/miniflux/EntryReadingHeader.tsx:413
+#: src/components/miniflux/EntryReadingHeader.tsx:432
 msgid "Mark as unread"
 msgstr ""
 
@@ -1421,12 +1430,12 @@ msgstr ""
 msgid "Next Article"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:245
-#: src/components/miniflux/EntryReadingHeader.tsx:251
+#: src/components/miniflux/EntryReadingHeader.tsx:250
+#: src/components/miniflux/EntryReadingHeader.tsx:256
 msgid "Next entry (j or →)"
 msgstr "Next entry (j or →)"
 
-#: src/components/miniflux/EntryReading.tsx:145
+#: src/components/miniflux/EntryReading.tsx:152
 msgid "Next section"
 msgstr "Next section"
 
@@ -1454,7 +1463,7 @@ msgstr "No categories yet"
 msgid "No category"
 msgstr "No category"
 
-#: src/components/miniflux/EntryReading.tsx:649
+#: src/components/miniflux/EntryReading.tsx:716
 msgid "No content available"
 msgstr "No content available"
 
@@ -1519,7 +1528,7 @@ msgstr ""
 msgid "of"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:115
+#: src/components/miniflux/EntryReadingHeader.tsx:119
 msgid "Off"
 msgstr "Off"
 
@@ -1532,7 +1541,7 @@ msgstr "オフラインキャッシュデータ"
 msgid "Offline Mode"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:142
+#: src/components/miniflux/EntryReadingHeader.tsx:146
 msgid "OLED"
 msgstr ""
 
@@ -1548,7 +1557,7 @@ msgstr "Open File"
 msgid "Open Folder"
 msgstr "Open Folder"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:516
+#: src/components/miniflux/EntryReadingHeader.tsx:527
 msgid "Open in browser"
 msgstr ""
 
@@ -1570,6 +1579,7 @@ msgstr ""
 msgid "OPML imported successfully"
 msgstr ""
 
+#: src/components/miniflux/EntryReadingHeader.tsx:178
 #: src/services/miniflux/entries.ts:528
 msgid "Original content downloaded"
 msgstr ""
@@ -1588,7 +1598,7 @@ msgstr "Overall progress"
 msgid "Page {0} of {1}"
 msgstr "Page {0} of {1}"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:136
+#: src/components/miniflux/EntryReadingHeader.tsx:140
 msgid "Paper"
 msgstr ""
 
@@ -1650,12 +1660,12 @@ msgstr "Preparing sync stages"
 msgid "Press"
 msgstr "押す"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:226
-#: src/components/miniflux/EntryReadingHeader.tsx:232
+#: src/components/miniflux/EntryReadingHeader.tsx:231
+#: src/components/miniflux/EntryReadingHeader.tsx:237
 msgid "Previous entry (h or ←)"
 msgstr "Previous entry (h or ←)"
 
-#: src/components/miniflux/EntryReading.tsx:144
+#: src/components/miniflux/EntryReading.tsx:151
 msgid "Previous section"
 msgstr "Previous section"
 
@@ -1711,11 +1721,11 @@ msgstr "Reader companion illustration"
 msgid "Reader typography settings"
 msgstr "Reader typography settings"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:281
+#: src/components/miniflux/EntryReadingHeader.tsx:286
 msgid "Reading display"
 msgstr "Reading display"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:330
+#: src/components/miniflux/EntryReadingHeader.tsx:335
 msgid "Reading theme"
 msgstr ""
 
@@ -1759,8 +1769,8 @@ msgid "Retry"
 msgstr "Retry"
 
 #: src/components/miniflux/AddFeedDialog.tsx:799
-#: src/components/miniflux/EditFeedDialog.tsx:397
-#: src/components/miniflux/settings/FeedFormDialog.tsx:618
+#: src/components/miniflux/EditFeedDialog.tsx:399
+#: src/components/miniflux/settings/FeedFormDialog.tsx:620
 msgid "Rewrite rules"
 msgstr "Rewrite rules"
 
@@ -1796,13 +1806,13 @@ msgid "Sans"
 msgstr "Sans"
 
 #: src/components/miniflux/settings/CategoryFormDialog.tsx:106
-#: src/components/miniflux/settings/FeedFormDialog.tsx:682
+#: src/components/miniflux/settings/FeedFormDialog.tsx:684
 #: src/components/miniflux/settings/UserFormDialog.tsx:158
 msgid "Save changes"
 msgstr "Save changes"
 
 #: src/components/miniflux/EditCategoryDialog.tsx:106
-#: src/components/miniflux/EditFeedDialog.tsx:454
+#: src/components/miniflux/EditFeedDialog.tsx:456
 msgid "Save Changes"
 msgstr "Save Changes"
 
@@ -1811,18 +1821,18 @@ msgid "Save Rules"
 msgstr "Save Rules"
 
 #: src/components/miniflux/EditCategoryDialog.tsx:106
-#: src/components/miniflux/EditFeedDialog.tsx:454
+#: src/components/miniflux/EditFeedDialog.tsx:456
 #: src/components/preferences/panes/AppearancePane.tsx:284
 msgid "Saving..."
 msgstr "Saving..."
 
 #: src/components/miniflux/AddFeedDialog.tsx:783
-#: src/components/miniflux/EditFeedDialog.tsx:381
-#: src/components/miniflux/settings/FeedFormDialog.tsx:601
+#: src/components/miniflux/EditFeedDialog.tsx:383
+#: src/components/miniflux/settings/FeedFormDialog.tsx:603
 msgid "Scraper rules"
 msgstr "Scraper rules"
 
-#: src/components/miniflux/EntryReading.tsx:200
+#: src/components/miniflux/EntryReading.tsx:214
 msgid "Scroll to top"
 msgstr ""
 
@@ -1919,7 +1929,7 @@ msgstr "テーマを選択"
 msgid "Select Video Download Folder"
 msgstr "Select Video Download Folder"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:138
+#: src/components/miniflux/EntryReadingHeader.tsx:142
 msgid "Sepia"
 msgstr ""
 
@@ -1971,11 +1981,11 @@ msgstr "設定"
 msgid "shadcn/ui"
 msgstr "shadcn/ui"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:469
+#: src/components/miniflux/EntryReadingHeader.tsx:480
 msgid "Share"
 msgstr "Share"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:506
+#: src/components/miniflux/EntryReadingHeader.tsx:517
 msgid "Share link copied!"
 msgstr ""
 
@@ -1997,11 +2007,11 @@ msgstr "すべて表示"
 msgid "Show Left Sidebar"
 msgstr "左サイドバーを表示"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:365
+#: src/components/miniflux/EntryReadingHeader.tsx:370
 msgid "Show reading progress at bottom-left"
 msgstr ""
 
-#: src/components/miniflux/EntryReading.tsx:199
+#: src/components/miniflux/EntryReading.tsx:213
 msgid "Show reading status"
 msgstr ""
 
@@ -2017,7 +2027,7 @@ msgstr "トレイアイコンを表示"
 msgid "Size"
 msgstr "Size"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:140
+#: src/components/miniflux/EntryReadingHeader.tsx:144
 msgid "Slate"
 msgstr ""
 
@@ -2035,8 +2045,8 @@ msgstr ""
 msgid "Source URL is required"
 msgstr "Source URL is required"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:386
-#: src/components/miniflux/EntryReadingHeader.tsx:395
+#: src/components/miniflux/EntryReadingHeader.tsx:391
+#: src/components/miniflux/EntryReadingHeader.tsx:400
 msgid "Star"
 msgstr "Star"
 
@@ -2072,7 +2082,7 @@ msgstr "アプリケーションをシステムトレイに最小化して起動
 msgid "Status"
 msgstr "Status"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:363
+#: src/components/miniflux/EntryReadingHeader.tsx:368
 msgid "Status Bar"
 msgstr ""
 
@@ -2301,8 +2311,8 @@ msgstr "Unread"
 msgid "unread items"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:386
-#: src/components/miniflux/EntryReadingHeader.tsx:395
+#: src/components/miniflux/EntryReadingHeader.tsx:391
+#: src/components/miniflux/EntryReadingHeader.tsx:400
 msgid "Unstar"
 msgstr "Unstar"
 
@@ -2354,7 +2364,7 @@ msgstr "Update username or password."
 msgid "URL copied to clipboard"
 msgstr "URL copied to clipboard"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:490
+#: src/components/miniflux/EntryReadingHeader.tsx:501
 msgid "URL copied!"
 msgstr ""
 
@@ -2381,8 +2391,8 @@ msgid "Use URL"
 msgstr "Use URL"
 
 #: src/components/miniflux/AddFeedDialog.tsx:715
-#: src/components/miniflux/EditFeedDialog.tsx:313
-#: src/components/miniflux/settings/FeedFormDialog.tsx:533
+#: src/components/miniflux/EditFeedDialog.tsx:315
+#: src/components/miniflux/settings/FeedFormDialog.tsx:535
 msgid "Useful for summary-only feeds"
 msgstr ""
 
@@ -2507,18 +2517,18 @@ msgstr ""
 msgid "You can find your API token in Miniflux Settings → API Keys"
 msgstr "Miniflux 設定 → API キーで API トークンを見つけることができます"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:284
+#: src/components/miniflux/EntryReadingHeader.tsx:289
 msgid "中文顯示"
 msgstr "中文顯示"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:118
+#: src/components/miniflux/EntryReadingHeader.tsx:122
 msgid "簡體中文"
 msgstr "簡體中文"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:117
+#: src/components/miniflux/EntryReadingHeader.tsx:121
 msgid "繁體中文（台灣）"
 msgstr "繁體中文（台灣）"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:116
+#: src/components/miniflux/EntryReadingHeader.tsx:120
 msgid "繁體中文（香港）"
 msgstr "繁體中文（香港）"
