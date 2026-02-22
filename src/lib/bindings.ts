@@ -740,6 +740,62 @@ async getUnreadCounts() : Promise<Result<UnreadCounts, string>> {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+/**
+ * Opens an in-app browser webview at the given logical-pixel bounds.
+ * 
+ * If a browser webview is already open, navigates it to the new URL and
+ * updates its bounds. Otherwise creates a new child webview attached to
+ * the main window.
+ * 
+ * `x`, `y`, `width`, `height` are CSS logical pixels from
+ * `getBoundingClientRect()` — no devicePixelRatio scaling needed.
+ */
+async openInAppBrowser(url: string, x: number, y: number, width: number, height: number, isDark: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("open_in_app_browser", { url, x, y, width, height, isDark }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Closes and destroys the in-app browser webview if it exists.
+ */
+async closeInAppBrowser() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("close_in_app_browser") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Updates the position and size of the browser webview.
+ * 
+ * Called by the React ResizeObserver whenever the browser pane changes size.
+ */
+async resizeBrowserWebview(x: number, y: number, width: number, height: number) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("resize_browser_webview", { x, y, width, height }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Synchronises the browser webview's color scheme with the app theme.
+ * 
+ * Uses Tauri's Webview::eval() API to set colorScheme on the page root.
+ * The injected value is always "dark" or "light" — no user input involved.
+ */
+async syncBrowserTheme(isDark: boolean) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("sync_browser_theme", { isDark }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
