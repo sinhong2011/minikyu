@@ -262,7 +262,7 @@ msgstr "Book-like rhythm"
 msgid "Browse categories"
 msgstr "Browse categories"
 
-#: src/components/miniflux/InAppBrowserPane.tsx:71
+#: src/components/miniflux/InAppBrowserPane.tsx:108
 msgid "Browser content"
 msgstr "Browser content"
 
@@ -445,8 +445,8 @@ msgstr "Close"
 msgid "Close behavior updated"
 msgstr "Close behavior updated"
 
-#: src/components/miniflux/InAppBrowserPane.tsx:58
-#: src/components/miniflux/InAppBrowserPane.tsx:64
+#: src/components/miniflux/InAppBrowserPane.tsx:95
+#: src/components/miniflux/InAppBrowserPane.tsx:101
 msgid "Close browser"
 msgstr "Close browser"
 
@@ -1558,6 +1558,8 @@ msgid "Open Folder"
 msgstr "Open Folder"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:527
+#: src/components/miniflux/InAppBrowserPane.tsx:77
+#: src/components/miniflux/InAppBrowserPane.tsx:83
 msgid "Open in browser"
 msgstr "Open in browser"
 
@@ -1728,6 +1730,11 @@ msgstr "Reading display"
 #: src/components/miniflux/EntryReadingHeader.tsx:335
 msgid "Reading theme"
 msgstr "Reading theme"
+
+#: src/components/miniflux/InAppBrowserPane.tsx:59
+#: src/components/miniflux/InAppBrowserPane.tsx:65
+msgid "Refresh"
+msgstr "Refresh"
 
 #: src/components/preferences/panes/FeedsPane.tsx:95
 msgid "Refresh all"

@@ -44,55 +44,56 @@ export function MainWindowContent({
           <ResizableHandle withHandle />
           <ResizablePanel>
             <div className="flex h-full flex-col border-l">
-              {inAppBrowserUrl ? (
-                <InAppBrowserPane
-                  url={inAppBrowserUrl}
-                  onClose={closeBrowser}
-                  browserContentRef={browserContentRef}
-                />
-              ) : (
-                <AnimatePresence initial={false} mode="wait">
-                  {selectedEntryId ? (
-                    <motion.div
-                      key="reading"
-                      className="flex h-full flex-col"
-                      initial={{ opacity: 0, x: 18, scale: 0.996 }}
-                      animate={{ opacity: 1, x: 0, scale: 1 }}
-                      exit={{ opacity: 0, x: -14, scale: 0.996 }}
-                      transition={{
-                        duration: 0.24,
-                        ease: [0.22, 1, 0.36, 1],
-                      }}
-                    >
-                      <EntryReading
-                        entryId={selectedEntryId}
-                        onNavigatePrev={onNavigatePrev}
-                        onNavigateNext={onNavigateNext}
-                        onClose={onClose}
-                        hasPrev={hasPrev}
-                        hasNext={hasNext}
-                        nextEntryTitle={nextEntryTitle}
-                        transitionDirection={entryTransitionDirection}
-                        onOpenInAppBrowser={openBrowser}
-                      />
-                    </motion.div>
-                  ) : (
-                    <motion.div
-                      key="empty"
-                      className="flex flex-1 flex-col items-center justify-center bg-muted/10"
-                      initial={{ opacity: 0, x: -10, scale: 0.998 }}
-                      animate={{ opacity: 1, x: 0, scale: 1 }}
-                      exit={{ opacity: 0, x: 8, scale: 0.998 }}
-                      transition={{
-                        duration: 0.2,
-                        ease: [0.22, 1, 0.36, 1],
-                      }}
-                    >
-                      <EntryEmptyState />
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              )}
+              <AnimatePresence mode="sync">
+                {inAppBrowserUrl ? (
+                  <motion.div
+                    key="browser"
+                    className="flex h-full flex-col"
+                    initial={{ opacity: 0, x: 22, scale: 0.997 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: 22, scale: 0.997 }}
+                    transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <InAppBrowserPane
+                      url={inAppBrowserUrl}
+                      onClose={closeBrowser}
+                      browserContentRef={browserContentRef}
+                    />
+                  </motion.div>
+                ) : selectedEntryId ? (
+                  <motion.div
+                    key="reading"
+                    className="flex h-full flex-col"
+                    initial={{ opacity: 0, x: 18, scale: 0.996 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: -14, scale: 0.996 }}
+                    transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <EntryReading
+                      entryId={selectedEntryId}
+                      onNavigatePrev={onNavigatePrev}
+                      onNavigateNext={onNavigateNext}
+                      onClose={onClose}
+                      hasPrev={hasPrev}
+                      hasNext={hasNext}
+                      nextEntryTitle={nextEntryTitle}
+                      transitionDirection={entryTransitionDirection}
+                      onOpenInAppBrowser={openBrowser}
+                    />
+                  </motion.div>
+                ) : (
+                  <motion.div
+                    key="empty"
+                    className="flex flex-1 flex-col items-center justify-center bg-muted/10"
+                    initial={{ opacity: 0, x: -10, scale: 0.998 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: 8, scale: 0.998 }}
+                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <EntryEmptyState />
+                  </motion.div>
+                )}
+              </AnimatePresence>
             </div>
           </ResizablePanel>
         </ResizablePanelGroup>

@@ -262,7 +262,7 @@ msgstr "Book-like rhythm"
 msgid "Browse categories"
 msgstr ""
 
-#: src/components/miniflux/InAppBrowserPane.tsx:71
+#: src/components/miniflux/InAppBrowserPane.tsx:108
 msgid "Browser content"
 msgstr ""
 
@@ -445,8 +445,8 @@ msgstr "Close"
 msgid "Close behavior updated"
 msgstr "关闭行为已更新"
 
-#: src/components/miniflux/InAppBrowserPane.tsx:58
-#: src/components/miniflux/InAppBrowserPane.tsx:64
+#: src/components/miniflux/InAppBrowserPane.tsx:95
+#: src/components/miniflux/InAppBrowserPane.tsx:101
 msgid "Close browser"
 msgstr ""
 
@@ -1558,6 +1558,8 @@ msgid "Open Folder"
 msgstr "Open Folder"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:527
+#: src/components/miniflux/InAppBrowserPane.tsx:77
+#: src/components/miniflux/InAppBrowserPane.tsx:83
 msgid "Open in browser"
 msgstr ""
 
@@ -1727,6 +1729,11 @@ msgstr "Reading display"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:335
 msgid "Reading theme"
+msgstr ""
+
+#: src/components/miniflux/InAppBrowserPane.tsx:59
+#: src/components/miniflux/InAppBrowserPane.tsx:65
+msgid "Refresh"
 msgstr ""
 
 #: src/components/preferences/panes/FeedsPane.tsx:95

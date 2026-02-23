@@ -1,7 +1,9 @@
-import { Cancel01Icon } from '@hugeicons/core-free-icons';
+import { Cancel01Icon, Globe02Icon, RefreshIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { openUrl } from '@tauri-apps/plugin-opener';
+import { motion } from 'motion/react';
 import { type RefObject, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
@@ -41,10 +43,51 @@ export function InAppBrowserPane({
   return (
     <div className={cn('flex h-full flex-col', className)}>
       {/* Toolbar — React content rendered above the native webview area */}
-      <div className="flex h-10 shrink-0 items-center gap-2 border-b bg-background px-3">
+      <motion.div
+        className="flex h-12 shrink-0 items-center gap-1 border-b bg-background px-3"
+        initial={{ opacity: 0, y: -8 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
+      >
         <span className="flex-1 truncate text-xs text-muted-foreground select-all" title={url}>
           {url}
         </span>
+
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="size-7 rounded-lg"
+                onClick={() => commands.reloadBrowserWebview().catch(() => {})}
+                aria-label={_(msg`Refresh`)}
+              >
+                <HugeiconsIcon icon={RefreshIcon} className="size-4" />
+              </Button>
+            }
+          />
+          <TooltipPanel>{_(msg`Refresh`)}</TooltipPanel>
+        </Tooltip>
+
+        <Tooltip>
+          <TooltipTrigger
+            render={
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="size-7 rounded-lg"
+                onClick={() => openUrl(url).catch(() => {})}
+                aria-label={_(msg`Open in browser`)}
+              >
+                <HugeiconsIcon icon={Globe02Icon} className="size-4" />
+              </Button>
+            }
+          />
+          <TooltipPanel>{_(msg`Open in browser`)}</TooltipPanel>
+        </Tooltip>
 
         <Tooltip>
           <TooltipTrigger
@@ -63,7 +106,7 @@ export function InAppBrowserPane({
           />
           <TooltipPanel>{_(msg`Close browser`)}</TooltipPanel>
         </Tooltip>
-      </div>
+      </motion.div>
 
       {/* Anchor section — native WKWebView is positioned exactly here */}
       <section

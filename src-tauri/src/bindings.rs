@@ -79,6 +79,7 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         in_app_browser::open_in_app_browser,
         in_app_browser::close_in_app_browser,
         in_app_browser::resize_browser_webview,
+        in_app_browser::reload_browser_webview,
         in_app_browser::sync_browser_theme,
     ])
 }

@@ -110,6 +110,19 @@ pub async fn resize_browser_webview(
     Ok(())
 }
 
+/// Reloads the current page in the in-app browser webview.
+#[tauri::command]
+#[specta::specta]
+pub async fn reload_browser_webview(app: AppHandle) -> Result<(), String> {
+    if let Some(webview) = app.get_webview(BROWSER_LABEL) {
+        // SAFETY: hardcoded literal, no user input involved.
+        webview
+            .eval("window.location.reload()")
+            .map_err(|e| format!("reload_browser_webview failed: {e}"))?;
+    }
+    Ok(())
+}
+
 /// Synchronises the browser webview's color scheme with the app theme.
 ///
 /// Uses Tauri's Webview::eval() API to set colorScheme on the page root.

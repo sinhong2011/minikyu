@@ -784,6 +784,17 @@ async resizeBrowserWebview(x: number, y: number, width: number, height: number) 
 }
 },
 /**
+ * Reloads the current page in the in-app browser webview.
+ */
+async reloadBrowserWebview() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("reload_browser_webview") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Synchronises the browser webview's color scheme with the app theme.
  * 
  * Uses Tauri's Webview::eval() API to set colorScheme on the page root.
