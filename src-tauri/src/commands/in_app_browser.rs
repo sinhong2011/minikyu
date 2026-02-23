@@ -32,6 +32,9 @@ pub async fn open_in_app_browser(
         .parse::<tauri::Url>()
         .map_err(|e| format!("Invalid URL: {e}"))?;
 
+    // SAFETY: color_scheme is always the literal "dark" or "light", no user input.
+    let color_scheme = if is_dark { "dark" } else { "light" };
+
     if let Some(webview) = app.get_webview(BROWSER_LABEL) {
         // Reuse existing webview: update URL and position.
         webview
@@ -43,31 +46,31 @@ pub async fn open_in_app_browser(
                 size: LogicalSize::new(width, height).into(),
             })
             .map_err(|e| format!("set_bounds failed: {e}"))?;
+        // Sync color scheme on the already-loaded page.
+        let script = format!("document.documentElement.style.colorScheme = '{color_scheme}'");
+        let _ = webview.eval(&script);
     } else {
         // Create a new child webview attached to the main window.
+        // initialization_script runs at the start of every page load, ensuring
+        // color-scheme is applied even when the user navigates within the browser.
         let window = app
             .get_window("main")
             .ok_or("Main window not found")?;
+
+        let init_script =
+            format!("document.documentElement.style.colorScheme = '{color_scheme}';");
 
         window
             .add_child(
                 tauri::webview::WebviewBuilder::new(
                     BROWSER_LABEL,
                     tauri::WebviewUrl::External(parsed_url),
-                ),
+                )
+                .initialization_script(&init_script),
                 LogicalPosition::new(x, y),
                 LogicalSize::new(width, height),
             )
             .map_err(|e| format!("Failed to create browser webview: {e}"))?;
-    }
-
-    // Apply initial theme. `webview.eval()` is Tauri's official API method for
-    // executing a JavaScript string in a child webview (not JS eval()).
-    // The injected value is always "dark" or "light" — no user input involved.
-    let color_scheme = if is_dark { "dark" } else { "light" };
-    if let Some(webview) = app.get_webview(BROWSER_LABEL) {
-        let script = format!("document.documentElement.style.colorScheme = '{color_scheme}'");
-        let _ = webview.eval(&script);
     }
 
     log::info!("In-app browser opened: {url}");
