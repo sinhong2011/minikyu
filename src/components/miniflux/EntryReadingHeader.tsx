@@ -57,6 +57,7 @@ interface EntryReadingHeaderProps {
   onFetchOriginalContent: () => void;
   onShare?: () => void;
   onClose?: () => void;
+  onOpenInAppBrowser?: (url: string) => void;
   isRead: boolean;
   isTogglingRead: boolean;
   isFetchingOriginalContent: boolean;
@@ -82,6 +83,7 @@ export function EntryReadingHeader({
   onFetchOriginalContent,
   onShare,
   onClose,
+  onOpenInAppBrowser,
   isRead,
   isTogglingRead,
   isFetchingOriginalContent,
@@ -555,6 +557,12 @@ export function EntryReadingHeader({
             target="_blank"
             rel="noopener noreferrer"
             className="hover:underline decoration-primary/50 underline-offset-4"
+            onClick={(e) => {
+              if (onOpenInAppBrowser) {
+                e.preventDefault();
+                onOpenInAppBrowser(entry.url);
+              }
+            }}
           >
             <h1 className="text-2xl font-bold">{entry.title}</h1>
           </a>

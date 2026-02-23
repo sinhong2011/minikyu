@@ -1,7 +1,9 @@
 import { AnimatePresence, motion } from 'motion/react';
 import { EntryEmptyState } from '@/components/miniflux/EntryEmptyState';
 import { EntryReading } from '@/components/miniflux/EntryReading';
+import { InAppBrowserPane } from '@/components/miniflux/InAppBrowserPane';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
+import { useInAppBrowser } from '@/hooks/use-in-app-browser';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/store/ui-store';
 
@@ -30,6 +32,7 @@ export function MainWindowContent({
 }: MainWindowContentProps) {
   const lastQuickPaneEntry = useUIStore((state) => state.lastQuickPaneEntry);
   const selectedEntryId = useUIStore((state) => state.selectedEntryId);
+  const { openBrowser, closeBrowser, browserContentRef, inAppBrowserUrl } = useInAppBrowser();
 
   return (
     <div className={cn('flex h-full flex-col bg-background', className)}>
@@ -41,18 +44,30 @@ export function MainWindowContent({
           <ResizableHandle withHandle />
           <ResizablePanel>
             <div className="flex h-full flex-col border-l">
-              <AnimatePresence initial={false} mode="wait">
-                {selectedEntryId ? (
+              <AnimatePresence mode="sync">
+                {inAppBrowserUrl ? (
+                  <motion.div
+                    key="browser"
+                    className="flex h-full flex-col"
+                    initial={{ opacity: 0, x: 22, scale: 0.997 }}
+                    animate={{ opacity: 1, x: 0, scale: 1 }}
+                    exit={{ opacity: 0, x: 22, scale: 0.997 }}
+                    transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
+                  >
+                    <InAppBrowserPane
+                      url={inAppBrowserUrl}
+                      onClose={closeBrowser}
+                      browserContentRef={browserContentRef}
+                    />
+                  </motion.div>
+                ) : selectedEntryId ? (
                   <motion.div
                     key="reading"
                     className="flex h-full flex-col"
                     initial={{ opacity: 0, x: 18, scale: 0.996 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
                     exit={{ opacity: 0, x: -14, scale: 0.996 }}
-                    transition={{
-                      duration: 0.24,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
+                    transition={{ duration: 0.24, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <EntryReading
                       entryId={selectedEntryId}
@@ -63,6 +78,7 @@ export function MainWindowContent({
                       hasNext={hasNext}
                       nextEntryTitle={nextEntryTitle}
                       transitionDirection={entryTransitionDirection}
+                      onOpenInAppBrowser={openBrowser}
                     />
                   </motion.div>
                 ) : (
@@ -72,10 +88,7 @@ export function MainWindowContent({
                     initial={{ opacity: 0, x: -10, scale: 0.998 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
                     exit={{ opacity: 0, x: 8, scale: 0.998 }}
-                    transition={{
-                      duration: 0.2,
-                      ease: [0.22, 1, 0.36, 1],
-                    }}
+                    transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
                   >
                     <EntryEmptyState />
                   </motion.div>
