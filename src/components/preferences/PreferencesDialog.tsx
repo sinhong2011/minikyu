@@ -4,6 +4,7 @@ import {
   Delete02Icon,
   Edit02Icon,
   Folder01Icon,
+  Globe02Icon,
   InformationCircleIcon,
   Key01Icon,
   Link02Icon,
@@ -77,6 +78,7 @@ import { CategoriesPane } from './panes/CategoriesPane';
 import { FeedsPane } from './panes/FeedsPane';
 import { GeneralPane } from './panes/GeneralPane';
 import { IntegrationsPane } from './panes/IntegrationsPane';
+import { TranslationPane } from './panes/TranslationPane';
 import { UsersPane } from './panes/UsersPane';
 
 const appSettingsItems = [
@@ -89,6 +91,11 @@ const appSettingsItems = [
     id: 'appearance' as const,
     label: msg`Appearance`,
     icon: ColorsIcon,
+  },
+  {
+    id: 'translation' as const,
+    label: msg`Translation`,
+    icon: Globe02Icon,
   },
   {
     id: 'advanced' as const,
@@ -323,7 +330,7 @@ export function PreferencesDialog() {
         },
       },
     ],
-    [_, formatRelativeTime]
+    [_, formatRelativeTime, setFeedDialogState]
   );
 
   // Handler functions
@@ -590,6 +597,7 @@ export function PreferencesDialog() {
               {/* App Settings */}
               {activePane === 'general' && <GeneralPane />}
               {activePane === 'appearance' && <AppearancePane />}
+              {activePane === 'translation' && <TranslationPane />}
               {activePane === 'advanced' && <AdvancedPane />}
               {activePane === 'about' && <AboutPane />}
 

@@ -289,7 +289,111 @@
   animation: entry-empty-signal 1.7s ease-in-out infinite;
 }
 
+@keyframes translation-appear {
+  from {
+    opacity: 0;
+    transform: translateY(5px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.reader-translation-block {
+  animation: none;
+}
+
+/* Re-translating: keep previous result visible with a gentle pulse */
+.reader-translation-reloading {
+  position: relative;
+  animation: translation-reloading-pulse 1.6s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes translation-reloading-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.45;
+  }
+}
+
+/* Inline retry indicator for failed translations */
+.reader-translation-retry {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 12px;
+  margin-top: 6px;
+  margin-bottom: 4px;
+  border-radius: 8px;
+  cursor: pointer;
+  user-select: none;
+  opacity: 0.45;
+  transition:
+    opacity 200ms ease,
+    background-color 200ms ease;
+  animation: translation-appear 280ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.reader-translation-retry:hover,
+.reader-translation-retry:focus-visible {
+  opacity: 0.75;
+  background-color: color-mix(in oklch, currentColor 5%, transparent);
+}
+
+.reader-translation-retry:focus-visible {
+  outline: 2px solid color-mix(in oklch, currentColor 25%, transparent);
+  outline-offset: 2px;
+}
+
+.reader-translation-retry:active {
+  opacity: 0.9;
+}
+
+.reader-translation-retry-dot {
+  flex-shrink: 0;
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background-color: color-mix(in oklch, currentColor 40%, transparent);
+}
+
+.reader-translation-retry-label {
+  font-size: 0.8em;
+  letter-spacing: 0.01em;
+}
+
+.reader-translation-retry-action {
+  margin-inline-start: auto;
+  font-size: 0.75em;
+  font-weight: 500;
+  opacity: 0;
+  transform: translateX(-4px);
+  transition:
+    opacity 180ms ease,
+    transform 180ms ease;
+}
+
+.reader-translation-retry:hover .reader-translation-retry-action,
+.reader-translation-retry:focus-visible .reader-translation-retry-action {
+  opacity: 1;
+  transform: translateX(0);
+}
+
 @media (prefers-reduced-motion: reduce) {
+  .reader-translation-block,
+  .reader-translation-retry,
+  .reader-translation-reloading {
+    animation: none;
+  }
+
+  .reader-translation-retry-action {
+    transition: none;
+  }
+
   .entry-empty-hero,
   .entry-empty-aura,
   .entry-empty-book,

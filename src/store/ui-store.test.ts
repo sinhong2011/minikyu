@@ -66,6 +66,9 @@ describe('UIStore', () => {
     setPreferencesActivePane('about');
     expect(useUIStore.getState().preferencesActivePane).toBe('about');
 
+    setPreferencesActivePane('translation');
+    expect(useUIStore.getState().preferencesActivePane).toBe('translation');
+
     setPreferencesActivePane('advanced');
     expect(useUIStore.getState().preferencesActivePane).toBe('advanced');
   });

@@ -16,6 +16,11 @@ Object.defineProperty(window, 'matchMedia', {
   })),
 });
 
+Object.defineProperty(window.HTMLElement.prototype, 'scrollIntoView', {
+  writable: true,
+  value: vi.fn(),
+});
+
 // Mock Tauri APIs for tests
 vi.mock('@tauri-apps/api/event', () => ({
   listen: vi.fn().mockResolvedValue(() => {
@@ -58,7 +63,11 @@ vi.mock('@/lib/tauri-bindings', () => ({
         // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_line_width: 65,
         // biome-ignore lint/style/useNamingConvention: preferences field name
+        reader_line_height: 1.75,
+        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_font_family: 'sans-serif',
+        // biome-ignore lint/style/useNamingConvention: preferences field name
+        reader_theme: 'default',
         // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_code_theme: 'auto',
         // biome-ignore lint/style/useNamingConvention: preferences field name
@@ -69,6 +78,24 @@ vi.mock('@/lib/tauri-bindings', () => ({
         reader_status_bar: false,
         // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_custom_conversions: [],
+        // biome-ignore lint/style/useNamingConvention: preferences field name
+        reader_translation_display_mode: 'bilingual',
+        // biome-ignore lint/style/useNamingConvention: preferences field name
+        reader_translation_trigger_mode: 'manual',
+        // biome-ignore lint/style/useNamingConvention: preferences field name
+        reader_translation_route_mode: 'engine_first',
+        // biome-ignore lint/style/useNamingConvention: preferences field name
+        reader_translation_target_language: null,
+        // biome-ignore lint/style/useNamingConvention: preferences field name
+        reader_translation_primary_engine: 'deepl',
+        // biome-ignore lint/style/useNamingConvention: preferences field name
+        reader_translation_engine_fallbacks: ['google_translate'],
+        // biome-ignore lint/style/useNamingConvention: preferences field name
+        reader_translation_llm_fallbacks: [],
+        // biome-ignore lint/style/useNamingConvention: preferences field name
+        reader_translation_apple_fallback_enabled: false,
+        // biome-ignore lint/style/useNamingConvention: preferences field name
+        reader_translation_provider_settings: {},
         // biome-ignore lint/style/useNamingConvention: preferences field name
         image_download_path: null,
         // biome-ignore lint/style/useNamingConvention: preferences field name
@@ -83,6 +110,8 @@ vi.mock('@/lib/tauri-bindings', () => ({
     switchMinifluxAccount: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
     minifluxDisconnect: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
     getMinifluxAccounts: vi.fn().mockResolvedValue({ status: 'ok', data: [] as any }),
+    getTranslationCacheEntry: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
+    setTranslationCacheEntry: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
   },
   unwrapResult: vi.fn((result: { status: string; data?: unknown }) => {
     if (result.status === 'ok') return result.data;

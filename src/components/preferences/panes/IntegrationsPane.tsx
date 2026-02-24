@@ -192,6 +192,7 @@ export function IntegrationsPane({ integrations, isLoading }: IntegrationsPanePr
         </div>
         <div className="space-y-2">
           {Array.from({ length: 5 }).map((_, i) => (
+            // biome-ignore lint/suspicious/noArrayIndexKey: static skeleton list
             <div key={i} className="flex items-center gap-3 rounded-md border px-3 py-2">
               <Skeleton className="size-5 shrink-0" />
               <div className="min-w-0 flex-1">

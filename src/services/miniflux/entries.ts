@@ -103,7 +103,9 @@ export function useEntries(filters: EntryFilters = {}) {
           sampleEntries: result.data.entries?.slice(0, 3).map((e) => ({
             id: e.id,
             title: e.title,
+            // biome-ignore lint/style/useNamingConvention: Miniflux API field name
             published_at: e.published_at,
+            // biome-ignore lint/style/useNamingConvention: Miniflux API field name
             changed_at: e.changed_at,
           })),
         });

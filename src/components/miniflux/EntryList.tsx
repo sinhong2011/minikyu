@@ -674,8 +674,12 @@ export function EntryList({
                           </div>
                         )}
 
-                        <ItemDescription className="mt-3 line-clamp-3 break-all whitespace-pre-wrap">
-                          {entry.content?.replace(/<[^>]*>/g, '')}
+                        <ItemDescription className="mt-3 line-clamp-3 break-all">
+                          {entry.content
+                            ?.replace(/<[^>]*>/g, '')
+                            .replace(/&nbsp;/g, ' ')
+                            .replace(/\s+/g, ' ')
+                            .trim()}
                         </ItemDescription>
                       </ItemContent>
 

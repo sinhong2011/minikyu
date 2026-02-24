@@ -2,7 +2,6 @@ import { relaunch } from '@tauri-apps/plugin-process';
 import { check } from '@tauri-apps/plugin-updater';
 import { useEffect } from 'react';
 import { ErrorBoundary } from './components/ErrorBoundary';
-import { SplashScreen } from './components/SplashScreen';
 import { ThemeProvider } from './components/ThemeProvider';
 import { initializeLanguage } from './i18n/language-init';
 import { initializeCommandSystem } from './lib/commands';
@@ -111,9 +110,7 @@ export function AppProviders({ children }: AppProvidersProps) {
 
   return (
     <ErrorBoundary>
-      <ThemeProvider>
-        <SplashScreen>{children}</SplashScreen>
-      </ThemeProvider>
+      <ThemeProvider>{children}</ThemeProvider>
     </ErrorBoundary>
   );
 }

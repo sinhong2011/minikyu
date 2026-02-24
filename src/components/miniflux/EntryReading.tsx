@@ -28,9 +28,12 @@ import {
   useToggleEntryRead,
   useToggleEntryStar,
 } from '@/services/miniflux/entries';
+import type { TranslationRoutingPreferences } from '@/services/translation';
 import { EntryReadingHeader } from './EntryReadingHeader';
 import { buildEntryContentWithToc } from './entry-toc';
-import { SafeHtml } from './SafeHtml';
+import { ImmersiveTranslationLayer } from './ImmersiveTranslationLayer';
+import { ReaderSelectionToolbar } from './ReaderSelectionToolbar';
+import { TranslationProgressRing } from './TranslationProgressRing';
 
 const MIN_FONT_SIZE = 14;
 const MAX_FONT_SIZE = 24;
@@ -84,11 +87,24 @@ export function EntryReading({
     readerTheme,
     codeTheme,
     statusBarVisible,
+    translationDisplayMode,
+    translationRouteMode,
+    translationTargetLanguage,
+    translationPrimaryEngine,
+    translationEngineFallbacks,
+    translationLlmFallbacks,
+    appleTranslationFallbackEnabled,
+    translationAutoEnabled,
+    translationExcludedFeedIds,
+    translationProviderSettings,
+    setTranslationAutoEnabled,
     setFontSize,
     setLineWidth,
     setLineHeight,
     setReaderTheme,
     setStatusBarVisible,
+    setTranslationDisplayMode,
+    setTranslationTargetLanguage,
   } = useReaderSettings();
   const { data: entry, isLoading, error } = useEntry(entryId);
   const fetchEntryContent = useFetchEntryContent();
@@ -96,6 +112,11 @@ export function EntryReading({
   const toggleEntryRead = useToggleEntryRead();
   const toggleEntryReadRef = useRef(toggleEntryRead);
   toggleEntryReadRef.current = toggleEntryRead;
+  const translationAutoEnabledRef = useRef(translationAutoEnabled);
+  translationAutoEnabledRef.current = translationAutoEnabled;
+  const isExcludedFeed = entry ? translationExcludedFeedIds.includes(entry.feed_id) : false;
+  const isExcludedFeedRef = useRef(isExcludedFeed);
+  isExcludedFeedRef.current = isExcludedFeed;
   const onScrollRef = useRef(onScroll);
   onScrollRef.current = onScroll;
   const entryRef = useRef(entry);
@@ -114,6 +135,10 @@ export function EntryReading({
   const previousEntryIdRef = useRef<string | null>(null);
   const previousContentRef = useRef<string | null>(null);
   const previousDownloadStatusEntryIdRef = useRef<string | null>(null);
+  const [translationEnabled, setTranslationEnabled] = useState(false);
+  const [translateRequestToken, setTranslateRequestToken] = useState(0);
+  const [activeTranslationProvider, setActiveTranslationProvider] = useState<string | null>(null);
+  const [translationProgress, setTranslationProgress] = useState({ completed: 0, total: 0 });
 
   const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 
@@ -175,13 +200,6 @@ export function EntryReading({
         y: { duration: 0.3, ease: [0.35, 0, 0.9, 1] as const },
         filter: { duration: 0.28, ease: [0.35, 0, 0.9, 1] as const },
         opacity: { duration: 0.24, ease: [0.45, 0, 1, 1] as const },
-      };
-  const contentSwapTransition = prefersReducedMotion
-    ? { duration: 0 }
-    : {
-        y: { duration: 0.26, ease: [0.22, 1, 0.36, 1] as const },
-        opacity: { duration: 0.24, ease: [0.2, 0.95, 0.35, 1] as const },
-        filter: { duration: 0.24, ease: [0.22, 1, 0.36, 1] as const },
       };
   const readerThemePalette = useMemo(() => getReaderThemePalette(readerTheme), [readerTheme]);
   const useInvertedProse = readerTheme === 'slate' || readerTheme === 'oled';
@@ -256,6 +274,30 @@ export function EntryReading({
       readerThemePalette.link,
       readerThemePalette.muted,
       readerThemePalette.text,
+    ]
+  );
+  const translationPreferences: TranslationRoutingPreferences = useMemo(
+    () => ({
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      reader_translation_route_mode: translationRouteMode,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      reader_translation_target_language: translationTargetLanguage ?? 'en',
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      reader_translation_primary_engine: translationPrimaryEngine,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      reader_translation_engine_fallbacks: translationEngineFallbacks,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      reader_translation_llm_fallbacks: translationLlmFallbacks,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      reader_translation_apple_fallback_enabled: appleTranslationFallbackEnabled,
+    }),
+    [
+      appleTranslationFallbackEnabled,
+      translationEngineFallbacks,
+      translationLlmFallbacks,
+      translationPrimaryEngine,
+      translationRouteMode,
+      translationTargetLanguage,
     ]
   );
 
@@ -421,6 +463,17 @@ export function EntryReading({
       setContentRevision((value) => value + 1);
     }
   }, [entry]);
+
+  useEffect(() => {
+    if (!entryId) {
+      return;
+    }
+    const shouldTranslate = translationAutoEnabledRef.current && !isExcludedFeedRef.current;
+    setTranslationEnabled(shouldTranslate);
+    setTranslateRequestToken(shouldTranslate ? 1 : 0);
+    setActiveTranslationProvider(null);
+    setTranslationProgress({ completed: 0, total: 0 });
+  }, [entryId]);
 
   useEffect(() => {
     const viewport = scrollRef.current?.querySelector<HTMLElement>(
@@ -606,6 +659,17 @@ export function EntryReading({
     };
   }, [cancelScrollAnimation]);
 
+  const handleTranslationEnabledChange = useCallback(
+    (enabled: boolean) => {
+      setTranslationEnabled(enabled);
+      setTranslationAutoEnabled(enabled);
+      if (enabled) {
+        setTranslateRequestToken((previousToken) => previousToken + 1);
+      }
+    },
+    [setTranslationAutoEnabled]
+  );
+
   if (isLoading) {
     return (
       <div className="flex h-full items-center justify-center">
@@ -644,9 +708,6 @@ export function EntryReading({
         onToggleStar={() => toggleStar.mutate(entry.id)}
         onToggleRead={() => toggleEntryRead.mutate(entry.id)}
         onOpenInAppBrowser={onOpenInAppBrowser}
-        onFetchOriginalContent={handleFetchOriginalContent}
-        isFetchingOriginalContent={fetchEntryContent.isPending}
-        isOriginalContentDownloaded={isOriginalContentDownloaded}
         isRead={entry.status === 'read'}
         isTogglingRead={toggleEntryRead.isPending}
         headerPadding={headerPadding}
@@ -656,13 +717,29 @@ export function EntryReading({
         titleScale={titleScale}
         titleY={titleY}
         titleMaxHeight={titleMaxHeight}
+        translationEnabled={translationEnabled}
+        onTranslationEnabledChange={handleTranslationEnabledChange}
+        translationDisplayMode={translationDisplayMode}
+        onTranslationDisplayModeChange={setTranslationDisplayMode}
+        translationTargetLanguage={translationTargetLanguage}
+        onTranslationTargetLanguageChange={setTranslationTargetLanguage}
+        activeTranslationProvider={activeTranslationProvider}
+        isExcludedFeed={isExcludedFeed}
+        onFetchOriginalContent={handleFetchOriginalContent}
+        isFetchingOriginalContent={fetchEntryContent.isPending}
+        isOriginalContentDownloaded={isOriginalContentDownloaded}
       />
 
       <div className="relative flex-1 min-h-0">
+        <ReaderSelectionToolbar
+          containerRef={scrollViewportRef}
+          translationPreferences={translationPreferences}
+          sourceLanguage={null}
+        />
         <ScrollArea className="h-full min-h-0" ref={scrollRef}>
           <AnimatePresence mode="wait">
             <motion.div
-              key={entry.id}
+              key={`${entry.id}:${contentRevision}`}
               initial={{
                 opacity: articleEnterOpacity,
                 y: directionalEnterY,
@@ -679,45 +756,45 @@ export function EntryReading({
               className="px-4 py-8 transition-colors duration-300 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
               style={readerSurfaceStyle}
             >
-              <AnimatePresence initial={false}>
-                <motion.div
-                  key={`${entry.id}:${contentRevision}`}
-                  initial={{ opacity: 0, y: 8, filter: 'blur(1px)' }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  exit={{ opacity: 0, y: -6, filter: 'blur(1px)' }}
-                  transition={contentSwapTransition}
-                >
-                  {entry.content ? (
-                    <SafeHtml
-                      html={readingContent.html}
-                      bionicEnglish={bionicReading}
-                      chineseConversionMode={chineseConversionMode}
-                      customConversionRules={customConversionRules}
-                      codeTheme={codeTheme}
-                      className={cn(
-                        'mx-auto max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
-                        useInvertedProse && 'prose-invert',
-                        '[&_h1]:mb-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold',
-                        '[&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:leading-snug [&_h2]:font-semibold',
-                        '[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:leading-snug [&_h3]:font-semibold',
-                        '[&_p]:my-5 [&_p]:tracking-[0.01em]',
-                        '[&_ul]:my-5 [&_ol]:my-5 [&_li]:my-1.5',
-                        '[&_a]:break-all [&_a]:underline [&_a]:decoration-[color:var(--reader-link)] [&_a]:underline-offset-4',
-                        '[&_blockquote]:my-8 [&_blockquote]:rounded-r-xl [&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:bg-primary/5 [&_blockquote]:px-4 [&_blockquote]:py-2 [&_blockquote]:text-foreground/90',
-                        '[&_hr]:my-8 [&_hr]:border-border/60',
-                        '[&_table]:text-sm [&_table]:leading-relaxed',
-                        '[&_img]:my-8',
-                        '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0'
-                      )}
-                      style={readerProseStyle}
-                    />
-                  ) : (
-                    <p className="text-muted-foreground italic text-center py-20">
-                      {_(msg`No content available`)}
-                    </p>
+              {entry.content ? (
+                <ImmersiveTranslationLayer
+                  entryId={entry.id}
+                  html={readingContent.html}
+                  translationEnabled={translationEnabled}
+                  translationDisplayMode={translationDisplayMode}
+                  translateRequestToken={translateRequestToken}
+                  translationPreferences={translationPreferences}
+                  providerSettings={translationProviderSettings}
+                  bionicEnglish={bionicReading}
+                  chineseConversionMode={chineseConversionMode}
+                  customConversionRules={customConversionRules}
+                  codeTheme={codeTheme}
+                  onActiveProviderChange={setActiveTranslationProvider}
+                  onTranslationProgressChange={(completed, total) =>
+                    setTranslationProgress({ completed, total })
+                  }
+                  className={cn(
+                    'mx-auto max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
+                    useInvertedProse && 'prose-invert',
+                    '[&_h1]:mb-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold',
+                    '[&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:leading-snug [&_h2]:font-semibold',
+                    '[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:leading-snug [&_h3]:font-semibold',
+                    '[&_p]:my-5 [&_p]:tracking-[0.01em]',
+                    '[&_ul]:my-5 [&_ol]:my-5 [&_li]:my-1.5',
+                    '[&_a]:break-all [&_a]:underline [&_a]:decoration-[color:var(--reader-link)] [&_a]:underline-offset-4',
+                    '[&_blockquote]:my-8 [&_blockquote]:rounded-r-xl [&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:bg-primary/5 [&_blockquote]:px-4 [&_blockquote]:py-2 [&_blockquote]:text-foreground/90',
+                    '[&_hr]:my-8 [&_hr]:border-border/60',
+                    '[&_table]:text-sm [&_table]:leading-relaxed',
+                    '[&_img]:my-8',
+                    '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0'
                   )}
-                </motion.div>
-              </AnimatePresence>
+                  style={readerProseStyle}
+                />
+              ) : (
+                <p className="text-muted-foreground italic text-center py-20">
+                  {_(msg`No content available`)}
+                </p>
+              )}
             </motion.div>
           </AnimatePresence>
         </ScrollArea>
@@ -897,6 +974,15 @@ export function EntryReading({
             </motion.div>
           )}
         </AnimatePresence>
+
+        {translationEnabled && (
+          <div className="pointer-events-none absolute bottom-14 left-2 z-30">
+            <TranslationProgressRing
+              completed={translationProgress.completed}
+              total={translationProgress.total}
+            />
+          </div>
+        )}
 
         <AnimatePresence mode="wait">
           {statusBarVisible ? (

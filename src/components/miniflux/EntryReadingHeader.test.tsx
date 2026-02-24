@@ -1,115 +1,109 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { fireEvent, render, screen } from '@testing-library/react';
-import type * as React from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useReaderSettings } from '@/hooks/use-reader-settings';
+import { describe, expect, it, vi } from 'vitest';
 import type { Entry } from '@/lib/bindings';
+import { fireEvent, render, screen } from '@/test/test-utils';
 import { EntryReadingHeader } from './EntryReadingHeader';
 
-vi.mock('@/hooks/use-reader-settings', () => ({
-  useReaderSettings: vi.fn(),
-}));
-
-vi.mock('@tauri-apps/plugin-clipboard-manager', () => ({
-  writeText: vi.fn(),
-}));
-
-vi.mock('./ReaderSettings', () => ({
-  // biome-ignore lint/style/useNamingConvention: mock module export name
-  ReaderSettings: () => <div data-testid="reader-settings" />,
-}));
-
-i18n.load('en', {});
-i18n.activate('en');
-
-const mockEntry = {
-  id: '1',
-  title: 'Test Entry',
-  url: 'https://example.com/entry',
+const sampleEntry: Entry = {
+  id: 'entry-1',
+  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
+  user_id: '1',
+  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
+  feed_id: '1',
+  title: 'Entry title',
+  url: 'https://example.com/articles/1',
+  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
+  comments_url: null,
   author: 'Author',
-  content: '<p>Summary</p>',
+  content: '<p>hello</p>',
+  hash: 'hash',
+  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
+  published_at: '2026-02-19T00:00:00Z',
+  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
+  created_at: null,
+  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
+  changed_at: null,
   status: 'unread',
+  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
+  share_code: null,
   starred: false,
+  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
+  reading_time: 3,
+  enclosures: [],
   feed: {
-    title: 'Test Feed',
+    id: '1',
+    // biome-ignore lint/style/useNamingConvention: Miniflux API field name
+    user_id: '1',
+    title: 'Feed title',
+    // biome-ignore lint/style/useNamingConvention: Miniflux API field name
+    site_url: 'https://example.com',
+    // biome-ignore lint/style/useNamingConvention: Miniflux API field name
+    feed_url: 'https://example.com/feed.xml',
+    category: null,
+    icon: null,
   },
-} as unknown as Entry;
+  tags: [],
+};
 
-(mockEntry as any).share_code = null;
-(mockEntry as any).published_at = '2026-02-21T10:00:00Z';
-(mockEntry as any).reading_time = 5;
-(mockEntry as any).feed.site_url = 'https://example.com';
+function renderHeader(overrides: { isExcludedFeed?: boolean } = {}) {
+  i18n.load('en', {});
+  i18n.activate('en');
 
-function renderHeader(overrides?: Partial<React.ComponentProps<typeof EntryReadingHeader>>) {
-  const onFetchOriginalContent = vi.fn();
-
-  render(
+  return render(
     <I18nProvider i18n={i18n}>
       <EntryReadingHeader
-        entry={mockEntry}
-        hasPrev
-        hasNext
+        entry={sampleEntry}
+        hasPrev={false}
+        hasNext={false}
         onToggleStar={vi.fn()}
         onToggleRead={vi.fn()}
-        onFetchOriginalContent={onFetchOriginalContent}
         isRead={false}
         isTogglingRead={false}
-        isFetchingOriginalContent={false}
-        isOriginalContentDownloaded={false}
-        headerPadding={0 as any}
-        smallTitleOpacity={1 as any}
-        smallTitleHeight={32 as any}
-        titleOpacity={1 as any}
-        titleScale={1 as any}
-        titleY={0 as any}
-        titleMaxHeight={120 as any}
-        {...overrides}
+        headerPadding={8 as never}
+        smallTitleOpacity={1 as never}
+        smallTitleHeight={32 as never}
+        titleOpacity={1 as never}
+        titleScale={1 as never}
+        titleY={0 as never}
+        titleMaxHeight={120 as never}
+        translationEnabled={false}
+        onTranslationEnabledChange={vi.fn()}
+        translationDisplayMode="bilingual"
+        onTranslationDisplayModeChange={vi.fn()}
+        translationTargetLanguage="en"
+        onTranslationTargetLanguageChange={vi.fn()}
+        activeTranslationProvider={null}
+        isExcludedFeed={overrides.isExcludedFeed ?? false}
       />
     </I18nProvider>
   );
-
-  return { onFetchOriginalContent };
 }
 
-describe('EntryReadingHeader', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    (useReaderSettings as any).mockReturnValue({
-      chineseConversionMode: 'off',
-      bionicReading: false,
-      codeTheme: 'auto',
-      readerTheme: 'default',
-      statusBarVisible: true,
-      setChineseConversionMode: vi.fn(),
-      setBionicReading: vi.fn(),
-      setCodeTheme: vi.fn(),
-      setReaderTheme: vi.fn(),
-      setStatusBarVisible: vi.fn(),
-      isLoading: false,
-    });
+describe('EntryReadingHeader translation options', () => {
+  it('does not render per-entry auto translate toggle', async () => {
+    renderHeader();
+
+    fireEvent.click(await screen.findByRole('button', { name: 'Translation options' }));
+
+    expect(screen.queryByText('Auto for this article')).not.toBeInTheDocument();
   });
 
-  it('calls fetch handler when download original content button is clicked', () => {
-    const { onFetchOriginalContent } = renderHeader();
+  it('shows excluded feed notice when feed is excluded', async () => {
+    renderHeader({ isExcludedFeed: true });
 
-    const button = screen.getByRole('button', { name: 'Download original content' });
-    fireEvent.click(button);
+    fireEvent.click(await screen.findByRole('button', { name: 'Translation options' }));
 
-    expect(onFetchOriginalContent).toHaveBeenCalledTimes(1);
+    expect(screen.getByText('Translation disabled for this feed')).toBeInTheDocument();
+    expect(screen.queryByText('Translate now')).not.toBeInTheDocument();
   });
 
-  it('disables download button while original content is being fetched', () => {
-    renderHeader({ isFetchingOriginalContent: true });
+  it('shows translate toggle when feed is not excluded', async () => {
+    renderHeader({ isExcludedFeed: false });
 
-    const button = screen.getByRole('button', { name: 'Fetching original content...' });
-    expect(button).toBeDisabled();
-  });
+    fireEvent.click(await screen.findByRole('button', { name: 'Translation options' }));
 
-  it('shows downloaded status after original content is fetched', () => {
-    renderHeader({ isOriginalContentDownloaded: true });
-
-    const button = screen.getByRole('button', { name: 'Original content downloaded' });
-    expect(button).not.toBeDisabled();
+    expect(screen.queryByText('Translation disabled for this feed')).not.toBeInTheDocument();
+    expect(screen.getByText('Translate now')).toBeInTheDocument();
   });
 });

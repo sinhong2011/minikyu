@@ -7,9 +7,33 @@ mod tests {
     use crate::miniflux::AuthConfig;
     use chrono::Utc;
     use sqlx::SqlitePool;
+    use std::sync::OnceLock;
 
     fn should_skip_keyring_tests() -> bool {
-        std::env::var("CI").is_ok()
+        static KEYRING_AVAILABLE: OnceLock<bool> = OnceLock::new();
+
+        let keyring_available = KEYRING_AVAILABLE.get_or_init(|| {
+            if std::env::var("CI").is_ok() || std::env::var("MINIKYU_SKIP_KEYRING_TESTS").is_ok() {
+                return false;
+            }
+
+            let probe_key = format!("minikyu:accounts:test-probe:{}", std::process::id());
+            let probe_secret = format!("probe-{}", std::process::id());
+
+            let entry = match keyring::Entry::new("minikyu", &probe_key) {
+                Ok(entry) => entry,
+                Err(_) => return false,
+            };
+
+            if entry.set_password(&probe_secret).is_err() {
+                return false;
+            }
+
+            let _ = entry.delete_credential();
+            true
+        });
+
+        !*keyring_available
     }
 
     async fn setup_test_db() -> SqlitePool {

@@ -2,7 +2,6 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useQueryClient } from '@tanstack/react-query';
 import { useState } from 'react';
-import { Switch } from '@/components/animate-ui/components/base/switch';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -15,14 +14,6 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
-import { Label } from '@/components/ui/label';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
 import { showToast } from '@/components/ui/sonner';
 import { logger } from '@/lib/logger';
 import { commands } from '@/lib/tauri-bindings';
@@ -34,8 +25,6 @@ import { SettingsField, SettingsSection } from '../shared/SettingsComponents';
 export function AdvancedPane() {
   const { _ } = useLingui();
   const queryClient = useQueryClient();
-  const [exampleAdvancedToggle, setExampleAdvancedToggle] = useState(false);
-  const [exampleDropdown, setExampleDropdown] = useState('option1');
   const [clearingData, setClearingData] = useState(false);
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
 
@@ -77,40 +66,6 @@ export function AdvancedPane() {
 
   return (
     <div className="space-y-6">
-      <SettingsSection title={_(msg`Example Advanced Settings`)}>
-        <SettingsField
-          label={_(msg`Example Advanced Toggle`)}
-          description={_(msg`This is an example advanced toggle setting (not persisted)`)}
-        >
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="example-advanced-toggle"
-              checked={exampleAdvancedToggle}
-              onCheckedChange={setExampleAdvancedToggle}
-            />
-            <Label htmlFor="example-advanced-toggle" className="text-sm">
-              {exampleAdvancedToggle ? _(msg`Enabled`) : _(msg`Disabled`)}
-            </Label>
-          </div>
-        </SettingsField>
-
-        <SettingsField
-          label={_(msg`Example Dropdown Setting`)}
-          description={_(msg`This is an example dropdown/select setting (not persisted)`)}
-        >
-          <Select value={exampleDropdown} onValueChange={setExampleDropdown}>
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="option1">{_(msg`Example Option 1`)}</SelectItem>
-              <SelectItem value="option2">{_(msg`Example Option 2`)}</SelectItem>
-              <SelectItem value="option3">{_(msg`Example Option 3`)}</SelectItem>
-            </SelectContent>
-          </Select>
-        </SettingsField>
-      </SettingsSection>
-
       <SettingsSection title={_(msg`Data`)}>
         <SettingsField
           label={_(msg`Clear local data`)}

@@ -53,12 +53,9 @@ pub async fn open_in_app_browser(
         // Create a new child webview attached to the main window.
         // initialization_script runs at the start of every page load, ensuring
         // color-scheme is applied even when the user navigates within the browser.
-        let window = app
-            .get_window("main")
-            .ok_or("Main window not found")?;
+        let window = app.get_window("main").ok_or("Main window not found")?;
 
-        let init_script =
-            format!("document.documentElement.style.colorScheme = '{color_scheme}';");
+        let init_script = format!("document.documentElement.style.colorScheme = '{color_scheme}';");
 
         window
             .add_child(

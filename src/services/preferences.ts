@@ -54,6 +54,24 @@ export function usePreferences() {
           // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_custom_conversions: [],
           // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_translation_display_mode: 'bilingual',
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_translation_trigger_mode: 'manual',
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_translation_route_mode: 'engine_first',
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_translation_target_language: null,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_translation_primary_engine: 'deepl',
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_translation_engine_fallbacks: ['google_translate'],
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_translation_llm_fallbacks: [],
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_translation_apple_fallback_enabled: false,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_translation_provider_settings: {},
+          // biome-ignore lint/style/useNamingConvention: preferences field name
           image_download_path: null,
           // biome-ignore lint/style/useNamingConvention: preferences field name
           video_download_path: null,

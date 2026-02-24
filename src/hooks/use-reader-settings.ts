@@ -73,6 +73,18 @@ export function useReaderSettings() {
     customConversionRules: preferences?.reader_custom_conversions ?? [],
     bionicReading: preferences?.reader_bionic_reading ?? false,
     statusBarVisible: preferences?.reader_status_bar ?? false,
+    translationDisplayMode: preferences?.reader_translation_display_mode ?? 'bilingual',
+    translationTriggerMode: preferences?.reader_translation_trigger_mode ?? 'manual',
+    translationRouteMode: preferences?.reader_translation_route_mode ?? 'engine_first',
+    translationTargetLanguage: preferences?.reader_translation_target_language ?? null,
+    translationPrimaryEngine: preferences?.reader_translation_primary_engine ?? null,
+    translationEngineFallbacks: preferences?.reader_translation_engine_fallbacks ?? [],
+    translationLlmFallbacks: preferences?.reader_translation_llm_fallbacks ?? [],
+    appleTranslationFallbackEnabled:
+      preferences?.reader_translation_apple_fallback_enabled ?? false,
+    translationAutoEnabled: preferences?.reader_translation_auto_enabled ?? false,
+    translationExcludedFeedIds: preferences?.reader_translation_excluded_feed_ids ?? [],
+    translationProviderSettings: preferences?.reader_translation_provider_settings ?? {},
     codeTheme,
     isLoading,
     setFontSize: (size: number) => updateSetting('reader_font_size', size),
@@ -101,6 +113,21 @@ export function useReaderSettings() {
       updateSetting('reader_chinese_conversion', mode),
     setBionicReading: (enabled: boolean) => updateSetting('reader_bionic_reading', enabled),
     setStatusBarVisible: (enabled: boolean) => updateSetting('reader_status_bar', enabled),
+    setTranslationDisplayMode: (mode: AppPreferences['reader_translation_display_mode']) =>
+      updateSetting('reader_translation_display_mode', mode),
+    setTranslationTriggerMode: (mode: AppPreferences['reader_translation_trigger_mode']) =>
+      updateSetting('reader_translation_trigger_mode', mode),
+    setTranslationRouteMode: (mode: AppPreferences['reader_translation_route_mode']) =>
+      updateSetting('reader_translation_route_mode', mode),
+    setTranslationTargetLanguage: (
+      language: AppPreferences['reader_translation_target_language']
+    ) => updateSetting('reader_translation_target_language', language),
+    setAppleTranslationFallbackEnabled: (enabled: boolean) =>
+      updateSetting('reader_translation_apple_fallback_enabled', enabled),
+    setTranslationAutoEnabled: (enabled: boolean) =>
+      updateSetting('reader_translation_auto_enabled', enabled),
+    setTranslationExcludedFeedIds: (ids: string[]) =>
+      updateSetting('reader_translation_excluded_feed_ids', ids),
     setCodeTheme: (theme: ReaderCodeTheme) => {
       const normalizedTheme = normalizeReaderCodeTheme(theme);
       setCodeThemeOverride(normalizedTheme);

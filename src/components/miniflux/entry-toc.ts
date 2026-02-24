@@ -12,6 +12,8 @@ export interface EntryContentWithToc {
 }
 
 const TOC_HEADING_SELECTOR = 'h2, h3, h4';
+const BLOCK_LEVEL_SELECTOR =
+  'p, div, h1, h2, h3, h4, h5, h6, ul, ol, li, blockquote, pre, table, section, article, figure, hr';
 
 function toSlug(text: string): string {
   return text
@@ -78,6 +80,47 @@ function toPreview(text: string): string {
   return `${normalizedText.slice(0, maxLength).trimEnd()}…`;
 }
 
+function wrapBareTextInParagraphs(doc: Document): void {
+  if (doc.body.querySelector(BLOCK_LEVEL_SELECTOR)) {
+    return;
+  }
+
+  const rawText = doc.body.textContent ?? '';
+  if (!rawText.trim()) {
+    return;
+  }
+
+  let chunks = rawText
+    .split(/\n{2,}/)
+    .map((chunk) => chunk.trim())
+    .filter((chunk) => chunk.length > 0);
+
+  // If splitting on double newlines yields only one block, try single newlines
+  if (chunks.length <= 1) {
+    const singleSplit = rawText
+      .split('\n')
+      .map((line) => line.trim())
+      .filter((line) => line.length > 0);
+    if (singleSplit.length > 1) {
+      chunks = singleSplit;
+    }
+  }
+
+  if (chunks.length === 0) {
+    return;
+  }
+
+  // Build paragraphs safely using DOM APIs to avoid XSS from raw text
+  while (doc.body.firstChild) {
+    doc.body.removeChild(doc.body.firstChild);
+  }
+  for (const text of chunks) {
+    const p = doc.createElement('p');
+    p.textContent = text;
+    doc.body.appendChild(p);
+  }
+}
+
 export function buildEntryContentWithToc(html: string): EntryContentWithToc {
   if (!html.trim()) {
     return { html, tocItems: [] };
@@ -89,6 +132,7 @@ export function buildEntryContentWithToc(html: string): EntryContentWithToc {
 
   const parser = new DOMParser();
   const doc = parser.parseFromString(html, 'text/html');
+  wrapBareTextInParagraphs(doc);
   const headingNodes = Array.from(doc.body.querySelectorAll<HTMLElement>(TOC_HEADING_SELECTOR));
   const usedIds = new Set<string>();
   const tocItems: EntryTocItem[] = [];

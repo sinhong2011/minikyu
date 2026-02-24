@@ -170,11 +170,33 @@ pub async fn delete_credentials(server_url: &str, username: &str) -> Result<(), 
 #[cfg(test)]
 mod tests {
     use super::*;
+    use std::sync::OnceLock;
 
-    /// Check if running in CI environment without keyring support
     fn should_skip_keyring_tests() -> bool {
-        // CI environment typically doesn't have a keyring service available
-        std::env::var("CI").is_ok()
+        static KEYRING_AVAILABLE: OnceLock<bool> = OnceLock::new();
+
+        let keyring_available = KEYRING_AVAILABLE.get_or_init(|| {
+            if std::env::var("CI").is_ok() || std::env::var("MINIKYU_SKIP_KEYRING_TESTS").is_ok() {
+                return false;
+            }
+
+            let probe_key = format!("minikyu:keyring:test-probe:{}", std::process::id());
+            let probe_secret = format!("probe-{}", std::process::id());
+
+            let entry = match Entry::new(SERVICE_NAME, &probe_key) {
+                Ok(entry) => entry,
+                Err(_) => return false,
+            };
+
+            if entry.set_password(&probe_secret).is_err() {
+                return false;
+            }
+
+            let _ = entry.delete_credential();
+            true
+        });
+
+        !*keyring_available
     }
 
     #[test]
