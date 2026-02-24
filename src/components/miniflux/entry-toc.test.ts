@@ -56,6 +56,43 @@ describe('entry-toc', () => {
     expect(output.tocItems).toEqual([]);
   });
 
+  it('wraps bare text content without block elements in paragraphs', () => {
+    const bareText =
+      'Malaysian tour guide Syazni Nabilah and her family have been immersed in festivities.\n' +
+      '"This year is especially meaningful for me because it is my first time giving hongbaos."\n' +
+      'As Malay-Muslims, we enjoy the cultural exchange.';
+
+    const output = buildEntryContentWithToc(bareText);
+
+    expect(output.html).toContain('<p>');
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(output.html, 'text/html');
+    const paragraphs = doc.body.querySelectorAll('p');
+    expect(paragraphs.length).toBe(3);
+    expect(paragraphs[0]?.textContent).toContain('Malaysian tour guide');
+    expect(paragraphs[2]?.textContent).toContain('Malay-Muslims');
+  });
+
+  it('wraps double-newline separated bare text into paragraphs', () => {
+    const bareText =
+      'First paragraph text here.\n\nSecond paragraph text here.\n\nThird paragraph.';
+
+    const output = buildEntryContentWithToc(bareText);
+
+    const parser = new DOMParser();
+    const doc = parser.parseFromString(output.html, 'text/html');
+    const paragraphs = doc.body.querySelectorAll('p');
+    expect(paragraphs.length).toBe(3);
+  });
+
+  it('does not wrap content that already has block elements', () => {
+    const htmlContent = '<p>Already wrapped</p><p>Second paragraph</p>';
+    const output = buildEntryContentWithToc(htmlContent);
+
+    expect(output.html).toContain('<p>Already wrapped</p>');
+    expect(output.html).toContain('<p>Second paragraph</p>');
+  });
+
   it('generates section preview and strips script/style from section text', () => {
     const input = `
       <h2>Section A</h2>

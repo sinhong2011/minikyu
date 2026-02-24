@@ -15,6 +15,7 @@ export type TranslateReaderSegmentInput = {
   sourceLanguage?: string | null;
   targetLanguage?: string;
   preferences: TranslationRoutingPreferences;
+  forcedProvider?: string | null;
 };
 
 export type TranslateReaderSegmentResult = {

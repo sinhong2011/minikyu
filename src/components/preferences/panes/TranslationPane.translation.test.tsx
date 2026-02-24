@@ -17,6 +17,10 @@ vi.mock('@/services/preferences', () => ({
   useSavePreferences: () => mockUseSavePreferences(),
 }));
 
+vi.mock('@/services/miniflux/feeds', () => ({
+  useFeeds: () => ({ data: [] }),
+}));
+
 vi.mock('@/lib/tauri-bindings', () => ({
   commands: {
     getTranslationProviderKeyStatus: (...args: unknown[]) =>
@@ -26,6 +30,7 @@ vi.mock('@/lib/tauri-bindings', () => ({
     translateReaderSegment: (...args: unknown[]) => mockTranslateReaderSegment(...args),
     clearLocalData: (...args: unknown[]) => mockClearLocalData(...args),
     minifluxDisconnect: (...args: unknown[]) => mockMinifluxDisconnect(...args),
+    getProviderAvailableModels: vi.fn().mockResolvedValue({ status: 'ok', data: [] }),
   },
 }));
 
@@ -78,6 +83,10 @@ const basePreferences = {
   reader_translation_apple_fallback_enabled: true,
   // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_provider_settings: {},
+  // biome-ignore lint/style/useNamingConvention: preferences field name
+  reader_translation_auto_enabled: false,
+  // biome-ignore lint/style/useNamingConvention: preferences field name
+  reader_translation_excluded_feed_ids: [],
   // biome-ignore lint/style/useNamingConvention: preferences field name
   image_download_path: null,
   // biome-ignore lint/style/useNamingConvention: preferences field name
@@ -233,14 +242,19 @@ describe('TranslationPane settings', () => {
     });
   });
 
-  it('does not require API key input for ollama', async () => {
+  it('shows optional API key input for ollama without flagging it as required', async () => {
     render(<TranslationPane />);
 
     fireEvent.click(
       within(screen.getByTestId('translation-provider-row-ollama')).getByText('Ollama')
     );
-    expect(await screen.findByLabelText('Ollama model')).toBeInTheDocument();
-    expect(screen.queryByLabelText('Ollama API key')).not.toBeInTheDocument();
+    expect(await screen.findByPlaceholderText('Type or fetch to pick a model')).toBeInTheDocument();
+    // API key field is present but optional (for cloud API usage)
+    expect(screen.getByLabelText('Ollama API key')).toBeInTheDocument();
+    // Required fields only lists Model, not API key
+    expect(screen.getByTestId('selected-provider-required-fields')).toHaveTextContent(
+      'Required fields: Model'
+    );
   });
 
   it('persists route mode changes and does not render apple fallback toggle', async () => {

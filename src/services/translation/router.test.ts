@@ -68,6 +68,8 @@ describe('translation router service', () => {
       llm_fallbacks: ['openai', 'anthropic'],
       // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
       apple_fallback_enabled: false,
+      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+      forced_provider: null,
     });
   });
 

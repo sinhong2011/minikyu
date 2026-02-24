@@ -22,11 +22,18 @@ import {
   readerThemeOptions,
 } from '@/lib/reader-theme';
 import { cn } from '@/lib/utils';
-import { useEntry, useToggleEntryRead, useToggleEntryStar } from '@/services/miniflux/entries';
+import {
+  useEntry,
+  useFetchEntryContent,
+  useToggleEntryRead,
+  useToggleEntryStar,
+} from '@/services/miniflux/entries';
 import type { TranslationRoutingPreferences } from '@/services/translation';
 import { EntryReadingHeader } from './EntryReadingHeader';
 import { buildEntryContentWithToc } from './entry-toc';
 import { ImmersiveTranslationLayer } from './ImmersiveTranslationLayer';
+import { ReaderSelectionToolbar } from './ReaderSelectionToolbar';
+import { TranslationProgressRing } from './TranslationProgressRing';
 
 const MIN_FONT_SIZE = 14;
 const MAX_FONT_SIZE = 24;
@@ -52,6 +59,7 @@ interface EntryReadingProps {
   nextEntryTitle?: string;
   transitionDirection?: 'forward' | 'backward';
   hideNavigation?: boolean;
+  onOpenInAppBrowser?: (url: string) => void;
 }
 
 export function EntryReading({
@@ -65,6 +73,7 @@ export function EntryReading({
   nextEntryTitle,
   transitionDirection = 'forward',
   hideNavigation = false,
+  onOpenInAppBrowser,
 }: EntryReadingProps) {
   const { _ } = useLingui();
   const {
@@ -86,6 +95,8 @@ export function EntryReading({
     translationLlmFallbacks,
     appleTranslationFallbackEnabled,
     translationAutoEnabled,
+    translationExcludedFeedIds,
+    translationProviderSettings,
     setTranslationAutoEnabled,
     setFontSize,
     setLineWidth,
@@ -96,12 +107,16 @@ export function EntryReading({
     setTranslationTargetLanguage,
   } = useReaderSettings();
   const { data: entry, isLoading, error } = useEntry(entryId);
+  const fetchEntryContent = useFetchEntryContent();
   const toggleStar = useToggleEntryStar();
   const toggleEntryRead = useToggleEntryRead();
   const toggleEntryReadRef = useRef(toggleEntryRead);
   toggleEntryReadRef.current = toggleEntryRead;
   const translationAutoEnabledRef = useRef(translationAutoEnabled);
   translationAutoEnabledRef.current = translationAutoEnabled;
+  const isExcludedFeed = entry ? translationExcludedFeedIds.includes(entry.feed_id) : false;
+  const isExcludedFeedRef = useRef(isExcludedFeed);
+  isExcludedFeedRef.current = isExcludedFeed;
   const onScrollRef = useRef(onScroll);
   onScrollRef.current = onScroll;
   const entryRef = useRef(entry);
@@ -115,9 +130,15 @@ export function EntryReading({
   const [hoveredHeadingId, setHoveredHeadingId] = useState<string | null>(null);
   const [readingProgress, setReadingProgress] = useState(0);
   const [isAtBottom, setIsAtBottom] = useState(false);
+  const [isOriginalContentDownloaded, setIsOriginalContentDownloaded] = useState(false);
+  const [contentRevision, setContentRevision] = useState(0);
+  const previousEntryIdRef = useRef<string | null>(null);
+  const previousContentRef = useRef<string | null>(null);
+  const previousDownloadStatusEntryIdRef = useRef<string | null>(null);
   const [translationEnabled, setTranslationEnabled] = useState(false);
   const [translateRequestToken, setTranslateRequestToken] = useState(0);
   const [activeTranslationProvider, setActiveTranslationProvider] = useState<string | null>(null);
+  const [translationProgress, setTranslationProgress] = useState({ completed: 0, total: 0 });
 
   const easeOutCubic = (t: number) => 1 - (1 - t) ** 3;
 
@@ -401,13 +422,57 @@ export function EntryReading({
   }, [entry]);
 
   useEffect(() => {
+    const currentEntryId = entry?.id ?? null;
+    if (previousDownloadStatusEntryIdRef.current !== currentEntryId) {
+      previousDownloadStatusEntryIdRef.current = currentEntryId;
+      setIsOriginalContentDownloaded(false);
+    }
+  }, [entry]);
+
+  const handleFetchOriginalContent = useCallback(() => {
+    if (!entry) {
+      return;
+    }
+
+    fetchEntryContent.mutate(
+      { id: entry.id, updateContent: true },
+      {
+        onSuccess: () => {
+          setIsOriginalContentDownloaded(true);
+        },
+      }
+    );
+  }, [entry, fetchEntryContent]);
+
+  useEffect(() => {
+    if (!entry) {
+      return;
+    }
+
+    const currentContent = entry.content ?? '';
+
+    if (previousEntryIdRef.current !== entry.id) {
+      previousEntryIdRef.current = entry.id;
+      previousContentRef.current = currentContent;
+      setContentRevision(0);
+      return;
+    }
+
+    if (previousContentRef.current !== currentContent) {
+      previousContentRef.current = currentContent;
+      setContentRevision((value) => value + 1);
+    }
+  }, [entry]);
+
+  useEffect(() => {
     if (!entryId) {
       return;
     }
-    const shouldTranslate = translationAutoEnabledRef.current;
+    const shouldTranslate = translationAutoEnabledRef.current && !isExcludedFeedRef.current;
     setTranslationEnabled(shouldTranslate);
     setTranslateRequestToken(shouldTranslate ? 1 : 0);
     setActiveTranslationProvider(null);
+    setTranslationProgress({ completed: 0, total: 0 });
   }, [entryId]);
 
   useEffect(() => {
@@ -642,6 +707,7 @@ export function EntryReading({
         hideNavigation={hideNavigation}
         onToggleStar={() => toggleStar.mutate(entry.id)}
         onToggleRead={() => toggleEntryRead.mutate(entry.id)}
+        onOpenInAppBrowser={onOpenInAppBrowser}
         isRead={entry.status === 'read'}
         isTogglingRead={toggleEntryRead.isPending}
         headerPadding={headerPadding}
@@ -658,13 +724,22 @@ export function EntryReading({
         translationTargetLanguage={translationTargetLanguage}
         onTranslationTargetLanguageChange={setTranslationTargetLanguage}
         activeTranslationProvider={activeTranslationProvider}
+        isExcludedFeed={isExcludedFeed}
+        onFetchOriginalContent={handleFetchOriginalContent}
+        isFetchingOriginalContent={fetchEntryContent.isPending}
+        isOriginalContentDownloaded={isOriginalContentDownloaded}
       />
 
       <div className="relative flex-1 min-h-0">
+        <ReaderSelectionToolbar
+          containerRef={scrollViewportRef}
+          translationPreferences={translationPreferences}
+          sourceLanguage={null}
+        />
         <ScrollArea className="h-full min-h-0" ref={scrollRef}>
           <AnimatePresence mode="wait">
             <motion.div
-              key={entry.id}
+              key={`${entry.id}:${contentRevision}`}
               initial={{
                 opacity: articleEnterOpacity,
                 y: directionalEnterY,
@@ -689,11 +764,15 @@ export function EntryReading({
                   translationDisplayMode={translationDisplayMode}
                   translateRequestToken={translateRequestToken}
                   translationPreferences={translationPreferences}
+                  providerSettings={translationProviderSettings}
                   bionicEnglish={bionicReading}
                   chineseConversionMode={chineseConversionMode}
                   customConversionRules={customConversionRules}
                   codeTheme={codeTheme}
                   onActiveProviderChange={setActiveTranslationProvider}
+                  onTranslationProgressChange={(completed, total) =>
+                    setTranslationProgress({ completed, total })
+                  }
                   className={cn(
                     'mx-auto max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
                     useInvertedProse && 'prose-invert',
@@ -895,6 +974,15 @@ export function EntryReading({
             </motion.div>
           )}
         </AnimatePresence>
+
+        {translationEnabled && (
+          <div className="pointer-events-none absolute bottom-14 left-2 z-30">
+            <TranslationProgressRing
+              completed={translationProgress.completed}
+              total={translationProgress.total}
+            />
+          </div>
+        )}
 
         <AnimatePresence mode="wait">
           {statusBarVisible ? (

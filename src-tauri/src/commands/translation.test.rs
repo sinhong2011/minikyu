@@ -213,6 +213,7 @@ mod resolve_llm_system_prompt_tests {
             engine_fallbacks: vec![],
             llm_fallbacks: vec![],
             apple_fallback_enabled: false,
+            forced_provider: None,
         }
     }
 

@@ -85,6 +85,8 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         translation::delete_translation_provider_key,
         translation::get_translation_provider_key_status,
         translation::translate_reader_segment,
+        translation::get_ollama_available_tags,
+        translation::get_provider_available_models,
         translation_cache::get_translation_cache_entry,
         translation_cache::set_translation_cache_entry,
     ])

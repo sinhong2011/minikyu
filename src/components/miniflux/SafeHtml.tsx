@@ -18,6 +18,9 @@ import {
   MenuPanel,
   MenuSeparator,
   MenuShortcut,
+  MenuSubmenu,
+  MenuSubmenuPanel,
+  MenuSubmenuTrigger,
   MenuTrigger,
 } from '@/components/animate-ui/components/base/menu';
 import { Button } from '@/components/ui/button';
@@ -50,6 +53,17 @@ interface Image {
   alt?: string;
 }
 
+interface SegmentDisplayState {
+  status: string;
+  translatedText: string | null;
+  providerUsed: string | null;
+}
+
+interface AvailableProvider {
+  id: string;
+  label: string;
+}
+
 interface SafeHtmlProps {
   html: string;
   bionicEnglish?: boolean;
@@ -59,6 +73,11 @@ interface SafeHtmlProps {
   className?: string;
   style?: React.CSSProperties;
   onTranslateNode?: (text: string) => void;
+  segmentStates?: Record<string, SegmentDisplayState>;
+  availableProviders?: AvailableProvider[];
+  onTranslateWithProvider?: (text: string, providerId: string) => void;
+  onRetryTranslation?: (text: string) => void;
+  onCopyTranslation?: (translatedText: string) => void;
 }
 
 interface TransitionRect {
@@ -622,7 +641,15 @@ export function sanitizeReaderHtml(html: string): string {
     // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
     USE_PROFILES: { html: true },
     // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
-    ADD_ATTR: ['target', 'rel', 'data-translation-loading'],
+    ADD_ATTR: [
+      'target',
+      'rel',
+      'data-translation-loading',
+      'data-translation-retry',
+      'data-translation-role',
+      'data-translation-segment-id',
+      'data-testid',
+    ],
   });
 }
 
@@ -635,6 +662,11 @@ export function SafeHtml({
   className,
   style,
   onTranslateNode,
+  segmentStates,
+  availableProviders,
+  onTranslateWithProvider,
+  onRetryTranslation,
+  onCopyTranslation,
 }: SafeHtmlProps) {
   const { _ } = useLingui();
   const { copy: copyReaderNodeText } = useClipboard();
@@ -656,6 +688,10 @@ export function SafeHtml({
   const translationToolbarHintLabel = _(msg`Translation controls in top bar`);
   const translateParagraphLabel = _(msg`Translate this paragraph`);
   const topBarLabel = _(msg`Top bar`);
+  const retryTranslationLabel = _(msg`Retry translation`);
+  const translateWithLabel = _(msg`Translate with...`);
+  const copyTranslationLabel = _(msg`Copy translation`);
+  const translationFailedLabel = _(msg`Translation failed`);
   const codeLanguageLabel = _(msg`Language`);
   const imageFallbackAlt = _(msg`Image`);
 
@@ -1122,6 +1158,8 @@ export function SafeHtml({
       children,
       interactive = true,
       showParticles = false,
+      translationSegmentId,
+      isTranslatedBlock = false,
     }: {
       nodeTag: string;
       textLength: number;
@@ -1129,10 +1167,18 @@ export function SafeHtml({
       children: React.ReactNode;
       interactive?: boolean;
       showParticles?: boolean;
+      translationSegmentId?: string;
+      isTranslatedBlock?: boolean;
     }) => {
       const shouldUseLayoutCenter = nodeTag !== 'pre' && nodeTag !== 'table';
       const nodeIndex = readerNodeIndex;
       readerNodeIndex += 1;
+
+      const segmentState =
+        translationSegmentId != null ? segmentStates?.[translationSegmentId] : undefined;
+      const isTranslated = segmentState?.status === 'success';
+      const isFailed = segmentState?.status === 'error';
+      const isLoading = segmentState?.status === 'loading';
 
       return (
         <div
@@ -1143,7 +1189,11 @@ export function SafeHtml({
           className={cn(
             'reader-node-block relative rounded-xl bg-transparent px-2.5 pt-1 pb-0 shadow-none',
             interactive &&
+              !isTranslatedBlock &&
               'group/reader-node transition-[background-color,box-shadow,transform] duration-180 hover:-translate-y-px hover:bg-muted/65 hover:shadow-[0_16px_32px_-22px_hsl(var(--foreground)/0.56),0_8px_16px_-12px_hsl(var(--foreground)/0.34)] focus-within:-translate-y-px focus-within:bg-muted/65 focus-within:shadow-[0_16px_32px_-22px_hsl(var(--foreground)/0.56),0_8px_16px_-12px_hsl(var(--foreground)/0.34)]',
+            interactive &&
+              isTranslatedBlock &&
+              'group/reader-node transition-[background-color] duration-180 hover:bg-accent/40 focus-within:bg-accent/40',
             shouldUseLayoutCenter && 'flex justify-center'
           )}
         >
@@ -1191,23 +1241,117 @@ export function SafeHtml({
                     <MenuGroupLabel className="px-2.5 pb-1 pt-1 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground/90">
                       {translationActionsLabel}
                     </MenuGroupLabel>
-                    {onTranslateNode ? (
-                      <MenuItem
-                        onClick={() => onTranslateNode(nodeText)}
-                        className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
-                      >
-                        <span>{translateParagraphLabel}</span>
-                      </MenuItem>
+
+                    {isTranslatedBlock ? (
+                      isTranslated &&
+                      segmentState?.translatedText &&
+                      onCopyTranslation && (
+                        <MenuItem
+                          onClick={() => onCopyTranslation(segmentState.translatedText ?? '')}
+                          className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
+                        >
+                          <span className="flex items-center gap-1.5">
+                            <HugeiconsIcon icon={CopyIcon} className="h-3.5 w-3.5" />
+                            {copyTranslationLabel}
+                          </span>
+                        </MenuItem>
+                      )
                     ) : (
-                      <MenuItem
-                        disabled
-                        className="rounded-lg px-2.5 py-2 text-[0.85rem] font-medium text-muted-foreground"
-                      >
-                        <span>{translationToolbarHintLabel}</span>
-                        <MenuShortcut className="text-[10px] font-medium tracking-[0.08em] text-muted-foreground/70">
-                          {topBarLabel}
-                        </MenuShortcut>
-                      </MenuItem>
+                      <>
+                        {isTranslated && segmentState?.providerUsed && (
+                          <MenuItem
+                            disabled
+                            className="rounded-lg px-2.5 py-1.5 text-[0.85rem] font-medium text-muted-foreground"
+                          >
+                            <span className="flex items-center gap-1.5">
+                              <HugeiconsIcon
+                                icon={CheckmarkCircle01Icon}
+                                className="h-3.5 w-3.5 text-emerald-500"
+                              />
+                              {segmentState.providerUsed}
+                            </span>
+                          </MenuItem>
+                        )}
+
+                        {isFailed && (
+                          <MenuItem
+                            disabled
+                            className="rounded-lg px-2.5 py-1.5 text-[0.85rem] font-medium text-destructive"
+                          >
+                            <span>{translationFailedLabel}</span>
+                          </MenuItem>
+                        )}
+
+                        {(isTranslated || isFailed) && onRetryTranslation && (
+                          <MenuItem
+                            onClick={() => onRetryTranslation(nodeText)}
+                            className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
+                          >
+                            <span>{retryTranslationLabel}</span>
+                          </MenuItem>
+                        )}
+
+                        {(isTranslated || isFailed) &&
+                          availableProviders &&
+                          availableProviders.length > 0 &&
+                          onTranslateWithProvider && (
+                            <MenuSubmenu>
+                              <MenuSubmenuTrigger className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium">
+                                {translateWithLabel}
+                              </MenuSubmenuTrigger>
+                              <MenuSubmenuPanel className="w-56 rounded-2xl border-border/60 bg-popover/95 p-1.5 shadow-[0_24px_48px_-28px_hsl(var(--foreground)/0.7),0_14px_32px_-24px_hsl(var(--foreground)/0.55)] backdrop-blur-xl">
+                                {availableProviders.map((provider) => (
+                                  <MenuItem
+                                    key={provider.id}
+                                    onClick={() => onTranslateWithProvider(nodeText, provider.id)}
+                                    className="rounded-lg px-2.5 py-2 text-[0.9rem] font-medium"
+                                  >
+                                    <span className="flex items-center gap-1.5">
+                                      {segmentState?.providerUsed === provider.id && (
+                                        <HugeiconsIcon
+                                          icon={CheckmarkCircle01Icon}
+                                          className="h-3.5 w-3.5 text-emerald-500"
+                                        />
+                                      )}
+                                      {provider.label}
+                                    </span>
+                                  </MenuItem>
+                                ))}
+                              </MenuSubmenuPanel>
+                            </MenuSubmenu>
+                          )}
+
+                        {!isTranslated &&
+                          !isFailed &&
+                          !isLoading &&
+                          (onTranslateNode ? (
+                            <MenuItem
+                              onClick={() => onTranslateNode(nodeText)}
+                              className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
+                            >
+                              <span>{translateParagraphLabel}</span>
+                            </MenuItem>
+                          ) : (
+                            <MenuItem
+                              disabled
+                              className="rounded-lg px-2.5 py-2 text-[0.85rem] font-medium text-muted-foreground"
+                            >
+                              <span>{translationToolbarHintLabel}</span>
+                              <MenuShortcut className="text-[10px] font-medium tracking-[0.08em] text-muted-foreground/70">
+                                {topBarLabel}
+                              </MenuShortcut>
+                            </MenuItem>
+                          ))}
+
+                        {isLoading && (
+                          <MenuItem
+                            disabled
+                            className="rounded-lg px-2.5 py-1.5 text-[0.85rem] font-medium text-muted-foreground animate-pulse"
+                          >
+                            <span>{translationActionsLabel}...</span>
+                          </MenuItem>
+                        )}
+                      </>
                     )}
                   </MenuGroup>
                 </MenuPanel>
@@ -1215,11 +1359,16 @@ export function SafeHtml({
             </div>
           )}
           {shouldUseLayoutCenter ? (
-            <div className="w-fit max-w-full" data-reader-node-content="true">
+            <div
+              className={cn('w-fit max-w-full', interactive && 'pr-8')}
+              data-reader-node-content="true"
+            >
               {children}
             </div>
           ) : (
-            <div data-reader-node-content="true">{children}</div>
+            <div className={interactive ? 'pr-8' : undefined} data-reader-node-content="true">
+              {children}
+            </div>
           )}
         </div>
       );
@@ -1393,13 +1542,17 @@ export function SafeHtml({
 
           const isTranslationLoading =
             domNode.name === 'p' && domNode.attribs['data-translation-loading'] === 'true';
+          const segmentId = domNode.attribs['data-translation-segment-id'];
+          const translatedBlock = domNode.attribs['data-translation-role'] === 'translated';
 
           return wrapReaderNodeBlock({
             nodeTag: domNode.name,
             textLength: blockText.length,
             nodeText: blockText,
             interactive: !isImageOnlyBlock,
-            showParticles: isTranslationLoading,
+            showParticles: isTranslationLoading && !translatedBlock,
+            translationSegmentId: segmentId,
+            isTranslatedBlock: translatedBlock,
             children: createElement(
               domNode.name,
               normalizedProps,
@@ -1429,6 +1582,15 @@ export function SafeHtml({
     translateParagraphLabel,
     translationActionsLabel,
     translationToolbarHintLabel,
+    retryTranslationLabel,
+    translateWithLabel,
+    copyTranslationLabel,
+    translationFailedLabel,
+    segmentStates,
+    availableProviders,
+    onTranslateWithProvider,
+    onRetryTranslation,
+    onCopyTranslation,
   ]);
 
   const sanitizedHtml = useMemo(() => sanitizeReaderHtml(html), [html]);

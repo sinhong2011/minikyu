@@ -16,8 +16,10 @@ import {
 import { CSS } from '@dnd-kit/utilities';
 import {
   Globe02Icon,
+  InformationCircleIcon,
   Key01Icon,
   Link02Icon,
+  Refresh04Icon,
   RssIcon,
   Settings01Icon,
   Sorting01Icon,
@@ -30,6 +32,14 @@ import { motion } from 'motion/react';
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { Switch } from '@/components/animate-ui/components/base/switch';
 import { Button } from '@/components/ui/button';
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxEmpty,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '@/components/ui/combobox';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import {
@@ -41,14 +51,17 @@ import {
 } from '@/components/ui/select';
 import { showToast } from '@/components/ui/sonner';
 import { Textarea } from '@/components/ui/textarea';
+import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import {
+  type ChineseConversionRule,
   commands,
   type ReaderTranslationProviderSettings,
   type ReaderTranslationRouteMode,
   type TranslationSegmentRequest,
 } from '@/lib/tauri-bindings';
+import { useFeeds } from '@/services/miniflux/feeds';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
-import { SettingsSection } from '../shared/SettingsComponents';
+import { SettingsField, SettingsSection } from '../shared/SettingsComponents';
 
 interface TranslationProviderDefinition {
   id: string;
@@ -88,6 +101,7 @@ const DEFAULT_LLM_PROVIDER_IDS = TRANSLATION_PROVIDERS.filter(
 
 const PROVIDER_ENDPOINT_PLACEHOLDERS: Readonly<Record<string, string>> = {
   deepl: 'https://api-free.deepl.com/v2',
+  // biome-ignore lint/style/useNamingConvention: provider ID from backend
   google_translate: 'https://translation.googleapis.com/language/translate/v2',
   ollama: 'http://localhost:11434',
 };
@@ -107,22 +121,27 @@ const PROVIDER_ICON_SPECS: Readonly<Record<string, ProviderIconSpec>> = {
     icon: Link02Icon,
     className: 'bg-blue-500/20 text-blue-600 dark:text-blue-300',
   },
+  // biome-ignore lint/style/useNamingConvention: provider ID from backend
   google_translate: {
     icon: Globe02Icon,
     className: 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-300',
   },
+  // biome-ignore lint/style/useNamingConvention: provider ID from backend
   microsoft_translator: {
     icon: Globe02Icon,
     className: 'bg-cyan-500/20 text-cyan-600 dark:text-cyan-300',
   },
+  // biome-ignore lint/style/useNamingConvention: provider ID from backend
   qwen_mt: {
     icon: RssIcon,
     className: 'bg-violet-500/20 text-violet-600 dark:text-violet-300',
   },
+  // biome-ignore lint/style/useNamingConvention: provider ID from backend
   hunyuan_mt: {
     icon: RssIcon,
     className: 'bg-fuchsia-500/20 text-fuchsia-600 dark:text-fuchsia-300',
   },
+  // biome-ignore lint/style/useNamingConvention: provider ID from backend
   baidu_translate: {
     icon: RssIcon,
     className: 'bg-orange-500/20 text-orange-600 dark:text-orange-300',
@@ -222,6 +241,10 @@ function providerRequiresApiKey(providerId: string): boolean {
   return providerId !== 'ollama';
 }
 
+function providerAcceptsOptionalApiKey(providerId: string): boolean {
+  return providerId === 'ollama';
+}
+
 function ProviderIconBadge({ providerId, className }: { providerId: string; className?: string }) {
   const [imageFailed, setImageFailed] = useState(false);
   const providerIconSpec = getProviderIconSpec(providerId);
@@ -272,11 +295,21 @@ interface SettingsRowProps {
 function SettingsRow({ children, description, htmlFor, label }: SettingsRowProps) {
   return (
     <div className="grid gap-3 md:grid-cols-[220px_minmax(0,1fr)] md:items-start">
-      <div className="space-y-1">
+      <div className="flex items-center gap-1.5 pt-0.5">
         <Label htmlFor={htmlFor} className="text-sm font-medium text-foreground">
           {label}
         </Label>
-        {description ? <p className="text-sm text-muted-foreground">{description}</p> : null}
+        {description ? (
+          <Tooltip delay={300}>
+            <TooltipTrigger
+              aria-label="More information"
+              className="inline-flex shrink-0 cursor-default text-muted-foreground/50 transition-colors hover:text-muted-foreground"
+            >
+              <HugeiconsIcon icon={InformationCircleIcon} className="size-3.5" />
+            </TooltipTrigger>
+            <TooltipPanel className="max-w-xs text-balance">{description}</TooltipPanel>
+          </Tooltip>
+        ) : null}
       </div>
       <div className="min-w-0">{children}</div>
     </div>
@@ -411,6 +444,32 @@ function SortableProviderRow({
   );
 }
 
+interface CustomRuleDraft extends ChineseConversionRule {
+  id: string;
+}
+
+let customRuleDraftId = 0;
+
+function nextCustomRuleDraftId(): string {
+  customRuleDraftId += 1;
+  return `rule-${customRuleDraftId}`;
+}
+
+function normalizeRules(rules: ChineseConversionRule[] | undefined): ChineseConversionRule[] {
+  return (rules ?? []).map((rule) => ({
+    from: rule.from.trim(),
+    to: rule.to.trim(),
+  }));
+}
+
+function toDraftRules(rules: ChineseConversionRule[] | undefined): CustomRuleDraft[] {
+  return (rules ?? []).map((rule) => ({
+    id: nextCustomRuleDraftId(),
+    from: rule.from,
+    to: rule.to,
+  }));
+}
+
 export function TranslationPane() {
   const { _ } = useLingui();
   const { data: preferences } = usePreferences();
@@ -428,7 +487,44 @@ export function TranslationPane() {
   const [selectedProviderId, setSelectedProviderId] = useState<string>(
     TRANSLATION_PROVIDERS[0]?.id ?? ''
   );
+  const [providerAvailableModels, setProviderAvailableModelsRaw] = useState<
+    Record<string, string[]>
+  >(() => {
+    try {
+      const stored = localStorage.getItem('translation-provider-models');
+      return stored ? (JSON.parse(stored) as Record<string, string[]>) : {};
+    } catch {
+      return {};
+    }
+  });
+  const setProviderAvailableModels: typeof setProviderAvailableModelsRaw = (action) => {
+    setProviderAvailableModelsRaw((previous) => {
+      const next = typeof action === 'function' ? action(previous) : action;
+      try {
+        localStorage.setItem('translation-provider-models', JSON.stringify(next));
+      } catch {
+        // Ignore storage errors
+      }
+      return next;
+    });
+  };
+  const [isFetchingModels, setIsFetchingModels] = useState(false);
   const didHydrateProviderOrder = useRef(false);
+
+  const [customRulesDraft, setCustomRulesDraft] = useState<CustomRuleDraft[]>([]);
+  const persistedRules = useMemo(
+    () => normalizeRules(preferences?.reader_custom_conversions),
+    [preferences?.reader_custom_conversions]
+  );
+  const normalizedDraftRules = useMemo(() => normalizeRules(customRulesDraft), [customRulesDraft]);
+  const hasInvalidCustomRules = useMemo(
+    () => normalizedDraftRules.some((rule) => rule.from.length === 0),
+    [normalizedDraftRules]
+  );
+  const hasRuleChanges = useMemo(
+    () => JSON.stringify(normalizedDraftRules) !== JSON.stringify(persistedRules),
+    [normalizedDraftRules, persistedRules]
+  );
 
   const translationEngines = useMemo(
     () => TRANSLATION_PROVIDERS.filter((provider) => provider.kind === 'engine'),
@@ -460,6 +556,10 @@ export function TranslationPane() {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  useEffect(() => {
+    setCustomRulesDraft(toDraftRules(preferences?.reader_custom_conversions));
+  }, [preferences?.reader_custom_conversions]);
 
   useEffect(() => {
     const nextRuntimeInputs: Record<string, ProviderRuntimeInputState> = {};
@@ -643,7 +743,7 @@ export function TranslationPane() {
   };
 
   const refreshProviderStatus = async (providerId: string) => {
-    if (!providerRequiresApiKey(providerId)) {
+    if (!providerRequiresApiKey(providerId) && !providerAcceptsOptionalApiKey(providerId)) {
       setProviderKeyStatus((previous) => ({ ...previous, [providerId]: true }));
       return;
     }
@@ -661,7 +761,7 @@ export function TranslationPane() {
     const loadProviderStatuses = async () => {
       const entries = await Promise.all(
         TRANSLATION_PROVIDERS.map(async (provider) => {
-          if (!providerRequiresApiKey(provider.id)) {
+          if (!providerRequiresApiKey(provider.id) && !providerAcceptsOptionalApiKey(provider.id)) {
             return [provider.id, true] as const;
           }
 
@@ -683,6 +783,36 @@ export function TranslationPane() {
       cancelled = true;
     };
   }, []);
+
+  const updateCustomRule = (ruleId: string, patch: Partial<ChineseConversionRule>) => {
+    setCustomRulesDraft((current) =>
+      current.map((rule) => (rule.id === ruleId ? { ...rule, ...patch } : rule))
+    );
+  };
+
+  const addCustomRule = () => {
+    setCustomRulesDraft((current) => [
+      ...current,
+      { id: nextCustomRuleDraftId(), from: '', to: '' },
+    ]);
+  };
+
+  const removeCustomRule = (ruleId: string) => {
+    setCustomRulesDraft((current) => current.filter((rule) => rule.id !== ruleId));
+  };
+
+  const resetCustomRules = () => {
+    setCustomRulesDraft(toDraftRules(preferences?.reader_custom_conversions));
+  };
+
+  const saveCustomRules = async () => {
+    if (!preferences || hasInvalidCustomRules) return;
+    await savePreferences.mutateAsync({
+      ...preferences,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      reader_custom_conversions: normalizedDraftRules,
+    });
+  };
 
   const handleRouteModeChange = async (value: string) => {
     if (!preferences) return;
@@ -888,6 +1018,32 @@ export function TranslationPane() {
     return true;
   };
 
+  const getModelsCacheKey = (providerId: string) => {
+    const endpoint = providerRuntimeInputs[providerId]?.baseUrl?.trim() ?? '';
+    return `${providerId}:${endpoint}`;
+  };
+
+  const handleFetchModels = async (providerId: string) => {
+    setIsFetchingModels(true);
+    try {
+      const result = await commands.getProviderAvailableModels(providerId);
+      if (result.status === 'error') {
+        showToast.error(_(msg`Failed to fetch available models`), result.error);
+        return;
+      }
+      const cacheKey = getModelsCacheKey(providerId);
+      setProviderAvailableModels((previous) => ({
+        ...previous,
+        [cacheKey]: result.data,
+      }));
+      if (result.data.length === 0) {
+        showToast.info(_(msg`No models found for this provider`));
+      }
+    } finally {
+      setIsFetchingModels(false);
+    }
+  };
+
   const handleVerifyProvider = async (provider: TranslationProviderDefinition) => {
     const runtimeSaved = await handleProviderRuntimeBlur(provider);
     if (!runtimeSaved) {
@@ -915,6 +1071,11 @@ export function TranslationPane() {
         }
         hasProviderKey = keyStatusResult.data;
         setProviderKeyStatus((previous) => ({ ...previous, [provider.id]: keyStatusResult.data }));
+      }
+    } else if (providerAcceptsOptionalApiKey(provider.id) && keyInputValue.length > 0) {
+      keySaved = await handleProviderKeyBlur(provider.id);
+      if (!keySaved) {
+        return;
       }
     }
 
@@ -953,6 +1114,8 @@ export function TranslationPane() {
       llm_fallbacks: provider.kind === 'llm' ? [provider.id] : [],
       // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
       apple_fallback_enabled: false,
+      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+      forced_provider: null,
     };
 
     setVerifyingProviderId(provider.id);
@@ -975,6 +1138,7 @@ export function TranslationPane() {
 
   const getProviderDisplayState = (provider: TranslationProviderDefinition) => {
     const requiresApiKey = providerRequiresApiKey(provider.id);
+    const acceptsOptionalApiKey = providerAcceptsOptionalApiKey(provider.id);
     const routeEnabled = isProviderEnabled(provider);
     const runtimeSettings = getProviderRuntimeSettings(provider);
     const enabled = runtimeSettings.enabled || routeEnabled;
@@ -997,6 +1161,7 @@ export function TranslationPane() {
     }
 
     return {
+      acceptsOptionalApiKey,
       configured,
       enabled,
       missingRequiredFields,
@@ -1217,6 +1382,13 @@ export function TranslationPane() {
                 <SettingsRow
                   label={_(msg`${selectedProviderDisplay.providerName} base URL`)}
                   htmlFor={`provider-base-url-${selectedProvider.id}`}
+                  description={
+                    selectedProvider.id === 'ollama'
+                      ? _(
+                          msg`Local Ollama: leave empty (uses http://localhost:11434). Ollama Cloud: use https://ollama.com — requires an API key and model names with the -cloud suffix (e.g. gpt-oss:120b-cloud).`
+                        )
+                      : undefined
+                  }
                 >
                   <Input
                     id={`provider-base-url-${selectedProvider.id}`}
@@ -1243,29 +1415,77 @@ export function TranslationPane() {
                 </SettingsRow>
 
                 {selectedProvider.kind === 'llm' && (
-                  <SettingsRow
-                    label={_(msg`${selectedProviderDisplay.providerName} model`)}
-                    htmlFor={`provider-model-${selectedProvider.id}`}
-                  >
-                    <Input
-                      id={`provider-model-${selectedProvider.id}`}
-                      aria-label={_(msg`${selectedProviderDisplay.providerName} model`)}
-                      value={selectedProviderDisplay.runtimeInput.model}
-                      onChange={(event) =>
-                        setProviderRuntimeInputs((previous) => ({
-                          ...previous,
-                          [selectedProvider.id]: {
-                            ...(previous[selectedProvider.id] ??
-                              toRuntimeInputState(selectedProviderDisplay.runtimeSettings)),
-                            model: event.target.value,
-                          },
-                        }))
-                      }
-                      onBlur={() => {
-                        void handleProviderRuntimeBlur(selectedProvider);
-                      }}
-                      placeholder={_(msg`Required for LLM providers`)}
-                    />
+                  <SettingsRow label={_(msg`${selectedProviderDisplay.providerName} model`)}>
+                    <div className="flex items-center gap-1.5">
+                      <div className="min-w-0 flex-1">
+                        <Combobox
+                          value={selectedProviderDisplay.runtimeInput.model}
+                          onValueChange={(value) => {
+                            if (value === null) return;
+                            setProviderRuntimeInputs((previous) => ({
+                              ...previous,
+                              [selectedProvider.id]: {
+                                ...(previous[selectedProvider.id] ??
+                                  toRuntimeInputState(selectedProviderDisplay.runtimeSettings)),
+                                model: value,
+                              },
+                            }));
+                            void handleProviderRuntimeBlur(selectedProvider);
+                          }}
+                          inputValue={selectedProviderDisplay.runtimeInput.model}
+                          onInputValueChange={(value) => {
+                            setProviderRuntimeInputs((previous) => ({
+                              ...previous,
+                              [selectedProvider.id]: {
+                                ...(previous[selectedProvider.id] ??
+                                  toRuntimeInputState(selectedProviderDisplay.runtimeSettings)),
+                                model: value,
+                              },
+                            }));
+                          }}
+                        >
+                          <ComboboxInput
+                            placeholder={
+                              isFetchingModels
+                                ? _(msg`Fetching...`)
+                                : _(msg`Type or fetch to pick a model`)
+                            }
+                            onBlur={() => {
+                              void handleProviderRuntimeBlur(selectedProvider);
+                            }}
+                          />
+                          <ComboboxContent>
+                            <ComboboxList>
+                              <ComboboxEmpty>{_(msg`No models found`)}</ComboboxEmpty>
+                              {(
+                                providerAvailableModels[getModelsCacheKey(selectedProvider.id)] ??
+                                []
+                              ).map((modelName) => (
+                                <ComboboxItem key={modelName} value={modelName}>
+                                  {modelName}
+                                </ComboboxItem>
+                              ))}
+                            </ComboboxList>
+                          </ComboboxContent>
+                        </Combobox>
+                      </div>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className="size-9 shrink-0 text-muted-foreground hover:text-foreground"
+                        disabled={isFetchingModels}
+                        aria-label={_(msg`Fetch available models`)}
+                        onClick={() => {
+                          void handleFetchModels(selectedProvider.id);
+                        }}
+                      >
+                        <HugeiconsIcon
+                          icon={Refresh04Icon}
+                          className={isFetchingModels ? 'animate-spin' : ''}
+                        />
+                      </Button>
+                    </div>
                   </SettingsRow>
                 )}
 
@@ -1325,10 +1545,18 @@ export function TranslationPane() {
                   />
                 </SettingsRow>
 
-                {selectedProviderDisplay.requiresApiKey && (
+                {(selectedProviderDisplay.requiresApiKey ||
+                  selectedProviderDisplay.acceptsOptionalApiKey) && (
                   <SettingsRow
                     label={_(msg`${selectedProviderDisplay.providerName} API key`)}
                     htmlFor={`provider-key-${selectedProvider.id}`}
+                    description={
+                      selectedProviderDisplay.acceptsOptionalApiKey
+                        ? _(
+                            msg`Optional. Leave empty for local Ollama. Required for the Ollama cloud API (ollama.com).`
+                          )
+                        : undefined
+                    }
                   >
                     <Input
                       id={`provider-key-${selectedProvider.id}`}
@@ -1345,7 +1573,11 @@ export function TranslationPane() {
                         void handleProviderKeyBlur(selectedProvider.id);
                       }}
                       placeholder={
-                        selectedProviderDisplay.configured ? _(msg`Replace key`) : _(msg`Paste key`)
+                        (providerKeyStatus[selectedProvider.id] ?? false)
+                          ? _(msg`Replace key`)
+                          : selectedProviderDisplay.acceptsOptionalApiKey
+                            ? _(msg`Optional – for cloud API`)
+                            : _(msg`Paste key`)
                       }
                     />
                   </SettingsRow>
@@ -1355,6 +1587,204 @@ export function TranslationPane() {
           </div>
         </div>
       </SettingsSection>
+
+      <SettingsSection title={_(msg`Chinese Conversion`)}>
+        <SettingsField
+          label={_(msg`Conversion Mode`)}
+          description={_(
+            msg`Convert Chinese characters between Simplified and Traditional variants.`
+          )}
+        >
+          <Select
+            value={preferences?.reader_chinese_conversion ?? 's2tw'}
+            onValueChange={(value) => {
+              if (preferences) {
+                savePreferences.mutate({
+                  ...preferences,
+                  // biome-ignore lint/style/useNamingConvention: preferences field name
+                  reader_chinese_conversion: value as typeof preferences.reader_chinese_conversion,
+                });
+              }
+            }}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="off">{_(msg`Off`)}</SelectItem>
+              <SelectItem value="s2hk">{_(msg`繁體中文（香港）`)}</SelectItem>
+              <SelectItem value="s2tw">{_(msg`繁體中文（台灣）`)}</SelectItem>
+              <SelectItem value="t2s">{_(msg`簡體中文`)}</SelectItem>
+            </SelectContent>
+          </Select>
+        </SettingsField>
+
+        <SettingsField
+          label={_(msg`Custom Term Conversion`)}
+          description={_(
+            msg`These replacements are applied after built-in Chinese conversion in the reading panel.`
+          )}
+        >
+          <div className="space-y-2">
+            {customRulesDraft.length === 0 && (
+              <p className="text-sm text-muted-foreground">{_(msg`No custom rules yet`)}</p>
+            )}
+
+            {customRulesDraft.map((rule) => (
+              <div key={rule.id} className="grid grid-cols-[1fr_1fr_auto] gap-2">
+                <Input
+                  value={rule.from}
+                  placeholder={_(msg`From`)}
+                  onChange={(event) => updateCustomRule(rule.id, { from: event.target.value })}
+                  disabled={savePreferences.isPending}
+                />
+                <Input
+                  value={rule.to}
+                  placeholder={_(msg`To`)}
+                  onChange={(event) => updateCustomRule(rule.id, { to: event.target.value })}
+                  disabled={savePreferences.isPending}
+                />
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => removeCustomRule(rule.id)}
+                  disabled={savePreferences.isPending}
+                >
+                  {_(msg`Remove`)}
+                </Button>
+              </div>
+            ))}
+
+            {hasInvalidCustomRules && (
+              <p className="text-sm text-destructive">
+                {_(msg`Each rule must include a non-empty "From" value`)}
+              </p>
+            )}
+
+            <div className="flex flex-wrap gap-2">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={addCustomRule}
+                disabled={savePreferences.isPending}
+              >
+                {_(msg`Add Rule`)}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={resetCustomRules}
+                disabled={savePreferences.isPending || !hasRuleChanges}
+              >
+                {_(msg`Reset`)}
+              </Button>
+              <Button
+                type="button"
+                onClick={() => void saveCustomRules()}
+                disabled={
+                  savePreferences.isPending ||
+                  hasInvalidCustomRules ||
+                  !hasRuleChanges ||
+                  !preferences
+                }
+              >
+                {savePreferences.isPending ? _(msg`Saving...`) : _(msg`Save Rules`)}
+              </Button>
+            </div>
+          </div>
+        </SettingsField>
+      </SettingsSection>
+
+      <SettingsSection title={_(msg`Feed Exclusions`)}>
+        <SettingsField
+          label={_(msg`Excluded Feeds`)}
+          description={_(
+            msg`Feeds in this list will not be automatically translated. Chinese conversion still applies.`
+          )}
+        >
+          <FeedExclusionList />
+        </SettingsField>
+      </SettingsSection>
+    </div>
+  );
+}
+
+function FeedExclusionList() {
+  const { _ } = useLingui();
+  const { data: preferences } = usePreferences();
+  const { mutate: savePreferencesAction, isPending } = useSavePreferences();
+  const { data: feeds } = useFeeds();
+  const excludedIds = preferences?.reader_translation_excluded_feed_ids ?? [];
+
+  const excludedFeeds = (feeds ?? []).filter((feed) => excludedIds.includes(feed.id));
+  const availableFeeds = (feeds ?? []).filter((feed) => !excludedIds.includes(feed.id));
+
+  const addFeed = (feedId: string) => {
+    if (!preferences || excludedIds.includes(feedId)) return;
+    savePreferencesAction({
+      ...preferences,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      reader_translation_excluded_feed_ids: [...excludedIds, feedId],
+    });
+  };
+
+  const removeFeed = (feedId: string) => {
+    if (!preferences) return;
+    savePreferencesAction({
+      ...preferences,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      reader_translation_excluded_feed_ids: excludedIds.filter((id) => id !== feedId),
+    });
+  };
+
+  return (
+    <div className="space-y-2">
+      {excludedFeeds.length === 0 && (
+        <p className="text-sm text-muted-foreground">
+          {_(msg`No feeds excluded. All feeds will be translated when translation is enabled.`)}
+        </p>
+      )}
+
+      {excludedFeeds.map((feed) => (
+        <div
+          key={feed.id}
+          className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2"
+        >
+          <p className="text-sm truncate">{feed.title}</p>
+          <Button
+            type="button"
+            variant="outline"
+            size="sm"
+            onClick={() => removeFeed(feed.id)}
+            disabled={isPending}
+          >
+            {_(msg`Remove`)}
+          </Button>
+        </div>
+      ))}
+
+      {availableFeeds.length > 0 && (
+        <Combobox
+          value=""
+          onValueChange={(value) => {
+            if (value && typeof value === 'string') {
+              addFeed(value);
+            }
+          }}
+        >
+          <ComboboxInput placeholder={_(msg`Search feeds to exclude...`)} />
+          <ComboboxContent>
+            <ComboboxList>
+              {availableFeeds.map((feed) => (
+                <ComboboxItem key={feed.id} value={feed.id}>
+                  {feed.title}
+                </ComboboxItem>
+              ))}
+              <ComboboxEmpty>{_(msg`No feeds found`)}</ComboboxEmpty>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      )}
     </div>
   );
 }

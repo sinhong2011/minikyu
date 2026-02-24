@@ -54,10 +54,6 @@ pub async fn miniflux_connect(
             let mut config_with_username = config.clone();
             config_with_username.username = Some(user.username.clone());
 
-            if let Err(e) = app_handle.emit("miniflux-connected", ()) {
-                log::error!("Failed to emit miniflux-connected event: {}", e);
-            }
-
             if let Err(e) = crate::commands::accounts::save_miniflux_account(
                 app_handle.clone(),
                 state.clone(),
@@ -69,6 +65,12 @@ pub async fn miniflux_connect(
                 log::error!("{}", error_msg);
                 // Don't return error here - authentication was successful, just log the issue
                 // The user can still use the app, just won't have credentials saved
+            }
+
+            // Emit after account is saved so the frontend sync doesn't
+            // race with the account INSERT and cause SQLite lock contention
+            if let Err(e) = app_handle.emit("miniflux-connected", ()) {
+                log::error!("Failed to emit miniflux-connected event: {}", e);
             }
 
             Ok(true)

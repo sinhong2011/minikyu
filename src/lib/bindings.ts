@@ -743,25 +743,17 @@ async getUnreadCounts() : Promise<Result<UnreadCounts, string>> {
 },
 /**
  * Opens an in-app browser webview at the given logical-pixel bounds.
- *
+ * 
  * If a browser webview is already open, navigates it to the new URL and
  * updates its bounds. Otherwise creates a new child webview attached to
  * the main window.
- *
+ * 
  * `x`, `y`, `width`, `height` are CSS logical pixels from
  * `getBoundingClientRect()` — no devicePixelRatio scaling needed.
  */
 async openInAppBrowser(url: string, x: number, y: number, width: number, height: number, isDark: boolean) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("open_in_app_browser", { url, x, y, width, height, isDark }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async saveTranslationProviderKey(provider: string, profile: string, apiKey: string) : Promise<Result<null, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("save_translation_provider_key", { provider, profile, apiKey }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -778,30 +770,14 @@ async closeInAppBrowser() : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
-async deleteTranslationProviderKey(provider: string, profile: string) : Promise<Result<null, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("delete_translation_provider_key", { provider, profile }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
 /**
  * Updates the position and size of the browser webview.
- *
+ * 
  * Called by the React ResizeObserver whenever the browser pane changes size.
  */
 async resizeBrowserWebview(x: number, y: number, width: number, height: number) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("resize_browser_webview", { x, y, width, height }) };
-} catch (e) {
-    if(e instanceof Error) throw e;
-    else return { status: "error", error: e  as any };
-}
-},
-async getTranslationProviderKeyStatus(provider: string, profile: string) : Promise<Result<boolean, string>> {
-    try {
-    return { status: "ok", data: await TAURI_INVOKE("get_translation_provider_key_status", { provider, profile }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -820,7 +796,8 @@ async reloadBrowserWebview() : Promise<Result<null, string>> {
 },
 /**
  * Synchronises the browser webview's color scheme with the app theme.
- *
+ * 
+ * Uses Tauri's Webview::eval() API to set colorScheme on the page root.
  * The injected value is always "dark" or "light" — no user input involved.
  */
 async syncBrowserTheme(isDark: boolean) : Promise<Result<null, string>> {
@@ -831,9 +808,49 @@ async syncBrowserTheme(isDark: boolean) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async saveTranslationProviderKey(provider: string, profile: string, apiKey: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("save_translation_provider_key", { provider, profile, apiKey }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async deleteTranslationProviderKey(provider: string, profile: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("delete_translation_provider_key", { provider, profile }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async getTranslationProviderKeyStatus(provider: string, profile: string) : Promise<Result<boolean, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_translation_provider_key_status", { provider, profile }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async translateReaderSegment(request: TranslationSegmentRequest) : Promise<Result<TranslationSegmentResponse, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("translate_reader_segment", { request }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async getOllamaAvailableTags() : Promise<Result<string[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_ollama_available_tags") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async getProviderAvailableModels(provider: string) : Promise<Result<string[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_provider_available_models", { provider }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -996,6 +1013,10 @@ reader_translation_provider_settings?: Partial<{ [key in string]: ReaderTranslat
  * Whether translation is automatically enabled for all entries.
  */
 reader_translation_auto_enabled?: boolean; 
+/**
+ * Feed IDs excluded from immersive translation.
+ */
+reader_translation_excluded_feed_ids?: string[]; 
 /**
  * Default download path for images (null = ask every time)
  */
@@ -1202,7 +1223,7 @@ export type SystemTime = { duration_since_epoch: string; duration_since_unix_epo
  * Cached translation entry stored on disk.
  */
 export type TranslationCacheEntry = { translated_text: string; provider_used: string; cached_at: string }
-export type TranslationSegmentRequest = { text: string; source_language: string | null; target_language: string; route_mode: string; primary_engine: string | null; engine_fallbacks: string[]; llm_fallbacks: string[]; apple_fallback_enabled: boolean }
+export type TranslationSegmentRequest = { text: string; source_language: string | null; target_language: string; route_mode: string; primary_engine: string | null; engine_fallbacks: string[]; llm_fallbacks: string[]; apple_fallback_enabled: boolean; forced_provider: string | null }
 export type TranslationSegmentResponse = { translated_text: string; provider_used: string; fallback_chain: string[] }
 /**
  * Tray icon states for visual feedback

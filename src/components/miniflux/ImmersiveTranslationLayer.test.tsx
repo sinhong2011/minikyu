@@ -7,6 +7,15 @@ import { commands } from '@/lib/tauri-bindings';
 import { translateReaderSegmentWithPreferences } from '@/services/translation';
 import { ImmersiveTranslationLayer } from './ImmersiveTranslationLayer';
 
+vi.mock('@/lib/logger', () => ({
+  debug: vi.fn(),
+  info: vi.fn(),
+  warn: vi.fn(),
+  error: vi.fn(),
+  trace: vi.fn(),
+  logger: { debug: vi.fn(), info: vi.fn(), warn: vi.fn(), error: vi.fn(), trace: vi.fn() },
+}));
+
 vi.mock('@/services/translation', () => ({
   translateReaderSegmentWithPreferences: vi.fn(),
 }));
@@ -151,7 +160,7 @@ describe('ImmersiveTranslationLayer', () => {
       />
     );
 
-    const retryButton = await screen.findByRole('button', { name: 'Retry' });
+    const retryButton = await screen.findByTestId('translation-retry-0');
     fireEvent.click(retryButton);
 
     await waitFor(() => {

@@ -22,6 +22,8 @@ export function normalizeTranslationSegmentRequest(
     engine_fallbacks: request.engine_fallbacks.map((provider) => provider.trim()),
     // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     llm_fallbacks: request.llm_fallbacks.map((provider) => provider.trim()),
+    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+    forced_provider: request.forced_provider?.trim() || null,
   };
 }
 

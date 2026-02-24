@@ -216,20 +216,15 @@ export function MinifluxLayout() {
       return;
     }
 
-    if (lastReadingEntry && entriesData?.entries) {
-      const entryExists = entriesData.entries.find(
-        (e) => String(e.id) === lastReadingEntry.entry_id
-      );
-      if (entryExists) {
-        setEntryTransitionDirection('forward');
-        logger.info('Auto-selecting last reading entry', {
-          entryId: lastReadingEntry.entry_id,
-          timestamp: lastReadingEntry.timestamp,
-        });
-        setSelectedEntryId(lastReadingEntry.entry_id);
-      }
+    if (lastReadingEntry) {
+      setEntryTransitionDirection('forward');
+      logger.info('Auto-selecting last reading entry', {
+        entryId: lastReadingEntry.entry_id,
+        timestamp: lastReadingEntry.timestamp,
+      });
+      setSelectedEntryId(lastReadingEntry.entry_id);
     }
-  }, [lastReadingEntry, entriesData, selectedEntryId, setSelectedEntryId]);
+  }, [lastReadingEntry, selectedEntryId, setSelectedEntryId]);
 
   useEffect(() => {
     if (!isConnected) {

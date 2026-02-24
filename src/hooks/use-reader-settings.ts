@@ -83,6 +83,8 @@ export function useReaderSettings() {
     appleTranslationFallbackEnabled:
       preferences?.reader_translation_apple_fallback_enabled ?? false,
     translationAutoEnabled: preferences?.reader_translation_auto_enabled ?? false,
+    translationExcludedFeedIds: preferences?.reader_translation_excluded_feed_ids ?? [],
+    translationProviderSettings: preferences?.reader_translation_provider_settings ?? {},
     codeTheme,
     isLoading,
     setFontSize: (size: number) => updateSetting('reader_font_size', size),
@@ -124,6 +126,8 @@ export function useReaderSettings() {
       updateSetting('reader_translation_apple_fallback_enabled', enabled),
     setTranslationAutoEnabled: (enabled: boolean) =>
       updateSetting('reader_translation_auto_enabled', enabled),
+    setTranslationExcludedFeedIds: (ids: string[]) =>
+      updateSetting('reader_translation_excluded_feed_ids', ids),
     setCodeTheme: (theme: ReaderCodeTheme) => {
       const normalizedTheme = normalizeReaderCodeTheme(theme);
       setCodeThemeOverride(normalizedTheme);

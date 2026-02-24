@@ -11,6 +11,7 @@ fn engine_first_tries_selected_engine_first() {
         engine_fallbacks: vec!["google_translate".to_string()],
         llm_fallbacks: vec!["openai".to_string()],
         apple_fallback_enabled: true,
+        forced_provider: None,
     };
 
     let mut attempts = Vec::new();
@@ -36,6 +37,7 @@ fn on_engine_failure_and_apple_enabled_chain_skips_apple_provider() {
         engine_fallbacks: vec!["google_translate".to_string()],
         llm_fallbacks: vec!["openai".to_string()],
         apple_fallback_enabled: true,
+        forced_provider: None,
     };
 
     let decision = route_translation_provider(&request, true, |provider| Ok(provider == "openai"))
@@ -63,6 +65,7 @@ fn if_apple_unavailable_first_llm_fallback_is_attempted() {
         engine_fallbacks: vec!["google_translate".to_string()],
         llm_fallbacks: vec!["openai".to_string(), "anthropic".to_string()],
         apple_fallback_enabled: true,
+        forced_provider: None,
     };
 
     let decision = route_translation_provider(&request, false, |provider| Ok(provider == "openai"))
@@ -90,6 +93,7 @@ fn apple_failure_falls_back_to_next_available_provider() {
         engine_fallbacks: vec![],
         llm_fallbacks: vec!["openai".to_string()],
         apple_fallback_enabled: true,
+        forced_provider: None,
     };
 
     let response = translate_with_provider_chain(

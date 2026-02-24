@@ -40,6 +40,8 @@ export function buildTranslationSegmentRequest(
     llm_fallbacks: [...(input.preferences.reader_translation_llm_fallbacks ?? [])],
     // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     apple_fallback_enabled: input.preferences.reader_translation_apple_fallback_enabled,
+    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+    forced_provider: input.forcedProvider ?? null,
   };
 }
 

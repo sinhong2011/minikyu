@@ -29,6 +29,23 @@ const GOOGLE_TRANSLATE_DEFAULT_BASE_URL: &str = "https://translation.googleapis.
 const GOOGLE_TRANSLATE_PATH: &str = "/language/translate/v2";
 const OLLAMA_DEFAULT_BASE_URL: &str = "http://localhost:11434";
 const OLLAMA_CHAT_PATH: &str = "/api/chat";
+const OLLAMA_TAGS_PATH: &str = "/api/tags";
+const OPENAI_PROVIDER: &str = "openai";
+const ANTHROPIC_PROVIDER: &str = "anthropic";
+const GEMINI_PROVIDER: &str = "gemini";
+const OPENAI_DEFAULT_BASE_URL: &str = "https://api.openai.com";
+const ANTHROPIC_DEFAULT_BASE_URL: &str = "https://api.anthropic.com";
+const GEMINI_DEFAULT_BASE_URL: &str = "https://generativelanguage.googleapis.com";
+const OPENROUTER_DEFAULT_BASE_URL: &str = "https://openrouter.ai";
+const GLM_DEFAULT_BASE_URL: &str = "https://open.bigmodel.cn/api/paas/v4";
+const KIMI_DEFAULT_BASE_URL: &str = "https://api.moonshot.cn";
+const MINIMAX_DEFAULT_BASE_URL: &str = "https://api.minimax.io";
+const QWEN_DEFAULT_BASE_URL: &str = "https://dashscope.aliyuncs.com/compatible-mode";
+const DEEPSEEK_DEFAULT_BASE_URL: &str = "https://api.deepseek.com";
+const OPENAI_COMPATIBLE_MODELS_PATH: &str = "/v1/models";
+const OPENROUTER_MODELS_PATH: &str = "/api/v1/models";
+const GLM_MODELS_PATH: &str = "/models";
+const GEMINI_MODELS_PATH: &str = "/v1beta/models";
 const DEFAULT_PROVIDER_TIMEOUT_MS: u32 = 15_000;
 const DEFAULT_LLM_TRANSLATION_PROMPT: &str = "\
 You are a professional {source_lang} to {target_lang} translator. \
@@ -248,6 +265,7 @@ pub struct TranslationSegmentRequest {
     pub engine_fallbacks: Vec<String>,
     pub llm_fallbacks: Vec<String>,
     pub apple_fallback_enabled: bool,
+    pub forced_provider: Option<String>,
 }
 
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
@@ -300,6 +318,102 @@ struct OllamaChatResponse {
 #[derive(Debug, Deserialize)]
 struct OllamaChatMessage {
     content: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct OllamaTagsApiResponse {
+    models: Vec<OllamaTagsApiModel>,
+}
+
+#[derive(Debug, Deserialize)]
+struct OllamaTagsApiModel {
+    name: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct OpenAiModelsApiResponse {
+    data: Vec<OpenAiModelsApiModel>,
+}
+
+#[derive(Debug, Deserialize)]
+struct OpenAiModelsApiModel {
+    id: String,
+}
+
+#[derive(Debug, Deserialize)]
+struct GeminiModelsApiResponse {
+    models: Vec<GeminiModelsApiModel>,
+}
+
+#[derive(Debug, Deserialize)]
+struct GeminiModelsApiModel {
+    name: String,
+}
+
+/// OpenAI-compatible chat completions response (works for OpenAI, DeepSeek, Qwen, Kimi, etc.)
+#[derive(Debug, Deserialize)]
+struct OpenAiChatCompletionsResponse {
+    choices: Option<Vec<OpenAiChatChoice>>,
+    error: Option<OpenAiErrorBody>,
+}
+
+#[derive(Debug, Deserialize)]
+struct OpenAiChatChoice {
+    message: Option<OpenAiChatMessage>,
+}
+
+#[derive(Debug, Deserialize)]
+struct OpenAiChatMessage {
+    content: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct OpenAiErrorBody {
+    message: Option<String>,
+}
+
+/// Anthropic Messages API response
+#[derive(Debug, Deserialize)]
+struct AnthropicMessagesResponse {
+    content: Option<Vec<AnthropicContentBlock>>,
+    error: Option<AnthropicErrorBody>,
+}
+
+#[derive(Debug, Deserialize)]
+struct AnthropicContentBlock {
+    text: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct AnthropicErrorBody {
+    message: Option<String>,
+}
+
+/// Gemini generateContent response
+#[derive(Debug, Deserialize)]
+struct GeminiGenerateContentResponse {
+    candidates: Option<Vec<GeminiCandidate>>,
+    error: Option<GeminiErrorBody>,
+}
+
+#[derive(Debug, Deserialize)]
+struct GeminiCandidate {
+    content: Option<GeminiContent>,
+}
+
+#[derive(Debug, Deserialize)]
+struct GeminiContent {
+    parts: Option<Vec<GeminiPart>>,
+}
+
+#[derive(Debug, Deserialize)]
+struct GeminiPart {
+    text: Option<String>,
+}
+
+#[derive(Debug, Deserialize)]
+struct GeminiErrorBody {
+    message: Option<String>,
 }
 
 fn validate_provider_profile(provider: &str, profile: &str) -> Result<(String, String), String> {
@@ -715,6 +829,7 @@ fn map_google_translate_http_error(status: reqwest::StatusCode) -> String {
 
 fn map_ollama_http_error(status: reqwest::StatusCode) -> String {
     match status.as_u16() {
+        401 | 403 => "Ollama authentication failed. Please check API key".to_string(),
         404 => "Ollama endpoint not found. Check Ollama base URL".to_string(),
         408 | 504 => "Ollama request timed out".to_string(),
         _ => format!("Ollama request failed with status {}", status.as_u16()),
@@ -877,6 +992,7 @@ async fn translate_with_google_translate(
 
 async fn translate_with_ollama(
     request: &TranslationSegmentRequest,
+    api_key: Option<&str>,
     settings: Option<&ReaderTranslationProviderSettings>,
 ) -> Result<String, String> {
     let model = settings
@@ -890,6 +1006,12 @@ async fn translate_with_ollama(
         OLLAMA_CHAT_PATH,
     );
     let timeout = Duration::from_millis(resolve_provider_timeout_ms(settings));
+
+    log::info!(
+        "ollama: POST {endpoint} | model={model} | auth={}",
+        if api_key.is_some() { "bearer" } else { "none" }
+    );
+
     let client = reqwest::Client::builder()
         .timeout(timeout)
         .build()
@@ -910,15 +1032,27 @@ async fn translate_with_ollama(
         ]
     });
 
-    let response = client
-        .post(endpoint)
-        .json(&payload)
+    let mut request_builder = client.post(&endpoint).json(&payload);
+    if let Some(key) = api_key {
+        request_builder = request_builder.header("Authorization", format!("Bearer {key}"));
+    }
+    let response = request_builder
         .send()
         .await
         .map_err(|e| format!("Ollama request failed: {e}"))?;
     let status = response.status();
+    log::info!("ollama: response status={}", status.as_u16());
     if !status.is_success() {
-        return Err(map_ollama_http_error(status));
+        if status.as_u16() == 404 {
+            let err = format!(
+                "Ollama endpoint not found at '{endpoint}'. For local Ollama use http://localhost:11434; for Ollama Cloud use https://ollama.com with a -cloud model (e.g. gpt-oss:120b-cloud)"
+            );
+            log::warn!("ollama: 404 {err}");
+            return Err(err);
+        }
+        let err = map_ollama_http_error(status);
+        log::warn!("ollama: error {err}");
+        return Err(err);
     }
 
     let body: OllamaChatResponse = response
@@ -953,6 +1087,225 @@ async fn translate_with_ollama(
     Ok(translated_text)
 }
 
+/// Translate using any OpenAI-compatible chat completions API (OpenAI, DeepSeek, Qwen, Kimi, etc.)
+async fn translate_with_openai_compatible(
+    provider: &str,
+    request: &TranslationSegmentRequest,
+    api_key: &str,
+    settings: Option<&ReaderTranslationProviderSettings>,
+    default_base_url: &str,
+) -> Result<String, String> {
+    let model = settings
+        .and_then(|v| v.model.as_deref())
+        .map(str::trim)
+        .filter(|v| !v.is_empty())
+        .ok_or_else(|| format!("{provider} model is required"))?;
+    let chat_path = "/v1/chat/completions";
+    let endpoint = resolve_provider_endpoint(
+        settings.and_then(|v| v.base_url.as_deref()),
+        default_base_url,
+        chat_path,
+    );
+    let timeout = Duration::from_millis(resolve_provider_timeout_ms(settings));
+
+    log::info!("{provider}: POST {endpoint} | model={model}");
+
+    let client = reqwest::Client::builder()
+        .timeout(timeout)
+        .build()
+        .map_err(|e| format!("Failed to initialize {provider} HTTP client: {e}"))?;
+
+    let payload = serde_json::json!({
+        "model": model,
+        "stream": false,
+        "messages": [
+            {
+                "role": "system",
+                "content": resolve_llm_system_prompt(request, settings),
+            },
+            {
+                "role": "user",
+                "content": request.text,
+            }
+        ]
+    });
+
+    let response = client
+        .post(&endpoint)
+        .bearer_auth(api_key)
+        .json(&payload)
+        .send()
+        .await
+        .map_err(|e| format!("{provider} request failed: {e}"))?;
+    let status = response.status();
+    log::info!("{provider}: response status={}", status.as_u16());
+    if !status.is_success() {
+        let body_text = response.text().await.unwrap_or_default();
+        return Err(format!(
+            "{provider} returned {}: {body_text}",
+            status.as_u16()
+        ));
+    }
+
+    let body: OpenAiChatCompletionsResponse = response
+        .json()
+        .await
+        .map_err(|e| format!("Failed to parse {provider} response: {e}"))?;
+    if let Some(err) = body.error.and_then(|e| e.message) {
+        return Err(format!("{provider} error: {err}"));
+    }
+
+    body.choices
+        .and_then(|c| c.into_iter().next())
+        .and_then(|c| c.message)
+        .and_then(|m| m.content)
+        .map(|t| t.trim().to_string())
+        .filter(|t| !t.is_empty())
+        .ok_or_else(|| format!("{provider} returned an empty translation"))
+}
+
+/// Translate using the Anthropic Messages API.
+async fn translate_with_anthropic(
+    request: &TranslationSegmentRequest,
+    api_key: &str,
+    settings: Option<&ReaderTranslationProviderSettings>,
+) -> Result<String, String> {
+    let model = settings
+        .and_then(|v| v.model.as_deref())
+        .map(str::trim)
+        .filter(|v| !v.is_empty())
+        .ok_or_else(|| "Anthropic model is required".to_string())?;
+    let endpoint = resolve_provider_endpoint(
+        settings.and_then(|v| v.base_url.as_deref()),
+        ANTHROPIC_DEFAULT_BASE_URL,
+        "/v1/messages",
+    );
+    let timeout = Duration::from_millis(resolve_provider_timeout_ms(settings));
+
+    log::info!("anthropic: POST {endpoint} | model={model}");
+
+    let client = reqwest::Client::builder()
+        .timeout(timeout)
+        .build()
+        .map_err(|e| format!("Failed to initialize Anthropic HTTP client: {e}"))?;
+
+    let payload = serde_json::json!({
+        "model": model,
+        "max_tokens": 4096,
+        "system": resolve_llm_system_prompt(request, settings),
+        "messages": [
+            {
+                "role": "user",
+                "content": request.text,
+            }
+        ]
+    });
+
+    let response = client
+        .post(&endpoint)
+        .header("x-api-key", api_key)
+        .header("anthropic-version", "2023-06-01")
+        .header("content-type", "application/json")
+        .json(&payload)
+        .send()
+        .await
+        .map_err(|e| format!("Anthropic request failed: {e}"))?;
+    let status = response.status();
+    log::info!("anthropic: response status={}", status.as_u16());
+    if !status.is_success() {
+        let body_text = response.text().await.unwrap_or_default();
+        return Err(format!(
+            "Anthropic returned {}: {body_text}",
+            status.as_u16()
+        ));
+    }
+
+    let body: AnthropicMessagesResponse = response
+        .json()
+        .await
+        .map_err(|e| format!("Failed to parse Anthropic response: {e}"))?;
+    if let Some(err) = body.error.and_then(|e| e.message) {
+        return Err(format!("Anthropic error: {err}"));
+    }
+
+    body.content
+        .and_then(|blocks| blocks.into_iter().next())
+        .and_then(|b| b.text)
+        .map(|t| t.trim().to_string())
+        .filter(|t| !t.is_empty())
+        .ok_or_else(|| "Anthropic returned an empty translation".to_string())
+}
+
+/// Translate using the Gemini generateContent API.
+async fn translate_with_gemini(
+    request: &TranslationSegmentRequest,
+    api_key: &str,
+    settings: Option<&ReaderTranslationProviderSettings>,
+) -> Result<String, String> {
+    let model = settings
+        .and_then(|v| v.model.as_deref())
+        .map(str::trim)
+        .filter(|v| !v.is_empty())
+        .ok_or_else(|| "Gemini model is required".to_string())?;
+    let base_url = settings
+        .and_then(|v| v.base_url.as_deref())
+        .map(str::trim)
+        .filter(|v| !v.is_empty())
+        .unwrap_or(GEMINI_DEFAULT_BASE_URL);
+    let normalized = base_url.trim_end_matches('/');
+    let endpoint = format!("{normalized}/v1beta/models/{model}:generateContent?key={api_key}");
+    let timeout = Duration::from_millis(resolve_provider_timeout_ms(settings));
+
+    log::info!("gemini: POST (key omitted) | model={model}");
+
+    let client = reqwest::Client::builder()
+        .timeout(timeout)
+        .build()
+        .map_err(|e| format!("Failed to initialize Gemini HTTP client: {e}"))?;
+
+    let system_prompt = resolve_llm_system_prompt(request, settings);
+    let payload = serde_json::json!({
+        "system_instruction": {
+            "parts": [{ "text": system_prompt }]
+        },
+        "contents": [{
+            "parts": [{ "text": request.text }]
+        }]
+    });
+
+    let response = client
+        .post(&endpoint)
+        .header("content-type", "application/json")
+        .json(&payload)
+        .send()
+        .await
+        .map_err(|e| format!("Gemini request failed: {e}"))?;
+    let status = response.status();
+    log::info!("gemini: response status={}", status.as_u16());
+    if !status.is_success() {
+        let body_text = response.text().await.unwrap_or_default();
+        return Err(format!("Gemini returned {}: {body_text}", status.as_u16()));
+    }
+
+    let body: GeminiGenerateContentResponse = response
+        .json()
+        .await
+        .map_err(|e| format!("Failed to parse Gemini response: {e}"))?;
+    if let Some(err) = body.error.and_then(|e| e.message) {
+        return Err(format!("Gemini error: {err}"));
+    }
+
+    body.candidates
+        .and_then(|c| c.into_iter().next())
+        .and_then(|c| c.content)
+        .and_then(|c| c.parts)
+        .and_then(|p| p.into_iter().next())
+        .and_then(|p| p.text)
+        .map(|t| t.trim().to_string())
+        .filter(|t| !t.is_empty())
+        .ok_or_else(|| "Gemini returned an empty translation".to_string())
+}
+
 async fn translate_with_external_provider(
     provider: &str,
     request: &TranslationSegmentRequest,
@@ -968,10 +1321,35 @@ async fn translate_with_external_provider(
             let key = api_key.ok_or_else(|| "Google Translate API key is missing".to_string())?;
             translate_with_google_translate(request, key, settings).await
         }
-        OLLAMA_PROVIDER => translate_with_ollama(request, settings).await,
-        _ => Err(format!(
-            "Translation provider '{provider}' is not implemented"
-        )),
+        OLLAMA_PROVIDER => translate_with_ollama(request, api_key, settings).await,
+        ANTHROPIC_PROVIDER => {
+            let key = api_key.ok_or_else(|| "Anthropic API key is missing".to_string())?;
+            translate_with_anthropic(request, key, settings).await
+        }
+        GEMINI_PROVIDER => {
+            let key = api_key.ok_or_else(|| "Gemini API key is missing".to_string())?;
+            translate_with_gemini(request, key, settings).await
+        }
+        _ => {
+            // All other LLM providers use OpenAI-compatible chat completions API
+            let key = api_key.ok_or_else(|| format!("{provider} API key is missing"))?;
+            let default_base_url = match provider {
+                OPENAI_PROVIDER => OPENAI_DEFAULT_BASE_URL,
+                "openrouter" => OPENROUTER_DEFAULT_BASE_URL,
+                "glm" => GLM_DEFAULT_BASE_URL,
+                "kimi" => KIMI_DEFAULT_BASE_URL,
+                "minimax" => MINIMAX_DEFAULT_BASE_URL,
+                "qwen" => QWEN_DEFAULT_BASE_URL,
+                "deepseek" => DEEPSEEK_DEFAULT_BASE_URL,
+                _ => {
+                    return Err(format!(
+                        "Translation provider '{provider}' is not implemented"
+                    ))
+                }
+            };
+            translate_with_openai_compatible(provider, request, key, settings, default_base_url)
+                .await
+        }
     }
 }
 
@@ -1151,6 +1529,46 @@ pub async fn translate_reader_segment(
     let preferences = load_preferences_sync(&app).unwrap_or_default();
     let provider_settings = &preferences.reader_translation_provider_settings;
     let apple_available = is_apple_translation_available();
+    // If forced_provider is set, skip the fallback chain entirely
+    if let Some(ref forced) = request.forced_provider {
+        let provider = normalize_provider_identifier(forced)
+            .ok_or_else(|| format!("Unknown forced provider: {forced}"))?;
+
+        let available = if provider == APPLE_BUILT_IN_PROVIDER {
+            apple_available
+        } else if !provider_has_runtime_settings(&provider, provider_settings) {
+            false
+        } else if !provider_requires_key(&provider) {
+            true
+        } else {
+            provider_has_key_in_default_profile(&provider)?
+        };
+
+        if !available {
+            return Err(format!("Forced provider '{provider}' is not available"));
+        }
+
+        let translated_text = if provider == APPLE_BUILT_IN_PROVIDER {
+            translate_with_apple_built_in(&request).map(|r| r.translated_text)
+        } else {
+            let api_key = if provider_requires_key(&provider) {
+                Some(get_provider_key_in_default_profile(&provider)?)
+            } else {
+                get_provider_key_in_default_profile(&provider).ok()
+            };
+            let settings = provider_settings.get(provider.as_str());
+            translate_with_external_provider(&provider, &request, api_key.as_deref(), settings)
+                .await
+        }
+        .map_err(|e| format!("{provider}: {e}"))?;
+
+        return Ok(TranslationSegmentResponse {
+            translated_text,
+            provider_used: provider,
+            fallback_chain: vec![forced.clone()],
+        });
+    }
+
     let provider_attempts = collect_provider_attempts(&request, apple_available);
     if provider_attempts.is_empty() {
         return Err("No translation provider configured".to_string());
@@ -1188,7 +1606,9 @@ pub async fn translate_reader_segment(
                     }
                 }
             } else {
-                None
+                // For providers that accept but don't require a key (e.g. Ollama for cloud API),
+                // try to retrieve it if stored; silently skip if not present.
+                get_provider_key_in_default_profile(&provider).ok()
             };
             let settings = provider_settings.get(provider.as_str());
             translate_with_external_provider(&provider, &request, api_key.as_deref(), settings)
@@ -1217,6 +1637,191 @@ pub async fn translate_reader_segment(
         "Translation failed after provider fallback attempts: {}",
         provider_errors.join(" | ")
     ))
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn get_ollama_available_tags(app: AppHandle) -> Result<Vec<String>, String> {
+    let preferences = load_preferences_sync(&app).unwrap_or_default();
+    let provider_settings = preferences
+        .reader_translation_provider_settings
+        .get(OLLAMA_PROVIDER);
+    let endpoint = resolve_provider_endpoint(
+        provider_settings.and_then(|s| s.base_url.as_deref()),
+        OLLAMA_DEFAULT_BASE_URL,
+        OLLAMA_TAGS_PATH,
+    );
+    let api_key = get_provider_key_in_default_profile(OLLAMA_PROVIDER).ok();
+    let timeout = Duration::from_millis(resolve_provider_timeout_ms(provider_settings));
+
+    log::info!(
+        "ollama tags: GET {endpoint} | auth={}",
+        if api_key.is_some() { "bearer" } else { "none" }
+    );
+
+    let client = reqwest::Client::new();
+    let mut request = client.get(&endpoint).timeout(timeout);
+    if let Some(key) = &api_key {
+        request = request.bearer_auth(key);
+    }
+
+    let response = request
+        .send()
+        .await
+        .map_err(|e| format!("Ollama tags request failed: {e}"))?;
+
+    let status = response.status();
+    log::info!("ollama tags: response status={}", status.as_u16());
+
+    if !status.is_success() {
+        return Err(format!(
+            "Ollama tags request failed with status {}: {}",
+            status.as_u16(),
+            endpoint
+        ));
+    }
+
+    let body: OllamaTagsApiResponse = response
+        .json()
+        .await
+        .map_err(|e| format!("Failed to parse Ollama tags response: {e}"))?;
+
+    let names: Vec<String> = body.models.into_iter().map(|m| m.name).collect();
+    log::info!("ollama tags: found {} models", names.len());
+    Ok(names)
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn get_provider_available_models(
+    app: AppHandle,
+    provider: String,
+) -> Result<Vec<String>, String> {
+    let preferences = load_preferences_sync(&app).unwrap_or_default();
+    let provider_settings = preferences
+        .reader_translation_provider_settings
+        .get(&provider);
+    let base_url_override = provider_settings.and_then(|s| s.base_url.as_deref());
+    let timeout = Duration::from_millis(resolve_provider_timeout_ms(provider_settings));
+    let api_key = get_provider_key_in_default_profile(&provider).ok();
+    let provider_str = provider.as_str();
+
+    match provider_str {
+        OLLAMA_PROVIDER => {
+            let endpoint = resolve_provider_endpoint(
+                base_url_override,
+                OLLAMA_DEFAULT_BASE_URL,
+                OLLAMA_TAGS_PATH,
+            );
+            log::info!(
+                "provider models (ollama): GET {endpoint} | auth={}",
+                if api_key.is_some() { "bearer" } else { "none" }
+            );
+            let client = reqwest::Client::new();
+            let mut req = client.get(&endpoint).timeout(timeout);
+            if let Some(key) = &api_key {
+                req = req.bearer_auth(key);
+            }
+            let response = req
+                .send()
+                .await
+                .map_err(|e| format!("Request failed: {e}"))?;
+            let status = response.status();
+            if !status.is_success() {
+                return Err(format!("Request failed with status {}", status.as_u16()));
+            }
+            let body: OllamaTagsApiResponse = response
+                .json()
+                .await
+                .map_err(|e| format!("Failed to parse response: {e}"))?;
+            let names: Vec<String> = body.models.into_iter().map(|m| m.name).collect();
+            log::info!("provider models (ollama): found {} models", names.len());
+            Ok(names)
+        }
+        GEMINI_PROVIDER => {
+            let key = api_key.ok_or_else(|| "Gemini API key is required".to_string())?;
+            let base_url = base_url_override
+                .map(str::trim)
+                .filter(|v| !v.is_empty())
+                .unwrap_or(GEMINI_DEFAULT_BASE_URL);
+            let normalized = base_url.trim_end_matches('/');
+            let path = GEMINI_MODELS_PATH.trim_start_matches('/');
+            let endpoint = format!("{normalized}/{path}?key={key}");
+            log::info!("provider models (gemini): GET (key omitted from log)");
+            let client = reqwest::Client::new();
+            let response = client
+                .get(&endpoint)
+                .timeout(timeout)
+                .send()
+                .await
+                .map_err(|e| format!("Request failed: {e}"))?;
+            let status = response.status();
+            if !status.is_success() {
+                return Err(format!("Request failed with status {}", status.as_u16()));
+            }
+            let body: GeminiModelsApiResponse = response
+                .json()
+                .await
+                .map_err(|e| format!("Failed to parse response: {e}"))?;
+            let names: Vec<String> = body
+                .models
+                .into_iter()
+                .map(|m| {
+                    m.name
+                        .strip_prefix("models/")
+                        .unwrap_or(&m.name)
+                        .to_string()
+                })
+                .collect();
+            log::info!("provider models (gemini): found {} models", names.len());
+            Ok(names)
+        }
+        _ => {
+            let key = api_key.ok_or_else(|| format!("API key for '{provider}' is required"))?;
+            let (default_base_url, models_path) = match provider_str {
+                OPENAI_PROVIDER => (OPENAI_DEFAULT_BASE_URL, OPENAI_COMPATIBLE_MODELS_PATH),
+                ANTHROPIC_PROVIDER => (ANTHROPIC_DEFAULT_BASE_URL, OPENAI_COMPATIBLE_MODELS_PATH),
+                "openrouter" => (OPENROUTER_DEFAULT_BASE_URL, OPENROUTER_MODELS_PATH),
+                "glm" => (GLM_DEFAULT_BASE_URL, GLM_MODELS_PATH),
+                "kimi" => (KIMI_DEFAULT_BASE_URL, OPENAI_COMPATIBLE_MODELS_PATH),
+                "minimax" => (MINIMAX_DEFAULT_BASE_URL, OPENAI_COMPATIBLE_MODELS_PATH),
+                "qwen" => (QWEN_DEFAULT_BASE_URL, OPENAI_COMPATIBLE_MODELS_PATH),
+                "deepseek" => (DEEPSEEK_DEFAULT_BASE_URL, OPENAI_COMPATIBLE_MODELS_PATH),
+                _ => {
+                    return Err(format!(
+                        "Provider '{provider}' does not support model listing"
+                    ))
+                }
+            };
+            let endpoint =
+                resolve_provider_endpoint(base_url_override, default_base_url, models_path);
+            log::info!("provider models ({provider}): GET {endpoint} | auth=bearer");
+            let client = reqwest::Client::new();
+            let mut req = client.get(&endpoint).timeout(timeout);
+            if provider_str == ANTHROPIC_PROVIDER {
+                req = req
+                    .header("x-api-key", &key)
+                    .header("anthropic-version", "2023-06-01");
+            } else {
+                req = req.bearer_auth(&key);
+            }
+            let response = req
+                .send()
+                .await
+                .map_err(|e| format!("Request failed: {e}"))?;
+            let status = response.status();
+            if !status.is_success() {
+                return Err(format!("Request failed with status {}", status.as_u16()));
+            }
+            let body: OpenAiModelsApiResponse = response
+                .json()
+                .await
+                .map_err(|e| format!("Failed to parse response: {e}"))?;
+            let names: Vec<String> = body.data.into_iter().map(|m| m.id).collect();
+            log::info!("provider models ({provider}): found {} models", names.len());
+            Ok(names)
+        }
+    }
 }
 
 #[cfg(test)]

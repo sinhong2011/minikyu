@@ -55,14 +55,14 @@ interface EntryReadingHeaderProps {
   hideNavigation?: boolean;
   onToggleStar: () => void;
   onToggleRead: () => void;
-  onFetchOriginalContent: () => void;
+  onFetchOriginalContent?: () => void;
   onShare?: () => void;
   onClose?: () => void;
   onOpenInAppBrowser?: (url: string) => void;
   isRead: boolean;
   isTogglingRead: boolean;
-  isFetchingOriginalContent: boolean;
-  isOriginalContentDownloaded: boolean;
+  isFetchingOriginalContent?: boolean;
+  isOriginalContentDownloaded?: boolean;
   headerPadding: MotionValue<number>;
   smallTitleOpacity: MotionValue<number>;
   smallTitleHeight: MotionValue<number>;
@@ -79,6 +79,7 @@ interface EntryReadingHeaderProps {
     language: AppPreferences['reader_translation_target_language']
   ) => void;
   activeTranslationProvider: string | null;
+  isExcludedFeed: boolean;
 }
 
 export function EntryReadingHeader({
@@ -112,6 +113,7 @@ export function EntryReadingHeader({
   translationTargetLanguage,
   onTranslationTargetLanguageChange,
   activeTranslationProvider,
+  isExcludedFeed,
 }: EntryReadingHeaderProps) {
   const { _ } = useLingui();
   const {
@@ -338,103 +340,85 @@ export function EntryReadingHeader({
               >
                 <PopoverHeader>
                   <PopoverTitle>{_(msg`Translation`)}</PopoverTitle>
-                  <p className="text-[11px] leading-snug text-muted-foreground">
-                    {_(msg`Translate this article and tune how translated text is shown.`)}
-                  </p>
                 </PopoverHeader>
 
-                <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
-                  <div className="space-y-0.5">
-                    <p className="text-xs font-medium">{_(msg`Translate now`)}</p>
-                    <p className="text-[11px] text-muted-foreground">
-                      {_(msg`Applies to all articles when enabled`)}
+                {isExcludedFeed ? (
+                  <div className="rounded-md border border-border/50 px-2.5 py-2">
+                    <p className="text-xs text-muted-foreground">
+                      {_(msg`Translation disabled for this feed`)}
                     </p>
                   </div>
-                  <Switch
-                    checked={translationEnabled}
-                    onCheckedChange={(checked) => onTranslationEnabledChange(Boolean(checked))}
-                    aria-label={_(msg`Translate now`)}
-                  />
-                </div>
+                ) : (
+                  <>
+                    <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
+                      <div className="space-y-0.5">
+                        <p className="text-xs font-medium">{_(msg`Translate now`)}</p>
+                        <p className="text-[11px] text-muted-foreground">
+                          {_(msg`Applies to all articles when enabled`)}
+                        </p>
+                      </div>
+                      <Switch
+                        checked={translationEnabled}
+                        onCheckedChange={(checked) => onTranslationEnabledChange(Boolean(checked))}
+                        aria-label={_(msg`Translate now`)}
+                      />
+                    </div>
 
-                <div className="space-y-1.5">
-                  <p className="text-xs text-muted-foreground">{_(msg`Target language`)}</p>
-                  <Select
-                    value={translationTargetLanguage ?? 'en'}
-                    onValueChange={(value) => onTranslationTargetLanguageChange(value)}
-                  >
-                    <SelectTrigger className="h-8 w-full text-xs">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {translationTargetLanguageOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                    <div className="space-y-1.5">
+                      <p className="text-xs text-muted-foreground">{_(msg`Target language`)}</p>
+                      <Select
+                        value={translationTargetLanguage ?? 'en'}
+                        onValueChange={(value) => onTranslationTargetLanguageChange(value)}
+                      >
+                        <SelectTrigger className="h-8 w-full text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {translationTargetLanguageOptions.map((option) => (
+                            <SelectItem key={option.value} value={option.value}>
+                              {option.label}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                <div className="space-y-1.5">
-                  <p className="text-xs text-muted-foreground">{_(msg`Display mode`)}</p>
-                  <Select
-                    value={translationDisplayMode}
-                    onValueChange={(value) =>
-                      onTranslationDisplayModeChange(
-                        value as AppPreferences['reader_translation_display_mode']
-                      )
-                    }
-                  >
-                    <SelectTrigger className="h-8 w-full text-xs">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="bilingual">{_(msg`Bilingual`)}</SelectItem>
-                      <SelectItem value="translated_only">{_(msg`Translated only`)}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+                    <div className="space-y-1.5">
+                      <p className="text-xs text-muted-foreground">{_(msg`Display mode`)}</p>
+                      <Select
+                        value={translationDisplayMode}
+                        onValueChange={(value) =>
+                          onTranslationDisplayModeChange(
+                            value as AppPreferences['reader_translation_display_mode']
+                          )
+                        }
+                      >
+                        <SelectTrigger className="h-8 w-full text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="bilingual">{_(msg`Bilingual`)}</SelectItem>
+                          <SelectItem value="translated_only">{_(msg`Translated only`)}</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
 
-                {activeTranslationProvider && (
-                  <div
-                    className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2"
-                    data-testid="active-translation-provider-badge"
-                  >
-                    <p className="text-xs text-muted-foreground">{_(msg`Provider`)}</p>
-                    <p className="text-xs font-medium">
-                      {getTranslationProviderLabel(activeTranslationProvider)}
-                    </p>
-                  </div>
+                    {activeTranslationProvider && (
+                      <div
+                        className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2"
+                        data-testid="active-translation-provider-badge"
+                      >
+                        <p className="text-xs text-muted-foreground">{_(msg`Provider`)}</p>
+                        <p className="text-xs font-medium">
+                          {getTranslationProviderLabel(activeTranslationProvider)}
+                        </p>
+                      </div>
+                    )}
+                  </>
                 )}
-              </PopoverContent>
-            </Popover>
 
-            <ReaderSettings />
+                <div className="border-t border-border/40" />
 
-            <Popover>
-              <PopoverTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className={toolbarButtonClass}
-                    aria-label={_(msg`Chinese conversion`)}
-                    disabled={isLoading}
-                  >
-                    <HugeiconsIcon icon={TextIcon} className="h-5 w-5" strokeWidth={2} />
-                  </Button>
-                }
-              />
-              <PopoverContent
-                className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/95 p-3.5 shadow-xl"
-                side="bottom"
-                align="start"
-              >
-                <PopoverHeader>
-                  <PopoverTitle>{_(msg`Reading display`)}</PopoverTitle>
-                </PopoverHeader>
                 <div className="space-y-1.5">
                   <p className="text-xs text-muted-foreground">{_(msg`中文顯示`)}</p>
                   <Select
@@ -456,6 +440,34 @@ export function EntryReadingHeader({
                     </SelectContent>
                   </Select>
                 </div>
+              </PopoverContent>
+            </Popover>
+
+            <ReaderSettings />
+
+            <Popover>
+              <PopoverTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className={toolbarButtonClass}
+                    aria-label={_(msg`Reading display`)}
+                    disabled={isLoading}
+                  >
+                    <HugeiconsIcon icon={TextIcon} className="h-5 w-5" strokeWidth={2} />
+                  </Button>
+                }
+              />
+              <PopoverContent
+                className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/95 p-3.5 shadow-xl"
+                side="bottom"
+                align="start"
+              >
+                <PopoverHeader>
+                  <PopoverTitle>{_(msg`Reading display`)}</PopoverTitle>
+                </PopoverHeader>
 
                 <div className="space-y-1.5">
                   <p className="text-xs text-muted-foreground">{_(msg`Code theme`)}</p>
