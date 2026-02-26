@@ -10,6 +10,8 @@ pub mod downloads;
 pub mod in_app_browser;
 pub mod miniflux;
 pub mod notifications;
+pub mod player_window;
+pub mod podcast;
 pub mod preferences;
 pub mod quick_pane;
 pub mod reading_state;

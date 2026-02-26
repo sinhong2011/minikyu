@@ -100,6 +100,8 @@ vi.mock('@/lib/tauri-bindings', () => ({
         image_download_path: null,
         // biome-ignore lint/style/useNamingConvention: preferences field name
         video_download_path: null,
+        // biome-ignore lint/style/useNamingConvention: preferences field name
+        player_display_mode: 'FloatingWindow',
       },
     }),
     savePreferences: vi.fn().mockResolvedValue({ status: 'ok', data: null }),

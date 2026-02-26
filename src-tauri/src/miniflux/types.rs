@@ -447,6 +447,42 @@ pub struct DownloadProgress {
     pub file_path: Option<String>,
 }
 
+/// Per-feed podcast settings
+#[derive(Debug, Clone, Serialize, Deserialize, Type)]
+pub struct PodcastFeedSettings {
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
+    pub feed_id: i64,
+    pub auto_download_count: i32,
+    pub playback_speed: f64,
+    pub auto_cleanup_days: i32,
+}
+
+/// Podcast playback progress
+#[derive(Debug, Clone, Serialize, Deserialize, Type)]
+pub struct PodcastProgress {
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
+    pub entry_id: i64,
+    pub current_time: i32,
+    pub total_time: i32,
+    pub completed: bool,
+    pub last_played_at: String,
+}
+
+/// Result of podcast cleanup operation
+#[derive(Debug, Clone, Serialize, Deserialize, Type)]
+pub struct CleanupResult {
+    pub deleted_count: i32,
+    pub freed_bytes: i64,
+}
+
 /// Authentication Config
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
 pub struct AuthConfig {

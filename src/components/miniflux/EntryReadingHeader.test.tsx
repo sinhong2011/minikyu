@@ -1,7 +1,8 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vitest';
 import type { Entry } from '@/lib/bindings';
+import { usePlayerStore } from '@/store/player-store';
 import { fireEvent, render, screen } from '@/test/test-utils';
 import { EntryReadingHeader } from './EntryReadingHeader';
 
@@ -46,14 +47,16 @@ const sampleEntry: Entry = {
   tags: [],
 };
 
-function renderHeader(overrides: { isExcludedFeed?: boolean } = {}) {
+function renderHeader(overrides: { isExcludedFeed?: boolean; entry?: Entry } = {}) {
   i18n.load('en', {});
   i18n.activate('en');
+
+  usePlayerStore.getState().dismiss();
 
   return render(
     <I18nProvider i18n={i18n}>
       <EntryReadingHeader
-        entry={sampleEntry}
+        entry={overrides.entry ?? sampleEntry}
         hasPrev={false}
         hasNext={false}
         onToggleStar={vi.fn()}
@@ -81,6 +84,10 @@ function renderHeader(overrides: { isExcludedFeed?: boolean } = {}) {
 }
 
 describe('EntryReadingHeader translation options', () => {
+  afterEach(() => {
+    usePlayerStore.getState().dismiss();
+  });
+
   it('does not render per-entry auto translate toggle', async () => {
     renderHeader();
 
@@ -105,5 +112,27 @@ describe('EntryReadingHeader translation options', () => {
 
     expect(screen.queryByText('Translation disabled for this feed')).not.toBeInTheDocument();
     expect(screen.getByText('Translate now')).toBeInTheDocument();
+  });
+
+  it('shows podcast play button on header right when entry has audio enclosure', async () => {
+    const podcastEntry: Entry = {
+      ...sampleEntry,
+      enclosures: [
+        {
+          id: 'enc-1',
+          // biome-ignore lint/style/useNamingConvention: Miniflux API field name
+          entry_id: 'entry-1',
+          url: 'https://example.com/audio.mp3',
+          // biome-ignore lint/style/useNamingConvention: Miniflux API field name
+          mime_type: 'audio/mpeg',
+          length: '1800',
+          position: 0,
+        },
+      ],
+    };
+
+    renderHeader({ entry: podcastEntry });
+
+    expect(await screen.findByTestId('entry-header-podcast-play')).toBeInTheDocument();
   });
 });

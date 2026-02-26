@@ -15,6 +15,7 @@ import { useLingui } from '@lingui/react';
 import { SyncProgressPopover } from '@/components/sync/SyncProgressPopover';
 import { CommandSearchButton } from '@/components/titlebar/CommandSearchButton';
 import { MacOSWindowControls } from '@/components/titlebar/MacOSWindowControls';
+// TitleBarPodcastAnchor removed — mini player moved to floating player window
 import { WindowsWindowControls } from '@/components/titlebar/WindowsWindowControls';
 import { Button } from '@/components/ui/button';
 import { useCommandContext } from '@/hooks/use-command-context';
@@ -131,7 +132,7 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
       </div>
 
       {/* Center: Command search + quick actions */}
-      <div data-tauri-drag-region className="flex flex-1 items-center justify-center gap-2">
+      <div data-tauri-drag-region className="flex min-w-0 flex-1 items-center justify-center gap-2">
         <div className="min-w-0 w-full max-w-xl">
           <CommandSearchButton onClick={onOpenCommandPalette} />
         </div>
@@ -175,10 +176,11 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
         >
           ↓
         </Button>
+        {/* Mini player removed — floating player auto-shows on play */}
       </div>
 
       {/* Right section */}
-      <div data-tauri-drag-region className="flex items-center pr-2">
+      <div data-tauri-drag-region className="relative flex items-center gap-1 pr-2">
         {!isMacOS && <WindowsWindowControls />}
       </div>
     </div>

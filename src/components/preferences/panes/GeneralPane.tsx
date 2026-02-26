@@ -16,7 +16,7 @@ import {
 } from '@/components/ui/select';
 import { showToast } from '@/components/ui/sonner';
 import { logger } from '@/lib/logger';
-import type { CloseBehavior } from '@/lib/tauri-bindings';
+import type { CloseBehavior, PlayerDisplayMode } from '@/lib/tauri-bindings';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
 import { SettingsField, SettingsSection } from '../shared/SettingsComponents';
 
@@ -81,6 +81,24 @@ export function GeneralPane() {
     } catch {
       logger.error('Failed to save start minimized preference');
       showToast.error(_(msg`Failed to update start minimized setting`));
+    }
+  };
+
+  const handlePlayerDisplayModeChange = async (value: PlayerDisplayMode) => {
+    if (!preferences) return;
+
+    logger.info('Updating player display mode', { mode: value });
+
+    try {
+      await savePreferences.mutateAsync({
+        ...preferences,
+        // biome-ignore lint/style/useNamingConvention: preferences field name
+        player_display_mode: value,
+      });
+      showToast.success(_(msg`Player display mode updated`));
+    } catch {
+      logger.error('Failed to save player display mode');
+      showToast.error(_(msg`Failed to update player display mode`));
     }
   };
 
@@ -201,6 +219,25 @@ export function GeneralPane() {
               {(preferences?.start_minimized ?? false) ? _(msg`Enabled`) : _(msg`Disabled`)}
             </Label>
           </div>
+        </SettingsField>
+
+        <SettingsField
+          label={_(msg`Player Display Mode`)}
+          description={_(msg`Choose how the player appears when clicking the tray icon`)}
+        >
+          <Select
+            value={preferences?.player_display_mode ?? 'FloatingWindow'}
+            onValueChange={(value) => handlePlayerDisplayModeChange(value as PlayerDisplayMode)}
+            disabled={!preferences || savePreferences.isPending}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="FloatingWindow">{_(msg`Floating player window`)}</SelectItem>
+              <SelectItem value="TrayPopover">{_(msg`Compact tray popover`)}</SelectItem>
+            </SelectContent>
+          </Select>
         </SettingsField>
       </SettingsSection>
 

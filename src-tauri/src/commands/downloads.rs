@@ -156,6 +156,36 @@ pub async fn init_download_manager(app: &tauri::AppHandle) {
     }
 }
 
+/// Get the local file path for a completed download by URL
+#[tauri::command]
+#[specta::specta]
+pub async fn get_downloaded_file_path(app: tauri::AppHandle, url: String) -> Result<Option<String>, String> {
+    let state: tauri::State<'_, AppState> = app.state();
+    let pool_lock = state.db_pool.lock().await;
+    if let Some(pool) = &*pool_lock {
+        let row = sqlx::query(
+            "SELECT file_path FROM downloads WHERE url = ? AND status = 'completed' AND file_path IS NOT NULL LIMIT 1",
+        )
+        .bind(&url)
+        .fetch_optional(pool)
+        .await
+        .map_err(|e| e.to_string())?;
+
+        if let Some(row) = row {
+            let file_path: Option<String> = row.get("file_path");
+            // Verify file still exists on disk
+            if let Some(ref path) = file_path {
+                if std::path::Path::new(path).exists() {
+                    return Ok(file_path);
+                }
+            }
+        }
+        Ok(None)
+    } else {
+        Err("Database pool not initialized".to_string())
+    }
+}
+
 /// Get all downloads from database
 #[tauri::command]
 #[specta::specta]
@@ -287,13 +317,26 @@ pub async fn download_file(
         .unwrap_or_else(|| extract_filename(&url).unwrap_or_else(|| "download.bin".to_string()));
 
     let preferences = crate::commands::preferences::load_preferences_sync(&app);
-    let default_path = match media_type.as_deref() {
+    let default_path: Option<String> = match media_type.as_deref() {
         Some("image") => preferences
             .as_ref()
-            .and_then(|p| p.image_download_path.as_ref()),
+            .and_then(|p| p.image_download_path.clone()),
         Some("video") => preferences
             .as_ref()
-            .and_then(|p| p.video_download_path.as_ref()),
+            .and_then(|p| p.video_download_path.clone()),
+        Some("audio") => {
+            // Auto-save podcasts to ~/Downloads/Podcasts (no save dialog)
+            let base = app
+                .path()
+                .download_dir()
+                .unwrap_or_else(|_| {
+                    app.path()
+                        .home_dir()
+                        .unwrap_or_else(|_| std::path::PathBuf::from("."))
+                        .join("Downloads")
+                });
+            Some(base.join("Podcasts").to_string_lossy().into_owned())
+        }
         _ => None,
     };
 

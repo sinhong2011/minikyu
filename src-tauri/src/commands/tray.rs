@@ -23,8 +23,9 @@ const TRAY_ICON_ID: &str = "main-tray";
 const MENU_SHOW_ID: &str = "tray-show";
 const MENU_HIDE_ID: &str = "tray-hide";
 const MENU_PREFERENCES_ID: &str = "tray-preferences";
-const MENU_QUICK_ACTION_1_ID: &str = "tray-quick-action-1";
-const MENU_QUICK_ACTION_2_ID: &str = "tray-quick-action-2";
+const MENU_PODCAST_PLAY_PAUSE_ID: &str = "tray-podcast-play-pause";
+const MENU_PODCAST_NEXT_ID: &str = "tray-podcast-next";
+const MENU_PODCAST_PLAYER_ID: &str = "tray-podcast-player";
 const MENU_QUIT_ID: &str = "tray-quit";
 
 // ============================================================================
@@ -39,6 +40,18 @@ static CURRENT_TRAY_STATE: Mutex<TrayIconState> = Mutex::new(TrayIconState::Norm
 
 /// Current tooltip text
 static CURRENT_TOOLTIP: Mutex<String> = Mutex::new(String::new());
+
+/// Last known tray icon rect (x, y, width, height) in physical pixels
+static TRAY_ICON_RECT: Mutex<Option<(f64, f64, f64, f64)>> = Mutex::new(None);
+
+// ============================================================================
+// Tray Icon Position
+// ============================================================================
+
+/// Get the last known tray icon rect (x, y, width, height) in physical pixels.
+pub fn get_tray_icon_rect() -> Option<(f64, f64, f64, f64)> {
+    *TRAY_ICON_RECT.lock().unwrap()
+}
 
 // ============================================================================
 // Tray Initialization
@@ -68,14 +81,11 @@ pub fn init_tray(app: &AppHandle) -> Result<(), String> {
         .icon(icon)
         .show_menu_on_left_click(false); // Right-click for menu, left-click toggles window
 
-    // Set icon as template on macOS for proper theme adaptation
-    // Note: Template icons must be monochrome with good contrast
+    // Use color icon (not template) so the original icon colors are shown
     #[cfg(target_os = "macos")]
     {
-        // Try template mode first, but if icon is not visible, comment this out
-        tray_builder = tray_builder.icon_as_template(true);
-        log::info!("✓ Set tray icon as template for macOS (adapts to dark/light mode)");
-        log::info!("  If icon is not visible, try using colored icon instead");
+        tray_builder = tray_builder.icon_as_template(false);
+        log::info!("✓ Set tray icon as color icon for macOS");
     }
 
     let tray = tray_builder
@@ -90,16 +100,8 @@ pub fn init_tray(app: &AppHandle) -> Result<(), String> {
     log::info!("✓ System tray initialized successfully");
     log::info!("========================================");
 
-    // Verify tray icon is visible (macOS only)
     #[cfg(target_os = "macos")]
-    {
-        log::info!("Tray icon should now be visible in the macOS menu bar");
-        log::info!("If you don't see it, check:");
-        log::info!("  1. The icon file exists and is valid");
-        log::info!("  2. The icon is a monochrome template icon (not colored)");
-        log::info!("  3. macOS hasn't hidden it due to space constraints");
-        log::info!("  4. Check Console.app for any error messages");
-    }
+    log::info!("Tray icon should now be visible in the macOS menu bar");
 
     Ok(())
 }
@@ -119,24 +121,33 @@ fn create_tray_menu(app: &AppHandle) -> Result<Menu<tauri::Wry>, String> {
     let separator1 = PredefinedMenuItem::separator(app)
         .map_err(|e| format!("Failed to create separator: {e}"))?;
 
-    // Quick actions
-    let quick_action_1 = MenuItem::with_id(
+    // Podcast controls
+    let podcast_play_pause = MenuItem::with_id(
         app,
-        MENU_QUICK_ACTION_1_ID,
-        "Quick Action 1",
+        MENU_PODCAST_PLAY_PAUSE_ID,
+        "Play / Pause",
         true,
         None::<&str>,
     )
-    .map_err(|e| format!("Failed to create quick action 1: {e}"))?;
+    .map_err(|e| format!("Failed to create podcast play/pause item: {e}"))?;
 
-    let quick_action_2 = MenuItem::with_id(
+    let podcast_next = MenuItem::with_id(
         app,
-        MENU_QUICK_ACTION_2_ID,
-        "Quick Action 2",
+        MENU_PODCAST_NEXT_ID,
+        "Next Track",
         true,
         None::<&str>,
     )
-    .map_err(|e| format!("Failed to create quick action 2: {e}"))?;
+    .map_err(|e| format!("Failed to create podcast next item: {e}"))?;
+
+    let podcast_player = MenuItem::with_id(
+        app,
+        MENU_PODCAST_PLAYER_ID,
+        "Show Player",
+        true,
+        None::<&str>,
+    )
+    .map_err(|e| format!("Failed to create podcast player item: {e}"))?;
 
     // Separator
     let separator2 = PredefinedMenuItem::separator(app)
@@ -164,8 +175,9 @@ fn create_tray_menu(app: &AppHandle) -> Result<Menu<tauri::Wry>, String> {
     menu.append(&show_item)
         .and_then(|_| menu.append(&hide_item))
         .and_then(|_| menu.append(&separator1))
-        .and_then(|_| menu.append(&quick_action_1))
-        .and_then(|_| menu.append(&quick_action_2))
+        .and_then(|_| menu.append(&podcast_play_pause))
+        .and_then(|_| menu.append(&podcast_next))
+        .and_then(|_| menu.append(&podcast_player))
         .and_then(|_| menu.append(&separator2))
         .and_then(|_| menu.append(&preferences))
         .and_then(|_| menu.append(&separator3))
@@ -185,19 +197,40 @@ fn handle_tray_icon_event(tray: &TrayIcon, event: TrayIconEvent) {
         TrayIconEvent::Click {
             button: MouseButton::Left,
             button_state: MouseButtonState::Up,
+            rect,
             ..
         } => {
-            // Left click: toggle window visibility
-            log::debug!("Tray left-click: toggling window visibility");
-            if let Err(e) = toggle_main_window(tray.app_handle()) {
-                log::error!("Failed to toggle window: {e}");
+            // Store the tray icon rect for popover positioning
+            let pos = rect.position.to_physical::<f64>(1.0);
+            let sz = rect.size.to_physical::<f64>(1.0);
+            *TRAY_ICON_RECT.lock().unwrap() =
+                Some((pos.x, pos.y, sz.width, sz.height));
+            log::debug!(
+                "Tray icon rect: ({}, {}) {}x{}",
+                pos.x, pos.y, sz.width, sz.height
+            );
+
+            // Left click: always toggle tray popover
+            log::debug!("Tray left-click: toggling tray popover");
+
+            let result = crate::commands::player_window::toggle_tray_popover(
+                tray.app_handle().clone(),
+            );
+            if let Err(e) = result {
+                log::error!("Failed to toggle tray popover: {e}");
             }
         }
         TrayIconEvent::Click {
             button: MouseButton::Right,
             button_state: MouseButtonState::Up,
+            rect,
             ..
         } => {
+            // Store rect on right-click too
+            let pos = rect.position.to_physical::<f64>(1.0);
+            let sz = rect.size.to_physical::<f64>(1.0);
+            *TRAY_ICON_RECT.lock().unwrap() =
+                Some((pos.x, pos.y, sz.width, sz.height));
             // Right click: show menu (handled automatically by Tauri)
             log::debug!("Tray right-click: showing menu");
             update_menu_visibility(tray.app_handle());
@@ -231,15 +264,21 @@ fn handle_menu_event(app: &AppHandle, event: tauri::menu::MenuEvent) {
                 log::error!("Failed to show window: {e}");
             }
         }
-        MENU_QUICK_ACTION_1_ID => {
-            log::debug!("Tray menu: Quick Action 1");
-            app.emit("tray-quick-action", "action-1")
-                .unwrap_or_else(|e| log::error!("Failed to emit quick action: {e}"));
+        MENU_PODCAST_PLAY_PAUSE_ID => {
+            log::debug!("Tray menu: Podcast Play/Pause");
+            app.emit("player:cmd", serde_json::json!({"action": "toggle-play-pause"}))
+                .unwrap_or_else(|e| log::error!("Failed to emit podcast play/pause: {e}"));
         }
-        MENU_QUICK_ACTION_2_ID => {
-            log::debug!("Tray menu: Quick Action 2");
-            app.emit("tray-quick-action", "action-2")
-                .unwrap_or_else(|e| log::error!("Failed to emit quick action: {e}"));
+        MENU_PODCAST_NEXT_ID => {
+            log::debug!("Tray menu: Podcast Next");
+            app.emit("player:cmd", serde_json::json!({"action": "next-track"}))
+                .unwrap_or_else(|e| log::error!("Failed to emit podcast next: {e}"));
+        }
+        MENU_PODCAST_PLAYER_ID => {
+            log::debug!("Tray menu: Show Player");
+            if let Err(e) = crate::commands::player_window::toggle_player_window(app.clone()) {
+                log::error!("Failed to toggle player window: {e}");
+            }
         }
         MENU_QUIT_ID => {
             log::info!("Tray menu: Quit");
@@ -285,16 +324,6 @@ pub fn hide_main_window(app: &AppHandle) -> Result<(), String> {
     Ok(())
 }
 
-/// Toggle main window visibility
-fn toggle_main_window(app: &AppHandle) -> Result<(), String> {
-    let window = get_main_window(app)?;
-    match window.is_visible() {
-        Ok(true) => hide_main_window(app),
-        Ok(false) => show_main_window(app),
-        Err(e) => Err(format!("Failed to check window visibility: {e}")),
-    }
-}
-
 /// Update menu items based on window state
 fn update_menu_visibility(app: &AppHandle) {
     if let Ok(window) = get_main_window(app) {
@@ -338,13 +367,6 @@ fn get_icon(
     // 1. Check CARGO_MANIFEST_DIR first (most reliable in dev)
     if let Ok(manifest_dir) = std::env::var("CARGO_MANIFEST_DIR") {
         let manifest_path = std::path::PathBuf::from(manifest_dir.clone());
-
-        // On macOS, prefer template icon for proper theme adaptation
-        #[cfg(target_os = "macos")]
-        {
-            icon_paths.push(manifest_path.join("icons/32x32-template.png"));
-        }
-
         icon_paths.push(manifest_path.join("icons/32x32.png"));
         icon_paths.push(manifest_path.join("icons/icon.png"));
         log::debug!("CARGO_MANIFEST_DIR: {:?}", manifest_dir);
@@ -352,12 +374,6 @@ fn get_icon(
 
     // 2. Try resource directory (production builds)
     if let Ok(resource_path) = app.path().resource_dir() {
-        // On macOS, prefer template icon for proper theme adaptation
-        #[cfg(target_os = "macos")]
-        {
-            icon_paths.push(resource_path.join("icons/32x32-template.png"));
-        }
-
         icon_paths.push(resource_path.join("icons/32x32.png"));
         icon_paths.push(resource_path.join("icons/icon.png"));
         log::debug!("Resource dir: {:?}", resource_path);
@@ -365,33 +381,17 @@ fn get_icon(
 
     // 3. Try workspace root (fallback for dev)
     if let Ok(exe_path) = std::env::current_exe() {
-        // Navigate from executable to workspace root
-        // In dev: target/debug/tauri-app -> target/ -> src-tauri/ -> workspace root
         let workspace_root = exe_path
             .ancestors()
             .nth(3)
             .map(|p| p.to_path_buf())
             .unwrap_or_else(|| std::path::PathBuf::from("."));
-
-        // On macOS, prefer template icon for proper theme adaptation
-        #[cfg(target_os = "macos")]
-        {
-            icon_paths.push(workspace_root.join("src-tauri/icons/32x32-template.png"));
-        }
-
         icon_paths.push(workspace_root.join("src-tauri/icons/32x32.png"));
         icon_paths.push(workspace_root.join("src-tauri/icons/icon.png"));
         log::debug!("Workspace root: {:?}", workspace_root);
     }
 
     // 4. Try relative paths (last resort)
-    #[cfg(target_os = "macos")]
-    {
-        icon_paths.push(std::path::PathBuf::from(
-            "src-tauri/icons/32x32-template.png",
-        ));
-    }
-
     icon_paths.push(std::path::PathBuf::from("src-tauri/icons/32x32.png"));
     icon_paths.push(std::path::PathBuf::from("src-tauri/icons/icon.png"));
 
@@ -418,27 +418,12 @@ fn get_icon(
 
     log::info!("✓ Successfully loaded tray icon from: {:?}", found_path);
 
-    // Parse the PNG to get dimensions
-    let (width, height) = parse_png_dimensions(&icon_bytes).unwrap_or((32, 32));
-    log::debug!("Icon dimensions: {}x{}", width, height);
-
-    let icon = tauri::image::Image::new_owned(icon_bytes, width, height);
+    // Use from_bytes to properly decode PNG data into RGBA pixels
+    let icon = tauri::image::Image::from_bytes(&icon_bytes)
+        .map_err(|e| format!("Failed to decode tray icon: {e}"))?
+        .to_owned();
 
     Ok(icon)
-}
-
-/// Parse PNG dimensions from bytes
-fn parse_png_dimensions(data: &[u8]) -> Option<(u32, u32)> {
-    // PNG signature is 8 bytes, IHDR starts at byte 16
-    // Width is at bytes 16-19, height at 20-23 (big-endian)
-    if data.len() < 24 || data[0..8] != [0x89, 0x50, 0x4E, 0x47, 0x0D, 0x0A, 0x1A, 0x0A] {
-        return None;
-    }
-
-    let width = u32::from_be_bytes([data[16], data[17], data[18], data[19]]);
-    let height = u32::from_be_bytes([data[20], data[21], data[22], data[23]]);
-
-    Some((width, height))
 }
 
 // ============================================================================

@@ -746,6 +746,78 @@ pub async fn flush_history(state: State<'_, AppState>) -> Result<(), String> {
     client.flush_history().await
 }
 
+/// Convert icon data to a data URL. Handles both raw base64 and already-prefixed data URLs.
+fn to_data_url(data: &str, mime_type: &str) -> String {
+    if data.starts_with("data:") {
+        data.to_string()
+    } else if data.starts_with(&format!("{mime_type};base64,")) {
+        // Already has mime+base64 prefix but missing "data:" scheme
+        format!("data:{data}")
+    } else {
+        format!("data:{mime_type};base64,{data}")
+    }
+}
+
+/// Get feed icon as a data URL. Checks local cache first, then fetches from server.
+#[tauri::command]
+#[specta::specta]
+pub async fn get_feed_icon_data(
+    state: State<'_, AppState>,
+    feed_id: String,
+) -> Result<Option<String>, String> {
+    let feed_id_parsed = feed_id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid feed ID: {e}"))?;
+
+    let pool = state
+        .db_pool
+        .lock()
+        .await
+        .as_ref()
+        .ok_or("Database not initialized")?
+        .clone();
+
+    // Check local cache first
+    let cached = sqlx::query("SELECT data, mime_type FROM icons WHERE feed_id = ?")
+        .bind(feed_id_parsed)
+        .fetch_optional(&pool)
+        .await
+        .map_err(|e| format!("{e}"))?;
+
+    if let Some(row) = cached {
+        let data: String = row.get("data");
+        let mime_type: String = row.get("mime_type");
+        return Ok(Some(to_data_url(&data, &mime_type)));
+    }
+
+    // Fetch from server
+    let guard = state.miniflux.client.lock().await;
+    let client = match guard.as_ref() {
+        Some(c) => c,
+        None => return Ok(None),
+    };
+
+    match client.get_feed_icon(feed_id_parsed).await {
+        Ok(icon) => {
+            let now = chrono::Utc::now().to_rfc3339();
+            let _ = sqlx::query(
+                "INSERT OR REPLACE INTO icons (id, feed_id, icon_id, data, mime_type, created_at) VALUES (?, ?, ?, ?, ?, ?)",
+            )
+            .bind(icon.id)
+            .bind(feed_id_parsed)
+            .bind(icon.id)
+            .bind(&icon.data)
+            .bind(&icon.mime_type)
+            .bind(&now)
+            .execute(&pool)
+            .await;
+
+            Ok(Some(to_data_url(&icon.data, &icon.mime_type)))
+        }
+        Err(_) => Ok(None),
+    }
+}
+
 pub async fn get_categories_from_db(
     pool: &SqlitePool,
 ) -> Result<Vec<crate::miniflux::Category>, String> {
@@ -928,7 +1000,10 @@ async fn get_entries_from_db_with_projection(
         .await
         .map_err(|e| format!("Failed to fetch entries: {e}"))?;
 
-    let entries: Vec<crate::miniflux::Entry> = rows.iter().map(build_entry_from_row).collect();
+    let mut entries: Vec<crate::miniflux::Entry> = rows.iter().map(build_entry_from_row).collect();
+
+    // Load enclosures for all entries in a single batch query
+    load_enclosures_for_entries(pool, &mut entries).await?;
 
     Ok(crate::miniflux::EntryResponse {
         total,
@@ -1020,7 +1095,9 @@ pub async fn get_entry_from_db(
     .map_err(|e| format!("Failed to fetch entry: {e}"))?
     .ok_or_else(|| format!("Entry with id {id} not found"))?;
 
-    Ok(build_entry_from_row(&row))
+    let mut entries = vec![build_entry_from_row(&row)];
+    load_enclosures_for_entries(pool, &mut entries).await?;
+    Ok(entries.remove(0))
 }
 
 async fn update_entry_content_in_db(
@@ -1089,6 +1166,57 @@ fn build_feed_from_row(row: &sqlx::sqlite::SqliteRow) -> crate::miniflux::Feed {
         created_at: row.get("created_at"),
         updated_at: row.get("updated_at"),
     }
+}
+
+async fn load_enclosures_for_entries(
+    pool: &SqlitePool,
+    entries: &mut [crate::miniflux::Entry],
+) -> Result<(), String> {
+    if entries.is_empty() {
+        return Ok(());
+    }
+
+    let entry_ids: Vec<i64> = entries.iter().map(|e| e.id).collect();
+    let placeholders: Vec<String> = entry_ids.iter().map(|_| "?".to_string()).collect();
+    let query_str = format!(
+        "SELECT id, entry_id, url, mime_type, length, position FROM enclosures WHERE entry_id IN ({})",
+        placeholders.join(",")
+    );
+
+    let mut query = sqlx::query(&query_str);
+    for id in &entry_ids {
+        query = query.bind(id);
+    }
+
+    let rows = query
+        .fetch_all(pool)
+        .await
+        .map_err(|e| format!("Failed to fetch enclosures: {e}"))?;
+
+    // Group enclosures by entry_id
+    let mut enc_map: std::collections::HashMap<i64, Vec<crate::miniflux::Enclosure>> =
+        std::collections::HashMap::new();
+    for row in &rows {
+        let entry_id: i64 = row.get("entry_id");
+        let enc = crate::miniflux::Enclosure {
+            id: row.get("id"),
+            entry_id,
+            url: row.get("url"),
+            mime_type: row.get("mime_type"),
+            length: row.get("length"),
+            position: row.get("position"),
+        };
+        enc_map.entry(entry_id).or_default().push(enc);
+    }
+
+    // Attach enclosures to entries
+    for entry in entries.iter_mut() {
+        if let Some(encs) = enc_map.remove(&entry.id) {
+            entry.enclosures = Some(encs);
+        }
+    }
+
+    Ok(())
 }
 
 fn build_entry_from_row(row: &sqlx::sqlite::SqliteRow) -> crate::miniflux::Entry {

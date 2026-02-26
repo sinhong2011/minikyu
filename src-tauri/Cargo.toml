@@ -4,7 +4,7 @@ version = "0.2.0-beta.1"
 description = "A Tauri App"
 authors = ["you"]
 edition = "2021"
-rust-version = "1.82"
+rust-version = "1.90"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
 
@@ -22,7 +22,7 @@ tauri-build = { version = "2", features = [] }
 tokio = { version = "1", features = ["full"] }
 
 [dependencies]
-tauri = { version = "2", features = [
+tauri = { version = "2", features = ["protocol-asset",
   "macos-private-api",
   "tray-icon",
   "image-png",
@@ -48,7 +48,8 @@ time = { version = "0.3.46", features = [
 ] }
 regex = "1"
 dotenvy = "0.15"
-tauri-plugin-mcp-bridge = { version = "0.8.1", optional = true }
+tauri-plugin-mcp-bridge = "0.8.1"
+tauri-plugin-webdriver = { version = "0.2", optional = true }
 
 # Type-safe Tauri command bindings
 specta = { version = "=2.0.0-rc.22", features = ["derive", "serde_json"] }
@@ -94,7 +95,7 @@ tauri-nspanel = { git = "https://github.com/ahkohd/tauri-nspanel", branch = "v2.
 
 [features]
 default = []
-mcp-bridge = ["tauri-plugin-mcp-bridge"]
+webdriver = ["tauri-plugin-webdriver"]
 
 # Optimize for smaller binary size in release builds
 [profile.release]

@@ -97,6 +97,16 @@ pub struct ReaderTranslationProviderSettings {
     pub system_prompt: Option<String>,
 }
 
+/// Player display mode when clicking the tray icon.
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, Type, Default, PartialEq, Eq, Hash)]
+pub enum PlayerDisplayMode {
+    /// Show the floating player window
+    #[default]
+    FloatingWindow,
+    /// Show the compact tray popover
+    TrayPopover,
+}
+
 /// Application preferences that persist to disk.
 /// Only contains settings that should be saved between sessions.
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
@@ -169,6 +179,8 @@ pub struct AppPreferences {
     pub image_download_path: Option<String>,
     /// Default download path for videos (null = ask every time)
     pub video_download_path: Option<String>,
+    /// Player display mode: floating window or tray popover
+    pub player_display_mode: PlayerDisplayMode,
 }
 
 impl Default for AppPreferences {
@@ -203,6 +215,7 @@ impl Default for AppPreferences {
             reader_translation_excluded_feed_ids: vec![],
             image_download_path: None,
             video_download_path: None,
+            player_display_mode: PlayerDisplayMode::FloatingWindow,
         }
     }
 }

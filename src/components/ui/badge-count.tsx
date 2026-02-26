@@ -10,14 +10,41 @@ interface AnimatedBadgeProps {
   animateOnMount?: boolean;
 }
 
+/** Split compact format into numeric value and suffix using formatToParts */
+function getCompactParts(
+  formatter: Intl.NumberFormat,
+  count: number
+): { compactValue: number; suffix: string; decimalPlaces: number } {
+  const parts = formatter.formatToParts(count);
+  const suffix = parts.find((p) => p.type === 'compact')?.value ?? '';
+  if (!suffix) {
+    return { compactValue: count, suffix: '', decimalPlaces: 0 };
+  }
+
+  // Reconstruct the numeric portion from parts
+  const numStr = parts
+    .filter((p) => p.type === 'integer' || p.type === 'decimal' || p.type === 'fraction')
+    .map((p) => p.value)
+    .join('');
+  const compactValue = Number.parseFloat(numStr) || count;
+  const fractionPart = parts.find((p) => p.type === 'fraction');
+  const decimalPlaces = fractionPart ? fractionPart.value.length : 0;
+
+  return { compactValue, suffix, decimalPlaces };
+}
+
 export function AnimatedBadge({
   count,
   className = '',
   animateOnMount = true,
 }: AnimatedBadgeProps) {
   const { i18n } = useLingui();
-  const numberFormatter = useMemo(
-    () => new Intl.NumberFormat(i18n.locale, { maximumFractionDigits: 0 }),
+  const compactFormatter = useMemo(
+    () => new Intl.NumberFormat(i18n.locale, { notation: 'compact', maximumFractionDigits: 1 }),
+    [i18n.locale]
+  );
+  const plainFormatter = useMemo(
+    () => new Intl.NumberFormat(i18n.locale, { maximumFractionDigits: 1 }),
     [i18n.locale]
   );
 
@@ -25,7 +52,8 @@ export function AnimatedBadge({
     return null;
   }
 
-  const formattedCount = numberFormatter.format(count);
+  const { compactValue, suffix, decimalPlaces } = getCompactParts(compactFormatter, count);
+  const formattedCount = compactFormatter.format(count);
   const minWidth = formattedCount.length * 0.6;
 
   return (
@@ -44,10 +72,12 @@ export function AnimatedBadge({
       }}
     >
       <CountingNumber
-        number={count}
+        number={compactValue}
+        decimalPlaces={decimalPlaces}
         initiallyStable={!animateOnMount}
-        formatter={(value) => numberFormatter.format(value)}
+        formatter={(value) => plainFormatter.format(value)}
       />
+      {suffix}
     </motion.span>
   );
 }

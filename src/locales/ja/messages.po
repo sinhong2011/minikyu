@@ -20,14 +20,14 @@ msgid "{0} / {1} entries"
 msgstr "{0} / {1} entries"
 
 #. placeholder {0}: selectedProviderDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1330
-#: src/components/preferences/panes/TranslationPane.tsx:1335
+#: src/components/preferences/panes/TranslationPane.tsx:1551
+#: src/components/preferences/panes/TranslationPane.tsx:1563
 msgid "{0} API key"
 msgstr ""
 
 #. placeholder {0}: selectedProviderDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1218
-#: src/components/preferences/panes/TranslationPane.tsx:1223
+#: src/components/preferences/panes/TranslationPane.tsx:1383
+#: src/components/preferences/panes/TranslationPane.tsx:1395
 msgid "{0} base URL"
 msgstr ""
 
@@ -57,8 +57,7 @@ msgid "{0} feeds synced"
 msgstr "{0} feeds synced"
 
 #. placeholder {0}: selectedProviderDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1247
-#: src/components/preferences/panes/TranslationPane.tsx:1252
+#: src/components/preferences/panes/TranslationPane.tsx:1418
 msgid "{0} model"
 msgstr ""
 
@@ -69,14 +68,14 @@ msgid "{0} of {1} entries downloaded"
 msgstr "{0} of {1} entries downloaded"
 
 #. placeholder {0}: selectedProviderDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1274
-#: src/components/preferences/panes/TranslationPane.tsx:1282
+#: src/components/preferences/panes/TranslationPane.tsx:1494
+#: src/components/preferences/panes/TranslationPane.tsx:1502
 msgid "{0} system prompt"
 msgstr ""
 
 #. placeholder {0}: selectedProviderDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1304
-#: src/components/preferences/panes/TranslationPane.tsx:1309
+#: src/components/preferences/panes/TranslationPane.tsx:1524
+#: src/components/preferences/panes/TranslationPane.tsx:1529
 msgid "{0} timeout (ms)"
 msgstr ""
 
@@ -85,11 +84,11 @@ msgstr ""
 msgid "{0} total"
 msgstr "{0} total"
 
-#: src/components/miniflux/EntryReading.tsx:208
+#: src/components/miniflux/EntryReading.tsx:247
 msgid "{minutesLeft} min left"
 msgstr ""
 
-#: src/components/miniflux/EntryReading.tsx:207
+#: src/components/miniflux/EntryReading.tsx:246
 msgid "{progressPercent}% read"
 msgstr ""
 
@@ -160,7 +159,7 @@ msgstr "Add feed"
 #: src/components/layout/AppSidebar.tsx:524
 #: src/components/layout/AppSidebar.tsx:528
 #: src/components/miniflux/AddFeedDialog.tsx:385
-#: src/components/miniflux/AddFeedDialog.tsx:903
+#: src/components/miniflux/AddFeedDialog.tsx:910
 msgid "Add Feed"
 msgstr "Add Feed"
 
@@ -172,7 +171,7 @@ msgstr "Add New Category"
 msgid "Add New Feed"
 msgstr "Add New Feed"
 
-#: src/components/preferences/panes/AppearancePane.tsx:264
+#: src/components/preferences/panes/TranslationPane.tsx:1671
 msgid "Add Rule"
 msgstr "Add Rule"
 
@@ -209,8 +208,8 @@ msgstr "Advanced settings"
 #: src/components/layout/AppSidebar.tsx:429
 #: src/components/miniflux/EntryFilters.tsx:99
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:33
-#: src/components/miniflux/MinifluxLayout.tsx:381
-#: src/components/miniflux/MinifluxLayout.tsx:389
+#: src/components/miniflux/MinifluxLayout.tsx:378
+#: src/components/miniflux/MinifluxLayout.tsx:386
 msgid "All"
 msgstr "すべて"
 
@@ -222,7 +221,7 @@ msgstr "All categories, feeds, and entries are synced"
 msgid "All feeds refreshed"
 msgstr "All feeds refreshed"
 
-#: src/components/miniflux/MinifluxLayout.tsx:279
+#: src/components/miniflux/MinifluxLayout.tsx:276
 msgid "All read entries have been deleted"
 msgstr ""
 
@@ -230,7 +229,7 @@ msgstr ""
 #~ msgid "Allow Apple built-in translation as fallback when other providers fail."
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:527
+#: src/components/preferences/panes/TranslationPane.tsx:627
 msgid "Anthropic"
 msgstr ""
 
@@ -238,10 +237,10 @@ msgstr ""
 msgid "Any time"
 msgstr "Any time"
 
-#: src/components/preferences/panes/TranslationPane.tsx:927
-#: src/components/preferences/panes/TranslationPane.tsx:987
-#: src/components/preferences/panes/TranslationPane.tsx:989
-#: src/components/preferences/panes/TranslationPane.tsx:993
+#: src/components/preferences/panes/TranslationPane.tsx:1088
+#: src/components/preferences/panes/TranslationPane.tsx:1151
+#: src/components/preferences/panes/TranslationPane.tsx:1153
+#: src/components/preferences/panes/TranslationPane.tsx:1157
 msgid "API key"
 msgstr ""
 
@@ -272,7 +271,7 @@ msgstr ""
 msgid "Appearance"
 msgstr "外観"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:170
+#: src/components/miniflux/EntryReadingHeader.tsx:182
 msgid "Apple Built-in"
 msgstr ""
 
@@ -288,7 +287,7 @@ msgstr ""
 #~ msgid "Apple fallback setting updated"
 #~ msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:337
+#: src/components/miniflux/EntryReadingHeader.tsx:357
 msgid "Applies to all articles when enabled"
 msgstr ""
 
@@ -296,7 +295,7 @@ msgstr ""
 msgid "Are you sure you want to delete this category and all its feeds?"
 msgstr "Are you sure you want to delete this category and all its feeds?"
 
-#: src/components/miniflux/MinifluxLayout.tsx:258
+#: src/components/miniflux/MinifluxLayout.tsx:255
 msgid "Are you sure you want to flush history? This will delete all read entries from the Miniflux server."
 msgstr ""
 
@@ -304,15 +303,15 @@ msgstr ""
 msgid "Are you sure you want to unsubscribe from this feed?"
 msgstr "Are you sure you want to unsubscribe from this feed?"
 
-#: src/components/miniflux/EntryReading.tsx:157
+#: src/components/miniflux/EntryReading.tsx:196
 msgid "Article table of contents"
 msgstr "Article table of contents"
 
-#: src/components/miniflux/MinifluxLayout.tsx:517
+#: src/components/miniflux/MinifluxLayout.tsx:514
 msgid "Ascending"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:144
+#: src/components/miniflux/EntryReadingHeader.tsx:156
 msgid "Auto"
 msgstr "Auto"
 
@@ -321,11 +320,11 @@ msgstr "Auto"
 #~ msgid "Auto for this article"
 #~ msgstr ""
 
-#: src/components/preferences/panes/IntegrationsPane.tsx:281
+#: src/components/preferences/panes/IntegrationsPane.tsx:282
 msgid "Available Services"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:521
+#: src/components/preferences/panes/TranslationPane.tsx:621
 msgid "Baidu Translate"
 msgstr ""
 
@@ -333,17 +332,17 @@ msgstr ""
 msgid "Beautiful, accessible components"
 msgstr "美しく使いやすいコンポーネント"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:380
+#: src/components/miniflux/EntryReadingHeader.tsx:400
 msgid "Bilingual"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:493
+#: src/components/miniflux/EntryReadingHeader.tsx:518
 msgid "Bionic Reading"
 msgstr "Bionic Reading"
 
-#: src/components/miniflux/AddFeedDialog.tsx:810
-#: src/components/miniflux/EditFeedDialog.tsx:410
-#: src/components/miniflux/settings/FeedFormDialog.tsx:631
+#: src/components/miniflux/AddFeedDialog.tsx:817
+#: src/components/miniflux/EditFeedDialog.tsx:417
+#: src/components/miniflux/settings/FeedFormDialog.tsx:638
 msgid "Blocklist rules"
 msgstr "Blocklist rules"
 
@@ -360,6 +359,10 @@ msgstr "Book-like rhythm"
 msgid "Browse categories"
 msgstr ""
 
+#: src/components/miniflux/InAppBrowserPane.tsx:114
+msgid "Browser content"
+msgstr ""
+
 #: src/components/preferences/panes/AboutPane.tsx:169
 msgid "Build date"
 msgstr ""
@@ -374,14 +377,14 @@ msgstr "Can’t find a category? Create a new one."
 
 #: src/components/downloads/DownloadManagerDialog.tsx:421
 #: src/components/miniflux/AddCategoryDialog.tsx:97
-#: src/components/miniflux/AddFeedDialog.tsx:855
+#: src/components/miniflux/AddFeedDialog.tsx:862
 #: src/components/miniflux/ConnectionDialog.tsx:359
 #: src/components/miniflux/EditCategoryDialog.tsx:103
-#: src/components/miniflux/EditFeedDialog.tsx:446
+#: src/components/miniflux/EditFeedDialog.tsx:453
 #: src/components/miniflux/SearchSourceDialog.tsx:155
 #: src/components/miniflux/settings/CategoryFormDialog.tsx:103
 #: src/components/miniflux/settings/DeleteEntityDialog.tsx:51
-#: src/components/miniflux/settings/FeedFormDialog.tsx:674
+#: src/components/miniflux/settings/FeedFormDialog.tsx:681
 #: src/components/miniflux/settings/UserFormDialog.tsx:155
 #: src/components/preferences/panes/AdvancedPane.tsx:92
 msgid "Cancel"
@@ -399,7 +402,7 @@ msgstr "カテゴリー"
 
 #: src/components/miniflux/AddFeedDialog.tsx:565
 #: src/components/miniflux/EditFeedDialog.tsx:220
-#: src/components/miniflux/MinifluxLayout.tsx:372
+#: src/components/miniflux/MinifluxLayout.tsx:369
 #: src/components/miniflux/settings/FeedFormDialog.tsx:419
 #: src/components/preferences/PreferencesDialog.tsx:273
 msgid "Category"
@@ -463,21 +466,21 @@ msgstr ""
 msgid "Checking..."
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:133
-#: src/components/preferences/panes/TranslationPane.tsx:1053
+#: src/components/miniflux/EntryReadingHeader.tsx:145
+#: src/components/preferences/panes/TranslationPane.tsx:1218
 msgid "Chinese (Simplified)"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:134
-#: src/components/preferences/panes/TranslationPane.tsx:1054
+#: src/components/miniflux/EntryReadingHeader.tsx:146
+#: src/components/preferences/panes/TranslationPane.tsx:1219
 msgid "Chinese (Traditional)"
 msgstr ""
 
 #: src/components/miniflux/EntryReadingHeader.tsx:410
-msgid "Chinese conversion"
-msgstr "Chinese conversion"
+#~ msgid "Chinese conversion"
+#~ msgstr "Chinese conversion"
 
-#: src/components/preferences/panes/AppearancePane.tsx:214
+#: src/components/preferences/panes/TranslationPane.tsx:1591
 msgid "Chinese Conversion"
 msgstr "Chinese Conversion"
 
@@ -485,7 +488,7 @@ msgstr "Chinese Conversion"
 msgid "Choose a story from the list and your reading companion will guide the focus."
 msgstr "Choose a story from the list and your reading companion will guide the focus."
 
-#: src/components/preferences/panes/TranslationPane.tsx:1021
+#: src/components/preferences/panes/TranslationPane.tsx:1186
 msgid "Choose how translation requests are routed across engines and LLMs."
 msgstr ""
 
@@ -493,11 +496,11 @@ msgstr ""
 msgid "Choose what happens when you click the window close button"
 msgstr "ウィンドウの閉じるボタンをクリックしたときの動作を選択"
 
-#: src/components/preferences/panes/AppearancePane.tsx:195
+#: src/components/preferences/panes/AppearancePane.tsx:113
 msgid "Choose your preferred color theme"
 msgstr "お好みのカラーテーマを選択"
 
-#: src/components/preferences/panes/AppearancePane.tsx:170
+#: src/components/preferences/panes/AppearancePane.tsx:88
 msgid "Choose your preferred display language"
 msgstr "お好みの表示言語を選択"
 
@@ -543,8 +546,8 @@ msgstr "Clear local data?"
 msgid "Clearing..."
 msgstr "Clearing..."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:235
-#: src/components/miniflux/EntryReadingHeader.tsx:241
+#: src/components/miniflux/EntryReadingHeader.tsx:250
+#: src/components/miniflux/EntryReadingHeader.tsx:256
 #: src/components/miniflux/ReaderSettings.tsx:226
 msgid "Close"
 msgstr "Close"
@@ -552,6 +555,11 @@ msgstr "Close"
 #: src/components/preferences/panes/GeneralPane.tsx:40
 msgid "Close behavior updated"
 msgstr "閉じる動作を更新しました"
+
+#: src/components/miniflux/InAppBrowserPane.tsx:101
+#: src/components/miniflux/InAppBrowserPane.tsx:107
+msgid "Close browser"
+msgstr ""
 
 #: src/components/preferences/panes/GeneralPane.tsx:152
 msgid "Close Button Behavior"
@@ -569,11 +577,11 @@ msgstr "ウィンドウを閉じる"
 msgid "Code and precision"
 msgstr "Code and precision"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:448
+#: src/components/miniflux/EntryReadingHeader.tsx:473
 msgid "Code theme"
 msgstr "Code theme"
 
-#: src/components/preferences/panes/AppearancePane.tsx:194
+#: src/components/preferences/panes/AppearancePane.tsx:112
 msgid "Color Theme"
 msgstr "カラーテーマ"
 
@@ -598,11 +606,11 @@ msgstr ""
 msgid "Completed"
 msgstr "Completed"
 
-#: src/components/preferences/panes/IntegrationsPane.tsx:308
+#: src/components/preferences/panes/IntegrationsPane.tsx:309
 msgid "Configure services in Miniflux server settings."
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1190
+#: src/components/preferences/panes/TranslationPane.tsx:1355
 msgid "Configured"
 msgstr ""
 
@@ -618,11 +626,11 @@ msgstr "Miniflux に接続"
 msgid "Connect to Miniflux to see server version."
 msgstr ""
 
-#: src/components/miniflux/MinifluxLayout.tsx:324
+#: src/components/miniflux/MinifluxLayout.tsx:321
 msgid "Connect to Server"
 msgstr "サーバーに接続"
 
-#: src/components/miniflux/MinifluxLayout.tsx:322
+#: src/components/miniflux/MinifluxLayout.tsx:319
 msgid "Connect to your Miniflux server to get started"
 msgstr "Miniflux サーバーに接続して開始"
 
@@ -630,19 +638,35 @@ msgstr "Miniflux サーバーに接続して開始"
 msgid "Connecting..."
 msgstr "接続中..."
 
-#: src/components/miniflux/AddFeedDialog.tsx:860
+#: src/components/miniflux/AddFeedDialog.tsx:867
 msgid "Continue to Add Feed"
 msgstr "Continue to Add Feed"
+
+#: src/components/preferences/panes/TranslationPane.tsx:1593
+msgid "Conversion Mode"
+msgstr ""
+
+#: src/components/preferences/panes/TranslationPane.tsx:1595
+msgid "Convert Chinese characters between Simplified and Traditional variants."
+msgstr ""
+
+#: src/components/miniflux/ReaderSelectionToolbar.tsx:164
+msgid "Copied"
+msgstr ""
 
 #: src/components/ui/sonner.tsx:49
 msgid "Copied!"
 msgstr "コピーしました！"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:601
+#: src/components/miniflux/ReaderSelectionToolbar.tsx:164
+msgid "Copy"
+msgstr ""
+
+#: src/components/miniflux/EntryReadingHeader.tsx:663
 msgid "Copy article URL"
 msgstr ""
 
-#: src/components/miniflux/SafeHtml.tsx:648
+#: src/components/miniflux/SafeHtml.tsx:683
 msgid "Copy code"
 msgstr "Copy code"
 
@@ -650,12 +674,16 @@ msgstr "Copy code"
 msgid "Copy message"
 msgstr "メッセージをコピー"
 
-#: src/components/miniflux/SafeHtml.tsx:652
+#: src/components/miniflux/SafeHtml.tsx:687
 msgid "Copy phrase text"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:617
+#: src/components/miniflux/EntryReadingHeader.tsx:679
 msgid "Copy share link"
+msgstr ""
+
+#: src/components/miniflux/SafeHtml.tsx:693
+msgid "Copy translation"
 msgstr ""
 
 #: src/components/downloads/DownloadManagerDialog.tsx:463
@@ -696,7 +724,7 @@ msgstr "Create category"
 msgid "Create Category"
 msgstr "Create Category"
 
-#: src/components/miniflux/settings/FeedFormDialog.tsx:677
+#: src/components/miniflux/settings/FeedFormDialog.tsx:684
 msgid "Create feed"
 msgstr "Create feed"
 
@@ -716,7 +744,7 @@ msgstr "Creating..."
 msgid "Current version"
 msgstr ""
 
-#: src/components/preferences/panes/AppearancePane.tsx:216
+#: src/components/preferences/panes/TranslationPane.tsx:1623
 msgid "Custom Term Conversion"
 msgstr "Custom Term Conversion"
 
@@ -728,7 +756,7 @@ msgstr "カスタマイズ可能なキーボードショートカット"
 msgid "Customize your application preferences here."
 msgstr "ここでアプリケーションの設定をカスタマイズします。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:207
+#: src/components/preferences/panes/AppearancePane.tsx:125
 msgid "Dark"
 msgstr "ダーク"
 
@@ -744,16 +772,16 @@ msgstr "Date Range"
 msgid "Debug"
 msgstr "デバッグ"
 
-#: src/components/preferences/panes/TranslationPane.tsx:511
+#: src/components/preferences/panes/TranslationPane.tsx:611
 msgid "DeepL"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:541
+#: src/components/preferences/panes/TranslationPane.tsx:641
 msgid "DeepSeek"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:155
-#: src/components/miniflux/EntryReadingHeader.tsx:165
+#: src/components/miniflux/EntryReadingHeader.tsx:167
+#: src/components/miniflux/EntryReadingHeader.tsx:177
 msgid "Default"
 msgstr ""
 
@@ -793,28 +821,32 @@ msgstr "Delete user"
 msgid "Delete user?"
 msgstr "Delete user?"
 
-#: src/components/miniflux/MinifluxLayout.tsx:523
+#: src/components/miniflux/MinifluxLayout.tsx:520
 msgid "Descending"
 msgstr ""
 
-#: src/components/miniflux/MinifluxLayout.tsx:512
+#: src/components/miniflux/MinifluxLayout.tsx:509
 msgid "Direction"
 msgstr ""
 
-#: src/components/miniflux/AddFeedDialog.tsx:727
-#: src/components/miniflux/EditFeedDialog.tsx:327
-#: src/components/miniflux/settings/FeedFormDialog.tsx:547
+#: src/components/miniflux/AddFeedDialog.tsx:734
+#: src/components/miniflux/EditFeedDialog.tsx:334
+#: src/components/miniflux/settings/FeedFormDialog.tsx:554
 msgid "Disable feed"
 msgstr "Disable feed"
 
 #: src/components/preferences/panes/GeneralPane.tsx:184
 #: src/components/preferences/panes/GeneralPane.tsx:201
-#: src/components/preferences/panes/IntegrationsPane.tsx:293
-#: src/components/preferences/panes/TranslationPane.tsx:1180
+#: src/components/preferences/panes/IntegrationsPane.tsx:294
+#: src/components/preferences/panes/TranslationPane.tsx:1345
 msgid "Disabled"
 msgstr "無効"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:367
+#: src/components/podcast/PodcastMiniPlayer.tsx:111
+msgid "Dismiss player"
+msgstr ""
+
+#: src/components/miniflux/EntryReadingHeader.tsx:387
 msgid "Display mode"
 msgstr ""
 
@@ -841,6 +873,16 @@ msgstr "Download Failed"
 #: src/components/downloads/DownloadManagerDialog.tsx:311
 msgid "Download Manager"
 msgstr "Download Manager"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:217
+msgid "Download original content"
+msgstr ""
+
+#: src/components/miniflux/AddFeedDialog.tsx:712
+#: src/components/miniflux/EditFeedDialog.tsx:312
+#: src/components/miniflux/settings/FeedFormDialog.tsx:532
+msgid "Download original content (crawler)"
+msgstr ""
 
 #: src/components/preferences/panes/GeneralPane.tsx:207
 msgid "Download Settings"
@@ -876,7 +918,7 @@ msgstr "e.g. Technology"
 msgid "e.g. Technology, News"
 msgstr "e.g. Technology, News"
 
-#: src/components/preferences/panes/AppearancePane.tsx:253
+#: src/components/preferences/panes/TranslationPane.tsx:1660
 msgid "Each rule must include a non-empty \"From\" value"
 msgstr "Each rule must include a non-empty \"From\" value"
 
@@ -906,7 +948,7 @@ msgid "Edit user"
 msgstr "Edit user"
 
 #. placeholder {0}: providerDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1122
+#: src/components/preferences/panes/TranslationPane.tsx:1287
 msgid "Enable {0}"
 msgstr ""
 
@@ -914,22 +956,22 @@ msgstr ""
 #~ msgid "Enable {providerName}"
 #~ msgstr ""
 
-#: src/components/preferences/panes/IntegrationsPane.tsx:232
+#: src/components/preferences/panes/IntegrationsPane.tsx:233
 msgid "enabled"
 msgstr ""
 
 #: src/components/preferences/panes/GeneralPane.tsx:184
 #: src/components/preferences/panes/GeneralPane.tsx:201
-#: src/components/preferences/panes/IntegrationsPane.tsx:259
-#: src/components/preferences/panes/TranslationPane.tsx:1180
+#: src/components/preferences/panes/IntegrationsPane.tsx:260
+#: src/components/preferences/panes/TranslationPane.tsx:1345
 msgid "Enabled"
 msgstr "有効"
 
-#: src/components/preferences/panes/IntegrationsPane.tsx:243
+#: src/components/preferences/panes/IntegrationsPane.tsx:244
 msgid "Enabled Services"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:377
+#: src/components/preferences/panes/TranslationPane.tsx:410
 msgid "Engine"
 msgstr ""
 
@@ -941,16 +983,16 @@ msgstr ""
 #~ msgid "Engine fallback order updated"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1033
+#: src/components/preferences/panes/TranslationPane.tsx:1198
 msgid "Engine first"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:132
-#: src/components/preferences/panes/TranslationPane.tsx:1052
+#: src/components/miniflux/EntryReadingHeader.tsx:144
+#: src/components/preferences/panes/TranslationPane.tsx:1217
 msgid "English"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:494
+#: src/components/miniflux/EntryReadingHeader.tsx:519
 msgid "English only"
 msgstr "English only"
 
@@ -986,7 +1028,7 @@ msgstr ""
 msgid "Entries"
 msgstr "Entries"
 
-#: src/components/miniflux/EntryReading.tsx:628
+#: src/components/miniflux/EntryReading.tsx:711
 msgid "Entry not found"
 msgstr "Entry not found"
 
@@ -1017,6 +1059,10 @@ msgstr "Everything is up to date"
 #: src/components/preferences/panes/AdvancedPane.tsx:108
 #~ msgid "Example Option 3"
 #~ msgstr "オプション 3"
+
+#: src/components/preferences/panes/TranslationPane.tsx:1700
+msgid "Excluded Feeds"
+msgstr ""
 
 #: src/lib/commands/window-commands.ts:76
 msgid "Exit Fullscreen"
@@ -1083,6 +1129,10 @@ msgstr "Failed to delete feed"
 msgid "Failed to delete user"
 msgstr "Failed to delete user"
 
+#: src/services/miniflux/entries.ts:517
+msgid "Failed to download original content"
+msgstr ""
+
 #: src/lib/commands/window-commands.ts:69
 msgid "Failed to enter fullscreen: {message}"
 msgstr "全画面表示に失敗しました：{message}"
@@ -1098,7 +1148,11 @@ msgstr "全画面表示の終了に失敗しました：{message}"
 msgid "Failed to export OPML"
 msgstr ""
 
-#: src/components/miniflux/MinifluxLayout.tsx:270
+#: src/components/preferences/panes/TranslationPane.tsx:1031
+msgid "Failed to fetch available models"
+msgstr ""
+
+#: src/components/miniflux/MinifluxLayout.tsx:267
 msgid "Failed to flush history"
 msgstr ""
 
@@ -1113,7 +1167,7 @@ msgstr ""
 msgid "Failed to load categories"
 msgstr "Failed to load categories"
 
-#: src/components/miniflux/EntryList.tsx:482
+#: src/components/miniflux/EntryList.tsx:483
 msgid "Failed to load entries"
 msgstr "Failed to load entries"
 
@@ -1143,11 +1197,11 @@ msgstr "Failed to refresh feeds"
 #~ msgid "Failed to remove provider key"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:810
+#: src/components/preferences/panes/TranslationPane.tsx:940
 msgid "Failed to resort providers"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:827
+#: src/components/preferences/panes/TranslationPane.tsx:957
 msgid "Failed to save provider key"
 msgstr ""
 
@@ -1199,12 +1253,12 @@ msgstr "Failed to update image download path"
 #~ msgid "Failed to update primary translation engine"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:742
+#: src/components/preferences/panes/TranslationPane.tsx:872
 msgid "Failed to update provider order"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:846
-#: src/components/preferences/panes/TranslationPane.tsx:882
+#: src/components/preferences/panes/TranslationPane.tsx:976
+#: src/components/preferences/panes/TranslationPane.tsx:1012
 msgid "Failed to update provider runtime setting"
 msgstr ""
 
@@ -1212,11 +1266,11 @@ msgstr ""
 msgid "Failed to update start minimized setting"
 msgstr "最小化起動設定の更新に失敗しました"
 
-#: src/components/preferences/panes/TranslationPane.tsx:697
+#: src/components/preferences/panes/TranslationPane.tsx:827
 msgid "Failed to update translation route mode"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:711
+#: src/components/preferences/panes/TranslationPane.tsx:841
 msgid "Failed to update translation target language"
 msgstr ""
 
@@ -1232,7 +1286,7 @@ msgstr "Failed to update user"
 msgid "Failed to update video download path"
 msgstr "Failed to update video download path"
 
-#: src/components/miniflux/MinifluxLayout.tsx:376
+#: src/components/miniflux/MinifluxLayout.tsx:373
 #: src/components/preferences/PreferencesDialog.tsx:240
 msgid "Feed"
 msgstr "Feed"
@@ -1248,6 +1302,10 @@ msgstr "Feed created with partial settings"
 #: src/services/miniflux/feeds.ts:230
 msgid "Feed deleted"
 msgstr "Feed deleted"
+
+#: src/components/preferences/panes/TranslationPane.tsx:1698
+msgid "Feed Exclusions"
+msgstr ""
 
 #: src/services/miniflux/feeds.ts:289
 msgid "Feed refreshed"
@@ -1284,11 +1342,27 @@ msgstr "Feed URL must be a valid URL"
 msgid "Feeds"
 msgstr "Feeds"
 
-#: src/components/miniflux/AddFeedDialog.tsx:761
-#: src/components/miniflux/EditFeedDialog.tsx:361
-#: src/components/miniflux/settings/FeedFormDialog.tsx:581
+#: src/components/preferences/panes/TranslationPane.tsx:1702
+msgid "Feeds in this list will not be automatically translated. Chinese conversion still applies."
+msgstr ""
+
+#: src/components/preferences/panes/TranslationPane.tsx:1478
+msgid "Fetch available models"
+msgstr ""
+
+#: src/components/miniflux/AddFeedDialog.tsx:768
+#: src/components/miniflux/EditFeedDialog.tsx:368
+#: src/components/miniflux/settings/FeedFormDialog.tsx:588
 msgid "Fetch via proxy"
 msgstr "Fetch via proxy"
+
+#: src/components/miniflux/EntryReadingHeader.tsx:218
+msgid "Fetching original content..."
+msgstr ""
+
+#: src/components/preferences/panes/TranslationPane.tsx:1450
+msgid "Fetching..."
+msgstr ""
 
 #: src/components/downloads/DownloadManagerDialog.tsx:356
 msgid "File Name"
@@ -1298,11 +1372,11 @@ msgstr "File Name"
 msgid "Fill from .env"
 msgstr ".env から入力"
 
-#: src/components/miniflux/MinifluxLayout.tsx:482
+#: src/components/miniflux/MinifluxLayout.tsx:479
 msgid "Flush history"
 msgstr ""
 
-#: src/components/miniflux/MinifluxLayout.tsx:260
+#: src/components/miniflux/MinifluxLayout.tsx:257
 msgid "Flush History"
 msgstr ""
 
@@ -1322,16 +1396,16 @@ msgstr "Font Size"
 msgid "Found sources"
 msgstr "Found sources"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:138
-#: src/components/preferences/panes/TranslationPane.tsx:1058
+#: src/components/miniflux/EntryReadingHeader.tsx:150
+#: src/components/preferences/panes/TranslationPane.tsx:1223
 msgid "French"
 msgstr ""
 
-#: src/components/preferences/panes/AppearancePane.tsx:230
+#: src/components/preferences/panes/TranslationPane.tsx:1637
 msgid "From"
 msgstr "From"
 
-#: src/components/preferences/panes/TranslationPane.tsx:529
+#: src/components/preferences/panes/TranslationPane.tsx:629
 msgid "Gemini"
 msgstr ""
 
@@ -1343,8 +1417,8 @@ msgstr "一般"
 msgid "Georgia"
 msgstr "Georgia"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:139
-#: src/components/preferences/panes/TranslationPane.tsx:1059
+#: src/components/miniflux/EntryReadingHeader.tsx:151
+#: src/components/preferences/panes/TranslationPane.tsx:1224
 msgid "German"
 msgstr ""
 
@@ -1352,8 +1426,12 @@ msgstr ""
 msgid "Git commit hash."
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:533
+#: src/components/preferences/panes/TranslationPane.tsx:633
 msgid "GLM"
+msgstr ""
+
+#: src/components/podcast/PodcastMiniPlayer.tsx:78
+msgid "Go to episode"
 msgstr ""
 
 #: src/components/ui/data-table.tsx:169
@@ -1372,7 +1450,7 @@ msgstr "Go to next page"
 msgid "Go to previous page"
 msgstr "Go to previous page"
 
-#: src/components/preferences/panes/TranslationPane.tsx:513
+#: src/components/preferences/panes/TranslationPane.tsx:613
 msgid "Google Translate"
 msgstr ""
 
@@ -1398,7 +1476,7 @@ msgstr "左サイドバーを非表示"
 msgid "Hide Others"
 msgstr "他を非表示"
 
-#: src/components/miniflux/EntryReading.tsx:209
+#: src/components/miniflux/EntryReading.tsx:248
 msgid "Hide reading status"
 msgstr ""
 
@@ -1408,19 +1486,19 @@ msgstr "左サイドバーを非表示"
 
 #: src/components/layout/AppSidebar.tsx:486
 #: src/components/layout/AppSidebar.tsx:495
-#: src/components/miniflux/MinifluxLayout.tsx:387
+#: src/components/miniflux/MinifluxLayout.tsx:384
 msgid "History"
 msgstr "履歴"
 
-#: src/components/miniflux/MinifluxLayout.tsx:278
+#: src/components/miniflux/MinifluxLayout.tsx:275
 msgid "History flushed"
 msgstr ""
 
-#: src/components/miniflux/MinifluxLayout.tsx:411
+#: src/components/miniflux/MinifluxLayout.tsx:408
 msgid "history items"
 msgstr ""
 
-#: src/components/miniflux/MinifluxLayout.tsx:305
+#: src/components/miniflux/MinifluxLayout.tsx:302
 msgid "History page is only available when connected to Miniflux server."
 msgstr ""
 
@@ -1448,21 +1526,21 @@ msgstr "https://example.com/rss.xml"
 msgid "Humanist"
 msgstr "Humanist"
 
-#: src/components/preferences/panes/TranslationPane.tsx:519
+#: src/components/preferences/panes/TranslationPane.tsx:619
 msgid "Hunyuan-MT"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1034
+#: src/components/preferences/panes/TranslationPane.tsx:1199
 msgid "Hybrid auto"
 msgstr ""
 
-#: src/components/miniflux/AddFeedDialog.tsx:744
-#: src/components/miniflux/EditFeedDialog.tsx:344
-#: src/components/miniflux/settings/FeedFormDialog.tsx:564
+#: src/components/miniflux/AddFeedDialog.tsx:751
+#: src/components/miniflux/EditFeedDialog.tsx:351
+#: src/components/miniflux/settings/FeedFormDialog.tsx:571
 msgid "Ignore HTTP cache"
 msgstr "Ignore HTTP cache"
 
-#: src/components/miniflux/SafeHtml.tsx:656
+#: src/components/miniflux/SafeHtml.tsx:696
 msgid "Image"
 msgstr "Image"
 
@@ -1481,7 +1559,7 @@ msgstr "Image download path updated"
 msgid "Import OPML"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1206
+#: src/components/preferences/panes/TranslationPane.tsx:1371
 msgid "Inactive"
 msgstr ""
 
@@ -1490,7 +1568,7 @@ msgid "Installed version of Minikyu."
 msgstr ""
 
 #: src/components/preferences/panes/IntegrationsPane.tsx:188
-#: src/components/preferences/panes/IntegrationsPane.tsx:222
+#: src/components/preferences/panes/IntegrationsPane.tsx:223
 msgid "Integration Services"
 msgstr ""
 
@@ -1498,34 +1576,34 @@ msgstr ""
 msgid "Integrations"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:135
-#: src/components/preferences/panes/TranslationPane.tsx:1055
+#: src/components/miniflux/EntryReadingHeader.tsx:147
+#: src/components/preferences/panes/TranslationPane.tsx:1220
 msgid "Japanese"
 msgstr ""
 
-#: src/components/miniflux/AddFeedDialog.tsx:827
-#: src/components/miniflux/EditFeedDialog.tsx:427
-#: src/components/miniflux/settings/FeedFormDialog.tsx:648
+#: src/components/miniflux/AddFeedDialog.tsx:834
+#: src/components/miniflux/EditFeedDialog.tsx:434
+#: src/components/miniflux/settings/FeedFormDialog.tsx:655
 msgid "Keeplist rules"
 msgstr "Keeplist rules"
 
-#: src/components/preferences/panes/TranslationPane.tsx:535
+#: src/components/preferences/panes/TranslationPane.tsx:635
 msgid "Kimi"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:136
-#: src/components/preferences/panes/TranslationPane.tsx:1056
+#: src/components/miniflux/EntryReadingHeader.tsx:148
+#: src/components/preferences/panes/TranslationPane.tsx:1221
 msgid "Korean"
 msgstr ""
 
-#: src/components/miniflux/SafeHtml.tsx:655
+#: src/components/miniflux/SafeHtml.tsx:695
 #: src/components/miniflux/UserNav.tsx:256
-#: src/components/preferences/panes/AppearancePane.tsx:167
-#: src/components/preferences/panes/AppearancePane.tsx:169
+#: src/components/preferences/panes/AppearancePane.tsx:85
+#: src/components/preferences/panes/AppearancePane.tsx:87
 msgid "Language"
 msgstr "言語"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1041
+#: src/components/preferences/panes/TranslationPane.tsx:1206
 msgid "Language used for immersive translation output."
 msgstr ""
 
@@ -1533,7 +1611,7 @@ msgstr ""
 msgid "Last 24 hours"
 msgstr "Last 24 hours"
 
-#: src/components/miniflux/MinifluxLayout.tsx:507
+#: src/components/miniflux/MinifluxLayout.tsx:504
 msgid "Last read date"
 msgstr ""
 
@@ -1550,11 +1628,11 @@ msgstr "最新の React 並列機能"
 msgid "Latest version"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1298
+#: src/components/preferences/panes/TranslationPane.tsx:1518
 msgid "Leave empty to use default prompt"
 msgstr ""
 
-#: src/components/preferences/panes/AppearancePane.tsx:206
+#: src/components/preferences/panes/AppearancePane.tsx:124
 msgid "Light"
 msgstr "ライト"
 
@@ -1568,7 +1646,7 @@ msgstr ""
 msgid "Line Width"
 msgstr "Line Width"
 
-#: src/components/preferences/panes/TranslationPane.tsx:377
+#: src/components/preferences/panes/TranslationPane.tsx:410
 msgid "LLM"
 msgstr ""
 
@@ -1584,7 +1662,7 @@ msgstr ""
 #~ msgid "LLM provider"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1099
+#: src/components/preferences/panes/TranslationPane.tsx:1264
 msgid "LLM providers"
 msgstr ""
 
@@ -1593,13 +1671,17 @@ msgid "Loading version information..."
 msgstr ""
 
 #: src/components/layout/AppSidebar.tsx:408
-#: src/components/miniflux/MinifluxLayout.tsx:287
+#: src/components/miniflux/MinifluxLayout.tsx:284
 msgid "Loading..."
 msgstr "読み込み中..."
 
 #: src/components/preferences/panes/AdvancedPane.tsx:53
 msgid "Local data cleared"
 msgstr "Local data cleared"
+
+#: src/components/preferences/panes/TranslationPane.tsx:1388
+msgid "Local Ollama: leave empty (uses http://localhost:11434). Ollama Cloud: use https://ollama.com — requires an API key and model names with the -cloud suffix (e.g. gpt-oss:120b-cloud)."
+msgstr ""
 
 #: src/components/miniflux/UserNav.tsx:312
 msgid "Log out"
@@ -1629,17 +1711,17 @@ msgstr ""
 msgid "Manage third-party service integrations."
 msgstr ""
 
-#: src/components/preferences/panes/IntegrationsPane.tsx:225
+#: src/components/preferences/panes/IntegrationsPane.tsx:226
 msgid "Manage third-party service integrations. Configure services in Miniflux settings."
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:550
-#: src/components/miniflux/EntryReadingHeader.tsx:569
+#: src/components/miniflux/EntryReadingHeader.tsx:575
+#: src/components/miniflux/EntryReadingHeader.tsx:594
 msgid "Mark as read"
 msgstr "Mark as read"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:550
-#: src/components/miniflux/EntryReadingHeader.tsx:569
+#: src/components/miniflux/EntryReadingHeader.tsx:575
+#: src/components/miniflux/EntryReadingHeader.tsx:594
 msgid "Mark as unread"
 msgstr ""
 
@@ -1648,7 +1730,7 @@ msgstr ""
 #~ msgid "Marked as read"
 #~ msgstr "Marked as read"
 
-#: src/components/preferences/panes/TranslationPane.tsx:515
+#: src/components/preferences/panes/TranslationPane.tsx:615
 msgid "Microsoft Translator"
 msgstr ""
 
@@ -1670,7 +1752,7 @@ msgstr ""
 msgid "Minikyu"
 msgstr "Minikyu"
 
-#: src/components/preferences/panes/TranslationPane.tsx:537
+#: src/components/preferences/panes/TranslationPane.tsx:637
 msgid "MiniMax"
 msgstr ""
 
@@ -1690,15 +1772,15 @@ msgstr "ウィンドウを最小化"
 #~ msgid "Missing fields"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:934
-#: src/components/preferences/panes/TranslationPane.tsx:1205
+#: src/components/preferences/panes/TranslationPane.tsx:1095
+#: src/components/preferences/panes/TranslationPane.tsx:1370
 msgid "Missing required fields"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:930
-#: src/components/preferences/panes/TranslationPane.tsx:987
-#: src/components/preferences/panes/TranslationPane.tsx:988
-#: src/components/preferences/panes/TranslationPane.tsx:996
+#: src/components/preferences/panes/TranslationPane.tsx:1091
+#: src/components/preferences/panes/TranslationPane.tsx:1151
+#: src/components/preferences/panes/TranslationPane.tsx:1152
+#: src/components/preferences/panes/TranslationPane.tsx:1160
 msgid "Model"
 msgstr ""
 
@@ -1710,6 +1792,10 @@ msgstr "モダンな Rust 駆動のデスクトップフレームワーク"
 msgid "Monospace"
 msgstr "Monospace"
 
+#: src/components/podcast/PodcastPlayer.tsx:231
+msgid "Mute"
+msgstr ""
+
 #: src/components/miniflux/ReaderSettings.tsx:167
 msgid "Native platform feel"
 msgstr "Native platform feel"
@@ -1718,7 +1804,7 @@ msgstr "Native platform feel"
 msgid "Navigation"
 msgstr "ナビゲーション"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1115
+#: src/components/preferences/panes/TranslationPane.tsx:1280
 msgid "Needs setup"
 msgstr ""
 
@@ -1734,12 +1820,12 @@ msgstr ""
 msgid "Next Article"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:276
-#: src/components/miniflux/EntryReadingHeader.tsx:282
+#: src/components/miniflux/EntryReadingHeader.tsx:291
+#: src/components/miniflux/EntryReadingHeader.tsx:297
 msgid "Next entry (j or →)"
 msgstr "Next entry (j or →)"
 
-#: src/components/miniflux/EntryReading.tsx:156
+#: src/components/miniflux/EntryReading.tsx:195
 msgid "Next section"
 msgstr "Next section"
 
@@ -1767,19 +1853,24 @@ msgstr "No categories yet"
 msgid "No category"
 msgstr "No category"
 
-#: src/components/miniflux/EntryReading.tsx:716
+#: src/components/miniflux/EntryReading.tsx:816
 msgid "No content available"
 msgstr "No content available"
 
-#: src/components/preferences/panes/AppearancePane.tsx:223
+#: src/components/preferences/panes/TranslationPane.tsx:1630
 msgid "No custom rules yet"
 msgstr "No custom rules yet"
 
-#: src/components/miniflux/EntryList.tsx:497
+#: src/components/miniflux/EntryList.tsx:498
 msgid "No entries found"
 msgstr "No entries found"
 
+#: src/components/preferences/panes/TranslationPane.tsx:1744
+msgid "No feeds excluded. All feeds will be translated when translation is enabled."
+msgstr ""
+
 #: src/components/preferences/panes/FeedsPane.tsx:113
+#: src/components/preferences/panes/TranslationPane.tsx:1783
 msgid "No feeds found"
 msgstr "No feeds found"
 
@@ -1791,8 +1882,16 @@ msgstr "No feeds yet"
 msgid "No fonts found."
 msgstr "No fonts found."
 
-#: src/components/preferences/panes/IntegrationsPane.tsx:305
+#: src/components/preferences/panes/IntegrationsPane.tsx:306
 msgid "No integration services enabled"
+msgstr ""
+
+#: src/components/preferences/panes/TranslationPane.tsx:1459
+msgid "No models found"
+msgstr ""
+
+#: src/components/preferences/panes/TranslationPane.tsx:1040
+msgid "No models found for this provider"
 msgstr ""
 
 #: src/components/command-palette/CommandPalette.tsx:99
@@ -1820,7 +1919,7 @@ msgstr ""
 msgid "None"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1191
+#: src/components/preferences/panes/TranslationPane.tsx:1356
 msgid "Not configured"
 msgstr ""
 
@@ -1832,11 +1931,12 @@ msgstr ""
 msgid "Not connected to Miniflux server"
 msgstr ""
 
-#: src/components/preferences/panes/IntegrationsPane.tsx:235
+#: src/components/preferences/panes/IntegrationsPane.tsx:236
 msgid "of"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:126
+#: src/components/miniflux/EntryReadingHeader.tsx:138
+#: src/components/preferences/panes/TranslationPane.tsx:1614
 msgid "Off"
 msgstr "Off"
 
@@ -1845,15 +1945,15 @@ msgstr "Off"
 msgid "Offline cached data"
 msgstr "オフラインキャッシュデータ"
 
-#: src/components/miniflux/MinifluxLayout.tsx:302
+#: src/components/miniflux/MinifluxLayout.tsx:299
 msgid "Offline Mode"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:163
+#: src/components/miniflux/EntryReadingHeader.tsx:175
 msgid "OLED"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:525
+#: src/components/preferences/panes/TranslationPane.tsx:625
 msgid "Ollama"
 msgstr ""
 
@@ -1869,7 +1969,9 @@ msgstr "Open File"
 msgid "Open Folder"
 msgstr "Open Folder"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:627
+#: src/components/miniflux/EntryReadingHeader.tsx:689
+#: src/components/miniflux/InAppBrowserPane.tsx:83
+#: src/components/miniflux/InAppBrowserPane.tsx:89
 msgid "Open in browser"
 msgstr ""
 
@@ -1881,7 +1983,7 @@ msgstr "設定を開く"
 msgid "Open the application preferences"
 msgstr "アプリケーションの設定を開く"
 
-#: src/components/preferences/panes/TranslationPane.tsx:523
+#: src/components/preferences/panes/TranslationPane.tsx:623
 msgid "OpenAI"
 msgstr ""
 
@@ -1889,7 +1991,7 @@ msgstr ""
 #~ msgid "openai, anthropic, gemini"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:531
+#: src/components/preferences/panes/TranslationPane.tsx:631
 msgid "OpenRouter"
 msgstr ""
 
@@ -1903,12 +2005,25 @@ msgstr ""
 msgid "OPML imported successfully"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1240
+#: src/components/preferences/panes/TranslationPane.tsx:1579
+msgid "Optional – for cloud API"
+msgstr ""
+
+#: src/components/preferences/panes/TranslationPane.tsx:1412
 msgid "Optional endpoint override"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1324
+#: src/components/preferences/panes/TranslationPane.tsx:1544
 msgid "Optional timeout"
+msgstr ""
+
+#: src/components/preferences/panes/TranslationPane.tsx:1556
+msgid "Optional. Leave empty for local Ollama. Required for the Ollama cloud API (ollama.com)."
+msgstr ""
+
+#: src/components/miniflux/EntryReadingHeader.tsx:219
+#: src/services/miniflux/entries.ts:530
+msgid "Original content downloaded"
 msgstr ""
 
 #: src/components/command-palette/CommandPalette.tsx:80
@@ -1919,7 +2034,7 @@ msgstr "その他"
 msgid "Overall progress"
 msgstr "Overall progress"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1277
+#: src/components/preferences/panes/TranslationPane.tsx:1497
 msgid "Override the default translation instruction. Supports {source_lang} and {target_lang} placeholders."
 msgstr ""
 
@@ -1929,7 +2044,7 @@ msgstr ""
 msgid "Page {0} of {1}"
 msgstr "Page {0} of {1}"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:157
+#: src/components/miniflux/EntryReadingHeader.tsx:169
 msgid "Paper"
 msgstr ""
 
@@ -1951,7 +2066,7 @@ msgstr "パスワードが必要です"
 msgid "Paste a website URL to discover available RSS/Atom feeds."
 msgstr "Paste a website URL to discover available RSS/Atom feeds."
 
-#: src/components/preferences/panes/TranslationPane.tsx:1348
+#: src/components/preferences/panes/TranslationPane.tsx:1580
 msgid "Paste key"
 msgstr ""
 
@@ -1959,11 +2074,26 @@ msgstr ""
 msgid "Paste new API token"
 msgstr "Paste new API token"
 
-#: src/components/miniflux/SafeHtml.tsx:649
+#: src/components/podcast/PodcastMiniPlayer.tsx:95
+#: src/components/podcast/PodcastPlayer.tsx:164
+msgid "Pause"
+msgstr ""
+
+#: src/components/miniflux/SafeHtml.tsx:684
 msgid "Phrase"
 msgstr ""
 
-#: src/components/miniflux/MinifluxLayout.tsx:309
+#: src/components/podcast/PodcastMiniPlayer.tsx:95
+#: src/components/podcast/PodcastPlayer.tsx:164
+msgid "Play"
+msgstr ""
+
+#: src/components/podcast/PodcastPlayer.tsx:189
+#: src/components/podcast/PodcastPlayer.tsx:196
+msgid "Playback speed"
+msgstr ""
+
+#: src/components/miniflux/MinifluxLayout.tsx:306
 msgid "Please connect to your server to use this feature."
 msgstr ""
 
@@ -1985,6 +2115,14 @@ msgstr "Please enter a valid URL"
 msgid "Please restart the app to complete cleanup."
 msgstr "Please restart the app to complete cleanup."
 
+#: src/components/miniflux/EntryList.tsx:653
+msgid "Podcast"
+msgstr ""
+
+#: src/components/podcast/PodcastPlayer.tsx:120
+msgid "Podcast Episode"
+msgstr ""
+
 #: src/components/preferences/PreferencesDialog.tsx:452
 #: src/components/preferences/PreferencesDialog.tsx:513
 #: src/components/preferences/PreferencesDialog.tsx:579
@@ -2003,12 +2141,12 @@ msgstr "Preparing sync stages"
 msgid "Press"
 msgstr "押す"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:257
-#: src/components/miniflux/EntryReadingHeader.tsx:263
+#: src/components/miniflux/EntryReadingHeader.tsx:272
+#: src/components/miniflux/EntryReadingHeader.tsx:278
 msgid "Previous entry (h or ←)"
 msgstr "Previous entry (h or ←)"
 
-#: src/components/miniflux/EntryReading.tsx:155
+#: src/components/miniflux/EntryReading.tsx:194
 msgid "Previous section"
 msgstr "Previous section"
 
@@ -2028,8 +2166,7 @@ msgstr "Previous section"
 msgid "Progress"
 msgstr "Progress"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:391
-#: src/components/miniflux/ReaderSelectionTranslatePopover.tsx:68
+#: src/components/miniflux/EntryReadingHeader.tsx:411
 msgid "Provider"
 msgstr ""
 
@@ -2037,44 +2174,44 @@ msgstr ""
 #~ msgid "Provider key removed"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:833
+#: src/components/preferences/panes/TranslationPane.tsx:963
 msgid "Provider key saved"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:740
+#: src/components/preferences/panes/TranslationPane.tsx:870
 msgid "Provider order updated"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:843
+#: src/components/preferences/panes/TranslationPane.tsx:973
 msgid "Provider runtime setting updated"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1142
+#: src/components/preferences/panes/TranslationPane.tsx:1307
 msgid "Provider settings"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:913
-#: src/components/preferences/panes/TranslationPane.tsx:963
+#: src/components/preferences/panes/TranslationPane.tsx:1069
+#: src/components/preferences/panes/TranslationPane.tsx:1126
 msgid "Provider verification failed"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:967
+#: src/components/preferences/panes/TranslationPane.tsx:1130
 msgid "Provider verification succeeded"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1070
+#: src/components/preferences/panes/TranslationPane.tsx:1235
 msgid "Providers"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:808
+#: src/components/preferences/panes/TranslationPane.tsx:938
 msgid "Providers resorted"
 msgstr ""
 
-#: src/components/miniflux/MinifluxLayout.tsx:501
+#: src/components/miniflux/MinifluxLayout.tsx:498
 msgid "Published date"
 msgstr ""
 
-#: src/components/miniflux/EntryList.tsx:448
+#: src/components/miniflux/EntryList.tsx:449
 msgid "Pull to refresh"
 msgstr ""
 
@@ -2106,11 +2243,11 @@ msgstr "{APP_NAME} を終了"
 msgid "Quit application"
 msgstr "アプリケーションを終了"
 
-#: src/components/preferences/panes/TranslationPane.tsx:539
+#: src/components/preferences/panes/TranslationPane.tsx:639
 msgid "Qwen"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:517
+#: src/components/preferences/panes/TranslationPane.tsx:617
 msgid "Qwen-MT"
 msgstr ""
 
@@ -2122,7 +2259,7 @@ msgstr "React 19"
 msgid "Reader companion illustration"
 msgstr "Reader companion illustration"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1016
+#: src/components/preferences/panes/TranslationPane.tsx:1181
 msgid "Reader translation"
 msgstr ""
 
@@ -2130,32 +2267,39 @@ msgstr ""
 msgid "Reader typography settings"
 msgstr "Reader typography settings"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:423
+#: src/components/miniflux/EntryReadingHeader.tsx:456
+#: src/components/miniflux/EntryReadingHeader.tsx:469
 msgid "Reading display"
 msgstr "Reading display"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:472
+#: src/components/miniflux/EntryReadingHeader.tsx:497
 msgid "Reading theme"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1203
+#: src/components/preferences/panes/TranslationPane.tsx:1368
 msgid "Ready"
+msgstr ""
+
+#: src/components/miniflux/InAppBrowserPane.tsx:65
+#: src/components/miniflux/InAppBrowserPane.tsx:71
+msgid "Refresh"
 msgstr ""
 
 #: src/components/preferences/panes/FeedsPane.tsx:95
 msgid "Refresh all"
 msgstr "Refresh all"
 
-#: src/components/miniflux/EntryList.tsx:445
+#: src/components/miniflux/EntryList.tsx:446
 #: src/components/preferences/panes/FeedsPane.tsx:95
 msgid "Refreshing..."
 msgstr "Refreshing..."
 
-#: src/components/miniflux/EntryList.tsx:447
+#: src/components/miniflux/EntryList.tsx:448
 msgid "Release to refresh"
 msgstr ""
 
-#: src/components/preferences/panes/AppearancePane.tsx:246
+#: src/components/preferences/panes/TranslationPane.tsx:1653
+#: src/components/preferences/panes/TranslationPane.tsx:1761
 msgid "Remove"
 msgstr "Remove"
 
@@ -2172,7 +2316,7 @@ msgid "Removing stale local records"
 msgstr "Removing stale local records"
 
 #. placeholder {0}: providerDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1121
+#: src/components/preferences/panes/TranslationPane.tsx:1286
 msgid "Reorder {0}"
 msgstr ""
 
@@ -2180,7 +2324,7 @@ msgstr ""
 #~ msgid "Replace"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1348
+#: src/components/preferences/panes/TranslationPane.tsx:1577
 msgid "Replace key"
 msgstr ""
 
@@ -2188,32 +2332,36 @@ msgstr ""
 #~ msgid "Replace key for {providerName}"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1213
+#: src/components/preferences/panes/TranslationPane.tsx:1378
 msgid "Required fields"
 msgstr ""
 
 #: src/components/preferences/panes/TranslationPane.tsx:1267
-msgid "Required for LLM providers"
-msgstr ""
+#~ msgid "Required for LLM providers"
+#~ msgstr ""
 
 #: src/components/miniflux/ReaderSettings.tsx:217
-#: src/components/preferences/panes/AppearancePane.tsx:272
+#: src/components/preferences/panes/TranslationPane.tsx:1679
 #: src/components/preferences/ShortcutPicker.tsx:231
 msgid "Reset"
 msgstr "リセット"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1076
+#: src/components/preferences/panes/TranslationPane.tsx:1241
 msgid "Resort providers"
 msgstr ""
 
 #: src/components/downloads/DownloadManagerDialog.tsx:432
-#: src/components/miniflux/ImmersiveTranslationLayer.tsx:310
+#: src/components/miniflux/ImmersiveTranslationLayer.tsx:743
 msgid "Retry"
 msgstr "Retry"
 
-#: src/components/miniflux/AddFeedDialog.tsx:792
-#: src/components/miniflux/EditFeedDialog.tsx:392
-#: src/components/miniflux/settings/FeedFormDialog.tsx:613
+#: src/components/miniflux/SafeHtml.tsx:691
+msgid "Retry translation"
+msgstr ""
+
+#: src/components/miniflux/AddFeedDialog.tsx:799
+#: src/components/miniflux/EditFeedDialog.tsx:399
+#: src/components/miniflux/settings/FeedFormDialog.tsx:620
 msgid "Rewrite rules"
 msgstr "Rewrite rules"
 
@@ -2222,7 +2370,7 @@ msgstr "Rewrite rules"
 msgid "Role"
 msgstr "Role"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1019
+#: src/components/preferences/panes/TranslationPane.tsx:1184
 msgid "Route strategy"
 msgstr ""
 
@@ -2261,13 +2409,13 @@ msgstr "Sans"
 #~ msgstr ""
 
 #: src/components/miniflux/settings/CategoryFormDialog.tsx:106
-#: src/components/miniflux/settings/FeedFormDialog.tsx:677
+#: src/components/miniflux/settings/FeedFormDialog.tsx:684
 #: src/components/miniflux/settings/UserFormDialog.tsx:158
 msgid "Save changes"
 msgstr "Save changes"
 
 #: src/components/miniflux/EditCategoryDialog.tsx:106
-#: src/components/miniflux/EditFeedDialog.tsx:449
+#: src/components/miniflux/EditFeedDialog.tsx:456
 msgid "Save Changes"
 msgstr "Save Changes"
 
@@ -2275,27 +2423,28 @@ msgstr "Save Changes"
 #~ msgid "Save key for {providerName}"
 #~ msgstr ""
 
-#: src/components/preferences/panes/AppearancePane.tsx:284
+#: src/components/preferences/panes/TranslationPane.tsx:1691
 msgid "Save Rules"
 msgstr "Save Rules"
 
 #: src/components/miniflux/EditCategoryDialog.tsx:106
-#: src/components/miniflux/EditFeedDialog.tsx:449
-#: src/components/preferences/panes/AppearancePane.tsx:284
+#: src/components/miniflux/EditFeedDialog.tsx:456
+#: src/components/preferences/panes/TranslationPane.tsx:1691
 msgid "Saving..."
 msgstr "Saving..."
 
-#: src/components/miniflux/AddFeedDialog.tsx:776
-#: src/components/miniflux/EditFeedDialog.tsx:376
-#: src/components/miniflux/settings/FeedFormDialog.tsx:596
+#: src/components/miniflux/AddFeedDialog.tsx:783
+#: src/components/miniflux/EditFeedDialog.tsx:383
+#: src/components/miniflux/settings/FeedFormDialog.tsx:603
 msgid "Scraper rules"
 msgstr "Scraper rules"
 
-#: src/components/miniflux/EntryReading.tsx:211
+#: src/components/miniflux/EntryReading.tsx:250
 msgid "Scroll to top"
 msgstr ""
 
-#: src/components/miniflux/MinifluxLayout.tsx:533
+#: src/components/miniflux/MinifluxLayout.tsx:530
+#: src/components/miniflux/ReaderSelectionToolbar.tsx:165
 #: src/components/miniflux/SearchSourceDialog.tsx:163
 #: src/components/miniflux/settings/FeedFormDialog.tsx:337
 msgid "Search"
@@ -2321,6 +2470,10 @@ msgstr "Search categories..."
 #: src/components/miniflux/EntryFilters.tsx:59
 msgid "Search entries..."
 msgstr "Search entries..."
+
+#: src/components/preferences/panes/TranslationPane.tsx:1775
+msgid "Search feeds to exclude..."
+msgstr ""
 
 #: src/components/preferences/panes/FeedsPane.tsx:57
 msgid "Search feeds..."
@@ -2380,11 +2533,11 @@ msgstr "Select Image Download Folder"
 msgid "Select or enter server URL"
 msgstr "サーバー URL を選択または入力"
 
-#: src/components/miniflux/SafeHtml.tsx:651
+#: src/components/miniflux/SafeHtml.tsx:686
 msgid "Select phrase text"
 msgstr ""
 
-#: src/components/preferences/panes/AppearancePane.tsx:203
+#: src/components/preferences/panes/AppearancePane.tsx:121
 msgid "Select theme"
 msgstr "テーマを選択"
 
@@ -2392,7 +2545,7 @@ msgstr "テーマを選択"
 msgid "Select Video Download Folder"
 msgstr "Select Video Download Folder"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:159
+#: src/components/miniflux/EntryReadingHeader.tsx:171
 msgid "Sepia"
 msgstr ""
 
@@ -2431,7 +2584,7 @@ msgstr "サーバー URL が必要です"
 msgid "Server version"
 msgstr ""
 
-#: src/components/preferences/panes/IntegrationsPane.tsx:235
+#: src/components/preferences/panes/IntegrationsPane.tsx:236
 msgid "services"
 msgstr ""
 
@@ -2444,11 +2597,11 @@ msgstr "設定"
 msgid "shadcn/ui"
 msgstr "shadcn/ui"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:580
+#: src/components/miniflux/EntryReadingHeader.tsx:642
 msgid "Share"
 msgstr "Share"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:617
+#: src/components/miniflux/EntryReadingHeader.tsx:679
 msgid "Share link copied!"
 msgstr ""
 
@@ -2470,11 +2623,11 @@ msgstr "すべて表示"
 msgid "Show Left Sidebar"
 msgstr "左サイドバーを表示"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:507
+#: src/components/miniflux/EntryReadingHeader.tsx:532
 msgid "Show reading progress at bottom-left"
 msgstr ""
 
-#: src/components/miniflux/EntryReading.tsx:210
+#: src/components/miniflux/EntryReading.tsx:249
 msgid "Show reading status"
 msgstr ""
 
@@ -2490,16 +2643,25 @@ msgstr "トレイアイコンを表示"
 msgid "Size"
 msgstr "Size"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:161
+#: src/components/podcast/PodcastPlayer.tsx:154
+msgid "Skip back 15s"
+msgstr ""
+
+#: src/components/podcast/PodcastMiniPlayer.tsx:103
+#: src/components/podcast/PodcastPlayer.tsx:178
+msgid "Skip forward 30s"
+msgstr ""
+
+#: src/components/miniflux/EntryReadingHeader.tsx:173
 msgid "Slate"
 msgstr ""
 
-#: src/components/preferences/panes/AppearancePane.tsx:124
+#: src/components/preferences/panes/AppearancePane.tsx:72
 msgid "Something went wrong"
 msgstr "エラーが発生しました"
 
-#: src/components/miniflux/MinifluxLayout.tsx:490
-#: src/components/miniflux/MinifluxLayout.tsx:496
+#: src/components/miniflux/MinifluxLayout.tsx:487
+#: src/components/miniflux/MinifluxLayout.tsx:493
 msgid "Sort by"
 msgstr ""
 
@@ -2508,13 +2670,13 @@ msgstr ""
 msgid "Source URL is required"
 msgstr "Source URL is required"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:137
-#: src/components/preferences/panes/TranslationPane.tsx:1057
+#: src/components/miniflux/EntryReadingHeader.tsx:149
+#: src/components/preferences/panes/TranslationPane.tsx:1222
 msgid "Spanish"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:528
-#: src/components/miniflux/EntryReadingHeader.tsx:537
+#: src/components/miniflux/EntryReadingHeader.tsx:553
+#: src/components/miniflux/EntryReadingHeader.tsx:562
 msgid "Star"
 msgstr "Star"
 
@@ -2522,15 +2684,15 @@ msgstr "Star"
 #: src/components/layout/AppSidebar.tsx:477
 #: src/components/miniflux/EntryFilters.tsx:115
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:44
-#: src/components/miniflux/MinifluxLayout.tsx:383
+#: src/components/miniflux/MinifluxLayout.tsx:380
 msgid "Starred"
 msgstr "スター付き"
 
-#: src/components/miniflux/MinifluxLayout.tsx:407
+#: src/components/miniflux/MinifluxLayout.tsx:404
 msgid "starred items"
 msgstr ""
 
-#: src/components/miniflux/MinifluxLayout.tsx:306
+#: src/components/miniflux/MinifluxLayout.tsx:303
 msgid "Starred items page is only available when connected to Miniflux server."
 msgstr ""
 
@@ -2550,7 +2712,7 @@ msgstr "アプリケーションをシステムトレイに最小化して起動
 msgid "Status"
 msgstr "Status"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:505
+#: src/components/miniflux/EntryReadingHeader.tsx:530
 msgid "Status Bar"
 msgstr ""
 
@@ -2559,6 +2721,10 @@ msgstr ""
 #: src/components/sync/SyncProgressPopover.tsx:171
 msgid "Step {0} of {totalSteps}: {1}"
 msgstr "Step {0} of {totalSteps}: {1}"
+
+#: src/components/podcast/PodcastPlayer.tsx:252
+msgid "Stop after this episode"
+msgstr ""
 
 #: src/components/miniflux/ReaderSettings.tsx:173
 msgid "Strong newspaper tone"
@@ -2611,11 +2777,11 @@ msgstr "Syncing your Miniflux data"
 msgid "Syncing..."
 msgstr "Syncing..."
 
-#: src/components/preferences/panes/AppearancePane.tsx:208
+#: src/components/preferences/panes/AppearancePane.tsx:126
 msgid "System"
 msgstr "システム"
 
-#: src/components/preferences/panes/AppearancePane.tsx:181
+#: src/components/preferences/panes/AppearancePane.tsx:99
 msgid "System Default"
 msgstr "システムデフォルト"
 
@@ -2636,8 +2802,8 @@ msgstr "System UI"
 msgid "TanStack"
 msgstr "TanStack"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:348
-#: src/components/preferences/panes/TranslationPane.tsx:1040
+#: src/components/miniflux/EntryReadingHeader.tsx:368
+#: src/components/preferences/panes/TranslationPane.tsx:1205
 msgid "Target language"
 msgstr ""
 
@@ -2657,11 +2823,11 @@ msgstr "テスト通知"
 msgid "The URL of your Miniflux server (e.g., miniflux.example.com)"
 msgstr "Miniflux サーバーの URL（例：miniflux.example.com）"
 
-#: src/components/preferences/panes/AppearancePane.tsx:192
+#: src/components/preferences/panes/AppearancePane.tsx:110
 msgid "Theme"
 msgstr "テーマ"
 
-#: src/components/preferences/panes/AppearancePane.tsx:218
+#: src/components/preferences/panes/TranslationPane.tsx:1625
 msgid "These replacements are applied after built-in Chinese conversion in the reading panel."
 msgstr "These replacements are applied after built-in Chinese conversion in the reading panel."
 
@@ -2697,7 +2863,7 @@ msgstr "This will remove all locally stored data and disconnect your account."
 msgid "This will remove the category from Miniflux."
 msgstr "This will remove the category from Miniflux."
 
-#: src/components/preferences/panes/TranslationPane.tsx:866
+#: src/components/preferences/panes/TranslationPane.tsx:996
 msgid "Timeout must be a positive number"
 msgstr ""
 
@@ -2727,7 +2893,7 @@ msgstr ""
 msgid "Title is required"
 msgstr "Title is required"
 
-#: src/components/preferences/panes/AppearancePane.tsx:236
+#: src/components/preferences/panes/TranslationPane.tsx:1643
 msgid "To"
 msgstr "To"
 
@@ -2737,8 +2903,8 @@ msgstr "コマンドパレットを開いて利用可能なコマンドを探索
 
 #: src/components/layout/AppSidebar.tsx:444
 #: src/components/layout/AppSidebar.tsx:453
-#: src/components/miniflux/EntryList.tsx:145
-#: src/components/miniflux/MinifluxLayout.tsx:385
+#: src/components/miniflux/EntryList.tsx:146
+#: src/components/miniflux/MinifluxLayout.tsx:382
 msgid "Today"
 msgstr "今日"
 
@@ -2758,7 +2924,7 @@ msgstr "最大化の切り替え"
 msgid "Toggle window maximize state"
 msgstr "ウィンドウの最大化状態を切り替え"
 
-#: src/components/miniflux/SafeHtml.tsx:654
+#: src/components/miniflux/SafeHtml.tsx:690
 msgid "Top bar"
 msgstr ""
 
@@ -2766,20 +2932,28 @@ msgstr ""
 #~ msgid "Translate automatically when opening this entry."
 #~ msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:335
-#: src/components/miniflux/EntryReadingHeader.tsx:343
+#: src/components/miniflux/EntryReadingHeader.tsx:355
+#: src/components/miniflux/EntryReadingHeader.tsx:363
 msgid "Translate now"
 msgstr ""
 
-#: src/components/miniflux/ReaderSelectionTranslatePopover.tsx:116
+#: src/components/miniflux/ReaderSelectionToolbar.tsx:163
 msgid "Translate selection"
 msgstr ""
 
 #: src/components/miniflux/EntryReadingHeader.tsx:329
-msgid "Translate this article and tune how translated text is shown."
+#~ msgid "Translate this article and tune how translated text is shown."
+#~ msgstr ""
+
+#: src/components/miniflux/SafeHtml.tsx:689
+msgid "Translate this paragraph"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:381
+#: src/components/miniflux/SafeHtml.tsx:692
+msgid "Translate with..."
+msgstr ""
+
+#: src/components/miniflux/EntryReadingHeader.tsx:401
 msgid "Translated only"
 msgstr ""
 
@@ -2787,52 +2961,56 @@ msgstr ""
 #~ msgid "Translating..."
 #~ msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:319
-#: src/components/miniflux/EntryReadingHeader.tsx:327
-#: src/components/miniflux/SafeHtml.tsx:650
+#: src/components/miniflux/EntryReadingHeader.tsx:334
+#: src/components/miniflux/EntryReadingHeader.tsx:342
+#: src/components/miniflux/SafeHtml.tsx:685
 #: src/components/preferences/PreferencesDialog.tsx:97
 msgid "Translation"
 msgstr ""
 
-#: src/components/miniflux/SafeHtml.tsx:653
+#: src/components/miniflux/SafeHtml.tsx:688
 msgid "Translation controls in top bar"
+msgstr ""
+
+#: src/components/miniflux/EntryReadingHeader.tsx:348
+msgid "Translation disabled for this feed"
 msgstr ""
 
 #: src/components/preferences/panes/TranslationPane.tsx:562
 #~ msgid "Translation engine"
 #~ msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1099
+#: src/components/preferences/panes/TranslationPane.tsx:1264
 msgid "Translation engines"
 msgstr ""
 
-#: src/components/miniflux/ImmersiveTranslationLayer.tsx:276
-#: src/components/miniflux/ImmersiveTranslationLayer.tsx:301
-#: src/components/miniflux/ReaderSelectionTranslatePopover.tsx:89
+#: src/components/miniflux/ImmersiveTranslationLayer.tsx:742
+#: src/components/miniflux/ReaderSelectionToolbar.tsx:270
+#: src/components/miniflux/SafeHtml.tsx:694
 msgid "Translation failed"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:305
+#: src/components/miniflux/EntryReadingHeader.tsx:320
 msgid "Translation options"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1066
+#: src/components/preferences/panes/TranslationPane.tsx:1231
 msgid "Translation Providers"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1029
+#: src/components/preferences/panes/TranslationPane.tsx:1194
 msgid "Translation route mode"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:695
+#: src/components/preferences/panes/TranslationPane.tsx:825
 msgid "Translation route mode updated"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1048
+#: src/components/preferences/panes/TranslationPane.tsx:1213
 msgid "Translation target language"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:709
+#: src/components/preferences/panes/TranslationPane.tsx:839
 msgid "Translation target language updated"
 msgstr ""
 
@@ -2853,21 +3031,29 @@ msgstr "Tune the reading layout for long-form comfort."
 msgid "Type a command or search..."
 msgstr "コマンドを入力または検索..."
 
+#: src/components/preferences/panes/TranslationPane.tsx:1451
+msgid "Type or fetch to pick a model"
+msgstr ""
+
 #: src/components/miniflux/ReaderSettings.tsx:207
 msgid "Typography"
 msgstr "Typography"
+
+#: src/components/podcast/PodcastPlayer.tsx:231
+msgid "Unmute"
+msgstr ""
 
 #: src/components/miniflux/EntryFilters.tsx:107
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:38
 msgid "Unread"
 msgstr "Unread"
 
-#: src/components/miniflux/MinifluxLayout.tsx:403
+#: src/components/miniflux/MinifluxLayout.tsx:400
 msgid "unread items"
 msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:528
-#: src/components/miniflux/EntryReadingHeader.tsx:537
+#: src/components/miniflux/EntryReadingHeader.tsx:553
+#: src/components/miniflux/EntryReadingHeader.tsx:562
 msgid "Unstar"
 msgstr "Unstar"
 
@@ -2919,7 +3105,7 @@ msgstr "Update username or password."
 msgid "URL copied to clipboard"
 msgstr "URL copied to clipboard"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:601
+#: src/components/miniflux/EntryReadingHeader.tsx:663
 msgid "URL copied!"
 msgstr ""
 
@@ -2930,8 +3116,8 @@ msgstr "URL selected from discovered sources"
 #: src/components/miniflux/AddFeedDialog.tsx:710
 #: src/components/miniflux/EditFeedDialog.tsx:310
 #: src/components/miniflux/settings/FeedFormDialog.tsx:530
-msgid "Use custom crawler"
-msgstr "Use custom crawler"
+#~ msgid "Use custom crawler"
+#~ msgstr "Use custom crawler"
 
 #: src/components/miniflux/SearchSourceDialog.tsx:193
 msgid "Use in Add Feed"
@@ -2944,6 +3130,12 @@ msgstr "Use source title"
 #: src/components/miniflux/AddFeedDialog.tsx:503
 msgid "Use URL"
 msgstr "Use URL"
+
+#: src/components/miniflux/AddFeedDialog.tsx:715
+#: src/components/miniflux/EditFeedDialog.tsx:315
+#: src/components/miniflux/settings/FeedFormDialog.tsx:535
+msgid "Useful for summary-only feeds"
+msgstr ""
 
 #: src/components/miniflux/settings/UserFormDialog.tsx:140
 #: src/components/miniflux/UserNav.tsx:252
@@ -2995,11 +3187,11 @@ msgstr "ユーザー名/パスワード"
 msgid "Users"
 msgstr "Users"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1165
+#: src/components/preferences/panes/TranslationPane.tsx:1330
 msgid "Verify"
 msgstr ""
 
-#: src/components/preferences/panes/TranslationPane.tsx:1164
+#: src/components/preferences/panes/TranslationPane.tsx:1329
 msgid "Verifying..."
 msgstr ""
 
@@ -3021,6 +3213,11 @@ msgstr ""
 #: src/lib/menu.ts:106
 #~ msgid "Version: {__APP_VERSION__}"
 #~ msgstr "バージョン: {__APP_VERSION__}"
+
+#. placeholder {0}: translationState.provider
+#: src/components/miniflux/ReaderSelectionToolbar.tsx:265
+msgid "via {0}"
+msgstr ""
 
 #: src/components/preferences/panes/GeneralPane.tsx:232
 msgid "Video Download Path"
@@ -3050,7 +3247,7 @@ msgstr "ビュー"
 msgid "Warm and friendly"
 msgstr "Warm and friendly"
 
-#: src/components/miniflux/MinifluxLayout.tsx:320
+#: src/components/miniflux/MinifluxLayout.tsx:317
 msgid "Welcome to Miniflux"
 msgstr "Miniflux へようこそ"
 
@@ -3062,7 +3259,7 @@ msgstr "Tauri テンプレートへようこそ"
 msgid "Window"
 msgstr "ウィンドウ"
 
-#: src/components/miniflux/EntryList.tsx:147
+#: src/components/miniflux/EntryList.tsx:148
 msgid "Yesterday"
 msgstr "Yesterday"
 
@@ -3078,18 +3275,21 @@ msgstr ""
 msgid "You can find your API token in Miniflux Settings → API Keys"
 msgstr "Miniflux 設定 → API キーで API トークンを見つけることができます"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:426
+#: src/components/miniflux/EntryReadingHeader.tsx:423
 msgid "中文顯示"
 msgstr "中文顯示"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:129
+#: src/components/miniflux/EntryReadingHeader.tsx:141
+#: src/components/preferences/panes/TranslationPane.tsx:1617
 msgid "簡體中文"
 msgstr "簡體中文"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:128
+#: src/components/miniflux/EntryReadingHeader.tsx:140
+#: src/components/preferences/panes/TranslationPane.tsx:1616
 msgid "繁體中文（台灣）"
 msgstr "繁體中文（台灣）"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:127
+#: src/components/miniflux/EntryReadingHeader.tsx:139
+#: src/components/preferences/panes/TranslationPane.tsx:1615
 msgid "繁體中文（香港）"
 msgstr "繁體中文（香港）"

@@ -25,6 +25,8 @@
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
+    "test:e2e:tauri": "cd e2e-tauri && bun test",
+    "test:e2e:tauri:build": "tauri build --debug --no-bundle --features webdriver",
     "rust:fmt": "cd src-tauri && cargo fmt",
     "rust:fmt:check": "cd src-tauri && cargo fmt -- --check",
     "rust:clippy": "cd src-tauri && cargo clippy -- -D warnings",

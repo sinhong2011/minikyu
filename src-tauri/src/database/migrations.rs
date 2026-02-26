@@ -21,6 +21,11 @@ pub async fn run_migrations(pool: &SqlitePool) -> Result<(), sqlx::Error> {
         record_migration(pool, 3, "add_entries_status_published_at_index").await?;
     }
 
+    if !applied_migrations.contains(&4) {
+        apply_podcast_settings_migration(pool).await?;
+        record_migration(pool, 4, "podcast_feed_settings_and_duration").await?;
+    }
+
     Ok(())
 }
 
@@ -323,7 +328,7 @@ pub(crate) async fn apply_initial_schema(pool: &SqlitePool) -> Result<(), sqlx::
         CREATE TABLE IF NOT EXISTS podcast_progress (
             id INTEGER PRIMARY KEY,
             entry_id INTEGER NOT NULL UNIQUE,
-            current_time INTEGER NOT NULL,
+            "current_time" INTEGER NOT NULL,
             total_time INTEGER NOT NULL,
             completed BOOLEAN DEFAULT FALSE,
             last_played_at TEXT NOT NULL,
@@ -382,6 +387,31 @@ pub(crate) async fn apply_initial_schema(pool: &SqlitePool) -> Result<(), sqlx::
 
     log::info!("Initial schema migration applied (version 1)");
 
+    Ok(())
+}
+
+pub(crate) async fn apply_podcast_settings_migration(pool: &SqlitePool) -> Result<(), sqlx::Error> {
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS podcast_feed_settings (
+            feed_id INTEGER PRIMARY KEY,
+            auto_download_count INTEGER DEFAULT 3,
+            playback_speed REAL DEFAULT 1.0,
+            auto_cleanup_days INTEGER DEFAULT 7,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        )
+        "#,
+    )
+    .execute(pool)
+    .await?;
+
+    sqlx::query("ALTER TABLE enclosures ADD COLUMN duration_seconds INTEGER")
+        .execute(pool)
+        .await
+        .ok(); // OK if column already exists
+
+    log::info!("Podcast settings migration applied (version 4)");
     Ok(())
 }
 
