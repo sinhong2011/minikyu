@@ -3,6 +3,7 @@ import { Menu, MenuItem, PredefinedMenuItem, Submenu } from '@tauri-apps/api/men
 import { i18n } from '@/i18n';
 import { logger } from '@/lib/logger';
 import { notifications } from '@/lib/notifications';
+import { commands } from '@/lib/tauri-bindings';
 import { checkLatestVersion } from '@/lib/updates';
 import { useUIStore } from '@/store/ui-store';
 
@@ -47,9 +48,11 @@ export async function buildAppMenu(): Promise<Menu> {
           text: _(msg`Show All`),
         }),
         await PredefinedMenuItem.new({ item: 'Separator' }),
-        await PredefinedMenuItem.new({
-          item: 'Quit',
+        await MenuItem.new({
+          id: 'quit',
           text: _(msg`Quit ${APP_NAME}`),
+          accelerator: 'CmdOrCtrl+Q',
+          action: handleQuitApp,
         }),
       ],
     });
@@ -134,4 +137,12 @@ function handleOpenPreferences(): void {
 function handleToggleLeftSidebar(): void {
   logger.info('Toggle Left Sidebar menu item clicked');
   useUIStore.getState().toggleLeftSidebar();
+}
+
+async function handleQuitApp(): Promise<void> {
+  logger.info('Quit menu item clicked');
+  const result = await commands.trayQuitApp();
+  if (result.status === 'error') {
+    logger.error('Failed to quit application', { error: result.error });
+  }
 }

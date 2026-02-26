@@ -282,12 +282,20 @@ fn handle_menu_event(app: &AppHandle, event: tauri::menu::MenuEvent) {
         }
         MENU_QUIT_ID => {
             log::info!("Tray menu: Quit");
-            app.exit(0);
+            quit_app_now(app);
         }
         _ => {
             log::warn!("Unknown tray menu item: {:?}", event.id);
         }
     }
+}
+
+/// Perform best-effort cleanup and terminate immediately.
+/// This avoids macOS terminate callback unwind issues seen in some Tao shutdown paths.
+fn quit_app_now(app: &AppHandle) -> ! {
+    let _ = app.emit("app-quitting", ());
+    cleanup_tray();
+    std::process::exit(0);
 }
 
 // ============================================================================
@@ -480,6 +488,13 @@ pub async fn tray_is_window_visible(app: AppHandle) -> Result<bool, String> {
         .map_err(|e| format!("Failed to check visibility: {e}"))
 }
 
+/// Quit the app through a guarded path that skips fragile terminate callbacks.
+#[tauri::command]
+#[specta::specta]
+pub async fn tray_quit_app(app: AppHandle) -> Result<(), String> {
+    quit_app_now(&app)
+}
+
 // ============================================================================
 // Cleanup
 // ============================================================================
@@ -488,9 +503,36 @@ pub async fn tray_is_window_visible(app: AppHandle) -> Result<bool, String> {
 #[allow(dead_code)]
 pub fn cleanup_tray() {
     log::info!("Cleaning up tray icon");
-    *TRAY_ICON_INSTANCE.lock().unwrap() = None;
-    *CURRENT_TRAY_STATE.lock().unwrap() = TrayIconState::Normal;
-    *CURRENT_TOOLTIP.lock().unwrap() = String::new();
+    {
+        let mut tray_guard = match TRAY_ICON_INSTANCE.lock() {
+            Ok(guard) => guard,
+            Err(poisoned) => {
+                log::error!("Tray icon mutex poisoned during cleanup; recovering");
+                poisoned.into_inner()
+            }
+        };
+        *tray_guard = None;
+    }
+    {
+        let mut state_guard = match CURRENT_TRAY_STATE.lock() {
+            Ok(guard) => guard,
+            Err(poisoned) => {
+                log::error!("Tray state mutex poisoned during cleanup; recovering");
+                poisoned.into_inner()
+            }
+        };
+        *state_guard = TrayIconState::Normal;
+    }
+    {
+        let mut tooltip_guard = match CURRENT_TOOLTIP.lock() {
+            Ok(guard) => guard,
+            Err(poisoned) => {
+                log::error!("Tray tooltip mutex poisoned during cleanup; recovering");
+                poisoned.into_inner()
+            }
+        };
+        *tooltip_guard = String::new();
+    }
 }
 
 // ============================================================================

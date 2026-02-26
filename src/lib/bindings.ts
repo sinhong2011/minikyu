@@ -300,6 +300,17 @@ async trayIsWindowVisible() : Promise<Result<boolean, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+/**
+ * Quit the app through a guarded path that skips fragile terminate callbacks.
+ */
+async trayQuitApp() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("tray_quit_app") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async saveMinifluxAccount(config: AuthConfig) : Promise<Result<string, AccountError>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("save_miniflux_account", { config }) };
