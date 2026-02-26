@@ -1,25 +1,39 @@
-import {
-  type BundledLanguage,
-  type BundledTheme,
-  bundledThemesInfo,
-  getSingletonHighlighter,
-} from 'shiki';
+import type { HighlighterCore } from 'shiki/core';
+
+const SHIKI_THEME_IDS = [
+  'catppuccin-latte',
+  'catppuccin-mocha',
+  'dracula',
+  'everforest-dark',
+  'everforest-light',
+  'github-dark',
+  'github-light',
+  'min-dark',
+  'min-light',
+  'nord',
+  'one-dark-pro',
+  'one-light',
+  'rose-pine',
+  'rose-pine-dawn',
+  'solarized-dark',
+  'solarized-light',
+  'tokyo-night',
+  'vitesse-light',
+  'vitesse-dark',
+] as const;
+
+type SupportedTheme = (typeof SHIKI_THEME_IDS)[number];
 
 const SHIKI_DEFAULT_THEMES = {
   light: 'github-light',
   dark: 'github-dark',
-} as const satisfies Record<'light' | 'dark', BundledTheme>;
+} as const satisfies Record<'light' | 'dark', SupportedTheme>;
 
-export type ReaderCodeTheme = 'auto' | BundledTheme;
+export type ReaderCodeTheme = 'auto' | SupportedTheme;
 
-const bundledThemeIds = bundledThemesInfo.map((theme) => theme.id).sort() as BundledTheme[];
-
-export const readerCodeThemeOptions: ReaderCodeTheme[] = ['auto', ...bundledThemeIds];
+export const readerCodeThemeOptions: ReaderCodeTheme[] = ['auto', ...SHIKI_THEME_IDS];
 
 const READER_CODE_THEME_SET = new Set<ReaderCodeTheme>(readerCodeThemeOptions);
-const SHIKI_LOADABLE_THEMES = readerCodeThemeOptions.filter(
-  (theme): theme is BundledTheme => theme !== 'auto'
-);
 
 const SHIKI_LANGUAGES = [
   'bash',
@@ -43,9 +57,11 @@ const SHIKI_LANGUAGES = [
   'typescript',
   'xml',
   'yaml',
-] as const satisfies ReadonlyArray<BundledLanguage>;
+] as const;
 
-const SHIKI_LANGUAGE_SET = new Set<BundledLanguage>(SHIKI_LANGUAGES);
+type SupportedShikiLanguage = (typeof SHIKI_LANGUAGES)[number];
+
+const SHIKI_LANGUAGE_SET = new Set<string>(SHIKI_LANGUAGES);
 
 const LANGUAGE_ALIASES: Record<string, SupportedCodeLanguage> = {
   cjs: 'javascript',
@@ -68,9 +84,9 @@ const LANGUAGE_ALIASES: Record<string, SupportedCodeLanguage> = {
   zsh: 'bash',
 };
 
-let highlighterPromise: ReturnType<typeof getSingletonHighlighter> | null = null;
+let highlighterPromise: Promise<HighlighterCore> | null = null;
 
-export type SupportedCodeLanguage = (typeof SHIKI_LANGUAGES)[number] | 'text';
+export type SupportedCodeLanguage = SupportedShikiLanguage | 'text';
 
 export const codeLanguageOptions = [
   'text',
@@ -258,14 +274,69 @@ export function detectCodeLanguageFromContent(code: string): SupportedCodeLangua
   return 'text';
 }
 
-function getHighlighter() {
+async function initHighlighter(): Promise<HighlighterCore> {
+  const [{ createHighlighterCore }, { createJavaScriptRegexEngine }] = await Promise.all([
+    import('shiki/core'),
+    import('shiki/engine/javascript'),
+  ]);
+
+  const [langs, themes] = await Promise.all([
+    Promise.all([
+      import('shiki/langs/bash.mjs'),
+      import('shiki/langs/cpp.mjs'),
+      import('shiki/langs/css.mjs'),
+      import('shiki/langs/go.mjs'),
+      import('shiki/langs/html.mjs'),
+      import('shiki/langs/java.mjs'),
+      import('shiki/langs/javascript.mjs'),
+      import('shiki/langs/json.mjs'),
+      import('shiki/langs/jsx.mjs'),
+      import('shiki/langs/kotlin.mjs'),
+      import('shiki/langs/markdown.mjs'),
+      import('shiki/langs/python.mjs'),
+      import('shiki/langs/rust.mjs'),
+      import('shiki/langs/shellscript.mjs'),
+      import('shiki/langs/sql.mjs'),
+      import('shiki/langs/swift.mjs'),
+      import('shiki/langs/toml.mjs'),
+      import('shiki/langs/tsx.mjs'),
+      import('shiki/langs/typescript.mjs'),
+      import('shiki/langs/xml.mjs'),
+      import('shiki/langs/yaml.mjs'),
+    ]),
+    Promise.all([
+      import('shiki/themes/catppuccin-latte.mjs'),
+      import('shiki/themes/catppuccin-mocha.mjs'),
+      import('shiki/themes/dracula.mjs'),
+      import('shiki/themes/everforest-dark.mjs'),
+      import('shiki/themes/everforest-light.mjs'),
+      import('shiki/themes/github-dark.mjs'),
+      import('shiki/themes/github-light.mjs'),
+      import('shiki/themes/min-dark.mjs'),
+      import('shiki/themes/min-light.mjs'),
+      import('shiki/themes/nord.mjs'),
+      import('shiki/themes/one-dark-pro.mjs'),
+      import('shiki/themes/one-light.mjs'),
+      import('shiki/themes/rose-pine.mjs'),
+      import('shiki/themes/rose-pine-dawn.mjs'),
+      import('shiki/themes/solarized-dark.mjs'),
+      import('shiki/themes/solarized-light.mjs'),
+      import('shiki/themes/tokyo-night.mjs'),
+      import('shiki/themes/vitesse-light.mjs'),
+      import('shiki/themes/vitesse-dark.mjs'),
+    ]),
+  ]);
+
+  return createHighlighterCore({
+    engine: createJavaScriptRegexEngine(),
+    langs: langs.map((m) => m.default),
+    themes: themes.map((m) => m.default),
+  });
+}
+
+function getHighlighter(): Promise<HighlighterCore> {
   if (!highlighterPromise) {
-    highlighterPromise = getSingletonHighlighter({
-      langs: [...SHIKI_LANGUAGES],
-      themes: [
-        ...new Set([...SHIKI_LOADABLE_THEMES, ...Object.values(SHIKI_DEFAULT_THEMES)]),
-      ] as BundledTheme[],
-    }).catch((error) => {
+    highlighterPromise = initHighlighter().catch((error: unknown) => {
       highlighterPromise = null;
       throw error;
     });
@@ -291,7 +362,7 @@ export function normalizeCodeLanguage(rawLanguage?: string | null): SupportedCod
     return 'text';
   }
 
-  if (SHIKI_LANGUAGE_SET.has(aliasResolved as BundledLanguage)) {
+  if (SHIKI_LANGUAGE_SET.has(aliasResolved)) {
     return aliasResolved as SupportedCodeLanguage;
   }
 
@@ -308,7 +379,7 @@ export function normalizeReaderCodeTheme(rawTheme?: string | null): ReaderCodeTh
     : 'auto';
 }
 
-function resolveShikiTheme(theme: ReaderCodeTheme, isDarkMode: boolean): BundledTheme {
+function resolveShikiTheme(theme: ReaderCodeTheme, isDarkMode: boolean): SupportedTheme {
   if (theme === 'auto') {
     return isDarkMode ? SHIKI_DEFAULT_THEMES.dark : SHIKI_DEFAULT_THEMES.light;
   }
