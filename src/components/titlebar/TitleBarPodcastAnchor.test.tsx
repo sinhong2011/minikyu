@@ -76,38 +76,34 @@ describe('TitleBarPodcastAnchor', () => {
     usePlayerStore.getState().dismiss();
   });
 
-  it('renders nothing when no podcast is active', () => {
+  it('renders icon button', () => {
     renderAnchor();
-    expect(screen.queryByTestId('titlebar-podcast-icon')).not.toBeInTheDocument();
+    const button = screen.getByTestId('titlebar-podcast-icon');
+    expect(button).toBeInTheDocument();
   });
 
-  it('renders capsule with playback progress', () => {
+  it('shows eq bars when playing', () => {
     act(() => {
-      const { play, _setBuffering, _updateDuration, _updateTime } = usePlayerStore.getState();
+      const { play, _setBuffering } = usePlayerStore.getState();
       play(createEntry(), createEnclosure());
-      _updateDuration(300);
-      _updateTime(75);
       _setBuffering(false);
     });
     renderAnchor();
 
-    const trigger = screen.getByTestId('titlebar-podcast-icon');
-    expect(trigger).toBeInTheDocument();
-    expect(trigger).toHaveClass('rounded-full');
-    expect(screen.getByText('Podcast test title')).toBeInTheDocument();
-    expect(screen.getByText('1:15 / 5:00')).toBeInTheDocument();
+    const button = screen.getByTestId('titlebar-podcast-icon');
+    expect(button).toBeInTheDocument();
+    // EqBars renders animated spans inside the button when playing
+    const bars = button.querySelectorAll('span span');
+    expect(bars.length).toBeGreaterThan(0);
   });
 
-  it('calls togglePlayerWindow when capsule is clicked', async () => {
+  it('calls togglePlayerWindow when clicked', async () => {
     const { commands } = await import('@/lib/tauri-bindings');
-    act(() => {
-      usePlayerStore.getState().play(createEntry(), createEnclosure());
-    });
     renderAnchor();
 
-    const trigger = screen.getByTestId('titlebar-podcast-icon');
+    const button = screen.getByTestId('titlebar-podcast-icon');
     act(() => {
-      trigger.click();
+      button.click();
     });
 
     expect(commands.togglePlayerWindow).toHaveBeenCalled();
