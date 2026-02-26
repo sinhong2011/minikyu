@@ -18,6 +18,8 @@ import {
 } from '@/components/animate-ui/components/base/menu';
 import { MainWindowContent } from '@/components/layout/MainWindowContent';
 import { Button } from '@/components/ui/button';
+import { useAudioEngine } from '@/hooks/use-audio-engine';
+import { usePlayerCommandListener } from '@/hooks/use-player-command-listener';
 import { useSyncProgressListener } from '@/hooks/use-sync-progress-listener';
 import { logger } from '@/lib/logger';
 import { queryClient } from '@/lib/query-client';
@@ -44,6 +46,8 @@ type SortDirection = 'asc' | 'desc';
 
 export function MinifluxLayout() {
   const { _, i18n } = useLingui();
+  useAudioEngine();
+  usePlayerCommandListener();
   const search = useSearch({ from: '/' });
   const filter: FilterType = search.filter || 'all';
   const categoryId = search.categoryId;
@@ -62,8 +66,21 @@ export function MinifluxLayout() {
   const [entryTransitionDirection, setEntryTransitionDirection] = useState<'forward' | 'backward'>(
     'forward'
   );
-  const [sortOrder, setSortOrder] = useState<SortOrder>('published_at');
+  const [sortOrder, setSortOrder] = useState<SortOrder>(
+    filter === 'history' ? 'changed_at' : 'published_at'
+  );
   const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
+  // Default sort order: history uses changed_at desc, others use published_at asc
+  useEffect(() => {
+    if (filter === 'history') {
+      setSortOrder('changed_at');
+      setSortDirection('asc');
+    } else {
+      setSortOrder('published_at');
+      setSortDirection('asc');
+    }
+  }, [filter]);
+
   const syncMiniflux = useSyncMiniflux();
   const syncing = useSyncStore((state) => state.syncing);
   const hasAutoSyncedRef = useRef(false);
@@ -85,7 +102,8 @@ export function MinifluxLayout() {
   const { data: lastReadingEntry } = useLastReadingEntry();
   const saveLastReading = useSaveLastReading();
   const countFormatter = new Intl.NumberFormat(i18n.locale, {
-    maximumFractionDigits: 0,
+    notation: 'compact',
+    maximumFractionDigits: 1,
   });
 
   // Merge router filters with local filters

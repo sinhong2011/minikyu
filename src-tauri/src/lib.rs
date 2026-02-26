@@ -147,10 +147,16 @@ pub fn run() {
         app_builder = app_builder.plugin(tauri_nspanel::init());
     }
 
-    // MCP Bridge plugin for debugging/driver connection (debug builds only with feature flag)
-    #[cfg(all(debug_assertions, feature = "mcp-bridge"))]
+    // MCP Bridge plugin for debugging/driver connection (debug builds only)
+    #[cfg(debug_assertions)]
     {
         app_builder = app_builder.plugin(tauri_plugin_mcp_bridge::init());
+    }
+
+    // WebDriver plugin for e2e testing (debug builds only with feature flag)
+    #[cfg(all(debug_assertions, feature = "webdriver"))]
+    {
+        app_builder = app_builder.plugin(tauri_plugin_webdriver::init());
     }
 
     app_builder
@@ -249,6 +255,17 @@ pub fn run() {
                 }
             } else {
                 log::info!("Quick pane is disabled; skipping window initialization");
+            }
+
+            // Create the player window (hidden) - must be done on main thread
+            if let Err(e) = commands::player_window::init_player_window(app.handle()) {
+                log::error!("Failed to create player window: {e}");
+                // Non-fatal: app can still run without player window
+            }
+
+            // Create the tray popover (hidden) - must be done on main thread
+            if let Err(e) = commands::player_window::init_tray_popover(app.handle()) {
+                log::error!("Failed to create tray popover: {e}");
             }
 
             // Initialize system tray icon (desktop only)

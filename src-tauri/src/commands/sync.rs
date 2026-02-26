@@ -450,6 +450,53 @@ async fn upsert_entries(
         .await
         .map_err(|e| format!("Failed to upsert entries: {e}"))?;
 
+    // Upsert enclosures from entries that have them
+    upsert_enclosures(pool, entries, now).await?;
+
+    Ok(())
+}
+
+async fn upsert_enclosures(
+    pool: &SqlitePool,
+    entries: &[crate::miniflux::Entry],
+    now: &str,
+) -> Result<(), String> {
+    let enclosures: Vec<_> = entries
+        .iter()
+        .flat_map(|e| e.enclosures.as_deref().unwrap_or_default())
+        .collect();
+
+    if enclosures.is_empty() {
+        return Ok(());
+    }
+
+    // SQLite has a variable limit; batch in chunks of 500
+    for chunk in enclosures.chunks(500) {
+        let mut builder: QueryBuilder<sqlx::Sqlite> = QueryBuilder::new(
+            "INSERT INTO enclosures (id, entry_id, url, mime_type, length, position, created_at)",
+        );
+
+        builder.push_values(chunk, |mut row, enc| {
+            row.push_bind(enc.id)
+                .push_bind(enc.entry_id)
+                .push_bind(&enc.url)
+                .push_bind(&enc.mime_type)
+                .push_bind(enc.length)
+                .push_bind(enc.position)
+                .push_bind(now);
+        });
+
+        builder.push(
+            " ON CONFLICT(id) DO UPDATE SET url = excluded.url, mime_type = excluded.mime_type, length = excluded.length, position = excluded.position",
+        );
+
+        builder
+            .build()
+            .execute(pool)
+            .await
+            .map_err(|e| format!("Failed to upsert enclosures: {e}"))?;
+    }
+
     Ok(())
 }
 

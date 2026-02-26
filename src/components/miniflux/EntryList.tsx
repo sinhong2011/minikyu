@@ -1,10 +1,17 @@
-import { Refresh04Icon } from '@hugeicons/core-free-icons';
+import {
+  Download01Icon,
+  HeadphonesIcon,
+  PlayIcon,
+  Playlist03Icon,
+  Refresh04Icon,
+} from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { format } from 'date-fns';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { toast } from 'sonner';
 import { FeedAvatar } from '@/components/miniflux';
 import {
   Item,
@@ -22,9 +29,17 @@ import {
   getEntryDateSectionType,
   groupEntriesByCalendarDate,
 } from '@/lib/miniflux-utils';
-import type { Entry, EntryFilters } from '@/lib/tauri-bindings';
+import {
+  buildPodcastDownloadFileName,
+  formatDuration,
+  getPodcastEnclosure,
+} from '@/lib/podcast-utils';
+import type { Enclosure, Entry, EntryFilters } from '@/lib/tauri-bindings';
+import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
 import { useEntries, usePrefetchEntry } from '@/services/miniflux';
+import { usePlayerStore } from '@/store/player-store';
+import { useUIStore } from '@/store/ui-store';
 import {
   type EntryListFilterStatus,
   EntryListFloatingFilterBar,
@@ -427,6 +442,24 @@ export function EntryList({
     prefetchEntry(entryId);
   };
 
+  const handlePlayPodcast = useCallback((entry: Entry, enclosure: Enclosure) => {
+    usePlayerStore.getState().play(entry, enclosure);
+  }, []);
+
+  const handleDownloadPodcast = useCallback(
+    async (entry: Entry, enclosure: Enclosure) => {
+      const fileName = buildPodcastDownloadFileName(entry.title, enclosure);
+      useUIStore.getState().setDownloadsOpen(true);
+      toast.message(_(msg`Downloading`), { description: fileName });
+
+      const result = await commands.downloadFile(enclosure.url, fileName, 'audio');
+      if (result.status === 'error') {
+        toast.error(_(msg`Download Failed`), { description: result.error });
+      }
+    },
+    [_]
+  );
+
   const skeletonKeys = ['one', 'two', 'three', 'four', 'five', 'six'];
   const showPullIndicator = Boolean(onPullToRefresh) && (isPulling || pullRefreshPending);
   const pullOffset = isPulling
@@ -594,6 +627,10 @@ export function EntryList({
               const entry = row.entry;
               const isNew = newEntryIds.has(entry.id);
               const thumbnailUrl = extractThumbnail(entry);
+              const podcastEnclosure = getPodcastEnclosure(entry);
+              const podcastDuration = podcastEnclosure?.length
+                ? formatDuration(Number(podcastEnclosure.length))
+                : null;
 
               return (
                 <motion.div
@@ -642,7 +679,61 @@ export function EntryList({
                             <span className="max-w-[120px] truncate">{entry.feed.title}</span>
                           </div>
                           <div className="flex shrink-0 items-center gap-2">
-                            {entry.reading_time && <span>{entry.reading_time} min</span>}
+                            {podcastEnclosure ? (
+                              <div className="flex items-center gap-1">
+                                <button
+                                  type="button"
+                                  className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-muted-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
+                                  title={_(msg`Download`)}
+                                  data-testid="podcast-indicator-download"
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    handleDownloadPodcast(entry, podcastEnclosure);
+                                  }}
+                                >
+                                  <HugeiconsIcon icon={Download01Icon} className="size-3" />
+                                </button>
+                                <button
+                                  type="button"
+                                  className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-muted-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
+                                  title={_(msg`Play`)}
+                                  data-testid="podcast-indicator-play"
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    handlePlayPodcast(entry, podcastEnclosure);
+                                  }}
+                                >
+                                  <HugeiconsIcon icon={PlayIcon} className="size-3" />
+                                </button>
+                                <button
+                                  type="button"
+                                  className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-muted-foreground/80 transition-colors hover:bg-accent hover:text-foreground"
+                                  title={_(msg`Add to playlist`)}
+                                  data-testid="podcast-indicator-queue"
+                                  onClick={(event) => {
+                                    event.preventDefault();
+                                    event.stopPropagation();
+                                    usePlayerStore.getState().addToQueue(entry, podcastEnclosure);
+                                    toast.message(_(msg`Added to playlist`), {
+                                      description: entry.title,
+                                    });
+                                  }}
+                                >
+                                  <HugeiconsIcon icon={Playlist03Icon} className="size-3" />
+                                </button>
+                                <span
+                                  className="flex items-center gap-1"
+                                  data-testid="podcast-indicator"
+                                >
+                                  <HugeiconsIcon icon={HeadphonesIcon} className="size-3" />
+                                  {podcastDuration || _(msg`Podcast`)}
+                                </span>
+                              </div>
+                            ) : (
+                              entry.reading_time && <span>{entry.reading_time} min</span>
+                            )}
                             <span className="text-border">•</span>
                             <span className="text-xs text-muted-foreground/70">
                               {formatEntryTime(entry.published_at)}

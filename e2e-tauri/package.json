@@ -1,0 +1,16 @@
+{
+  "name": "minikyu-e2e-tauri",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "test": "wdio run wdio.conf.mjs",
+    "test:headed": "wdio run wdio.conf.mjs --headed"
+  },
+  "devDependencies": {
+    "@wdio/cli": "^9.19.0",
+    "@wdio/local-runner": "^9.19.0",
+    "@wdio/mocha-framework": "^9.19.0",
+    "@wdio/spec-reporter": "^9.19.0",
+    "expect-webdriverio": "^5.0.0"
+  }
+}

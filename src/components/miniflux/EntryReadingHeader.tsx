@@ -8,6 +8,9 @@ import {
   Globe02Icon,
   Mail01Icon,
   MailOpen01Icon,
+  PauseIcon,
+  PlayIcon,
+  Playlist03Icon,
   Share01Icon,
   StarIcon,
   TextIcon,
@@ -18,7 +21,8 @@ import { useLingui } from '@lingui/react';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { format, parseISO } from 'date-fns';
 import { AnimatePresence, type MotionValue, motion } from 'motion/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
+import { toast } from 'sonner';
 import { Switch } from '@/components/animate-ui/components/base/switch';
 import { FeedAvatar } from '@/components/miniflux/FeedAvatar';
 import { Button } from '@/components/ui/button';
@@ -40,10 +44,12 @@ import { Spinner } from '@/components/ui/spinner';
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import type { Entry } from '@/lib/bindings';
+import { getPodcastEnclosure } from '@/lib/podcast-utils';
 import { normalizeReaderTheme, type ReaderTheme, readerThemeOptions } from '@/lib/reader-theme';
 import { type ReaderCodeTheme, readerCodeThemeOptions } from '@/lib/shiki-highlight';
 import type { AppPreferences, ChineseConversionMode } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
+import { usePlayerStore } from '@/store/player-store';
 import { ReaderSettings } from './ReaderSettings';
 
 interface EntryReadingHeaderProps {
@@ -191,6 +197,13 @@ export function EntryReadingHeader({
   const toolbarButtonClass =
     'h-9 w-9 rounded-xl border border-transparent text-muted-foreground/90 hover:bg-accent/70 hover:text-foreground data-[state=open]:border-border/60 data-[state=open]:bg-accent/70 data-[state=open]:text-foreground';
   const translationControlActive = translationEnabled;
+  const currentPlayerEntryId = usePlayerStore((state) => state.currentEntry?.id ?? null);
+  const playerIsPlaying = usePlayerStore((state) => state.isPlaying);
+  const playerIsBuffering = usePlayerStore((state) => state.isBuffering);
+  const podcastEnclosure = useMemo(() => getPodcastEnclosure(entry), [entry]);
+  const isCurrentPodcastEntry = currentPlayerEntryId === entry.id;
+  const podcastPlaying = isCurrentPodcastEntry && playerIsPlaying;
+  const podcastBuffering = isCurrentPodcastEntry && playerIsBuffering;
 
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [copiedShareCode, setCopiedShareCode] = useState(false);
@@ -217,6 +230,28 @@ export function EntryReadingHeader({
   const fetchOriginalContentLabel = _(msg`Download original content`);
   const fetchingOriginalContentLabel = _(msg`Fetching original content...`);
   const originalContentDownloadedLabel = _(msg`Original content downloaded`);
+  const podcastPlayLabel = podcastBuffering
+    ? _(msg`Loading...`)
+    : podcastPlaying
+      ? _(msg`Pause`)
+      : _(msg`Play`);
+
+  const handlePodcastPlayPause = () => {
+    if (!podcastEnclosure) return;
+
+    const { currentEntry, isPlaying, pause, play, resume } = usePlayerStore.getState();
+
+    if (currentEntry?.id === entry.id) {
+      if (isPlaying) {
+        pause();
+      } else {
+        resume();
+      }
+      return;
+    }
+
+    play(entry, podcastEnclosure);
+  };
 
   return (
     <motion.header
@@ -713,7 +748,7 @@ export function EntryReadingHeader({
         }}
         className="mt-1 flex items-start justify-between px-3"
       >
-        <div className="flex flex-col flex-1 space-y-2 pb-2">
+        <div className="flex flex-col flex-1 space-y-2.5 pb-2">
           <a
             href={entry.url}
             target="_blank"
@@ -726,34 +761,127 @@ export function EntryReadingHeader({
               }
             }}
           >
-            <h1 className="text-2xl font-bold">{entry.title}</h1>
+            <h1 className="text-2xl font-bold leading-tight tracking-tight">{entry.title}</h1>
           </a>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <FeedAvatar title={entry.feed.title} domain={entry.feed.site_url} className="size-4!" />
+          <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
+            <FeedAvatar title={entry.feed.title} domain={entry.feed.site_url} className="size-5!" />
             <a
               href={entry.feed.site_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-foreground/85 transition-colors hover:text-foreground hover:underline decoration-primary/40 underline-offset-4"
+              className="font-medium text-foreground/80 transition-colors hover:text-foreground hover:underline decoration-primary/40 underline-offset-4"
             >
               {entry.feed.title}
             </a>
             {entry.author && (
               <>
-                <span>•</span>
-                <span>{entry.author}</span>
+                <span className="text-muted-foreground/30">·</span>
+                <span className="text-muted-foreground/70">{entry.author}</span>
               </>
             )}
-            <span>•</span>
-            <span>{format(parseISO(entry.published_at), 'PPp')}</span>
+            <span className="text-muted-foreground/30">·</span>
+            <time className="text-muted-foreground/70" dateTime={entry.published_at}>
+              {format(parseISO(entry.published_at), 'MMM d, yyyy')}
+            </time>
             {entry.reading_time && (
               <>
-                <span>•</span>
-                <span>{entry.reading_time} min read</span>
+                <span className="text-muted-foreground/30">·</span>
+                <span className="tabular-nums text-muted-foreground/70">
+                  {entry.reading_time} {_(msg`min read`)}
+                </span>
               </>
             )}
           </div>
         </div>
+
+        {podcastEnclosure && (
+          <div className="ml-3 shrink-0 pt-1">
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 rounded-xl text-muted-foreground hover:text-foreground transition-all"
+                    onClick={handlePodcastPlayPause}
+                    aria-label={podcastPlayLabel}
+                    data-testid="entry-header-podcast-play"
+                  />
+                }
+              >
+                <span className="relative inline-flex">
+                  {podcastBuffering && (
+                    <motion.span
+                      aria-hidden
+                      className="pointer-events-none absolute -inset-1 rounded-full border border-primary/35"
+                      animate={{ rotate: 360 }}
+                      transition={{
+                        duration: 1.1,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: 'linear',
+                      }}
+                    />
+                  )}
+                  {podcastPlaying && !podcastBuffering && (
+                    <motion.span
+                      aria-hidden
+                      className="pointer-events-none absolute inset-0 rounded-full bg-primary/20"
+                      animate={{ scale: [1, 1.32], opacity: [0.45, 0] }}
+                      transition={{
+                        duration: 1.15,
+                        repeat: Number.POSITIVE_INFINITY,
+                        ease: 'easeOut',
+                      }}
+                    />
+                  )}
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                      key={podcastBuffering ? 'loading' : podcastPlaying ? 'pause' : 'play'}
+                      initial={{ opacity: 0, scale: 0.84, y: 1 }}
+                      animate={{ opacity: 1, scale: 1, y: 0 }}
+                      exit={{ opacity: 0, scale: 0.84, y: -1 }}
+                      transition={{ duration: 0.16 }}
+                    >
+                      {podcastBuffering ? (
+                        <Spinner className="h-5 w-5" />
+                      ) : (
+                        <HugeiconsIcon
+                          icon={podcastPlaying ? PauseIcon : PlayIcon}
+                          className="h-5 w-5"
+                        />
+                      )}
+                    </motion.span>
+                  </AnimatePresence>
+                </span>
+              </TooltipTrigger>
+              <TooltipPanel>{podcastPlayLabel}</TooltipPanel>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-10 w-10 rounded-xl text-muted-foreground hover:text-foreground"
+                    onClick={() => {
+                      if (!podcastEnclosure) return;
+                      usePlayerStore.getState().addToQueue(entry, podcastEnclosure);
+                      toast.message(_(msg`Added to playlist`), { description: entry.title });
+                    }}
+                    aria-label={_(msg`Add to playlist`)}
+                    data-testid="entry-header-podcast-queue"
+                  />
+                }
+              >
+                <HugeiconsIcon icon={Playlist03Icon} className="h-5 w-5" />
+              </TooltipTrigger>
+              <TooltipPanel>{_(msg`Add to playlist`)}</TooltipPanel>
+            </Tooltip>
+          </div>
+        )}
       </motion.div>
     </motion.header>
   );

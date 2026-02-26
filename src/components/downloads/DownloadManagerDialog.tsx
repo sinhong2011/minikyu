@@ -1,12 +1,16 @@
 import {
+  AlertCircleIcon,
   Cancel01Icon,
   Copy01Icon,
+  Delete02Icon,
   Download01Icon,
-  File01Icon,
   Folder01Icon,
-  InformationCircleIcon,
-  Link01Icon,
+  HeadphonesIcon,
+  Image01Icon,
+  PlayIcon,
   RefreshIcon,
+  Tick02Icon,
+  Video01Icon,
   ViewIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -14,21 +18,26 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { listen } from '@tauri-apps/api/event';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
-import { openPath } from '@tauri-apps/plugin-opener';
-import { useEffect, useRef, useState } from 'react';
+import { openPath, revealItemInDir } from '@tauri-apps/plugin-opener';
+import { AnimatePresence, motion } from 'motion/react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { Badge } from '@/components/ui/badge';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
-import { Progress } from '@/components/ui/progress';
 import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
+import { usePlayerStore } from '@/store/player-store';
 import { useUIStore } from '@/store/ui-store';
 
-type DownloadState = {
+// ── Types ────────────────────────────────────────────────────────────
+
+type DownloadStatus = 'downloading' | 'completed' | 'failed' | 'cancelled';
+type FilterTab = 'all' | 'active' | 'completed' | 'failed';
+
+type DownloadItem = {
   enclosureId: number;
   url: string;
   fileName: string;
-  status: 'downloading' | 'completed' | 'failed' | 'cancelled';
+  status: DownloadStatus;
   progress: number;
   downloadedBytes: number;
   totalBytes: number;
@@ -37,25 +46,324 @@ type DownloadState = {
   speed?: number;
 };
 
+// ── Helpers ──────────────────────────────────────────────────────────
+
+function inferMediaType(fileName: string): 'audio' | 'image' | 'video' | 'file' {
+  const ext = fileName.split('.').pop()?.toLowerCase() ?? '';
+  if (['mp3', 'm4a', 'aac', 'ogg', 'wav', 'flac', 'webm', 'opus'].includes(ext)) return 'audio';
+  if (['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'avif', 'bmp'].includes(ext)) return 'image';
+  if (['mp4', 'mkv', 'avi', 'mov', 'wmv'].includes(ext)) return 'video';
+  return 'file';
+}
+
+function getFileExt(fileName: string): string {
+  return fileName.split('.').pop()?.toUpperCase() ?? '';
+}
+
+function formatBytes(bytes: number): string {
+  if (bytes <= 0) return '';
+  const k = 1024;
+  const m = k * 1024;
+  const g = m * 1024;
+  if (bytes < k) return `${bytes} B`;
+  if (bytes < m) return `${(bytes / k).toFixed(1)} KB`;
+  if (bytes < g) return `${(bytes / m).toFixed(1)} MB`;
+  return `${(bytes / g).toFixed(2)} GB`;
+}
+
+function formatSpeed(bytesPerSec?: number): string {
+  if (!bytesPerSec || bytesPerSec <= 0) return '';
+  return `${formatBytes(bytesPerSec)}/s`;
+}
+
+function hostnameFromUrl(url: string): string {
+  try {
+    return new URL(url).hostname;
+  } catch {
+    return '';
+  }
+}
+
+// ── Sub-components ───────────────────────────────────────────────────
+
+const MEDIA_ICONS = {
+  audio: HeadphonesIcon,
+  image: Image01Icon,
+  video: Video01Icon,
+  file: Download01Icon,
+} as const;
+
+/**
+ * Safari-inspired icon with circular progress ring for active downloads,
+ * checkmark overlay for completed, and alert overlay for failed.
+ */
+function DownloadIcon({ item }: { item: DownloadItem }) {
+  const type = inferMediaType(item.fileName);
+  const icon = MEDIA_ICONS[type];
+
+  const radius = 17;
+  const circumference = 2 * Math.PI * radius;
+  const offset = circumference - (item.progress / 100) * circumference;
+
+  const isDone = item.status === 'completed';
+  const isFailed = item.status === 'failed';
+  const isActive = item.status === 'downloading';
+  const isCancelled = item.status === 'cancelled';
+
+  return (
+    <div className="relative flex size-10 shrink-0 items-center justify-center">
+      <div
+        className={cn(
+          'flex size-10 items-center justify-center rounded-full ring-1 ring-border/30 bg-muted/30',
+          isActive && 'bg-accent/60 ring-foreground/10',
+          isDone && 'bg-accent/40 ring-foreground/10',
+          isFailed && 'bg-destructive/5 ring-destructive/15',
+          isCancelled && 'bg-muted/40 ring-border/40'
+        )}
+      >
+        <HugeiconsIcon
+          icon={icon}
+          className={cn(
+            'size-4 text-muted-foreground',
+            isActive && 'text-foreground/70',
+            isDone && 'text-foreground/60',
+            isFailed && 'text-destructive/70',
+            isCancelled && 'text-muted-foreground/50'
+          )}
+        />
+      </div>
+
+      {isActive && (
+        <svg className="pointer-events-none absolute inset-0" viewBox="0 0 40 40" aria-hidden>
+          <circle
+            cx="20"
+            cy="20"
+            r={radius}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            className="text-foreground/5"
+          />
+          <circle
+            cx="20"
+            cy="20"
+            r={radius}
+            fill="none"
+            stroke="currentColor"
+            strokeWidth="2"
+            strokeLinecap="round"
+            strokeDasharray={circumference}
+            strokeDashoffset={offset}
+            className="text-foreground/50 transition-[stroke-dashoffset] duration-500 ease-out"
+            style={{ transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
+          />
+        </svg>
+      )}
+
+      {isDone && (
+        <div className="absolute -end-0.5 -bottom-0.5 flex size-4 items-center justify-center rounded-full bg-foreground text-background shadow-sm">
+          <HugeiconsIcon icon={Tick02Icon} className="size-2.5" />
+        </div>
+      )}
+      {isFailed && (
+        <div className="absolute -end-0.5 -bottom-0.5 flex size-4 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-sm">
+          <HugeiconsIcon icon={AlertCircleIcon} className="size-2.5" />
+        </div>
+      )}
+    </div>
+  );
+}
+
+function DownloadRow({
+  item,
+  onOpenFile,
+  onOpenFolder,
+  onCopyUrl,
+  onCancel,
+  onRetry,
+  onRemove,
+  onPlay,
+}: {
+  item: DownloadItem;
+  onOpenFile: (path: string) => void;
+  onOpenFolder: (path: string) => void;
+  onCopyUrl: (url: string) => void;
+  onCancel: (item: DownloadItem) => void;
+  onRetry: (item: DownloadItem) => void;
+  onRemove: (id: number) => void;
+  onPlay: (item: DownloadItem) => void;
+}) {
+  const { _ } = useLingui();
+  const ext = getFileExt(item.fileName);
+  const host = hostnameFromUrl(item.url);
+  const displayName = item.fileName || `Download ${item.enclosureId}`;
+
+  return (
+    <motion.div
+      layout
+      initial={{ opacity: 0, y: 8 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -8 }}
+      transition={{ duration: 0.2 }}
+      className={cn(
+        'flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors',
+        'hover:bg-foreground/[0.03]',
+        item.status === 'downloading' && 'bg-accent/30'
+      )}
+    >
+      <DownloadIcon item={item} />
+
+      <div className="min-w-0 flex-1">
+        {/* Name row */}
+        <div className="flex items-center gap-1.5">
+          <span className="truncate text-sm font-medium leading-snug" title={displayName}>
+            {displayName}
+          </span>
+          {ext && (
+            <span className="shrink-0 rounded bg-foreground/[0.05] px-1 py-px text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+              {ext}
+            </span>
+          )}
+        </div>
+
+        {/* Meta row */}
+        <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground/70">
+          {item.status === 'downloading' ? (
+            <>
+              <span className="tabular-nums">
+                {formatBytes(item.downloadedBytes)}
+                {item.totalBytes > 0 && ` / ${formatBytes(item.totalBytes)}`}
+              </span>
+              {item.speed !== undefined && item.speed > 0 && (
+                <>
+                  <span className="text-muted-foreground/30">·</span>
+                  <span className="tabular-nums text-foreground/50">{formatSpeed(item.speed)}</span>
+                </>
+              )}
+              <span className="text-muted-foreground/30">·</span>
+              <span className="tabular-nums">{item.progress}%</span>
+            </>
+          ) : item.status === 'completed' ? (
+            <>
+              {item.totalBytes > 0 && (
+                <span className="tabular-nums">{formatBytes(item.totalBytes)}</span>
+              )}
+              {host && (
+                <>
+                  {item.totalBytes > 0 && <span className="text-muted-foreground/30">·</span>}
+                  <span className="truncate">{host}</span>
+                </>
+              )}
+            </>
+          ) : item.status === 'failed' ? (
+            <span className="truncate text-destructive/80" title={item.error}>
+              {item.error || _(msg`Download failed`)}
+            </span>
+          ) : (
+            <span>{_(msg`Cancelled`)}</span>
+          )}
+        </div>
+      </div>
+
+      {/* Actions — always visible for primary, hover for secondary */}
+      <div className="flex shrink-0 items-center">
+        {item.status === 'downloading' && (
+          <button
+            type="button"
+            onClick={() => onCancel(item)}
+            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
+            title={_(msg`Cancel`)}
+          >
+            <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
+          </button>
+        )}
+
+        {(item.status === 'failed' || item.status === 'cancelled') && (
+          <button
+            type="button"
+            onClick={() => onRetry(item)}
+            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+            title={_(msg`Retry`)}
+          >
+            <HugeiconsIcon icon={RefreshIcon} className="size-3.5" />
+          </button>
+        )}
+
+        {item.status === 'completed' && inferMediaType(item.fileName) === 'audio' && (
+          <button
+            type="button"
+            onClick={() => onPlay(item)}
+            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+            title={_(msg`Play`)}
+          >
+            <HugeiconsIcon icon={PlayIcon} className="size-3.5" />
+          </button>
+        )}
+
+        {item.status === 'completed' && item.filePath && (
+          <>
+            <button
+              type="button"
+              onClick={() => item.filePath && onOpenFile(item.filePath)}
+              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+              title={_(msg`Open`)}
+            >
+              <HugeiconsIcon icon={ViewIcon} className="size-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => item.filePath && onOpenFolder(item.filePath)}
+              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+              title={_(msg`Show in Finder`)}
+            >
+              <HugeiconsIcon icon={Folder01Icon} className="size-3.5" />
+            </button>
+          </>
+        )}
+
+        <button
+          type="button"
+          onClick={() => onCopyUrl(item.url)}
+          className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+          title={_(msg`Copy URL`)}
+        >
+          <HugeiconsIcon icon={Copy01Icon} className="size-3" />
+        </button>
+        <button
+          type="button"
+          onClick={() => onRemove(item.enclosureId)}
+          className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
+          title={_(msg`Remove`)}
+        >
+          <HugeiconsIcon icon={Delete02Icon} className="size-3" />
+        </button>
+      </div>
+    </motion.div>
+  );
+}
+
+// ── Main component ───────────────────────────────────────────────────
+
 export function DownloadManagerDialog() {
   const { _ } = useLingui();
-  const [downloads, setDownloads] = useState<DownloadState[]>([]);
+  const [downloads, setDownloads] = useState<DownloadItem[]>([]);
+  const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const downloadsOpen = useUIStore((state) => state.downloadsOpen);
   const setDownloadsOpen = useUIStore((state) => state.setDownloadsOpen);
   const lastUpdateRef = useRef<Record<number, { bytes: number; time: number }>>({});
   const completedRef = useRef<Set<number>>(new Set());
 
+  // ── Data loading & event listening ──
+
   useEffect(() => {
     let unlisten: (() => void) | null = null;
 
     const setup = async () => {
-      // Load history from DB
       try {
         const result = await commands.getDownloadsFromDb();
         if (result.status === 'ok') {
-          const history = result.data;
           setDownloads(
-            history.map((h: any) => {
+            result.data.map((h: any) => {
               const variant = Object.keys(h)[0] as string;
               const data = h[variant];
               return {
@@ -63,7 +371,7 @@ export function DownloadManagerDialog() {
                 url: data.url || '',
                 fileName:
                   data.file_name || (data.file_path ? data.file_path.split(/[/\\]/).pop() : ''),
-                status: variant.toLowerCase() as DownloadState['status'],
+                status: variant.toLowerCase() as DownloadStatus,
                 progress: data.progress || 0,
                 downloadedBytes: data.downloaded_bytes || 0,
                 totalBytes: data.total_bytes || 0,
@@ -109,17 +417,12 @@ export function DownloadManagerDialog() {
             toast.success(_(msg`Download Completed`), {
               description: file_name,
               action: file_path
-                ? {
-                    label: _(msg`Open`),
-                    onClick: () => openPath(file_path),
-                  }
+                ? { label: _(msg`Open`), onClick: () => openPath(file_path) }
                 : undefined,
             });
           } else if (status === 'failed' && !completedRef.current.has(enclosure_id)) {
             completedRef.current.add(enclosure_id);
-            toast.error(_(msg`Download Failed`), {
-              description: file_name,
-            });
+            toast.error(_(msg`Download Failed`), { description: file_name });
           }
 
           const now = Date.now();
@@ -129,10 +432,7 @@ export function DownloadManagerDialog() {
             const timeDiff = (now - last.time) / 1000;
             if (timeDiff > 0.5) {
               speed = (downloaded_bytes - last.bytes) / timeDiff;
-              lastUpdateRef.current[enclosure_id] = {
-                bytes: downloaded_bytes,
-                time: now,
-              };
+              lastUpdateRef.current[enclosure_id] = { bytes: downloaded_bytes, time: now };
             } else {
               speed = -1;
             }
@@ -141,44 +441,40 @@ export function DownloadManagerDialog() {
           }
 
           setDownloads((prev) => {
-            const existingIndex = prev.findIndex((d) => d.enclosureId === enclosure_id);
-
-            if (existingIndex !== -1) {
-              return prev.map((d, i) => {
-                if (i === existingIndex) {
-                  return {
-                    ...d,
-                    fileName: file_name || d.fileName,
-                    url: url || d.url,
-                    progress,
-                    downloadedBytes: downloaded_bytes,
-                    totalBytes: total_bytes,
-                    status: status as DownloadState['status'],
-                    speed: speed === -1 ? d.speed : speed,
-                    filePath: file_path || d.filePath,
-                  };
-                }
-                return d;
-              });
-            } else {
-              return [
-                ...prev,
-                {
-                  enclosureId: enclosure_id,
-                  url: url || '',
-                  fileName: file_name || '',
-                  status: status as DownloadState['status'],
-                  progress,
-                  downloadedBytes: downloaded_bytes,
-                  totalBytes: total_bytes,
-                  speed: 0,
-                  filePath: file_path,
-                },
-              ];
+            const idx = prev.findIndex((d) => d.enclosureId === enclosure_id);
+            if (idx !== -1) {
+              return prev.map((d, i) =>
+                i === idx
+                  ? {
+                      ...d,
+                      fileName: file_name || d.fileName,
+                      url: url || d.url,
+                      progress,
+                      downloadedBytes: downloaded_bytes,
+                      totalBytes: total_bytes,
+                      status: status as DownloadStatus,
+                      speed: speed === -1 ? d.speed : speed,
+                      filePath: file_path || d.filePath,
+                    }
+                  : d
+              );
             }
+            return [
+              ...prev,
+              {
+                enclosureId: enclosure_id,
+                url: url || '',
+                fileName: file_name || '',
+                status: status as DownloadStatus,
+                progress,
+                downloadedBytes: downloaded_bytes,
+                totalBytes: total_bytes,
+                speed: 0,
+                filePath: file_path,
+              },
+            ];
           });
         });
-
         unlisten = unlistenFn;
       } catch (error) {
         console.error('Failed to listen to download-progress event:', error);
@@ -186,58 +482,62 @@ export function DownloadManagerDialog() {
     };
 
     setup();
-
     return () => {
       unlisten?.();
     };
   }, [_]);
 
-  const getStatusBadge = (status: DownloadState['status']) => {
-    switch (status) {
-      case 'downloading':
-        return (
-          <Badge
-            variant="outline"
-            className="text-blue-500 border-blue-500/30 bg-blue-500/10 animate-pulse"
-          >
-            {_(msg`Downloading`)}
-          </Badge>
-        );
-      case 'completed':
-        return (
-          <Badge variant="outline" className="text-green-500 border-green-500/30 bg-green-500/10">
-            {_(msg`Completed`)}
-          </Badge>
-        );
-      case 'failed':
-        return (
-          <Badge variant="outline" className="text-red-500 border-red-500/30 bg-red-500/10">
-            {_(msg`Failed`)}
-          </Badge>
-        );
-      case 'cancelled':
-        return (
-          <Badge variant="outline" className="text-muted-foreground bg-muted/10">
-            {_(msg`Cancelled`)}
-          </Badge>
-        );
-      default:
-        return null;
+  // ── Computed ──
+
+  const counts = useMemo(() => {
+    let active = 0;
+    let completed = 0;
+    let failed = 0;
+    for (const d of downloads) {
+      if (d.status === 'downloading') active++;
+      else if (d.status === 'completed') completed++;
+      else failed++;
     }
-  };
+    return { all: downloads.length, active, completed, failed };
+  }, [downloads]);
+
+  const filtered = useMemo(() => {
+    const list =
+      activeTab === 'all'
+        ? downloads
+        : activeTab === 'active'
+          ? downloads.filter((d) => d.status === 'downloading')
+          : activeTab === 'completed'
+            ? downloads.filter((d) => d.status === 'completed')
+            : downloads.filter((d) => d.status === 'failed' || d.status === 'cancelled');
+
+    // Active downloads first, then recent first
+    return [...list].sort((a, b) => {
+      if (a.status === 'downloading' && b.status !== 'downloading') return -1;
+      if (a.status !== 'downloading' && b.status === 'downloading') return 1;
+      return b.enclosureId - a.enclosureId;
+    });
+  }, [downloads, activeTab]);
+
+  // ── Handlers ──
 
   const handleOpenFile = async (filePath: string) => {
-    if (filePath) {
+    if (!filePath) return;
+    try {
       await openPath(filePath);
+    } catch (err) {
+      toast.error(_(msg`Could not open file`));
+      console.error('openPath failed:', err);
     }
   };
 
   const handleOpenFolder = async (filePath: string) => {
-    if (filePath) {
-      const pathParts = filePath.split(/[/\\]/);
-      pathParts.pop();
-      const folderPath = pathParts.join('/');
-      await openPath(folderPath);
+    if (!filePath) return;
+    try {
+      await revealItemInDir(filePath);
+    } catch (err) {
+      toast.error(_(msg`Could not reveal in folder`));
+      console.error('revealItemInDir failed:', err);
     }
   };
 
@@ -246,247 +546,183 @@ export function DownloadManagerDialog() {
     toast.success(_(msg`URL copied to clipboard`));
   };
 
-  const handleRemoveDownload = (id: number) => {
+  const handlePlay = async (dl: DownloadItem) => {
+    const entryResult = await commands.getEntryIdByEnclosureUrl(dl.url);
+    if (entryResult.status !== 'ok' || !entryResult.data) {
+      toast.error(_(msg`Could not find podcast entry`));
+      return;
+    }
+    const result = await commands.getEntry(entryResult.data);
+    if (result.status !== 'ok') {
+      toast.error(_(msg`Could not load podcast entry`));
+      return;
+    }
+    const entry = result.data;
+    const enclosure = entry.enclosures?.find((e) => e.url === dl.url);
+    if (!enclosure) {
+      toast.error(_(msg`Enclosure not found for this entry`));
+      return;
+    }
+    usePlayerStore.getState().play(entry, enclosure);
+    setDownloadsOpen(false);
+  };
+
+  const handleRemove = (id: number) => {
     setDownloads((prev) => prev.filter((d) => d.enclosureId !== id));
   };
 
-  const handleCancelDownload = async (download: DownloadState) => {
-    if (download.status === 'downloading') {
-      const result = await commands.cancelDownload(download.url);
-      if (result.status === 'ok') {
-        console.log('Successfully cancelled download:', download);
-      } else {
-        console.error('Failed to cancel download:', result.error);
-      }
+  const handleCancel = async (dl: DownloadItem) => {
+    if (dl.status !== 'downloading') return;
+    const result = await commands.cancelDownload(dl.url);
+    if (result.status === 'error') {
+      console.error('Failed to cancel download:', result.error);
     }
   };
 
-  const handleRetryDownload = async (download: DownloadState) => {
-    if (download.status === 'failed' || download.status === 'cancelled') {
-      const result = await commands.retryDownload(download.url, download.fileName, 'image');
-      if (result.status === 'ok') {
-        console.log('Successfully initiated retry:', download);
-      } else {
-        console.error('Failed to retry download:', result.error);
-      }
+  const handleRetry = async (dl: DownloadItem) => {
+    if (dl.status !== 'failed' && dl.status !== 'cancelled') return;
+    const mediaType = inferMediaType(dl.fileName) === 'audio' ? 'audio' : 'image';
+    const result = await commands.retryDownload(dl.url, dl.fileName, mediaType);
+    if (result.status === 'error') {
+      console.error('Failed to retry download:', result.error);
     }
   };
 
-  const handleClearCompleted = () => {
-    setDownloads((prev) => prev.filter((d) => d.status !== 'completed'));
+  const handleClearTab = () => {
+    if (activeTab === 'completed') {
+      setDownloads((prev) => prev.filter((d) => d.status !== 'completed'));
+    } else if (activeTab === 'failed') {
+      setDownloads((prev) => prev.filter((d) => d.status !== 'failed' && d.status !== 'cancelled'));
+    } else {
+      // Clear all non-active
+      setDownloads((prev) => prev.filter((d) => d.status === 'downloading'));
+    }
   };
 
-  const formatBytes = (bytes: number): string => {
-    if (bytes === 0) return '0 B';
-    const k = 1024;
-    const m = k * 1024;
-    const g = m * 1024;
+  const hasClearable =
+    activeTab === 'completed'
+      ? counts.completed > 0
+      : activeTab === 'failed'
+        ? counts.failed > 0
+        : counts.completed + counts.failed > 0;
 
-    if (bytes < k) return `${bytes} B`;
-    if (bytes < m) return `${(bytes / k).toFixed(1)} KB`;
-    if (bytes < g) return `${(bytes / m).toFixed(1)} MB`;
-    return `${(bytes / g).toFixed(2)} GB`;
-  };
+  const tabs: { key: FilterTab; label: string; count: number }[] = [
+    { key: 'all', label: _(msg`All`), count: counts.all },
+    { key: 'active', label: _(msg`Active`), count: counts.active },
+    { key: 'completed', label: _(msg`Done`), count: counts.completed },
+    { key: 'failed', label: _(msg`Failed`), count: counts.failed },
+  ];
 
-  const formatSpeed = (bytesPerSec?: number): string => {
-    if (!bytesPerSec || bytesPerSec <= 0) return '';
-    return `${formatBytes(bytesPerSec)}/s`;
-  };
-
-  const hasCompletedDownloads = downloads.some((d) => d.status === 'completed');
-
-  const activeDownloads = downloads.filter((d) => d.status === 'downloading');
-  const totalSpeed = activeDownloads.reduce((acc, d) => acc + (d.speed || 0), 0);
+  // ── Render ──
 
   return (
     <Dialog open={downloadsOpen} onOpenChange={setDownloadsOpen}>
       <DialogContent
-        className="sm:max-w-4xl max-h-[85vh] overflow-hidden flex flex-col z-[9999]"
+        className="flex h-[min(80vh,750px)] flex-col gap-0 overflow-hidden p-0 sm:max-w-xl sm:rounded-2xl"
         showCloseButton={false}
       >
-        <DialogTitle className="flex items-center justify-between gap-2 px-1">
-          <div className="flex items-center gap-4">
-            <div className="flex items-center gap-2">
-              <HugeiconsIcon icon={Download01Icon} size={20} className="text-primary" />
-              <span>{_(msg`Download Manager`)}</span>
-            </div>
-            {activeDownloads.length > 0 && (
-              <Badge variant="outline" className="text-[10px] font-mono py-0 h-5">
-                {activeDownloads.length} {_(msg`Active`)} • {formatSpeed(totalSpeed)}
-              </Badge>
+        {/* ── Header ── */}
+        <div className="flex items-center justify-between px-5 pt-5 pb-3">
+          <DialogTitle className="flex items-center gap-2.5 text-base font-semibold">
+            {_(msg`Downloads`)}
+            {counts.active > 0 && (
+              <span className="inline-flex items-center gap-1.5 rounded-full bg-foreground/5 px-2 py-0.5 text-[11px] font-semibold tabular-nums text-foreground/60">
+                <span className="size-1 animate-pulse rounded-full bg-foreground/50" />
+                {counts.active}
+              </span>
             )}
-          </div>
-          <div className="flex items-center gap-4 mr-8">
-            {hasCompletedDownloads && (
-              <button
-                type="button"
-                onClick={handleClearCompleted}
-                className="text-xs font-medium text-muted-foreground hover:text-foreground transition-colors"
-              >
-                {_(msg`Clear Completed`)}
-              </button>
-            )}
-            <button
-              type="button"
-              onClick={() => setDownloadsOpen(false)}
-              className="text-muted-foreground hover:text-foreground transition-colors"
-            >
-              <HugeiconsIcon icon={Cancel01Icon} size={18} />
-            </button>
-          </div>
-        </DialogTitle>
+          </DialogTitle>
+          <button
+            type="button"
+            onClick={() => setDownloadsOpen(false)}
+            className="flex size-7 items-center justify-center rounded-full text-muted-foreground/50 transition-colors hover:bg-foreground/5 hover:text-foreground"
+          >
+            <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
+          </button>
+        </div>
         <DialogDescription className="sr-only">
           {_(msg`View and manage your downloads`)}
         </DialogDescription>
 
-        <div className="flex-1 overflow-y-auto mt-2">
-          {downloads.length === 0 ? (
-            <div className="flex flex-col items-center justify-center h-80 text-muted-foreground">
-              <div className="h-20 w-20 text-muted-foreground/20 flex items-center justify-center rounded-full bg-muted/10">
-                <HugeiconsIcon icon={Download01Icon} size={40} />
+        {/* ── Filter pills ── */}
+        <div className="flex items-center gap-1 px-5 pb-3">
+          <div className="flex items-center gap-0.5 rounded-lg bg-foreground/[0.03] p-0.5">
+            {tabs.map((tab) => (
+              <button
+                key={tab.key}
+                type="button"
+                onClick={() => setActiveTab(tab.key)}
+                className={cn(
+                  'relative inline-flex items-center gap-1 rounded-md px-2.5 py-1 text-xs font-medium transition-colors',
+                  activeTab === tab.key
+                    ? 'bg-background text-foreground shadow-sm shadow-black/[0.04]'
+                    : 'text-muted-foreground/70 hover:text-foreground'
+                )}
+              >
+                {tab.label}
+                {tab.count > 0 && (
+                  <span
+                    className={cn(
+                      'tabular-nums',
+                      activeTab === tab.key ? 'text-foreground/50' : 'text-muted-foreground/40'
+                    )}
+                  >
+                    {tab.count}
+                  </span>
+                )}
+              </button>
+            ))}
+          </div>
+
+          <div className="flex-1" />
+
+          {hasClearable && (
+            <button
+              type="button"
+              onClick={handleClearTab}
+              className="text-xs font-medium text-muted-foreground/60 transition-colors hover:text-foreground"
+            >
+              {_(msg`Clear`)}
+            </button>
+          )}
+        </div>
+
+        {/* ── Separator ── */}
+        <div className="mx-5 h-px bg-border/40" />
+
+        {/* ── List ── */}
+        <div className="flex flex-1 flex-col gap-1 overflow-y-auto px-2 py-1">
+          {filtered.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center">
+              <div className="flex size-12 items-center justify-center rounded-2xl bg-foreground/[0.03]">
+                <HugeiconsIcon icon={Download01Icon} className="size-5 text-muted-foreground/25" />
               </div>
-              <p className="mt-4 text-center font-medium">{_(msg`No active downloads`)}</p>
-              <p className="text-sm text-muted-foreground/60">
-                {_(msg`Downloaded files will appear here`)}
+              <p className="mt-3 text-sm font-medium text-muted-foreground/60">
+                {activeTab === 'all'
+                  ? _(msg`No downloads yet`)
+                  : activeTab === 'active'
+                    ? _(msg`No active downloads`)
+                    : activeTab === 'completed'
+                      ? _(msg`No completed downloads`)
+                      : _(msg`No failed downloads`)}
               </p>
             </div>
           ) : (
-            <div className="grid gap-2 pr-2">
-              <div className="grid grid-cols-[1fr_100px_140px_100px_160px] gap-4 px-4 py-2 text-xs font-semibold text-muted-foreground border-b uppercase tracking-wider">
-                <div>{_(msg`File Name`)}</div>
-                <div className="text-center">{_(msg`Status`)}</div>
-                <div className="text-center">{_(msg`Progress`)}</div>
-                <div className="text-center">{_(msg`Size`)}</div>
-                <div className="text-right">{_(msg`Actions`)}</div>
-              </div>
-
-              {downloads.map((download) => (
-                <div
-                  key={download.enclosureId}
-                  className={cn(
-                    'grid grid-cols-[1fr_100px_140px_100px_160px] gap-4 items-center p-3 rounded-lg border transition-all hover:bg-muted/30 group',
-                    download.status === 'completed'
-                      ? 'bg-muted/10 border-green-500/10'
-                      : 'bg-card border-border'
-                  )}
-                >
-                  <div className="flex items-center gap-3 min-w-0">
-                    <div className="p-2 rounded bg-muted/50 text-muted-foreground shrink-0">
-                      <HugeiconsIcon icon={File01Icon} size={18} />
-                    </div>
-                    <div className="flex flex-col min-w-0">
-                      <span className="truncate font-medium text-sm" title={download.fileName}>
-                        {download.fileName || `Download ${download.enclosureId}`}
-                      </span>
-                      <div className="flex items-center gap-2 mt-1">
-                        <span className="text-[10px] text-muted-foreground font-mono flex items-center gap-1">
-                          <HugeiconsIcon icon={Link01Icon} size={10} />
-                          {download.url ? new URL(download.url).hostname : 'unknown'}
-                        </span>
-                        {download.speed !== undefined && download.status === 'downloading' && (
-                          <span className="text-[10px] text-primary font-medium">
-                            {formatSpeed(download.speed)}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  <div className="flex justify-center">{getStatusBadge(download.status)}</div>
-
-                  <div className="flex flex-col justify-center gap-1.5">
-                    <div className="flex items-center justify-between text-[10px] text-muted-foreground">
-                      <span className="font-medium">{download.progress}%</span>
-                    </div>
-                    <Progress value={download.progress} className="h-1" />
-                    {download.status === 'downloading' && (
-                      <span className="text-[9px] text-muted-foreground text-center">
-                        {formatBytes(download.downloadedBytes)} / {formatBytes(download.totalBytes)}
-                      </span>
-                    )}
-                  </div>
-
-                  <div className="flex flex-col justify-center">
-                    <span className="text-xs text-muted-foreground text-center">
-                      {formatBytes(download.totalBytes)}
-                    </span>
-                  </div>
-
-                  <div className="flex items-center justify-end gap-1">
-                    {download.status === 'downloading' && (
-                      <button
-                        type="button"
-                        onClick={() => handleCancelDownload(download)}
-                        className="h-8 w-8 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all rounded-md"
-                        title={_(msg`Cancel`)}
-                      >
-                        <HugeiconsIcon icon={Cancel01Icon} size={16} />
-                      </button>
-                    )}
-
-                    {(download.status === 'failed' || download.status === 'cancelled') && (
-                      <button
-                        type="button"
-                        onClick={() => handleRetryDownload(download)}
-                        className="h-8 w-8 flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all rounded-md"
-                        title={_(msg`Retry`)}
-                      >
-                        <HugeiconsIcon icon={RefreshIcon} size={16} />
-                      </button>
-                    )}
-
-                    {download.status === 'completed' && download.filePath && (
-                      <>
-                        <button
-                          type="button"
-                          onClick={() => download.filePath && handleOpenFile(download.filePath)}
-                          className="h-8 w-8 flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all rounded-md"
-                          title={_(msg`Open File`)}
-                        >
-                          <HugeiconsIcon icon={ViewIcon} size={16} />
-                        </button>
-                        <button
-                          type="button"
-                          onClick={() => download.filePath && handleOpenFolder(download.filePath)}
-                          className="h-8 w-8 flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all rounded-md"
-                          title={_(msg`Open Folder`)}
-                        >
-                          <HugeiconsIcon icon={Folder01Icon} size={16} />
-                        </button>
-                      </>
-                    )}
-
-                    <button
-                      type="button"
-                      onClick={() => handleCopyUrl(download.url)}
-                      className="h-8 w-8 flex items-center justify-center text-muted-foreground hover:text-primary hover:bg-primary/10 transition-all rounded-md opacity-0 group-hover:opacity-100"
-                      title={_(msg`Copy URL`)}
-                    >
-                      <HugeiconsIcon icon={Copy01Icon} size={16} />
-                    </button>
-
-                    <button
-                      type="button"
-                      onClick={() => handleRemoveDownload(download.enclosureId)}
-                      className="h-8 w-8 flex items-center justify-center text-muted-foreground hover:text-destructive hover:bg-destructive/10 transition-all rounded-md opacity-0 group-hover:opacity-100"
-                      title={_(msg`Remove from list`)}
-                    >
-                      <HugeiconsIcon icon={Cancel01Icon} size={16} />
-                    </button>
-
-                    {download.status === 'failed' && download.error && (
-                      <button
-                        type="button"
-                        className="h-8 w-8 flex items-center justify-center text-destructive"
-                        title={download.error}
-                      >
-                        <HugeiconsIcon icon={InformationCircleIcon} size={16} />
-                      </button>
-                    )}
-                  </div>
-                </div>
+            <AnimatePresence initial={false}>
+              {filtered.map((dl) => (
+                <DownloadRow
+                  key={dl.enclosureId}
+                  item={dl}
+                  onOpenFile={handleOpenFile}
+                  onOpenFolder={handleOpenFolder}
+                  onCopyUrl={handleCopyUrl}
+                  onCancel={handleCancel}
+                  onRetry={handleRetry}
+                  onRemove={handleRemove}
+                  onPlay={handlePlay}
+                />
               ))}
-            </div>
+            </AnimatePresence>
           )}
         </div>
       </DialogContent>

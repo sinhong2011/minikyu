@@ -59,6 +59,17 @@ async getDownloadsFromDb() : Promise<Result<DownloadState[], string>> {
 }
 },
 /**
+ * Get the local file path for a completed download by URL
+ */
+async getDownloadedFilePath(url: string) : Promise<Result<string | null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_downloaded_file_path", { url }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Clears all local app data (database, preferences, reading state, recovery files).
  */
 async clearLocalData() : Promise<Result<null, string>> {
@@ -733,6 +744,17 @@ async flushHistory() : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+/**
+ * Get feed icon as a data URL. Checks local cache first, then fetches from server.
+ */
+async getFeedIconData(feedId: string) : Promise<Result<string | null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_feed_icon_data", { feedId }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async syncMiniflux() : Promise<Result<SyncSummary, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("sync_miniflux") };
@@ -878,6 +900,153 @@ async getTranslationCacheEntry(key: string) : Promise<Result<TranslationCacheEnt
 async setTranslationCacheEntry(key: string, entry: TranslationCacheEntry) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("set_translation_cache_entry", { key, entry }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async showPlayerWindow() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("show_player_window") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async hidePlayerWindow() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("hide_player_window") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async togglePlayerWindow() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("toggle_player_window") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async showTrayPopover() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("show_tray_popover") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async hideTrayPopover() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("hide_tray_popover") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async toggleTrayPopover() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("toggle_tray_popover") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Get the entry_id for an enclosure by its URL (for linking downloads to player)
+ */
+async getEntryIdByEnclosureUrl(url: string) : Promise<Result<string | null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_entry_id_by_enclosure_url", { url }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Get podcast settings for a feed. Returns defaults if no settings exist.
+ */
+async getPodcastFeedSettings(feedId: string) : Promise<Result<PodcastFeedSettings, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_podcast_feed_settings", { feedId }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Update podcast settings for a feed (upsert)
+ */
+async updatePodcastFeedSettings(feedId: string, autoDownloadCount: number, playbackSpeed: number, autoCleanupDays: number) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("update_podcast_feed_settings", { feedId, autoDownloadCount, playbackSpeed, autoCleanupDays }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Save podcast playback progress (upsert)
+ */
+async savePodcastProgress(entryId: string, currentTime: number, totalTime: number) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("save_podcast_progress", { entryId, currentTime, totalTime }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Get podcast progress for a single entry
+ */
+async getPodcastProgress(entryId: string) : Promise<Result<PodcastProgress | null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_podcast_progress", { entryId }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Get podcast progress for multiple entries (batch)
+ */
+async getPodcastProgressBatch(entryIds: string[]) : Promise<Result<PodcastProgress[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_podcast_progress_batch", { entryIds }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Mark an episode as completed
+ */
+async markEpisodeCompleted(entryId: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("mark_episode_completed", { entryId }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Clean up played podcast episodes older than auto_cleanup_days
+ */
+async cleanupPlayedEpisodes() : Promise<Result<CleanupResult, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cleanup_played_episodes") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Seed test data for e2e tests. No-op in release builds.
+ */
+async seedE2eTestData(entryIds: string[]) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("seed_e2e_test_data", { entryIds }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -1035,7 +1204,11 @@ image_download_path: string | null;
 /**
  * Default download path for videos (null = ask every time)
  */
-video_download_path: string | null }
+video_download_path: string | null; 
+/**
+ * Player display mode: floating window or tray popover
+ */
+player_display_mode: PlayerDisplayMode }
 /**
  * Authentication Config
  */
@@ -1080,6 +1253,10 @@ from: string;
  * Replacement term to apply.
  */
 to: string }
+/**
+ * Result of podcast cleanup operation
+ */
+export type CleanupResult = { deleted_count: number; freed_bytes: string }
 /**
  * Window close behavior options
  */
@@ -1163,6 +1340,26 @@ export type MinifluxConnection = { id: string; username: string; server_url: str
  * Miniflux Version Information
  */
 export type MinifluxVersion = { version: string; commit?: string | null; build_date?: string | null; go_version?: string | null; arch?: string | null; os?: string | null }
+/**
+ * Player display mode when clicking the tray icon.
+ */
+export type PlayerDisplayMode = 
+/**
+ * Show the floating player window
+ */
+"FloatingWindow" | 
+/**
+ * Show the compact tray popover
+ */
+"TrayPopover"
+/**
+ * Per-feed podcast settings
+ */
+export type PodcastFeedSettings = { feed_id: string; auto_download_count: number; playback_speed: number; auto_cleanup_days: number }
+/**
+ * Podcast playback progress
+ */
+export type PodcastProgress = { entry_id: string; current_time: number; total_time: number; completed: boolean; last_played_at: string }
 /**
  * Reader translation rendering mode.
  */

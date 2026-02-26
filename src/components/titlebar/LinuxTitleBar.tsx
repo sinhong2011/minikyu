@@ -3,6 +3,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { CommandSearchButton } from '@/components/titlebar/CommandSearchButton';
+import { TitleBarPodcastAnchor } from '@/components/titlebar/TitleBarPodcastAnchor';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/store/ui-store';
@@ -41,14 +42,14 @@ export function LinuxTitleBar({ className, onOpenCommandPalette }: LinuxTitleBar
       </Button>
 
       {/* Center: Command search */}
-      <div className="flex flex-1 items-center justify-center">
-        <CommandSearchButton onClick={onOpenCommandPalette} />
+      <div className="flex min-w-0 flex-1 items-center justify-center">
+        <div className="min-w-0 w-full max-w-xl">
+          <CommandSearchButton onClick={onOpenCommandPalette} />
+        </div>
       </div>
 
-      {/* Right: Spacer for balance (Linux uses native decorations) */}
-      <div className="flex items-center">
-        <div className="h-8 w-8" />
-      </div>
+      {/* Right: Podcast anchor */}
+      <TitleBarPodcastAnchor />
     </div>
   );
 }

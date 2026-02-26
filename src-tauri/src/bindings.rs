@@ -2,8 +2,9 @@ use tauri_specta::{collect_commands, Builder};
 
 pub fn generate_bindings() -> Builder<tauri::Wry> {
     use crate::commands::{
-        accounts, counters, data, downloads, in_app_browser, miniflux, notifications, preferences,
-        quick_pane, reading_state, recovery, sync, translation, translation_cache, tray,
+        accounts, counters, data, downloads, in_app_browser, miniflux, notifications,
+        player_window, podcast, preferences, quick_pane, reading_state, recovery, sync,
+        translation, translation_cache, tray,
     };
 
     Builder::<tauri::Wry>::new().commands(collect_commands![
@@ -12,6 +13,7 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         downloads::retry_download,
         downloads::get_downloads,
         downloads::get_downloads_from_db,
+        downloads::get_downloaded_file_path,
         data::clear_local_data,
         preferences::greet,
         preferences::load_preferences,
@@ -75,6 +77,7 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         miniflux::get_integrations,
         miniflux::fetch_entry_content,
         miniflux::flush_history,
+        miniflux::get_feed_icon_data,
         sync::sync_miniflux,
         counters::get_unread_counts,
         in_app_browser::open_in_app_browser,
@@ -90,6 +93,21 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         translation::get_provider_available_models,
         translation_cache::get_translation_cache_entry,
         translation_cache::set_translation_cache_entry,
+        player_window::show_player_window,
+        player_window::hide_player_window,
+        player_window::toggle_player_window,
+        player_window::show_tray_popover,
+        player_window::hide_tray_popover,
+        player_window::toggle_tray_popover,
+        podcast::get_entry_id_by_enclosure_url,
+        podcast::get_podcast_feed_settings,
+        podcast::update_podcast_feed_settings,
+        podcast::save_podcast_progress,
+        podcast::get_podcast_progress,
+        podcast::get_podcast_progress_batch,
+        podcast::mark_episode_completed,
+        podcast::cleanup_played_episodes,
+        podcast::seed_e2e_test_data,
     ])
 }
 

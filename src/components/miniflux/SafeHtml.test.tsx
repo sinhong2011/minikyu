@@ -49,18 +49,16 @@ describe('SafeHtml reader node blocks', () => {
       container.querySelectorAll<HTMLElement>('[data-reader-node="true"]')
     );
 
-    expect(readerNodes).toHaveLength(4);
+    expect(readerNodes).toHaveLength(3);
     expect(readerNodes.map((node) => node.getAttribute('data-reader-node-tag'))).toEqual([
       'h2',
       'p',
-      'blockquote',
       'ul',
     ]);
     expect(readerNodes.map((node) => node.getAttribute('data-reader-node-index'))).toEqual([
       '0',
       '1',
       '2',
-      '3',
     ]);
     expect(
       readerNodes.every((node) => Number(node.getAttribute('data-reader-node-text-length')) > 0)

@@ -93,7 +93,6 @@ const VIEWER_CLOSE_ANIMATION_DURATION_MS = 360;
 const VIEWER_CLOSE_ANIMATION_EASING = 'cubic-bezier(0.22, 1, 0.36, 1)';
 const WRAPPABLE_READER_BLOCK_TAGS = new Set([
   'article',
-  'blockquote',
   'figure',
   'h1',
   'h2',
@@ -1445,41 +1444,29 @@ export function SafeHtml({
           const textContent = getTextContent(domNode);
           const defaultLanguage = detectCodeLanguageFromPre(domNode);
 
-          return wrapReaderNodeBlock({
-            nodeTag: 'pre',
-            textLength: textContent.trim().length,
-            nodeText: textContent.trim(),
-            interactive: false,
-            children: (
-              <CodeBlock
-                text={textContent}
-                copyLabel={copyCodeLabel}
-                languageLabel={codeLanguageLabel}
-                defaultLanguage={defaultLanguage}
-                codeTheme={codeTheme}
-              />
-            ),
-          });
+          return (
+            <CodeBlock
+              text={textContent}
+              copyLabel={copyCodeLabel}
+              languageLabel={codeLanguageLabel}
+              defaultLanguage={defaultLanguage}
+              codeTheme={codeTheme}
+            />
+          );
         }
 
         if (domNode.name === 'table') {
           const codeTable = extractCodeBlockFromTable(domNode);
           if (codeTable) {
-            return wrapReaderNodeBlock({
-              nodeTag: 'pre',
-              textLength: codeTable.codeText.trim().length,
-              nodeText: codeTable.codeText.trim(),
-              interactive: false,
-              children: (
-                <CodeBlock
-                  text={codeTable.codeText}
-                  copyLabel={copyCodeLabel}
-                  languageLabel={codeLanguageLabel}
-                  defaultLanguage={codeTable.defaultLanguage}
-                  codeTheme={codeTheme}
-                />
-              ),
-            });
+            return (
+              <CodeBlock
+                text={codeTable.codeText}
+                copyLabel={copyCodeLabel}
+                languageLabel={codeLanguageLabel}
+                defaultLanguage={codeTable.defaultLanguage}
+                codeTheme={codeTheme}
+              />
+            );
           }
 
           return wrapReaderNodeBlock({
@@ -1526,6 +1513,17 @@ export function SafeHtml({
         }
 
         if (WRAPPABLE_READER_BLOCK_TAGS.has(domNode.name)) {
+          // Skip wrapping for blocks that only contain a code block
+          const hasCodeChild = Boolean(
+            findFirstDescendant(
+              domNode,
+              (element) => element.name === 'pre' || element.name === 'code'
+            )
+          );
+          if (hasCodeChild) {
+            return domToReact(domNode.children as any, parserOptions) as any;
+          }
+
           const props = attributesToProps(domNode.attribs);
           const normalizedProps = {
             ...props,

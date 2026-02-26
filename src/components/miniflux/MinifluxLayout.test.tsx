@@ -259,7 +259,7 @@ describe('MinifluxLayout', () => {
 
     render(<MinifluxLayout />, { wrapper: TestWrapper });
 
-    expect(screen.getByText('12,345 unread items')).toBeInTheDocument();
+    expect(screen.getByText('12.3K unread items')).toBeInTheDocument();
   });
 
   it('renders cached content instead of welcome screen when offline', () => {

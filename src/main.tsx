@@ -13,6 +13,11 @@ import { queryClient } from '@/lib/query-client';
 import { router } from '@/router';
 import '@/styles/global.css';
 
+// Expose stores for e2e WebDriver testing in development
+if (import.meta.env.DEV) {
+  import('@/lib/test-bridge');
+}
+
 loadAndActivate(defaultLocale);
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

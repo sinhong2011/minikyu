@@ -91,6 +91,8 @@ const basePreferences = {
   image_download_path: null,
   // biome-ignore lint/style/useNamingConvention: preferences field name
   video_download_path: null,
+  // biome-ignore lint/style/useNamingConvention: preferences field name
+  player_display_mode: 'FloatingWindow',
 };
 
 describe('TranslationPane settings', () => {

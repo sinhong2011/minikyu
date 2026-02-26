@@ -32,6 +32,8 @@ export default defineConfig(async () => ({
       input: {
         main: resolve(__dirname, 'index.html'),
         'quick-pane': resolve(__dirname, 'quick-pane.html'),
+        'player-window': resolve(__dirname, 'player-window.html'),
+        'tray-popover': resolve(__dirname, 'tray-popover.html'),
       },
     },
   },
