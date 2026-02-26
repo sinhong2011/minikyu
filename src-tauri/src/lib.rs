@@ -280,6 +280,13 @@ pub fn run() {
             Ok(())
         })
         .invoke_handler(builder.invoke_handler())
-        .run(tauri::generate_context!())
-        .expect("error while running tauri application");
+        .build(tauri::generate_context!())
+        .expect("error while building tauri application")
+        .run(|_app, event| {
+            if let tauri::RunEvent::ExitRequested { .. } = event {
+                let _ = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
+                    commands::tray::cleanup_tray();
+                }));
+            }
+        });
 }
