@@ -748,7 +748,7 @@ export function EntryReadingHeader({
         }}
         className="mt-1 flex items-start justify-between px-3"
       >
-        <div className="flex flex-col flex-1 space-y-2 pb-2">
+        <div className="flex flex-col flex-1 space-y-2.5 pb-2">
           <a
             href={entry.url}
             target="_blank"
@@ -761,30 +761,34 @@ export function EntryReadingHeader({
               }
             }}
           >
-            <h1 className="text-2xl font-bold">{entry.title}</h1>
+            <h1 className="text-2xl font-bold leading-tight tracking-tight">{entry.title}</h1>
           </a>
-          <div className="flex items-center gap-2 text-sm text-muted-foreground">
-            <FeedAvatar title={entry.feed.title} domain={entry.feed.site_url} className="size-4!" />
+          <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
+            <FeedAvatar title={entry.feed.title} domain={entry.feed.site_url} className="size-5!" />
             <a
               href={entry.feed.site_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-foreground/85 transition-colors hover:text-foreground hover:underline decoration-primary/40 underline-offset-4"
+              className="font-medium text-foreground/80 transition-colors hover:text-foreground hover:underline decoration-primary/40 underline-offset-4"
             >
               {entry.feed.title}
             </a>
             {entry.author && (
               <>
-                <span>•</span>
-                <span>{entry.author}</span>
+                <span className="text-muted-foreground/30">·</span>
+                <span className="text-muted-foreground/70">{entry.author}</span>
               </>
             )}
-            <span>•</span>
-            <span>{format(parseISO(entry.published_at), 'PPp')}</span>
+            <span className="text-muted-foreground/30">·</span>
+            <time className="text-muted-foreground/70" dateTime={entry.published_at}>
+              {format(parseISO(entry.published_at), 'MMM d, yyyy')}
+            </time>
             {entry.reading_time && (
               <>
-                <span>•</span>
-                <span>{entry.reading_time} min read</span>
+                <span className="text-muted-foreground/30">·</span>
+                <span className="tabular-nums text-muted-foreground/70">
+                  {entry.reading_time} {_(msg`min read`)}
+                </span>
               </>
             )}
           </div>

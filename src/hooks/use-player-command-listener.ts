@@ -60,26 +60,44 @@ export function usePlayerCommandListener() {
           if (typeof value !== 'string') break;
           const item = store.queue.find((q) => q.entry.id === value);
           if (item) {
-            store.removeFromQueue(item.entry.id);
             store.play(item.entry, item.enclosure);
           }
           break;
         }
         case 'next-track': {
-          const next = store.queue[0];
+          // Find the entry after the current one in the queue
+          const currentId = store.currentEntry?.id;
+          const currentIdx = currentId
+            ? store.queue.findIndex((q) => q.entry.id === currentId)
+            : -1;
+          const nextIdx = currentIdx >= 0 ? currentIdx + 1 : 0;
+          const next = store.queue[nextIdx];
           if (next) {
-            store.removeFromQueue(next.entry.id);
             store.play(next.entry, next.enclosure);
           }
           break;
         }
         case 'prev-track': {
-          // Restart current track (no history tracking yet)
-          if (store.currentEntry) {
+          // Find the entry before the current one in the queue, or restart
+          const curId = store.currentEntry?.id;
+          const curIdx = curId ? store.queue.findIndex((q) => q.entry.id === curId) : -1;
+          const prevItem = curIdx > 0 ? store.queue[curIdx - 1] : undefined;
+          if (prevItem) {
+            store.play(prevItem.entry, prevItem.enclosure);
+          } else if (store.currentEntry) {
             store.seek(0);
           }
           break;
         }
+        case 'shuffle-queue':
+          store.shuffleQueue();
+          break;
+        case 'clear-queue':
+          store.clearQueue();
+          break;
+        case 'remove-from-queue':
+          if (typeof value === 'string') store.removeFromQueue(value);
+          break;
       }
     });
 

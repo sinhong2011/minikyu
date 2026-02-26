@@ -16,7 +16,8 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { emit } from '@tauri-apps/api/event';
-import { useRef, useState } from 'react';
+import { motion, useMotionValue, useTransform } from 'motion/react';
+import { useEffect, useRef, useState } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { PLAYER_CMD, type PlayerCmdPayload } from '@/lib/player-events';
 import { formatTimestamp } from '@/lib/podcast-utils';
@@ -40,6 +41,110 @@ function volumeIcon(volume: number, isMuted: boolean) {
   if (isMuted || volume === 0) return VolumeMute01Icon;
   if (volume < 0.5) return VolumeLowIcon;
   return VolumeHighIcon;
+}
+
+function VolumeSlider({
+  volume,
+  isMuted,
+  onChange,
+}: {
+  volume: number;
+  isMuted: boolean;
+  onChange: (v: number) => void;
+}) {
+  const trackRef = useRef<HTMLDivElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+  const [isHovered, setIsHovered] = useState(false);
+  const displayVolume = isMuted ? 0 : volume;
+  const active = isHovered || isDragging;
+
+  // Motion values for instant, render-free updates during drag
+  const mv = useMotionValue(displayVolume);
+  const fillScale = useTransform(mv, [0, 1], [0, 1]);
+  const thumbLeft = useTransform(mv, (v: number) => `calc(${v * 100}% - 5px)`);
+
+  // Sync prop changes (mute toggle, external volume) when not dragging
+  useEffect(() => {
+    if (!isDragging) {
+      mv.set(displayVolume);
+    }
+  }, [displayVolume, isDragging, mv]);
+
+  const getVolumeFromPointer = (clientX: number) => {
+    if (!trackRef.current) return mv.get();
+    const rect = trackRef.current.getBoundingClientRect();
+    return Math.max(0, Math.min(1, (clientX - rect.left) / rect.width));
+  };
+
+  const handlePointerDown = (e: React.PointerEvent) => {
+    e.preventDefault();
+    (e.target as HTMLElement).setPointerCapture(e.pointerId);
+    setIsDragging(true);
+    const v = getVolumeFromPointer(e.clientX);
+    mv.set(v);
+    onChange(v);
+  };
+
+  const handlePointerMove = (e: React.PointerEvent) => {
+    if (!isDragging) return;
+    const v = getVolumeFromPointer(e.clientX);
+    mv.set(v);
+    onChange(v);
+  };
+
+  const handlePointerUp = () => {
+    setIsDragging(false);
+  };
+
+  return (
+    <div
+      ref={trackRef}
+      className="relative flex h-4 w-20 cursor-pointer items-center"
+      onPointerDown={handlePointerDown}
+      onPointerMove={handlePointerMove}
+      onPointerUp={handlePointerUp}
+      onPointerEnter={() => setIsHovered(true)}
+      onPointerLeave={() => {
+        setIsHovered(false);
+        setIsDragging(false);
+      }}
+      title={`${Math.round(displayVolume * 100)}%`}
+    >
+      {/* Track */}
+      <motion.div
+        className="absolute inset-x-0 rounded-full bg-muted/40"
+        animate={{ height: active ? 6 : 4 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+      />
+      {/* Fill — driven by motion value, no spring lag during drag */}
+      <motion.div
+        className="absolute left-0 origin-left rounded-full bg-primary"
+        style={{ width: '100%', scaleX: fillScale }}
+        animate={{ height: active ? 6 : 4 }}
+        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+      />
+      {/* Glow */}
+      <motion.div
+        className="absolute left-0 origin-left rounded-full bg-primary/20 blur-[3px]"
+        style={{ width: '100%', scaleX: fillScale }}
+        animate={{
+          height: active ? 10 : 0,
+          opacity: active ? 1 : 0,
+        }}
+        transition={{ type: 'spring', stiffness: 300, damping: 30 }}
+      />
+      {/* Thumb — position driven by motion value */}
+      <motion.div
+        className="absolute top-1/2 size-2.5 -translate-y-1/2 rounded-full bg-primary shadow-sm shadow-primary/25"
+        style={{ left: thumbLeft }}
+        animate={{
+          scale: isDragging ? 1.4 : active ? 1 : 0,
+          opacity: active ? 1 : 0,
+        }}
+        transition={{ type: 'spring', stiffness: 400, damping: 25 }}
+      />
+    </div>
+  );
 }
 
 export function PlayerWindowControls({
@@ -221,16 +326,10 @@ export function PlayerWindowControls({
             <HugeiconsIcon icon={volumeIcon(volume, isMuted)} className="size-3.5" />
           </button>
 
-          <Slider
-            className="w-16 [&_[data-slot=slider-track]]:h-1 [&_[data-slot=slider-track]]:bg-muted/40 [&_[data-slot=slider-thumb]]:z-[2] [&_[data-slot=slider-thumb]]:size-2.5"
-            value={[isMuted ? 0 : volume * 100]}
-            min={0}
-            max={100}
-            step={1}
-            onValueChange={(val) => {
-              const v = typeof val === 'number' ? val : (val[0] ?? 0);
-              sendCmd('set-volume', v / 100);
-            }}
+          <VolumeSlider
+            volume={volume}
+            isMuted={isMuted}
+            onChange={(v) => sendCmd('set-volume', v)}
           />
 
           <button

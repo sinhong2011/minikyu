@@ -15,7 +15,7 @@ import { useLingui } from '@lingui/react';
 import { SyncProgressPopover } from '@/components/sync/SyncProgressPopover';
 import { CommandSearchButton } from '@/components/titlebar/CommandSearchButton';
 import { MacOSWindowControls } from '@/components/titlebar/MacOSWindowControls';
-// TitleBarPodcastAnchor removed — mini player moved to floating player window
+import { TitleBarPodcastAnchor } from '@/components/titlebar/TitleBarPodcastAnchor';
 import { WindowsWindowControls } from '@/components/titlebar/WindowsWindowControls';
 import { Button } from '@/components/ui/button';
 import { useCommandContext } from '@/hooks/use-command-context';
@@ -157,10 +157,9 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
                   icon={syncIcon}
                   className={cn(
                     'h-4 w-4 transition-[transform,color,opacity] duration-200',
-                    syncStatus === 'syncing' && 'sync-indicator-syncing text-primary',
-                    syncStatus === 'completed' &&
-                      'sync-indicator-completed text-emerald-600 dark:text-emerald-400',
-                    syncStatus === 'failed' && 'sync-indicator-failed text-destructive'
+                    syncStatus === 'syncing' && 'sync-indicator-syncing',
+                    syncStatus === 'completed' && 'sync-indicator-completed',
+                    syncStatus === 'failed' && 'sync-indicator-failed'
                   )}
                 />
               </span>
@@ -176,7 +175,7 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
         >
           ↓
         </Button>
-        {/* Mini player removed — floating player auto-shows on play */}
+        <TitleBarPodcastAnchor />
       </div>
 
       {/* Right section */}

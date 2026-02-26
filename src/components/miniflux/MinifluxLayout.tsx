@@ -69,14 +69,12 @@ export function MinifluxLayout() {
   const [sortOrder, setSortOrder] = useState<SortOrder>(
     filter === 'history' ? 'changed_at' : 'published_at'
   );
-  const [sortDirection, setSortDirection] = useState<SortDirection>(
-    filter === 'history' ? 'desc' : 'asc'
-  );
+  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
   // Default sort order: history uses changed_at desc, others use published_at asc
   useEffect(() => {
     if (filter === 'history') {
       setSortOrder('changed_at');
-      setSortDirection('desc');
+      setSortDirection('asc');
     } else {
       setSortOrder('published_at');
       setSortDirection('asc');

@@ -5,6 +5,7 @@ export const PLAYER_STATE_UPDATE = 'player:state-update';
 export const PLAYER_TRACK_CHANGE = 'player:track-change';
 export const PLAYER_DISMISSED = 'player:dismissed';
 export const PLAYER_CMD = 'player:cmd';
+export const PLAYER_REQUEST_SYNC = 'player:request-sync';
 
 // Payloads
 export interface PlayerStatePayload {
@@ -47,7 +48,10 @@ export type PlayerCmdAction =
   | 'toggle-mute'
   | 'play-entry'
   | 'download'
-  | 'dismiss';
+  | 'dismiss'
+  | 'shuffle-queue'
+  | 'clear-queue'
+  | 'remove-from-queue';
 
 export interface PlayerCmdPayload {
   action: PlayerCmdAction;

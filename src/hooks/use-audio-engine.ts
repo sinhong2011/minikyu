@@ -1,11 +1,12 @@
 import { convertFileSrc } from '@tauri-apps/api/core';
-import { emit } from '@tauri-apps/api/event';
+import { emit, listen } from '@tauri-apps/api/event';
 import { debounce, throttle } from 'es-toolkit';
 import { useEffect, useRef } from 'react';
 import { logger } from '@/lib/logger';
 import { extractThumbnail } from '@/lib/media-utils';
 import {
   PLAYER_DISMISSED,
+  PLAYER_REQUEST_SYNC,
   PLAYER_STATE_UPDATE,
   PLAYER_TRACK_CHANGE,
   type PlayerStatePayload,
@@ -299,19 +300,21 @@ export function useAudioEngine() {
 
         broadcastTrackChange();
 
-        // Auto-show player when a new track starts (respects display mode preference)
-        commands
-          .loadPreferences()
-          .then((result) => {
-            if (result.status === 'ok' && result.data.player_display_mode === 'TrayPopover') {
-              commands.showTrayPopover().catch(() => {});
-            } else {
+        // Auto-show player only when actively playing (not on persist rehydration)
+        if (state.isPlaying) {
+          commands
+            .loadPreferences()
+            .then((result) => {
+              if (result.status === 'ok' && result.data.player_display_mode === 'TrayPopover') {
+                commands.showTrayPopover().catch(() => {});
+              } else {
+                commands.showPlayerWindow().catch(() => {});
+              }
+            })
+            .catch(() => {
               commands.showPlayerWindow().catch(() => {});
-            }
-          })
-          .catch(() => {
-            commands.showPlayerWindow().catch(() => {});
-          });
+            });
+        }
       }
 
       // Play/pause
@@ -516,13 +519,25 @@ export function useAudioEngine() {
       if (state.currentEntry) {
         commands.markEpisodeCompleted(state.currentEntry.id);
       }
-      // Auto-play next is handled by the component layer (needs entry list context)
       activeLoadToken += 1;
       isLoadingTrack = false;
       isPlaybackStalled = false;
       pendingAutoPlay = false;
       setBuffering(false);
-      state.dismiss();
+
+      // Auto-advance to next track in queue
+      if (!state.stopAfterCurrent && state.queue.length > 0) {
+        const currentId = state.currentEntry?.id;
+        const currentIdx = currentId ? state.queue.findIndex((q) => q.entry.id === currentId) : -1;
+        const nextIdx = currentIdx >= 0 ? currentIdx + 1 : 0;
+        const next = state.queue[nextIdx];
+        if (next) {
+          state.play(next.entry, next.enclosure);
+          return;
+        }
+      }
+      // No next track — stop playback but keep queue
+      state._setPlaying(false);
     };
 
     const onError = () => {
@@ -565,8 +580,16 @@ export function useAudioEngine() {
       });
     }
 
+    // Respond to sync requests from other windows (e.g., floating player on mount)
+    const unlistenSyncRequest = listen(PLAYER_REQUEST_SYNC, () => {
+      logger.debug('Audio engine: sync request received, broadcasting state');
+      broadcastState();
+      broadcastTrackChange();
+    });
+
     runtime.teardown = () => {
       unsubscribe();
+      unlistenSyncRequest.then((fn) => fn());
       broadcastState.cancel();
       audio.removeEventListener('loadstart', onLoadStart);
       audio.removeEventListener('canplay', onCanPlay);

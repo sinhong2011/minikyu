@@ -17,6 +17,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import {
   PLAYER_DISMISSED,
+  PLAYER_REQUEST_SYNC,
   PLAYER_STATE_UPDATE,
   PLAYER_TRACK_CHANGE,
   type PlayerStatePayload,
@@ -397,6 +398,8 @@ export function TrayPopover() {
         setPs((p) => ({ ...p, isPlaying: false, isBuffering: false, currentTime: 0 }));
       }),
     ];
+    // Request current state from main window
+    emit(PLAYER_REQUEST_SYNC, {}).catch(() => {});
     return () => {
       for (const p of u) p.then((f) => f());
     };

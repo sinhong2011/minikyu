@@ -3,7 +3,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { CommandSearchButton } from '@/components/titlebar/CommandSearchButton';
-// TitleBarPodcastAnchor removed — mini player moved to floating player window
+import { TitleBarPodcastAnchor } from '@/components/titlebar/TitleBarPodcastAnchor';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { useUIStore } from '@/store/ui-store';
@@ -48,8 +48,8 @@ export function LinuxTitleBar({ className, onOpenCommandPalette }: LinuxTitleBar
         </div>
       </div>
 
-      {/* Right spacer */}
-      <div className="min-w-8" />
+      {/* Right: Podcast anchor */}
+      <TitleBarPodcastAnchor />
     </div>
   );
 }
