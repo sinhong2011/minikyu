@@ -6,6 +6,7 @@ export type PreferencesPane =
   | 'general'
   | 'appearance'
   | 'translation'
+  | 'shortcuts'
   | 'advanced'
   | 'about'
   | 'categories'

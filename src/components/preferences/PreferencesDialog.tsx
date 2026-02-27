@@ -4,12 +4,13 @@ import {
   Delete02Icon,
   Edit02Icon,
   Folder01Icon,
-  Globe02Icon,
   InformationCircleIcon,
   Key01Icon,
+  KeyboardIcon,
   Link02Icon,
   RssIcon,
   Settings01Icon,
+  SparklesIcon,
   UserGroupIcon,
   ZapIcon,
 } from '@hugeicons/core-free-icons';
@@ -78,6 +79,7 @@ import { CategoriesPane } from './panes/CategoriesPane';
 import { FeedsPane } from './panes/FeedsPane';
 import { GeneralPane } from './panes/GeneralPane';
 import { IntegrationsPane } from './panes/IntegrationsPane';
+import { ShortcutsPane } from './panes/ShortcutsPane';
 import { TranslationPane } from './panes/TranslationPane';
 import { UsersPane } from './panes/UsersPane';
 
@@ -94,8 +96,13 @@ const appSettingsItems = [
   },
   {
     id: 'translation' as const,
-    label: msg`Translation`,
-    icon: Globe02Icon,
+    label: msg`AI`,
+    icon: SparklesIcon,
+  },
+  {
+    id: 'shortcuts' as const,
+    label: msg`Shortcuts`,
+    icon: KeyboardIcon,
   },
   {
     id: 'advanced' as const,
@@ -598,6 +605,7 @@ export function PreferencesDialog() {
               {activePane === 'general' && <GeneralPane />}
               {activePane === 'appearance' && <AppearancePane />}
               {activePane === 'translation' && <TranslationPane />}
+              {activePane === 'shortcuts' && <ShortcutsPane />}
               {activePane === 'advanced' && <AdvancedPane />}
               {activePane === 'about' && <AboutPane />}
 

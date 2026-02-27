@@ -69,10 +69,10 @@ mod tests {
             .await
             .unwrap();
 
-        // Should have exactly 4 migrations
+        // Should have exactly 5 migrations
         assert_eq!(
-            count, 4,
-            "Should have exactly 4 migration entries after running twice"
+            count, 5,
+            "Should have exactly 5 migration entries after running twice"
         );
     }
 

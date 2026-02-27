@@ -47,7 +47,11 @@ const mockNavigationCommands: AppCommand[] = [
 
 const createMockContext = (): CommandContext => ({
   openPreferences: vi.fn(),
+  openPreferencesPane: vi.fn(),
   showToast: vi.fn(),
+  getSelectedEntryId: vi.fn(() => undefined),
+  isConnected: vi.fn(() => true),
+  hasPodcast: vi.fn(() => false),
 });
 
 const mockTranslate = (descriptor: MessageDescriptor): string => {

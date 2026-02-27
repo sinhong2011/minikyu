@@ -15,6 +15,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
+  Cancel01Icon,
   Globe02Icon,
   InformationCircleIcon,
   Key01Icon,
@@ -31,6 +32,7 @@ import { useLingui } from '@lingui/react';
 import { motion } from 'motion/react';
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { Switch } from '@/components/animate-ui/components/base/switch';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Combobox,
@@ -59,6 +61,7 @@ import {
   type ReaderTranslationRouteMode,
   type TranslationSegmentRequest,
 } from '@/lib/tauri-bindings';
+import { useCategories } from '@/services/miniflux/categories';
 import { useFeeds } from '@/services/miniflux/feeds';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
 import { SettingsField, SettingsSection } from '../shared/SettingsComponents';
@@ -509,6 +512,9 @@ export function TranslationPane() {
     });
   };
   const [isFetchingModels, setIsFetchingModels] = useState(false);
+  const [summaryModelInput, setSummaryModelInput] = useState(preferences?.ai_summary_model ?? '');
+  const [summaryAvailableModels, setSummaryAvailableModels] = useState<string[] | null>(null);
+  const [isFetchingSummaryModels, setIsFetchingSummaryModels] = useState(false);
   const didHydrateProviderOrder = useRef(false);
 
   const [customRulesDraft, setCustomRulesDraft] = useState<CustomRuleDraft[]>([]);
@@ -548,6 +554,10 @@ export function TranslationPane() {
       ),
     [allProviders]
   );
+  const chineseConversionEnabled =
+    preferences?.reader_chinese_conversion != null &&
+    preferences.reader_chinese_conversion !== 'off';
+
   const dndSensors = useSensors(
     useSensor(PointerSensor, {
       activationConstraint: { distance: 2 },
@@ -556,6 +566,10 @@ export function TranslationPane() {
       coordinateGetter: sortableKeyboardCoordinates,
     })
   );
+
+  useEffect(() => {
+    setSummaryModelInput(preferences?.ai_summary_model ?? '');
+  }, [preferences?.ai_summary_model]);
 
   useEffect(() => {
     setCustomRulesDraft(toDraftRules(preferences?.reader_custom_conversions));
@@ -1044,6 +1058,25 @@ export function TranslationPane() {
     }
   };
 
+  const handleFetchSummaryModels = async () => {
+    const providerId = preferences?.ai_summary_provider;
+    if (!providerId) return;
+    setIsFetchingSummaryModels(true);
+    try {
+      const result = await commands.getProviderAvailableModels(providerId);
+      if (result.status === 'error') {
+        showToast.error(_(msg`Failed to fetch available models`), result.error);
+        return;
+      }
+      setSummaryAvailableModels(result.data);
+      if (result.data.length === 0) {
+        showToast.info(_(msg`No models found for this provider`));
+      }
+    } finally {
+      setIsFetchingSummaryModels(false);
+    }
+  };
+
   const handleVerifyProvider = async (provider: TranslationProviderDefinition) => {
     const runtimeSaved = await handleProviderRuntimeBlur(provider);
     if (!runtimeSaved) {
@@ -1178,57 +1211,7 @@ export function TranslationPane() {
 
   return (
     <div className="space-y-6">
-      <SettingsSection title={_(msg`Reader translation`)}>
-        <div className="space-y-4">
-          <SettingsRow
-            label={_(msg`Route strategy`)}
-            description={_(
-              msg`Choose how translation requests are routed across engines and LLMs.`
-            )}
-          >
-            <Select
-              value={preferences?.reader_translation_route_mode ?? 'engine_first'}
-              onValueChange={handleRouteModeChange}
-              disabled={!preferences || savePreferences.isPending}
-            >
-              <SelectTrigger aria-label={_(msg`Translation route mode`)} className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="engine_first">{_(msg`Engine first`)}</SelectItem>
-                <SelectItem value="hybrid_auto">{_(msg`Hybrid auto`)}</SelectItem>
-              </SelectContent>
-            </Select>
-          </SettingsRow>
-
-          <SettingsRow
-            label={_(msg`Target language`)}
-            description={_(msg`Language used for immersive translation output.`)}
-          >
-            <Select
-              value={preferences?.reader_translation_target_language ?? 'en'}
-              onValueChange={handleTargetLanguageChange}
-              disabled={!preferences || savePreferences.isPending}
-            >
-              <SelectTrigger aria-label={_(msg`Translation target language`)} className="w-full">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="en">{_(msg`English`)}</SelectItem>
-                <SelectItem value="zh-CN">{_(msg`Chinese (Simplified)`)}</SelectItem>
-                <SelectItem value="zh-TW">{_(msg`Chinese (Traditional)`)}</SelectItem>
-                <SelectItem value="ja">{_(msg`Japanese`)}</SelectItem>
-                <SelectItem value="ko">{_(msg`Korean`)}</SelectItem>
-                <SelectItem value="es">{_(msg`Spanish`)}</SelectItem>
-                <SelectItem value="fr">{_(msg`French`)}</SelectItem>
-                <SelectItem value="de">{_(msg`German`)}</SelectItem>
-              </SelectContent>
-            </Select>
-          </SettingsRow>
-        </div>
-      </SettingsSection>
-
-      <SettingsSection title={_(msg`Translation Providers`)}>
+      <SettingsSection title={_(msg`Providers`)}>
         <div className="grid gap-3 lg:grid-cols-[260px_minmax(0,1fr)]">
           <div className="overflow-hidden rounded-md border border-border/60">
             <div className="flex items-center justify-between gap-2 border-b border-border/50 px-3 py-2">
@@ -1588,114 +1571,55 @@ export function TranslationPane() {
         </div>
       </SettingsSection>
 
-      <SettingsSection title={_(msg`Chinese Conversion`)}>
-        <SettingsField
-          label={_(msg`Conversion Mode`)}
-          description={_(
-            msg`Convert Chinese characters between Simplified and Traditional variants.`
-          )}
-        >
-          <Select
-            value={preferences?.reader_chinese_conversion ?? 's2tw'}
-            onValueChange={(value) => {
-              if (preferences) {
-                savePreferences.mutate({
-                  ...preferences,
-                  // biome-ignore lint/style/useNamingConvention: preferences field name
-                  reader_chinese_conversion: value as typeof preferences.reader_chinese_conversion,
-                });
-              }
-            }}
+      <SettingsSection title={_(msg`Translation`)}>
+        <div className="space-y-4">
+          <SettingsRow
+            label={_(msg`Route strategy`)}
+            description={_(
+              msg`Choose how translation requests are routed across engines and LLMs.`
+            )}
           >
-            <SelectTrigger>
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="off">{_(msg`Off`)}</SelectItem>
-              <SelectItem value="s2hk">{_(msg`繁體中文（香港）`)}</SelectItem>
-              <SelectItem value="s2tw">{_(msg`繁體中文（台灣）`)}</SelectItem>
-              <SelectItem value="t2s">{_(msg`簡體中文`)}</SelectItem>
-            </SelectContent>
-          </Select>
-        </SettingsField>
+            <Select
+              value={preferences?.reader_translation_route_mode ?? 'engine_first'}
+              onValueChange={handleRouteModeChange}
+              disabled={!preferences || savePreferences.isPending}
+            >
+              <SelectTrigger aria-label={_(msg`Translation route mode`)} className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="engine_first">{_(msg`Engine first`)}</SelectItem>
+                <SelectItem value="hybrid_auto">{_(msg`Hybrid auto`)}</SelectItem>
+              </SelectContent>
+            </Select>
+          </SettingsRow>
 
-        <SettingsField
-          label={_(msg`Custom Term Conversion`)}
-          description={_(
-            msg`These replacements are applied after built-in Chinese conversion in the reading panel.`
-          )}
-        >
-          <div className="space-y-2">
-            {customRulesDraft.length === 0 && (
-              <p className="text-sm text-muted-foreground">{_(msg`No custom rules yet`)}</p>
-            )}
+          <SettingsRow
+            label={_(msg`Target language`)}
+            description={_(msg`Language used for immersive translation output.`)}
+          >
+            <Select
+              value={preferences?.reader_translation_target_language ?? 'en'}
+              onValueChange={handleTargetLanguageChange}
+              disabled={!preferences || savePreferences.isPending}
+            >
+              <SelectTrigger aria-label={_(msg`Translation target language`)} className="w-full">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="en">{_(msg`English`)}</SelectItem>
+                <SelectItem value="zh-CN">{_(msg`Chinese (Simplified)`)}</SelectItem>
+                <SelectItem value="zh-TW">{_(msg`Chinese (Traditional)`)}</SelectItem>
+                <SelectItem value="ja">{_(msg`Japanese`)}</SelectItem>
+                <SelectItem value="ko">{_(msg`Korean`)}</SelectItem>
+                <SelectItem value="es">{_(msg`Spanish`)}</SelectItem>
+                <SelectItem value="fr">{_(msg`French`)}</SelectItem>
+                <SelectItem value="de">{_(msg`German`)}</SelectItem>
+              </SelectContent>
+            </Select>
+          </SettingsRow>
+        </div>
 
-            {customRulesDraft.map((rule) => (
-              <div key={rule.id} className="grid grid-cols-[1fr_1fr_auto] gap-2">
-                <Input
-                  value={rule.from}
-                  placeholder={_(msg`From`)}
-                  onChange={(event) => updateCustomRule(rule.id, { from: event.target.value })}
-                  disabled={savePreferences.isPending}
-                />
-                <Input
-                  value={rule.to}
-                  placeholder={_(msg`To`)}
-                  onChange={(event) => updateCustomRule(rule.id, { to: event.target.value })}
-                  disabled={savePreferences.isPending}
-                />
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => removeCustomRule(rule.id)}
-                  disabled={savePreferences.isPending}
-                >
-                  {_(msg`Remove`)}
-                </Button>
-              </div>
-            ))}
-
-            {hasInvalidCustomRules && (
-              <p className="text-sm text-destructive">
-                {_(msg`Each rule must include a non-empty "From" value`)}
-              </p>
-            )}
-
-            <div className="flex flex-wrap gap-2">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={addCustomRule}
-                disabled={savePreferences.isPending}
-              >
-                {_(msg`Add Rule`)}
-              </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={resetCustomRules}
-                disabled={savePreferences.isPending || !hasRuleChanges}
-              >
-                {_(msg`Reset`)}
-              </Button>
-              <Button
-                type="button"
-                onClick={() => void saveCustomRules()}
-                disabled={
-                  savePreferences.isPending ||
-                  hasInvalidCustomRules ||
-                  !hasRuleChanges ||
-                  !preferences
-                }
-              >
-                {savePreferences.isPending ? _(msg`Saving...`) : _(msg`Save Rules`)}
-              </Button>
-            </div>
-          </div>
-        </SettingsField>
-      </SettingsSection>
-
-      <SettingsSection title={_(msg`Feed Exclusions`)}>
         <SettingsField
           label={_(msg`Excluded Feeds`)}
           description={_(
@@ -1704,6 +1628,293 @@ export function TranslationPane() {
         >
           <FeedExclusionList />
         </SettingsField>
+
+        <SettingsField
+          label={_(msg`Excluded Categories`)}
+          description={_(
+            msg`All feeds in these categories will skip auto-translation. Chinese conversion still applies.`
+          )}
+        >
+          <CategoryExclusionList />
+        </SettingsField>
+      </SettingsSection>
+
+      <SettingsSection title={_(msg`AI Summary`)}>
+        <SettingsField
+          label={_(msg`Provider`)}
+          description={_(
+            msg`LLM provider for AI summaries. If not set, uses the translation LLM fallback chain.`
+          )}
+        >
+          <Select
+            value={preferences?.ai_summary_provider ?? ''}
+            onValueChange={(value) => {
+              if (preferences) {
+                savePreferences.mutate({
+                  ...preferences,
+                  // biome-ignore lint/style/useNamingConvention: preferences field name
+                  ai_summary_provider: value || null,
+                });
+              }
+            }}
+          >
+            <SelectTrigger className="w-full">
+              <SelectValue placeholder={_(msg`Use translation LLM providers`)} />
+            </SelectTrigger>
+            <SelectContent>
+              {llmProviders.map((provider) => (
+                <SelectItem key={provider.id} value={provider.id}>
+                  {getProviderLabel(provider.id)}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </SettingsField>
+        {preferences?.ai_summary_provider && (
+          <SettingsField
+            label={_(msg`Model`)}
+            description={_(
+              msg`Model name for AI summaries. If not set, uses the model configured for this provider in translation settings.`
+            )}
+          >
+            <div className="flex items-center gap-2">
+              <div className="flex-1">
+                <Combobox
+                  value={summaryModelInput}
+                  onValueChange={(value) => {
+                    setSummaryModelInput(value ?? '');
+                    if (preferences) {
+                      savePreferences.mutate({
+                        ...preferences,
+                        // biome-ignore lint/style/useNamingConvention: preferences field name
+                        ai_summary_model: value || null,
+                      });
+                    }
+                  }}
+                >
+                  <ComboboxInput placeholder={_(msg`Type or fetch to pick a model`)} />
+                  <ComboboxContent>
+                    <ComboboxList>
+                      <ComboboxEmpty>{_(msg`No models found`)}</ComboboxEmpty>
+                      {(summaryAvailableModels ?? []).map((modelName) => (
+                        <ComboboxItem key={modelName} value={modelName}>
+                          {modelName}
+                        </ComboboxItem>
+                      ))}
+                    </ComboboxList>
+                  </ComboboxContent>
+                </Combobox>
+              </div>
+              <Button
+                type="button"
+                variant="ghost"
+                size="icon"
+                className="size-9 shrink-0 text-muted-foreground hover:text-foreground"
+                disabled={isFetchingSummaryModels}
+                aria-label={_(msg`Fetch available models`)}
+                onClick={() => {
+                  void handleFetchSummaryModels();
+                }}
+              >
+                <HugeiconsIcon
+                  icon={Refresh04Icon}
+                  className={isFetchingSummaryModels ? 'animate-spin' : ''}
+                />
+              </Button>
+            </div>
+          </SettingsField>
+        )}
+        <SettingsField
+          label={_(msg`Auto-summarize`)}
+          description={_(msg`Automatically generate an AI summary when opening an article`)}
+        >
+          <Switch
+            checked={preferences?.ai_summary_auto_enabled ?? false}
+            onCheckedChange={(checked) => {
+              if (preferences) {
+                savePreferences.mutate({
+                  ...preferences,
+                  // biome-ignore lint/style/useNamingConvention: preferences field name
+                  ai_summary_auto_enabled: Boolean(checked),
+                });
+              }
+            }}
+          />
+        </SettingsField>
+        <SettingsField
+          label={_(msg`Custom Prompt`)}
+          description={_(
+            msg`Override the default system prompt for AI summaries. Leave empty to use the default.`
+          )}
+        >
+          <Textarea
+            value={preferences?.ai_summary_custom_prompt ?? ''}
+            onChange={(e) => {
+              if (preferences) {
+                savePreferences.mutate({
+                  ...preferences,
+                  // biome-ignore lint/style/useNamingConvention: preferences field name
+                  ai_summary_custom_prompt: e.target.value || null,
+                });
+              }
+            }}
+            placeholder="You are a concise article summarizer. Summarize the following article in 3-5 bullet points (max 250 words total). Each bullet point should be 1-2 sentences. Capture the key ideas and main takeaways. Use clear, direct language. Output only the summary bullet points, nothing else."
+            rows={4}
+            className="text-xs"
+          />
+        </SettingsField>
+        <SettingsField
+          label={_(msg`Max text length`)}
+          description={_(
+            msg`Maximum number of characters sent to the LLM. Longer articles are truncated.`
+          )}
+        >
+          <Input
+            type="number"
+            min={1000}
+            max={500000}
+            step={10000}
+            value={preferences?.ai_summary_max_text_length ?? 100000}
+            onChange={(e) => {
+              const value = Number.parseInt(e.target.value, 10);
+              if (preferences && Number.isFinite(value) && value >= 1000) {
+                savePreferences.mutate({
+                  ...preferences,
+                  // biome-ignore lint/style/useNamingConvention: preferences field name
+                  ai_summary_max_text_length: value,
+                });
+              }
+            }}
+            className="w-32"
+          />
+        </SettingsField>
+      </SettingsSection>
+
+      <SettingsSection
+        title={_(msg`Chinese Conversion`)}
+        action={
+          <Switch
+            checked={chineseConversionEnabled}
+            onCheckedChange={(checked) => {
+              if (preferences) {
+                savePreferences.mutate({
+                  ...preferences,
+                  // biome-ignore lint/style/useNamingConvention: preferences field name
+                  reader_chinese_conversion: checked ? 's2tw' : 'off',
+                });
+              }
+            }}
+          />
+        }
+      >
+        {chineseConversionEnabled && (
+          <>
+            <SettingsField
+              label={_(msg`Conversion Mode`)}
+              description={_(
+                msg`Convert Chinese characters between Simplified and Traditional variants.`
+              )}
+            >
+              <Select
+                value={preferences?.reader_chinese_conversion ?? 's2tw'}
+                onValueChange={(value) => {
+                  if (preferences) {
+                    savePreferences.mutate({
+                      ...preferences,
+                      // biome-ignore lint/style/useNamingConvention: preferences field name
+                      reader_chinese_conversion:
+                        value as typeof preferences.reader_chinese_conversion,
+                    });
+                  }
+                }}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="s2hk">{_(msg`繁體中文（香港）`)}</SelectItem>
+                  <SelectItem value="s2tw">{_(msg`繁體中文（台灣）`)}</SelectItem>
+                  <SelectItem value="t2s">{_(msg`簡體中文`)}</SelectItem>
+                </SelectContent>
+              </Select>
+            </SettingsField>
+
+            <SettingsField
+              label={_(msg`Custom Term Conversion`)}
+              description={_(
+                msg`These replacements are applied after built-in Chinese conversion in the reading panel.`
+              )}
+            >
+              <div className="space-y-2">
+                {customRulesDraft.length === 0 && (
+                  <p className="text-sm text-muted-foreground">{_(msg`No custom rules yet`)}</p>
+                )}
+
+                {customRulesDraft.map((rule) => (
+                  <div key={rule.id} className="grid grid-cols-[1fr_1fr_auto] gap-2">
+                    <Input
+                      value={rule.from}
+                      placeholder={_(msg`From`)}
+                      onChange={(event) => updateCustomRule(rule.id, { from: event.target.value })}
+                      disabled={savePreferences.isPending}
+                    />
+                    <Input
+                      value={rule.to}
+                      placeholder={_(msg`To`)}
+                      onChange={(event) => updateCustomRule(rule.id, { to: event.target.value })}
+                      disabled={savePreferences.isPending}
+                    />
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={() => removeCustomRule(rule.id)}
+                      disabled={savePreferences.isPending}
+                    >
+                      {_(msg`Remove`)}
+                    </Button>
+                  </div>
+                ))}
+
+                {hasInvalidCustomRules && (
+                  <p className="text-sm text-destructive">
+                    {_(msg`Each rule must include a non-empty "From" value`)}
+                  </p>
+                )}
+
+                <div className="flex flex-wrap gap-2">
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={addCustomRule}
+                    disabled={savePreferences.isPending}
+                  >
+                    {_(msg`Add Rule`)}
+                  </Button>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={resetCustomRules}
+                    disabled={savePreferences.isPending || !hasRuleChanges}
+                  >
+                    {_(msg`Reset`)}
+                  </Button>
+                  <Button
+                    type="button"
+                    onClick={() => void saveCustomRules()}
+                    disabled={
+                      savePreferences.isPending ||
+                      hasInvalidCustomRules ||
+                      !hasRuleChanges ||
+                      !preferences
+                    }
+                  >
+                    {savePreferences.isPending ? _(msg`Saving...`) : _(msg`Save Rules`)}
+                  </Button>
+                </div>
+              </div>
+            </SettingsField>
+          </>
+        )}
       </SettingsSection>
     </div>
   );
@@ -1739,29 +1950,30 @@ function FeedExclusionList() {
 
   return (
     <div className="space-y-2">
+      {excludedFeeds.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {excludedFeeds.map((feed) => (
+            <Badge key={feed.id} variant="secondary" className="gap-1 pr-1 h-auto py-0.5">
+              <span className="max-w-[200px] truncate">{feed.title}</span>
+              <button
+                type="button"
+                onClick={() => removeFeed(feed.id)}
+                disabled={isPending}
+                aria-label={_(msg`Remove ${feed.title}`)}
+                className="ml-0.5 rounded-sm opacity-60 hover:opacity-100 disabled:pointer-events-none transition-opacity"
+              >
+                <HugeiconsIcon icon={Cancel01Icon} className="size-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
+
       {excludedFeeds.length === 0 && (
         <p className="text-sm text-muted-foreground">
           {_(msg`No feeds excluded. All feeds will be translated when translation is enabled.`)}
         </p>
       )}
-
-      {excludedFeeds.map((feed) => (
-        <div
-          key={feed.id}
-          className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2"
-        >
-          <p className="text-sm truncate">{feed.title}</p>
-          <Button
-            type="button"
-            variant="outline"
-            size="sm"
-            onClick={() => removeFeed(feed.id)}
-            disabled={isPending}
-          >
-            {_(msg`Remove`)}
-          </Button>
-        </div>
-      ))}
 
       {availableFeeds.length > 0 && (
         <Combobox
@@ -1781,6 +1993,89 @@ function FeedExclusionList() {
                 </ComboboxItem>
               ))}
               <ComboboxEmpty>{_(msg`No feeds found`)}</ComboboxEmpty>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      )}
+    </div>
+  );
+}
+
+function CategoryExclusionList() {
+  const { _ } = useLingui();
+  const { data: preferences } = usePreferences();
+  const { mutate: savePreferencesAction, isPending } = useSavePreferences();
+  const { data: categories } = useCategories();
+  const excludedIds = preferences?.reader_translation_excluded_category_ids ?? [];
+
+  const excludedCategories = (categories ?? []).filter((cat) => excludedIds.includes(cat.id));
+  const availableCategories = (categories ?? []).filter((cat) => !excludedIds.includes(cat.id));
+
+  const addCategory = (categoryId: string) => {
+    if (!preferences || excludedIds.includes(categoryId)) return;
+    savePreferencesAction({
+      ...preferences,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      reader_translation_excluded_category_ids: [...excludedIds, categoryId],
+    });
+  };
+
+  const removeCategory = (categoryId: string) => {
+    if (!preferences) return;
+    savePreferencesAction({
+      ...preferences,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      reader_translation_excluded_category_ids: excludedIds.filter((id) => id !== categoryId),
+    });
+  };
+
+  return (
+    <div className="space-y-2">
+      {excludedCategories.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {excludedCategories.map((cat) => (
+            <Badge key={cat.id} variant="secondary" className="gap-1 pr-1 h-auto py-0.5">
+              <span className="max-w-[200px] truncate">{cat.title}</span>
+              <button
+                type="button"
+                onClick={() => removeCategory(cat.id)}
+                disabled={isPending}
+                aria-label={_(msg`Remove ${cat.title}`)}
+                className="ml-0.5 rounded-sm opacity-60 hover:opacity-100 disabled:pointer-events-none transition-opacity"
+              >
+                <HugeiconsIcon icon={Cancel01Icon} className="size-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
+
+      {excludedCategories.length === 0 && (
+        <p className="text-sm text-muted-foreground">
+          {_(
+            msg`No categories excluded. All categories will be translated when translation is enabled.`
+          )}
+        </p>
+      )}
+
+      {availableCategories.length > 0 && (
+        <Combobox
+          value=""
+          onValueChange={(value) => {
+            if (value && typeof value === 'string') {
+              addCategory(value);
+            }
+          }}
+        >
+          <ComboboxInput placeholder={_(msg`Search categories to exclude...`)} />
+          <ComboboxContent>
+            <ComboboxList>
+              {availableCategories.map((cat) => (
+                <ComboboxItem key={cat.id} value={cat.id}>
+                  {cat.title}
+                </ComboboxItem>
+              ))}
+              <ComboboxEmpty>{_(msg`No categories found`)}</ComboboxEmpty>
             </ComboboxList>
           </ComboboxContent>
         </Combobox>

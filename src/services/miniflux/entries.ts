@@ -116,7 +116,21 @@ export function useEntries(filters: EntryFilters = {}) {
     getNextPageParam: (_, allPages) => getNextEntriesOffset(allPages),
     select: (data): EntryResponse => {
       const sortStart = performance.now();
-      let entries = data.pages.flatMap((page) => page.entries ?? []);
+      // Deduplicate entries — two causes:
+      // 1. Offset-based pagination can overlap when new items arrive mid-scroll (same ID)
+      // 2. Miniflux can create two DB rows for the same feed article when the feed lacks
+      //    stable GUIDs (different IDs but same URL, common with V2EX)
+      const seenIds = new Set<string>();
+      const seenUrls = new Set<string>();
+      let entries = data.pages
+        .flatMap((page) => page.entries ?? [])
+        .filter((entry) => {
+          if (seenIds.has(entry.id)) return false;
+          seenIds.add(entry.id);
+          if (entry.url && seenUrls.has(entry.url)) return false;
+          if (entry.url) seenUrls.add(entry.url);
+          return true;
+        });
       const total = data.pages[0]?.total ?? '0';
 
       // Client-side sorting to ensure correct order and direction

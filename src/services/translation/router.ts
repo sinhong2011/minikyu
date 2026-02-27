@@ -1,3 +1,4 @@
+import { listen, type UnlistenFn } from '@tauri-apps/api/event';
 import { commands, type TranslationSegmentRequest } from '@/lib/tauri-bindings';
 import {
   normalizeTranslationSegmentResponse,
@@ -5,6 +6,15 @@ import {
   type TranslateReaderSegmentResult,
   type TranslationRoutingPreferences,
 } from './types';
+
+export interface TranslationStreamEvent {
+  // biome-ignore lint/style/useNamingConvention: Tauri event payload field name
+  stream_id: string;
+  event: 'delta' | 'done' | 'error';
+  text: string;
+  // biome-ignore lint/style/useNamingConvention: Tauri event payload field name
+  provider_used: string | null;
+}
 
 function resolveTargetLanguage(
   targetLanguageOverride: string | undefined,
@@ -56,4 +66,49 @@ export async function translateReaderSegmentWithPreferences(
   }
 
   return normalizeTranslationSegmentResponse(result.data);
+}
+
+export interface TranslationStreamCallbacks {
+  onDelta: (text: string) => void;
+  onDone: (fullText: string, providerUsed: string) => void;
+  onError: (error: string) => void;
+}
+
+/**
+ * Streaming translation: calls the streaming backend command and
+ * delivers text deltas via callbacks.
+ * Returns an unlisten function to cancel the stream listener.
+ */
+export async function translateReaderSegmentStream(
+  input: TranslateReaderSegmentInput,
+  streamId: string,
+  callbacks: TranslationStreamCallbacks
+): Promise<UnlistenFn> {
+  const request = buildTranslationSegmentRequest(input);
+
+  const unlisten = await listen<TranslationStreamEvent>('translation-stream', (event) => {
+    const data = event.payload;
+    if (data.stream_id !== streamId) return;
+
+    switch (data.event) {
+      case 'delta':
+        callbacks.onDelta(data.text);
+        break;
+      case 'done':
+        callbacks.onDone(data.text, data.provider_used ?? 'unknown');
+        break;
+      case 'error':
+        callbacks.onError(data.text);
+        break;
+    }
+  });
+
+  // Fire the streaming command (don't await the full result — events arrive via listener)
+  commands.translateReaderSegmentStream(request, streamId).then((result) => {
+    if (result.status === 'error') {
+      callbacks.onError(result.error);
+    }
+  });
+
+  return unlisten;
 }

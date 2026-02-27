@@ -285,7 +285,9 @@ fn handle_menu_event(app: &AppHandle, event: tauri::menu::MenuEvent) {
             quit_app_now(app);
         }
         _ => {
-            log::warn!("Unknown tray menu item: {:?}", event.id);
+            // App menu items (File, Edit, View, Article, etc.) also flow through
+            // this handler in Tauri v2. Silently ignore non-tray menu IDs.
+            log::trace!("Ignoring non-tray menu item: {:?}", event.id);
         }
     }
 }

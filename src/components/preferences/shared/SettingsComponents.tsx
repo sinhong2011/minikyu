@@ -11,6 +11,7 @@ interface SettingsFieldProps {
 interface SettingsSectionProps {
   title: string;
   children: ReactNode;
+  action?: ReactNode;
 }
 
 export function SettingsField({ label, children, description }: SettingsFieldProps) {
@@ -23,11 +24,14 @@ export function SettingsField({ label, children, description }: SettingsFieldPro
   );
 }
 
-export function SettingsSection({ title, children }: SettingsSectionProps) {
+export function SettingsSection({ title, children, action }: SettingsSectionProps) {
   return (
     <div className="space-y-4">
       <div>
-        <h3 className="text-lg font-medium text-foreground">{title}</h3>
+        <div className="flex items-center justify-between">
+          <h3 className="text-lg font-medium text-foreground">{title}</h3>
+          {action}
+        </div>
         <Separator className="mt-2" />
       </div>
       <div className="space-y-4">{children}</div>

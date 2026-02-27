@@ -11,9 +11,10 @@ use std::thread;
 use std::time::Duration;
 #[cfg(target_os = "macos")]
 use std::time::Instant;
-use tauri::AppHandle;
+use tauri::{AppHandle, Emitter};
 
 use crate::commands::preferences::load_preferences_sync;
+use crate::utils::llm_stream;
 use crate::types::ReaderTranslationProviderSettings;
 
 const KEYRING_SERVICE_NAME: &str = "minikyu";
@@ -1820,6 +1821,411 @@ pub async fn get_provider_available_models(
             let names: Vec<String> = body.data.into_iter().map(|m| m.id).collect();
             log::info!("provider models ({provider}): found {} models", names.len());
             Ok(names)
+        }
+    }
+}
+
+// ── Streaming translation ──
+
+#[derive(Debug, Clone, Serialize, Deserialize, Type)]
+pub struct TranslationStreamEvent {
+    /// Unique stream ID to correlate chunks with the request.
+    pub stream_id: String,
+    /// "delta" for text chunks, "done" for completion, "error" for failure.
+    pub event: String,
+    /// Text delta (for "delta" events) or full accumulated text (for "done").
+    pub text: String,
+    /// Provider name (set on "done").
+    pub provider_used: Option<String>,
+}
+
+fn emit_translation_delta(app: &AppHandle, stream_id: &str, delta: &str) {
+    let _ = app.emit(
+        "translation-stream",
+        TranslationStreamEvent {
+            stream_id: stream_id.to_string(),
+            event: "delta".to_string(),
+            text: delta.to_string(),
+            provider_used: None,
+        },
+    );
+}
+
+/// Streaming version of translate_reader_segment for LLM providers.
+/// Non-LLM providers (Apple, DeepL, Google) emit the full result as a single chunk.
+#[tauri::command]
+#[specta::specta]
+pub async fn translate_reader_segment_stream(
+    app: AppHandle,
+    request: TranslationSegmentRequest,
+    stream_id: String,
+) -> Result<(), String> {
+    validate_translation_segment_request(&request)?;
+
+    let preferences = load_preferences_sync(&app).unwrap_or_default();
+    let provider_settings = &preferences.reader_translation_provider_settings;
+    let apple_available = is_apple_translation_available();
+
+    // If forced_provider is set, skip the fallback chain
+    if let Some(ref forced) = request.forced_provider {
+        let provider = normalize_provider_identifier(forced)
+            .ok_or_else(|| format!("Unknown forced provider: {forced}"))?;
+
+        let available = if provider == APPLE_BUILT_IN_PROVIDER {
+            apple_available
+        } else if !provider_has_runtime_settings(&provider, provider_settings) {
+            false
+        } else if !provider_requires_key(&provider) {
+            true
+        } else {
+            provider_has_key_in_default_profile(&provider)?
+        };
+
+        if !available {
+            return Err(format!("Forced provider '{provider}' is not available"));
+        }
+
+        return translate_segment_stream_with_provider(
+            &app,
+            &stream_id,
+            &provider,
+            &request,
+            provider_settings,
+            apple_available,
+        )
+        .await;
+    }
+
+    let provider_attempts = collect_provider_attempts(&request, apple_available);
+    if provider_attempts.is_empty() {
+        return Err("No translation provider configured".to_string());
+    }
+
+    let mut provider_errors: Vec<String> = Vec::new();
+
+    for provider in provider_attempts {
+        let available = if provider == APPLE_BUILT_IN_PROVIDER {
+            apple_available
+        } else if !provider_has_runtime_settings(&provider, provider_settings) {
+            false
+        } else if !provider_requires_key(&provider) {
+            true
+        } else {
+            match provider_has_key_in_default_profile(&provider) {
+                Ok(v) => v,
+                Err(e) => {
+                    provider_errors.push(format!("{provider}: {e}"));
+                    continue;
+                }
+            }
+        };
+
+        if !available {
+            continue;
+        }
+
+        match translate_segment_stream_with_provider(
+            &app,
+            &stream_id,
+            &provider,
+            &request,
+            provider_settings,
+            apple_available,
+        )
+        .await
+        {
+            Ok(()) => return Ok(()),
+            Err(e) => {
+                provider_errors.push(format!("{provider}: {e}"));
+            }
+        }
+    }
+
+    let error_msg = if provider_errors.is_empty() {
+        "No available translation provider in fallback chain".to_string()
+    } else {
+        format!(
+            "Translation failed after provider fallback attempts: {}",
+            provider_errors.join(" | ")
+        )
+    };
+
+    let _ = app.emit(
+        "translation-stream",
+        TranslationStreamEvent {
+            stream_id,
+            event: "error".to_string(),
+            text: error_msg.clone(),
+            provider_used: None,
+        },
+    );
+
+    Err(error_msg)
+}
+
+async fn translate_segment_stream_with_provider(
+    app: &AppHandle,
+    stream_id: &str,
+    provider: &str,
+    request: &TranslationSegmentRequest,
+    provider_settings: &HashMap<String, ReaderTranslationProviderSettings>,
+    apple_available: bool,
+) -> Result<(), String> {
+    let settings = provider_settings.get(provider);
+
+    // Non-LLM providers can't stream, so fall back to non-streaming + emit full result
+    if !provider_is_llm(provider) {
+        let translated_text = if provider == APPLE_BUILT_IN_PROVIDER {
+            if !apple_available {
+                return Err("Apple built-in translation is not available".to_string());
+            }
+            translate_with_apple_built_in(request).map(|r| r.translated_text)
+        } else if provider == DEEPL_PROVIDER {
+            let key = get_provider_key_in_default_profile(provider)?;
+            translate_with_deepl(request, &key, settings).await
+        } else if provider == GOOGLE_TRANSLATE_PROVIDER {
+            let key = get_provider_key_in_default_profile(provider)?;
+            translate_with_google_translate(request, &key, settings).await
+        } else {
+            Err(format!("Provider '{provider}' does not support streaming"))
+        }?;
+
+        // Emit the full result as a single chunk + done
+        emit_translation_delta(app, stream_id, &translated_text);
+        let _ = app.emit(
+            "translation-stream",
+            TranslationStreamEvent {
+                stream_id: stream_id.to_string(),
+                event: "done".to_string(),
+                text: translated_text,
+                provider_used: Some(provider.to_string()),
+            },
+        );
+        return Ok(());
+    }
+
+    // LLM providers — stream
+    let api_key = if provider_requires_key(provider) {
+        Some(get_provider_key_in_default_profile(provider)?)
+    } else {
+        get_provider_key_in_default_profile(provider).ok()
+    };
+
+    let system_prompt = resolve_llm_system_prompt(request, settings);
+    let full_text = call_translation_llm_stream(
+        app,
+        stream_id,
+        provider,
+        &request.text,
+        &system_prompt,
+        api_key.as_deref(),
+        settings,
+    )
+    .await?;
+
+    let _ = app.emit(
+        "translation-stream",
+        TranslationStreamEvent {
+            stream_id: stream_id.to_string(),
+            event: "done".to_string(),
+            text: full_text,
+            provider_used: Some(provider.to_string()),
+        },
+    );
+
+    Ok(())
+}
+
+async fn call_translation_llm_stream(
+    app: &AppHandle,
+    stream_id: &str,
+    provider: &str,
+    text: &str,
+    system_prompt: &str,
+    api_key: Option<&str>,
+    settings: Option<&ReaderTranslationProviderSettings>,
+) -> Result<String, String> {
+    let model = settings
+        .and_then(|v| v.model.as_deref())
+        .map(str::trim)
+        .filter(|v| !v.is_empty())
+        .ok_or_else(|| format!("{provider} model is required"))?;
+    let timeout = Duration::from_millis(resolve_provider_timeout_ms(settings));
+
+    let client = reqwest::Client::builder()
+        .timeout(timeout)
+        .build()
+        .map_err(|e| format!("HTTP client error: {e}"))?;
+
+    match provider {
+        OLLAMA_PROVIDER => {
+            let endpoint = resolve_provider_endpoint(
+                settings.and_then(|v| v.base_url.as_deref()),
+                OLLAMA_DEFAULT_BASE_URL,
+                OLLAMA_CHAT_PATH,
+            );
+            log::info!("translate-stream(ollama): POST {endpoint} | model={model}");
+
+            let payload = serde_json::json!({
+                "model": model,
+                "stream": true,
+                "messages": [
+                    { "role": "system", "content": system_prompt },
+                    { "role": "user", "content": text }
+                ]
+            });
+
+            let mut req = client.post(&endpoint).json(&payload);
+            if let Some(key) = api_key {
+                if !key.trim().is_empty() {
+                    req = req.bearer_auth(key);
+                }
+            }
+            let response = req.send().await.map_err(|e| format!("Ollama request failed: {e}"))?;
+            let status = response.status();
+            if !status.is_success() {
+                let body = response.text().await.unwrap_or_default();
+                return Err(format!("Ollama returned {}: {body}", status.as_u16()));
+            }
+
+            let app_c = app.clone();
+            let sid = stream_id.to_string();
+            llm_stream::stream_ollama(response, &mut |delta| {
+                emit_translation_delta(&app_c, &sid, delta);
+            })
+            .await
+        }
+        ANTHROPIC_PROVIDER => {
+            let key = api_key.ok_or("Anthropic API key is missing")?;
+            let endpoint = resolve_provider_endpoint(
+                settings.and_then(|v| v.base_url.as_deref()),
+                ANTHROPIC_DEFAULT_BASE_URL,
+                "/v1/messages",
+            );
+            log::info!("translate-stream(anthropic): POST {endpoint} | model={model}");
+
+            let payload = serde_json::json!({
+                "model": model,
+                "max_tokens": 4096,
+                "stream": true,
+                "system": system_prompt,
+                "messages": [
+                    { "role": "user", "content": text }
+                ]
+            });
+
+            let response = client
+                .post(&endpoint)
+                .header("x-api-key", key)
+                .header("anthropic-version", "2023-06-01")
+                .header("content-type", "application/json")
+                .json(&payload)
+                .send()
+                .await
+                .map_err(|e| format!("Anthropic request failed: {e}"))?;
+            let status = response.status();
+            if !status.is_success() {
+                let body = response.text().await.unwrap_or_default();
+                return Err(format!("Anthropic returned {}: {body}", status.as_u16()));
+            }
+
+            let app_c = app.clone();
+            let sid = stream_id.to_string();
+            llm_stream::stream_anthropic(response, &mut |delta| {
+                emit_translation_delta(&app_c, &sid, delta);
+            })
+            .await
+        }
+        GEMINI_PROVIDER => {
+            let key = api_key.ok_or("Gemini API key is missing")?;
+            let base_url = settings
+                .and_then(|v| v.base_url.as_deref())
+                .map(str::trim)
+                .filter(|v| !v.is_empty())
+                .unwrap_or(GEMINI_DEFAULT_BASE_URL);
+            let endpoint = format!(
+                "{}/v1beta/models/{model}:streamGenerateContent?key={key}&alt=sse",
+                base_url.trim_end_matches('/')
+            );
+            log::info!("translate-stream(gemini): POST .../{model}:streamGenerateContent");
+
+            let payload = serde_json::json!({
+                "system_instruction": {
+                    "parts": [{ "text": system_prompt }]
+                },
+                "contents": [{
+                    "parts": [{ "text": text }]
+                }]
+            });
+
+            let response = client
+                .post(&endpoint)
+                .header("content-type", "application/json")
+                .json(&payload)
+                .send()
+                .await
+                .map_err(|e| format!("Gemini request failed: {e}"))?;
+            let status = response.status();
+            if !status.is_success() {
+                let body = response.text().await.unwrap_or_default();
+                return Err(format!("Gemini returned {}: {body}", status.as_u16()));
+            }
+
+            let app_c = app.clone();
+            let sid = stream_id.to_string();
+            llm_stream::stream_gemini(response, &mut |delta| {
+                emit_translation_delta(&app_c, &sid, delta);
+            })
+            .await
+        }
+        _ => {
+            // OpenAI-compatible providers
+            let key = api_key.ok_or_else(|| format!("{provider} API key is missing"))?;
+            let default_base_url = match provider {
+                "openai" => OPENAI_DEFAULT_BASE_URL,
+                "openrouter" => OPENROUTER_DEFAULT_BASE_URL,
+                "glm" => GLM_DEFAULT_BASE_URL,
+                "kimi" => KIMI_DEFAULT_BASE_URL,
+                "minimax" => MINIMAX_DEFAULT_BASE_URL,
+                "qwen" => QWEN_DEFAULT_BASE_URL,
+                "deepseek" => DEEPSEEK_DEFAULT_BASE_URL,
+                _ => return Err(format!("Provider '{provider}' is not implemented")),
+            };
+            let endpoint = resolve_provider_endpoint(
+                settings.and_then(|v| v.base_url.as_deref()),
+                default_base_url,
+                "/v1/chat/completions",
+            );
+            log::info!("translate-stream({provider}): POST {endpoint} | model={model}");
+
+            let payload = serde_json::json!({
+                "model": model,
+                "stream": true,
+                "messages": [
+                    { "role": "system", "content": system_prompt },
+                    { "role": "user", "content": text }
+                ]
+            });
+
+            let response = client
+                .post(&endpoint)
+                .bearer_auth(key)
+                .json(&payload)
+                .send()
+                .await
+                .map_err(|e| format!("{provider} request failed: {e}"))?;
+            let status = response.status();
+            if !status.is_success() {
+                let body = response.text().await.unwrap_or_default();
+                return Err(format!("{provider} returned {}: {body}", status.as_u16()));
+            }
+
+            let app_c = app.clone();
+            let sid = stream_id.to_string();
+            llm_stream::stream_openai_compatible(response, &mut |delta| {
+                emit_translation_delta(&app_c, &sid, delta);
+            })
+            .await
         }
     }
 }

@@ -21,5 +21,9 @@ export interface CommandGroup {
 
 export interface CommandContext {
   openPreferences: () => void;
+  openPreferencesPane: (pane: string) => void;
   showToast: (message: string, type?: 'success' | 'error' | 'info') => void;
+  getSelectedEntryId: () => string | undefined;
+  isConnected: () => boolean;
+  hasPodcast: () => boolean;
 }

@@ -60,6 +60,7 @@ function renderHeader(overrides: { isExcludedFeed?: boolean; entry?: Entry } = {
         hasPrev={false}
         hasNext={false}
         onToggleStar={vi.fn()}
+        isStarred={false}
         onToggleRead={vi.fn()}
         isRead={false}
         isTogglingRead={false}
@@ -78,6 +79,9 @@ function renderHeader(overrides: { isExcludedFeed?: boolean; entry?: Entry } = {
         onTranslationTargetLanguageChange={vi.fn()}
         activeTranslationProvider={null}
         isExcludedFeed={overrides.isExcludedFeed ?? false}
+        onSummarize={vi.fn()}
+        isSummarizing={false}
+        hasSummary={false}
       />
     </I18nProvider>
   );
