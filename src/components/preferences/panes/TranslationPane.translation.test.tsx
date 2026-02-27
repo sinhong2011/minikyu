@@ -21,6 +21,10 @@ vi.mock('@/services/miniflux/feeds', () => ({
   useFeeds: () => ({ data: [] }),
 }));
 
+vi.mock('@/services/miniflux/categories', () => ({
+  useCategories: () => ({ data: [] }),
+}));
+
 vi.mock('@/lib/tauri-bindings', () => ({
   commands: {
     getTranslationProviderKeyStatus: (...args: unknown[]) =>
@@ -133,7 +137,7 @@ describe('TranslationPane settings', () => {
   it('renders provider list with status labels in selected provider settings', async () => {
     render(<TranslationPane />);
 
-    expect(await screen.findByText('Translation Providers')).toBeInTheDocument();
+    expect(await screen.findByRole('heading', { name: 'Providers' })).toBeInTheDocument();
     expect(screen.getByText('Translation engines')).toBeInTheDocument();
     expect(screen.getByText('LLM providers')).toBeInTheDocument();
     expect(screen.queryByText('Provider settings')).not.toBeInTheDocument();
