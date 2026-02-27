@@ -25,6 +25,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
         error: <HugeiconsIcon icon={OctagonIcon} className="size-4 text-red-600" />,
         loading: <HugeiconsIcon icon={Loading02Icon} className="size-4 animate-spin" />,
       }}
+      toastOptions={{
+        classNames: {
+          description: 'text-muted-foreground! text-[13px]!',
+        },
+      }}
       style={
         {
           '--normal-bg': 'var(--popover)',

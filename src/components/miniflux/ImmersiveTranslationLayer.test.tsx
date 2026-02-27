@@ -4,7 +4,8 @@ import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { commands } from '@/lib/tauri-bindings';
-import { translateReaderSegmentWithPreferences } from '@/services/translation';
+import type { TranslationStreamCallbacks } from '@/services/translation';
+import { translateReaderSegmentStream } from '@/services/translation';
 import { ImmersiveTranslationLayer } from './ImmersiveTranslationLayer';
 
 vi.mock('@/lib/logger', () => ({
@@ -17,7 +18,7 @@ vi.mock('@/lib/logger', () => ({
 }));
 
 vi.mock('@/services/translation', () => ({
-  translateReaderSegmentWithPreferences: vi.fn(),
+  translateReaderSegmentStream: vi.fn(),
 }));
 
 const sampleHtml = '<p>Paragraph one original</p><p>Paragraph two original</p>';
@@ -40,6 +41,32 @@ const baseTranslationPreferences = {
   // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_apple_fallback_enabled: true,
 };
+
+/** Mock that simulates streaming by calling onDone immediately */
+function mockTranslateStream(
+  input: { text: string },
+  _streamId: string,
+  callbacks: TranslationStreamCallbacks
+) {
+  // Simulate streaming — call onDone immediately with translated text
+  Promise.resolve().then(() => {
+    callbacks.onDone(`Translated: ${input.text}`, 'deepl');
+  });
+  // Return a mock unlisten function
+  return Promise.resolve(() => {});
+}
+
+/** Mock that simulates a streaming error */
+function mockTranslateStreamError(
+  _input: { text: string },
+  _streamId: string,
+  callbacks: TranslationStreamCallbacks
+) {
+  Promise.resolve().then(() => {
+    callbacks.onError('network');
+  });
+  return Promise.resolve(() => {});
+}
 
 function renderWithI18n(component: React.ReactElement) {
   i18n.load('en', {});
@@ -78,14 +105,10 @@ function LayerHarness({
 describe('ImmersiveTranslationLayer', () => {
   beforeEach(() => {
     vi.clearAllMocks();
-    (
-      translateReaderSegmentWithPreferences as unknown as ReturnType<typeof vi.fn>
-    ).mockImplementation(async ({ text }: { text: string }) => ({
-      translatedText: `Translated: ${text}`,
-      providerUsed: 'deepl',
-      fallbackChain: ['deepl'],
-    }));
-    // Default: cache miss so existing tests still call translateReaderSegmentWithPreferences
+    (translateReaderSegmentStream as unknown as ReturnType<typeof vi.fn>).mockImplementation(
+      mockTranslateStream
+    );
+    // Default: cache miss so existing tests still call translateReaderSegmentStream
     vi.mocked(commands.getTranslationCacheEntry).mockResolvedValue({ status: 'ok', data: null });
     vi.mocked(commands.setTranslationCacheEntry).mockResolvedValue({ status: 'ok', data: null });
   });
@@ -96,7 +119,7 @@ describe('ImmersiveTranslationLayer', () => {
     fireEvent.click(screen.getByRole('button', { name: 'Translate' }));
 
     await waitFor(() => {
-      expect(translateReaderSegmentWithPreferences).toHaveBeenCalledTimes(2);
+      expect(translateReaderSegmentStream).toHaveBeenCalledTimes(2);
     });
   });
 
@@ -137,13 +160,13 @@ describe('ImmersiveTranslationLayer', () => {
       />
     );
 
-    expect(translateReaderSegmentWithPreferences).not.toHaveBeenCalled();
+    expect(translateReaderSegmentStream).not.toHaveBeenCalled();
   });
 
   it('renders retry button when segment translation fails', async () => {
-    (
-      translateReaderSegmentWithPreferences as unknown as ReturnType<typeof vi.fn>
-    ).mockRejectedValueOnce(new Error('network'));
+    (translateReaderSegmentStream as unknown as ReturnType<typeof vi.fn>).mockImplementationOnce(
+      mockTranslateStreamError
+    );
 
     renderWithI18n(
       <ImmersiveTranslationLayer
@@ -164,7 +187,7 @@ describe('ImmersiveTranslationLayer', () => {
     fireEvent.click(retryButton);
 
     await waitFor(() => {
-      expect(translateReaderSegmentWithPreferences).toHaveBeenCalledTimes(3);
+      expect(translateReaderSegmentStream).toHaveBeenCalledTimes(3);
     });
   });
 
@@ -190,7 +213,7 @@ describe('ImmersiveTranslationLayer', () => {
   });
 
   describe('translation cache', () => {
-    it('uses cached translation without calling translateReaderSegment', async () => {
+    it('uses cached translation without calling translateReaderSegmentStream', async () => {
       vi.mocked(commands.getTranslationCacheEntry).mockResolvedValue({
         status: 'ok',
         data: {
@@ -222,7 +245,7 @@ describe('ImmersiveTranslationLayer', () => {
         expect(commands.getTranslationCacheEntry).toHaveBeenCalled();
       });
 
-      expect(translateReaderSegmentWithPreferences).not.toHaveBeenCalled();
+      expect(translateReaderSegmentStream).not.toHaveBeenCalled();
     });
 
     it('writes to cache after successful live translation', async () => {
@@ -267,11 +290,11 @@ describe('ImmersiveTranslationLayer', () => {
     );
 
     await waitFor(() => {
-      expect(translateReaderSegmentWithPreferences).toHaveBeenCalledTimes(1);
+      expect(translateReaderSegmentStream).toHaveBeenCalledTimes(1);
     });
 
-    const calls = (translateReaderSegmentWithPreferences as unknown as ReturnType<typeof vi.fn>)
-      .mock.calls as Array<[{ text: string }]>;
+    const calls = (translateReaderSegmentStream as unknown as ReturnType<typeof vi.fn>).mock
+      .calls as Array<[{ text: string }]>;
     expect(calls[0]?.[0]?.text).toBe(
       'Paragraph one original text that is long enough to translate'
     );
@@ -294,11 +317,11 @@ describe('ImmersiveTranslationLayer', () => {
     );
 
     await waitFor(() => {
-      expect(translateReaderSegmentWithPreferences).toHaveBeenCalledTimes(2);
+      expect(translateReaderSegmentStream).toHaveBeenCalledTimes(2);
     });
 
-    const calls = (translateReaderSegmentWithPreferences as unknown as ReturnType<typeof vi.fn>)
-      .mock.calls as Array<[{ text: string }]>;
+    const calls = (translateReaderSegmentStream as unknown as ReturnType<typeof vi.fn>).mock
+      .calls as Array<[{ text: string }]>;
     const hasUnsafeScriptText = calls.some((call) => call[0]?.text.includes('alert("xss")'));
 
     expect(hasUnsafeScriptText).toBe(false);

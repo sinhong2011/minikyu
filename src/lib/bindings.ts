@@ -841,6 +841,38 @@ async syncBrowserTheme(isDark: boolean) : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+async summarizeArticle(request: SummarizeArticleRequest) : Promise<Result<SummarizeArticleResponse, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("summarize_article", { request }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async summarizeArticleStream(request: SummarizeArticleRequest, streamId: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("summarize_article_stream", { request, streamId }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async getArticleSummary(entryId: string) : Promise<Result<ArticleSummaryRecord | null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_article_summary", { entryId }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async saveArticleSummary(entryId: string, summary: string, providerUsed: string | null, modelUsed: string | null) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("save_article_summary", { entryId, summary, providerUsed, modelUsed }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async saveTranslationProviderKey(provider: string, profile: string, apiKey: string) : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("save_translation_provider_key", { provider, profile, apiKey }) };
@@ -868,6 +900,18 @@ async getTranslationProviderKeyStatus(provider: string, profile: string) : Promi
 async translateReaderSegment(request: TranslationSegmentRequest) : Promise<Result<TranslationSegmentResponse, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("translate_reader_segment", { request }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Streaming version of translate_reader_segment for LLM providers.
+ * Non-LLM providers (Apple, DeepL, Google) emit the full result as a single chunk.
+ */
+async translateReaderSegmentStream(request: TranslationSegmentRequest, streamId: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("translate_reader_segment_stream", { request, streamId }) };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -1198,6 +1242,10 @@ reader_translation_auto_enabled?: boolean;
  */
 reader_translation_excluded_feed_ids?: string[]; 
 /**
+ * Category IDs excluded from immersive translation.
+ */
+reader_translation_excluded_category_ids?: string[]; 
+/**
  * Default download path for images (null = ask every time)
  */
 image_download_path: string | null; 
@@ -1206,9 +1254,34 @@ image_download_path: string | null;
  */
 video_download_path: string | null; 
 /**
+ * Whether AI summary is automatically generated when opening an article.
+ */
+ai_summary_auto_enabled?: boolean; 
+/**
+ * Custom system prompt for AI summary. If None or empty, uses built-in default.
+ */
+ai_summary_custom_prompt?: string | null; 
+/**
+ * Preferred LLM provider for AI summary (e.g. "ollama", "openai"). If None, uses translation LLM fallback chain.
+ */
+ai_summary_provider?: string | null; 
+/**
+ * Preferred model for AI summary (e.g. "llama3", "gpt-4o"). If None, uses the model from provider settings.
+ */
+ai_summary_model?: string | null; 
+/**
+ * Maximum article text length (in characters) sent to the LLM for summarization.
+ */
+ai_summary_max_text_length?: number; 
+/**
  * Player display mode: floating window or tray popover
  */
-player_display_mode: PlayerDisplayMode }
+player_display_mode: PlayerDisplayMode; 
+/**
+ * Custom keyboard shortcut overrides. Keys are action IDs, values are shortcut strings.
+ */
+keyboard_shortcuts?: Partial<{ [key in string]: string }> }
+export type ArticleSummaryRecord = { entry_id: string; summary: string; provider_used: string | null; model_used: string | null }
 /**
  * Authentication Config
  */
@@ -1425,6 +1498,8 @@ export type RecoveryError =
  * Subscription (from discover)
  */
 export type Subscription = { url: string; title: string; type: string }
+export type SummarizeArticleRequest = { text: string; language: string | null }
+export type SummarizeArticleResponse = { summary: string; provider_used: string; model_used: string }
 export type SyncSummary = { entries_pulled: number; entries_pushed: number; feeds_pulled: number; categories_pulled: number }
 export type SystemTime = { duration_since_epoch: string; duration_since_unix_epoch: number }
 /**

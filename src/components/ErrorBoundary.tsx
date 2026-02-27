@@ -10,26 +10,24 @@ interface State {
   hasError: boolean;
   error?: Error;
   errorInfo?: ErrorInfo;
+  showDetails: boolean;
+  copied: boolean;
 }
 
 /**
- * Simple error boundary that saves app state before crashes
+ * Application-level error boundary with crash recovery and diagnostics.
  *
- * Automatically saves crash data to recovery files for debugging
- * Shows a user-friendly error message instead of a blank screen
+ * Captures unhandled React errors, persists crash data for debugging,
+ * and renders a user-friendly fallback with recovery actions.
  */
 export class ErrorBoundary extends Component<Props, State> {
   constructor(props: Props) {
     super(props);
-    this.state = { hasError: false };
+    this.state = { hasError: false, showDetails: false, copied: false };
   }
 
-  static getDerivedStateFromError(error: Error): State {
-    // Update state so the next render will show the fallback UI
-    return {
-      hasError: true,
-      error,
-    };
+  static getDerivedStateFromError(error: Error): Partial<State> {
+    return { hasError: true, error };
   }
 
   override componentDidCatch(error: Error, errorInfo: ErrorInfo) {
@@ -39,22 +37,15 @@ export class ErrorBoundary extends Component<Props, State> {
     });
 
     this.setState({ errorInfo });
-
-    // Save crash state asynchronously (don't block error UI)
     this.saveCrashData(error, errorInfo);
   }
 
   private async saveCrashData(error: Error, errorInfo: ErrorInfo) {
     try {
-      // Get basic app state - extend this based on your app's needs
       const appState = {
         url: window.location.href,
         userAgent: navigator.userAgent,
         timestamp: new Date().toISOString(),
-        // Add more app state here as needed:
-        // currentUser: getCurrentUser(),
-        // activeFeatures: getActiveFeatures(),
-        // etc.
       };
 
       await saveCrashState(appState, {
@@ -63,7 +54,6 @@ export class ErrorBoundary extends Component<Props, State> {
         componentStack: errorInfo.componentStack || undefined,
       });
     } catch (saveError) {
-      // Don't throw from error boundary - just log
       logger.error('Failed to save crash data', { saveError });
     }
   }
@@ -73,77 +63,421 @@ export class ErrorBoundary extends Component<Props, State> {
   };
 
   private handleReset = () => {
-    this.setState({ hasError: false, error: undefined, errorInfo: undefined });
+    this.setState({
+      hasError: false,
+      error: undefined,
+      errorInfo: undefined,
+      showDetails: false,
+      copied: false,
+    });
   };
 
+  private toggleDetails = () => {
+    this.setState((prev) => ({ showDetails: !prev.showDetails }));
+  };
+
+  private copyDiagnostics = () => {
+    const { error, errorInfo } = this.state;
+    if (!error) return;
+
+    const diagnostics = [
+      `Error: ${error.name}: ${error.message}`,
+      '',
+      `App Version: ${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'unknown'}`,
+      `Timestamp: ${new Date().toISOString()}`,
+      `URL: ${window.location.href}`,
+      `User Agent: ${navigator.userAgent}`,
+      '',
+      '--- Stack Trace ---',
+      error.stack ?? 'No stack trace',
+      '',
+      '--- Component Stack ---',
+      errorInfo?.componentStack ?? 'No component stack',
+    ].join('\n');
+
+    navigator.clipboard.writeText(diagnostics).then(() => {
+      this.setState({ copied: true });
+      setTimeout(() => this.setState({ copied: false }), 2000);
+    });
+  };
+
+  private formatComponentStack(stack: string): string[] {
+    return stack
+      .split('\n')
+      .map((line) => line.trim())
+      .filter(Boolean)
+      .slice(0, 8);
+  }
+
   override render() {
-    if (this.state.hasError) {
-      return (
-        <div className="flex min-h-screen flex-col items-center justify-center bg-background p-8">
-          <div className="w-full max-w-md text-center">
-            <div className="mb-6">
-              <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center">
+    if (!this.state.hasError) {
+      return this.props.children;
+    }
+
+    const { error, errorInfo, showDetails, copied } = this.state;
+    const errorName = error?.name ?? 'Error';
+    const errorMessage = error?.message ?? 'An unexpected error occurred';
+
+    return (
+      <div
+        style={{
+          display: 'flex',
+          minHeight: '100vh',
+          alignItems: 'center',
+          justifyContent: 'center',
+          padding: '24px',
+          fontFamily:
+            '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", sans-serif',
+          background: 'radial-gradient(ellipse 120% 70% at 50% 0%, #1c1c23 0%, #09090b 65%)',
+          color: '#fafafa',
+        }}
+      >
+        {/* Card */}
+        <div
+          style={{
+            width: '100%',
+            maxWidth: '420px',
+            background: '#111113',
+            border: '1px solid rgba(255,255,255,0.06)',
+            borderRadius: '20px',
+            boxShadow:
+              '0 0 0 1px rgba(0,0,0,0.4), 0 24px 64px rgba(0,0,0,0.5), 0 8px 24px rgba(0,0,0,0.3)',
+            overflow: 'hidden',
+          }}
+        >
+          {/* Card body */}
+          <div style={{ padding: '36px 32px 28px' }}>
+            {/* Icon */}
+            <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '20px' }}>
+              <div
+                style={{
+                  width: '48px',
+                  height: '48px',
+                  borderRadius: '14px',
+                  background: 'rgba(239,68,68,0.1)',
+                  border: '1px solid rgba(239,68,68,0.2)',
+                  display: 'flex',
+                  alignItems: 'center',
+                  justifyContent: 'center',
+                }}
+              >
                 <svg
-                  className="h-8 w-8 text-destructive"
-                  fill="none"
+                  width="22"
+                  height="22"
                   viewBox="0 0 24 24"
-                  stroke="currentColor"
+                  fill="none"
+                  stroke="#ef4444"
+                  strokeWidth="1.75"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
                 >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-2.5L13.732 4c-.77-.833-1.964-.833-2.732 0L3.082 16.5c-.77.833.192 2.5 1.732 2.5z"
-                  />
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="8" x2="12" y2="12" />
+                  <line x1="12" y1="16" x2="12.01" y2="16" />
                 </svg>
               </div>
-              <h1 className="text-2xl font-bold text-foreground mb-2">Something went wrong</h1>
-              <p className="text-muted-foreground mb-6">
-                The application encountered an unexpected error. Your data has been saved
-                automatically.
+            </div>
+
+            {/* Title */}
+            <div style={{ textAlign: 'center', marginBottom: '24px' }}>
+              <h1
+                style={{
+                  fontSize: '17px',
+                  fontWeight: 600,
+                  margin: '0 0 6px 0',
+                  letterSpacing: '-0.01em',
+                  color: '#fafafa',
+                }}
+              >
+                Something went wrong
+              </h1>
+              <p
+                style={{
+                  fontSize: '13px',
+                  color: '#71717a',
+                  margin: 0,
+                  lineHeight: 1.5,
+                }}
+              >
+                The application encountered an unexpected error.
+                <br />
+                Your data has been saved automatically.
               </p>
             </div>
 
-            <div className="space-y-3">
+            {/* Error badge */}
+            <div
+              style={{
+                borderRadius: '10px',
+                border: '1px solid rgba(239,68,68,0.15)',
+                background: 'rgba(239,68,68,0.05)',
+                padding: '10px 14px',
+                marginBottom: '20px',
+              }}
+            >
+              <div
+                style={{
+                  fontSize: '11px',
+                  fontWeight: 600,
+                  color: '#ef4444',
+                  marginBottom: '3px',
+                  fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace',
+                  letterSpacing: '0.02em',
+                }}
+              >
+                {errorName}
+              </div>
+              <div
+                style={{
+                  fontSize: '13px',
+                  color: '#d4d4d8',
+                  lineHeight: 1.45,
+                  wordBreak: 'break-word',
+                }}
+              >
+                {errorMessage}
+              </div>
+            </div>
+
+            {/* Action buttons */}
+            <div style={{ display: 'flex', gap: '8px', marginBottom: '4px' }}>
               <button
                 type="button"
                 onClick={this.handleReload}
-                className="w-full px-4 py-2 bg-primary text-primary-foreground rounded-md hover:bg-primary/90 transition-colors"
+                style={{
+                  flex: 1,
+                  padding: '9px 16px',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  border: 'none',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                  background: '#fafafa',
+                  color: '#09090b',
+                  letterSpacing: '-0.01em',
+                  transition: 'opacity 120ms',
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.opacity = '0.88';
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.opacity = '0.88';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.opacity = '1';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.opacity = '1';
+                }}
               >
-                Reload Application
+                Reload App
               </button>
-
               <button
                 type="button"
                 onClick={this.handleReset}
-                className="w-full px-4 py-2 bg-secondary text-secondary-foreground rounded-md hover:bg-secondary/90 transition-colors"
+                style={{
+                  flex: 1,
+                  padding: '9px 16px',
+                  fontSize: '13px',
+                  fontWeight: 500,
+                  border: '1px solid rgba(255,255,255,0.08)',
+                  borderRadius: '10px',
+                  cursor: 'pointer',
+                  background: 'transparent',
+                  color: '#a1a1aa',
+                  letterSpacing: '-0.01em',
+                  transition: 'color 120ms, border-color 120ms',
+                }}
+                onMouseOver={(e) => {
+                  e.currentTarget.style.color = '#fafafa';
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.16)';
+                }}
+                onFocus={(e) => {
+                  e.currentTarget.style.color = '#fafafa';
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.16)';
+                }}
+                onMouseOut={(e) => {
+                  e.currentTarget.style.color = '#a1a1aa';
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                }}
+                onBlur={(e) => {
+                  e.currentTarget.style.color = '#a1a1aa';
+                  e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
+                }}
               >
                 Try Again
               </button>
             </div>
+          </div>
 
-            {import.meta.env.DEV && this.state.error && (
-              <details className="mt-6 text-left">
-                <summary className="cursor-pointer text-sm text-muted-foreground hover:text-foreground">
-                  Error Details (Development Only)
-                </summary>
-                <div className="mt-2 p-3 bg-muted rounded-md text-xs font-mono">
-                  <div className="text-destructive font-semibold mb-1">
-                    {this.state.error.name}: {this.state.error.message}
-                  </div>
-                  {this.state.error.stack && (
-                    <pre className="whitespace-pre-wrap text-muted-foreground overflow-auto">
-                      {this.state.error.stack}
+          {/* Diagnostics footer */}
+          <div
+            style={{
+              borderTop: '1px solid rgba(255,255,255,0.05)',
+              background: 'rgba(0,0,0,0.2)',
+            }}
+          >
+            <button
+              type="button"
+              onClick={this.toggleDetails}
+              style={{
+                display: 'flex',
+                width: '100%',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                padding: '10px 16px',
+                fontSize: '12px',
+                fontWeight: 500,
+                border: 'none',
+                cursor: 'pointer',
+                background: 'transparent',
+                color: '#52525b',
+                transition: 'color 120ms',
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.color = '#a1a1aa';
+              }}
+              onFocus={(e) => {
+                e.currentTarget.style.color = '#a1a1aa';
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.color = '#52525b';
+              }}
+              onBlur={(e) => {
+                e.currentTarget.style.color = '#52525b';
+              }}
+            >
+              <span>Diagnostics</span>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                {showDetails && (
+                  <button
+                    type="button"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      this.copyDiagnostics();
+                    }}
+                    style={{
+                      fontSize: '11px',
+                      padding: '2px 8px',
+                      borderRadius: '4px',
+                      border: 'none',
+                      background: 'rgba(255,255,255,0.06)',
+                      color: copied ? '#4ade80' : '#71717a',
+                      cursor: 'pointer',
+                      transition: 'color 150ms',
+                    }}
+                  >
+                    {copied ? 'Copied' : 'Copy'}
+                  </button>
+                )}
+                <svg
+                  width="12"
+                  height="12"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  strokeWidth="2"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  style={{
+                    transition: 'transform 150ms',
+                    transform: showDetails ? 'rotate(180deg)' : 'rotate(0deg)',
+                  }}
+                >
+                  <polyline points="6 9 12 15 18 9" />
+                </svg>
+              </div>
+            </button>
+
+            {showDetails && (
+              <div
+                style={{
+                  borderTop: '1px solid rgba(255,255,255,0.04)',
+                  padding: '12px 16px',
+                  maxHeight: '240px',
+                  overflowY: 'auto',
+                }}
+              >
+                {error?.stack && (
+                  <div style={{ marginBottom: '12px' }}>
+                    <div
+                      style={{
+                        fontSize: '10px',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                        color: '#3f3f46',
+                        marginBottom: '6px',
+                      }}
+                    >
+                      Stack Trace
+                    </div>
+                    <pre
+                      style={{
+                        margin: 0,
+                        fontSize: '11px',
+                        lineHeight: 1.6,
+                        fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace',
+                        color: '#52525b',
+                        whiteSpace: 'pre-wrap',
+                        wordBreak: 'break-all',
+                      }}
+                    >
+                      {error.stack}
                     </pre>
-                  )}
+                  </div>
+                )}
+
+                {errorInfo?.componentStack && (
+                  <div style={{ marginBottom: '12px' }}>
+                    <div
+                      style={{
+                        fontSize: '10px',
+                        fontWeight: 600,
+                        textTransform: 'uppercase',
+                        letterSpacing: '0.06em',
+                        color: '#3f3f46',
+                        marginBottom: '6px',
+                      }}
+                    >
+                      Component Stack
+                    </div>
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                      {this.formatComponentStack(errorInfo.componentStack).map((line, i) => (
+                        <span
+                          key={`${i}:${line}`}
+                          style={{
+                            fontSize: '11px',
+                            fontFamily: 'ui-monospace, "SF Mono", Menlo, monospace',
+                            color: '#52525b',
+                          }}
+                        >
+                          {line}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <div
+                  style={{
+                    fontSize: '10px',
+                    color: '#3f3f46',
+                    display: 'flex',
+                    gap: '12px',
+                    flexWrap: 'wrap',
+                    paddingTop: '4px',
+                    borderTop: '1px solid rgba(255,255,255,0.04)',
+                  }}
+                >
+                  {typeof __APP_VERSION__ !== 'undefined' && <span>v{__APP_VERSION__}</span>}
+                  <span>{new Date().toLocaleString()}</span>
                 </div>
-              </details>
+              </div>
             )}
           </div>
         </div>
-      );
-    }
-
-    return this.props.children;
+      </div>
+    );
   }
 }

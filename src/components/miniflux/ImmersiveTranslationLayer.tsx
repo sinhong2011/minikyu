@@ -5,7 +5,7 @@ import { logger } from '@/lib/logger';
 import type { ReaderCodeTheme } from '@/lib/shiki-highlight';
 import { commands } from '@/lib/tauri-bindings';
 import type { TranslationRoutingPreferences } from '@/services/translation';
-import { translateReaderSegmentWithPreferences } from '@/services/translation';
+import { translateReaderSegmentStream } from '@/services/translation';
 import { SafeHtml, sanitizeReaderHtml } from './SafeHtml';
 
 async function computeTranslationCacheKey(text: string, targetLanguage: string): Promise<string> {
@@ -297,9 +297,9 @@ export function ImmersiveTranslationLayer({
         logger.debug(`[translation] segment ${segment.id} cache MISS`);
       }
 
-      // No cache hit — show shimmer and call API (preserve previous translation if re-translating)
+      // No cache hit — show shimmer and call streaming API
       logger.debug(
-        `[translation] segment ${segment.id} calling API (batch) text="${textPreview}…"`
+        `[translation] segment ${segment.id} calling streaming API (batch) text="${textPreview}…"`
       );
       setSegmentStates((previousState) => {
         const existing = previousState[segment.id];
@@ -313,60 +313,86 @@ export function ImmersiveTranslationLayer({
         };
       });
 
+      const streamId = `translate-${segment.id}-${requestId}-${Date.now()}`;
       try {
-        const translationResult = await translateReaderSegmentWithPreferences({
-          text: segment.text,
-          sourceLanguage: sourceLanguageValue,
-          preferences: translationPreferencesValue,
+        await new Promise<void>((resolve, reject) => {
+          translateReaderSegmentStream(
+            {
+              text: segment.text,
+              sourceLanguage: sourceLanguageValue,
+              preferences: translationPreferencesValue,
+            },
+            streamId,
+            {
+              onDelta: (delta) => {
+                if (requestId !== activeRequestIdRef.current) return;
+                setSegmentStates((prev) => ({
+                  ...prev,
+                  [segment.id]: {
+                    status: 'loading',
+                    translatedText: (prev[segment.id]?.translatedText ?? '') + delta,
+                    providerUsed: prev[segment.id]?.providerUsed ?? null,
+                  },
+                }));
+              },
+              onDone: (fullText, providerUsed) => {
+                if (requestId !== activeRequestIdRef.current) {
+                  logger.debug(
+                    `[translation] segment ${segment.id} result discarded (stale batch request)`
+                  );
+                  resolve();
+                  return;
+                }
+                logger.debug(
+                  `[translation] segment ${segment.id} stream success provider=${providerUsed}`
+                );
+                setSegmentStates((prev) => ({
+                  ...prev,
+                  [segment.id]: {
+                    status: 'success',
+                    translatedText: fullText,
+                    providerUsed,
+                  },
+                }));
+                onActiveProviderChangeRef.current?.(providerUsed);
+
+                // Write to cache
+                if (cacheKey) {
+                  logger.debug(
+                    `[translation] segment ${segment.id} writing cache key=${cacheKey.slice(0, 20)}… provider=${providerUsed}`
+                  );
+                  commands
+                    .setTranslationCacheEntry(cacheKey, {
+                      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+                      translated_text: fullText,
+                      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+                      provider_used: providerUsed,
+                      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+                      cached_at: String(Math.floor(Date.now() / 1000)),
+                    })
+                    .then((r) => {
+                      if (r.status === 'ok') {
+                        logger.debug(`[translation] segment ${segment.id} cache write OK`);
+                      } else {
+                        logger.debug(
+                          `[translation] segment ${segment.id} cache write FAILED: ${r.error}`
+                        );
+                      }
+                    });
+                }
+                resolve();
+              },
+              onError: (error) => {
+                reject(new Error(error));
+              },
+            }
+          );
         });
-
-        if (requestId !== activeRequestIdRef.current) {
-          logger.debug(
-            `[translation] segment ${segment.id} result discarded (stale batch request)`
-          );
-          return;
-        }
-
-        logger.debug(
-          `[translation] segment ${segment.id} API success provider=${translationResult.providerUsed}`
-        );
-        setSegmentStates((previousState) => ({
-          ...previousState,
-          [segment.id]: {
-            status: 'success',
-            translatedText: translationResult.translatedText,
-            providerUsed: translationResult.providerUsed,
-          },
-        }));
-        onActiveProviderChangeRef.current?.(translationResult.providerUsed);
-
-        // Write to cache
-        if (cacheKey) {
-          logger.debug(
-            `[translation] segment ${segment.id} writing cache key=${cacheKey.slice(0, 20)}… provider=${translationResult.providerUsed}`
-          );
-          commands
-            .setTranslationCacheEntry(cacheKey, {
-              // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
-              translated_text: translationResult.translatedText,
-              // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
-              provider_used: translationResult.providerUsed,
-              // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
-              cached_at: String(Math.floor(Date.now() / 1000)),
-            })
-            .then((r) => {
-              if (r.status === 'ok') {
-                logger.debug(`[translation] segment ${segment.id} cache write OK`);
-              } else {
-                logger.debug(`[translation] segment ${segment.id} cache write FAILED: ${r.error}`);
-              }
-            });
-        }
       } catch (err) {
         if (requestId !== activeRequestIdRef.current) {
           return;
         }
-        logger.debug(`[translation] segment ${segment.id} API error: ${err}`);
+        logger.debug(`[translation] segment ${segment.id} stream error: ${err}`);
         setSegmentStates((previousState) => ({
           ...previousState,
           [segment.id]: {
@@ -463,57 +489,81 @@ export function ImmersiveTranslationLayer({
         };
       });
 
+      const streamId = `translate-retry-${segment.id}-${segReqId}-${Date.now()}`;
       try {
-        const translationResult = await translateReaderSegmentWithPreferences({
-          text: segment.text,
-          sourceLanguage,
-          preferences: translationPreferencesRef.current,
-        });
-
-        if (segmentRequestIdsRef.current[segment.id] !== segReqId) return;
-
-        logger.debug(
-          `[translation] retrySegment ${segment.id} success provider=${translationResult.providerUsed}`
-        );
-        setSegmentStates((prev) => ({
-          ...prev,
-          [segment.id]: {
-            status: 'success',
-            translatedText: translationResult.translatedText,
-            providerUsed: translationResult.providerUsed,
-          },
-        }));
-        onActiveProviderChangeRef.current?.(translationResult.providerUsed);
-
-        const targetLanguage =
-          translationPreferencesRef.current.reader_translation_target_language ?? '';
-        if (targetLanguage) {
-          const cacheKey = await computeTranslationCacheKey(segment.text, targetLanguage);
-          logger.debug(
-            `[translation] retrySegment ${segment.id} writing cache key=${cacheKey.slice(0, 20)}… provider=${translationResult.providerUsed}`
-          );
-          commands
-            .setTranslationCacheEntry(cacheKey, {
-              // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
-              translated_text: translationResult.translatedText,
-              // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
-              provider_used: translationResult.providerUsed,
-              // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
-              cached_at: String(Math.floor(Date.now() / 1000)),
-            })
-            .then((r) => {
-              if (r.status === 'ok') {
-                logger.debug(`[translation] retrySegment ${segment.id} cache write OK`);
-              } else {
+        await new Promise<void>((resolve, reject) => {
+          translateReaderSegmentStream(
+            {
+              text: segment.text,
+              sourceLanguage,
+              preferences: translationPreferencesRef.current,
+            },
+            streamId,
+            {
+              onDelta: (delta) => {
+                if (segmentRequestIdsRef.current[segment.id] !== segReqId) return;
+                setSegmentStates((prev) => ({
+                  ...prev,
+                  [segment.id]: {
+                    status: 'loading',
+                    translatedText: (prev[segment.id]?.translatedText ?? '') + delta,
+                    providerUsed: prev[segment.id]?.providerUsed ?? null,
+                  },
+                }));
+              },
+              onDone: (fullText, providerUsed) => {
+                if (segmentRequestIdsRef.current[segment.id] !== segReqId) {
+                  resolve();
+                  return;
+                }
                 logger.debug(
-                  `[translation] retrySegment ${segment.id} cache write FAILED: ${r.error}`
+                  `[translation] retrySegment ${segment.id} stream success provider=${providerUsed}`
                 );
-              }
-            });
-        }
+                setSegmentStates((prev) => ({
+                  ...prev,
+                  [segment.id]: {
+                    status: 'success',
+                    translatedText: fullText,
+                    providerUsed,
+                  },
+                }));
+                onActiveProviderChangeRef.current?.(providerUsed);
+
+                const targetLanguage =
+                  translationPreferencesRef.current.reader_translation_target_language ?? '';
+                if (targetLanguage) {
+                  computeTranslationCacheKey(segment.text, targetLanguage).then((cacheKey) => {
+                    commands
+                      .setTranslationCacheEntry(cacheKey, {
+                        // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+                        translated_text: fullText,
+                        // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+                        provider_used: providerUsed,
+                        // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+                        cached_at: String(Math.floor(Date.now() / 1000)),
+                      })
+                      .then((r) => {
+                        if (r.status === 'ok') {
+                          logger.debug(`[translation] retrySegment ${segment.id} cache write OK`);
+                        } else {
+                          logger.debug(
+                            `[translation] retrySegment ${segment.id} cache write FAILED: ${r.error}`
+                          );
+                        }
+                      });
+                  });
+                }
+                resolve();
+              },
+              onError: (error) => {
+                reject(new Error(error));
+              },
+            }
+          );
+        });
       } catch (err) {
         if (segmentRequestIdsRef.current[segment.id] !== segReqId) return;
-        logger.debug(`[translation] retrySegment ${segment.id} error: ${err}`);
+        logger.debug(`[translation] retrySegment ${segment.id} stream error: ${err}`);
         setSegmentStates((prev) => ({
           ...prev,
           [segment.id]: { status: 'error', translatedText: null, providerUsed: null },
@@ -553,66 +603,80 @@ export function ImmersiveTranslationLayer({
         };
       });
 
-      void (async () => {
-        try {
-          const translationResult = await translateReaderSegmentWithPreferences({
-            text: segment.text,
-            sourceLanguage,
-            preferences: translationPreferencesRef.current,
-          });
-
-          if (segmentRequestIdsRef.current[segment.id] !== segReqId) return;
-
-          logger.debug(
-            `[translation] handleTranslateNode segment ${segment.id} success provider=${translationResult.providerUsed}`
-          );
-          setSegmentStates((prev) => ({
-            ...prev,
-            [segment.id]: {
-              status: 'success',
-              translatedText: translationResult.translatedText,
-              providerUsed: translationResult.providerUsed,
-            },
-          }));
-          onActiveProviderChangeRef.current?.(translationResult.providerUsed);
-
-          const targetLanguage =
-            translationPreferencesRef.current.reader_translation_target_language ?? '';
-          if (targetLanguage) {
-            const cacheKey = await computeTranslationCacheKey(segment.text, targetLanguage);
+      const streamId = `translate-node-${segment.id}-${segReqId}-${Date.now()}`;
+      translateReaderSegmentStream(
+        {
+          text: segment.text,
+          sourceLanguage,
+          preferences: translationPreferencesRef.current,
+        },
+        streamId,
+        {
+          onDelta: (delta) => {
+            if (segmentRequestIdsRef.current[segment.id] !== segReqId) return;
+            setSegmentStates((prev) => ({
+              ...prev,
+              [segment.id]: {
+                status: 'loading',
+                translatedText: (prev[segment.id]?.translatedText ?? '') + delta,
+                providerUsed: prev[segment.id]?.providerUsed ?? null,
+              },
+            }));
+          },
+          onDone: (fullText, providerUsed) => {
+            if (segmentRequestIdsRef.current[segment.id] !== segReqId) return;
             logger.debug(
-              `[translation] handleTranslateNode segment ${segment.id} writing cache key=${cacheKey.slice(0, 20)}… provider=${translationResult.providerUsed}`
+              `[translation] handleTranslateNode segment ${segment.id} stream success provider=${providerUsed}`
             );
-            commands
-              .setTranslationCacheEntry(cacheKey, {
-                // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
-                translated_text: translationResult.translatedText,
-                // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
-                provider_used: translationResult.providerUsed,
-                // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
-                cached_at: String(Math.floor(Date.now() / 1000)),
-              })
-              .then((r) => {
-                if (r.status === 'ok') {
-                  logger.debug(
-                    `[translation] handleTranslateNode segment ${segment.id} cache write OK`
-                  );
-                } else {
-                  logger.debug(
-                    `[translation] handleTranslateNode segment ${segment.id} cache write FAILED: ${r.error}`
-                  );
-                }
+            setSegmentStates((prev) => ({
+              ...prev,
+              [segment.id]: {
+                status: 'success',
+                translatedText: fullText,
+                providerUsed,
+              },
+            }));
+            onActiveProviderChangeRef.current?.(providerUsed);
+
+            const targetLanguage =
+              translationPreferencesRef.current.reader_translation_target_language ?? '';
+            if (targetLanguage) {
+              computeTranslationCacheKey(segment.text, targetLanguage).then((cacheKey) => {
+                commands
+                  .setTranslationCacheEntry(cacheKey, {
+                    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+                    translated_text: fullText,
+                    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+                    provider_used: providerUsed,
+                    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+                    cached_at: String(Math.floor(Date.now() / 1000)),
+                  })
+                  .then((r) => {
+                    if (r.status === 'ok') {
+                      logger.debug(
+                        `[translation] handleTranslateNode segment ${segment.id} cache write OK`
+                      );
+                    } else {
+                      logger.debug(
+                        `[translation] handleTranslateNode segment ${segment.id} cache write FAILED: ${r.error}`
+                      );
+                    }
+                  });
               });
-          }
-        } catch (err) {
-          if (segmentRequestIdsRef.current[segment.id] !== segReqId) return;
-          logger.debug(`[translation] handleTranslateNode segment ${segment.id} error: ${err}`);
-          setSegmentStates((prev) => ({
-            ...prev,
-            [segment.id]: { status: 'error', translatedText: null, providerUsed: null },
-          }));
+            }
+          },
+          onError: (error) => {
+            if (segmentRequestIdsRef.current[segment.id] !== segReqId) return;
+            logger.debug(
+              `[translation] handleTranslateNode segment ${segment.id} stream error: ${error}`
+            );
+            setSegmentStates((prev) => ({
+              ...prev,
+              [segment.id]: { status: 'error', translatedText: null, providerUsed: null },
+            }));
+          },
         }
-      })();
+      );
     },
     [segments, sourceLanguage]
   );
@@ -648,84 +712,89 @@ export function ImmersiveTranslationLayer({
         };
       });
 
-      void (async () => {
-        const targetLanguage =
-          translationPreferencesRef.current.reader_translation_target_language ?? '';
-        let cacheKey: string | null = null;
-        if (targetLanguage) {
-          cacheKey = await computeTranslationCacheKey(segment.text, targetLanguage);
-          logger.debug(
-            `[translation] translateWithProvider segment ${segment.id} cacheKey=${cacheKey.slice(0, 20)}…`
-          );
-        }
-
-        try {
-          logger.debug(
-            `[translation] translateWithProvider segment ${segment.id} calling API forced=${providerId}`
-          );
-          const translationResult = await translateReaderSegmentWithPreferences({
-            text: segment.text,
-            sourceLanguage,
-            preferences: translationPreferencesRef.current,
-            forcedProvider: providerId,
-          });
-
-          if (segmentRequestIdsRef.current[segment.id] !== segReqId) {
+      const streamId = `translate-forced-${segment.id}-${segReqId}-${Date.now()}`;
+      logger.debug(
+        `[translation] translateWithProvider segment ${segment.id} calling streaming API forced=${providerId}`
+      );
+      translateReaderSegmentStream(
+        {
+          text: segment.text,
+          sourceLanguage,
+          preferences: translationPreferencesRef.current,
+          forcedProvider: providerId,
+        },
+        streamId,
+        {
+          onDelta: (delta) => {
+            if (segmentRequestIdsRef.current[segment.id] !== segReqId) return;
+            setSegmentStates((prev) => ({
+              ...prev,
+              [segment.id]: {
+                status: 'loading',
+                translatedText: (prev[segment.id]?.translatedText ?? '') + delta,
+                providerUsed: prev[segment.id]?.providerUsed ?? null,
+              },
+            }));
+          },
+          onDone: (fullText, providerUsed) => {
+            if (segmentRequestIdsRef.current[segment.id] !== segReqId) {
+              logger.debug(
+                `[translation] translateWithProvider segment ${segment.id} result discarded (stale per-segment request)`
+              );
+              return;
+            }
             logger.debug(
-              `[translation] translateWithProvider segment ${segment.id} result discarded (stale per-segment request)`
+              `[translation] translateWithProvider segment ${segment.id} stream success provider=${providerUsed}`
             );
-            return;
-          }
+            setSegmentStates((prev) => ({
+              ...prev,
+              [segment.id]: {
+                status: 'success',
+                translatedText: fullText,
+                providerUsed,
+              },
+            }));
+            onActiveProviderChangeRef.current?.(providerUsed);
 
-          logger.debug(
-            `[translation] translateWithProvider segment ${segment.id} API success provider=${translationResult.providerUsed} translated="${translationResult.translatedText.slice(0, 40)}…"`
-          );
-          setSegmentStates((previous) => ({
-            ...previous,
-            [segment.id]: {
-              status: 'success',
-              translatedText: translationResult.translatedText,
-              providerUsed: translationResult.providerUsed,
-            },
-          }));
-          onActiveProviderChangeRef.current?.(translationResult.providerUsed);
-
-          if (cacheKey) {
-            logger.debug(
-              `[translation] translateWithProvider segment ${segment.id} writing cache key=${cacheKey.slice(0, 20)}… provider=${translationResult.providerUsed}`
-            );
-            commands
-              .setTranslationCacheEntry(cacheKey, {
-                // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
-                translated_text: translationResult.translatedText,
-                // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
-                provider_used: translationResult.providerUsed,
-                // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
-                cached_at: String(Math.floor(Date.now() / 1000)),
-              })
-              .then((r) => {
-                if (r.status === 'ok') {
-                  logger.debug(
-                    `[translation] translateWithProvider segment ${segment.id} cache write OK`
-                  );
-                } else {
-                  logger.debug(
-                    `[translation] translateWithProvider segment ${segment.id} cache write FAILED: ${r.error}`
-                  );
-                }
+            const targetLanguage =
+              translationPreferencesRef.current.reader_translation_target_language ?? '';
+            if (targetLanguage) {
+              computeTranslationCacheKey(segment.text, targetLanguage).then((cacheKey) => {
+                commands
+                  .setTranslationCacheEntry(cacheKey, {
+                    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+                    translated_text: fullText,
+                    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+                    provider_used: providerUsed,
+                    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
+                    cached_at: String(Math.floor(Date.now() / 1000)),
+                  })
+                  .then((r) => {
+                    if (r.status === 'ok') {
+                      logger.debug(
+                        `[translation] translateWithProvider segment ${segment.id} cache write OK`
+                      );
+                    } else {
+                      logger.debug(
+                        `[translation] translateWithProvider segment ${segment.id} cache write FAILED: ${r.error}`
+                      );
+                    }
+                  });
               });
-          }
-        } catch (err) {
-          if (segmentRequestIdsRef.current[segment.id] !== segReqId) return;
-          logger.debug(
-            `[translation] translateWithProvider segment ${segment.id} API error: ${err}`
-          );
-          setSegmentStates((previous) => ({
-            ...previous,
-            [segment.id]: { status: 'error', translatedText: null, providerUsed: null },
-          }));
+            }
+          },
+          onError: (error) => {
+            if (segmentRequestIdsRef.current[segment.id] !== segReqId) return;
+            logger.debug(
+              `[translation] translateWithProvider segment ${segment.id} stream error: ${error}`
+            );
+            setSegmentStates((prev) => ({
+              ...prev,
+              [segment.id]: { status: 'error', translatedText: null, providerUsed: null },
+            }));
+          },
         }
-      })();
+      );
     },
     [segments, sourceLanguage]
   );

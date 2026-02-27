@@ -46,6 +46,8 @@ export default defineConfig(async () => ({
     port: 1420,
     strictPort: true,
     host: host || false,
+    // Disable Vite's raw error overlay — the app has a custom React ErrorBoundary
+    overlay: false,
     hmr: host
       ? {
           protocol: 'ws',

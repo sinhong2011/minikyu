@@ -9,6 +9,10 @@ export function registerCommands(commands: AppCommand[]): void {
   }
 }
 
+export function getCommandById(id: string): AppCommand | undefined {
+  return commandRegistry.get(id);
+}
+
 export function getAllCommands(
   context: CommandContext,
   searchValue = '',
@@ -23,7 +27,14 @@ export function getAllCommands(
     return allCommands.filter((cmd) => {
       const label = _(cmd.label).toLowerCase();
       const description = cmd.description ? _(cmd.description).toLowerCase() : '';
-      return label.includes(search) || description.includes(search);
+      const group = (cmd.group ?? '').toLowerCase();
+      const keywordMatch = cmd.keywords?.some((kw) => kw.includes(search)) ?? false;
+      return (
+        label.includes(search) ||
+        description.includes(search) ||
+        group.includes(search) ||
+        keywordMatch
+      );
     });
   }
 

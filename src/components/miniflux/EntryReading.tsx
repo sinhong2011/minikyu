@@ -1,7 +1,16 @@
 import {
   ArrowDown01Icon,
   ArrowRightIcon,
+  ArrowTurnUpIcon,
   ArrowUp01Icon,
+  Copy01Icon,
+  Download01Icon,
+  Globe02Icon,
+  Link01Icon,
+  Mail01Icon,
+  MailOpen01Icon,
+  SparklesIcon,
+  StarIcon,
   ViewIcon,
   ViewOffIcon,
 } from '@hugeicons/core-free-icons';
@@ -10,10 +19,23 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { AnimatePresence, motion, useMotionValue, useTransform } from 'motion/react';
 import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { ArticleSummaryCard, useArticleSummary } from '@/components/miniflux/ArticleSummary';
 import { Button } from '@/components/ui/button';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuGroup,
+  ContextMenuItem,
+  ContextMenuLabel,
+  ContextMenuSeparator,
+  ContextMenuShortcut,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
+import { showToast } from '@/components/ui/sonner';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
+import { useShortcutConfig } from '@/hooks/use-shortcut-config';
 import { logger } from '@/lib/logger';
 import { getReaderFontStack } from '@/lib/reader-fonts';
 import {
@@ -21,6 +43,7 @@ import {
   normalizeReaderTheme,
   readerThemeOptions,
 } from '@/lib/reader-theme';
+import { formatShortcutDisplay, matchesShortcut } from '@/lib/shortcut-registry';
 import { cn } from '@/lib/utils';
 import {
   useEntry,
@@ -96,8 +119,12 @@ export function EntryReading({
     appleTranslationFallbackEnabled,
     translationAutoEnabled,
     translationExcludedFeedIds,
+    translationExcludedCategoryIds,
     translationProviderSettings,
+    aiSummaryAutoEnabled,
     setTranslationAutoEnabled,
+    setTranslationExcludedFeedIds,
+    setTranslationExcludedCategoryIds,
     setFontSize,
     setLineWidth,
     setLineHeight,
@@ -106,15 +133,34 @@ export function EntryReading({
     setTranslationDisplayMode,
     setTranslationTargetLanguage,
   } = useReaderSettings();
+  const { resolved: shortcuts } = useShortcutConfig();
+  const shortcutsRef = useRef(shortcuts);
+  shortcutsRef.current = shortcuts;
   const { data: entry, isLoading, error } = useEntry(entryId);
   const fetchEntryContent = useFetchEntryContent();
   const toggleStar = useToggleEntryStar();
   const toggleEntryRead = useToggleEntryRead();
   const toggleEntryReadRef = useRef(toggleEntryRead);
   toggleEntryReadRef.current = toggleEntryRead;
+  const toggleStarRef = useRef(toggleStar);
+  toggleStarRef.current = toggleStar;
+  const onOpenInAppBrowserRef = useRef(onOpenInAppBrowser);
+  onOpenInAppBrowserRef.current = onOpenInAppBrowser;
   const translationAutoEnabledRef = useRef(translationAutoEnabled);
   translationAutoEnabledRef.current = translationAutoEnabled;
-  const isExcludedFeed = entry ? translationExcludedFeedIds.includes(entry.feed_id) : false;
+  const articleSummary = useArticleSummary(
+    entryId,
+    entry?.content ?? '',
+    translationTargetLanguage ?? undefined,
+    aiSummaryAutoEnabled
+  );
+  const articleSummaryRef = useRef(articleSummary);
+  articleSummaryRef.current = articleSummary;
+  const isExcludedFeed = entry
+    ? translationExcludedFeedIds.includes(entry.feed_id) ||
+      (entry.feed.category !== null &&
+        translationExcludedCategoryIds.includes(entry.feed.category.id))
+    : false;
   const isExcludedFeedRef = useRef(isExcludedFeed);
   isExcludedFeedRef.current = isExcludedFeed;
   const onScrollRef = useRef(onScroll);
@@ -136,6 +182,8 @@ export function EntryReading({
   const previousContentRef = useRef<string | null>(null);
   const previousDownloadStatusEntryIdRef = useRef<string | null>(null);
   const [translationEnabled, setTranslationEnabled] = useState(false);
+  const translationEnabledRef = useRef(translationEnabled);
+  translationEnabledRef.current = translationEnabled;
   const [translateRequestToken, setTranslateRequestToken] = useState(0);
   const [activeTranslationProvider, setActiveTranslationProvider] = useState<string | null>(null);
   const [translationProgress, setTranslationProgress] = useState({ completed: 0, total: 0 });
@@ -555,6 +603,9 @@ export function EntryReading({
   }, [cancelScrollAnimation, readingContent.tocItems, scrollY, showToc]);
 
   useEffect(() => {
+    const match = (id: string, e: KeyboardEvent) =>
+      matchesShortcut(e, shortcutsRef.current[id] ?? '');
+
     const handleKeyDown = (e: KeyboardEvent) => {
       const isInputTarget =
         e.target instanceof HTMLInputElement ||
@@ -565,66 +616,114 @@ export function EntryReading({
       if (isInputTarget || e.defaultPrevented) {
         return;
       }
-      if (e.metaKey || e.ctrlKey) {
-        return;
-      }
 
       const viewport = scrollRef.current?.querySelector<HTMLElement>(
         '[data-slot="scroll-area-viewport"]'
       );
 
-      if (e.key === ' ') {
+      // Reading — scroll
+      if (match('scroll-down', e)) {
         if (!viewport) return;
         e.preventDefault();
-        const scrollAmount = viewport.clientHeight * 0.8;
-        const nextScrollTop = viewport.scrollTop + (e.shiftKey ? -scrollAmount : scrollAmount);
-        animateViewportScrollTo(viewport, nextScrollTop);
-      } else if (e.altKey && e.key === 'ArrowUp') {
+        const amount = viewport.clientHeight * 0.8;
+        animateViewportScrollTo(viewport, viewport.scrollTop + amount);
+      } else if (match('scroll-up', e)) {
+        if (!viewport) return;
+        e.preventDefault();
+        const amount = viewport.clientHeight * 0.8;
+        animateViewportScrollTo(viewport, viewport.scrollTop - amount);
+      }
+      // Reading — typography
+      else if (match('increase-line-height', e)) {
         e.preventDefault();
         setLineHeight(
           Math.min(MAX_LINE_HEIGHT, Number((lineHeight + LINE_HEIGHT_STEP).toFixed(2)))
         );
-      } else if (e.altKey && e.key === 'ArrowDown') {
+      } else if (match('decrease-line-height', e)) {
         e.preventDefault();
         setLineHeight(
           Math.max(MIN_LINE_HEIGHT, Number((lineHeight - LINE_HEIGHT_STEP).toFixed(2)))
         );
-      } else if (e.key === '=' || e.key === '+') {
+      } else if (match('increase-font', e)) {
         e.preventDefault();
         setFontSize(Math.min(MAX_FONT_SIZE, fontSize + 1));
-      } else if (e.key === '-') {
+      } else if (match('decrease-font', e)) {
         e.preventDefault();
         setFontSize(Math.max(MIN_FONT_SIZE, fontSize - 1));
-      } else if (e.key === '[') {
+      } else if (match('narrow-content', e)) {
         e.preventDefault();
         setLineWidth(Math.max(MIN_LINE_WIDTH, lineWidth - 2));
-      } else if (e.key === ']') {
+      } else if (match('widen-content', e)) {
         e.preventDefault();
         setLineWidth(Math.min(MAX_LINE_WIDTH, lineWidth + 2));
-      } else if (e.shiftKey && e.key.toLowerCase() === 't') {
+      } else if (match('cycle-theme', e)) {
         e.preventDefault();
         const currentTheme = normalizeReaderTheme(readerTheme);
         const currentIndex = readerThemeOptions.indexOf(currentTheme);
         const nextIndex = (currentIndex + 1) % readerThemeOptions.length;
         const nextTheme = readerThemeOptions[nextIndex];
-        if (nextTheme) {
-          setReaderTheme(nextTheme);
-        }
-      } else if (e.key === 'h') {
+        if (nextTheme) setReaderTheme(nextTheme);
+      }
+      // Navigation
+      else if (match('prev-article', e)) {
         if (hasPrev && onNavigatePrev) {
           e.preventDefault();
           onNavigatePrev();
         }
-      } else if (e.key === 'j') {
+      } else if (match('next-article', e)) {
         if (hasNext && onNavigateNext) {
           e.preventDefault();
           onNavigateNext();
         }
-      } else if (e.key.toLowerCase() === 'm') {
+      } else if (match('go-to-top', e)) {
+        if (!viewport) return;
+        e.preventDefault();
+        animateViewportScrollTo(viewport, 0);
+      }
+      // Article actions
+      else if (match('toggle-read', e)) {
         const currentEntry = entryRef.current;
         if (currentEntry && !toggleEntryReadRef.current.isPending) {
           e.preventDefault();
           toggleEntryReadRef.current.mutate(currentEntry.id);
+        }
+      } else if (match('summarize', e)) {
+        const summary = articleSummaryRef.current;
+        if (!summary.loading) {
+          e.preventDefault();
+          summary.handleSummarize();
+        }
+      } else if (match('toggle-star', e)) {
+        const currentEntry = entryRef.current;
+        if (currentEntry && !toggleStarRef.current.isPending) {
+          e.preventDefault();
+          toggleStarRef.current.mutate(currentEntry.id);
+        }
+      } else if (match('toggle-translation', e)) {
+        e.preventDefault();
+        handleTranslationEnabledChange(!translationEnabledRef.current);
+      } else if (match('fetch-content', e)) {
+        e.preventDefault();
+        handleFetchOriginalContent();
+      }
+      // Links
+      else if (match('open-browser', e)) {
+        const currentEntry = entryRef.current;
+        if (currentEntry?.url) {
+          e.preventDefault();
+          window.open(currentEntry.url, '_blank', 'noopener,noreferrer');
+        }
+      } else if (match('open-app-browser', e)) {
+        const currentEntry = entryRef.current;
+        if (currentEntry?.url && onOpenInAppBrowserRef.current) {
+          e.preventDefault();
+          onOpenInAppBrowserRef.current(currentEntry.url);
+        }
+      } else if (match('copy-link', e)) {
+        const currentEntry = entryRef.current;
+        if (currentEntry?.url) {
+          e.preventDefault();
+          navigator.clipboard.writeText(currentEntry.url);
         }
       }
     };
@@ -634,6 +733,7 @@ export function EntryReading({
   }, [
     animateViewportScrollTo,
     fontSize,
+    handleFetchOriginalContent,
     hasNext,
     hasPrev,
     lineHeight,
@@ -669,6 +769,80 @@ export function EntryReading({
     },
     [setTranslationAutoEnabled]
   );
+
+  // Listen for command palette / menu bar translation events
+  useEffect(() => {
+    const handleTranslateCommand = () => {
+      handleTranslationEnabledChange(!translationEnabled);
+    };
+    const handleDisplayModeCommand = (e: Event) => {
+      const mode = (e as CustomEvent).detail;
+      if (mode === 'bilingual' || mode === 'translated_only') {
+        setTranslationDisplayMode(mode);
+      }
+    };
+    document.addEventListener('command:translate', handleTranslateCommand);
+    document.addEventListener('command:set-translation-display-mode', handleDisplayModeCommand);
+    return () => {
+      document.removeEventListener('command:translate', handleTranslateCommand);
+      document.removeEventListener(
+        'command:set-translation-display-mode',
+        handleDisplayModeCommand
+      );
+    };
+  }, [handleTranslationEnabledChange, translationEnabled, setTranslationDisplayMode]);
+
+  // Listen for command palette / menu bar article events
+  useEffect(() => {
+    const handlers: Record<string, () => void> = {
+      'command:toggle-read': () => {
+        if (entry) toggleEntryRead.mutate(entry.id);
+      },
+      'command:toggle-star': () => {
+        if (entry) toggleStar.mutate(entry.id);
+      },
+      'command:fetch-content': () => handleFetchOriginalContent(),
+      'command:open-in-browser': () => {
+        if (entry?.url) window.open(entry.url, '_blank', 'noopener,noreferrer');
+      },
+      'command:open-in-app-browser': () => {
+        if (entry?.url && onOpenInAppBrowser) onOpenInAppBrowser(entry.url);
+      },
+      'command:copy-link': () => {
+        if (entry?.url) navigator.clipboard.writeText(entry.url);
+      },
+      'command:prev-article': () => onNavigatePrev?.(),
+      'command:next-article': () => onNavigateNext?.(),
+      'command:font-size-increase': () => setFontSize(Math.min(MAX_FONT_SIZE, fontSize + 1)),
+      'command:font-size-decrease': () => setFontSize(Math.max(MIN_FONT_SIZE, fontSize - 1)),
+      'command:font-size-reset': () => setFontSize(18),
+    };
+    const handleSetTheme = (e: Event) => {
+      const theme = (e as CustomEvent).detail;
+      if (theme) setReaderTheme(theme);
+    };
+    for (const [event, handler] of Object.entries(handlers)) {
+      document.addEventListener(event, handler);
+    }
+    document.addEventListener('command:set-reader-theme', handleSetTheme);
+    return () => {
+      for (const [event, handler] of Object.entries(handlers)) {
+        document.removeEventListener(event, handler);
+      }
+      document.removeEventListener('command:set-reader-theme', handleSetTheme);
+    };
+  }, [
+    entry,
+    toggleEntryRead,
+    toggleStar,
+    handleFetchOriginalContent,
+    onOpenInAppBrowser,
+    onNavigatePrev,
+    onNavigateNext,
+    fontSize,
+    setFontSize,
+    setReaderTheme,
+  ]);
 
   if (isLoading) {
     return (
@@ -706,6 +880,7 @@ export function EntryReading({
         hasNext={hasNext}
         hideNavigation={hideNavigation}
         onToggleStar={() => toggleStar.mutate(entry.id)}
+        isStarred={entry.starred ?? false}
         onToggleRead={() => toggleEntryRead.mutate(entry.id)}
         onOpenInAppBrowser={onOpenInAppBrowser}
         isRead={entry.status === 'read'}
@@ -728,6 +903,9 @@ export function EntryReading({
         onFetchOriginalContent={handleFetchOriginalContent}
         isFetchingOriginalContent={fetchEntryContent.isPending}
         isOriginalContentDownloaded={isOriginalContentDownloaded}
+        onSummarize={articleSummary.handleSummarize}
+        isSummarizing={articleSummary.loading}
+        hasSummary={!!articleSummary.summary}
       />
 
       <div className="relative flex-1 min-h-0">
@@ -736,68 +914,316 @@ export function EntryReading({
           translationPreferences={translationPreferences}
           sourceLanguage={null}
         />
-        <ScrollArea className="h-full min-h-0" ref={scrollRef}>
-          <AnimatePresence mode="wait">
-            <motion.div
-              key={`${entry.id}:${contentRevision}`}
-              initial={{
-                opacity: articleEnterOpacity,
-                y: directionalEnterY,
-                filter: 'blur(0.8px)',
-              }}
-              animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-              exit={{
-                opacity: articleExitOpacity,
-                y: directionalExitY,
-                filter: 'blur(0.8px)',
-                transition: articleExitTransition,
-              }}
-              transition={articleEnterTransition}
-              className="px-4 py-8 transition-colors duration-300 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
-              style={readerSurfaceStyle}
-            >
-              {entry.content ? (
-                <ImmersiveTranslationLayer
-                  entryId={entry.id}
-                  html={readingContent.html}
-                  translationEnabled={translationEnabled}
-                  translationDisplayMode={translationDisplayMode}
-                  translateRequestToken={translateRequestToken}
-                  translationPreferences={translationPreferences}
-                  providerSettings={translationProviderSettings}
-                  bionicEnglish={bionicReading}
-                  chineseConversionMode={chineseConversionMode}
-                  customConversionRules={customConversionRules}
-                  codeTheme={codeTheme}
-                  onActiveProviderChange={setActiveTranslationProvider}
-                  onTranslationProgressChange={(completed, total) =>
-                    setTranslationProgress({ completed, total })
-                  }
-                  className={cn(
-                    'mx-auto max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
-                    useInvertedProse && 'prose-invert',
-                    '[&_h1]:mb-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold',
-                    '[&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:leading-snug [&_h2]:font-semibold',
-                    '[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:leading-snug [&_h3]:font-semibold',
-                    '[&_p]:my-5 [&_p]:tracking-[0.01em]',
-                    '[&_ul]:my-5 [&_ol]:my-5 [&_li]:my-1.5',
-                    '[&_a]:break-all [&_a]:underline [&_a]:decoration-[color:var(--reader-link)] [&_a]:underline-offset-4',
-                    '[&_blockquote]:my-8 [&_blockquote]:rounded-r-xl [&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:bg-primary/5 [&_blockquote]:px-4 [&_blockquote]:py-2 [&_blockquote]:text-foreground/90',
-                    '[&_hr]:my-8 [&_hr]:border-border/60',
-                    '[&_table]:text-sm [&_table]:leading-relaxed',
-                    '[&_img]:my-8',
-                    '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0'
+        <ContextMenu>
+          <ContextMenuTrigger className="h-full">
+            <ScrollArea className="h-full min-h-0" ref={scrollRef}>
+              <AnimatePresence mode="wait">
+                <motion.div
+                  key={`${entry.id}:${contentRevision}`}
+                  initial={{
+                    opacity: articleEnterOpacity,
+                    y: directionalEnterY,
+                    filter: 'blur(0.8px)',
+                  }}
+                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                  exit={{
+                    opacity: articleExitOpacity,
+                    y: directionalExitY,
+                    filter: 'blur(0.8px)',
+                    transition: articleExitTransition,
+                  }}
+                  transition={articleEnterTransition}
+                  className="px-4 py-8 transition-colors duration-300 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
+                  style={readerSurfaceStyle}
+                >
+                  <ArticleSummaryCard
+                    summary={articleSummary.summary}
+                    loading={articleSummary.loading}
+                    error={articleSummary.error}
+                    modelUsed={articleSummary.modelUsed}
+                    providerUsed={articleSummary.providerUsed}
+                    collapsed={articleSummary.collapsed}
+                    onToggleCollapse={articleSummary.onToggleCollapse}
+                    onRetry={articleSummary.handleSummarize}
+                  />
+                  {entry.content ? (
+                    <ImmersiveTranslationLayer
+                      entryId={entry.id}
+                      html={readingContent.html}
+                      translationEnabled={translationEnabled}
+                      translationDisplayMode={translationDisplayMode}
+                      translateRequestToken={translateRequestToken}
+                      translationPreferences={translationPreferences}
+                      providerSettings={translationProviderSettings}
+                      bionicEnglish={bionicReading}
+                      chineseConversionMode={chineseConversionMode}
+                      customConversionRules={customConversionRules}
+                      codeTheme={codeTheme}
+                      onActiveProviderChange={setActiveTranslationProvider}
+                      onTranslationProgressChange={(completed, total) =>
+                        setTranslationProgress({ completed, total })
+                      }
+                      className={cn(
+                        'mx-auto max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
+                        useInvertedProse && 'prose-invert',
+                        '[&_h1]:mb-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold',
+                        '[&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:leading-snug [&_h2]:font-semibold',
+                        '[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:leading-snug [&_h3]:font-semibold',
+                        '[&_p]:my-5 [&_p]:tracking-[0.01em]',
+                        '[&_ul]:my-5 [&_ol]:my-5 [&_li]:my-1.5',
+                        '[&_a]:break-all [&_a]:underline [&_a]:decoration-[color:var(--reader-link)] [&_a]:underline-offset-4',
+                        '[&_blockquote]:my-8 [&_blockquote]:rounded-r-xl [&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:bg-primary/5 [&_blockquote]:px-4 [&_blockquote]:py-2 [&_blockquote]:text-foreground/90',
+                        '[&_hr]:my-8 [&_hr]:border-border/60',
+                        '[&_table]:text-sm [&_table]:leading-relaxed',
+                        '[&_img]:my-8',
+                        '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0'
+                      )}
+                      style={readerProseStyle}
+                    />
+                  ) : (
+                    <p className="text-muted-foreground italic text-center py-20">
+                      {_(msg`No content available`)}
+                    </p>
                   )}
-                  style={readerProseStyle}
+                </motion.div>
+              </AnimatePresence>
+            </ScrollArea>
+          </ContextMenuTrigger>
+          <ContextMenuContent className="w-64">
+            {/* Quick actions toolbar */}
+            <div className="flex items-center gap-1 px-1.5 py-1">
+              <button
+                type="button"
+                disabled={!hasPrev || !onNavigatePrev}
+                onClick={onNavigatePrev}
+                className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+                title={_(msg`Previous Article`)}
+              >
+                <HugeiconsIcon icon={ArrowUp01Icon} strokeWidth={2} className="size-4" />
+              </button>
+              <button
+                type="button"
+                disabled={!hasNext || !onNavigateNext}
+                onClick={onNavigateNext}
+                className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+                title={_(msg`Next Article`)}
+              >
+                <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2} className="size-4" />
+              </button>
+              <div className="ml-auto flex items-center gap-1">
+                <button
+                  type="button"
+                  onClick={() => toggleStar.mutate(entry.id)}
+                  className={cn(
+                    'flex size-7 items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground',
+                    entry.starred ? 'text-yellow-500' : 'text-muted-foreground'
+                  )}
+                  title={entry.starred ? _(msg`Unstar`) : _(msg`Star`)}
+                >
+                  <HugeiconsIcon icon={StarIcon} strokeWidth={2} className="size-4" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => {
+                    const viewport = scrollRef.current?.querySelector<HTMLElement>(
+                      '[data-slot="scroll-area-viewport"]'
+                    );
+                    if (viewport) animateViewportScrollTo(viewport, 0);
+                  }}
+                  className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                  title={_(msg`Go to Top`)}
+                >
+                  <HugeiconsIcon icon={ArrowTurnUpIcon} strokeWidth={2} className="size-4" />
+                </button>
+              </div>
+            </div>
+
+            <ContextMenuSeparator />
+
+            <ContextMenuGroup>
+              <ContextMenuLabel>{_(msg`AI`)}</ContextMenuLabel>
+              <ContextMenuItem
+                onClick={articleSummary.handleSummarize}
+                disabled={articleSummary.loading}
+              >
+                <HugeiconsIcon
+                  icon={SparklesIcon}
+                  strokeWidth={2}
+                  className="size-4 text-muted-foreground"
                 />
-              ) : (
-                <p className="text-muted-foreground italic text-center py-20">
-                  {_(msg`No content available`)}
-                </p>
-              )}
-            </motion.div>
-          </AnimatePresence>
-        </ScrollArea>
+                {articleSummary.summary ? _(msg`Re-summarize`) : _(msg`Summarize Article`)}
+                <ContextMenuShortcut>
+                  {formatShortcutDisplay(shortcuts['summarize'])}
+                </ContextMenuShortcut>
+              </ContextMenuItem>
+            </ContextMenuGroup>
+
+            <ContextMenuSeparator />
+
+            <ContextMenuGroup>
+              <ContextMenuLabel>{_(msg`Translation`)}</ContextMenuLabel>
+              <ContextMenuItem onClick={() => handleTranslationEnabledChange(!translationEnabled)}>
+                <HugeiconsIcon
+                  icon={Globe02Icon}
+                  strokeWidth={2}
+                  className="size-4 text-muted-foreground"
+                />
+                {_(msg`Translate Article`)}
+                <ContextMenuShortcut>
+                  {formatShortcutDisplay(shortcuts['toggle-translation'])}
+                </ContextMenuShortcut>
+              </ContextMenuItem>
+              {entry.feed &&
+                (() => {
+                  const isFeedExcluded = translationExcludedFeedIds.includes(entry.feed_id);
+                  return (
+                    <ContextMenuItem
+                      onClick={() => {
+                        const next = isFeedExcluded
+                          ? translationExcludedFeedIds.filter((id) => id !== entry.feed_id)
+                          : [...translationExcludedFeedIds, entry.feed_id];
+                        setTranslationExcludedFeedIds(next);
+                        if (isFeedExcluded) {
+                          showToast.success(_(msg`Feed translation re-enabled`), entry.feed.title);
+                        } else {
+                          showToast.info(_(msg`Feed excluded from translation`), entry.feed.title);
+                        }
+                      }}
+                    >
+                      <HugeiconsIcon
+                        icon={ViewOffIcon}
+                        strokeWidth={2}
+                        className="size-4 text-muted-foreground"
+                      />
+                      {_(msg`Skip this feed`)}
+                      <span
+                        className={cn(
+                          'ml-auto size-2 rounded-full shrink-0 transition-colors',
+                          isFeedExcluded ? 'bg-primary' : 'border border-muted-foreground/40'
+                        )}
+                      />
+                    </ContextMenuItem>
+                  );
+                })()}
+              {entry.feed.category &&
+                (() => {
+                  const isCategoryExcluded = translationExcludedCategoryIds.includes(
+                    entry.feed.category.id
+                  );
+                  return (
+                    <ContextMenuItem
+                      onClick={() => {
+                        const categoryId = entry.feed.category?.id;
+                        if (!categoryId) return;
+                        const next = isCategoryExcluded
+                          ? translationExcludedCategoryIds.filter((id) => id !== categoryId)
+                          : [...translationExcludedCategoryIds, categoryId];
+                        setTranslationExcludedCategoryIds(next);
+                        if (isCategoryExcluded) {
+                          showToast.success(
+                            _(msg`Category translation re-enabled`),
+                            entry.feed.category?.title
+                          );
+                        } else {
+                          showToast.info(
+                            _(msg`Category excluded from translation`),
+                            entry.feed.category?.title
+                          );
+                        }
+                      }}
+                    >
+                      <HugeiconsIcon
+                        icon={ViewOffIcon}
+                        strokeWidth={2}
+                        className="size-4 text-muted-foreground"
+                      />
+                      {_(msg`Skip this category`)}
+                      <span
+                        className={cn(
+                          'ml-auto size-2 rounded-full shrink-0 transition-colors',
+                          isCategoryExcluded ? 'bg-primary' : 'border border-muted-foreground/40'
+                        )}
+                      />
+                    </ContextMenuItem>
+                  );
+                })()}
+            </ContextMenuGroup>
+
+            <ContextMenuSeparator />
+
+            <ContextMenuGroup>
+              <ContextMenuLabel>{_(msg`Article`)}</ContextMenuLabel>
+              <ContextMenuItem onClick={() => toggleEntryRead.mutate(entry.id)}>
+                <HugeiconsIcon
+                  icon={entry.status === 'read' ? Mail01Icon : MailOpen01Icon}
+                  strokeWidth={2}
+                  className="size-4 text-muted-foreground"
+                />
+                {entry.status === 'read' ? _(msg`Mark as unread`) : _(msg`Mark as read`)}
+                <ContextMenuShortcut>
+                  {formatShortcutDisplay(shortcuts['toggle-read'])}
+                </ContextMenuShortcut>
+              </ContextMenuItem>
+              <ContextMenuItem onClick={handleFetchOriginalContent}>
+                <HugeiconsIcon
+                  icon={Download01Icon}
+                  strokeWidth={2}
+                  className="size-4 text-muted-foreground"
+                />
+                {_(msg`Fetch Original Content`)}
+                <ContextMenuShortcut>
+                  {formatShortcutDisplay(shortcuts['fetch-content'])}
+                </ContextMenuShortcut>
+              </ContextMenuItem>
+            </ContextMenuGroup>
+
+            {entry.url && (
+              <>
+                <ContextMenuSeparator />
+                <ContextMenuGroup>
+                  <ContextMenuLabel>{_(msg`Links`)}</ContextMenuLabel>
+                  <ContextMenuItem
+                    onClick={() => window.open(entry.url, '_blank', 'noopener,noreferrer')}
+                  >
+                    <HugeiconsIcon
+                      icon={Link01Icon}
+                      strokeWidth={2}
+                      className="size-4 text-muted-foreground"
+                    />
+                    {_(msg`Open in Browser`)}
+                    <ContextMenuShortcut>
+                      {formatShortcutDisplay(shortcuts['open-browser'])}
+                    </ContextMenuShortcut>
+                  </ContextMenuItem>
+                  {onOpenInAppBrowser && (
+                    <ContextMenuItem onClick={() => onOpenInAppBrowser(entry.url)}>
+                      <HugeiconsIcon
+                        icon={ViewIcon}
+                        strokeWidth={2}
+                        className="size-4 text-muted-foreground"
+                      />
+                      {_(msg`Open in App Browser`)}
+                      <ContextMenuShortcut>
+                        {formatShortcutDisplay(shortcuts['open-app-browser'])}
+                      </ContextMenuShortcut>
+                    </ContextMenuItem>
+                  )}
+                  <ContextMenuItem onClick={() => navigator.clipboard.writeText(entry.url)}>
+                    <HugeiconsIcon
+                      icon={Copy01Icon}
+                      strokeWidth={2}
+                      className="size-4 text-muted-foreground"
+                    />
+                    {_(msg`Copy Link`)}
+                    <ContextMenuShortcut>
+                      {formatShortcutDisplay(shortcuts['copy-link'])}
+                    </ContextMenuShortcut>
+                  </ContextMenuItem>
+                </ContextMenuGroup>
+              </>
+            )}
+          </ContextMenuContent>
+        </ContextMenu>
 
         <AnimatePresence>
           {showToc && (

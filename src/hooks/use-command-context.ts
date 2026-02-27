@@ -1,5 +1,7 @@
 import type { CommandContext } from '@/lib/commands/types';
 import { notify } from '@/lib/notifications';
+import { usePlayerStore } from '@/store/player-store';
+import type { PreferencesPane } from '@/store/ui-store';
 import { useUIStore } from '@/store/ui-store';
 
 /**
@@ -9,7 +11,12 @@ import { useUIStore } from '@/store/ui-store';
  */
 const commandContext: CommandContext = {
   openPreferences: () => useUIStore.getState().togglePreferences(),
+  openPreferencesPane: (pane: string) =>
+    useUIStore.getState().openPreferencesToPane(pane as PreferencesPane),
   showToast: (message, type = 'info') => void notify(message, undefined, { type }),
+  getSelectedEntryId: () => useUIStore.getState().selectedEntryId,
+  isConnected: () => true,
+  hasPodcast: () => usePlayerStore.getState().currentEntry !== null,
 };
 
 /**
@@ -17,5 +24,12 @@ const commandContext: CommandContext = {
  * Returns a stable reference to avoid unnecessary re-renders.
  */
 export function useCommandContext(): CommandContext {
+  return commandContext;
+}
+
+/**
+ * Get the command context singleton for use outside React components.
+ */
+export function getCommandContext(): CommandContext {
   return commandContext;
 }

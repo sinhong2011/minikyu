@@ -177,7 +177,6 @@ export function ZenModeView() {
                 entryId={currentEntryId}
                 hasPrev={false}
                 hasNext={hasEntries}
-                nextEntryTitle={hasEntries ? _(msg`Next Article`) : undefined}
                 hideNavigation={true}
                 onClose={handleExit}
                 onNavigateNext={selectNewEntry}

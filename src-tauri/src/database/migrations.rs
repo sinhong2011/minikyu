@@ -26,6 +26,11 @@ pub async fn run_migrations(pool: &SqlitePool) -> Result<(), sqlx::Error> {
         record_migration(pool, 4, "podcast_feed_settings_and_duration").await?;
     }
 
+    if !applied_migrations.contains(&5) {
+        apply_local_cache_migration(pool).await?;
+        record_migration(pool, 5, "article_summaries_and_translation_cache").await?;
+    }
+
     Ok(())
 }
 
@@ -412,6 +417,45 @@ pub(crate) async fn apply_podcast_settings_migration(pool: &SqlitePool) -> Resul
         .ok(); // OK if column already exists
 
     log::info!("Podcast settings migration applied (version 4)");
+    Ok(())
+}
+
+pub(crate) async fn apply_local_cache_migration(pool: &SqlitePool) -> Result<(), sqlx::Error> {
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS article_summaries (
+            entry_id TEXT NOT NULL PRIMARY KEY,
+            summary TEXT NOT NULL,
+            provider_used TEXT,
+            model_used TEXT,
+            created_at TEXT NOT NULL,
+            updated_at TEXT NOT NULL
+        )
+        "#,
+    )
+    .execute(pool)
+    .await?;
+
+    sqlx::query(
+        r#"
+        CREATE TABLE IF NOT EXISTS translation_cache (
+            cache_key TEXT NOT NULL PRIMARY KEY,
+            translated_text TEXT NOT NULL,
+            provider_used TEXT NOT NULL,
+            cached_at INTEGER NOT NULL
+        )
+        "#,
+    )
+    .execute(pool)
+    .await?;
+
+    sqlx::query(
+        "CREATE INDEX IF NOT EXISTS idx_translation_cache_cached_at ON translation_cache(cached_at)",
+    )
+    .execute(pool)
+    .await?;
+
+    log::info!("Local cache migration applied (version 5)");
     Ok(())
 }
 

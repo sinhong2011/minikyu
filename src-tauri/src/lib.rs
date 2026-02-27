@@ -300,10 +300,16 @@ pub fn run() {
         .build(tauri::generate_context!())
         .expect("error while building tauri application")
         .run(|_app, event| {
-            if let tauri::RunEvent::ExitRequested { .. } = event {
+            if let tauri::RunEvent::ExitRequested { api, .. } = event {
+                // Prevent Tao's default terminate callback which triggers a macOS
+                // crash report due to NSPanel (tauri-nspanel) deallocation order
+                // issues during the normal shutdown path.
+                // Force a clean exit via process::exit(0) instead.
+                api.prevent_exit();
                 let _ = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                     commands::tray::cleanup_tray();
                 }));
+                std::process::exit(0);
             }
         });
 }

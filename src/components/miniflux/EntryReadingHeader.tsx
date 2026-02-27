@@ -12,6 +12,7 @@ import {
   PlayIcon,
   Playlist03Icon,
   Share01Icon,
+  SparklesIcon,
   StarIcon,
   TextIcon,
 } from '@hugeicons/core-free-icons';
@@ -60,6 +61,7 @@ interface EntryReadingHeaderProps {
   hasNext: boolean;
   hideNavigation?: boolean;
   onToggleStar: () => void;
+  isStarred: boolean;
   onToggleRead: () => void;
   onFetchOriginalContent?: () => void;
   onShare?: () => void;
@@ -86,6 +88,9 @@ interface EntryReadingHeaderProps {
   ) => void;
   activeTranslationProvider: string | null;
   isExcludedFeed: boolean;
+  onSummarize: () => void;
+  isSummarizing: boolean;
+  hasSummary: boolean;
 }
 
 export function EntryReadingHeader({
@@ -96,6 +101,7 @@ export function EntryReadingHeader({
   hasNext,
   hideNavigation = false,
   onToggleStar,
+  isStarred,
   onToggleRead,
   onFetchOriginalContent,
   onShare,
@@ -120,6 +126,9 @@ export function EntryReadingHeader({
   onTranslationTargetLanguageChange,
   activeTranslationProvider,
   isExcludedFeed,
+  onSummarize,
+  isSummarizing,
+  hasSummary,
 }: EntryReadingHeaderProps) {
   const { _ } = useLingui();
   const {
@@ -336,6 +345,41 @@ export function EntryReadingHeader({
           </div>
 
           <div className="flex items-center gap-1.5">
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className={cn(
+                      toolbarButtonClass,
+                      'relative',
+                      hasSummary && 'border-border/60 bg-accent/70 text-foreground'
+                    )}
+                    onClick={onSummarize}
+                    disabled={isSummarizing}
+                    aria-label={_(msg`Summarize with AI`)}
+                  />
+                }
+              >
+                <HugeiconsIcon
+                  icon={SparklesIcon}
+                  className={cn('h-5 w-5', isSummarizing && 'animate-pulse')}
+                  strokeWidth={2}
+                />
+                {hasSummary && (
+                  <span
+                    className="absolute -end-0.5 -top-0.5 size-2 rounded-full bg-primary"
+                    aria-hidden="true"
+                  />
+                )}
+              </TooltipTrigger>
+              <TooltipPanel>
+                {isSummarizing ? _(msg`Summarizing...`) : _(msg`Summarize with AI`)}
+              </TooltipPanel>
+            </Tooltip>
+
             <Popover>
               <Tooltip>
                 <TooltipTrigger
@@ -584,27 +628,6 @@ export function EntryReadingHeader({
                     variant="ghost"
                     size="icon"
                     className={toolbarButtonClass}
-                    onClick={onToggleStar}
-                    aria-label={entry.starred ? _(msg`Unstar`) : _(msg`Star`)}
-                  />
-                }
-              >
-                <HugeiconsIcon
-                  icon={StarIcon}
-                  className={entry.starred ? 'h-5 w-5 fill-primary text-primary' : 'h-5 w-5'}
-                />
-              </TooltipTrigger>
-              <TooltipPanel>{entry.starred ? _(msg`Unstar`) : _(msg`Star`)}</TooltipPanel>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className={toolbarButtonClass}
                     onClick={onToggleRead}
                     disabled={isTogglingRead}
                     aria-label={isRead ? _(msg`Mark as unread`) : _(msg`Mark as read`)}
@@ -627,6 +650,24 @@ export function EntryReadingHeader({
                 </AnimatePresence>
               </TooltipTrigger>
               <TooltipPanel>{isRead ? _(msg`Mark as unread`) : _(msg`Mark as read`)}</TooltipPanel>
+            </Tooltip>
+
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className={cn(toolbarButtonClass, isStarred && 'text-yellow-500')}
+                    onClick={onToggleStar}
+                    aria-label={isStarred ? _(msg`Unstar`) : _(msg`Star`)}
+                  />
+                }
+              >
+                <HugeiconsIcon icon={StarIcon} className="h-5 w-5" strokeWidth={2} />
+              </TooltipTrigger>
+              <TooltipPanel>{isStarred ? _(msg`Unstar`) : _(msg`Star`)}</TooltipPanel>
             </Tooltip>
 
             <Tooltip>

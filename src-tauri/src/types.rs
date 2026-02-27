@@ -107,6 +107,10 @@ pub enum PlayerDisplayMode {
     TrayPopover,
 }
 
+const fn default_ai_summary_max_text_length() -> u32 {
+    100_000
+}
+
 /// Application preferences that persist to disk.
 /// Only contains settings that should be saved between sessions.
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
@@ -175,12 +179,33 @@ pub struct AppPreferences {
     /// Feed IDs excluded from immersive translation.
     #[serde(default)]
     pub reader_translation_excluded_feed_ids: Vec<String>,
+    /// Category IDs excluded from immersive translation.
+    #[serde(default)]
+    pub reader_translation_excluded_category_ids: Vec<String>,
     /// Default download path for images (null = ask every time)
     pub image_download_path: Option<String>,
     /// Default download path for videos (null = ask every time)
     pub video_download_path: Option<String>,
+    /// Whether AI summary is automatically generated when opening an article.
+    #[serde(default)]
+    pub ai_summary_auto_enabled: bool,
+    /// Custom system prompt for AI summary. If None or empty, uses built-in default.
+    #[serde(default)]
+    pub ai_summary_custom_prompt: Option<String>,
+    /// Preferred LLM provider for AI summary (e.g. "ollama", "openai"). If None, uses translation LLM fallback chain.
+    #[serde(default)]
+    pub ai_summary_provider: Option<String>,
+    /// Preferred model for AI summary (e.g. "llama3", "gpt-4o"). If None, uses the model from provider settings.
+    #[serde(default)]
+    pub ai_summary_model: Option<String>,
+    /// Maximum article text length (in characters) sent to the LLM for summarization.
+    #[serde(default = "default_ai_summary_max_text_length")]
+    pub ai_summary_max_text_length: u32,
     /// Player display mode: floating window or tray popover
     pub player_display_mode: PlayerDisplayMode,
+    /// Custom keyboard shortcut overrides. Keys are action IDs, values are shortcut strings.
+    #[serde(default)]
+    pub keyboard_shortcuts: HashMap<String, String>,
 }
 
 impl Default for AppPreferences {
@@ -213,9 +238,16 @@ impl Default for AppPreferences {
             reader_translation_provider_settings: HashMap::new(),
             reader_translation_auto_enabled: false,
             reader_translation_excluded_feed_ids: vec![],
+            reader_translation_excluded_category_ids: vec![],
+            ai_summary_auto_enabled: false,
+            ai_summary_custom_prompt: None,
+            ai_summary_provider: None,
+            ai_summary_model: None,
+            ai_summary_max_text_length: default_ai_summary_max_text_length(),
             image_download_path: None,
             video_download_path: None,
             player_display_mode: PlayerDisplayMode::FloatingWindow,
+            keyboard_shortcuts: HashMap::new(),
         }
     }
 }

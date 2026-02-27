@@ -320,6 +320,18 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
     },
     [setFeedDialogState]
   );
+  // Listen for command palette events to open feed/category dialogs directly
+  React.useEffect(() => {
+    const handleAddFeed = () => openAddFeedDialog();
+    const handleAddCategory = () => setCategoryDialogState({ mode: 'create' });
+    document.addEventListener('command:add-feed', handleAddFeed);
+    document.addEventListener('command:add-category', handleAddCategory);
+    return () => {
+      document.removeEventListener('command:add-feed', handleAddFeed);
+      document.removeEventListener('command:add-category', handleAddCategory);
+    };
+  }, [openAddFeedDialog, setCategoryDialogState]);
+
   const handleSync = React.useCallback(() => {
     if (!isConnected || syncing) {
       return;
