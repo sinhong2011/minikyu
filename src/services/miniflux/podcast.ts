@@ -1,5 +1,19 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
-import { commands } from '@/lib/tauri-bindings';
+import { commands, type PodcastFeedSettings } from '@/lib/tauri-bindings';
+
+interface ResolvedSpeedUpdateSettings {
+  autoDownloadCount: number;
+  autoCleanupDays: number;
+}
+
+export function resolvePodcastFeedSettingsForSpeedUpdate(
+  settings: PodcastFeedSettings | undefined
+): ResolvedSpeedUpdateSettings {
+  return {
+    autoDownloadCount: settings?.auto_download_count ?? 3,
+    autoCleanupDays: settings?.auto_cleanup_days ?? 7,
+  };
+}
 
 export const podcastQueryKeys = {
   all: ['podcast'] as const,

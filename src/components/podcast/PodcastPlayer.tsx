@@ -35,7 +35,11 @@ import {
 import type { Enclosure, Entry } from '@/lib/tauri-bindings';
 import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
-import { useUpdatePodcastFeedSettings } from '@/services/miniflux/podcast';
+import {
+  resolvePodcastFeedSettingsForSpeedUpdate,
+  usePodcastFeedSettings,
+  useUpdatePodcastFeedSettings,
+} from '@/services/miniflux/podcast';
 import { usePlayerStore } from '@/store/player-store';
 import { useUIStore } from '@/store/ui-store';
 
@@ -61,6 +65,7 @@ export function PodcastPlayer({ entry, enclosure }: PodcastPlayerProps) {
   const stopAfterCurrent = usePlayerStore((s) => s.stopAfterCurrent);
   const currentEntry = usePlayerStore((s) => s.currentEntry);
   const updateFeedSettings = useUpdatePodcastFeedSettings();
+  const { data: feedSettings } = usePodcastFeedSettings(entry.feed_id);
   const [speedPopoverOpen, setSpeedPopoverOpen] = useState(false);
   const [volumePopoverOpen, setVolumePopoverOpen] = useState(false);
   const [downloadStatus, setDownloadStatus] = useState<
@@ -98,16 +103,21 @@ export function PodcastPlayer({ entry, enclosure }: PodcastPlayerProps) {
 
   const handleSpeedChange = (speed: number) => {
     usePlayerStore.getState().setSpeed(speed);
+  };
+
+  const persistSpeedPreference = (speed: number) => {
+    const resolvedSettings = resolvePodcastFeedSettingsForSpeedUpdate(feedSettings);
     updateFeedSettings.mutate({
       feedId: entry.feed_id,
-      autoDownloadCount: 3,
+      autoDownloadCount: resolvedSettings.autoDownloadCount,
       playbackSpeed: speed,
-      autoCleanupDays: 7,
+      autoCleanupDays: resolvedSettings.autoCleanupDays,
     });
   };
 
   const handleSpeedPreset = (speed: number) => {
     handleSpeedChange(speed);
+    persistSpeedPreference(speed);
     setSpeedPopoverOpen(false);
   };
 
@@ -431,6 +441,10 @@ export function PodcastPlayer({ entry, enclosure }: PodcastPlayerProps) {
                   onValueChange={(value) => {
                     const s = resolveValue(value);
                     handleSpeedChange(Math.round(s * 100) / 100);
+                  }}
+                  onValueCommitted={(value) => {
+                    const s = resolveValue(value);
+                    persistSpeedPreference(Math.round(s * 100) / 100);
                   }}
                 />
                 <div className="mt-1 flex justify-between text-xs text-muted-foreground">

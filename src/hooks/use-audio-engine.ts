@@ -515,9 +515,29 @@ export function useAudioEngine() {
 
     const onEnded = () => {
       const state = usePlayerStore.getState();
-      // Mark completed
+      // Persist completion progress first so mark-as-completed always has a row to update.
       if (state.currentEntry) {
-        commands.markEpisodeCompleted(state.currentEntry.id);
+        const entryId = state.currentEntry.id;
+        const completedDuration = Math.floor(normalizeMediaTime(audio.duration || state.duration));
+        const completedTime = Math.floor(
+          normalizeMediaTime(
+            completedDuration > 0
+              ? completedDuration
+              : Math.max(audio.currentTime, state.currentTime)
+          )
+        );
+
+        void commands
+          .savePodcastProgress(entryId, completedTime, completedDuration)
+          .catch((error) => {
+            logger.warn('Audio engine: failed to persist completed progress', {
+              error: String(error),
+              entryId,
+            });
+          })
+          .finally(() => {
+            void commands.markEpisodeCompleted(entryId);
+          });
       }
       activeLoadToken += 1;
       isLoadingTrack = false;
