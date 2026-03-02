@@ -40,11 +40,11 @@ export function formatRelativeTime(dateString: string): string {
   });
 }
 
-export function formatEntryTime(dateString: string): string {
+export function formatEntryTime(dateString: string, use24h = true): string {
   const date = parseDateInput(dateString);
   if (!date) return '';
 
-  return format(date, 'HH:mm');
+  return format(date, use24h ? 'HH:mm' : 'hh:mm a');
 }
 
 export function getEntryDateSectionType(date: Date, now: Date = new Date()): EntryDateSectionType {

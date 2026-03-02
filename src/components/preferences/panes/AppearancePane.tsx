@@ -128,6 +128,31 @@ export function AppearancePane() {
           </Select>
         </SettingsField>
       </SettingsSection>
+
+      <SettingsSection title={_(msg`Date & Time`)}>
+        <SettingsField
+          label={_(msg`Time Format`)}
+          description={_(msg`Choose how times are displayed throughout the app`)}
+        >
+          <Select
+            value={preferences?.time_format ?? '24h'}
+            onValueChange={(value: string) => {
+              if (preferences) {
+                savePreferences.mutate({ ...preferences, time_format: value });
+              }
+            }}
+            disabled={savePreferences.isPending}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="12h">{_(msg`12-hour`)}</SelectItem>
+              <SelectItem value="24h">{_(msg`24-hour`)}</SelectItem>
+            </SelectContent>
+          </Select>
+        </SettingsField>
+      </SettingsSection>
     </div>
   );
 }

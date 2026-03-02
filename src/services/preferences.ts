@@ -97,6 +97,8 @@ export function usePreferences() {
           keyboard_shortcuts: {},
           // biome-ignore lint/style/useNamingConvention: preferences field name
           log_level: 'info',
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          time_format: '24h',
         };
       }
 

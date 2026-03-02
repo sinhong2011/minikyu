@@ -115,32 +115,6 @@ pub async fn clear_local_data(
     Ok(())
 }
 
-/// Opens the app data directory in the system file manager.
-#[tauri::command]
-#[specta::specta]
-pub async fn open_data_directory(app_handle: AppHandle) -> Result<String, String> {
-    let app_data_dir = app_handle
-        .path()
-        .app_data_dir()
-        .map_err(|e| format!("Failed to get app data directory: {e}"))?;
-
-    std::fs::create_dir_all(&app_data_dir)
-        .map_err(|e| format!("Failed to create app data directory: {e}"))?;
-
-    let path_str = app_data_dir
-        .to_str()
-        .ok_or("App data directory path contains invalid UTF-8")?
-        .to_string();
-
-    tauri_plugin_opener::open_path(&app_data_dir, None::<&str>).map_err(|e| {
-        log::error!("Failed to open data directory: {e}");
-        format!("Failed to open data directory: {e}")
-    })?;
-
-    log::info!("Opened data directory: {path_str}");
-    Ok(path_str)
-}
-
 #[cfg(test)]
 mod tests {
     use super::*;

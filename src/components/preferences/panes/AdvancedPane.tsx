@@ -2,7 +2,6 @@ import {
   Copy01Icon,
   Delete02Icon,
   Download04Icon,
-  FolderOpenIcon,
   RecycleIcon,
   Upload04Icon,
 } from '@hugeicons/core-free-icons';
@@ -254,23 +253,6 @@ export function AdvancedPane() {
     }
   };
 
-  // ── Open data directory ───────────────────────────────────────────────
-
-  const handleOpenDataDirectory = async () => {
-    try {
-      const result = await commands.openDataDirectory();
-      if (result.status === 'error') {
-        throw new Error(result.error);
-      }
-    } catch (error) {
-      logger.error('Failed to open data directory', { error });
-      showToast.error(
-        _(msg`Failed to open data directory`),
-        error instanceof Error ? error.message : String(error)
-      );
-    }
-  };
-
   // ── Copy debug info ───────────────────────────────────────────────────
 
   const handleCopyDebugInfo = async () => {
@@ -354,52 +336,44 @@ export function AdvancedPane() {
         </SettingsField>
       </SettingsSection>
 
-      {/* ── Diagnostics ────────────────────────────────────────────── */}
-      <SettingsSection title={_(msg`Diagnostics`)}>
-        <SettingsField
-          label={_(msg`Open data directory`)}
-          description={_(msg`Open the folder where Minikyu stores local data.`)}
-        >
-          <Button variant="outline" onClick={handleOpenDataDirectory}>
-            <HugeiconsIcon icon={FolderOpenIcon} className="size-4" />
-            {_(msg`Open`)}
-          </Button>
-        </SettingsField>
-
-        <SettingsField
-          label={_(msg`Copy debug info`)}
-          description={_(msg`Copy app version, OS, and environment details for bug reports.`)}
-        >
-          <Button variant="outline" onClick={handleCopyDebugInfo}>
-            <HugeiconsIcon icon={Copy01Icon} className="size-4" />
-            {copied ? _(msg`Copied!`) : _(msg`Copy`)}
-          </Button>
-        </SettingsField>
-
-        <SettingsField
-          label={_(msg`Log level`)}
-          description={_(
-            msg`Control the verbosity of frontend log output. More verbose levels include all levels above them.`
-          )}
-        >
-          <Select
-            value={preferences?.log_level ?? 'info'}
-            onValueChange={handleLogLevelChange}
-            disabled={!preferences || savePreferences.isPending}
+      {/* ── Diagnostics (dev only) ─────────────────────────────────── */}
+      {import.meta.env.DEV && (
+        <SettingsSection title={_(msg`Diagnostics`)}>
+          <SettingsField
+            label={_(msg`Copy debug info`)}
+            description={_(msg`Copy app version, OS, and environment details for bug reports.`)}
           >
-            <SelectTrigger className="w-32">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              {LOG_LEVELS.map((level) => (
-                <SelectItem key={level} value={level}>
-                  {level.charAt(0).toUpperCase() + level.slice(1)}
-                </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </SettingsField>
-      </SettingsSection>
+            <Button variant="outline" onClick={handleCopyDebugInfo}>
+              <HugeiconsIcon icon={Copy01Icon} className="size-4" />
+              {copied ? _(msg`Copied!`) : _(msg`Copy`)}
+            </Button>
+          </SettingsField>
+
+          <SettingsField
+            label={_(msg`Log level`)}
+            description={_(
+              msg`Control the verbosity of frontend log output. More verbose levels include all levels above them.`
+            )}
+          >
+            <Select
+              value={preferences?.log_level ?? 'info'}
+              onValueChange={handleLogLevelChange}
+              disabled={!preferences || savePreferences.isPending}
+            >
+              <SelectTrigger className="w-32">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                {LOG_LEVELS.map((level) => (
+                  <SelectItem key={level} value={level}>
+                    {level.charAt(0).toUpperCase() + level.slice(1)}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </SettingsField>
+        </SettingsSection>
+      )}
 
       {/* ── Data ───────────────────────────────────────────────────── */}
       <SettingsSection title={_(msg`Data`)}>
