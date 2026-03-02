@@ -75,6 +75,14 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y libwebkit2gtk-4.1-dev libappindicator3-dev librsvg2-dev patchelf
 
+      - name: Install WiX toolset
+        if: matrix.platform == 'windows-latest'
+        shell: pwsh
+        run: |
+          choco install wixtoolset --version=3.14.1 -y --no-progress
+          $wixPath = "C:\Program Files (x86)\WiX Toolset v3.14\bin"
+          "$wixPath" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
+
       # Windows Code Signing
       - name: Import Windows Certificate
         if: matrix.platform == 'windows-latest'
@@ -104,6 +112,15 @@ jobs:
         run: |
           if [ -n "$APPLE_CERTIFICATE" ]; then
             echo "$APPLE_CERTIFICATE" | base64 --decode > certificate.p12
+
+            # Preflight: fail early with clear diagnostics if cert/password are mismatched.
+            if ! openssl pkcs12 -in certificate.p12 -passin "pass:$APPLE_CERTIFICATE_PASSWORD" -nokeys -info >/dev/null 2>&1; then
+              if ! openssl pkcs12 -legacy -in certificate.p12 -passin "pass:$APPLE_CERTIFICATE_PASSWORD" -nokeys -info >/dev/null 2>&1; then
+                echo "::error::APPLE_CERTIFICATE preflight failed. Verify production environment secrets APPLE_CERTIFICATE and APPLE_CERTIFICATE_PASSWORD are from the same .p12 export."
+                exit 1
+              fi
+            fi
+
             security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
             security default-keychain -s build.keychain
             security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain

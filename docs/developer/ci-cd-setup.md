@@ -55,6 +55,19 @@ The Tauri updater requires a public/private key pair.
 
 ### 2. Configure macOS Signing
 
+#### Optional: Prepare `.p12` with helper script
+
+Use the repository helper to validate/convert `.p12` and generate single-line Base64 for `APPLE_CERTIFICATE`:
+
+```bash
+APPLE_CERTIFICATE_PASSWORD='your-p12-password' \
+  ./scripts/prepare-apple-certificate.sh \
+  --input Certificates.p12 \
+  --copy
+```
+
+This creates `Certificates-modern.p12` and `Certificates-modern.base64.txt` (and copies Base64 to clipboard with `--copy`).
+
 #### Exporting the Certificate
 1. Open **Keychain Access** on your Mac.
 2. Find your **Developer ID Application** certificate.
