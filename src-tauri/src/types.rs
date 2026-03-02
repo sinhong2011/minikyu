@@ -111,6 +111,10 @@ const fn default_ai_summary_max_text_length() -> u32 {
     100_000
 }
 
+fn default_time_format() -> String {
+    "24h".to_string()
+}
+
 /// Application preferences that persist to disk.
 /// Only contains settings that should be saved between sessions.
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
@@ -209,6 +213,9 @@ pub struct AppPreferences {
     /// Frontend log level. One of: "trace", "debug", "info", "warn", "error".
     #[serde(default = "default_log_level")]
     pub log_level: String,
+    /// Time display format: "12h" or "24h". Defaults to "24h".
+    #[serde(default = "default_time_format")]
+    pub time_format: String,
 }
 
 fn default_log_level() -> String {
@@ -256,6 +263,7 @@ impl Default for AppPreferences {
             player_display_mode: PlayerDisplayMode::FloatingWindow,
             keyboard_shortcuts: HashMap::new(),
             log_level: default_log_level(),
+            time_format: default_time_format(),
         }
     }
 }

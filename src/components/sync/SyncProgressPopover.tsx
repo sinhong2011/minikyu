@@ -9,6 +9,7 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import { usePreferences } from '@/services/preferences';
 import { useSyncStore } from '@/store/sync-store';
 
 interface SyncProgressPopoverProps {
@@ -31,6 +32,7 @@ const stageOrder: StageId[] = ['categories', 'feeds', 'entries', 'cleanup'];
 
 export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
   const { _ } = useLingui();
+  const { data: preferences } = usePreferences();
   const syncing = useSyncStore((state) => state.syncing);
   const currentStage = useSyncStore((state) => state.currentStage);
   const categoriesCount = useSyncStore((state) => state.categoriesCount);
@@ -148,11 +150,13 @@ export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
   const overallProgress = Math.round((completedSteps / totalSteps) * 100);
   const activeStage = stages.find((stage) => getStageStatus(stage.id) === 'active');
 
+  const use24h = preferences?.time_format !== '12h';
   const formatSyncTime = (date: Date) =>
     new Intl.DateTimeFormat(undefined, {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
+      hour12: !use24h,
     }).format(date);
 
   const statusTitle =

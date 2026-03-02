@@ -38,6 +38,7 @@ import type { Enclosure, Entry, EntryFilters } from '@/lib/tauri-bindings';
 import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
 import { useEntries, usePrefetchEntry } from '@/services/miniflux';
+import { usePreferences } from '@/services/preferences';
 import { usePlayerStore } from '@/store/player-store';
 import { useUIStore } from '@/store/ui-store';
 import {
@@ -80,6 +81,8 @@ export function EntryList({
   isRefreshing = false,
 }: EntryListProps) {
   const { _ } = useLingui();
+  const { data: preferences } = usePreferences();
+  const use24h = preferences?.time_format !== '12h';
   const {
     data: entriesData,
     isLoading,
@@ -736,7 +739,7 @@ export function EntryList({
                             )}
                             <span className="text-border">•</span>
                             <span className="text-xs text-muted-foreground/70">
-                              {formatEntryTime(entry.published_at)}
+                              {formatEntryTime(entry.published_at, use24h)}
                             </span>
                             {entry.status === 'unread' && (
                               <div className="h-2.5 w-2.5 rounded-full bg-primary/70 shadow-sm" />

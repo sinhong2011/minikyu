@@ -16,30 +16,12 @@
   }
 }
 
-@keyframes sync-indicator-spin {
-  0% {
-    transform: rotate(0deg) scale(1);
+@keyframes sync-indicator-active {
+  from {
+    transform: rotate(0deg);
   }
-  50% {
-    transform: rotate(180deg) scale(1.06);
-  }
-  100% {
-    transform: rotate(360deg) scale(1);
-  }
-}
-
-@keyframes sync-indicator-ring {
-  0% {
-    transform: scale(0.72);
-    opacity: 0.16;
-  }
-  60% {
-    transform: scale(1.22);
-    opacity: 0.36;
-  }
-  100% {
-    transform: scale(1.36);
-    opacity: 0;
+  to {
+    transform: rotate(360deg);
   }
 }
 
@@ -77,19 +59,8 @@
   }
 }
 
-.sync-indicator-syncing {
-  animation: sync-indicator-spin 1s linear infinite;
-}
-
-.sync-indicator-ring::after {
-  position: absolute;
-  inset: -6px;
-  z-index: -1;
-  border-radius: 9999px;
-  background: color-mix(in oklch, var(--primary) 45%, transparent);
-  content: "";
-  pointer-events: none;
-  animation: sync-indicator-ring 1.2s ease-out infinite;
+.sync-indicator-active {
+  animation: sync-indicator-active 0.8s linear infinite;
 }
 
 .sync-indicator-completed {

@@ -1,9 +1,5 @@
 import {
-  Alert01Icon,
-  ArrowReloadHorizontalIcon,
   CenterFocusIcon,
-  CheckmarkCircle01Icon,
-  DatabaseSync01Icon,
   PanelLeftCloseIcon,
   PanelLeftIcon,
   Settings01Icon,
@@ -20,10 +16,10 @@ import { WindowsWindowControls } from '@/components/titlebar/WindowsWindowContro
 import { Button } from '@/components/ui/button';
 import { useCommandContext } from '@/hooks/use-command-context';
 import type { AppPlatform } from '@/hooks/use-platform';
+import { useSyncIndicator } from '@/hooks/use-sync-indicator';
 import { executeCommand } from '@/lib/commands';
 import { cn } from '@/lib/utils';
 import { useIsConnected } from '@/services/miniflux/auth';
-import { useSyncStore } from '@/store/sync-store';
 import { useUIStore } from '@/store/ui-store';
 
 interface WindowTitleBarProps {
@@ -40,9 +36,7 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
   const zenModeEnabled = useUIStore((state) => state.zenModeEnabled);
   const toggleZenMode = useUIStore((state) => state.toggleZenMode);
   const { data: isConnected } = useIsConnected();
-  const syncing = useSyncStore((state) => state.syncing);
-  const syncError = useSyncStore((state) => state.error);
-  const syncStage = useSyncStore((state) => state.currentStage);
+  const { status: syncStatus, icon: syncIcon, title: syncTitle } = useSyncIndicator();
   const commandContext = useCommandContext();
 
   const handleOpenSettings = async () => {
@@ -53,29 +47,6 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
   };
 
   const isMacOS = platform === 'macos';
-  const syncStatus = syncing
-    ? 'syncing'
-    : syncError || syncStage === 'failed'
-      ? 'failed'
-      : syncStage === 'completed'
-        ? 'completed'
-        : 'idle';
-  const syncIcon =
-    syncStatus === 'syncing'
-      ? ArrowReloadHorizontalIcon
-      : syncStatus === 'failed'
-        ? Alert01Icon
-        : syncStatus === 'completed'
-          ? CheckmarkCircle01Icon
-          : DatabaseSync01Icon;
-  const syncTitle =
-    syncStatus === 'syncing'
-      ? _(msg`Syncing...`)
-      : syncStatus === 'failed'
-        ? _(msg`Sync failed`)
-        : syncStatus === 'completed'
-          ? _(msg`Sync completed`)
-          : _(msg`Sync Progress`);
 
   return (
     <div
@@ -147,22 +118,15 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
               )}
               title={syncTitle}
             >
-              <span
+              <HugeiconsIcon
+                icon={syncIcon}
                 className={cn(
-                  'relative inline-flex items-center justify-center isolate',
-                  syncStatus === 'syncing' && 'sync-indicator-ring'
+                  'h-4 w-4 transition-[transform,color,opacity] duration-200',
+                  syncStatus === 'syncing' && 'sync-indicator-active',
+                  syncStatus === 'completed' && 'sync-indicator-completed',
+                  syncStatus === 'failed' && 'sync-indicator-failed'
                 )}
-              >
-                <HugeiconsIcon
-                  icon={syncIcon}
-                  className={cn(
-                    'h-4 w-4 transition-[transform,color,opacity] duration-200',
-                    syncStatus === 'syncing' && 'sync-indicator-syncing',
-                    syncStatus === 'completed' && 'sync-indicator-completed',
-                    syncStatus === 'failed' && 'sync-indicator-failed'
-                  )}
-                />
-              </span>
+              />
             </Button>
           </SyncProgressPopover>
         )}
