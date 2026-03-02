@@ -37,6 +37,7 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         tray::tray_get_state,
         tray::tray_is_window_visible,
         tray::tray_quit_app,
+        tray::handle_close_request,
         accounts::save_miniflux_account,
         accounts::get_miniflux_accounts,
         accounts::get_active_miniflux_account,

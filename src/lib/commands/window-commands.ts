@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import i18n from '@/i18n/config';
+import { commands } from '@/lib/tauri-bindings';
 import type { AppCommand } from './types';
 
 export const windowCommands: AppCommand[] = [
@@ -12,8 +13,10 @@ export const windowCommands: AppCommand[] = [
 
     execute: async (context) => {
       try {
-        const appWindow = getCurrentWindow();
-        await appWindow.close();
+        const result = await commands.handleCloseRequest();
+        if (result.status === 'error') {
+          context.showToast(i18n._(msg`Failed to close window: ${result.error}`), 'error');
+        }
       } catch (error) {
         const message = error instanceof Error ? error.message : 'Unknown error';
         context.showToast(i18n._(msg`Failed to close window: ${message}`), 'error');

@@ -322,6 +322,19 @@ async trayQuitApp() : Promise<Result<null, string>> {
     else return { status: "error", error: e  as any };
 }
 },
+/**
+ * Handle the close button click based on user preferences.
+ * If close_behavior is MinimizeToTray, hides the window.
+ * If close_behavior is Quit, exits the app.
+ */
+async handleCloseRequest() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("handle_close_request") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async saveMinifluxAccount(config: AuthConfig) : Promise<Result<string, AccountError>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("save_miniflux_account", { config }) };
