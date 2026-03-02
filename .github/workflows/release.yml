@@ -112,6 +112,15 @@ jobs:
         run: |
           if [ -n "$APPLE_CERTIFICATE" ]; then
             echo "$APPLE_CERTIFICATE" | base64 --decode > certificate.p12
+
+            # Preflight: fail early with clear diagnostics if cert/password are mismatched.
+            if ! openssl pkcs12 -in certificate.p12 -passin "pass:$APPLE_CERTIFICATE_PASSWORD" -nokeys -info >/dev/null 2>&1; then
+              if ! openssl pkcs12 -legacy -in certificate.p12 -passin "pass:$APPLE_CERTIFICATE_PASSWORD" -nokeys -info >/dev/null 2>&1; then
+                echo "::error::APPLE_CERTIFICATE preflight failed. Verify production environment secrets APPLE_CERTIFICATE and APPLE_CERTIFICATE_PASSWORD are from the same .p12 export."
+                exit 1
+              fi
+            fi
+
             security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
             security default-keychain -s build.keychain
             security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
