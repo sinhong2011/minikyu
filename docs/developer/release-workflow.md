@@ -90,6 +90,8 @@ Force a specific version:
 git commit --allow-empty -m "chore: release 2.0.0" -m "Release-As: 2.0.0"
 ```
 
+For the first stable release (`1.0.0`), you can also run the `release-please` workflow manually and set `release_as=1.0.0`.
+
 ## Configuration
 
 **GitHub Workflow:** `.github/workflows/release-please.yml`
