@@ -28,18 +28,18 @@ jobs:
         uses: googleapis/release-please-action@v4
         id: release
         with:
-          release-type: node
-          package-name: minikyu
           token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: .release-please.json
+          manifest-file: .release-please-manifest.json
 
       - name: Release please with version override
         if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_as != '' }}
         uses: googleapis/release-please-action@v4
         id: release_override
         with:
-          release-type: node
-          package-name: minikyu
           token: ${{ secrets.GITHUB_TOKEN }}
+          config-file: .release-please.json
+          manifest-file: .release-please-manifest.json
           release-as: ${{ github.event.inputs.release_as }}
 
   trigger-release:
