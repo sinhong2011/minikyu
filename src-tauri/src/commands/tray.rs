@@ -76,17 +76,17 @@ pub fn init_tray(app: &AppHandle) -> Result<(), String> {
 
     // Build the tray icon with the icon set during construction
     log::info!("Building tray icon...");
-    let mut tray_builder = TrayIconBuilder::with_id(TRAY_ICON_ID)
+    let tray_builder = TrayIconBuilder::with_id(TRAY_ICON_ID)
         .menu(&menu)
         .icon(icon)
         .show_menu_on_left_click(false); // Right-click for menu, left-click toggles window
 
     // Use color icon (not template) so the original icon colors are shown
     #[cfg(target_os = "macos")]
-    {
-        tray_builder = tray_builder.icon_as_template(false);
-        log::info!("✓ Set tray icon as color icon for macOS");
-    }
+    let tray_builder = tray_builder.icon_as_template(false);
+
+    #[cfg(target_os = "macos")]
+    log::info!("✓ Set tray icon as color icon for macOS");
 
     let tray = tray_builder
         .on_tray_icon_event(handle_tray_icon_event)
