@@ -1,14 +1,18 @@
 name: release-please
 
 on:
+  push:
+    branches:
+      - main
   workflow_dispatch:
     inputs:
-      force:
-        description: "Force release creation"
+      release_as:
+        description: "Optional version override (e.g., 1.0.0 for first stable release)"
         required: false
-        default: "false"
+        type: string
 
 permissions:
+  actions: write
   contents: write
   pull-requests: write
 
@@ -16,18 +20,27 @@ jobs:
   release-please:
     runs-on: ubuntu-latest
     outputs:
-      release_created: ${{ steps.release.outputs.release_created }}
-      tag_name: ${{ steps.release.outputs.tag_name }}
+      release_created: ${{ steps.release.outputs.release_created || steps.release_override.outputs.release_created }}
+      tag_name: ${{ steps.release.outputs.tag_name || steps.release_override.outputs.tag_name }}
     steps:
       - name: Release please
+        if: ${{ github.event_name != 'workflow_dispatch' || github.event.inputs.release_as == '' }}
         uses: googleapis/release-please-action@v4
         id: release
         with:
           release-type: node
           package-name: minikyu
           token: ${{ secrets.GITHUB_TOKEN }}
-          prerelease: true
-          prerelease-type: beta
+
+      - name: Release please with version override
+        if: ${{ github.event_name == 'workflow_dispatch' && github.event.inputs.release_as != '' }}
+        uses: googleapis/release-please-action@v4
+        id: release_override
+        with:
+          release-type: node
+          package-name: minikyu
+          token: ${{ secrets.GITHUB_TOKEN }}
+          release-as: ${{ github.event.inputs.release_as }}
 
   trigger-release:
     needs: release-please

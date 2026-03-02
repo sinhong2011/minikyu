@@ -55,7 +55,7 @@ jobs:
         uses: actions/cache@v4
         with:
           path: ~/.bun/install/cache
-          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lockb') }}
+          key: ${{ runner.os }}-bun-${{ hashFiles('**/bun.lock') }}
           restore-keys: |
             ${{ runner.os }}-bun-
 
@@ -158,7 +158,7 @@ jobs:
             Existing users will receive automatic update notifications.
 
             **Full Changelog**: https://github.com/${{ github.repository }}/commits/${{ github.ref_name || inputs.version }}
-          releaseDraft: true
+          releaseDraft: false
           prerelease: false
           includeUpdaterJson: ${{ env.IS_PRODUCTION == 'true' }}
           args: ${{ matrix.args }} ${{ env.EXTRA_ARGS }}
