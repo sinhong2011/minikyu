@@ -1,10 +1,15 @@
+import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { listen } from '@tauri-apps/api/event';
 import { useEffect } from 'react';
+import { toast } from 'sonner';
 import { PLAYER_CMD, type PlayerCmdPayload } from '@/lib/player-events';
 import { buildPodcastDownloadFileName } from '@/lib/podcast-utils';
 import { commands } from '@/lib/tauri-bindings';
 import { usePlayerStore } from '@/store/player-store';
 import { useUIStore } from '@/store/ui-store';
+
+const _ = i18n._.bind(i18n);
 
 export function usePlayerCommandListener() {
   useEffect(() => {
@@ -49,7 +54,11 @@ export function usePlayerCommandListener() {
           if (currentEntry && currentEnclosure) {
             const fileName = buildPodcastDownloadFileName(currentEntry.title, currentEnclosure);
             useUIStore.getState().setDownloadsOpen(true);
-            commands.downloadFile(currentEnclosure.url, fileName, 'audio');
+            void commands.downloadFile(currentEnclosure.url, fileName, 'audio').then((result) => {
+              if (result.status === 'error') {
+                toast.error(_(msg`Download Failed`), { description: result.error });
+              }
+            });
           }
           break;
         }

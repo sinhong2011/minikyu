@@ -41,6 +41,7 @@ vi.mock('@tauri-apps/api/event', () => ({
   listen: vi.fn().mockResolvedValue(() => {
     // Mock unlisten function
   }),
+  emit: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock('@tauri-apps/plugin-updater', () => ({

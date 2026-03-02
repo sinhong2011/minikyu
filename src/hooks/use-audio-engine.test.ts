@@ -7,6 +7,15 @@ vi.mock('@/lib/tauri-bindings', () => ({
     getPodcastProgress: vi.fn(async () => ({ status: 'ok', data: null })),
     savePodcastProgress: vi.fn(async () => ({ status: 'ok', data: null })),
     markEpisodeCompleted: vi.fn(async () => ({ status: 'ok', data: null })),
+    getDownloadedFilePath: vi.fn(async () => ({ status: 'ok', data: null })),
+    loadPreferences: vi.fn(async () => ({
+      status: 'ok',
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      data: { player_display_mode: 'FloatingWindow' },
+    })),
+    getFeedIconData: vi.fn(async () => ({ status: 'ok', data: null })),
+    showPlayerWindow: vi.fn(async () => ({ status: 'ok', data: null })),
+    showTrayPopover: vi.fn(async () => ({ status: 'ok', data: null })),
   },
 }));
 
@@ -222,5 +231,42 @@ describe('useAudioEngine', () => {
     await waitFor(() => {
       expect(audio.play).toHaveBeenCalledTimes(1);
     });
+  });
+
+  it('saves progress before marking episode as completed when playback ends', async () => {
+    const audio = new MockAudio();
+    installRuntime(audio);
+
+    const { useAudioEngine } = await import('./use-audio-engine');
+    const { usePlayerStore } = await import('@/store/player-store');
+    const { commands } = await import('@/lib/tauri-bindings');
+    const entry = createEntry();
+    const enclosure = createEnclosure();
+
+    renderHook(() => useAudioEngine());
+
+    audio.duration = 1800;
+    audio.buffered = {
+      length: 1,
+      end: () => 1800,
+    };
+
+    act(() => {
+      usePlayerStore.getState().play(entry, enclosure);
+    });
+
+    await waitFor(() => {
+      expect(audio.play).toHaveBeenCalledTimes(1);
+    });
+
+    act(() => {
+      audio.currentTime = 1800;
+      audio.dispatchEvent(new Event('ended'));
+    });
+
+    await waitFor(() => {
+      expect(commands.savePodcastProgress).toHaveBeenCalledWith(entry.id, 1800, 1800);
+    });
+    expect(commands.markEpisodeCompleted).toHaveBeenCalledWith(entry.id);
   });
 });
