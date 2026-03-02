@@ -206,6 +206,13 @@ pub struct AppPreferences {
     /// Custom keyboard shortcut overrides. Keys are action IDs, values are shortcut strings.
     #[serde(default)]
     pub keyboard_shortcuts: HashMap<String, String>,
+    /// Frontend log level. One of: "trace", "debug", "info", "warn", "error".
+    #[serde(default = "default_log_level")]
+    pub log_level: String,
+}
+
+fn default_log_level() -> String {
+    "info".to_string()
 }
 
 impl Default for AppPreferences {
@@ -248,6 +255,7 @@ impl Default for AppPreferences {
             video_download_path: None,
             player_display_mode: PlayerDisplayMode::FloatingWindow,
             keyboard_shortcuts: HashMap::new(),
+            log_level: default_log_level(),
         }
     }
 }

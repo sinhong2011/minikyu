@@ -5,6 +5,7 @@ import { logger } from './logger-middleware';
 export type PreferencesPane =
   | 'general'
   | 'appearance'
+  | 'reader'
   | 'translation'
   | 'shortcuts'
   | 'advanced'

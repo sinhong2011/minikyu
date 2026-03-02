@@ -81,6 +81,17 @@ async clearLocalData() : Promise<Result<null, string>> {
 }
 },
 /**
+ * Opens the app data directory in the system file manager.
+ */
+async openDataDirectory() : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("open_data_directory") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Simple greeting command for demonstration purposes.
  */
 async greet(name: string) : Promise<Result<string, string>> {
@@ -1280,7 +1291,11 @@ player_display_mode: PlayerDisplayMode;
 /**
  * Custom keyboard shortcut overrides. Keys are action IDs, values are shortcut strings.
  */
-keyboard_shortcuts?: Partial<{ [key in string]: string }> }
+keyboard_shortcuts?: Partial<{ [key in string]: string }>; 
+/**
+ * Frontend log level. One of: "trace", "debug", "info", "warn", "error".
+ */
+log_level?: string }
 export type ArticleSummaryRecord = { entry_id: string; summary: string; provider_used: string | null; model_used: string | null }
 /**
  * Authentication Config
