@@ -304,12 +304,14 @@ pub fn run() {
                 // Prevent Tao's default terminate callback which triggers a macOS
                 // crash report due to NSPanel (tauri-nspanel) deallocation order
                 // issues during the normal shutdown path.
-                // Force a clean exit via process::exit(0) instead.
                 api.prevent_exit();
                 let _ = std::panic::catch_unwind(std::panic::AssertUnwindSafe(|| {
                     commands::tray::cleanup_tray();
                 }));
-                std::process::exit(0);
+                // Use _exit(2) instead of std::process::exit to skip all
+                // atexit/cleanup handlers that re-trigger [NSApplication terminate:]
+                // and cause tao's applicationWillTerminate panic.
+                unsafe { extern "C" { fn _exit(code: i32) -> !; } _exit(0) }
             }
         });
 }

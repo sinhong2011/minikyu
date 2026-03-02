@@ -293,11 +293,17 @@ fn handle_menu_event(app: &AppHandle, event: tauri::menu::MenuEvent) {
 }
 
 /// Perform best-effort cleanup and terminate immediately.
-/// This avoids macOS terminate callback unwind issues seen in some Tao shutdown paths.
+/// Uses _exit(2) to skip atexit handlers that re-trigger [NSApplication terminate:]
+/// and cause tao's applicationWillTerminate panic on macOS.
 fn quit_app_now(app: &AppHandle) -> ! {
     let _ = app.emit("app-quitting", ());
     cleanup_tray();
-    std::process::exit(0);
+    unsafe {
+        extern "C" {
+            fn _exit(code: i32) -> !;
+        }
+        _exit(0)
+    }
 }
 
 // ============================================================================
@@ -541,22 +547,25 @@ pub fn cleanup_tray() {
 // Window Close Handler
 // ============================================================================
 
-/// Handle window close request based on user preferences
-#[allow(dead_code)]
-pub fn handle_window_close_request(
-    app: &AppHandle,
-    close_behavior: &CloseBehavior,
-) -> Result<bool, String> {
-    match close_behavior {
-        CloseBehavior::Quit => {
-            log::info!("Close behavior: Quit - allowing window close");
-            cleanup_tray();
-            Ok(true) // Allow close
-        }
+/// Handle the close button click based on user preferences.
+/// If close_behavior is MinimizeToTray, hides the window.
+/// If close_behavior is Quit, exits the app.
+#[tauri::command]
+#[specta::specta]
+pub async fn handle_close_request(app: AppHandle) -> Result<(), String> {
+    let prefs = crate::commands::preferences::load_preferences_sync(&app);
+    let behavior = prefs
+        .map(|p| p.close_behavior)
+        .unwrap_or_default();
+
+    match behavior {
         CloseBehavior::MinimizeToTray => {
             log::info!("Close behavior: Minimize to tray - hiding window");
-            hide_main_window(app)?;
-            Ok(false) // Prevent close, just hide
+            hide_main_window(&app)
+        }
+        CloseBehavior::Quit => {
+            log::info!("Close behavior: Quit - exiting app");
+            quit_app_now(&app)
         }
     }
 }
