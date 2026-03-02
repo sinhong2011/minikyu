@@ -79,8 +79,12 @@ jobs:
         if: matrix.platform == 'windows-latest'
         shell: pwsh
         run: |
-          choco install wixtoolset --version=3.14.1 -y --no-progress
-          $wixPath = "C:\Program Files (x86)\WiX Toolset v3.14\bin"
+          $wixCandle = Get-Command candle.exe -ErrorAction SilentlyContinue
+          if (-not $wixCandle) {
+            choco install wixtoolset -y --no-progress
+            $wixCandle = Get-Command candle.exe -ErrorAction Stop
+          }
+          $wixPath = Split-Path -Path $wixCandle.Source -Parent
           "$wixPath" | Out-File -FilePath $env:GITHUB_PATH -Encoding utf8 -Append
 
       # Windows Code Signing
