@@ -34,10 +34,7 @@
       "assetProtocol": {
         "enable": true,
         "scope": {
-          "allow": [
-            "$DOWNLOAD/**",
-            "$HOME/Downloads/**"
-          ]
+          "allow": ["$DOWNLOAD/**", "$HOME/Downloads/**"]
         }
       }
     },
@@ -72,9 +69,7 @@
   "plugins": {
     "updater": {
       "active": true,
-      "endpoints": [
-        "https://github.com/niskan516/minikyu/releases/latest/download/latest.json"
-      ],
+      "endpoints": ["https://github.com/niskan516/minikyu/releases/latest/download/latest.json"],
       "dialog": true,
       "pubkey": ""
     }
