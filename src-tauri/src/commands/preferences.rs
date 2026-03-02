@@ -137,6 +137,12 @@ pub async fn save_preferences(app: AppHandle, preferences: AppPreferences) -> Re
     validate_download_path(&preferences.image_download_path)?;
     validate_download_path(&preferences.video_download_path)?;
 
+    // Validate log level
+    match preferences.log_level.as_str() {
+        "trace" | "debug" | "info" | "warn" | "error" => {}
+        _ => return Err(format!("Invalid log level: {}", preferences.log_level)),
+    }
+
     log::debug!("Saving preferences to disk: {preferences:?}");
     let prefs_path = get_preferences_path(&app)?;
 

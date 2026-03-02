@@ -72,11 +72,31 @@ export function usePreferences() {
           // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_translation_provider_settings: {},
           // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_translation_auto_enabled: false,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_translation_excluded_feed_ids: [],
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_translation_excluded_category_ids: [],
+          // biome-ignore lint/style/useNamingConvention: preferences field name
           image_download_path: null,
           // biome-ignore lint/style/useNamingConvention: preferences field name
           video_download_path: null,
           // biome-ignore lint/style/useNamingConvention: preferences field name
+          ai_summary_auto_enabled: false,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          ai_summary_custom_prompt: null,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          ai_summary_provider: null,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          ai_summary_model: null,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          ai_summary_max_text_length: 100000,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
           player_display_mode: 'FloatingWindow',
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          keyboard_shortcuts: {},
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          log_level: 'info',
         };
       }
 

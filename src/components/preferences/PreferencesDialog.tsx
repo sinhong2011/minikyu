@@ -1,5 +1,6 @@
 import {
   AlertCircleIcon,
+  Book01Icon,
   ColorsIcon,
   Delete02Icon,
   Edit02Icon,
@@ -79,6 +80,7 @@ import { CategoriesPane } from './panes/CategoriesPane';
 import { FeedsPane } from './panes/FeedsPane';
 import { GeneralPane } from './panes/GeneralPane';
 import { IntegrationsPane } from './panes/IntegrationsPane';
+import { ReaderPane } from './panes/ReaderPane';
 import { ShortcutsPane } from './panes/ShortcutsPane';
 import { TranslationPane } from './panes/TranslationPane';
 import { UsersPane } from './panes/UsersPane';
@@ -93,6 +95,11 @@ const appSettingsItems = [
     id: 'appearance' as const,
     label: msg`Appearance`,
     icon: ColorsIcon,
+  },
+  {
+    id: 'reader' as const,
+    label: msg`Reader`,
+    icon: Book01Icon,
   },
   {
     id: 'translation' as const,
@@ -604,6 +611,7 @@ export function PreferencesDialog() {
               {/* App Settings */}
               {activePane === 'general' && <GeneralPane />}
               {activePane === 'appearance' && <AppearancePane />}
+              {activePane === 'reader' && <ReaderPane />}
               {activePane === 'translation' && <TranslationPane />}
               {activePane === 'shortcuts' && <ShortcutsPane />}
               {activePane === 'advanced' && <AdvancedPane />}

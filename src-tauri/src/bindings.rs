@@ -15,6 +15,7 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         downloads::get_downloads_from_db,
         downloads::get_downloaded_file_path,
         data::clear_local_data,
+        data::open_data_directory,
         preferences::greet,
         preferences::load_preferences,
         preferences::save_preferences,
