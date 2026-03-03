@@ -9,6 +9,7 @@ import {
   Link01Icon,
   Mail01Icon,
   MailOpen01Icon,
+  SentIcon,
   SparklesIcon,
   StarIcon,
   ViewIcon,
@@ -44,6 +45,7 @@ import {
   readerThemeOptions,
 } from '@/lib/reader-theme';
 import { formatShortcutDisplay, matchesShortcut } from '@/lib/shortcut-registry';
+import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
 import {
   useEntry,
@@ -491,6 +493,23 @@ export function EntryReading({
       }
     );
   }, [entry, fetchEntryContent]);
+
+  const handleSaveToServices = useCallback(async () => {
+    if (!entry) return;
+    try {
+      const result = await commands.saveEntry(entry.id);
+      if (result.status === 'error') {
+        showToast.error(_(msg`Failed to save entry`), result.error);
+        return;
+      }
+      showToast.success(_(msg`Entry sent to services`), entry.title);
+    } catch (error) {
+      showToast.error(
+        _(msg`Failed to save entry`),
+        error instanceof Error ? error.message : String(error)
+      );
+    }
+  }, [entry, _]);
 
   useEffect(() => {
     if (!entry) {
@@ -1218,6 +1237,14 @@ export function EntryReading({
                     <ContextMenuShortcut>
                       {formatShortcutDisplay(shortcuts['copy-link'])}
                     </ContextMenuShortcut>
+                  </ContextMenuItem>
+                  <ContextMenuItem onClick={handleSaveToServices}>
+                    <HugeiconsIcon
+                      icon={SentIcon}
+                      strokeWidth={2}
+                      className="size-4 text-muted-foreground"
+                    />
+                    {_(msg`Save to services`)}
                   </ContextMenuItem>
                 </ContextMenuGroup>
               </>

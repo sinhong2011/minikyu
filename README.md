@@ -72,6 +72,16 @@ bun run tauri build
 
 [MIT](LICENSE.md)
 
+## Star History
+
+<a href="https://www.star-history.com/#sinhong2011/minikyu&type=timeline&legend=bottom-right">
+ <picture>
+   <source media="(prefers-color-scheme: dark)" srcset="https://api.star-history.com/svg?repos=sinhong2011/minikyu&type=timeline&theme=dark&legend=top-left" />
+   <source media="(prefers-color-scheme: light)" srcset="https://api.star-history.com/svg?repos=sinhong2011/minikyu&type=timeline&legend=top-left" />
+   <img alt="Star History Chart" src="https://api.star-history.com/svg?repos=sinhong2011/minikyu&type=timeline&legend=top-left" />
+ </picture>
+</a>
+
 ---
 
 Built with [Tauri](https://tauri.app) | [shadcn/ui](https://ui.shadcn.com) | [React](https://react.dev)

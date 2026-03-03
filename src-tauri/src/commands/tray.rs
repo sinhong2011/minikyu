@@ -131,14 +131,9 @@ fn create_tray_menu(app: &AppHandle) -> Result<Menu<tauri::Wry>, String> {
     )
     .map_err(|e| format!("Failed to create podcast play/pause item: {e}"))?;
 
-    let podcast_next = MenuItem::with_id(
-        app,
-        MENU_PODCAST_NEXT_ID,
-        "Next Track",
-        true,
-        None::<&str>,
-    )
-    .map_err(|e| format!("Failed to create podcast next item: {e}"))?;
+    let podcast_next =
+        MenuItem::with_id(app, MENU_PODCAST_NEXT_ID, "Next Track", true, None::<&str>)
+            .map_err(|e| format!("Failed to create podcast next item: {e}"))?;
 
     let podcast_player = MenuItem::with_id(
         app,
@@ -203,19 +198,20 @@ fn handle_tray_icon_event(tray: &TrayIcon, event: TrayIconEvent) {
             // Store the tray icon rect for popover positioning
             let pos = rect.position.to_physical::<f64>(1.0);
             let sz = rect.size.to_physical::<f64>(1.0);
-            *TRAY_ICON_RECT.lock().unwrap() =
-                Some((pos.x, pos.y, sz.width, sz.height));
+            *TRAY_ICON_RECT.lock().unwrap() = Some((pos.x, pos.y, sz.width, sz.height));
             log::debug!(
                 "Tray icon rect: ({}, {}) {}x{}",
-                pos.x, pos.y, sz.width, sz.height
+                pos.x,
+                pos.y,
+                sz.width,
+                sz.height
             );
 
             // Left click: always toggle tray popover
             log::debug!("Tray left-click: toggling tray popover");
 
-            let result = crate::commands::player_window::toggle_tray_popover(
-                tray.app_handle().clone(),
-            );
+            let result =
+                crate::commands::player_window::toggle_tray_popover(tray.app_handle().clone());
             if let Err(e) = result {
                 log::error!("Failed to toggle tray popover: {e}");
             }
@@ -229,8 +225,7 @@ fn handle_tray_icon_event(tray: &TrayIcon, event: TrayIconEvent) {
             // Store rect on right-click too
             let pos = rect.position.to_physical::<f64>(1.0);
             let sz = rect.size.to_physical::<f64>(1.0);
-            *TRAY_ICON_RECT.lock().unwrap() =
-                Some((pos.x, pos.y, sz.width, sz.height));
+            *TRAY_ICON_RECT.lock().unwrap() = Some((pos.x, pos.y, sz.width, sz.height));
             // Right click: show menu (handled automatically by Tauri)
             log::debug!("Tray right-click: showing menu");
             update_menu_visibility(tray.app_handle());
@@ -266,8 +261,11 @@ fn handle_menu_event(app: &AppHandle, event: tauri::menu::MenuEvent) {
         }
         MENU_PODCAST_PLAY_PAUSE_ID => {
             log::debug!("Tray menu: Podcast Play/Pause");
-            app.emit("player:cmd", serde_json::json!({"action": "toggle-play-pause"}))
-                .unwrap_or_else(|e| log::error!("Failed to emit podcast play/pause: {e}"));
+            app.emit(
+                "player:cmd",
+                serde_json::json!({"action": "toggle-play-pause"}),
+            )
+            .unwrap_or_else(|e| log::error!("Failed to emit podcast play/pause: {e}"));
         }
         MENU_PODCAST_NEXT_ID => {
             log::debug!("Tray menu: Podcast Next");
@@ -494,9 +492,7 @@ pub fn cleanup_tray() {
 #[specta::specta]
 pub async fn handle_close_request(app: AppHandle) -> Result<(), String> {
     let prefs = crate::commands::preferences::load_preferences_sync(&app);
-    let behavior = prefs
-        .map(|p| p.close_behavior)
-        .unwrap_or_default();
+    let behavior = prefs.map(|p| p.close_behavior).unwrap_or_default();
 
     match behavior {
         CloseBehavior::MinimizeToTray => {

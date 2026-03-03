@@ -159,7 +159,10 @@ pub async fn init_download_manager(app: &tauri::AppHandle) {
 /// Get the local file path for a completed download by URL
 #[tauri::command]
 #[specta::specta]
-pub async fn get_downloaded_file_path(app: tauri::AppHandle, url: String) -> Result<Option<String>, String> {
+pub async fn get_downloaded_file_path(
+    app: tauri::AppHandle,
+    url: String,
+) -> Result<Option<String>, String> {
     let state: tauri::State<'_, AppState> = app.state();
     let pool_lock = state.db_pool.lock().await;
     if let Some(pool) = &*pool_lock {
@@ -326,15 +329,12 @@ pub async fn download_file(
             .and_then(|p| p.video_download_path.clone()),
         Some("audio") => {
             // Auto-save podcasts to ~/Downloads/Podcasts (no save dialog)
-            let base = app
-                .path()
-                .download_dir()
-                .unwrap_or_else(|_| {
-                    app.path()
-                        .home_dir()
-                        .unwrap_or_else(|_| std::path::PathBuf::from("."))
-                        .join("Downloads")
-                });
+            let base = app.path().download_dir().unwrap_or_else(|_| {
+                app.path()
+                    .home_dir()
+                    .unwrap_or_else(|_| std::path::PathBuf::from("."))
+                    .join("Downloads")
+            });
             Some(base.join("Podcasts").to_string_lossy().into_owned())
         }
         _ => None,
@@ -390,7 +390,7 @@ pub async fn download_file(
         &url,
         download_id,
         file_name_str.clone(),
-        default_path.as_ref().map(|x| x.as_str()),
+        default_path.as_deref(),
     )
     .await;
 

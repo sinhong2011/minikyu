@@ -29,6 +29,7 @@ interface UIState {
   zenModeEnabled: boolean;
   zenModeEntryId: string | null;
   inAppBrowserUrl: string | null;
+  showConnectionDialog: boolean;
 
   toggleLeftSidebar: () => void;
   setLeftSidebarVisible: (visible: boolean) => void;
@@ -51,6 +52,7 @@ interface UIState {
   setZenModeEnabled: (enabled: boolean) => void;
   setZenModeEntryId: (entryId: string | null) => void;
   setInAppBrowserUrl: (url: string | null) => void;
+  setShowConnectionDialog: (show: boolean) => void;
 }
 
 export const useUIStore = create<UIState>()(
@@ -71,6 +73,7 @@ export const useUIStore = create<UIState>()(
           zenModeEnabled: false,
           zenModeEntryId: null,
           inAppBrowserUrl: null,
+          showConnectionDialog: false,
 
           toggleLeftSidebar: () => {
             console.log('[ui-store] toggleLeftSidebar called');
@@ -165,6 +168,9 @@ export const useUIStore = create<UIState>()(
 
           setInAppBrowserUrl: (url: string | null) =>
             set({ inAppBrowserUrl: url }, undefined, 'setInAppBrowserUrl'),
+
+          setShowConnectionDialog: (show: boolean) =>
+            set({ showConnectionDialog: show }, undefined, 'setShowConnectionDialog'),
         };
       },
       {

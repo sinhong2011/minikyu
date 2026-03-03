@@ -36,6 +36,16 @@ pub struct SyncSummary {
     pub feeds_pulled: u32,
     pub categories_pulled: u32,
 }
+
+/// Persisted sync status returned to the frontend for display
+#[derive(Debug, Clone, Serialize, Deserialize, specta::Type)]
+pub struct SyncStatus {
+    pub last_sync_at: Option<String>,
+    pub categories_synced: u32,
+    pub feeds_synced: u32,
+    pub entries_synced: u32,
+}
+
 #[derive(Debug, Clone, FromRow)]
 #[allow(dead_code)]
 pub struct SyncState {
@@ -48,6 +58,10 @@ pub struct SyncState {
     pub entries_offset: i64,
     pub entries_pulled: i64,
     pub entries_total: i64,
+    pub account_id: Option<i64>,
+    pub categories_synced: i64,
+    pub feeds_synced: i64,
+    pub entries_synced: i64,
 }
 
 #[derive(Debug, Clone, Copy)]
@@ -69,11 +83,15 @@ impl SyncWindow {
     }
 }
 
-/// Gets or creates the sync state row. Only one row exists in the table.
-pub async fn get_or_create_sync_state(pool: &SqlitePool) -> Result<SyncState, String> {
+/// Gets or creates the sync state row for a specific account.
+pub async fn get_or_create_sync_state(
+    pool: &SqlitePool,
+    account_id: i64,
+) -> Result<SyncState, String> {
     if let Some(row) = sqlx::query_as::<_, SyncState>(
-        "SELECT id, last_sync_at, last_full_sync_at, sync_in_progress, sync_error, sync_version, entries_offset, entries_pulled, entries_total FROM sync_state LIMIT 1",
+        "SELECT id, last_sync_at, last_full_sync_at, sync_in_progress, sync_error, sync_version, entries_offset, entries_pulled, entries_total, account_id, categories_synced, feeds_synced, entries_synced FROM sync_state WHERE account_id = ? LIMIT 1",
     )
+    .bind(account_id)
     .fetch_optional(pool)
     .await
     .map_err(|e| format!("{e}"))?
@@ -82,15 +100,17 @@ pub async fn get_or_create_sync_state(pool: &SqlitePool) -> Result<SyncState, St
     }
 
     sqlx::query(
-        "INSERT INTO sync_state (last_sync_at, last_full_sync_at, sync_in_progress, sync_error, sync_version, entries_offset, entries_pulled, entries_total) VALUES (NULL, NULL, 0, NULL, 1, 0, 0, 0)",
+        "INSERT INTO sync_state (account_id, last_sync_at, last_full_sync_at, sync_in_progress, sync_error, sync_version, entries_offset, entries_pulled, entries_total, categories_synced, feeds_synced, entries_synced) VALUES (?, NULL, NULL, 0, NULL, 1, 0, 0, 0, 0, 0, 0)",
     )
+    .bind(account_id)
     .execute(pool)
     .await
     .map_err(|e| format!("{e}"))?;
 
     sqlx::query_as::<_, SyncState>(
-        "SELECT id, last_sync_at, last_full_sync_at, sync_in_progress, sync_error, sync_version, entries_offset, entries_pulled, entries_total FROM sync_state LIMIT 1",
+        "SELECT id, last_sync_at, last_full_sync_at, sync_in_progress, sync_error, sync_version, entries_offset, entries_pulled, entries_total, account_id, categories_synced, feeds_synced, entries_synced FROM sync_state WHERE account_id = ? LIMIT 1",
     )
+    .bind(account_id)
     .fetch_one(pool)
     .await
     .map_err(|e| format!("{e}"))
@@ -128,6 +148,7 @@ pub async fn sync_miniflux_impl(
     pool: &SqlitePool,
     client: &MinifluxClient,
     app_handle: &AppHandle,
+    account_id: i64,
 ) -> Result<SyncSummary, String> {
     let window = SyncWindow::default();
     let now = Utc::now().to_rfc3339();
@@ -139,30 +160,81 @@ pub async fn sync_miniflux_impl(
         categories_pulled: 0,
     };
 
-    let mut sync_state = get_or_create_sync_state(pool).await?;
-    let is_full_sync = sync_state.last_full_sync_at.is_none();
+    let mut sync_state = get_or_create_sync_state(pool, account_id).await?;
+    let mut is_full_sync = sync_state.last_full_sync_at.is_none();
     let was_in_progress = sync_state.sync_in_progress;
 
     // If a previous sync was interrupted (app crashed), it's now a stale in_progress flag
     // Reset it so we don't think we're resuming indefinitely
     if was_in_progress {
         log::info!("Detected interrupted sync from previous run, resetting in_progress flag");
-        sqlx::query("UPDATE sync_state SET sync_in_progress = 0, sync_error = 'Sync interrupted by app closure'")
+        sqlx::query("UPDATE sync_state SET sync_in_progress = 0, sync_error = 'Sync interrupted by app closure' WHERE account_id = ?")
+            .bind(account_id)
             .execute(pool)
             .await
             .map_err(|e| format!("Failed to clear interrupted sync state: {e}"))?;
 
         // Reload state after clearing in_progress
-        sync_state = get_or_create_sync_state(pool).await?;
+        sync_state = get_or_create_sync_state(pool, account_id).await?;
     }
 
-    sqlx::query("UPDATE sync_state SET sync_in_progress = 1, sync_error = NULL")
+    sqlx::query("UPDATE sync_state SET sync_in_progress = 1, sync_error = NULL WHERE account_id = ?")
+        .bind(account_id)
         .execute(pool)
         .await
         .map_err(|e| format!("Failed to mark sync in progress: {e}"))?;
 
     let user = client.get_current_user().await?;
     let user_id = user.id;
+
+    // Recover from orphaned sync state: if last_full_sync_at is NULL but entries
+    // already exist in the DB for this user, the sync_state was lost (e.g. migration
+    // assigned it to a different account). Recover by switching to incremental sync
+    // using the latest entry timestamp as the baseline.
+    if is_full_sync {
+        let existing_count: i64 = sqlx::query_scalar(
+            "SELECT COUNT(*) FROM entries WHERE user_id = ?",
+        )
+        .bind(user_id)
+        .fetch_one(pool)
+        .await
+        .map_err(|e| format!("Failed to count existing entries: {e}"))?;
+
+        if existing_count > 0 {
+            // Entries exist but sync_state is blank — recover the baseline timestamp
+            let latest_changed_at: Option<String> = sqlx::query_scalar(
+                "SELECT MAX(changed_at) FROM entries WHERE user_id = ?",
+            )
+            .bind(user_id)
+            .fetch_one(pool)
+            .await
+            .map_err(|e| format!("Failed to query latest entry timestamp: {e}"))?;
+
+            let recovery_timestamp = latest_changed_at.unwrap_or_else(|| now.clone());
+
+            log::info!(
+                "Sync state recovery: found {} existing entries for user {}. \
+                 Setting last_full_sync_at and last_sync_at to {} for incremental sync.",
+                existing_count,
+                user_id,
+                recovery_timestamp
+            );
+
+            sqlx::query(
+                "UPDATE sync_state SET last_full_sync_at = ?, last_sync_at = ? WHERE account_id = ?",
+            )
+            .bind(&recovery_timestamp)
+            .bind(&recovery_timestamp)
+            .bind(account_id)
+            .execute(pool)
+            .await
+            .map_err(|e| format!("Failed to recover sync state: {e}"))?;
+
+            // Reload state and switch to incremental sync
+            sync_state = get_or_create_sync_state(pool, account_id).await?;
+            is_full_sync = false;
+        }
+    }
 
     if is_full_sync {
         mark_categories_stale(pool, user_id).await?;
@@ -203,8 +275,9 @@ pub async fn sync_miniflux_impl(
     // Reset resume fields if this is not a resumed sync (i.e., sync was not in progress)
     if !sync_state.sync_in_progress {
         sqlx::query(
-            "UPDATE sync_state SET entries_offset = 0, entries_pulled = 0, entries_total = 0",
+            "UPDATE sync_state SET entries_offset = 0, entries_pulled = 0, entries_total = 0 WHERE account_id = ?",
         )
+        .bind(account_id)
         .execute(pool)
         .await
         .map_err(|e| format!("Failed to reset sync resume state: {e}"))?;
@@ -213,7 +286,7 @@ pub async fn sync_miniflux_impl(
     if is_full_sync {
         sync_full_entries(pool, client, &window, &mut summary, app_handle).await?;
     } else {
-        sync_incremental_entries(pool, client, &window, &mut summary, &sync_state, app_handle)
+        sync_incremental_entries(pool, client, &window, &mut summary, &sync_state, app_handle, account_id)
             .await?;
     }
 
@@ -235,10 +308,14 @@ pub async fn sync_miniflux_impl(
     let _ = app_handle.emit("sync-progress", &SyncProgressEvent::CleanupCompleted);
 
     sqlx::query(
-        "UPDATE sync_state SET last_sync_at = ?, last_full_sync_at = COALESCE(last_full_sync_at, ?), sync_in_progress = 0, sync_error = NULL, entries_offset = 0, entries_pulled = 0, entries_total = 0",
+        "UPDATE sync_state SET last_sync_at = ?, last_full_sync_at = COALESCE(last_full_sync_at, ?), sync_in_progress = 0, sync_error = NULL, entries_offset = 0, entries_pulled = 0, entries_total = 0, categories_synced = ?, feeds_synced = ?, entries_synced = ? WHERE account_id = ?",
     )
     .bind(&sync_started_at)
     .bind(&sync_started_at)
+    .bind(summary.categories_pulled as i64)
+    .bind(summary.feeds_pulled as i64)
+    .bind(summary.entries_pulled as i64)
+    .bind(account_id)
     .execute(pool)
     .await
     .map_err(|e| format!("Failed to update sync state: {e}"))?;
@@ -268,17 +345,29 @@ pub async fn sync_miniflux(
         .ok_or("Database not initialized")?
         .clone();
 
-    let client_guard = state.miniflux.client.lock().await;
-    let client = client_guard
-        .as_ref()
-        .ok_or("Not connected to Miniflux server")?
-        .clone();
+    let client = {
+        let client_guard = state.miniflux.client.lock().await;
+        client_guard
+            .as_ref()
+            .ok_or("Not connected to Miniflux server")?
+            .clone()
+    }; // Lock released here — other commands can use the client during sync
 
-    let summary = match sync_miniflux_impl(&pool, &client, &app_handle).await {
+    // Get active account ID for per-account sync state
+    let account_id: i64 = sqlx::query_scalar(
+        "SELECT id FROM miniflux_connections WHERE is_active = 1 LIMIT 1",
+    )
+    .fetch_optional(&pool)
+    .await
+    .map_err(|e| format!("Failed to query active account: {e}"))?
+    .ok_or("No active account found")?;
+
+    let summary = match sync_miniflux_impl(&pool, &client, &app_handle, account_id).await {
         Ok(summary) => summary,
         Err(error) => {
-            let _ = sqlx::query("UPDATE sync_state SET sync_in_progress = 0, sync_error = ?")
+            let _ = sqlx::query("UPDATE sync_state SET sync_in_progress = 0, sync_error = ? WHERE account_id = ?")
                 .bind(&error)
+                .bind(account_id)
                 .execute(&pool)
                 .await;
 
@@ -297,6 +386,47 @@ pub async fn sync_miniflux(
     );
 
     Ok(summary)
+}
+
+#[tauri::command]
+#[specta::specta]
+pub async fn get_sync_status(
+    _app_handle: AppHandle,
+    state: State<'_, AppState>,
+) -> Result<Option<SyncStatus>, String> {
+    let pool = state
+        .db_pool
+        .lock()
+        .await
+        .as_ref()
+        .ok_or("Database not initialized")?
+        .clone();
+
+    let account_id: Option<i64> = sqlx::query_scalar(
+        "SELECT id FROM miniflux_connections WHERE is_active = 1 LIMIT 1",
+    )
+    .fetch_optional(&pool)
+    .await
+    .map_err(|e| format!("Failed to query active account: {e}"))?;
+
+    let Some(account_id) = account_id else {
+        return Ok(None);
+    };
+
+    let row: Option<(Option<String>, i64, i64, i64)> = sqlx::query_as(
+        "SELECT last_sync_at, categories_synced, feeds_synced, entries_synced FROM sync_state WHERE account_id = ? LIMIT 1",
+    )
+    .bind(account_id)
+    .fetch_optional(&pool)
+    .await
+    .map_err(|e| format!("Failed to query sync status: {e}"))?;
+
+    Ok(row.map(|(last_sync_at, categories, feeds, entries)| SyncStatus {
+        last_sync_at,
+        categories_synced: categories as u32,
+        feeds_synced: feeds as u32,
+        entries_synced: entries as u32,
+    }))
 }
 
 async fn upsert_categories(
@@ -574,6 +704,7 @@ async fn sync_incremental_entries(
     summary: &mut SyncSummary,
     state: &SyncState,
     app_handle: &AppHandle,
+    account_id: i64,
 ) -> Result<(), String> {
     let mut window = *window;
     let mut offset = if state.sync_in_progress {
@@ -628,11 +759,12 @@ async fn sync_incremental_entries(
         // Persist progress every 10% to support resume
         if percentage as i32 % 10 == 0 || count < window.limit as usize {
             let _ = sqlx::query(
-                "UPDATE sync_state SET entries_offset = ?, entries_pulled = ?, entries_total = ? WHERE id = 1",
+                "UPDATE sync_state SET entries_offset = ?, entries_pulled = ?, entries_total = ? WHERE account_id = ?",
             )
             .bind(offset)
             .bind(total_seen)
             .bind(response.total)
+            .bind(account_id)
             .execute(pool)
             .await;
         }

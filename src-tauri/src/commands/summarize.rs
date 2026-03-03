@@ -208,14 +208,20 @@ pub async fn summarize_article(
             .map(|m| m.to_string())
             .unwrap_or_else(|| get_model_name(effective_settings));
 
-        return call_llm(provider, text, &system_prompt, api_key.as_deref(), effective_settings)
-            .await
-            .map(|summary| SummarizeArticleResponse {
-                summary,
-                provider_used: provider.to_string(),
-                model_used: model,
-            })
-            .map_err(|e| format!("Summary failed: {provider}: {e}"));
+        return call_llm(
+            provider,
+            text,
+            &system_prompt,
+            api_key.as_deref(),
+            effective_settings,
+        )
+        .await
+        .map(|summary| SummarizeArticleResponse {
+            summary,
+            provider_used: provider.to_string(),
+            model_used: model,
+        })
+        .map_err(|e| format!("Summary failed: {provider}: {e}"));
     }
 
     // Fallback: iterate through translation LLM provider chain
@@ -317,9 +323,8 @@ fn has_runtime_settings(
 }
 
 fn get_provider_key(provider: &str) -> Result<String, String> {
-    let keyring_key = format!(
-        "{TRANSLATION_KEYRING_KEY_PREFIX}:{provider}:{DEFAULT_TRANSLATION_PROFILE}"
-    );
+    let keyring_key =
+        format!("{TRANSLATION_KEYRING_KEY_PREFIX}:{provider}:{DEFAULT_TRANSLATION_PROFILE}");
     let entry = Entry::new(KEYRING_SERVICE_NAME, &keyring_key)
         .map_err(|e| format!("Keyring error for {provider}: {e}"))?;
     let password = entry
@@ -919,8 +924,16 @@ async fn call_llm_stream(
         }
         _ => {
             let key = api_key.ok_or_else(|| format!("{provider} API key is missing"))?;
-            call_openai_compatible_stream(app, stream_id, provider, text, system_prompt, key, settings)
-                .await
+            call_openai_compatible_stream(
+                app,
+                stream_id,
+                provider,
+                text,
+                system_prompt,
+                key,
+                settings,
+            )
+            .await
         }
     }
 }

@@ -31,8 +31,8 @@ import { Field, FieldDescription, FieldError, FieldLabel } from '@/components/ui
 import { Input } from '@/components/ui/input';
 import { PasswordInput } from '@/components/ui/password-input';
 import { Spinner } from '@/components/ui/spinner';
+import { resetAccountState } from '@/lib/account-reset';
 import { logger } from '@/lib/logger';
-import { queryClient } from '@/lib/query-client';
 import { cn } from '@/lib/utils';
 import { useConnect } from '@/services/miniflux';
 import { useAccounts } from '@/services/miniflux/accounts';
@@ -134,7 +134,7 @@ export function ConnectionDialog({
       try {
         await connect.mutateAsync(config);
 
-        queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+        await resetAccountState();
 
         onOpenChange(false);
         form.reset();

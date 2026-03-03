@@ -102,10 +102,11 @@ pub async fn save_miniflux_account(
             sqlx::query("DELETE FROM feeds").execute(&pool).await?;
             // Clear categories
             sqlx::query("DELETE FROM categories").execute(&pool).await?;
-            // Clear sync state to force a full resync
+            // Clear sync state for this account to force a full resync
             sqlx::query(
-                "UPDATE sync_state SET last_sync_at = NULL, last_full_sync_at = NULL, entries_offset = 0, entries_pulled = 0, entries_total = 0",
+                "DELETE FROM sync_state WHERE account_id = ?",
             )
+            .bind(id)
             .execute(&pool)
             .await?;
             log::info!("Old synced data cleared successfully");
@@ -280,7 +281,23 @@ pub async fn delete_miniflux_account(
         .ok_or(AccountError::NotFound)?
         .clone();
 
-    delete_miniflux_account_impl(&pool, id).await
+    // Check if the account being deleted is the active one
+    let is_active: Option<bool> =
+        sqlx::query_scalar("SELECT is_active FROM miniflux_connections WHERE id = ?")
+            .bind(id)
+            .fetch_optional(&pool)
+            .await
+            .map_err(|e| AccountError::DatabaseError(e.to_string()))?;
+
+    delete_miniflux_account_impl(&pool, id).await?;
+
+    // Clear cached user_id if the deleted account was active
+    if is_active == Some(true) {
+        *state.miniflux.user_id.lock().await = None;
+        *state.miniflux.client.lock().await = None;
+    }
+
+    Ok(())
 }
 
 async fn delete_miniflux_account_impl(pool: &SqlitePool, id: i64) -> Result<(), AccountError> {
@@ -298,6 +315,12 @@ async fn delete_miniflux_account_impl(pool: &SqlitePool, id: i64) -> Result<(), 
         .bind(id)
         .execute(pool)
         .await?;
+
+    // Clean up per-account sync state
+    let _ = sqlx::query("DELETE FROM sync_state WHERE account_id = ?")
+        .bind(id)
+        .execute(pool)
+        .await;
 
     match delete_credentials(&server_url, &username).await {
         Ok(_) => {
@@ -344,6 +367,9 @@ pub async fn switch_miniflux_account(
         .bind(account_id)
         .execute(&pool)
         .await?;
+
+    // Per-account sync state is preserved — no need to reset.
+    // Each account has its own sync_state row keyed by account_id.
 
     auto_reconnect_miniflux(app_handle, state).await
 }

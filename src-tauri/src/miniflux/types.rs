@@ -434,6 +434,36 @@ pub struct UserUpdate {
     pub stylesheet: Option<String>,
 }
 
+/// API Key
+#[derive(Debug, Clone, Serialize, Deserialize, Type)]
+pub struct ApiKey {
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
+    pub id: i64,
+    #[serde(
+        serialize_with = "serialize_i64_as_string",
+        deserialize_with = "deserialize_i64_from_string_or_number"
+    )]
+    #[specta(type = String)]
+    pub user_id: i64,
+    pub description: String,
+    #[serde(default)]
+    pub token: Option<String>,
+    #[serde(default)]
+    pub created_at: Option<String>,
+    #[serde(default)]
+    pub last_used_at: Option<String>,
+}
+
+/// API Key Create Request
+#[derive(Debug, Clone, Serialize, Deserialize, Type)]
+pub struct ApiKeyCreate {
+    pub description: String,
+}
+
 /// Download Progress
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
 pub struct DownloadProgress {

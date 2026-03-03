@@ -3,12 +3,14 @@ import {
   CheckmarkCircle01Icon,
   CircleIcon,
   Loading03Icon,
+  UserIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { cn } from '@/lib/utils';
+import { useActiveAccount } from '@/services/miniflux/accounts';
 import { usePreferences } from '@/services/preferences';
 import { useSyncStore } from '@/store/sync-store';
 
@@ -33,6 +35,7 @@ const stageOrder: StageId[] = ['categories', 'feeds', 'entries', 'cleanup'];
 export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
   const { _ } = useLingui();
   const { data: preferences } = usePreferences();
+  const { data: currentAccount } = useActiveAccount();
   const syncing = useSyncStore((state) => state.syncing);
   const currentStage = useSyncStore((state) => state.currentStage);
   const categoriesCount = useSyncStore((state) => state.categoriesCount);
@@ -145,10 +148,8 @@ export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
     return stage.description;
   };
 
-  const completedSteps = stages.filter((stage) => getStageStatus(stage.id) === 'completed').length;
-  const totalSteps = stages.length;
-  const overallProgress = Math.round((completedSteps / totalSteps) * 100);
   const activeStage = stages.find((stage) => getStageStatus(stage.id) === 'active');
+  const totalSteps = stages.length;
 
   const use24h = preferences?.time_format !== '12h';
   const formatSyncTime = (date: Date) =>
@@ -197,42 +198,35 @@ export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
                 />
               )}
             </div>
+            {currentAccount && (
+              <div className="flex items-center gap-1.5 text-xs text-muted-foreground/70">
+                <HugeiconsIcon icon={UserIcon} className="h-3 w-3" />
+                <span>{currentAccount.username}</span>
+              </div>
+            )}
             <p className="text-xs text-muted-foreground">{statusTitle}</p>
             <p className={cn('text-xs', error ? 'text-destructive' : 'text-muted-foreground/80')}>
               {statusDescription}
             </p>
           </div>
 
-          <div className="space-y-1.5">
-            <div className="flex items-center justify-between text-xs text-muted-foreground">
-              <span>{_(msg`Overall progress`)}</span>
-              <span>
-                {completedSteps} / {totalSteps}
-              </span>
-            </div>
-            <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-              <div
-                className="h-full bg-primary transition-all duration-300 ease-in-out"
-                style={{ width: `${overallProgress}%` }}
-              />
-            </div>
-          </div>
-
-          <div className="space-y-3">
-            {stages.map((stage) => {
+          <div className="relative">
+            {stages.map((stage, index) => {
               const status = getStageStatus(stage.id);
               const isActive = status === 'active';
               const isCompleted = status === 'completed';
               const isPending = status === 'pending';
               const isError = status === 'error';
+              const isLast = index === stages.length - 1;
 
               return (
-                <div key={stage.id} className="space-y-1.5">
-                  <div className="flex items-start gap-3 text-sm">
+                <div key={stage.id} className="relative flex gap-3">
+                  {/* Vertical line + circle column */}
+                  <div className="flex flex-col items-center">
                     <div
                       className={cn(
-                        'mt-0.5 flex h-6 w-6 shrink-0 items-center justify-center rounded-full border',
-                        isActive && 'border-primary text-primary',
+                        'flex h-6 w-6 shrink-0 items-center justify-center rounded-full border transition-colors',
+                        isActive && 'border-primary bg-primary/10 text-primary',
                         isCompleted && 'border-primary bg-primary text-primary-foreground',
                         isPending && 'border-muted-foreground/30 text-muted-foreground/30',
                         isError && 'border-destructive/60 bg-destructive/10 text-destructive'
@@ -248,54 +242,65 @@ export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
                         <HugeiconsIcon icon={CircleIcon} className="h-3 w-3" />
                       )}
                     </div>
-                    <div className="min-w-0 flex-1 space-y-0.5">
-                      <div className="flex items-center justify-between gap-2">
-                        <span
-                          className={cn(
-                            isActive && 'font-medium text-foreground',
-                            isCompleted && 'text-foreground/80',
-                            isPending && 'text-muted-foreground/70',
-                            isError && 'font-medium text-destructive'
-                          )}
-                        >
-                          {stage.label}
-                        </span>
-                        <span
-                          className={cn(
-                            'text-xs',
-                            isError ? 'text-destructive' : 'text-muted-foreground'
-                          )}
-                        >
-                          {getStageMetric(stage, status)}
-                        </span>
-                      </div>
-                      <p
+                    {!isLast && (
+                      <div
                         className={cn(
-                          'text-xs',
-                          isError ? 'text-destructive/90' : 'text-muted-foreground/75'
+                          'w-px flex-1 min-h-4 transition-colors',
+                          isCompleted ? 'bg-primary/50' : 'bg-border'
                         )}
-                      >
-                        {getStageDetail(stage, status)}
-                      </p>
-                    </div>
+                      />
+                    )}
                   </div>
 
-                  {stage.id === 'entries' && (isActive || isCompleted) && stage.progress && (
-                    <div className="ml-9 space-y-1">
-                      <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
-                        <div
-                          className="h-full bg-primary transition-all duration-300 ease-in-out"
-                          style={{ width: `${stage.progress.percentage}%` }}
-                        />
-                      </div>
-                      <div className="flex justify-between text-xs text-muted-foreground">
-                        <span>
-                          {stage.progress.pulled} / {stage.progress.total}
-                        </span>
-                        <span>{Math.round(stage.progress.percentage)}%</span>
-                      </div>
+                  {/* Content */}
+                  <div className={cn('min-w-0 flex-1', !isLast ? 'pb-4' : 'pb-0')}>
+                    <div className="flex items-center justify-between gap-2">
+                      <span
+                        className={cn(
+                          'text-sm',
+                          isActive && 'font-medium text-foreground',
+                          isCompleted && 'text-foreground/80',
+                          isPending && 'text-muted-foreground/70',
+                          isError && 'font-medium text-destructive'
+                        )}
+                      >
+                        {stage.label}
+                      </span>
+                      <span
+                        className={cn(
+                          'text-xs shrink-0',
+                          isError ? 'text-destructive' : 'text-muted-foreground'
+                        )}
+                      >
+                        {getStageMetric(stage, status)}
+                      </span>
                     </div>
-                  )}
+                    <p
+                      className={cn(
+                        'text-xs mt-0.5',
+                        isError ? 'text-destructive/90' : 'text-muted-foreground/75'
+                      )}
+                    >
+                      {getStageDetail(stage, status)}
+                    </p>
+
+                    {stage.id === 'entries' && (isActive || isCompleted) && stage.progress && (
+                      <div className="mt-2 space-y-1">
+                        <div className="h-1.5 w-full overflow-hidden rounded-full bg-secondary">
+                          <div
+                            className="h-full bg-primary transition-all duration-300 ease-in-out"
+                            style={{ width: `${stage.progress.percentage}%` }}
+                          />
+                        </div>
+                        <div className="flex justify-between text-xs text-muted-foreground">
+                          <span>
+                            {stage.progress.pulled} / {stage.progress.total}
+                          </span>
+                          <span>{Math.round(stage.progress.percentage)}%</span>
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
               );
             })}

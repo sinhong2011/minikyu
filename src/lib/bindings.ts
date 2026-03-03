@@ -70,11 +70,39 @@ async getDownloadedFilePath(url: string) : Promise<Result<string | null, string>
 }
 },
 /**
- * Clears all local app data (database, preferences, reading state, recovery files).
+ * Clears synced data for the current active account only.
+ * 
+ * Removes entries, feeds, categories, enclosures, and sync state for the
+ * active user. Other accounts' data, preferences, and downloads are preserved.
  */
 async clearLocalData() : Promise<Result<null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("clear_local_data") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Returns the size of all local data files.
+ */
+async getLocalDataSize() : Promise<Result<LocalDataSize, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_local_data_size") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Factory reset: deletes all local data and re-initializes an empty database.
+ * 
+ * This is the nuclear option — removes the database, preferences, downloads,
+ * recovery files, reading state, and keyring credentials for **all** accounts.
+ */
+async factoryReset() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("factory_reset") };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -670,6 +698,50 @@ async deleteUser(id: string) : Promise<Result<null, string>> {
 }
 },
 /**
+ * Get all API keys
+ */
+async getApiKeys() : Promise<Result<ApiKey[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_api_keys") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Create a new API key
+ */
+async createApiKey(request: ApiKeyCreate) : Promise<Result<ApiKey, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("create_api_key", { request }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Delete an API key
+ */
+async deleteApiKey(id: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("delete_api_key", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Save entry to third-party services (Pocket, Wallabag, etc.)
+ */
+async saveEntry(id: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("save_entry", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Get counters
  */
 async getCounters() : Promise<Result<Counters, string>> {
@@ -771,6 +843,14 @@ async getFeedIconData(feedId: string) : Promise<Result<string | null, string>> {
 async syncMiniflux() : Promise<Result<SyncSummary, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("sync_miniflux") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async getSyncStatus() : Promise<Result<SyncStatus | null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("get_sync_status") };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -1142,6 +1222,14 @@ export type AccountError =
  */
 { type: "DatabaseError"; data: string }
 /**
+ * API Key
+ */
+export type ApiKey = { id: string; user_id: string; description: string; token?: string | null; created_at?: string | null; last_used_at?: string | null }
+/**
+ * API Key Create Request
+ */
+export type ApiKeyCreate = { description: string }
+/**
  * Application preferences that persist to disk.
  * Only contains settings that should be saved between sessions.
  */
@@ -1368,6 +1456,22 @@ export type CloseBehavior =
  */
 export type Counters = { user_id: string; read_count: string; unread_count: string }
 /**
+ * Size information for a single data file or directory.
+ */
+export type DataFileSize = { 
+/**
+ * Display name of the data file
+ */
+name: string; 
+/**
+ * Size in bytes
+ */
+bytes: string; 
+/**
+ * Whether the file/directory exists
+ */
+exists: boolean }
+/**
  * Download state managed by download manager
  */
 export type DownloadState = 
@@ -1429,6 +1533,18 @@ export type FeedUpdate = { feed_url?: string | null; site_url?: string | null; t
 export type Integration = { user_id: string; wallabag_enabled?: boolean; wallabag_url?: string | null; wallabag_client_id?: string | null; wallabag_client_secret?: string | null; wallabag_username?: string | null; wallabag_password?: string | null; shiori_enabled?: boolean; shiori_url?: string | null; shiori_username?: string | null; shiori_password?: string | null; pocket_enabled?: boolean; pocket_consumer_key?: string | null; pocket_access_token?: string | null; instapaper_enabled?: boolean; instapaper_url?: string | null; instapaper_username?: string | null; instapaper_password?: string | null; pinboard_enabled?: boolean; pinboard_token?: string | null; pinboard_tags?: string | null; shaarli_enabled?: boolean; shaarli_url?: string | null; shaarli_api_key?: string | null; rainloop_enabled?: boolean; rainloop_url?: string | null; rainloop_username?: string | null; rainloop_password?: string | null; raindrop_enabled?: boolean; raindrop_token?: string | null; discord_enabled?: boolean; discord_webhook_url?: string | null; discord_username?: string | null; discord_avatar_url?: string | null; telegram_bot_enabled?: boolean; telegram_bot_token?: string | null; telegram_bot_chat_id?: string | null; slack_enabled?: boolean; slack_webhook_url?: string | null; slack_username?: string | null; slack_icon_url?: string | null; slack_channel?: string | null; matrix_bot_enabled?: boolean; matrix_bot_url?: string | null; matrix_bot_username?: string | null; matrix_bot_password?: string | null; matrix_bot_chat_id?: string | null; ntfy_enabled?: boolean; ntfy_topic_url?: string | null; ntfy_username?: string | null; ntfy_password?: string | null; pushover_enabled?: boolean; pushover_app_id?: string | null; pushover_token?: string | null; pushover_user_key?: string | null; pushover_device?: string | null; apprise_enabled?: boolean; apprise_service_url?: string | null; apprise_script_url?: string | null; webhook_enabled?: boolean; webhook_url?: string | null; webhook_secret?: string | null; notion_enabled?: boolean; notion_page_id?: string | null; notion_token?: string | null; linkace_enabled?: boolean; linkace_url?: string | null; linkace_api_key?: string | null; linkding_enabled?: boolean; linkding_url?: string | null; linkding_api_key?: string | null; linkwarden_enabled?: boolean; linkwarden_url?: string | null; linkwarden_api_key?: string | null; linkwarden_username?: string | null; linkwarden_password?: string | null; betula_enabled?: boolean; betula_url?: string | null; betula_token?: string | null; cubox_enabled?: boolean; cubox_api_key?: string | null; omnivore_enabled?: boolean; omnivore_api_key?: string | null; readeck_enabled?: boolean; readeck_url?: string | null; readeck_api_key?: string | null; readeck_username?: string | null; readeck_password?: string | null; readwise_reader_enabled?: boolean; readwise_reader_api_key?: string | null; nunux_keeper_enabled?: boolean; nunux_keeper_url?: string | null; nunux_keeper_api_key?: string | null; espial_enabled?: boolean; espial_url?: string | null; espial_api_key?: string | null; rss_bridge_enabled?: boolean; rss_bridge_url?: string | null }
 export type JsonValue = null | boolean | number | string | JsonValue[] | Partial<{ [key in string]: JsonValue }>
 export type LastReadingEntry = { entry_id: string; timestamp: string }
+/**
+ * Aggregate local data size information.
+ */
+export type LocalDataSize = { 
+/**
+ * Individual file sizes
+ */
+files: DataFileSize[]; 
+/**
+ * Total size in bytes
+ */
+total_bytes: string }
 export type MinifluxConnection = { id: string; username: string; server_url: string; auth_method: string; is_active: boolean; created_at: string; updated_at: string }
 /**
  * Miniflux Version Information
@@ -1521,6 +1637,10 @@ export type RecoveryError =
 export type Subscription = { url: string; title: string; type: string }
 export type SummarizeArticleRequest = { text: string; language: string | null }
 export type SummarizeArticleResponse = { summary: string; provider_used: string; model_used: string }
+/**
+ * Persisted sync status returned to the frontend for display
+ */
+export type SyncStatus = { last_sync_at: string | null; categories_synced: number; feeds_synced: number; entries_synced: number }
 export type SyncSummary = { entries_pulled: number; entries_pushed: number; feeds_pulled: number; categories_pulled: number }
 export type SystemTime = { duration_since_epoch: string; duration_since_unix_epoch: number }
 /**

@@ -11,6 +11,7 @@ import {
   PauseIcon,
   PlayIcon,
   Playlist03Icon,
+  SentIcon,
   Share01Icon,
   SparklesIcon,
   StarIcon,
@@ -49,6 +50,7 @@ import { getPodcastEnclosure } from '@/lib/podcast-utils';
 import { normalizeReaderTheme, type ReaderTheme, readerThemeOptions } from '@/lib/reader-theme';
 import { type ReaderCodeTheme, readerCodeThemeOptions } from '@/lib/shiki-highlight';
 import type { AppPreferences, ChineseConversionMode } from '@/lib/tauri-bindings';
+import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
 import { usePlayerStore } from '@/store/player-store';
 import { ReaderSettings } from './ReaderSettings';
@@ -216,6 +218,8 @@ export function EntryReadingHeader({
 
   const [copiedUrl, setCopiedUrl] = useState(false);
   const [copiedShareCode, setCopiedShareCode] = useState(false);
+  const [savedToServices, setSavedToServices] = useState(false);
+  const [isSavingToServices, setIsSavingToServices] = useState(false);
 
   const handleCopyUrl = async () => {
     await writeText(entry.url);
@@ -235,6 +239,26 @@ export function EntryReadingHeader({
 
   const handleOpenInBrowser = () => {
     window.open(entry.url, '_blank', 'noopener,noreferrer');
+  };
+
+  const handleSaveToServices = async () => {
+    setIsSavingToServices(true);
+    try {
+      const result = await commands.saveEntry(entry.id);
+      if (result.status === 'error') {
+        toast.error(_(msg`Failed to save entry`), { description: result.error });
+        return;
+      }
+      setSavedToServices(true);
+      toast.success(_(msg`Entry sent to services`));
+      setTimeout(() => setSavedToServices(false), 2000);
+    } catch (error) {
+      toast.error(_(msg`Failed to save entry`), {
+        description: error instanceof Error ? error.message : String(error),
+      });
+    } finally {
+      setIsSavingToServices(false);
+    }
   };
   const fetchOriginalContentLabel = _(msg`Download original content`);
   const fetchingOriginalContentLabel = _(msg`Fetching original content...`);
@@ -763,6 +787,22 @@ export function EntryReadingHeader({
                 >
                   <HugeiconsIcon icon={Globe02Icon} className="h-4 w-4 text-muted-foreground" />
                   <span>{_(msg`Open in browser`)}</span>
+                </button>
+                <button
+                  type="button"
+                  onClick={handleSaveToServices}
+                  disabled={isSavingToServices}
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent cursor-pointer disabled:opacity-50"
+                >
+                  <HugeiconsIcon
+                    icon={SentIcon}
+                    className={
+                      savedToServices ? 'h-4 w-4 text-primary' : 'h-4 w-4 text-muted-foreground'
+                    }
+                  />
+                  <span className={savedToServices ? 'text-primary' : ''}>
+                    {savedToServices ? _(msg`Saved!`) : _(msg`Save to services`)}
+                  </span>
                 </button>
               </PopoverContent>
             </Popover>

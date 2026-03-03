@@ -598,6 +598,42 @@ impl MinifluxClient {
         self.get("version").await
     }
 
+    // ==================== API Keys ====================
+
+    /// Get all API keys
+    pub async fn get_api_keys(&self) -> Result<Vec<ApiKey>, String> {
+        self.get("api-keys").await
+    }
+
+    /// Create a new API key
+    pub async fn create_api_key(&self, request: ApiKeyCreate) -> Result<ApiKey, String> {
+        self.post("api-keys", &request).await
+    }
+
+    /// Delete an API key
+    pub async fn delete_api_key(&self, id: i64) -> Result<(), String> {
+        self.delete(&format!("api-keys/{id}")).await
+    }
+
+    // ==================== Save Entry ====================
+
+    /// Save entry to third-party services
+    pub async fn save_entry(&self, id: i64) -> Result<(), String> {
+        let response = self
+            .build_post_request(&format!("entries/{id}/save"))
+            .send()
+            .await
+            .map_err(|e| format!("Network error: {e}"))?;
+
+        if !response.status().is_success() {
+            let status = response.status();
+            let body = response.text().await.unwrap_or_default();
+            return Err(format!("API error: {status} - {body}"));
+        }
+
+        Ok(())
+    }
+
     // ==================== Integrations ====================
 
     /// Get user integration settings

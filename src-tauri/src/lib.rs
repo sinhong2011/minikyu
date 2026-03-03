@@ -173,6 +173,7 @@ pub fn run() {
             db_pool: Arc::new(Mutex::new(None)),
             miniflux: MinifluxState {
                 client: std::sync::Arc::new(tokio::sync::Mutex::new(None)),
+                user_id: std::sync::Arc::new(tokio::sync::Mutex::new(None)),
             },
         })
         .setup(|app| {

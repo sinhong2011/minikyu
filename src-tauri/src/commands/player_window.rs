@@ -173,11 +173,9 @@ pub fn show_player_window(app: AppHandle) -> Result<(), String> {
 
     #[cfg(not(target_os = "macos"))]
     {
-        let window = app
-            .get_webview_window(PLAYER_WINDOW_LABEL)
-            .ok_or_else(|| {
-                "Player window not found - was init_player_window called at startup?".to_string()
-            })?;
+        let window = app.get_webview_window(PLAYER_WINDOW_LABEL).ok_or_else(|| {
+            "Player window not found - was init_player_window called at startup?".to_string()
+        })?;
         window
             .show()
             .map_err(|e| format!("Failed to show window: {e}"))?;
@@ -352,9 +350,7 @@ fn is_tray_popover_visible(app: &AppHandle) -> bool {
 /// Calculate popover position centered below the tray icon.
 /// Falls back to top-right corner if tray icon rect is unknown.
 fn calculate_popover_position(scale: f64, screen_width: f64) -> (f64, f64) {
-    if let Some((icon_x, icon_y, icon_w, icon_h)) =
-        crate::commands::tray::get_tray_icon_rect()
-    {
+    if let Some((icon_x, icon_y, icon_w, icon_h)) = crate::commands::tray::get_tray_icon_rect() {
         // Convert physical pixels to logical
         let icon_center_x = icon_x / scale + icon_w / scale / 2.0;
         let icon_bottom_y = icon_y / scale + icon_h / scale;

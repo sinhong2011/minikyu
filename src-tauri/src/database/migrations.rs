@@ -31,6 +31,16 @@ pub async fn run_migrations(pool: &SqlitePool) -> Result<(), sqlx::Error> {
         record_migration(pool, 5, "article_summaries_and_translation_cache").await?;
     }
 
+    if !applied_migrations.contains(&6) {
+        apply_per_account_sync_state_migration(pool).await?;
+        record_migration(pool, 6, "per_account_sync_state").await?;
+    }
+
+    if !applied_migrations.contains(&7) {
+        apply_sync_state_stats_migration(pool).await?;
+        record_migration(pool, 7, "sync_state_completion_stats").await?;
+    }
+
     Ok(())
 }
 
@@ -456,6 +466,73 @@ pub(crate) async fn apply_local_cache_migration(pool: &SqlitePool) -> Result<(),
     .await?;
 
     log::info!("Local cache migration applied (version 5)");
+    Ok(())
+}
+
+pub(crate) async fn apply_per_account_sync_state_migration(
+    pool: &SqlitePool,
+) -> Result<(), sqlx::Error> {
+    // Add account_id column (nullable for existing rows)
+    sqlx::query("ALTER TABLE sync_state ADD COLUMN account_id INTEGER")
+        .execute(pool)
+        .await
+        .ok(); // OK if column already exists
+
+    // Assign existing sync_state row to the active account
+    sqlx::query(
+        r#"
+        UPDATE sync_state
+        SET account_id = (SELECT id FROM miniflux_connections WHERE is_active = 1 LIMIT 1)
+        WHERE account_id IS NULL
+        "#,
+    )
+    .execute(pool)
+    .await?;
+
+    // Add completion stats columns
+    sqlx::query("ALTER TABLE sync_state ADD COLUMN categories_synced INTEGER DEFAULT 0")
+        .execute(pool)
+        .await
+        .ok();
+    sqlx::query("ALTER TABLE sync_state ADD COLUMN feeds_synced INTEGER DEFAULT 0")
+        .execute(pool)
+        .await
+        .ok();
+    sqlx::query("ALTER TABLE sync_state ADD COLUMN entries_synced INTEGER DEFAULT 0")
+        .execute(pool)
+        .await
+        .ok();
+
+    // Create unique index so each account has at most one sync_state row
+    sqlx::query(
+        "CREATE UNIQUE INDEX IF NOT EXISTS idx_sync_state_account_id ON sync_state(account_id)",
+    )
+    .execute(pool)
+    .await?;
+
+    log::info!("Per-account sync state migration applied (version 6)");
+    Ok(())
+}
+
+/// Ensures sync_state has completion stats columns.
+/// Needed for DBs that ran migration 6 before stats columns were added.
+pub(crate) async fn apply_sync_state_stats_migration(
+    pool: &SqlitePool,
+) -> Result<(), sqlx::Error> {
+    sqlx::query("ALTER TABLE sync_state ADD COLUMN categories_synced INTEGER DEFAULT 0")
+        .execute(pool)
+        .await
+        .ok(); // OK if column already exists
+    sqlx::query("ALTER TABLE sync_state ADD COLUMN feeds_synced INTEGER DEFAULT 0")
+        .execute(pool)
+        .await
+        .ok();
+    sqlx::query("ALTER TABLE sync_state ADD COLUMN entries_synced INTEGER DEFAULT 0")
+        .execute(pool)
+        .await
+        .ok();
+
+    log::info!("Sync state stats migration applied (version 7)");
     Ok(())
 }
 

@@ -88,6 +88,7 @@ mod tests {
             &pool,
             "2026-02-12 00:00:00",
             "2026-02-13 00:00:00",
+            1,
         )
         .await
         .expect("Query should succeed");

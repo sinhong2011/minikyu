@@ -56,7 +56,8 @@ export function MinifluxLayout() {
   const { data: activeAccount } = useActiveAccount();
   const { data: categories } = useCategories();
   const { data: unreadCounts } = useUnreadCounts();
-  const [showConnectionDialog, setShowConnectionDialog] = useState(false);
+  const showConnectionDialog = useUIStore((state) => state.showConnectionDialog);
+  const setShowConnectionDialog = useUIStore((state) => state.setShowConnectionDialog);
   const selectedEntryId = useUIStore((state) => state.selectedEntryId);
   const setSelectedEntryId = useUIStore((state) => state.setSelectedEntryId);
   const searchFiltersVisible = useUIStore((state) => state.searchFiltersVisible);
@@ -244,6 +245,17 @@ export function MinifluxLayout() {
     }
   }, [lastReadingEntry, selectedEntryId, setSelectedEntryId]);
 
+  // Reset state when account changes
+  const activeAccountId = activeAccount?.id;
+  // biome-ignore lint/correctness/useExhaustiveDependencies: activeAccountId triggers reset when account switches
+  useEffect(() => {
+    hasAutoSyncedRef.current = false;
+    suppressAutoSelectRef.current = false;
+    setSelectedEntryId(undefined);
+  }, [activeAccountId, setSelectedEntryId]);
+
+  // Auto-sync on connect or account switch
+  // biome-ignore lint/correctness/useExhaustiveDependencies: activeAccountId triggers sync for new account
   useEffect(() => {
     if (!isConnected) {
       hasAutoSyncedRef.current = false;
@@ -254,7 +266,7 @@ export function MinifluxLayout() {
       hasAutoSyncedRef.current = true;
       syncMiniflux.mutate();
     }
-  }, [isConnected, syncing, syncMiniflux]);
+  }, [activeAccountId, isConnected, syncing, syncMiniflux]);
 
   const handlePullToRefresh = useCallback(() => {
     if (!isConnected || syncing) {
@@ -578,6 +590,7 @@ export function MinifluxLayout() {
           />
         </div>
       </div>
+      <ConnectionDialog open={showConnectionDialog} onOpenChange={setShowConnectionDialog} />
     </MainWindowContent>
   );
 }

@@ -23,6 +23,12 @@ interface SyncState {
   setCategoriesCount: (count: number) => void;
   setFeedsCount: (count: number) => void;
   setEntriesProgress: (progress: { pulled: number; total: number; percentage: number }) => void;
+  restoreSyncStatus: (status: {
+    lastSyncAt: string | null;
+    categoriesSynced: number;
+    feedsSynced: number;
+    entriesSynced: number;
+  }) => void;
 }
 
 export const useSyncStore = create<SyncState>()(
@@ -49,9 +55,6 @@ export const useSyncStore = create<SyncState>()(
               syncing: true,
               error: null,
               currentStage: 'idle',
-              categoriesCount: undefined,
-              feedsCount: undefined,
-              entriesProgress: undefined,
             },
             undefined,
             'startSync'
@@ -77,6 +80,23 @@ export const useSyncStore = create<SyncState>()(
 
         setEntriesProgress: (progress: { pulled: number; total: number; percentage: number }) =>
           set({ entriesProgress: progress }, undefined, 'setEntriesProgress'),
+
+        restoreSyncStatus: (status) =>
+          set(
+            {
+              syncing: false,
+              error: null,
+              currentStage: status.lastSyncAt ? 'completed' : 'idle',
+              lastSyncedAt: status.lastSyncAt ? new Date(status.lastSyncAt) : null,
+              categoriesCount: status.categoriesSynced || undefined,
+              feedsCount: status.feedsSynced || undefined,
+              entriesProgress: status.entriesSynced
+                ? { pulled: status.entriesSynced, total: status.entriesSynced, percentage: 100 }
+                : undefined,
+            },
+            undefined,
+            'restoreSyncStatus'
+          ),
       }),
       { name: 'sync-store' }
     ),

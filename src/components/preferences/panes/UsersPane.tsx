@@ -52,12 +52,19 @@ export function UsersPane({
                 key={user.id}
                 className="flex items-center justify-between rounded-md border px-3 py-2"
               >
-                <div className="flex items-center gap-2">
-                  <span className="text-sm font-medium">{user.username}</span>
-                  {user.is_admin && (
-                    <Badge variant="secondary" className="text-xs">
-                      {_(msg`Admin`)}
-                    </Badge>
+                <div className="flex flex-col gap-0.5">
+                  <div className="flex items-center gap-2">
+                    <span className="text-sm font-medium">{user.username}</span>
+                    {user.is_admin && (
+                      <Badge variant="secondary" className="text-xs">
+                        {_(msg`Admin`)}
+                      </Badge>
+                    )}
+                  </div>
+                  {user.last_login_at && (
+                    <span className="text-xs text-muted-foreground">
+                      {_(msg`Last login`)}: {new Date(user.last_login_at).toLocaleString()}
+                    </span>
                   )}
                 </div>
                 <div className="flex items-center gap-1">

@@ -41,8 +41,19 @@ mod tests {
     #[tokio::test]
     async fn test_get_sync_state_default_row_created() {
         let pool = setup_test_db().await;
-        let state = get_or_create_sync_state(&pool).await.unwrap();
+        let state = get_or_create_sync_state(&pool, 1).await.unwrap();
         assert!(!state.sync_in_progress);
+        assert_eq!(state.account_id, Some(1));
+    }
+
+    #[tokio::test]
+    async fn test_get_sync_state_per_account_isolation() {
+        let pool = setup_test_db().await;
+        let state1 = get_or_create_sync_state(&pool, 1).await.unwrap();
+        let state2 = get_or_create_sync_state(&pool, 2).await.unwrap();
+        assert_ne!(state1.id, state2.id);
+        assert_eq!(state1.account_id, Some(1));
+        assert_eq!(state2.account_id, Some(2));
     }
 
     #[tokio::test]
