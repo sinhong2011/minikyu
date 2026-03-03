@@ -10,6 +10,10 @@ pre-commit:
       glob: '**/*.{ts,tsx}'
       run: bunx tsc --noEmit
 
+    actionlint:
+      glob: '.github/workflows/*.{yml,yaml}'
+      run: actionlint -shellcheck=""
+
 pre-push:
   parallel: true
   commands:
