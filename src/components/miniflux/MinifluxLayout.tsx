@@ -245,10 +245,12 @@ export function MinifluxLayout() {
     }
   }, [lastReadingEntry, selectedEntryId, setSelectedEntryId]);
 
-  // Reset state when account changes
+  // Reset state when account changes (skip initial mount)
   const activeAccountId = activeAccount?.id;
-  // biome-ignore lint/correctness/useExhaustiveDependencies: activeAccountId triggers reset when account switches
+  const prevAccountIdRef = useRef(activeAccountId);
   useEffect(() => {
+    if (prevAccountIdRef.current === activeAccountId) return;
+    prevAccountIdRef.current = activeAccountId;
     hasAutoSyncedRef.current = false;
     suppressAutoSelectRef.current = false;
     setSelectedEntryId(undefined);

@@ -9,6 +9,16 @@ import * as authService from '@/services/miniflux/auth';
 import * as usersService from '@/services/miniflux/users';
 import { UserNav } from './UserNav';
 
+vi.mock('@tauri-apps/plugin-dialog', () => ({
+  confirm: vi.fn().mockResolvedValue(true),
+  open: vi.fn(),
+  save: vi.fn(),
+}));
+
+vi.mock('@/lib/account-reset', () => ({
+  resetAccountState: vi.fn().mockResolvedValue(undefined),
+}));
+
 // Setup i18n
 i18n.load('en', {});
 i18n.activate('en');
@@ -181,8 +191,8 @@ describe('UserNav', () => {
     expect(tauriBindings.commands.switchMinifluxAccount).toHaveBeenCalledWith('2');
   });
 
-  it('calls minifluxDisconnect when logout is clicked', async () => {
-    vi.spyOn(tauriBindings.commands, 'minifluxDisconnect').mockResolvedValue({
+  it('calls deleteMinifluxAccount when delete account is clicked', async () => {
+    vi.spyOn(tauriBindings.commands, 'deleteMinifluxAccount').mockResolvedValue({
       status: 'ok',
       data: null,
     });
@@ -191,10 +201,12 @@ describe('UserNav', () => {
     const trigger = screen.getByRole('button');
     fireEvent.click(trigger);
 
-    const logout = await screen.findByText('Log out');
-    fireEvent.click(logout);
+    const deleteAccount = await screen.findByText('Delete Account');
+    fireEvent.click(deleteAccount);
 
-    expect(tauriBindings.commands.minifluxDisconnect).toHaveBeenCalled();
+    await waitFor(() => {
+      expect(tauriBindings.commands.deleteMinifluxAccount).toHaveBeenCalled();
+    });
   });
 
   it('displays admin badge when user is admin', async () => {
