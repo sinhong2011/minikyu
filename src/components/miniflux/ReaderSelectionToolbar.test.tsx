@@ -205,7 +205,7 @@ describe('ReaderSelectionToolbar', () => {
       expect(screen.getByLabelText('Translate selection')).toBeInTheDocument();
     });
 
-    fireEvent.scroll(container);
+    container.dispatchEvent(new Event('scroll'));
     await waitFor(() => {
       expect(screen.queryByLabelText('Translate selection')).not.toBeInTheDocument();
     });

@@ -147,11 +147,25 @@ jobs:
         if: env.IS_PRODUCTION == 'true'
         shell: bash
         run: |
-          echo "TAURI_SIGNING_PRIVATE_KEY=${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}" >> $GITHUB_ENV
-          echo "TAURI_SIGNING_PRIVATE_KEY_PASSWORD=${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}" >> $GITHUB_ENV
-          echo "APPLE_ID=${{ secrets.APPLE_ID }}" >> $GITHUB_ENV
-          echo "APPLE_PASSWORD=${{ secrets.APPLE_PASSWORD }}" >> $GITHUB_ENV
-          echo "APPLE_TEAM_ID=${{ secrets.APPLE_TEAM_ID }}" >> $GITHUB_ENV
+          {
+            echo "TAURI_SIGNING_PRIVATE_KEY<<ENDOFKEY"
+            echo "$SIGNING_KEY"
+            echo "ENDOFKEY"
+          } >> $GITHUB_ENV
+          {
+            echo "TAURI_SIGNING_PRIVATE_KEY_PASSWORD<<ENDOFPASS"
+            echo "$SIGNING_PASSWORD"
+            echo "ENDOFPASS"
+          } >> $GITHUB_ENV
+          echo "APPLE_ID=$APPLE_ID_SECRET" >> $GITHUB_ENV
+          echo "APPLE_PASSWORD=$APPLE_PASSWORD_SECRET" >> $GITHUB_ENV
+          echo "APPLE_TEAM_ID=$APPLE_TEAM_ID_SECRET" >> $GITHUB_ENV
+        env:
+          SIGNING_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
+          SIGNING_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
+          APPLE_ID_SECRET: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD_SECRET: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID_SECRET: ${{ secrets.APPLE_TEAM_ID }}
           if [[ "${{ runner.os }}" == "macOS" ]]; then
             sed -i '' "s/\"signingIdentity\": null/\"signingIdentity\": \"${{ secrets.APPLE_SIGNING_IDENTITY }}\"/" src-tauri/tauri.conf.json
             sed -i '' "s/\"pubkey\": \"\"/\"pubkey\": \"${{ secrets.TAURI_UPDATER_PUBKEY }}\"/" src-tauri/tauri.conf.json
