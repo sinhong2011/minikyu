@@ -160,19 +160,22 @@ jobs:
           echo "APPLE_ID=$APPLE_ID_SECRET" >> $GITHUB_ENV
           echo "APPLE_PASSWORD=$APPLE_PASSWORD_SECRET" >> $GITHUB_ENV
           echo "APPLE_TEAM_ID=$APPLE_TEAM_ID_SECRET" >> $GITHUB_ENV
+          if [[ "$RUNNER_OS" == "macOS" ]]; then
+            sed -i '' "s/\"signingIdentity\": null/\"signingIdentity\": \"$APPLE_SIGNING_IDENTITY_SECRET\"/" src-tauri/tauri.conf.json
+            sed -i '' "s/\"pubkey\": \"\"/\"pubkey\": \"$TAURI_UPDATER_PUBKEY_SECRET\"/" src-tauri/tauri.conf.json
+          else
+            sed -i "s/\"signingIdentity\": null/\"signingIdentity\": \"$APPLE_SIGNING_IDENTITY_SECRET\"/" src-tauri/tauri.conf.json
+            sed -i "s/\"pubkey\": \"\"/\"pubkey\": \"$TAURI_UPDATER_PUBKEY_SECRET\"/" src-tauri/tauri.conf.json
+          fi
         env:
           SIGNING_KEY: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY }}
           SIGNING_PASSWORD: ${{ secrets.TAURI_SIGNING_PRIVATE_KEY_PASSWORD }}
           APPLE_ID_SECRET: ${{ secrets.APPLE_ID }}
           APPLE_PASSWORD_SECRET: ${{ secrets.APPLE_PASSWORD }}
           APPLE_TEAM_ID_SECRET: ${{ secrets.APPLE_TEAM_ID }}
-          if [[ "${{ runner.os }}" == "macOS" ]]; then
-            sed -i '' "s/\"signingIdentity\": null/\"signingIdentity\": \"${{ secrets.APPLE_SIGNING_IDENTITY }}\"/" src-tauri/tauri.conf.json
-            sed -i '' "s/\"pubkey\": \"\"/\"pubkey\": \"${{ secrets.TAURI_UPDATER_PUBKEY }}\"/" src-tauri/tauri.conf.json
-          else
-            sed -i "s/\"signingIdentity\": null/\"signingIdentity\": \"${{ secrets.APPLE_SIGNING_IDENTITY }}\"/" src-tauri/tauri.conf.json
-            sed -i "s/\"pubkey\": \"\"/\"pubkey\": \"${{ secrets.TAURI_UPDATER_PUBKEY }}\"/" src-tauri/tauri.conf.json
-          fi
+          APPLE_SIGNING_IDENTITY_SECRET: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+          TAURI_UPDATER_PUBKEY_SECRET: ${{ secrets.TAURI_UPDATER_PUBKEY }}
+          RUNNER_OS: ${{ runner.os }}
 
       - name: Build and release
         uses: tauri-apps/tauri-action@v0
