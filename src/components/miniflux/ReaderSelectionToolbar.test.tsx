@@ -165,7 +165,7 @@ describe('ReaderSelectionToolbar', () => {
       expect(screen.getByLabelText('Translate selection')).toBeInTheDocument();
     });
 
-    fireEvent.mouseDown(document.body);
+    document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
     await waitFor(() => {
       expect(screen.queryByLabelText('Translate selection')).not.toBeInTheDocument();
     });
