@@ -55,6 +55,9 @@ export const useSyncStore = create<SyncState>()(
               syncing: true,
               error: null,
               currentStage: 'idle',
+              categoriesCount: undefined,
+              feedsCount: undefined,
+              entriesProgress: undefined,
             },
             undefined,
             'startSync'
