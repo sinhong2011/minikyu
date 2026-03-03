@@ -348,8 +348,13 @@ export function useSyncMiniflux() {
     },
     onSuccess: () => {
       completeSync();
-      // Invalidate all Miniflux queries
-      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+      // Note: useSyncProgressListener already handles targeted invalidation
+      // for categories, feeds, entries, and counters via sync-completed event.
+      // We only invalidate data queries here as a fallback — NOT auth/user
+      // queries, which would cause unnecessary API calls to the Miniflux server.
+      queryClient.invalidateQueries({ queryKey: feedQueryKeys.all });
+      queryClient.invalidateQueries({ queryKey: ['miniflux', 'categories'] });
+      queryClient.invalidateQueries({ queryKey: ['miniflux', 'entries'] });
       queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
     },
     onError: (error: Error) => {

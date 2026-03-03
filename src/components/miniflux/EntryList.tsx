@@ -1,6 +1,8 @@
 import {
+  Alert01Icon,
   Download01Icon,
   HeadphonesIcon,
+  InboxIcon,
   PlayIcon,
   Playlist03Icon,
   Refresh04Icon,
@@ -515,7 +517,17 @@ export function EntryList({
   if (error) {
     return (
       <div className="relative h-full">
-        <div className="p-4 text-destructive">{_(msg`Failed to load entries`)}</div>
+        <div className="flex flex-col items-center justify-center gap-3 p-8 text-center">
+          <div className="flex h-10 w-10 items-center justify-center rounded-full bg-destructive/10">
+            <HugeiconsIcon icon={Alert01Icon} className="h-5 w-5 text-destructive" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-destructive">{_(msg`Failed to load entries`)}</p>
+            <p className="text-xs text-muted-foreground">
+              {_(msg`Check your connection and try again`)}
+            </p>
+          </div>
+        </div>
         {showFloatingFilterBar && currentStatus && onStatusChange && (
           <EntryListFloatingFilterBar
             currentStatus={currentStatus}
@@ -530,7 +542,17 @@ export function EntryList({
   if (!entriesData?.entries?.length) {
     return (
       <div className="relative h-full">
-        <div className="p-4 text-muted-foreground">{_(msg`No entries found`)}</div>
+        <div className="flex flex-col items-center justify-center gap-3 p-8 pt-24 text-center">
+          <div className="flex h-12 w-12 items-center justify-center rounded-full bg-muted">
+            <HugeiconsIcon icon={InboxIcon} className="h-6 w-6 text-muted-foreground/60" />
+          </div>
+          <div className="space-y-1">
+            <p className="text-sm font-medium text-muted-foreground">{_(msg`No entries found`)}</p>
+            <p className="text-xs text-muted-foreground/60">
+              {_(msg`Try changing the filter or syncing new content`)}
+            </p>
+          </div>
+        </div>
         {showFloatingFilterBar && currentStatus && onStatusChange && (
           <EntryListFloatingFilterBar
             currentStatus={currentStatus}

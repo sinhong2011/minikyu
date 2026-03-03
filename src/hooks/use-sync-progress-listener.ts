@@ -2,6 +2,7 @@ import { useQueryClient } from '@tanstack/react-query';
 import { listen } from '@tauri-apps/api/event';
 import { useEffect, useRef } from 'react';
 import { logger } from '@/lib/logger';
+import { commands } from '@/lib/tauri-bindings';
 import { categoryQueryKeys } from '@/services/miniflux/categories';
 import { counterQueryKeys } from '@/services/miniflux/counters';
 import { entryQueryKeys } from '@/services/miniflux/entries';
@@ -16,6 +17,24 @@ export function useSyncProgressListener() {
     let unlisten: (() => void) | null = null;
     let unlistenStarted: (() => void) | null = null;
     let unlistenCompleted: (() => void) | null = null;
+
+    // Restore persisted sync status on mount
+    const restoreStatus = async () => {
+      try {
+        const result = await commands.getSyncStatus();
+        if (result.status === 'ok' && result.data) {
+          useSyncStore.getState().restoreSyncStatus({
+            lastSyncAt: result.data.last_sync_at,
+            categoriesSynced: result.data.categories_synced,
+            feedsSynced: result.data.feeds_synced,
+            entriesSynced: result.data.entries_synced,
+          });
+        }
+      } catch (error) {
+        logger.debug('Failed to restore sync status:', { error });
+      }
+    };
+    restoreStatus();
 
     const setupListener = async () => {
       try {

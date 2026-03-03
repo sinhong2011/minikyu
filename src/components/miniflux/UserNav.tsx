@@ -1,4 +1,5 @@
 import {
+  AddCircleIcon,
   FileDownloadIcon,
   FileUploadIcon,
   Logout01Icon,
@@ -7,7 +8,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
+import { confirm, open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { toast } from 'sonner';
 
@@ -22,6 +23,7 @@ import {
 } from '@/components/animate-ui/components/base/menu';
 import { Avatar, AvatarFallback } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
+import { resetAccountState } from '@/lib/account-reset';
 import { logger } from '@/lib/logger';
 import { queryClient } from '@/lib/query-client';
 import { commands } from '@/lib/tauri-bindings';
@@ -29,6 +31,7 @@ import { cn } from '@/lib/utils';
 import { useAccounts, useActiveAccount } from '@/services/miniflux/accounts';
 import { useIsConnected } from '@/services/miniflux/auth';
 import { useCurrentUser } from '@/services/miniflux/users';
+import { useUIStore } from '@/store/ui-store';
 
 interface UserNavProps {
   compact?: boolean;
@@ -41,33 +44,10 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
   const { data: isConnected } = useIsConnected();
   const { data: currentUser, isLoading: isUserLoading, isError: isUserError } = useCurrentUser();
 
-  logger.info('[UserNav] Component rendering', {
-    accountsCount: accounts.length,
-    currentAccountId: currentAccount?.id,
-    currentUser: currentUser
-      ? {
-          id: currentUser.id,
-          username: currentUser.username,
-          isAdmin: currentUser.is_admin,
-        }
-      : null,
-    isUserLoading,
-    isUserError,
-    isConnected,
-  });
-
   if (!currentAccount) {
-    logger.warn('[UserNav] No current account found, returning null (component will not render)', {
-      availableAccountIds: accounts.map((acc) => acc.id),
-    });
+    logger.debug('[UserNav] No current account found, returning null');
     return null;
   }
-
-  logger.info('[UserNav] Current account found, rendering component', {
-    accountId: currentAccount.id,
-    username: currentAccount.username,
-    serverUrl: currentAccount.server_url,
-  });
 
   const getInitials = (username: string) => {
     return username.slice(0, 2).toUpperCase();
@@ -87,7 +67,7 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
     try {
       const result = await commands.switchMinifluxAccount(accountId);
       if (result.status === 'ok') {
-        queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+        await resetAccountState();
       } else {
         logger.error('Failed to switch account:', { error: result.error });
       }
@@ -96,14 +76,29 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
     }
   };
 
-  const handleLogout = async () => {
+  const handleDeleteAccount = async () => {
+    if (!currentAccount) return;
+
+    const confirmed = await confirm(
+      _(
+        msg`Are you sure you want to delete this account? This will remove all credentials and data associated with "${currentAccount.username}" on ${getDomain(currentAccount.server_url)}.`
+      ),
+      { title: _(msg`Delete Account`), kind: 'warning' }
+    );
+
+    if (!confirmed) return;
+
     try {
-      const result = await commands.minifluxDisconnect();
+      const result = await commands.deleteMinifluxAccount(currentAccount.id);
       if (result.status === 'ok') {
-        queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+        await resetAccountState();
+        toast.success(_(msg`Account deleted successfully`));
+      } else {
+        toast.error(_(msg`Failed to delete account`));
       }
     } catch (error) {
-      logger.error('Error logging out:', { error });
+      logger.error('Error deleting account:', { error });
+      toast.error(_(msg`Failed to delete account`));
     }
   };
 
@@ -288,6 +283,11 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
               )}
             </MenuItem>
           ))}
+          <MenuSeparator />
+          <MenuItem onClick={() => useUIStore.getState().setShowConnectionDialog(true)}>
+            <HugeiconsIcon icon={AddCircleIcon} className="mr-2 size-4" />
+            {_(msg`Add Account`)}
+          </MenuItem>
         </MenuGroup>
         {isConnected && (
           <>
@@ -307,9 +307,9 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
         )}
         <MenuSeparator />
         <MenuGroup>
-          <MenuItem variant="destructive" onClick={handleLogout}>
+          <MenuItem variant="destructive" onClick={handleDeleteAccount}>
             <HugeiconsIcon icon={Logout01Icon} className="mr-2 size-4" />
-            {_(msg`Log out`)}
+            {_(msg`Delete Account`)}
           </MenuItem>
         </MenuGroup>
       </MenuPanel>

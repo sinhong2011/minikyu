@@ -94,7 +94,10 @@ pub fn run() {
     {
         app_builder = app_builder.plugin(
             tauri_plugin_window_state::Builder::new()
-                .with_state_flags(tauri_plugin_window_state::StateFlags::all())
+                .with_state_flags(
+                    tauri_plugin_window_state::StateFlags::all()
+                        & !tauri_plugin_window_state::StateFlags::VISIBLE,
+                )
                 .build(),
         );
     }
@@ -170,6 +173,7 @@ pub fn run() {
             db_pool: Arc::new(Mutex::new(None)),
             miniflux: MinifluxState {
                 client: std::sync::Arc::new(tokio::sync::Mutex::new(None)),
+                user_id: std::sync::Arc::new(tokio::sync::Mutex::new(None)),
             },
         })
         .setup(|app| {

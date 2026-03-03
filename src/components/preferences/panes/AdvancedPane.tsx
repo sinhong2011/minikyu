@@ -1,4 +1,5 @@
 import {
+  AlertCircleIcon,
   Copy01Icon,
   Delete02Icon,
   Download04Icon,
@@ -8,7 +9,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { arch, version as osVersion, platform } from '@tauri-apps/plugin-os';
@@ -25,6 +26,7 @@ import {
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 import {
   Select,
   SelectContent,
@@ -35,15 +37,49 @@ import {
 import { showToast } from '@/components/ui/sonner';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { logger } from '@/lib/logger';
-import type { AppPreferences } from '@/lib/tauri-bindings';
+import type { AppPreferences, LocalDataSize } from '@/lib/tauri-bindings';
 import { commands } from '@/lib/tauri-bindings';
+import { useActiveAccount } from '@/services/miniflux/accounts';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
-import { useAccountStore } from '@/store/account-store';
 import { useReaderStore } from '@/store/reader-store';
 import { useSyncStore } from '@/store/sync-store';
 import { SettingsField, SettingsSection } from '../shared/SettingsComponents';
 
 const LOG_LEVELS = ['error', 'warn', 'info', 'debug', 'trace'] as const;
+
+function formatBytes(bytes: number): string {
+  if (bytes === 0) return '0 B';
+  const units = ['B', 'KB', 'MB', 'GB'];
+  const i = Math.min(Math.floor(Math.log(bytes) / Math.log(1024)), units.length - 1);
+  const value = bytes / 1024 ** i;
+  return `${value < 10 ? value.toFixed(1) : Math.round(value)} ${units[i]}`;
+}
+
+const STORAGE_COLORS = [
+  'bg-primary/70',
+  'bg-blue-500/60',
+  'bg-amber-500/50',
+  'bg-emerald-500/50',
+] as const;
+
+/** Group raw backend file entries into user-meaningful categories. */
+function groupStorageCategories(
+  files: Array<{ name: string; bytes: number | string; exists: boolean }>
+) {
+  const sum = (...names: string[]) =>
+    files
+      .filter((f) => f.exists && names.includes(f.name))
+      .reduce((acc, f) => acc + Number(f.bytes), 0);
+
+  return [
+    { label: 'Database', bytes: sum('Database', 'Database WAL', 'Database SHM') },
+    { label: 'Downloads', bytes: sum('Downloads') },
+    { label: 'Settings', bytes: sum('Preferences', 'Reading state') },
+    { label: 'Recovery', bytes: sum('Recovery files') },
+  ]
+    .filter((c) => c.bytes > 0)
+    .map((c, i) => ({ ...c, color: STORAGE_COLORS[i % STORAGE_COLORS.length] }));
+}
 
 export function AdvancedPane() {
   const { _ } = useLingui();
@@ -51,10 +87,24 @@ export function AdvancedPane() {
   const { data: preferences } = usePreferences();
   const savePreferences = useSavePreferences();
   const { copy, copied } = useClipboard();
+  const { data: activeAccount } = useActiveAccount();
   const [clearingData, setClearingData] = useState(false);
   const [clearDialogOpen, setClearDialogOpen] = useState(false);
   const [resetDialogOpen, setResetDialogOpen] = useState(false);
   const [resetting, setResetting] = useState(false);
+  const [factoryResetDialogOpen, setFactoryResetDialogOpen] = useState(false);
+  const [factoryResetting, setFactoryResetting] = useState(false);
+  const [factoryResetConfirmText, setFactoryResetConfirmText] = useState('');
+
+  const { data: dataSize } = useQuery({
+    queryKey: ['local-data-size'],
+    queryFn: async (): Promise<LocalDataSize> => {
+      const result = await commands.getLocalDataSize();
+      if (result.status === 'error') throw new Error(result.error);
+      return result.data;
+    },
+    staleTime: 1000 * 60 * 5,
+  });
 
   // ── Clear local data ──────────────────────────────────────────────────
 
@@ -68,10 +118,7 @@ export function AdvancedPane() {
         throw new Error(result.error);
       }
 
-      await commands.minifluxDisconnect();
-
       queryClient.clear();
-      useAccountStore.getState().clearAccounts();
       useReaderStore.getState().resetReaderState();
       useSyncStore.getState().setSyncing(false);
       useSyncStore.getState().setError(null);
@@ -80,8 +127,8 @@ export function AdvancedPane() {
 
       setClearDialogOpen(false);
       showToast.success(
-        _(msg`Local data cleared`),
-        _(msg`Please restart the app to complete cleanup.`)
+        _(msg`Account data cleared`),
+        _(msg`Synced data for the current account has been removed.`)
       );
     } catch (error) {
       logger.error('Failed to clear local data', { error });
@@ -190,6 +237,42 @@ export function AdvancedPane() {
       );
     } finally {
       setResetting(false);
+    }
+  };
+
+  // ── Factory reset ────────────────────────────────────────────────────
+
+  const handleFactoryReset = async () => {
+    if (factoryResetting) return;
+
+    setFactoryResetting(true);
+    try {
+      const result = await commands.factoryReset();
+      if (result.status === 'error') {
+        throw new Error(result.error);
+      }
+
+      queryClient.clear();
+      useReaderStore.getState().resetReaderState();
+      useSyncStore.getState().setSyncing(false);
+      useSyncStore.getState().setError(null);
+      useSyncStore.getState().setLastSyncedAt(null);
+      useSyncStore.getState().setCurrentStage('idle');
+
+      setFactoryResetDialogOpen(false);
+      setFactoryResetConfirmText('');
+      showToast.success(
+        _(msg`Factory reset complete`),
+        _(msg`All data has been deleted. The app has been reset to its initial state.`)
+      );
+    } catch (error) {
+      logger.error('Factory reset failed', { error });
+      showToast.error(
+        _(msg`Factory reset failed`),
+        error instanceof Error ? error.message : String(error)
+      );
+    } finally {
+      setFactoryResetting(false);
     }
   };
 
@@ -336,6 +419,190 @@ export function AdvancedPane() {
         </SettingsField>
       </SettingsSection>
 
+      {/* ── Storage & Data ────────────────────────────────────────── */}
+      <SettingsSection title={_(msg`Storage & Data`)}>
+        {dataSize && (
+          <div className="rounded-lg border bg-muted/30 p-4">
+            <div className="flex items-baseline justify-between">
+              <span className="text-sm text-muted-foreground">{_(msg`Local storage used`)}</span>
+              <span className="text-lg font-semibold font-mono tabular-nums">
+                {formatBytes(Number(dataSize.total_bytes))}
+              </span>
+            </div>
+            {(() => {
+              const categories = groupStorageCategories(dataSize.files);
+              return (
+                <>
+                  <div className="mt-3 flex gap-1 overflow-hidden rounded-full bg-muted">
+                    {categories.map((cat) => {
+                      const pct = (cat.bytes / Number(dataSize.total_bytes)) * 100;
+                      return (
+                        <div
+                          key={cat.label}
+                          className={`h-2 ${cat.color} first:rounded-l-full last:rounded-r-full transition-all`}
+                          style={{ width: `${Math.max(pct, 3)}%` }}
+                          title={`${cat.label}: ${formatBytes(cat.bytes)}`}
+                        />
+                      );
+                    })}
+                  </div>
+                  <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1">
+                    {categories.map((cat) => (
+                      <span
+                        key={cat.label}
+                        className="flex items-center gap-1.5 text-xs text-muted-foreground"
+                      >
+                        <span className={`inline-block size-2 rounded-full ${cat.color}`} />
+                        {cat.label}{' '}
+                        <span className="font-mono tabular-nums">{formatBytes(cat.bytes)}</span>
+                      </span>
+                    ))}
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+        )}
+
+        {/* Tier 1: Clear account data (least destructive) */}
+        <SettingsField
+          label={
+            activeAccount
+              ? _(msg`Clear data for ${activeAccount.username}`)
+              : _(msg`Clear account data`)
+          }
+          description={_(
+            msg`Removes synced entries, feeds, and categories for the current account. Other accounts and preferences are not affected.`
+          )}
+        >
+          <AlertDialog open={clearDialogOpen} onOpenChange={setClearDialogOpen}>
+            <AlertDialogTrigger
+              render={
+                <Button variant="outline" disabled={clearingData || !activeAccount}>
+                  <HugeiconsIcon icon={Delete02Icon} className="size-4" />
+                  {clearingData ? _(msg`Clearing...`) : _(msg`Clear data`)}
+                </Button>
+              }
+            />
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>
+                  {_(msg`Clear data for ${activeAccount?.username ?? ''}?`)}
+                </AlertDialogTitle>
+                <AlertDialogDescription>
+                  {_(
+                    msg`This will remove synced entries, feeds, categories, and sync history for this account. Other accounts and app preferences are not affected.`
+                  )}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{_(msg`Cancel`)}</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleClearLocalData}
+                  variant="destructive"
+                  disabled={clearingData}
+                >
+                  {_(msg`Clear data`)}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </SettingsField>
+
+        {/* Tier 2: Reset preferences (medium) */}
+        <SettingsField
+          label={_(msg`Reset preferences`)}
+          description={_(
+            msg`Restore all settings to their factory defaults. Your data and accounts are not affected.`
+          )}
+        >
+          <AlertDialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
+            <AlertDialogTrigger
+              render={
+                <Button variant="outline" disabled={resetting}>
+                  <HugeiconsIcon icon={RecycleIcon} className="size-4" />
+                  {resetting ? _(msg`Resetting...`) : _(msg`Reset`)}
+                </Button>
+              }
+            />
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{_(msg`Reset preferences?`)}</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {_(
+                    msg`All settings will be restored to their defaults. Your data and accounts will not be affected.`
+                  )}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{_(msg`Cancel`)}</AlertDialogCancel>
+                <AlertDialogAction onClick={handleResetPreferences} disabled={resetting}>
+                  {_(msg`Reset`)}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </SettingsField>
+
+        {/* Tier 3: Factory reset (most destructive, type-to-confirm) */}
+        <SettingsField
+          label={_(msg`Factory reset`)}
+          description={_(
+            msg`Permanently deletes everything — all accounts, synced data, preferences, downloads, and credentials. This cannot be undone.`
+          )}
+        >
+          <AlertDialog
+            open={factoryResetDialogOpen}
+            onOpenChange={(open) => {
+              setFactoryResetDialogOpen(open);
+              if (!open) setFactoryResetConfirmText('');
+            }}
+          >
+            <AlertDialogTrigger
+              render={
+                <Button variant="destructive" disabled={factoryResetting}>
+                  <HugeiconsIcon icon={AlertCircleIcon} className="size-4" />
+                  {factoryResetting ? _(msg`Resetting...`) : _(msg`Factory reset`)}
+                </Button>
+              }
+            />
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{_(msg`Factory reset?`)}</AlertDialogTitle>
+                <AlertDialogDescription>
+                  {_(
+                    msg`This will permanently delete all accounts, synced data, preferences, downloads, and saved credentials. The app will return to its initial state.`
+                  )}
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <div className="px-6 pb-2">
+                <label className="text-sm text-muted-foreground" htmlFor="factory-reset-confirm">
+                  {_(msg`Type RESET to confirm`)}
+                </label>
+                <Input
+                  id="factory-reset-confirm"
+                  className="mt-1.5"
+                  placeholder="RESET"
+                  value={factoryResetConfirmText}
+                  onChange={(e) => setFactoryResetConfirmText(e.target.value)}
+                  autoComplete="off"
+                />
+              </div>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{_(msg`Cancel`)}</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleFactoryReset}
+                  variant="destructive"
+                  disabled={factoryResetConfirmText !== 'RESET' || factoryResetting}
+                >
+                  {_(msg`Delete everything`)}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </SettingsField>
+      </SettingsSection>
+
       {/* ── Diagnostics (dev only) ─────────────────────────────────── */}
       {import.meta.env.DEV && (
         <SettingsSection title={_(msg`Diagnostics`)}>
@@ -374,79 +641,6 @@ export function AdvancedPane() {
           </SettingsField>
         </SettingsSection>
       )}
-
-      {/* ── Data ───────────────────────────────────────────────────── */}
-      <SettingsSection title={_(msg`Data`)}>
-        <SettingsField
-          label={_(msg`Reset preferences`)}
-          description={_(
-            msg`Restore all settings to their factory defaults. Your data and accounts are not affected.`
-          )}
-        >
-          <AlertDialog open={resetDialogOpen} onOpenChange={setResetDialogOpen}>
-            <AlertDialogTrigger
-              render={
-                <Button variant="outline" disabled={resetting}>
-                  <HugeiconsIcon icon={RecycleIcon} className="size-4" />
-                  {resetting ? _(msg`Resetting...`) : _(msg`Reset`)}
-                </Button>
-              }
-            />
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>{_(msg`Reset preferences?`)}</AlertDialogTitle>
-                <AlertDialogDescription>
-                  {_(
-                    msg`All settings will be restored to their defaults. Your data and accounts will not be affected.`
-                  )}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>{_(msg`Cancel`)}</AlertDialogCancel>
-                <AlertDialogAction onClick={handleResetPreferences} disabled={resetting}>
-                  {_(msg`Reset`)}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </SettingsField>
-
-        <SettingsField
-          label={_(msg`Clear local data`)}
-          description={_(
-            msg`Removes the local database, preferences, reading state, and recovery files. Downloaded files are not deleted.`
-          )}
-        >
-          <AlertDialog open={clearDialogOpen} onOpenChange={setClearDialogOpen}>
-            <AlertDialogTrigger
-              render={
-                <Button variant="destructive" disabled={clearingData}>
-                  <HugeiconsIcon icon={Delete02Icon} className="size-4" />
-                  {clearingData ? _(msg`Clearing...`) : _(msg`Clear local data`)}
-                </Button>
-              }
-            />
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>{_(msg`Clear local data?`)}</AlertDialogTitle>
-                <AlertDialogDescription>
-                  {_(msg`This will remove all locally stored data and disconnect your account.`)}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <AlertDialogFooter>
-                <AlertDialogCancel>{_(msg`Cancel`)}</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleClearLocalData}
-                  variant="destructive"
-                  disabled={clearingData}
-                >
-                  {_(msg`Clear data`)}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </SettingsField>
-      </SettingsSection>
     </div>
   );
 }

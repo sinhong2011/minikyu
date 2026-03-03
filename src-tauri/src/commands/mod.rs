@@ -10,6 +10,7 @@ pub mod downloads;
 pub mod in_app_browser;
 pub mod miniflux;
 pub mod notifications;
+#[allow(clippy::unused_unit)]
 pub mod player_window;
 pub mod podcast;
 pub mod preferences;

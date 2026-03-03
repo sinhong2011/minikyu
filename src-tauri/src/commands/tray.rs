@@ -131,14 +131,9 @@ fn create_tray_menu(app: &AppHandle) -> Result<Menu<tauri::Wry>, String> {
     )
     .map_err(|e| format!("Failed to create podcast play/pause item: {e}"))?;
 
-    let podcast_next = MenuItem::with_id(
-        app,
-        MENU_PODCAST_NEXT_ID,
-        "Next Track",
-        true,
-        None::<&str>,
-    )
-    .map_err(|e| format!("Failed to create podcast next item: {e}"))?;
+    let podcast_next =
+        MenuItem::with_id(app, MENU_PODCAST_NEXT_ID, "Next Track", true, None::<&str>)
+            .map_err(|e| format!("Failed to create podcast next item: {e}"))?;
 
     let podcast_player = MenuItem::with_id(
         app,
@@ -203,19 +198,20 @@ fn handle_tray_icon_event(tray: &TrayIcon, event: TrayIconEvent) {
             // Store the tray icon rect for popover positioning
             let pos = rect.position.to_physical::<f64>(1.0);
             let sz = rect.size.to_physical::<f64>(1.0);
-            *TRAY_ICON_RECT.lock().unwrap() =
-                Some((pos.x, pos.y, sz.width, sz.height));
+            *TRAY_ICON_RECT.lock().unwrap() = Some((pos.x, pos.y, sz.width, sz.height));
             log::debug!(
                 "Tray icon rect: ({}, {}) {}x{}",
-                pos.x, pos.y, sz.width, sz.height
+                pos.x,
+                pos.y,
+                sz.width,
+                sz.height
             );
 
             // Left click: always toggle tray popover
             log::debug!("Tray left-click: toggling tray popover");
 
-            let result = crate::commands::player_window::toggle_tray_popover(
-                tray.app_handle().clone(),
-            );
+            let result =
+                crate::commands::player_window::toggle_tray_popover(tray.app_handle().clone());
             if let Err(e) = result {
                 log::error!("Failed to toggle tray popover: {e}");
             }
@@ -229,8 +225,7 @@ fn handle_tray_icon_event(tray: &TrayIcon, event: TrayIconEvent) {
             // Store rect on right-click too
             let pos = rect.position.to_physical::<f64>(1.0);
             let sz = rect.size.to_physical::<f64>(1.0);
-            *TRAY_ICON_RECT.lock().unwrap() =
-                Some((pos.x, pos.y, sz.width, sz.height));
+            *TRAY_ICON_RECT.lock().unwrap() = Some((pos.x, pos.y, sz.width, sz.height));
             // Right click: show menu (handled automatically by Tauri)
             log::debug!("Tray right-click: showing menu");
             update_menu_visibility(tray.app_handle());
@@ -266,8 +261,11 @@ fn handle_menu_event(app: &AppHandle, event: tauri::menu::MenuEvent) {
         }
         MENU_PODCAST_PLAY_PAUSE_ID => {
             log::debug!("Tray menu: Podcast Play/Pause");
-            app.emit("player:cmd", serde_json::json!({"action": "toggle-play-pause"}))
-                .unwrap_or_else(|e| log::error!("Failed to emit podcast play/pause: {e}"));
+            app.emit(
+                "player:cmd",
+                serde_json::json!({"action": "toggle-play-pause"}),
+            )
+            .unwrap_or_else(|e| log::error!("Failed to emit podcast play/pause: {e}"));
         }
         MENU_PODCAST_NEXT_ID => {
             log::debug!("Tray menu: Podcast Next");
@@ -372,74 +370,14 @@ fn update_tray_icon(app: &AppHandle, state: &TrayIconState) -> Result<(), String
 
 /// Get the icon based on current state and platform
 fn get_icon(
-    app: &AppHandle,
+    _app: &AppHandle,
     _state: &TrayIconState,
 ) -> Result<tauri::image::Image<'static>, String> {
-    log::info!("Loading tray icon...");
-
-    // Try multiple icon paths in order of preference
-    let mut icon_paths = Vec::new();
-
-    // 1. Check CARGO_MANIFEST_DIR first (most reliable in dev)
-    if let Ok(manifest_dir) = std::env::var("CARGO_MANIFEST_DIR") {
-        let manifest_path = std::path::PathBuf::from(manifest_dir.clone());
-        icon_paths.push(manifest_path.join("icons/32x32.png"));
-        icon_paths.push(manifest_path.join("icons/icon.png"));
-        log::debug!("CARGO_MANIFEST_DIR: {:?}", manifest_dir);
-    }
-
-    // 2. Try resource directory (production builds)
-    if let Ok(resource_path) = app.path().resource_dir() {
-        icon_paths.push(resource_path.join("icons/32x32.png"));
-        icon_paths.push(resource_path.join("icons/icon.png"));
-        log::debug!("Resource dir: {:?}", resource_path);
-    }
-
-    // 3. Try workspace root (fallback for dev)
-    if let Ok(exe_path) = std::env::current_exe() {
-        let workspace_root = exe_path
-            .ancestors()
-            .nth(3)
-            .map(|p| p.to_path_buf())
-            .unwrap_or_else(|| std::path::PathBuf::from("."));
-        icon_paths.push(workspace_root.join("src-tauri/icons/32x32.png"));
-        icon_paths.push(workspace_root.join("src-tauri/icons/icon.png"));
-        log::debug!("Workspace root: {:?}", workspace_root);
-    }
-
-    // 4. Try relative paths (last resort)
-    icon_paths.push(std::path::PathBuf::from("src-tauri/icons/32x32.png"));
-    icon_paths.push(std::path::PathBuf::from("src-tauri/icons/icon.png"));
-
-    let mut icon_bytes = None;
-    let mut found_path = None;
-
-    for path in &icon_paths {
-        log::debug!("Trying icon path: {:?}", path);
-        if let Ok(bytes) = std::fs::read(path) {
-            icon_bytes = Some(bytes);
-            found_path = Some(path.clone());
-            log::info!("✓ Found icon at: {:?}", path);
-            break;
-        }
-    }
-
-    let icon_bytes = icon_bytes.ok_or_else(|| {
-        let paths_str: Vec<String> = icon_paths.iter().map(|p| p.display().to_string()).collect();
-        format!(
-            "Could not find tray icon at any of these paths:\n  {}",
-            paths_str.join("\n  ")
-        )
-    })?;
-
-    log::info!("✓ Successfully loaded tray icon from: {:?}", found_path);
-
-    // Use from_bytes to properly decode PNG data into RGBA pixels
-    let icon = tauri::image::Image::from_bytes(&icon_bytes)
-        .map_err(|e| format!("Failed to decode tray icon: {e}"))?
-        .to_owned();
-
-    Ok(icon)
+    // Embed icon at compile time — no filesystem access needed
+    let icon_bytes = include_bytes!("../../icons/32x32.png");
+    tauri::image::Image::from_bytes(icon_bytes)
+        .map_err(|e| format!("Failed to decode tray icon: {e}"))
+        .map(|img| img.to_owned())
 }
 
 // ============================================================================
@@ -554,9 +492,7 @@ pub fn cleanup_tray() {
 #[specta::specta]
 pub async fn handle_close_request(app: AppHandle) -> Result<(), String> {
     let prefs = crate::commands::preferences::load_preferences_sync(&app);
-    let behavior = prefs
-        .map(|p| p.close_behavior)
-        .unwrap_or_default();
+    let behavior = prefs.map(|p| p.close_behavior).unwrap_or_default();
 
     match behavior {
         CloseBehavior::MinimizeToTray => {

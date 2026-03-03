@@ -94,7 +94,7 @@ mod tests {
     async fn test_get_categories_empty_db() {
         let pool = setup_test_db().await;
 
-        let categories = super::super::get_categories_from_db(&pool)
+        let categories = super::super::get_categories_from_db(&pool, 1)
             .await
             .expect("get_categories_from_db should not error");
 
@@ -108,7 +108,7 @@ mod tests {
 
         insert_category(&pool, 1, "Technology", &now).await;
 
-        let categories = super::super::get_categories_from_db(&pool)
+        let categories = super::super::get_categories_from_db(&pool, 1)
             .await
             .expect("get_categories_from_db should not error");
 
@@ -125,7 +125,7 @@ mod tests {
     async fn test_get_feeds_empty_db() {
         let pool = setup_test_db().await;
 
-        let feeds = super::super::get_feeds_from_db(&pool)
+        let feeds = super::super::get_feeds_from_db(&pool, 1)
             .await
             .expect("get_feeds_from_db should not error");
 
@@ -149,7 +149,7 @@ mod tests {
         )
         .await;
 
-        let feeds = super::super::get_feeds_from_db(&pool)
+        let feeds = super::super::get_feeds_from_db(&pool, 1)
             .await
             .expect("get_feeds_from_db should not error");
 
@@ -172,7 +172,7 @@ mod tests {
     async fn test_get_category_feeds_empty_db() {
         let pool = setup_test_db().await;
 
-        let feeds = super::super::get_category_feeds_from_db(&pool, 1)
+        let feeds = super::super::get_category_feeds_from_db(&pool, 1, 1)
             .await
             .expect("get_category_feeds_from_db should not error");
 
@@ -208,7 +208,7 @@ mod tests {
         .await;
 
         // Get feeds for category 1
-        let feeds = super::super::get_category_feeds_from_db(&pool, 1)
+        let feeds = super::super::get_category_feeds_from_db(&pool, 1, 1)
             .await
             .expect("get_category_feeds_from_db should not error");
 
@@ -224,7 +224,7 @@ mod tests {
         let pool = setup_test_db().await;
         let filters = EntryFilters::default();
 
-        let response = super::super::get_entries_from_db(&pool, &filters)
+        let response = super::super::get_entries_from_db(&pool, &filters, 1)
             .await
             .expect("get_entries_from_db should not error");
 
@@ -254,7 +254,7 @@ mod tests {
         insert_entry(&pool, 1, 1, "Test Article", "unread", false, &now, None).await;
 
         let filters = EntryFilters::default();
-        let response = super::super::get_entries_from_db(&pool, &filters)
+        let response = super::super::get_entries_from_db(&pool, &filters, 1)
             .await
             .expect("get_entries_from_db should not error");
 
@@ -299,7 +299,7 @@ mod tests {
         )
         .await;
 
-        let response = super::super::get_entries_from_db(&pool, &EntryFilters::default())
+        let response = super::super::get_entries_from_db(&pool, &EntryFilters::default(), 1)
             .await
             .expect("get_entries_from_db should not error");
 
@@ -347,7 +347,7 @@ mod tests {
         )
         .await;
 
-        let response = super::super::get_entries_list_from_db(&pool, &EntryFilters::default())
+        let response = super::super::get_entries_list_from_db(&pool, &EntryFilters::default(), 1)
             .await
             .expect("get_entries_list_from_db should not error");
 
@@ -502,7 +502,7 @@ mod tests {
             ..EntryFilters::default()
         };
 
-        let response = super::super::get_entries_from_db(&pool, &filters)
+        let response = super::super::get_entries_from_db(&pool, &filters, 1)
             .await
             .expect("get_entries_from_db should not error");
 
@@ -535,7 +535,7 @@ mod tests {
             ..EntryFilters::default()
         };
 
-        let response = super::super::get_entries_from_db(&pool, &filters)
+        let response = super::super::get_entries_from_db(&pool, &filters, 1)
             .await
             .expect("get_entries_from_db should not error");
 
@@ -579,7 +579,7 @@ mod tests {
             ..EntryFilters::default()
         };
 
-        let response = super::super::get_entries_from_db(&pool, &filters)
+        let response = super::super::get_entries_from_db(&pool, &filters, 1)
             .await
             .expect("get_entries_from_db should not error");
 
@@ -632,7 +632,7 @@ mod tests {
             ..EntryFilters::default()
         };
 
-        let response = super::super::get_entries_from_db(&pool, &filters)
+        let response = super::super::get_entries_from_db(&pool, &filters, 1)
             .await
             .expect("get_entries_from_db should not error");
 
@@ -677,7 +677,7 @@ mod tests {
             ..EntryFilters::default()
         };
 
-        let response = super::super::get_entries_from_db(&pool, &filters)
+        let response = super::super::get_entries_from_db(&pool, &filters, 1)
             .await
             .expect("get_entries_from_db should not error");
 

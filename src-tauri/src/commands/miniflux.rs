@@ -12,6 +12,7 @@ use tokio::sync::Mutex;
 #[derive(Clone)]
 pub struct MinifluxState {
     pub client: Arc<Mutex<Option<MinifluxClient>>>,
+    pub user_id: Arc<Mutex<Option<i64>>>,
 }
 
 /// Connect to Miniflux server
@@ -48,6 +49,11 @@ pub async fn miniflux_connect(
             log::info!("Fetched current user: {} (ID: {})", user.username, user.id);
 
             *state.miniflux.client.lock().await = Some(client);
+            *state.miniflux.user_id.lock().await = Some(user.id);
+
+            // Per-account sync state is preserved across account switches.
+            // Resets happen in save_miniflux_account when server URL changes
+            // or when a brand-new account is created (no sync_state row yet).
 
             log::info!("Saving credentials after successful authentication");
 
@@ -86,6 +92,7 @@ pub async fn miniflux_connect(
 pub async fn miniflux_disconnect(state: State<'_, AppState>) -> Result<(), String> {
     log::info!("Disconnecting from Miniflux server");
     *state.miniflux.client.lock().await = None;
+    *state.miniflux.user_id.lock().await = None;
     Ok(())
 }
 
@@ -110,7 +117,8 @@ pub async fn get_categories(
         .ok_or("Database not initialized")?
         .clone();
 
-    get_categories_from_db(&pool).await
+    let user_id = get_active_user_id(&state).await?;
+    get_categories_from_db(&pool, user_id).await
 }
 
 /// Create a new category
@@ -180,7 +188,8 @@ pub async fn get_feeds(state: State<'_, AppState>) -> Result<Vec<crate::miniflux
         .ok_or("Database not initialized")?
         .clone();
 
-    get_feeds_from_db(&pool).await
+    let user_id = get_active_user_id(&state).await?;
+    get_feeds_from_db(&pool, user_id).await
 }
 
 /// Get feeds by category
@@ -202,7 +211,8 @@ pub async fn get_category_feeds(
         .parse::<i64>()
         .map_err(|e| format!("Invalid category ID: {}", e))?;
 
-    get_category_feeds_from_db(&pool, category_id_parsed).await
+    let user_id = get_active_user_id(&state).await?;
+    get_category_feeds_from_db(&pool, category_id_parsed, user_id).await
 }
 
 /// Get entries with filters
@@ -220,7 +230,8 @@ pub async fn get_entries(
         .ok_or("Database not initialized")?
         .clone();
 
-    get_entries_from_db(&pool, &filters).await
+    let user_id = get_active_user_id(&state).await?;
+    get_entries_from_db(&pool, &filters, user_id).await
 }
 
 /// Get lightweight entries for list UI with content preview
@@ -238,7 +249,8 @@ pub async fn get_entries_list(
         .ok_or("Database not initialized")?
         .clone();
 
-    get_entries_list_from_db(&pool, &filters).await
+    let user_id = get_active_user_id(&state).await?;
+    get_entries_list_from_db(&pool, &filters, user_id).await
 }
 
 /// Get a single entry
@@ -541,7 +553,7 @@ pub async fn delete_feed(state: State<'_, AppState>, id: String) -> Result<(), S
 #[tauri::command]
 #[specta::specta]
 pub async fn get_current_user(state: State<'_, AppState>) -> Result<crate::miniflux::User, String> {
-    log::info!("[get_current_user] Command invoked");
+    log::debug!("[get_current_user] Command invoked");
 
     let guard = state.miniflux.client.lock().await;
     let client = guard.as_ref().ok_or_else(|| {
@@ -549,13 +561,13 @@ pub async fn get_current_user(state: State<'_, AppState>) -> Result<crate::minif
         "Not connected to Miniflux server".to_string()
     })?;
 
-    log::info!("[get_current_user] Client acquired, fetching user from Miniflux API");
+    log::debug!("[get_current_user] Client acquired, fetching user from Miniflux API");
 
     let result = client.get_current_user().await;
 
     match &result {
         Ok(user) => {
-            log::info!(
+            log::debug!(
                 "[get_current_user] Successfully fetched user: id={}, username={}, is_admin={}",
                 user.id,
                 user.username,
@@ -631,6 +643,63 @@ pub async fn delete_user(state: State<'_, AppState>, id: String) -> Result<(), S
         .map_err(|e| format!("Invalid user ID: {}", e))?;
 
     client.delete_user(id_parsed).await
+}
+
+/// Get all API keys
+#[tauri::command]
+#[specta::specta]
+pub async fn get_api_keys(
+    state: State<'_, AppState>,
+) -> Result<Vec<crate::miniflux::ApiKey>, String> {
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    client.get_api_keys().await
+}
+
+/// Create a new API key
+#[tauri::command]
+#[specta::specta]
+pub async fn create_api_key(
+    state: State<'_, AppState>,
+    request: crate::miniflux::ApiKeyCreate,
+) -> Result<crate::miniflux::ApiKey, String> {
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    if request.description.trim().is_empty() {
+        return Err("Description cannot be empty".to_string());
+    }
+
+    client.create_api_key(request).await
+}
+
+/// Delete an API key
+#[tauri::command]
+#[specta::specta]
+pub async fn delete_api_key(state: State<'_, AppState>, id: String) -> Result<(), String> {
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid API key ID: {e}"))?;
+
+    client.delete_api_key(id_parsed).await
+}
+
+/// Save entry to third-party services (Pocket, Wallabag, etc.)
+#[tauri::command]
+#[specta::specta]
+pub async fn save_entry(state: State<'_, AppState>, id: String) -> Result<(), String> {
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid entry ID: {e}"))?;
+
+    client.save_entry(id_parsed).await
 }
 
 /// Get counters
@@ -818,16 +887,28 @@ pub async fn get_feed_icon_data(
     }
 }
 
+pub async fn get_active_user_id(state: &AppState) -> Result<i64, String> {
+    state
+        .miniflux
+        .user_id
+        .lock()
+        .await
+        .ok_or_else(|| "Not connected to Miniflux server".to_string())
+}
+
 pub async fn get_categories_from_db(
     pool: &SqlitePool,
+    user_id: i64,
 ) -> Result<Vec<crate::miniflux::Category>, String> {
     let rows = sqlx::query(
         r#"
         SELECT id, user_id, title, hide_globally, created_at, updated_at
         FROM categories
+        WHERE user_id = ?
         ORDER BY title ASC
         "#,
     )
+    .bind(user_id)
     .fetch_all(pool)
     .await
     .map_err(|e| format!("Failed to fetch categories: {e}"))?;
@@ -847,36 +928,9 @@ pub async fn get_categories_from_db(
     Ok(categories)
 }
 
-pub async fn get_feeds_from_db(pool: &SqlitePool) -> Result<Vec<crate::miniflux::Feed>, String> {
-    let rows = sqlx::query(
-        r#"
-        SELECT f.id, f.user_id, f.title, f.site_url, f.feed_url, f.category_id,
-               f.checked_at, f.etag_header, f.last_modified_header, f.parsing_error_message,
-               f.parsing_error_count, f.scraper_rules, f.rewrite_rules, f.crawler,
-               f.blocklist_rules, f.keeplist_rules, f.user_agent, f.username, f.password,
-               f.disabled, f.ignore_http_cache, f.fetch_via_proxy, f.no_media_player,
-               f.allow_self_signed_certificates, f.urlrewrite_rules, f.cookie,
-               f.apprise_service_urls, f.hide_globally, f.created_at, f.updated_at,
-               c.id as cat_id, c.user_id as cat_user_id, c.title as cat_title,
-               c.hide_globally as cat_hide_globally, c.created_at as cat_created_at,
-               c.updated_at as cat_updated_at
-        FROM feeds f
-        LEFT JOIN categories c ON f.category_id = c.id
-        ORDER BY f.title ASC
-        "#,
-    )
-    .fetch_all(pool)
-    .await
-    .map_err(|e| format!("Failed to fetch feeds: {e}"))?;
-
-    let feeds = rows.iter().map(build_feed_from_row).collect();
-
-    Ok(feeds)
-}
-
-pub async fn get_category_feeds_from_db(
+pub async fn get_feeds_from_db(
     pool: &SqlitePool,
-    category_id: i64,
+    user_id: i64,
 ) -> Result<Vec<crate::miniflux::Feed>, String> {
     let rows = sqlx::query(
         r#"
@@ -892,11 +946,45 @@ pub async fn get_category_feeds_from_db(
                c.updated_at as cat_updated_at
         FROM feeds f
         LEFT JOIN categories c ON f.category_id = c.id
-        WHERE f.category_id = ?
+        WHERE f.user_id = ?
+        ORDER BY f.title ASC
+        "#,
+    )
+    .bind(user_id)
+    .fetch_all(pool)
+    .await
+    .map_err(|e| format!("Failed to fetch feeds: {e}"))?;
+
+    let feeds = rows.iter().map(build_feed_from_row).collect();
+
+    Ok(feeds)
+}
+
+pub async fn get_category_feeds_from_db(
+    pool: &SqlitePool,
+    category_id: i64,
+    user_id: i64,
+) -> Result<Vec<crate::miniflux::Feed>, String> {
+    let rows = sqlx::query(
+        r#"
+        SELECT f.id, f.user_id, f.title, f.site_url, f.feed_url, f.category_id,
+               f.checked_at, f.etag_header, f.last_modified_header, f.parsing_error_message,
+               f.parsing_error_count, f.scraper_rules, f.rewrite_rules, f.crawler,
+               f.blocklist_rules, f.keeplist_rules, f.user_agent, f.username, f.password,
+               f.disabled, f.ignore_http_cache, f.fetch_via_proxy, f.no_media_player,
+               f.allow_self_signed_certificates, f.urlrewrite_rules, f.cookie,
+               f.apprise_service_urls, f.hide_globally, f.created_at, f.updated_at,
+               c.id as cat_id, c.user_id as cat_user_id, c.title as cat_title,
+               c.hide_globally as cat_hide_globally, c.created_at as cat_created_at,
+               c.updated_at as cat_updated_at
+        FROM feeds f
+        LEFT JOIN categories c ON f.category_id = c.id
+        WHERE f.category_id = ? AND f.user_id = ?
         ORDER BY f.title ASC
         "#,
     )
     .bind(category_id)
+    .bind(user_id)
     .fetch_all(pool)
     .await
     .map_err(|e| format!("Failed to fetch category feeds: {e}"))?;
@@ -909,21 +997,24 @@ pub async fn get_category_feeds_from_db(
 pub async fn get_entries_from_db(
     pool: &SqlitePool,
     filters: &EntryFilters,
+    user_id: i64,
 ) -> Result<crate::miniflux::EntryResponse, String> {
-    get_entries_from_db_with_projection(pool, filters, false).await
+    get_entries_from_db_with_projection(pool, filters, false, user_id).await
 }
 
 pub async fn get_entries_list_from_db(
     pool: &SqlitePool,
     filters: &EntryFilters,
+    user_id: i64,
 ) -> Result<crate::miniflux::EntryResponse, String> {
-    get_entries_from_db_with_projection(pool, filters, true).await
+    get_entries_from_db_with_projection(pool, filters, true, user_id).await
 }
 
 async fn get_entries_from_db_with_projection(
     pool: &SqlitePool,
     filters: &EntryFilters,
     use_content_preview: bool,
+    user_id: i64,
 ) -> Result<crate::miniflux::EntryResponse, String> {
     let mut count_query: QueryBuilder<sqlx::Sqlite> = QueryBuilder::new(
         r#"
@@ -931,10 +1022,11 @@ async fn get_entries_from_db_with_projection(
         FROM entries e
         JOIN feeds f ON e.feed_id = f.id
         LEFT JOIN categories c ON f.category_id = c.id
-        WHERE 1=1
+        WHERE e.user_id =
         "#,
     );
 
+    count_query.push_bind(user_id);
     apply_entry_filters(&mut count_query, filters);
 
     let total: i64 = count_query
@@ -982,10 +1074,11 @@ async fn get_entries_from_db_with_projection(
         FROM entries e
         JOIN feeds f ON e.feed_id = f.id
         LEFT JOIN categories c ON f.category_id = c.id
-        WHERE 1=1
+        WHERE e.user_id =
         "#,
     ));
 
+    query.push_bind(user_id);
     apply_entry_filters(&mut query, filters);
 
     query.push(" ORDER BY e.published_at DESC");

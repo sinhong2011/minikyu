@@ -165,6 +165,9 @@ next-env.d.ts
 src-tauri/target/
 src-tauri/Cargo.lock
 
+# CI scripts with sensitive logic
+scripts/prepare-apple-certificate.sh
+
 # Tauri generated files
 src-tauri/gen/schemas
 

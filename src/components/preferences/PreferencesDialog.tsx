@@ -498,7 +498,10 @@ export function PreferencesDialog() {
                   <SidebarGroupContent>
                     <SidebarMenu className="gap-1">
                       {serverSettingsItems
-                        .filter((item) => item.id !== 'users' || (currentUser?.is_admin ?? false))
+                        .filter((item) => {
+                          const adminOnly = item.id === 'users' || item.id === 'token';
+                          return !adminOnly || (currentUser?.is_admin ?? false);
+                        })
                         .map((item) => (
                           <SidebarMenuItem key={item.id}>
                             <SidebarMenuButton
@@ -565,7 +568,10 @@ export function PreferencesDialog() {
                     </div>
                     <div className="grid grid-cols-2 gap-1">
                       {serverSettingsItems
-                        .filter((item) => item.id !== 'users' || (currentUser?.is_admin ?? false))
+                        .filter((item) => {
+                          const adminOnly = item.id === 'users' || item.id === 'token';
+                          return !adminOnly || (currentUser?.is_admin ?? false);
+                        })
                         .map((item) => (
                           <Button
                             key={item.id}
@@ -618,7 +624,12 @@ export function PreferencesDialog() {
               {activePane === 'about' && <AboutPane />}
 
               {/* Server Settings - shown when connected, otherwise show message */}
-              {activePane === 'token' && (isConnected ? <ApiTokenPane /> : <ConnectionStatePane />)}
+              {activePane === 'token' &&
+                (isConnected ? (
+                  <ApiTokenPane isAdmin={currentUser?.is_admin ?? false} />
+                ) : (
+                  <ConnectionStatePane />
+                ))}
 
               {/* Categories pane */}
               {activePane === 'categories' &&

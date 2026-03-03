@@ -3,6 +3,7 @@
 export * from '../../hooks/use-command-context';
 export * from './registry';
 
+import { accountCommands } from './account-commands';
 import { articleCommands } from './article-commands';
 import { feedCommands } from './feed-commands';
 import { helpCommands } from './help-commands';
@@ -19,6 +20,7 @@ import { windowCommands } from './window-commands';
  * This should be called once during app initialization.
  */
 export function initializeCommandSystem(): void {
+  registerCommands(accountCommands);
   registerCommands(navigationCommands);
   registerCommands(windowCommands);
   registerCommands(notificationCommands);
@@ -35,6 +37,7 @@ export function initializeCommandSystem(): void {
 }
 
 export {
+  accountCommands,
   navigationCommands,
   windowCommands,
   notificationCommands,

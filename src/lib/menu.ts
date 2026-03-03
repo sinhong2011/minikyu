@@ -1,6 +1,8 @@
 import { msg } from '@lingui/core/macro';
 import { Menu, MenuItem, PredefinedMenuItem, Submenu } from '@tauri-apps/api/menu';
+import { confirm } from '@tauri-apps/plugin-dialog';
 import { i18n } from '@/i18n';
+import { resetAccountState } from '@/lib/account-reset';
 import { logger } from '@/lib/logger';
 import { notifications } from '@/lib/notifications';
 import { commands } from '@/lib/tauri-bindings';
@@ -98,6 +100,17 @@ export async function buildAppMenu(): Promise<Menu> {
           text: _(msg`Refresh All Feeds`),
           accelerator: 'CmdOrCtrl+Shift+R',
           action: handleRefreshAllFeeds,
+        }),
+        await PredefinedMenuItem.new({ item: 'Separator' }),
+        await MenuItem.new({
+          id: 'add-account',
+          text: _(msg`Add Account...`),
+          action: handleAddAccount,
+        }),
+        await MenuItem.new({
+          id: 'delete-account',
+          text: _(msg`Delete Account...`),
+          action: handleDeleteAccount,
         }),
         await PredefinedMenuItem.new({ item: 'Separator' }),
         await PredefinedMenuItem.new({ item: 'CloseWindow' }),
@@ -465,6 +478,30 @@ function handleImportOpml(): void {
 
 function handleExportOpml(): void {
   useUIStore.getState().openPreferencesToPane('feeds');
+}
+
+function handleAddAccount(): void {
+  useUIStore.getState().setShowConnectionDialog(true);
+}
+
+async function handleDeleteAccount(): Promise<void> {
+  const _ = i18n._.bind(i18n);
+  const result = await commands.getActiveMinifluxAccount();
+  if (result.status !== 'ok' || !result.data) return;
+
+  const confirmed = await confirm(
+    _(
+      msg`Are you sure you want to delete this account? This will remove all credentials and data associated with this account.`
+    ),
+    { title: _(msg`Delete Account`), kind: 'warning' }
+  );
+
+  if (!confirmed) return;
+
+  const deleteResult = await commands.deleteMinifluxAccount(result.data.id);
+  if (deleteResult.status === 'ok') {
+    await resetAccountState();
+  }
 }
 
 async function handleSyncNow(): Promise<void> {

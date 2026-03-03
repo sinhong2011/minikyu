@@ -14,8 +14,8 @@ use std::time::Instant;
 use tauri::{AppHandle, Emitter};
 
 use crate::commands::preferences::load_preferences_sync;
-use crate::utils::llm_stream;
 use crate::types::ReaderTranslationProviderSettings;
+use crate::utils::llm_stream;
 
 const KEYRING_SERVICE_NAME: &str = "minikyu";
 const TRANSLATION_KEYRING_KEY_PREFIX: &str = "minikyu:translation";
@@ -2081,7 +2081,10 @@ async fn call_translation_llm_stream(
                     req = req.bearer_auth(key);
                 }
             }
-            let response = req.send().await.map_err(|e| format!("Ollama request failed: {e}"))?;
+            let response = req
+                .send()
+                .await
+                .map_err(|e| format!("Ollama request failed: {e}"))?;
             let status = response.status();
             if !status.is_success() {
                 let body = response.text().await.unwrap_or_default();

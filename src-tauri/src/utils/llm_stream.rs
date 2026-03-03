@@ -57,10 +57,7 @@ where
 
 /// Parse an SSE stream from Anthropic's messages endpoint.
 /// Calls `on_chunk` for each text delta.
-pub async fn stream_anthropic<F>(
-    response: Response,
-    on_chunk: &mut F,
-) -> Result<String, String>
+pub async fn stream_anthropic<F>(response: Response, on_chunk: &mut F) -> Result<String, String>
 where
     F: FnMut(&str) + Send,
 {
@@ -117,10 +114,7 @@ where
 
 /// Parse a streaming response from Gemini's generateContent endpoint
 /// with `?alt=sse`.
-pub async fn stream_gemini<F>(
-    response: Response,
-    on_chunk: &mut F,
-) -> Result<String, String>
+pub async fn stream_gemini<F>(response: Response, on_chunk: &mut F) -> Result<String, String>
 where
     F: FnMut(&str) + Send,
 {
@@ -163,10 +157,7 @@ where
 }
 
 /// Parse Ollama streaming response (NDJSON, one JSON object per line).
-pub async fn stream_ollama<F>(
-    response: Response,
-    on_chunk: &mut F,
-) -> Result<String, String>
+pub async fn stream_ollama<F>(response: Response, on_chunk: &mut F) -> Result<String, String>
 where
     F: FnMut(&str) + Send,
 {
@@ -201,7 +192,11 @@ where
                         on_chunk(text);
                     }
                 }
-                if parsed.get("done").and_then(|d| d.as_bool()).unwrap_or(false) {
+                if parsed
+                    .get("done")
+                    .and_then(|d| d.as_bool())
+                    .unwrap_or(false)
+                {
                     return Ok(accumulated);
                 }
             }

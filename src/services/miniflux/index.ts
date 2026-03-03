@@ -5,6 +5,7 @@
  * All services follow the project's state management patterns.
  */
 
+export * from './api-keys';
 export * from './auth';
 export * from './categories';
 export * from './counters';
