@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.3.0](https://github.com/sinhong2011/minikyu/compare/v1.2.0...v1.3.0) (2026-03-04)
+
+
+### Bug Fixes
+
+* Isolate account data and add multi-account support ([#32](https://github.com/sinhong2011/minikyu/issues/32)) ([d179e9f](https://github.com/sinhong2011/minikyu/commit/d179e9fa81202c389b53fef26dbdbbd1931f43cb))
+* **ci:** Format tauri config for Biome check ([#27](https://github.com/sinhong2011/minikyu/issues/27)) ([773e53b](https://github.com/sinhong2011/minikyu/commit/773e53b4d288f33f5d18627586964e53544f7844))
+* **ci:** Use heredoc syntax for signing secrets ([#28](https://github.com/sinhong2011/minikyu/issues/28)) ([31713e9](https://github.com/sinhong2011/minikyu/commit/31713e914169bd66015a8df1e5a975be73bd80f4))
+* **ci:** Fix release workflow YAML syntax for signing step ([#30](https://github.com/sinhong2011/minikyu/issues/30)) ([e00d3e1](https://github.com/sinhong2011/minikyu/commit/e00d3e1947521b3d52febb85e64486452641ebc3))
+* **ci:** Fix release-please component mismatch and migration test ([#33](https://github.com/sinhong2011/minikyu/issues/33)) ([eee21b4](https://github.com/sinhong2011/minikyu/commit/eee21b49f1c7c9dd5ad55af5e515762a3f7890b9))
+* **ci:** Fix lint errors and release tag prefix ([#35](https://github.com/sinhong2011/minikyu/issues/35)) ([b771227](https://github.com/sinhong2011/minikyu/commit/b77122765ee6a68eab9e728b85bb9b825969811a))
+* **test:** Use dispatchEvent for mousedown test to fix CI flakiness ([#29](https://github.com/sinhong2011/minikyu/issues/29)) ([14153d9](https://github.com/sinhong2011/minikyu/commit/14153d9483a47c361e50f50e2a3828acf90ebfc1))
+
 ## [1.2.0](https://github.com/sinhong2011/minikyu/compare/v1.1.0...v1.2.0) (2026-03-02)
 
 
