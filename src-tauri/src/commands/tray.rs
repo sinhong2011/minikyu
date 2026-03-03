@@ -372,74 +372,14 @@ fn update_tray_icon(app: &AppHandle, state: &TrayIconState) -> Result<(), String
 
 /// Get the icon based on current state and platform
 fn get_icon(
-    app: &AppHandle,
+    _app: &AppHandle,
     _state: &TrayIconState,
 ) -> Result<tauri::image::Image<'static>, String> {
-    log::info!("Loading tray icon...");
-
-    // Try multiple icon paths in order of preference
-    let mut icon_paths = Vec::new();
-
-    // 1. Check CARGO_MANIFEST_DIR first (most reliable in dev)
-    if let Ok(manifest_dir) = std::env::var("CARGO_MANIFEST_DIR") {
-        let manifest_path = std::path::PathBuf::from(manifest_dir.clone());
-        icon_paths.push(manifest_path.join("icons/32x32.png"));
-        icon_paths.push(manifest_path.join("icons/icon.png"));
-        log::debug!("CARGO_MANIFEST_DIR: {:?}", manifest_dir);
-    }
-
-    // 2. Try resource directory (production builds)
-    if let Ok(resource_path) = app.path().resource_dir() {
-        icon_paths.push(resource_path.join("icons/32x32.png"));
-        icon_paths.push(resource_path.join("icons/icon.png"));
-        log::debug!("Resource dir: {:?}", resource_path);
-    }
-
-    // 3. Try workspace root (fallback for dev)
-    if let Ok(exe_path) = std::env::current_exe() {
-        let workspace_root = exe_path
-            .ancestors()
-            .nth(3)
-            .map(|p| p.to_path_buf())
-            .unwrap_or_else(|| std::path::PathBuf::from("."));
-        icon_paths.push(workspace_root.join("src-tauri/icons/32x32.png"));
-        icon_paths.push(workspace_root.join("src-tauri/icons/icon.png"));
-        log::debug!("Workspace root: {:?}", workspace_root);
-    }
-
-    // 4. Try relative paths (last resort)
-    icon_paths.push(std::path::PathBuf::from("src-tauri/icons/32x32.png"));
-    icon_paths.push(std::path::PathBuf::from("src-tauri/icons/icon.png"));
-
-    let mut icon_bytes = None;
-    let mut found_path = None;
-
-    for path in &icon_paths {
-        log::debug!("Trying icon path: {:?}", path);
-        if let Ok(bytes) = std::fs::read(path) {
-            icon_bytes = Some(bytes);
-            found_path = Some(path.clone());
-            log::info!("✓ Found icon at: {:?}", path);
-            break;
-        }
-    }
-
-    let icon_bytes = icon_bytes.ok_or_else(|| {
-        let paths_str: Vec<String> = icon_paths.iter().map(|p| p.display().to_string()).collect();
-        format!(
-            "Could not find tray icon at any of these paths:\n  {}",
-            paths_str.join("\n  ")
-        )
-    })?;
-
-    log::info!("✓ Successfully loaded tray icon from: {:?}", found_path);
-
-    // Use from_bytes to properly decode PNG data into RGBA pixels
-    let icon = tauri::image::Image::from_bytes(&icon_bytes)
-        .map_err(|e| format!("Failed to decode tray icon: {e}"))?
-        .to_owned();
-
-    Ok(icon)
+    // Embed icon at compile time — no filesystem access needed
+    let icon_bytes = include_bytes!("../../icons/32x32.png");
+    tauri::image::Image::from_bytes(icon_bytes)
+        .map_err(|e| format!("Failed to decode tray icon: {e}"))
+        .map(|img| img.to_owned())
 }
 
 // ============================================================================
