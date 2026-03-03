@@ -7,7 +7,7 @@
   "packages": {
     ".": {
       "release-type": "node",
-      "package-name": "minikyu",
+      "component": "",
       "include-component-in-tag": false,
       "changelog-path": "CHANGELOG.md",
       "extra-files": ["src-tauri/tauri.conf.json", "src-tauri/Cargo.toml"]
