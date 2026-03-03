@@ -250,7 +250,7 @@ export function ApiTokenPane({ isAdmin }: ApiTokenPaneProps) {
                 <Button
                   size="sm"
                   variant="outline"
-                  onClick={() => handleCopyToken(createdKey.token!)}
+                  onClick={() => createdKey.token && handleCopyToken(createdKey.token)}
                 >
                   <HugeiconsIcon icon={Copy01Icon} className="size-4" />
                 </Button>

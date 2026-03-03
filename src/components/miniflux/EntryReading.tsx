@@ -621,6 +621,17 @@ export function EntryReading({
     return () => viewport.removeEventListener('scroll', handleScroll);
   }, [cancelScrollAnimation, readingContent.tocItems, scrollY, showToc]);
 
+  const handleTranslationEnabledChange = useCallback(
+    (enabled: boolean) => {
+      setTranslationEnabled(enabled);
+      setTranslationAutoEnabled(enabled);
+      if (enabled) {
+        setTranslateRequestToken((previousToken) => previousToken + 1);
+      }
+    },
+    [setTranslationAutoEnabled]
+  );
+
   useEffect(() => {
     const match = (id: string, e: KeyboardEvent) =>
       matchesShortcut(e, shortcutsRef.current[id] ?? '');
@@ -764,6 +775,7 @@ export function EntryReading({
     setLineHeight,
     setLineWidth,
     setReaderTheme,
+    handleTranslationEnabledChange,
   ]);
 
   useEffect(() => {
@@ -777,17 +789,6 @@ export function EntryReading({
       cancelScrollAnimation();
     };
   }, [cancelScrollAnimation]);
-
-  const handleTranslationEnabledChange = useCallback(
-    (enabled: boolean) => {
-      setTranslationEnabled(enabled);
-      setTranslationAutoEnabled(enabled);
-      if (enabled) {
-        setTranslateRequestToken((previousToken) => previousToken + 1);
-      }
-    },
-    [setTranslationAutoEnabled]
-  );
 
   // Listen for command palette / menu bar translation events
   useEffect(() => {
@@ -1072,7 +1073,7 @@ export function EntryReading({
                 />
                 {articleSummary.summary ? _(msg`Re-summarize`) : _(msg`Summarize Article`)}
                 <ContextMenuShortcut>
-                  {formatShortcutDisplay(shortcuts['summarize'])}
+                  {formatShortcutDisplay(shortcuts.summarize)}
                 </ContextMenuShortcut>
               </ContextMenuItem>
             </ContextMenuGroup>
