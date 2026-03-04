@@ -141,7 +141,7 @@ msgstr "12-hour"
 msgid "24-hour"
 msgstr "24-hour"
 
-#: src/components/preferences/panes/AboutPane.tsx:100
+#: src/components/preferences/panes/AboutPane.tsx:94
 msgid "A calm, focused space for your Miniflux reading. Catch up faster, stay organized, and enjoy every feed."
 msgstr "A calm, focused space for your Miniflux reading. Catch up faster, stay organized, and enjoy every feed."
 
@@ -532,7 +532,7 @@ msgstr "Browse categories"
 msgid "Browser content"
 msgstr "Browser content"
 
-#: src/components/preferences/panes/AboutPane.tsx:194
+#: src/components/preferences/panes/AboutPane.tsx:188
 msgid "Build date"
 msgstr "Build date"
 
@@ -635,7 +635,7 @@ msgstr "Check for Updates..."
 msgid "Check if a newer version is available"
 msgstr "Check if a newer version is available"
 
-#: src/components/preferences/panes/AboutPane.tsx:134
+#: src/components/preferences/panes/AboutPane.tsx:126
 msgid "Check latest version"
 msgstr "Check latest version"
 
@@ -655,7 +655,7 @@ msgstr "Checked"
 msgid "Checking for updates..."
 msgstr "Checking for updates..."
 
-#: src/components/preferences/panes/AboutPane.tsx:134
+#: src/components/preferences/panes/AboutPane.tsx:126
 msgid "Checking..."
 msgstr "Checking..."
 
@@ -851,7 +851,7 @@ msgstr "Color Theme"
 msgid "Command Palette"
 msgstr "Command Palette"
 
-#: src/components/preferences/panes/AboutPane.tsx:185
+#: src/components/preferences/panes/AboutPane.tsx:179
 msgid "Commit"
 msgstr "Commit"
 
@@ -887,7 +887,7 @@ msgstr "Connect to a Miniflux server"
 msgid "Connect to Miniflux"
 msgstr "Connect to Miniflux"
 
-#: src/components/preferences/panes/AboutPane.tsx:174
+#: src/components/preferences/panes/AboutPane.tsx:168
 msgid "Connect to Miniflux to see server version."
 msgstr "Connect to Miniflux to see server version."
 
@@ -1014,7 +1014,7 @@ msgstr "Could not find podcast entry"
 msgid "Could not load podcast entry"
 msgstr "Could not load podcast entry"
 
-#: src/components/preferences/panes/AboutPane.tsx:167
+#: src/components/preferences/panes/AboutPane.tsx:161
 msgid "Could not load server version information."
 msgstr "Could not load server version information."
 
@@ -1077,7 +1077,7 @@ msgstr "Created"
 msgid "Creating..."
 msgstr "Creating..."
 
-#: src/components/preferences/panes/AboutPane.tsx:107
+#: src/components/preferences/panes/AboutPane.tsx:101
 msgid "Current version"
 msgstr "Current version"
 
@@ -1334,7 +1334,7 @@ msgstr "Download Settings"
 msgid "Download the full article from the original source"
 msgstr "Download the full article from the original source"
 
-#: src/components/preferences/panes/AboutPane.tsx:126
+#: src/components/preferences/panes/AboutPane.tsx:118
 msgid "Download Update"
 msgstr "Download Update"
 
@@ -2093,7 +2093,7 @@ msgstr "Georgia"
 msgid "German"
 msgstr "German"
 
-#: src/components/preferences/panes/AboutPane.tsx:185
+#: src/components/preferences/panes/AboutPane.tsx:179
 msgid "Git commit hash."
 msgstr "Git commit hash."
 
@@ -2306,7 +2306,7 @@ msgstr "Increase speed by 0.25x"
 msgid "Increase volume by 10%"
 msgstr "Increase volume by 10%"
 
-#: src/components/preferences/panes/AboutPane.tsx:108
+#: src/components/preferences/panes/AboutPane.tsx:102
 msgid "Installed version of Minikyu."
 msgstr "Installed version of Minikyu."
 
@@ -2387,7 +2387,7 @@ msgstr "Later"
 msgid "Latest React with concurrent features"
 msgstr "Latest React with concurrent features"
 
-#: src/components/preferences/panes/AboutPane.tsx:113
+#: src/components/preferences/panes/AboutPane.tsx:107
 msgid "Latest version"
 msgstr "Latest version"
 
@@ -2444,7 +2444,7 @@ msgstr "LLM providers"
 msgid "Loading"
 msgstr "Loading"
 
-#: src/components/preferences/panes/AboutPane.tsx:157
+#: src/components/preferences/panes/AboutPane.tsx:151
 msgid "Loading version information..."
 msgstr "Loading version information..."
 
@@ -2572,11 +2572,11 @@ msgstr "min read"
 msgid "Mini player"
 msgstr "Mini player"
 
-#: src/components/preferences/panes/AboutPane.tsx:153
+#: src/components/preferences/panes/AboutPane.tsx:147
 msgid "Miniflux Server"
 msgstr "Miniflux Server"
 
-#: src/components/preferences/panes/AboutPane.tsx:180
+#: src/components/preferences/panes/AboutPane.tsx:174
 msgid "Miniflux server version."
 msgstr "Miniflux server version."
 
@@ -2586,7 +2586,7 @@ msgstr "Miniflux server version."
 
 #: src/components/brand/AppLogo.tsx:31
 #: src/components/brand/AppLogo.tsx:115
-#: src/components/preferences/panes/AboutPane.tsx:94
+#: src/components/preferences/panes/AboutPane.tsx:88
 msgid "Minikyu"
 msgstr "Minikyu"
 
@@ -3580,7 +3580,7 @@ msgstr "Restart Now"
 msgid "Restart to apply the update."
 msgstr "Restart to apply the update."
 
-#: src/components/preferences/panes/AboutPane.tsx:121
+#: src/components/preferences/panes/AboutPane.tsx:113
 msgid "Restart to Update"
 msgstr "Restart to Update"
 
@@ -3632,7 +3632,7 @@ msgid "Rows per page"
 msgstr "Rows per page"
 
 #: src/components/brand/AppLogo.tsx:118
-#: src/components/preferences/panes/AboutPane.tsx:95
+#: src/components/preferences/panes/AboutPane.tsx:89
 msgid "RSS Reader"
 msgstr "RSS Reader"
 
@@ -3648,7 +3648,7 @@ msgstr "Run sync to refresh categories, feeds, and entries"
 msgid "Running"
 msgstr "Running"
 
-#: src/components/preferences/panes/AboutPane.tsx:203
+#: src/components/preferences/panes/AboutPane.tsx:197
 msgid "Runtime"
 msgstr "Runtime"
 
@@ -3846,11 +3846,11 @@ msgstr "Serif"
 msgid "Server"
 msgstr "Server"
 
-#: src/components/preferences/panes/AboutPane.tsx:195
+#: src/components/preferences/panes/AboutPane.tsx:189
 msgid "Server build timestamp."
 msgstr "Server build timestamp."
 
-#: src/components/preferences/panes/AboutPane.tsx:204
+#: src/components/preferences/panes/AboutPane.tsx:198
 msgid "Server runtime environment."
 msgstr "Server runtime environment."
 
@@ -3867,9 +3867,9 @@ msgstr "Server URL"
 msgid "Server URL is required"
 msgstr "Server URL is required"
 
-#: src/components/preferences/panes/AboutPane.tsx:156
-#: src/components/preferences/panes/AboutPane.tsx:166
-#: src/components/preferences/panes/AboutPane.tsx:173
+#: src/components/preferences/panes/AboutPane.tsx:150
+#: src/components/preferences/panes/AboutPane.tsx:160
+#: src/components/preferences/panes/AboutPane.tsx:167
 msgid "Server version"
 msgstr "Server version"
 
@@ -4821,8 +4821,8 @@ msgstr "Verify"
 msgid "Verifying..."
 msgstr "Verifying..."
 
-#: src/components/preferences/panes/AboutPane.tsx:105
-#: src/components/preferences/panes/AboutPane.tsx:180
+#: src/components/preferences/panes/AboutPane.tsx:99
+#: src/components/preferences/panes/AboutPane.tsx:174
 msgid "Version"
 msgstr "Version"
 

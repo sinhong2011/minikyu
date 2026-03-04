@@ -141,7 +141,7 @@ msgstr ""
 msgid "24-hour"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:100
+#: src/components/preferences/panes/AboutPane.tsx:94
 msgid "A calm, focused space for your Miniflux reading. Catch up faster, stay organized, and enjoy every feed."
 msgstr "Miniflux 읽기에 맞춘 차분하고 집중되는 공간입니다. 더 빠르게 따라잡고, 깔끔하게 정리하며, 모든 피드를 편안하게 즐기세요."
 
@@ -532,7 +532,7 @@ msgstr ""
 msgid "Browser content"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:194
+#: src/components/preferences/panes/AboutPane.tsx:188
 msgid "Build date"
 msgstr ""
 
@@ -635,7 +635,7 @@ msgstr "업데이트 확인..."
 msgid "Check if a newer version is available"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:134
+#: src/components/preferences/panes/AboutPane.tsx:126
 msgid "Check latest version"
 msgstr ""
 
@@ -655,7 +655,7 @@ msgstr ""
 msgid "Checking for updates..."
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:134
+#: src/components/preferences/panes/AboutPane.tsx:126
 msgid "Checking..."
 msgstr ""
 
@@ -851,7 +851,7 @@ msgstr "색상 테마"
 msgid "Command Palette"
 msgstr "명령 팔레트"
 
-#: src/components/preferences/panes/AboutPane.tsx:185
+#: src/components/preferences/panes/AboutPane.tsx:179
 msgid "Commit"
 msgstr ""
 
@@ -887,7 +887,7 @@ msgstr ""
 msgid "Connect to Miniflux"
 msgstr "Miniflux에 연결"
 
-#: src/components/preferences/panes/AboutPane.tsx:174
+#: src/components/preferences/panes/AboutPane.tsx:168
 msgid "Connect to Miniflux to see server version."
 msgstr ""
 
@@ -1014,7 +1014,7 @@ msgstr ""
 msgid "Could not load podcast entry"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:167
+#: src/components/preferences/panes/AboutPane.tsx:161
 msgid "Could not load server version information."
 msgstr ""
 
@@ -1077,7 +1077,7 @@ msgstr ""
 msgid "Creating..."
 msgstr "Creating..."
 
-#: src/components/preferences/panes/AboutPane.tsx:107
+#: src/components/preferences/panes/AboutPane.tsx:101
 msgid "Current version"
 msgstr ""
 
@@ -1334,7 +1334,7 @@ msgstr "Download Settings"
 msgid "Download the full article from the original source"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:126
+#: src/components/preferences/panes/AboutPane.tsx:118
 msgid "Download Update"
 msgstr ""
 
@@ -2093,7 +2093,7 @@ msgstr "Georgia"
 msgid "German"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:185
+#: src/components/preferences/panes/AboutPane.tsx:179
 msgid "Git commit hash."
 msgstr ""
 
@@ -2306,7 +2306,7 @@ msgstr ""
 msgid "Increase volume by 10%"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:108
+#: src/components/preferences/panes/AboutPane.tsx:102
 msgid "Installed version of Minikyu."
 msgstr ""
 
@@ -2387,7 +2387,7 @@ msgstr ""
 msgid "Latest React with concurrent features"
 msgstr "동시성 기능이 있는 최신 React"
 
-#: src/components/preferences/panes/AboutPane.tsx:113
+#: src/components/preferences/panes/AboutPane.tsx:107
 msgid "Latest version"
 msgstr ""
 
@@ -2444,7 +2444,7 @@ msgstr ""
 msgid "Loading"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:157
+#: src/components/preferences/panes/AboutPane.tsx:151
 msgid "Loading version information..."
 msgstr ""
 
@@ -2572,11 +2572,11 @@ msgstr ""
 msgid "Mini player"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:153
+#: src/components/preferences/panes/AboutPane.tsx:147
 msgid "Miniflux Server"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:180
+#: src/components/preferences/panes/AboutPane.tsx:174
 msgid "Miniflux server version."
 msgstr ""
 
@@ -2586,7 +2586,7 @@ msgstr ""
 
 #: src/components/brand/AppLogo.tsx:31
 #: src/components/brand/AppLogo.tsx:115
-#: src/components/preferences/panes/AboutPane.tsx:94
+#: src/components/preferences/panes/AboutPane.tsx:88
 msgid "Minikyu"
 msgstr "Minikyu"
 
@@ -3580,7 +3580,7 @@ msgstr ""
 msgid "Restart to apply the update."
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:121
+#: src/components/preferences/panes/AboutPane.tsx:113
 msgid "Restart to Update"
 msgstr ""
 
@@ -3632,7 +3632,7 @@ msgid "Rows per page"
 msgstr "Rows per page"
 
 #: src/components/brand/AppLogo.tsx:118
-#: src/components/preferences/panes/AboutPane.tsx:95
+#: src/components/preferences/panes/AboutPane.tsx:89
 msgid "RSS Reader"
 msgstr "RSS Reader"
 
@@ -3648,7 +3648,7 @@ msgstr "Run sync to refresh categories, feeds, and entries"
 msgid "Running"
 msgstr "Running"
 
-#: src/components/preferences/panes/AboutPane.tsx:203
+#: src/components/preferences/panes/AboutPane.tsx:197
 msgid "Runtime"
 msgstr ""
 
@@ -3846,11 +3846,11 @@ msgstr "Serif"
 msgid "Server"
 msgstr "Server"
 
-#: src/components/preferences/panes/AboutPane.tsx:195
+#: src/components/preferences/panes/AboutPane.tsx:189
 msgid "Server build timestamp."
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:204
+#: src/components/preferences/panes/AboutPane.tsx:198
 msgid "Server runtime environment."
 msgstr ""
 
@@ -3867,9 +3867,9 @@ msgstr "서버 URL"
 msgid "Server URL is required"
 msgstr "서버 URL이 필요합니다"
 
-#: src/components/preferences/panes/AboutPane.tsx:156
-#: src/components/preferences/panes/AboutPane.tsx:166
-#: src/components/preferences/panes/AboutPane.tsx:173
+#: src/components/preferences/panes/AboutPane.tsx:150
+#: src/components/preferences/panes/AboutPane.tsx:160
+#: src/components/preferences/panes/AboutPane.tsx:167
 msgid "Server version"
 msgstr ""
 
@@ -4821,8 +4821,8 @@ msgstr ""
 msgid "Verifying..."
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:105
-#: src/components/preferences/panes/AboutPane.tsx:180
+#: src/components/preferences/panes/AboutPane.tsx:99
+#: src/components/preferences/panes/AboutPane.tsx:174
 msgid "Version"
 msgstr ""
 
