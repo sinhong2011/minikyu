@@ -114,6 +114,18 @@
       "assist": {
         "enabled": false
       }
+    },
+    {
+      "includes": ["src/locales/**/messages.ts"],
+      "linter": {
+        "enabled": false
+      },
+      "formatter": {
+        "enabled": false
+      },
+      "assist": {
+        "enabled": false
+      }
     }
   ]
 }
