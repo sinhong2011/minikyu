@@ -1,6 +1,7 @@
 import {
   Alert01Icon,
   CheckmarkCircle01Icon,
+  Download04Icon,
   InformationCircleIcon,
   Loading03Icon,
   RefreshIcon,
@@ -8,21 +9,13 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { useState } from 'react';
 import { AppLogo } from '@/components/brand/AppLogo';
 import { Button } from '@/components/ui/button';
-import { logger } from '@/lib/logger';
-import { checkLatestVersion } from '@/lib/updates';
+import { checkForUpdate, downloadUpdate, installAndRelaunch } from '@/lib/updater';
 import { cn } from '@/lib/utils';
 import { useMinifluxVersion } from '@/services/miniflux';
+import { useUpdaterStore } from '@/store/updater-store';
 import { SettingsField, SettingsSection } from '../shared/SettingsComponents';
-
-type UpdateCheckState =
-  | { status: 'idle' }
-  | { status: 'checking' }
-  | { status: 'up-to-date' }
-  | { status: 'available'; version: string }
-  | { status: 'error' };
 
 export function AboutPane() {
   const { _ } = useLingui();
@@ -31,35 +24,34 @@ export function AboutPane() {
     isLoading: versionLoading,
     error: versionError,
   } = useMinifluxVersion();
-  const [updateCheckState, setUpdateCheckState] = useState<UpdateCheckState>({ status: 'idle' });
+  const updaterStatus = useUpdaterStore((s) => s.status);
+  const updaterVersion = useUpdaterStore((s) =>
+    s.status === 'available' || s.status === 'downloading' || s.status === 'ready'
+      ? s.version
+      : null
+  );
+  const downloadProgress = useUpdaterStore((s) => (s.status === 'downloading' ? s.progress : 0));
 
-  const handleCheckForUpdates = async () => {
-    setUpdateCheckState({ status: 'checking' });
-
-    try {
-      const latestVersion = await checkLatestVersion();
-      if (latestVersion.status === 'available') {
-        setUpdateCheckState({
-          status: 'available',
-          version: latestVersion.version,
-        });
-      } else {
-        setUpdateCheckState({ status: 'up-to-date' });
-      }
-    } catch (error) {
-      logger.error('Failed to check latest version from About pane', { error });
-      setUpdateCheckState({ status: 'error' });
-    }
-  };
+  const isChecking = updaterStatus === 'checking';
+  const isDownloading = updaterStatus === 'downloading';
+  const isReady = updaterStatus === 'ready';
+  const isInstalling = updaterStatus === 'installing';
+  const isBusy = isChecking || isDownloading || isInstalling;
 
   const updateStatusText = (() => {
-    switch (updateCheckState.status) {
+    switch (updaterStatus) {
       case 'checking':
         return _(msg`Checking for updates...`);
       case 'up-to-date':
         return _(msg`You are running the latest version.`);
       case 'available':
-        return _(msg`Version ${updateCheckState.version} is available.`);
+        return _(msg`Version ${updaterVersion ?? ''} is available.`);
+      case 'downloading':
+        return _(msg`Downloading update v${updaterVersion ?? ''}... ${String(downloadProgress)}%`);
+      case 'ready':
+        return _(msg`Version ${updaterVersion ?? ''} is ready to install.`);
+      case 'installing':
+        return _(msg`Installing update...`);
       case 'error':
         return _(msg`Could not check for updates. Please try again.`);
       default:
@@ -68,13 +60,20 @@ export function AboutPane() {
   })();
 
   const updateStatusIcon = (() => {
-    switch (updateCheckState.status) {
+    switch (updaterStatus) {
       case 'checking':
+      case 'installing':
         return <HugeiconsIcon icon={Loading03Icon} className="size-4 animate-spin text-primary" />;
       case 'up-to-date':
         return <HugeiconsIcon icon={CheckmarkCircle01Icon} className="size-4 text-green-600" />;
       case 'available':
         return <HugeiconsIcon icon={InformationCircleIcon} className="size-4 text-blue-600" />;
+      case 'downloading':
+        return (
+          <HugeiconsIcon icon={Download04Icon} className="size-4 animate-pulse text-blue-600" />
+        );
+      case 'ready':
+        return <HugeiconsIcon icon={CheckmarkCircle01Icon} className="size-4 text-green-600" />;
       case 'error':
         return <HugeiconsIcon icon={Alert01Icon} className="size-4 text-destructive" />;
       default:
@@ -83,8 +82,6 @@ export function AboutPane() {
         );
     }
   })();
-
-  const isChecking = updateCheckState.status === 'checking';
 
   return (
     <div className="space-y-6">
@@ -112,15 +109,41 @@ export function AboutPane() {
         </SettingsField>
 
         <SettingsField label={_(msg`Latest version`)} description={updateStatusText}>
-          <div className="flex items-center gap-2">
-            {updateStatusIcon}
-            <Button variant="outline" onClick={handleCheckForUpdates} disabled={isChecking}>
-              <HugeiconsIcon
-                icon={isChecking ? Loading03Icon : RefreshIcon}
-                className={cn('size-4', isChecking && 'animate-spin')}
-              />
-              {isChecking ? _(msg`Checking...`) : _(msg`Check latest version`)}
-            </Button>
+          <div className="flex flex-col gap-2">
+            <div className="flex items-center gap-2">
+              {updateStatusIcon}
+
+              {isReady ? (
+                <Button variant="default" onClick={() => installAndRelaunch()}>
+                  <HugeiconsIcon icon={RefreshIcon} className="size-4" />
+                  {_(msg`Restart to Update`)}
+                </Button>
+              ) : updaterStatus === 'available' ? (
+                <Button variant="outline" onClick={() => downloadUpdate()}>
+                  <HugeiconsIcon icon={Download04Icon} className="size-4" />
+                  {_(msg`Download Update`)}
+                </Button>
+              ) : (
+                <Button variant="outline" onClick={() => checkForUpdate()} disabled={isBusy}>
+                  <HugeiconsIcon
+                    icon={isChecking ? Loading03Icon : RefreshIcon}
+                    className={cn('size-4', isChecking && 'animate-spin')}
+                  />
+                  {isChecking ? _(msg`Checking...`) : _(msg`Check latest version`)}
+                </Button>
+              )}
+            </div>
+
+            {isDownloading && (
+              <div className="w-full max-w-48">
+                <div className="h-1.5 w-full rounded-full bg-muted">
+                  <div
+                    className="h-1.5 rounded-full bg-primary transition-all duration-300"
+                    style={{ width: `${String(downloadProgress)}%` }}
+                  />
+                </div>
+              </div>
+            )}
           </div>
         </SettingsField>
       </SettingsSection>
