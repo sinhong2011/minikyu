@@ -126,6 +126,12 @@
       "assist": {
         "enabled": false
       }
+    },
+    {
+      "includes": ["src-tauri/tauri.conf.json"],
+      "formatter": {
+        "enabled": false
+      }
     }
   ]
 }
