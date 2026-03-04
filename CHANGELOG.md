@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.2](https://github.com/sinhong2011/minikyu/compare/v1.3.1...v1.3.2) (2026-03-04)
+
+
+### Bug Fixes
+
+* **ci:** Fix biome lint errors and add full lint to pre-push ([#41](https://github.com/sinhong2011/minikyu/issues/41)) ([1b3a635](https://github.com/sinhong2011/minikyu/commit/1b3a63539cc0642a50322fca4c9f695f4b316b17))
+
 ## [1.3.1](https://github.com/sinhong2011/minikyu/compare/v1.3.0...v1.3.1) (2026-03-04)
 
 
