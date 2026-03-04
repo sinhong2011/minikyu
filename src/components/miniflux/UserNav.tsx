@@ -79,16 +79,16 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
   const handleDeleteAccount = async () => {
     if (!currentAccount) return;
 
-    const confirmed = await confirm(
-      _(
-        msg`Are you sure you want to delete this account? This will remove all credentials and data associated with "${currentAccount.username}" on ${getDomain(currentAccount.server_url)}.`
-      ),
-      { title: _(msg`Delete Account`), kind: 'warning' }
-    );
-
-    if (!confirmed) return;
-
     try {
+      const confirmed = await confirm(
+        _(
+          msg`Are you sure you want to delete this account? This will remove all credentials and data associated with "${currentAccount.username}" on ${getDomain(currentAccount.server_url)}.`
+        ),
+        { title: _(msg`Delete Account`), kind: 'warning' }
+      );
+
+      if (!confirmed) return;
+
       const result = await commands.deleteMinifluxAccount(currentAccount.id);
       if (result.status === 'ok') {
         await resetAccountState();

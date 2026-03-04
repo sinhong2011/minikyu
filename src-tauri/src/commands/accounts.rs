@@ -269,9 +269,11 @@ pub async fn get_active_miniflux_account(
 pub async fn delete_miniflux_account(
     _app_handle: AppHandle,
     state: State<'_, AppState>,
-    id: i64,
+    id: String,
 ) -> Result<(), AccountError> {
     log::info!("Deleting account with ID: {}", id);
+
+    let account_id: i64 = id.parse().map_err(|_| AccountError::InvalidCredentials)?;
 
     let pool = state
         .db_pool
@@ -284,12 +286,12 @@ pub async fn delete_miniflux_account(
     // Check if the account being deleted is the active one
     let is_active: Option<bool> =
         sqlx::query_scalar("SELECT is_active FROM miniflux_connections WHERE id = ?")
-            .bind(id)
+            .bind(account_id)
             .fetch_optional(&pool)
             .await
             .map_err(|e| AccountError::DatabaseError(e.to_string()))?;
 
-    delete_miniflux_account_impl(&pool, id).await?;
+    delete_miniflux_account_impl(&pool, account_id).await?;
 
     // Clear cached user_id if the deleted account was active
     if is_active == Some(true) {
