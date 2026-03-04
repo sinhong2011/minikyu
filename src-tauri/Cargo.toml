@@ -3,6 +3,7 @@ name = "minikyu"
 version = "0.2.0-beta.1"
 description = "A Tauri App"
 authors = ["you"]
+license = "MIT"
 edition = "2021"
 rust-version = "1.90"
 

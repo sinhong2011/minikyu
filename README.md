@@ -72,6 +72,8 @@ bun run tauri build
 
 [MIT](LICENSE.md)
 
+Third-party dependency notices: [THIRD_PARTY_NOTICES.md](THIRD_PARTY_NOTICES.md)
+
 ## Star History
 
 <a href="https://www.star-history.com/#sinhong2011/minikyu&type=timeline&legend=bottom-right">
