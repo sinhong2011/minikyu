@@ -62,26 +62,20 @@ export function AboutPane() {
   const updateStatusIcon = (() => {
     switch (updaterStatus) {
       case 'checking':
-        // Button already shows a spinner — skip the status icon to avoid double spinner
-        return null;
       case 'installing':
-        return <HugeiconsIcon icon={Loading03Icon} className="size-4 animate-spin text-primary" />;
+      case 'downloading':
+        // No trailing icon during transient states — button provides visual feedback
+        return null;
       case 'up-to-date':
         return <HugeiconsIcon icon={CheckmarkCircle01Icon} className="size-4 text-green-600" />;
       case 'available':
         return <HugeiconsIcon icon={InformationCircleIcon} className="size-4 text-blue-600" />;
-      case 'downloading':
-        return (
-          <HugeiconsIcon icon={Download04Icon} className="size-4 animate-pulse text-blue-600" />
-        );
       case 'ready':
         return <HugeiconsIcon icon={CheckmarkCircle01Icon} className="size-4 text-green-600" />;
       case 'error':
         return <HugeiconsIcon icon={Alert01Icon} className="size-4 text-destructive" />;
       default:
-        return (
-          <HugeiconsIcon icon={InformationCircleIcon} className="size-4 text-muted-foreground" />
-        );
+        return null;
     }
   })();
 
@@ -113,8 +107,6 @@ export function AboutPane() {
         <SettingsField label={_(msg`Latest version`)} description={updateStatusText}>
           <div className="flex flex-col gap-2">
             <div className="flex items-center gap-2">
-              {updateStatusIcon}
-
               {isReady ? (
                 <Button variant="default" onClick={() => installAndRelaunch()}>
                   <HugeiconsIcon icon={RefreshIcon} className="size-4" />
@@ -134,6 +126,8 @@ export function AboutPane() {
                   {isChecking ? _(msg`Checking...`) : _(msg`Check latest version`)}
                 </Button>
               )}
+
+              {updateStatusIcon}
             </div>
 
             {isDownloading && (

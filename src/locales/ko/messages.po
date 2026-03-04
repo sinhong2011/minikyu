@@ -141,7 +141,7 @@ msgstr ""
 msgid "24-hour"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:101
+#: src/components/preferences/panes/AboutPane.tsx:100
 msgid "A calm, focused space for your Miniflux reading. Catch up faster, stay organized, and enjoy every feed."
 msgstr "Miniflux 읽기에 맞춘 차분하고 집중되는 공간입니다. 더 빠르게 따라잡고, 깔끔하게 정리하며, 모든 피드를 편안하게 즐기세요."
 
@@ -153,11 +153,11 @@ msgstr "React, TypeScript, Rust를 사용하여 크로스 플랫폼 데스크톱
 msgid "About"
 msgstr ""
 
-#: src/lib/menu.ts:25
+#: src/lib/menu.ts:26
 msgid "About {APP_NAME}"
 msgstr "{APP_NAME} 정보"
 
-#: src/lib/commands/help-commands.ts:33
+#: src/lib/commands/help-commands.ts:40
 msgid "About Minikyu"
 msgstr ""
 
@@ -190,7 +190,7 @@ msgstr ""
 msgid "Add Account"
 msgstr ""
 
-#: src/lib/menu.ts:107
+#: src/lib/menu.ts:108
 msgid "Add Account..."
 msgstr ""
 
@@ -309,12 +309,12 @@ msgid "All feeds in these categories will skip auto-translation. Chinese convers
 msgstr ""
 
 #: src/lib/commands/feed-commands.ts:64
-#: src/lib/menu.ts:528
+#: src/lib/menu.ts:533
 #: src/services/miniflux/feeds.ts:318
 msgid "All feeds refreshed"
 msgstr "All feeds refreshed"
 
-#: src/lib/menu.ts:512
+#: src/lib/menu.ts:517
 msgid "All feeds synchronized"
 msgstr ""
 
@@ -427,7 +427,7 @@ msgid "Are you sure you want to delete this account? This will remove all creden
 msgstr ""
 
 #: src/lib/commands/account-commands.ts:38
-#: src/lib/menu.ts:494
+#: src/lib/menu.ts:499
 msgid "Are you sure you want to delete this account? This will remove all credentials and data associated with this account."
 msgstr ""
 
@@ -445,7 +445,7 @@ msgstr "Are you sure you want to unsubscribe from this feed?"
 
 #: src/components/command-palette/CommandPalette.tsx:142
 #: src/components/miniflux/EntryReading.tsx:1175
-#: src/lib/menu.ts:214
+#: src/lib/menu.ts:215
 msgid "Article"
 msgstr ""
 
@@ -532,7 +532,7 @@ msgstr ""
 msgid "Browser content"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:169
+#: src/components/preferences/panes/AboutPane.tsx:194
 msgid "Build date"
 msgstr ""
 
@@ -623,23 +623,23 @@ msgstr ""
 msgid "Category updated"
 msgstr "Category updated"
 
-#: src/lib/commands/help-commands.ts:10
+#: src/lib/commands/help-commands.ts:11
 msgid "Check for Updates"
 msgstr ""
 
-#: src/lib/menu.ts:31
+#: src/lib/menu.ts:32
 msgid "Check for Updates..."
 msgstr "업데이트 확인..."
 
-#: src/lib/commands/help-commands.ts:11
+#: src/lib/commands/help-commands.ts:12
 msgid "Check if a newer version is available"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:122
+#: src/components/preferences/panes/AboutPane.tsx:134
 msgid "Check latest version"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:66
+#: src/components/preferences/panes/AboutPane.tsx:58
 msgid "Check whether a newer release is available."
 msgstr ""
 
@@ -651,11 +651,11 @@ msgstr ""
 msgid "Checked"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:58
+#: src/components/preferences/panes/AboutPane.tsx:44
 msgid "Checking for updates..."
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:122
+#: src/components/preferences/panes/AboutPane.tsx:134
 msgid "Checking..."
 msgstr ""
 
@@ -851,7 +851,7 @@ msgstr "색상 테마"
 msgid "Command Palette"
 msgstr "명령 팔레트"
 
-#: src/components/preferences/panes/AboutPane.tsx:160
+#: src/components/preferences/panes/AboutPane.tsx:185
 msgid "Commit"
 msgstr ""
 
@@ -887,7 +887,7 @@ msgstr ""
 msgid "Connect to Miniflux"
 msgstr "Miniflux에 연결"
 
-#: src/components/preferences/panes/AboutPane.tsx:149
+#: src/components/preferences/panes/AboutPane.tsx:174
 msgid "Connect to Miniflux to see server version."
 msgstr ""
 
@@ -961,7 +961,7 @@ msgstr ""
 
 #: src/components/miniflux/EntryReading.tsx:1237
 #: src/lib/commands/article-commands.ts:100
-#: src/lib/menu.ts:260
+#: src/lib/menu.ts:261
 msgid "Copy Link"
 msgstr ""
 
@@ -993,12 +993,12 @@ msgstr ""
 msgid "Copy URL"
 msgstr "Copy URL"
 
-#: src/lib/commands/help-commands.ts:27
-#: src/lib/menu.ts:447
+#: src/lib/commands/help-commands.ts:31
+#: src/lib/menu.ts:449
 msgid "Could not check for updates"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:64
+#: src/components/preferences/panes/AboutPane.tsx:56
 msgid "Could not check for updates. Please try again."
 msgstr ""
 
@@ -1014,7 +1014,7 @@ msgstr ""
 msgid "Could not load podcast entry"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:142
+#: src/components/preferences/panes/AboutPane.tsx:167
 msgid "Could not load server version information."
 msgstr ""
 
@@ -1077,7 +1077,7 @@ msgstr ""
 msgid "Creating..."
 msgstr "Creating..."
 
-#: src/components/preferences/panes/AboutPane.tsx:108
+#: src/components/preferences/panes/AboutPane.tsx:107
 msgid "Current version"
 msgstr ""
 
@@ -1130,7 +1130,7 @@ msgid "Decrease font size"
 msgstr ""
 
 #: src/lib/commands/view-commands.ts:18
-#: src/lib/menu.ts:195
+#: src/lib/menu.ts:196
 msgid "Decrease Font Size"
 msgstr ""
 
@@ -1146,7 +1146,7 @@ msgstr ""
 msgid "Decrease speed"
 msgstr ""
 
-#: src/lib/menu.ts:303
+#: src/lib/menu.ts:304
 msgid "Decrease Speed"
 msgstr ""
 
@@ -1169,7 +1169,7 @@ msgstr ""
 #: src/components/miniflux/EntryReadingHeader.tsx:184
 #: src/components/miniflux/EntryReadingHeader.tsx:194
 #: src/components/preferences/panes/ReaderPane.tsx:65
-#: src/lib/menu.ts:140
+#: src/lib/menu.ts:141
 msgid "Default"
 msgstr ""
 
@@ -1190,11 +1190,11 @@ msgstr "Delete"
 #: src/components/miniflux/UserNav.tsx:312
 #: src/lib/commands/account-commands.ts:23
 #: src/lib/commands/account-commands.ts:40
-#: src/lib/menu.ts:496
+#: src/lib/menu.ts:501
 msgid "Delete Account"
 msgstr ""
 
-#: src/lib/menu.ts:112
+#: src/lib/menu.ts:113
 msgid "Delete Account..."
 msgstr ""
 
@@ -1264,7 +1264,7 @@ msgstr "비활성화됨"
 #~ msgstr ""
 
 #: src/lib/commands/podcast-commands.ts:147
-#: src/lib/menu.ts:348
+#: src/lib/menu.ts:349
 msgid "Dismiss Player"
 msgstr ""
 
@@ -1334,6 +1334,10 @@ msgstr "Download Settings"
 msgid "Download the full article from the original source"
 msgstr ""
 
+#: src/components/preferences/panes/AboutPane.tsx:126
+msgid "Download Update"
+msgstr ""
+
 #: src/components/downloads/DownloadManagerDialog.tsx:350
 #~ msgid "Downloaded files will appear here"
 #~ msgstr "Downloaded files will appear here"
@@ -1346,6 +1350,15 @@ msgstr "Downloading"
 #: src/components/sync/SyncProgressPopover.tsx:130
 msgid "Downloading recent entries from server"
 msgstr "Downloading recent entries from server"
+
+#. placeholder {0}: state.version
+#. placeholder {0}: updaterVersion ?? ''
+#. placeholder {1}: String(downloadProgress)
+#. placeholder {1}: String(state.progress)
+#: src/components/preferences/panes/AboutPane.tsx:50
+#: src/hooks/use-auto-updater.ts:50
+msgid "Downloading update v{0}... {1}%"
+msgstr ""
 
 #: src/components/downloads/DownloadManagerDialog.tsx:627
 #: src/components/titlebar/WindowTitleBar.tsx:138
@@ -1372,7 +1385,7 @@ msgstr "Each rule must include a non-empty \"From\" value"
 
 #: src/components/layout/AppSidebar.tsx:141
 #: src/components/layout/AppSidebar.tsx:273
-#: src/lib/menu.ts:122
+#: src/lib/menu.ts:123
 msgid "Edit"
 msgstr "Edit"
 
@@ -1581,7 +1594,7 @@ msgid "Export OPML"
 msgstr ""
 
 #: src/lib/commands/feed-commands.ts:86
-#: src/lib/menu.ts:88
+#: src/lib/menu.ts:89
 msgid "Export OPML..."
 msgstr ""
 
@@ -1984,7 +1997,7 @@ msgstr ""
 
 #: src/components/miniflux/EntryReading.tsx:1193
 #: src/lib/commands/article-commands.ts:53
-#: src/lib/menu.ts:231
+#: src/lib/menu.ts:232
 msgid "Fetch Original Content"
 msgstr ""
 
@@ -2002,7 +2015,7 @@ msgstr ""
 msgid "Fetching..."
 msgstr ""
 
-#: src/lib/menu.ts:66
+#: src/lib/menu.ts:67
 msgid "File"
 msgstr ""
 
@@ -2080,7 +2093,7 @@ msgstr "Georgia"
 msgid "German"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:160
+#: src/components/preferences/panes/AboutPane.tsx:185
 msgid "Git commit hash."
 msgstr ""
 
@@ -2125,11 +2138,11 @@ msgstr ""
 #~ msgstr ""
 
 #: src/components/command-palette/CommandPalette.tsx:154
-#: src/lib/menu.ts:369
+#: src/lib/menu.ts:370
 msgid "Help"
 msgstr ""
 
-#: src/lib/menu.ts:44
+#: src/lib/menu.ts:45
 msgid "Hide {APP_NAME}"
 msgstr "{APP_NAME} 숨기기"
 
@@ -2143,7 +2156,7 @@ msgstr "왼쪽 사이드바 숨기기"
 #~ msgid "Hide original"
 #~ msgstr ""
 
-#: src/lib/menu.ts:48
+#: src/lib/menu.ts:49
 msgid "Hide Others"
 msgstr "기타 숨기기"
 
@@ -2244,7 +2257,7 @@ msgid "Import OPML"
 msgstr ""
 
 #: src/lib/commands/feed-commands.ts:76
-#: src/lib/menu.ts:83
+#: src/lib/menu.ts:84
 msgid "Import OPML..."
 msgstr ""
 
@@ -2265,7 +2278,7 @@ msgid "Increase font size"
 msgstr ""
 
 #: src/lib/commands/view-commands.ts:7
-#: src/lib/menu.ts:189
+#: src/lib/menu.ts:190
 msgid "Increase Font Size"
 msgstr ""
 
@@ -2281,7 +2294,7 @@ msgstr ""
 msgid "Increase speed"
 msgstr ""
 
-#: src/lib/menu.ts:309
+#: src/lib/menu.ts:310
 msgid "Increase Speed"
 msgstr ""
 
@@ -2293,8 +2306,12 @@ msgstr ""
 msgid "Increase volume by 10%"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:109
+#: src/components/preferences/panes/AboutPane.tsx:108
 msgid "Installed version of Minikyu."
+msgstr ""
+
+#: src/components/preferences/panes/AboutPane.tsx:54
+msgid "Installing update..."
 msgstr ""
 
 #: src/components/preferences/panes/IntegrationsPane.tsx:188
@@ -2362,11 +2379,15 @@ msgstr "Last synced at {0}"
 msgid "Last used"
 msgstr ""
 
+#: src/hooks/use-auto-updater.ts:81
+msgid "Later"
+msgstr ""
+
 #: src/pages/HomePage.tsx:29
 msgid "Latest React with concurrent features"
 msgstr "동시성 기능이 있는 최신 React"
 
-#: src/components/preferences/panes/AboutPane.tsx:114
+#: src/components/preferences/panes/AboutPane.tsx:113
 msgid "Latest version"
 msgstr ""
 
@@ -2423,7 +2444,7 @@ msgstr ""
 msgid "Loading"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:132
+#: src/components/preferences/panes/AboutPane.tsx:157
 msgid "Loading version information..."
 msgstr ""
 
@@ -2503,7 +2524,7 @@ msgid "Mark as read"
 msgstr "Mark as read"
 
 #: src/lib/commands/article-commands.ts:9
-#: src/lib/menu.ts:218
+#: src/lib/menu.ts:219
 msgid "Mark as Read/Unread"
 msgstr ""
 
@@ -2551,11 +2572,11 @@ msgstr ""
 msgid "Mini player"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:128
+#: src/components/preferences/panes/AboutPane.tsx:153
 msgid "Miniflux Server"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:155
+#: src/components/preferences/panes/AboutPane.tsx:180
 msgid "Miniflux server version."
 msgstr ""
 
@@ -2565,7 +2586,7 @@ msgstr ""
 
 #: src/components/brand/AppLogo.tsx:31
 #: src/components/brand/AppLogo.tsx:115
-#: src/components/preferences/panes/AboutPane.tsx:95
+#: src/components/preferences/panes/AboutPane.tsx:94
 msgid "Minikyu"
 msgstr "Minikyu"
 
@@ -2635,7 +2656,7 @@ msgid "Mute"
 msgstr ""
 
 #: src/lib/commands/podcast-commands.ts:77
-#: src/lib/menu.ts:321
+#: src/lib/menu.ts:322
 msgid "Mute / Unmute"
 msgstr ""
 
@@ -2664,11 +2685,11 @@ msgstr ""
 msgid "Never"
 msgstr ""
 
-#: src/lib/menu.ts:76
+#: src/lib/menu.ts:77
 msgid "New Category..."
 msgstr ""
 
-#: src/lib/menu.ts:70
+#: src/lib/menu.ts:71
 msgid "New Feed..."
 msgstr ""
 
@@ -2687,7 +2708,7 @@ msgid "Next article"
 msgstr ""
 
 #: src/components/miniflux/EntryReading.tsx:1029
-#: src/lib/menu.ts:273
+#: src/lib/menu.ts:274
 msgid "Next Article"
 msgstr ""
 
@@ -2856,7 +2877,7 @@ msgstr ""
 
 #: src/components/miniflux/EntryReadingHeader.tsx:192
 #: src/components/preferences/panes/ReaderPane.tsx:69
-#: src/lib/menu.ts:160
+#: src/lib/menu.ts:161
 msgid "OLED"
 msgstr ""
 
@@ -2893,7 +2914,7 @@ msgstr ""
 
 #: src/components/miniflux/EntryReading.tsx:1225
 #: src/lib/commands/article-commands.ts:89
-#: src/lib/menu.ts:255
+#: src/lib/menu.ts:256
 msgid "Open in App Browser"
 msgstr ""
 
@@ -2906,7 +2927,7 @@ msgstr ""
 
 #: src/components/miniflux/EntryReading.tsx:1213
 #: src/lib/commands/article-commands.ts:77
-#: src/lib/menu.ts:249
+#: src/lib/menu.ts:250
 msgid "Open in Browser"
 msgstr ""
 
@@ -2916,7 +2937,7 @@ msgid "Open player"
 msgstr ""
 
 #: src/lib/commands/podcast-commands.ts:158
-#: src/lib/menu.ts:337
+#: src/lib/menu.ts:338
 msgid "Open Player Window"
 msgstr ""
 
@@ -2944,7 +2965,7 @@ msgstr ""
 #~ msgid "Open the folder where Minikyu stores local data."
 #~ msgstr ""
 
-#: src/lib/commands/help-commands.ts:44
+#: src/lib/commands/help-commands.ts:51
 msgid "Open the issue tracker to report a bug"
 msgstr ""
 
@@ -3023,7 +3044,7 @@ msgstr "Page {0} of {1}"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:186
 #: src/components/preferences/panes/ReaderPane.tsx:66
-#: src/lib/menu.ts:145
+#: src/lib/menu.ts:146
 msgid "Paper"
 msgstr ""
 
@@ -3079,7 +3100,7 @@ msgid "Play"
 msgstr ""
 
 #: src/lib/commands/podcast-commands.ts:9
-#: src/lib/menu.ts:286
+#: src/lib/menu.ts:287
 #: src/lib/shortcut-registry.ts:97
 msgid "Play / Pause"
 msgstr ""
@@ -3126,7 +3147,7 @@ msgstr "Please enter a valid URL"
 
 #: src/components/command-palette/CommandPalette.tsx:144
 #: src/components/miniflux/EntryList.tsx:756
-#: src/lib/menu.ts:282
+#: src/lib/menu.ts:283
 msgid "Podcast"
 msgstr ""
 
@@ -3160,7 +3181,7 @@ msgstr ""
 msgid "Preferences reset to defaults"
 msgstr ""
 
-#: src/lib/menu.ts:37
+#: src/lib/menu.ts:38
 msgid "Preferences..."
 msgstr "설정..."
 
@@ -3186,7 +3207,7 @@ msgid "Previous article"
 msgstr ""
 
 #: src/components/miniflux/EntryReading.tsx:1020
-#: src/lib/menu.ts:267
+#: src/lib/menu.ts:268
 msgid "Previous Article"
 msgstr ""
 
@@ -3286,7 +3307,7 @@ msgstr "Queued"
 msgid "Quick access to all features"
 msgstr "모든 기능에 빠르게 액세스"
 
-#: src/lib/menu.ts:57
+#: src/lib/menu.ts:58
 msgid "Quit {APP_NAME}"
 msgstr "{APP_NAME} 종료"
 
@@ -3323,7 +3344,7 @@ msgid "Reader companion illustration"
 msgstr "Reader companion illustration"
 
 #: src/components/preferences/panes/ReaderPane.tsx:196
-#: src/lib/menu.ts:136
+#: src/lib/menu.ts:137
 msgid "Reader Theme"
 msgstr ""
 
@@ -3390,16 +3411,16 @@ msgid "Refresh all"
 msgstr "Refresh all"
 
 #: src/lib/commands/feed-commands.ts:54
-#: src/lib/menu.ts:100
+#: src/lib/menu.ts:101
 msgid "Refresh All Feeds"
 msgstr ""
 
-#: src/lib/menu.ts:528
+#: src/lib/menu.ts:533
 msgid "Refresh Complete"
 msgstr ""
 
-#: src/lib/menu.ts:530
 #: src/lib/menu.ts:535
+#: src/lib/menu.ts:540
 msgid "Refresh Failed"
 msgstr ""
 
@@ -3484,11 +3505,11 @@ msgstr ""
 #~ msgid "Replace key for {providerName}"
 #~ msgstr ""
 
-#: src/lib/commands/help-commands.ts:43
+#: src/lib/commands/help-commands.ts:50
 msgid "Report an Issue"
 msgstr ""
 
-#: src/lib/menu.ts:373
+#: src/lib/menu.ts:374
 msgid "Report an Issue..."
 msgstr ""
 
@@ -3514,7 +3535,7 @@ msgid "Reset all to defaults"
 msgstr ""
 
 #: src/lib/commands/view-commands.ts:29
-#: src/lib/menu.ts:201
+#: src/lib/menu.ts:202
 msgid "Reset Font Size"
 msgstr ""
 
@@ -3530,7 +3551,7 @@ msgstr ""
 msgid "Reset preferences?"
 msgstr ""
 
-#: src/lib/menu.ts:315
+#: src/lib/menu.ts:316
 msgid "Reset Speed"
 msgstr ""
 
@@ -3549,6 +3570,18 @@ msgstr ""
 
 #: src/components/preferences/panes/TranslationPane.tsx:1224
 msgid "Resort providers"
+msgstr ""
+
+#: src/hooks/use-auto-updater.ts:73
+msgid "Restart Now"
+msgstr ""
+
+#: src/hooks/use-auto-updater.ts:70
+msgid "Restart to apply the update."
+msgstr ""
+
+#: src/components/preferences/panes/AboutPane.tsx:121
+msgid "Restart to Update"
 msgstr ""
 
 #: src/components/titlebar/WindowsWindowControls.tsx:107
@@ -3599,7 +3632,7 @@ msgid "Rows per page"
 msgstr "Rows per page"
 
 #: src/components/brand/AppLogo.tsx:118
-#: src/components/preferences/panes/AboutPane.tsx:96
+#: src/components/preferences/panes/AboutPane.tsx:95
 msgid "RSS Reader"
 msgstr "RSS Reader"
 
@@ -3615,7 +3648,7 @@ msgstr "Run sync to refresh categories, feeds, and entries"
 msgid "Running"
 msgstr "Running"
 
-#: src/components/preferences/panes/AboutPane.tsx:178
+#: src/components/preferences/panes/AboutPane.tsx:203
 msgid "Runtime"
 msgstr ""
 
@@ -3800,7 +3833,7 @@ msgstr "Select Video Download Folder"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:188
 #: src/components/preferences/panes/ReaderPane.tsx:67
-#: src/lib/menu.ts:150
+#: src/lib/menu.ts:151
 msgid "Sepia"
 msgstr ""
 
@@ -3813,11 +3846,11 @@ msgstr "Serif"
 msgid "Server"
 msgstr "Server"
 
-#: src/components/preferences/panes/AboutPane.tsx:170
+#: src/components/preferences/panes/AboutPane.tsx:195
 msgid "Server build timestamp."
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:179
+#: src/components/preferences/panes/AboutPane.tsx:204
 msgid "Server runtime environment."
 msgstr ""
 
@@ -3834,9 +3867,9 @@ msgstr "서버 URL"
 msgid "Server URL is required"
 msgstr "서버 URL이 필요합니다"
 
-#: src/components/preferences/panes/AboutPane.tsx:131
-#: src/components/preferences/panes/AboutPane.tsx:141
-#: src/components/preferences/panes/AboutPane.tsx:148
+#: src/components/preferences/panes/AboutPane.tsx:156
+#: src/components/preferences/panes/AboutPane.tsx:166
+#: src/components/preferences/panes/AboutPane.tsx:173
 msgid "Server version"
 msgstr ""
 
@@ -3874,7 +3907,7 @@ msgstr ""
 msgid "Show a test toast notification"
 msgstr "테스트 알림 표시"
 
-#: src/lib/menu.ts:52
+#: src/lib/menu.ts:53
 msgid "Show All"
 msgstr "모두 표시"
 
@@ -3959,7 +3992,7 @@ msgid "Skip back 15s"
 msgstr ""
 
 #: src/lib/commands/podcast-commands.ts:36
-#: src/lib/menu.ts:292
+#: src/lib/menu.ts:293
 msgid "Skip Back 15s"
 msgstr ""
 
@@ -3974,7 +4007,7 @@ msgid "Skip forward 30s"
 msgstr ""
 
 #: src/lib/commands/podcast-commands.ts:23
-#: src/lib/menu.ts:297
+#: src/lib/menu.ts:298
 msgid "Skip Forward 30s"
 msgstr ""
 
@@ -3988,7 +4021,7 @@ msgstr ""
 
 #: src/components/miniflux/EntryReadingHeader.tsx:190
 #: src/components/preferences/panes/ReaderPane.tsx:68
-#: src/lib/menu.ts:155
+#: src/lib/menu.ts:156
 msgid "Slate"
 msgstr ""
 
@@ -4132,7 +4165,7 @@ msgstr ""
 #: src/components/miniflux/EntryReadingHeader.tsx:386
 #: src/components/miniflux/EntryReadingHeader.tsx:403
 #: src/lib/commands/article-commands.ts:112
-#: src/lib/menu.ts:243
+#: src/lib/menu.ts:244
 msgid "Summarize with AI"
 msgstr ""
 
@@ -4158,7 +4191,7 @@ msgstr "Sync article content and metadata"
 msgid "Sync completed"
 msgstr "Sync completed"
 
-#: src/lib/menu.ts:512
+#: src/lib/menu.ts:517
 msgid "Sync Completed"
 msgstr ""
 
@@ -4168,8 +4201,8 @@ msgstr ""
 msgid "Sync failed"
 msgstr "Sync failed"
 
-#: src/lib/menu.ts:514
 #: src/lib/menu.ts:519
+#: src/lib/menu.ts:524
 msgid "Sync Failed"
 msgstr ""
 
@@ -4191,7 +4224,7 @@ msgid "Sync is idle"
 msgstr "Sync is idle"
 
 #: src/lib/commands/feed-commands.ts:32
-#: src/lib/menu.ts:94
+#: src/lib/menu.ts:95
 msgid "Sync Now"
 msgstr ""
 
@@ -4389,7 +4422,7 @@ msgid "Toggle downloads"
 msgstr ""
 
 #: src/lib/commands/navigation-commands.ts:40
-#: src/lib/menu.ts:177
+#: src/lib/menu.ts:178
 msgid "Toggle Downloads"
 msgstr ""
 
@@ -4397,7 +4430,7 @@ msgstr ""
 msgid "Toggle left sidebar"
 msgstr ""
 
-#: src/lib/menu.ts:171
+#: src/lib/menu.ts:172
 msgid "Toggle Left Sidebar"
 msgstr "왼쪽 사이드바 전환"
 
@@ -4406,7 +4439,7 @@ msgid "Toggle Maximize"
 msgstr "최대화 전환"
 
 #: src/lib/commands/podcast-commands.ts:169
-#: src/lib/menu.ts:342
+#: src/lib/menu.ts:343
 msgid "Toggle Mini Player"
 msgstr ""
 
@@ -4437,7 +4470,7 @@ msgid "Toggle star"
 msgstr ""
 
 #: src/lib/commands/article-commands.ts:31
-#: src/lib/menu.ts:224
+#: src/lib/menu.ts:225
 msgid "Toggle Star"
 msgstr ""
 
@@ -4471,7 +4504,7 @@ msgstr ""
 
 #: src/components/miniflux/EntryReading.tsx:1091
 #: src/lib/commands/translation-commands.ts:7
-#: src/lib/menu.ts:237
+#: src/lib/menu.ts:238
 msgid "Translate Article"
 msgstr ""
 
@@ -4642,18 +4675,18 @@ msgstr "Unstar"
 msgid "Unsubscribe"
 msgstr "Unsubscribe"
 
-#: src/lib/commands/help-commands.ts:24
-#: src/lib/menu.ts:443
+#: src/lib/commands/help-commands.ts:33
+#: src/lib/menu.ts:451
 msgid "Up to Date"
 msgstr ""
 
-#: src/lib/commands/help-commands.ts:20
-#: src/lib/menu.ts:439
+#: src/lib/commands/help-commands.ts:23
+#: src/lib/menu.ts:441
 msgid "Update Available"
 msgstr ""
 
-#: src/lib/commands/help-commands.ts:27
-#: src/lib/menu.ts:447
+#: src/lib/commands/help-commands.ts:31
+#: src/lib/menu.ts:449
 msgid "Update Check Failed"
 msgstr ""
 
@@ -4684,6 +4717,11 @@ msgstr "Update token"
 #: src/components/miniflux/settings/UserFormDialog.tsx:68
 msgid "Update username or password."
 msgstr "Update username or password."
+
+#. placeholder {0}: state.version
+#: src/hooks/use-auto-updater.ts:69
+msgid "Update v{0} is ready"
+msgstr ""
 
 #: src/components/downloads/DownloadManagerDialog.tsx:546
 msgid "URL copied to clipboard"
@@ -4783,20 +4821,30 @@ msgstr ""
 msgid "Verifying..."
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:106
-#: src/components/preferences/panes/AboutPane.tsx:155
+#: src/components/preferences/panes/AboutPane.tsx:105
+#: src/components/preferences/panes/AboutPane.tsx:180
 msgid "Version"
 msgstr ""
 
-#. placeholder {0}: latestVersion.version
 #: src/lib/commands/help-commands.ts:21
 #: src/lib/menu.ts:440
-msgid "Version {0} is available"
+#~ msgid "Version {0} is available"
+#~ msgstr ""
+
+#. placeholder {0}: updaterVersion ?? ''
+#: src/components/preferences/panes/AboutPane.tsx:48
+msgid "Version {0} is available."
 msgstr ""
 
-#. placeholder {0}: updateCheckState.version
-#: src/components/preferences/panes/AboutPane.tsx:62
-msgid "Version {0} is available."
+#. placeholder {0}: state.version
+#: src/lib/commands/help-commands.ts:24
+#: src/lib/menu.ts:442
+msgid "Version {0} is available. Downloading..."
+msgstr ""
+
+#. placeholder {0}: updaterVersion ?? ''
+#: src/components/preferences/panes/AboutPane.tsx:52
+msgid "Version {0} is ready to install."
 msgstr ""
 
 #: src/lib/menu.ts:106
@@ -4817,7 +4865,7 @@ msgid "Video download path updated"
 msgstr "Video download path updated"
 
 #: src/components/command-palette/CommandPalette.tsx:146
-#: src/lib/menu.ts:167
+#: src/lib/menu.ts:168
 msgid "View"
 msgstr "보기"
 
@@ -4826,7 +4874,7 @@ msgstr "보기"
 msgid "View and manage your downloads"
 msgstr "View and manage your downloads"
 
-#: src/lib/commands/help-commands.ts:34
+#: src/lib/commands/help-commands.ts:41
 msgid "View app version and information"
 msgstr ""
 
@@ -4843,12 +4891,12 @@ msgid "Volume"
 msgstr ""
 
 #: src/lib/commands/podcast-commands.ts:135
-#: src/lib/menu.ts:331
+#: src/lib/menu.ts:332
 msgid "Volume Down"
 msgstr ""
 
 #: src/lib/commands/podcast-commands.ts:123
-#: src/lib/menu.ts:326
+#: src/lib/menu.ts:327
 msgid "Volume Up"
 msgstr ""
 
@@ -4869,7 +4917,7 @@ msgid "Widen content"
 msgstr ""
 
 #: src/components/command-palette/CommandPalette.tsx:152
-#: src/lib/menu.ts:356
+#: src/lib/menu.ts:357
 msgid "Window"
 msgstr "창"
 
@@ -4877,12 +4925,12 @@ msgstr "창"
 msgid "Yesterday"
 msgstr "Yesterday"
 
-#: src/lib/commands/help-commands.ts:24
-#: src/lib/menu.ts:443
+#: src/lib/commands/help-commands.ts:33
+#: src/lib/menu.ts:451
 msgid "You are running the latest version"
 msgstr ""
 
-#: src/components/preferences/panes/AboutPane.tsx:60
+#: src/components/preferences/panes/AboutPane.tsx:46
 msgid "You are running the latest version."
 msgstr ""
 
@@ -4894,7 +4942,7 @@ msgstr "Miniflux 설정 → API 키에서 API 토큰을 찾을 수 있습니다"
 msgid "Your data has been saved automatically."
 msgstr ""
 
-#: src/lib/menu.ts:183
+#: src/lib/menu.ts:184
 msgid "Zen Mode"
 msgstr ""
 
