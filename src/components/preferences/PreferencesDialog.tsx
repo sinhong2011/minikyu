@@ -226,25 +226,28 @@ export function PreferencesDialog() {
   }, [feeds, normalizedFeedSearchQuery]);
 
   // Helper function to format relative time
-  const formatRelativeTime = React.useCallback((dateString: string | null | undefined): string => {
-    if (!dateString) return '';
-    try {
-      const date = new Date(dateString);
-      const now = new Date();
-      const diffMs = now.getTime() - date.getTime();
-      const diffMins = Math.floor(diffMs / 60000);
-      const diffHours = Math.floor(diffMs / 3600000);
-      const diffDays = Math.floor(diffMs / 86400000);
+  const formatRelativeTime = React.useCallback(
+    (dateString: string | null | undefined): string => {
+      if (!dateString) return '';
+      try {
+        const date = new Date(dateString);
+        const now = new Date();
+        const diffMs = now.getTime() - date.getTime();
+        const diffMins = Math.floor(diffMs / 60000);
+        const diffHours = Math.floor(diffMs / 3600000);
+        const diffDays = Math.floor(diffMs / 86400000);
 
-      if (diffMins < 1) return 'Just now';
-      if (diffMins < 60) return `${diffMins}m ago`;
-      if (diffHours < 24) return `${diffHours}h ago`;
-      if (diffDays < 7) return `${diffDays}d ago`;
-      return date.toLocaleDateString();
-    } catch {
-      return '';
-    }
-  }, []);
+        if (diffMins < 1) return _(msg`Just now`);
+        if (diffMins < 60) return _(msg`${diffMins}m ago`);
+        if (diffHours < 24) return _(msg`${diffHours}h ago`);
+        if (diffDays < 7) return _(msg`${diffDays}d ago`);
+        return date.toLocaleDateString();
+      } catch {
+        return '';
+      }
+    },
+    [_]
+  );
 
   // Feed columns definition
   const feedColumns = React.useMemo<ColumnDef<Feed>[]>(
@@ -274,7 +277,7 @@ export function PreferencesDialog() {
                   </Tooltip>
                 )}
                 {feed.disabled && (
-                  <span className="text-xs text-muted-foreground italic">(disabled)</span>
+                  <span className="text-xs text-muted-foreground italic">({_(msg`Disabled`)})</span>
                 )}
               </div>
               <span className="block truncate text-xs text-muted-foreground">{feed.feed_url}</span>

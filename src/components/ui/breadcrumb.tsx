@@ -1,12 +1,14 @@
 import { ArrowRight01Icon, MoreHorizontalIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
+import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { Slot } from '@radix-ui/react-slot';
 import type * as React from 'react';
 
 import { cn } from '@/lib/utils';
 
 function Breadcrumb({ ...props }: React.ComponentProps<'nav'>) {
-  return <nav aria-label="breadcrumb" data-slot="breadcrumb" {...props} />;
+  return <nav aria-label={i18n._(msg`breadcrumb`)} data-slot="breadcrumb" {...props} />;
 }
 
 function BreadcrumbList({ className, ...props }: React.ComponentProps<'ol'>) {
@@ -86,7 +88,7 @@ function BreadcrumbEllipsis({ className, ...props }: React.ComponentProps<'span'
       {...props}
     >
       <HugeiconsIcon icon={MoreHorizontalIcon} className="size-4" />
-      <span className="sr-only">More</span>
+      <span className="sr-only">{i18n._(msg`More`)}</span>
     </span>
   );
 }

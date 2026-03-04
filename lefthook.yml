@@ -10,6 +10,11 @@ pre-commit:
       glob: '**/*.{ts,tsx}'
       run: bunx tsc --noEmit
 
+    i18n-compile:
+      glob: '**/*.{ts,tsx}'
+      run: bunx lingui extract && bunx lingui compile --typescript
+      stage_fixed: true
+
     actionlint:
       glob: '.github/workflows/*.{yml,yaml}'
       run: actionlint -shellcheck=""

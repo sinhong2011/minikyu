@@ -1,5 +1,7 @@
 import { Cancel01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
+import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import * as React from 'react';
 
 import { cn } from '@/lib/utils';
@@ -25,7 +27,7 @@ const TagInput = React.forwardRef<HTMLButtonElement, TagInputProps>(
       className,
       tags,
       onTagsChange,
-      placeholder = 'Add a tag...',
+      placeholder = i18n._(msg`Add a tag...`),
       maxTags,
       allowDuplicates = false,
       disabled = false,
@@ -122,7 +124,7 @@ const TagInput = React.forwardRef<HTMLButtonElement, TagInputProps>(
                     removeTag(tag.id);
                   }}
                   className="ml-1 hover:bg-destructive/20 rounded-sm p-0.5 transition-colors"
-                  aria-label={`Remove ${tag.text} tag`}
+                  aria-label={i18n._(msg`Remove ${tag.text} tag`)}
                 >
                   <HugeiconsIcon icon={Cancel01Icon} className="size-3" />
                 </button>
