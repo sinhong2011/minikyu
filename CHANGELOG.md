@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.3.1](https://github.com/sinhong2011/minikyu/compare/v1.3.0...v1.3.1) (2026-03-04)
+
+
+### Bug Fixes
+
+* **i18n:** Translation audit and auto-compile catalogs ([#39](https://github.com/sinhong2011/minikyu/issues/39)) ([6bcc043](https://github.com/sinhong2011/minikyu/commit/6bcc0437737186d13f526bcdb793c1850416b22c))
+
 ## [1.3.0](https://github.com/sinhong2011/minikyu/compare/v1.2.0...v1.3.0) (2026-03-04)
 
 
