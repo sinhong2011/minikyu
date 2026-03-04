@@ -138,6 +138,7 @@ export function AppearancePane() {
             value={preferences?.time_format ?? '24h'}
             onValueChange={(value: string) => {
               if (preferences) {
+                // biome-ignore lint/style/useNamingConvention: Rust backend field
                 savePreferences.mutate({ ...preferences, time_format: value });
               }
             }}
