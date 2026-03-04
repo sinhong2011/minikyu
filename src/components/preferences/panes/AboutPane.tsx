@@ -62,6 +62,8 @@ export function AboutPane() {
   const updateStatusIcon = (() => {
     switch (updaterStatus) {
       case 'checking':
+        // Button already shows a spinner — skip the status icon to avoid double spinner
+        return null;
       case 'installing':
         return <HugeiconsIcon icon={Loading03Icon} className="size-4 animate-spin text-primary" />;
       case 'up-to-date':
