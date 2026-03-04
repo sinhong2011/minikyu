@@ -1,3 +1,5 @@
+import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import { logger } from '@/lib/logger';
 import { saveCrashState } from '@/lib/recovery';
@@ -189,7 +191,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   color: '#fafafa',
                 }}
               >
-                Something went wrong
+                {i18n._(msg`Something went wrong`)}
               </h1>
               <p
                 style={{
@@ -199,9 +201,9 @@ export class ErrorBoundary extends Component<Props, State> {
                   lineHeight: 1.5,
                 }}
               >
-                The application encountered an unexpected error.
+                {i18n._(msg`The application encountered an unexpected error.`)}
                 <br />
-                Your data has been saved automatically.
+                {i18n._(msg`Your data has been saved automatically.`)}
               </p>
             </div>
 
@@ -270,7 +272,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   e.currentTarget.style.opacity = '1';
                 }}
               >
-                Reload App
+                {i18n._(msg`Reload App`)}
               </button>
               <button
                 type="button"
@@ -305,7 +307,7 @@ export class ErrorBoundary extends Component<Props, State> {
                   e.currentTarget.style.borderColor = 'rgba(255,255,255,0.08)';
                 }}
               >
-                Try Again
+                {i18n._(msg`Try Again`)}
               </button>
             </div>
           </div>
@@ -347,7 +349,7 @@ export class ErrorBoundary extends Component<Props, State> {
                 e.currentTarget.style.color = '#52525b';
               }}
             >
-              <span>Diagnostics</span>
+              <span>{i18n._(msg`Diagnostics`)}</span>
               <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
                 {showDetails && (
                   <button
@@ -367,7 +369,7 @@ export class ErrorBoundary extends Component<Props, State> {
                       transition: 'color 150ms',
                     }}
                   >
-                    {copied ? 'Copied' : 'Copy'}
+                    {copied ? i18n._(msg`Copied`) : i18n._(msg`Copy`)}
                   </button>
                 )}
                 <svg
@@ -410,7 +412,7 @@ export class ErrorBoundary extends Component<Props, State> {
                         marginBottom: '6px',
                       }}
                     >
-                      Stack Trace
+                      {i18n._(msg`Stack Trace`)}
                     </div>
                     <pre
                       style={{
@@ -440,7 +442,7 @@ export class ErrorBoundary extends Component<Props, State> {
                         marginBottom: '6px',
                       }}
                     >
-                      Component Stack
+                      {i18n._(msg`Component Stack`)}
                     </div>
                     <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
                       {this.formatComponentStack(errorInfo.componentStack).map((line, i) => (

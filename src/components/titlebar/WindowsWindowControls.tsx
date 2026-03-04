@@ -1,3 +1,5 @@
+import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { useEffect, useState } from 'react';
 import { useCommandContext } from '@/hooks/use-command-context';
@@ -91,8 +93,8 @@ export function WindowsWindowControls() {
         type="button"
         onClick={handleMinimize}
         className={cn(buttonClass, 'hover:bg-foreground/10')}
-        title="Minimize"
-        aria-label="Minimize window"
+        title={i18n._(msg`Minimize`)}
+        aria-label={i18n._(msg`Minimize window`)}
       >
         <WindowsIcons.minimize />
       </button>
@@ -102,8 +104,8 @@ export function WindowsWindowControls() {
         type="button"
         onClick={handleMaximizeToggle}
         className={cn(buttonClass, 'hover:bg-foreground/10')}
-        title={isMaximized ? 'Restore' : 'Maximize'}
-        aria-label={isMaximized ? 'Restore window' : 'Maximize window'}
+        title={isMaximized ? i18n._(msg`Restore`) : i18n._(msg`Maximize`)}
+        aria-label={isMaximized ? i18n._(msg`Restore window`) : i18n._(msg`Maximize window`)}
       >
         {isMaximized ? <WindowsIcons.restore /> : <WindowsIcons.maximize />}
       </button>
@@ -113,8 +115,8 @@ export function WindowsWindowControls() {
         type="button"
         onClick={handleClose}
         className={cn(buttonClass, 'hover:bg-destructive hover:text-destructive-foreground')}
-        title="Close"
-        aria-label="Close window"
+        title={i18n._(msg`Close`)}
+        aria-label={i18n._(msg`Close window`)}
       >
         <WindowsIcons.close />
       </button>

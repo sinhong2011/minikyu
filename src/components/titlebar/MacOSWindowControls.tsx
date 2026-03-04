@@ -1,3 +1,5 @@
+import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import React, { type HTMLProps, useEffect, useState } from 'react';
 import { useCommandContext } from '@/hooks/use-command-context';
@@ -121,7 +123,7 @@ export function MacOSWindowControls({ className, ...props }: MacOSWindowControls
       <button
         type="button"
         onClick={handleClose}
-        aria-label="Close window"
+        aria-label={i18n._(msg`Close window`)}
         className={cn(
           'group flex h-3 w-3 cursor-default items-center justify-center rounded-full border text-center text-black/60 hover:bg-[#ff544d] hover:border-black/[.12] active:bg-[#bf403a] active:text-black/60 dark:border-none',
           isWindowFocused ? 'border-black/[.12] bg-[#ff544d]' : 'border-gray-400/20 bg-gray-400'
@@ -134,7 +136,7 @@ export function MacOSWindowControls({ className, ...props }: MacOSWindowControls
       <button
         type="button"
         onClick={handleMinimize}
-        aria-label="Minimize window"
+        aria-label={i18n._(msg`Minimize window`)}
         className={cn(
           'group flex h-3 w-3 cursor-default items-center justify-center rounded-full border text-center text-black/60 hover:bg-[#ffbd2e] hover:border-black/[.12] active:bg-[#bf9122] active:text-black/60 dark:border-none',
           isWindowFocused ? 'border-black/[.12] bg-[#ffbd2e]' : 'border-gray-400/20 bg-gray-400'
@@ -147,7 +149,7 @@ export function MacOSWindowControls({ className, ...props }: MacOSWindowControls
       <button
         type="button"
         onClick={handleMaximizeOrFullscreen}
-        aria-label={isAltKeyPressed ? 'Maximize window' : 'Enter fullscreen'}
+        aria-label={isAltKeyPressed ? i18n._(msg`Maximize window`) : i18n._(msg`Enter fullscreen`)}
         className={cn(
           'group flex h-3 w-3 cursor-default items-center justify-center rounded-full border text-center text-black/60 hover:bg-[#28c93f] hover:border-black/[.12] active:bg-[#1e9930] active:text-black/60 dark:border-none',
           isWindowFocused ? 'border-black/[.12] bg-[#28c93f]' : 'border-gray-400/20 bg-gray-400'

@@ -7,6 +7,8 @@ import {
   SearchMinusFreeIcons,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
+import { i18n } from '@lingui/core';
+import { msg } from '@lingui/core/macro';
 import { useCallback, useEffect } from 'react';
 import Lightbox from 'yet-another-react-lightbox';
 import Counter from 'yet-another-react-lightbox/plugins/counter';
@@ -231,7 +233,7 @@ export function ImageViewer({
             key="custom-close-button"
             type="button"
             className="yarl__button"
-            aria-label="Close"
+            aria-label={i18n._(msg`Close`)}
             onClick={requestClose}
           >
             <HugeiconsIcon icon={Cancel01Icon} className="h-4 w-4" />
