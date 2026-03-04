@@ -29,6 +29,7 @@ const CURRENT_DATE = new Date().toISOString();
 const latestJson = {
   version: `v${MOCK_VERSION}`,
   notes: `Test release v${MOCK_VERSION}\n\n- Mock update for local testing\n- Tests progress bar and toast UI`,
+  // biome-ignore lint/style/useNamingConvention: Tauri updater API field
   pub_date: CURRENT_DATE,
   platforms: {
     'darwin-aarch64': {

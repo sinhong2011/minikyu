@@ -7,6 +7,7 @@
     ".": {
       "release-type": "node",
       "changelog-path": "CHANGELOG.md",
+      "package-name": "",
       "include-component-in-tag": false,
       "extra-files": ["src-tauri/tauri.conf.json", "src-tauri/Cargo.toml"]
     }
