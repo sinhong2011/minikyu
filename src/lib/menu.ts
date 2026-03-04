@@ -6,9 +6,10 @@ import { resetAccountState } from '@/lib/account-reset';
 import { logger } from '@/lib/logger';
 import { notifications } from '@/lib/notifications';
 import { commands } from '@/lib/tauri-bindings';
-import { checkLatestVersion } from '@/lib/updates';
+import { checkForUpdate, downloadUpdate } from '@/lib/updater';
 import { usePlayerStore } from '@/store/player-store';
 import { useUIStore } from '@/store/ui-store';
+import { useUpdaterStore } from '@/store/updater-store';
 
 const APP_NAME = 'Minikyu';
 
@@ -431,20 +432,24 @@ function handleAbout(): void {
 
 async function handleCheckForUpdates(): Promise<void> {
   const _ = i18n._.bind(i18n);
-  try {
-    const latestVersion = await checkLatestVersion();
+  const found = await checkForUpdate();
 
-    if (latestVersion.status === 'available') {
+  if (found) {
+    const state = useUpdaterStore.getState();
+    if (state.status === 'available') {
       notifications.info(
         _(msg`Update Available`),
-        _(msg`Version ${latestVersion.version} is available`)
+        _(msg`Version ${state.version} is available. Downloading...`)
       );
+      downloadUpdate();
+    }
+  } else {
+    const state = useUpdaterStore.getState();
+    if (state.status === 'error') {
+      notifications.error(_(msg`Update Check Failed`), _(msg`Could not check for updates`));
     } else {
       notifications.success(_(msg`Up to Date`), _(msg`You are running the latest version`));
     }
-  } catch (error) {
-    logger.error('Update check failed', { error });
-    notifications.error(_(msg`Update Check Failed`), _(msg`Could not check for updates`));
   }
 }
 
