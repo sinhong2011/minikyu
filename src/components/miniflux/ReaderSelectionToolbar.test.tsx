@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 import { translateReaderSegmentWithPreferences } from '@/services/translation';
 import { ReaderSelectionToolbar } from './ReaderSelectionToolbar';
@@ -165,7 +165,9 @@ describe('ReaderSelectionToolbar', () => {
       expect(screen.getByLabelText('Translate selection')).toBeInTheDocument();
     });
 
-    document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    await act(async () => {
+      document.dispatchEvent(new MouseEvent('mousedown', { bubbles: true }));
+    });
     await waitFor(() => {
       expect(screen.queryByLabelText('Translate selection')).not.toBeInTheDocument();
     });
