@@ -7,10 +7,12 @@ use futures_util::StreamExt;
 use serde::{Deserialize, Serialize};
 use specta::Type;
 use sqlx::Row;
+use std::collections::HashMap;
 use std::sync::{Arc, Mutex, OnceLock};
 use std::time::SystemTime;
 use tauri::{Emitter, Manager};
 use tokio::io::AsyncWriteExt;
+use tokio_util::sync::CancellationToken;
 
 /// Download state managed by download manager
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]
@@ -50,23 +52,42 @@ pub enum DownloadState {
     },
 }
 
-/// Download manager with active download tracking
+/// Download manager with active download tracking and cancellation
 #[derive(Debug)]
 pub struct DownloadManager {
     active_downloads: Arc<Mutex<Vec<DownloadState>>>,
+    cancellation_tokens: Arc<Mutex<HashMap<usize, CancellationToken>>>,
 }
 
 impl DownloadManager {
-    /// Create a new download manager
     pub fn new() -> Self {
         Self {
             active_downloads: Arc::new(Mutex::new(Vec::new())),
+            cancellation_tokens: Arc::new(Mutex::new(HashMap::new())),
         }
     }
 
-    /// Get all active downloads
     pub fn get_active_downloads(&self) -> Vec<DownloadState> {
         self.active_downloads.lock().unwrap().clone()
+    }
+
+    pub fn create_cancellation_token(&self, id: usize) -> CancellationToken {
+        let token = CancellationToken::new();
+        self.cancellation_tokens
+            .lock()
+            .unwrap()
+            .insert(id, token.clone());
+        token
+    }
+
+    pub fn cancel(&self, id: usize) {
+        if let Some(token) = self.cancellation_tokens.lock().unwrap().remove(&id) {
+            token.cancel();
+        }
+    }
+
+    pub fn remove_token(&self, id: usize) {
+        self.cancellation_tokens.lock().unwrap().remove(&id);
     }
 }
 
@@ -385,14 +406,19 @@ pub async fn download_file(
         },
     );
 
+    let cancel_token = get_download_manager().create_cancellation_token(download_id);
+
     let result = perform_download(
         &app,
         &url,
         download_id,
         file_name_str.clone(),
         default_path.as_deref(),
+        cancel_token,
     )
     .await;
+
+    get_download_manager().remove_token(download_id);
 
     match &result {
         Ok(file_path) => {
@@ -513,6 +539,9 @@ pub async fn cancel_download(app: tauri::AppHandle, url: String) -> Result<(), S
     }
 
     if let Some(id) = id_opt {
+        // Cancel the running download task via token
+        get_download_manager().cancel(id);
+
         {
             let mut downloads = get_download_manager().active_downloads.lock().unwrap();
             if let Some(index) = downloads.iter().position(|d| match d {
@@ -587,6 +616,7 @@ async fn perform_download(
     download_id: usize,
     file_name: String,
     default_path: Option<&str>,
+    cancel_token: CancellationToken,
 ) -> Result<String, String> {
     let file_path = if let Some(path) = default_path {
         let mut full_path = std::path::PathBuf::from(path);
@@ -641,6 +671,12 @@ async fn perform_download(
         .map_err(|e| format!("Failed to create file: {}", e))?;
 
     while let Some(chunk_result) = reader.next().await {
+        if cancel_token.is_cancelled() {
+            drop(file);
+            let _ = tokio::fs::remove_file(&file_path_buf).await;
+            return Err("Download cancelled".to_string());
+        }
+
         let chunk = chunk_result.map_err(|e| format!("Download chunk error: {}", e))?;
         downloaded_bytes += chunk.len() as i64;
         file.write_all(&chunk)
