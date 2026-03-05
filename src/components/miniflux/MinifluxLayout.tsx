@@ -607,13 +607,13 @@ export function MinifluxLayout() {
                   <MenuGroupLabel>{_(msg`Sort by`)}</MenuGroupLabel>
                   <MenuItem
                     onClick={() => setSortOrder('published_at')}
-                    className={cn(sortOrder === 'published_at' && 'bg-accent')}
+                    className={cn(sortOrder === 'published_at' && 'bg-white/10')}
                   >
                     {_(msg`Published date`)}
                   </MenuItem>
                   <MenuItem
                     onClick={() => setSortOrder('changed_at')}
-                    className={cn(sortOrder === 'changed_at' && 'bg-accent')}
+                    className={cn(sortOrder === 'changed_at' && 'bg-white/10')}
                   >
                     {_(msg`Last read date`)}
                   </MenuItem>
@@ -623,13 +623,13 @@ export function MinifluxLayout() {
                   <MenuGroupLabel>{_(msg`Direction`)}</MenuGroupLabel>
                   <MenuItem
                     onClick={() => setSortDirection('asc')}
-                    className={cn(sortDirection === 'asc' && 'bg-accent')}
+                    className={cn(sortDirection === 'asc' && 'bg-white/10')}
                   >
                     {_(msg`Ascending`)}
                   </MenuItem>
                   <MenuItem
                     onClick={() => setSortDirection('desc')}
-                    className={cn(sortDirection === 'desc' && 'bg-accent')}
+                    className={cn(sortDirection === 'desc' && 'bg-white/10')}
                   >
                     {_(msg`Descending`)}
                   </MenuItem>
