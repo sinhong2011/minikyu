@@ -44,6 +44,7 @@ type DownloadItem = {
   filePath?: string;
   error?: string;
   speed?: number;
+  eta?: string;
   mediaType?: string;
 };
 
@@ -75,6 +76,16 @@ function formatBytes(bytes: number): string {
 function formatSpeed(bytesPerSec?: number): string {
   if (!bytesPerSec || bytesPerSec <= 0) return '';
   return `${formatBytes(bytesPerSec)}/s`;
+}
+
+function formatEta(remainingBytes: number, speedBps: number): string {
+  if (!speedBps || speedBps <= 0 || remainingBytes <= 0) return '';
+  const seconds = Math.ceil(remainingBytes / speedBps);
+  if (seconds < 60) return `${seconds}s`;
+  if (seconds < 3600) return `${Math.ceil(seconds / 60)}m`;
+  const h = Math.floor(seconds / 3600);
+  const m = Math.ceil((seconds % 3600) / 60);
+  return m > 0 ? `${h}h ${m}m` : `${h}h`;
 }
 
 function hostnameFromUrl(url: string): string {
@@ -244,6 +255,12 @@ function DownloadRow({
                   <span className="tabular-nums text-foreground/50">{formatSpeed(item.speed)}</span>
                 </>
               )}
+              {item.eta && (
+                <>
+                  <span className="text-muted-foreground/30">·</span>
+                  <span className="tabular-nums">{item.eta}</span>
+                </>
+              )}
               <span className="text-muted-foreground/30">·</span>
               <span className="tabular-nums">{item.progress}%</span>
             </>
@@ -376,7 +393,7 @@ export function DownloadManagerDialog() {
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const downloadsOpen = useUIStore((state) => state.downloadsOpen);
   const setDownloadsOpen = useUIStore((state) => state.setDownloadsOpen);
-  const lastUpdateRef = useRef<Record<number, { bytes: number; time: number }>>({});
+  const speedRef = useRef<Record<number, { bytes: number; time: number; ema: number }>>({});
   const completedRef = useRef<Set<number>>(new Set());
 
   // ── Data loading & event listening ──
@@ -489,18 +506,22 @@ export function DownloadManagerDialog() {
           }
 
           const now = Date.now();
-          const last = lastUpdateRef.current[enclosure_id];
+          const last = speedRef.current[enclosure_id];
           let speed = 0;
+          const EmaAlpha = 0.3;
           if (last && status === 'downloading') {
             const timeDiff = (now - last.time) / 1000;
-            if (timeDiff > 0.5) {
-              speed = (downloaded_bytes - last.bytes) / timeDiff;
-              lastUpdateRef.current[enclosure_id] = { bytes: downloaded_bytes, time: now };
+            if (timeDiff > 0.25) {
+              const instantSpeed = (downloaded_bytes - last.bytes) / timeDiff;
+              const ema =
+                last.ema > 0 ? EmaAlpha * instantSpeed + (1 - EmaAlpha) * last.ema : instantSpeed;
+              speed = ema;
+              speedRef.current[enclosure_id] = { bytes: downloaded_bytes, time: now, ema };
             } else {
-              speed = -1;
+              speed = -1; // keep previous speed
             }
           } else {
-            lastUpdateRef.current[enclosure_id] = { bytes: downloaded_bytes, time: now };
+            speedRef.current[enclosure_id] = { bytes: downloaded_bytes, time: now, ema: 0 };
           }
 
           setDownloads((prev) => {
@@ -517,6 +538,12 @@ export function DownloadManagerDialog() {
                       totalBytes: total_bytes,
                       status: status as DownloadStatus,
                       speed: speed === -1 ? d.speed : speed,
+                      eta:
+                        speed > 0 && total_bytes > downloaded_bytes
+                          ? formatEta(total_bytes - downloaded_bytes, speed)
+                          : speed === -1
+                            ? d.eta
+                            : '',
                       filePath: file_path || d.filePath,
                       mediaType: media_type || d.mediaType,
                     }
