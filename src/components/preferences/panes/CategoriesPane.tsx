@@ -1,4 +1,10 @@
-import { Add01Icon, Delete02Icon, Edit02Icon, Search01Icon } from '@hugeicons/core-free-icons';
+import {
+  Add01Icon,
+  CheckmarkCircle02Icon,
+  Delete02Icon,
+  Edit02Icon,
+  Search01Icon,
+} from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
@@ -15,6 +21,7 @@ interface CategoriesPaneProps {
   onAddCategory: () => void;
   onEditCategory: (category: Category) => void;
   onDeleteCategory: (category: Category) => void;
+  onMarkAsRead: (category: Category) => void;
 }
 
 export function CategoriesPane({
@@ -25,6 +32,7 @@ export function CategoriesPane({
   onAddCategory,
   onEditCategory,
   onDeleteCategory,
+  onMarkAsRead,
 }: CategoriesPaneProps) {
   const { _ } = useLingui();
 
@@ -65,6 +73,16 @@ export function CategoriesPane({
             >
               <span className="min-w-0 flex-1 truncate text-sm">{category.title}</span>
               <div className="flex shrink-0 items-center gap-1">
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <Button size="sm" variant="ghost" onClick={() => onMarkAsRead(category)} />
+                    }
+                  >
+                    <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4" />
+                  </TooltipTrigger>
+                  <TooltipPanel>{_(msg`Mark as read`)}</TooltipPanel>
+                </Tooltip>
                 <Button size="sm" variant="ghost" onClick={() => onEditCategory(category)}>
                   <HugeiconsIcon icon={Edit02Icon} className="size-4" />
                 </Button>

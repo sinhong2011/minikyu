@@ -14,7 +14,8 @@ export type PreferencesPane =
   | 'feeds'
   | 'users'
   | 'token'
-  | 'integrations';
+  | 'integrations'
+  | 'sync';
 
 interface UIState {
   leftSidebarVisible: boolean;

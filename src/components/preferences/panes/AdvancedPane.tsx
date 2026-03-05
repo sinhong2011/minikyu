@@ -3,8 +3,11 @@ import {
   Copy01Icon,
   Delete02Icon,
   Download04Icon,
+  FileDownloadIcon,
+  FileUploadIcon,
   RecycleIcon,
   Upload04Icon,
+  UserCircleIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
@@ -25,6 +28,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from '@/components/ui/alert-dialog';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import {
@@ -47,6 +51,14 @@ import { SettingsField, SettingsSection } from '../shared/SettingsComponents';
 
 const LOG_LEVELS = ['error', 'warn', 'info', 'debug', 'trace'] as const;
 
+const LOG_LEVEL_LABELS = {
+  error: msg`Error`,
+  warn: msg`Warn`,
+  info: msg`Info`,
+  debug: msg`Debug`,
+  trace: msg`Trace`,
+} as const;
+
 function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 B';
   const units = ['B', 'KB', 'MB', 'GB'];
@@ -62,6 +74,13 @@ const STORAGE_COLORS = [
   'bg-emerald-500/50',
 ] as const;
 
+const STORAGE_LABEL_KEYS = {
+  database: msg`Database`,
+  downloads: msg`Downloads`,
+  settings: msg`Settings`,
+  recovery: msg`Recovery`,
+} as const;
+
 /** Group raw backend file entries into user-meaningful categories. */
 function groupStorageCategories(
   files: Array<{ name: string; bytes: number | string; exists: boolean }>
@@ -72,13 +91,17 @@ function groupStorageCategories(
       .reduce((acc, f) => acc + Number(f.bytes), 0);
 
   return [
-    { label: 'Database', bytes: sum('Database', 'Database WAL', 'Database SHM') },
-    { label: 'Downloads', bytes: sum('Downloads') },
-    { label: 'Settings', bytes: sum('Preferences', 'Reading state') },
-    { label: 'Recovery', bytes: sum('Recovery files') },
+    { labelKey: 'database', bytes: sum('Database', 'Database WAL', 'Database SHM') },
+    { labelKey: 'downloads', bytes: sum('Downloads') },
+    { labelKey: 'settings', bytes: sum('Preferences', 'Reading state') },
+    { labelKey: 'recovery', bytes: sum('Recovery files') },
   ]
     .filter((c) => c.bytes > 0)
-    .map((c, i) => ({ ...c, color: STORAGE_COLORS[i % STORAGE_COLORS.length] }));
+    .map((c, i) => ({
+      ...c,
+      label: STORAGE_LABEL_KEYS[c.labelKey as keyof typeof STORAGE_LABEL_KEYS],
+      color: STORAGE_COLORS[i % STORAGE_COLORS.length],
+    }));
 }
 
 export function AdvancedPane() {
@@ -336,6 +359,70 @@ export function AdvancedPane() {
     }
   };
 
+  // ── OPML export/import ──────────────────────────────────────────────
+
+  const handleExportOpml = async () => {
+    try {
+      const date = new Date().toISOString().split('T')[0];
+      const filePath = await saveDialog({
+        title: _(msg`Export OPML`),
+        defaultPath: `miniflux-feeds-${date}.opml`,
+        filters: [
+          { name: 'OPML', extensions: ['opml'] },
+          { name: 'XML', extensions: ['xml'] },
+        ],
+      });
+      if (!filePath) return;
+
+      const result = await commands.exportOpml();
+      if (result.status === 'error') {
+        showToast.error(_(msg`Failed to export OPML`), result.error);
+        return;
+      }
+
+      await writeTextFile(filePath, result.data);
+      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+      showToast.success(_(msg`OPML exported successfully`));
+    } catch (error) {
+      logger.error('Failed to export OPML', { error });
+      showToast.error(
+        _(msg`Failed to export OPML`),
+        error instanceof Error ? error.message : String(error)
+      );
+    }
+  };
+
+  const handleImportOpml = async () => {
+    try {
+      const filePath = await openDialog({
+        title: _(msg`Import OPML`),
+        multiple: false,
+        filters: [
+          { name: 'OPML', extensions: ['opml'] },
+          { name: 'XML', extensions: ['xml'] },
+          { name: 'All Files', extensions: ['*'] },
+        ],
+      });
+      if (!filePath) return;
+
+      const opmlContent = await readTextFile(filePath);
+      const result = await commands.importOpml(opmlContent);
+      if (result.status === 'error') {
+        showToast.error(_(msg`Failed to import OPML`), result.error);
+        return;
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+      showToast.success(_(msg`OPML imported successfully`));
+    } catch (error) {
+      logger.error('Failed to import OPML', { error });
+      showToast.error(
+        _(msg`Failed to import OPML`),
+        error instanceof Error ? error.message : String(error)
+      );
+    }
+  };
+
   // ── Copy debug info ───────────────────────────────────────────────────
 
   const handleCopyDebugInfo = async () => {
@@ -419,6 +506,29 @@ export function AdvancedPane() {
         </SettingsField>
       </SettingsSection>
 
+      {/* ── OPML ───────────────────────────────────────────────────── */}
+      <SettingsSection title={_(msg`OPML`)}>
+        <SettingsField
+          label={_(msg`Export OPML`)}
+          description={_(msg`Export your feeds as an OPML file for backup or migration.`)}
+        >
+          <Button variant="outline" onClick={handleExportOpml}>
+            <HugeiconsIcon icon={FileDownloadIcon} className="size-4" />
+            {_(msg`Export`)}
+          </Button>
+        </SettingsField>
+
+        <SettingsField
+          label={_(msg`Import OPML`)}
+          description={_(msg`Import feeds from an OPML file.`)}
+        >
+          <Button variant="outline" onClick={handleImportOpml}>
+            <HugeiconsIcon icon={FileUploadIcon} className="size-4" />
+            {_(msg`Import`)}
+          </Button>
+        </SettingsField>
+      </SettingsSection>
+
       {/* ── Storage & Data ────────────────────────────────────────── */}
       <SettingsSection title={_(msg`Storage & Data`)}>
         {dataSize && (
@@ -438,10 +548,10 @@ export function AdvancedPane() {
                       const pct = (cat.bytes / Number(dataSize.total_bytes)) * 100;
                       return (
                         <div
-                          key={cat.label}
+                          key={cat.labelKey}
                           className={`h-2 ${cat.color} first:rounded-l-full last:rounded-r-full transition-all`}
                           style={{ width: `${Math.max(pct, 3)}%` }}
-                          title={`${cat.label}: ${formatBytes(cat.bytes)}`}
+                          title={`${_(cat.label)}: ${formatBytes(cat.bytes)}`}
                         />
                       );
                     })}
@@ -449,11 +559,11 @@ export function AdvancedPane() {
                   <div className="mt-2.5 flex flex-wrap gap-x-4 gap-y-1">
                     {categories.map((cat) => (
                       <span
-                        key={cat.label}
+                        key={cat.labelKey}
                         className="flex items-center gap-1.5 text-xs text-muted-foreground"
                       >
                         <span className={`inline-block size-2 rounded-full ${cat.color}`} />
-                        {cat.label}{' '}
+                        {_(cat.label)}{' '}
                         <span className="font-mono tabular-nums">{formatBytes(cat.bytes)}</span>
                       </span>
                     ))}
@@ -467,9 +577,17 @@ export function AdvancedPane() {
         {/* Tier 1: Clear account data (least destructive) */}
         <SettingsField
           label={
-            activeAccount
-              ? _(msg`Clear data for ${activeAccount.username}`)
-              : _(msg`Clear account data`)
+            activeAccount ? (
+              <span>
+                {_(msg`Clear data for`)}{' '}
+                <Badge variant="secondary" className="text-xs font-normal">
+                  <HugeiconsIcon icon={UserCircleIcon} className="size-3" />
+                  {activeAccount.username}
+                </Badge>
+              </span>
+            ) : (
+              _(msg`Clear account data`)
+            )
           }
           description={_(
             msg`Removes synced entries, feeds, and categories for the current account. Other accounts and preferences are not affected.`
@@ -633,7 +751,7 @@ export function AdvancedPane() {
               <SelectContent>
                 {LOG_LEVELS.map((level) => (
                   <SelectItem key={level} value={level}>
-                    {level.charAt(0).toUpperCase() + level.slice(1)}
+                    {_(LOG_LEVEL_LABELS[level])}
                   </SelectItem>
                 ))}
               </SelectContent>
