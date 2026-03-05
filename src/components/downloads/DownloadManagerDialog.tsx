@@ -1,10 +1,9 @@
 import {
   AlertCircleIcon,
+  ArrowDown01Icon,
   Cancel01Icon,
-  Copy01Icon,
-  Delete02Icon,
+  Clock01Icon,
   Download01Icon,
-  Folder01Icon,
   HeadphonesIcon,
   Image01Icon,
   Menu01Icon,
@@ -122,7 +121,7 @@ function DownloadIcon({ item }: { item: DownloadItem }) {
   const type = inferMediaType(item.fileName);
   const icon = MEDIA_ICONS[type];
 
-  const radius = 17;
+  const radius = 15;
   const circumference = 2 * Math.PI * radius;
   const offset = circumference - (item.progress / 100) * circumference;
 
@@ -130,44 +129,48 @@ function DownloadIcon({ item }: { item: DownloadItem }) {
   const isFailed = item.status === 'failed';
   const isActive = item.status === 'downloading';
   const isCancelled = item.status === 'cancelled';
+  const isPaused = item.status === 'paused';
 
   return (
-    <div className="relative flex size-10 shrink-0 items-center justify-center">
+    <div className="relative flex size-9 shrink-0 items-center justify-center">
       <div
         className={cn(
-          'flex size-10 items-center justify-center rounded-full ring-1 ring-border/30 bg-muted/30',
-          isActive && 'bg-accent/60 ring-foreground/10',
-          isDone && 'bg-accent/40 ring-foreground/10',
-          isFailed && 'bg-destructive/5 ring-destructive/15',
-          isCancelled && 'bg-muted/40 ring-border/40'
+          'flex size-9 items-center justify-center rounded-xl',
+          isActive && 'bg-foreground/[0.06]',
+          isDone && 'bg-emerald-500/10',
+          isFailed && 'bg-destructive/8',
+          isCancelled && 'bg-foreground/[0.04]',
+          isPaused && 'bg-amber-500/10',
+          !isActive && !isDone && !isFailed && !isCancelled && !isPaused && 'bg-foreground/[0.04]'
         )}
       >
         <HugeiconsIcon
           icon={icon}
           className={cn(
-            'size-4 text-muted-foreground',
-            isActive && 'text-foreground/70',
-            isDone && 'text-foreground/60',
-            isFailed && 'text-destructive/70',
-            isCancelled && 'text-muted-foreground/50'
+            'size-4',
+            isActive && 'text-foreground/60',
+            isDone && 'text-emerald-600/70 dark:text-emerald-400/70',
+            isFailed && 'text-destructive/60',
+            isCancelled && 'text-muted-foreground/40',
+            isPaused && 'text-amber-600/60 dark:text-amber-400/60'
           )}
         />
       </div>
 
       {isActive && (
-        <svg className="pointer-events-none absolute inset-0" viewBox="0 0 40 40" aria-hidden>
+        <svg className="pointer-events-none absolute inset-0" viewBox="0 0 36 36" aria-hidden>
           <circle
-            cx="20"
-            cy="20"
+            cx="18"
+            cy="18"
             r={radius}
             fill="none"
             stroke="currentColor"
             strokeWidth="2"
-            className="text-foreground/5"
+            className="text-foreground/[0.06]"
           />
           <circle
-            cx="20"
-            cy="20"
+            cx="18"
+            cy="18"
             r={radius}
             fill="none"
             stroke="currentColor"
@@ -175,21 +178,10 @@ function DownloadIcon({ item }: { item: DownloadItem }) {
             strokeLinecap="round"
             strokeDasharray={circumference}
             strokeDashoffset={offset}
-            className="text-foreground/50 transition-[stroke-dashoffset] duration-500 ease-out"
+            className="text-foreground/40 transition-[stroke-dashoffset] duration-500 ease-out"
             style={{ transform: 'rotate(-90deg)', transformOrigin: '50% 50%' }}
           />
         </svg>
-      )}
-
-      {isDone && (
-        <div className="absolute -end-0.5 -bottom-0.5 flex size-4 items-center justify-center rounded-full bg-foreground text-background shadow-sm">
-          <HugeiconsIcon icon={Tick02Icon} className="size-2.5" />
-        </div>
-      )}
-      {isFailed && (
-        <div className="absolute -end-0.5 -bottom-0.5 flex size-4 items-center justify-center rounded-full bg-destructive text-destructive-foreground shadow-sm">
-          <HugeiconsIcon icon={AlertCircleIcon} className="size-2.5" />
-        </div>
       )}
     </div>
   );
@@ -245,11 +237,7 @@ function DownloadRow({
             'relative flex items-center outline-none transition-colors',
             'hover:bg-foreground/[0.03]',
             'focus-visible:ring-1 focus-visible:ring-ring',
-            compact ? 'gap-2 rounded-lg px-3 py-1.5' : 'gap-3 rounded-xl px-3 py-2.5',
-            item.status === 'downloading' && 'bg-accent/30',
-            item.status === 'completed' && 'border-l-2 border-l-emerald-500/30',
-            item.status === 'failed' && 'border-l-2 border-l-destructive/30',
-            item.status === 'paused' && 'border-l-2 border-l-amber-500/30'
+            compact ? 'gap-2 rounded-lg px-3 py-1.5' : 'gap-3 rounded-xl px-3 py-3'
           )}
         >
           {compact ? (
@@ -281,204 +269,143 @@ function DownloadRow({
               <DownloadIcon item={item} />
 
               <div className="min-w-0 flex-1">
-                {/* Name row */}
-                <div className="flex items-center gap-1.5">
-                  <span className="truncate text-sm font-medium leading-snug" title={displayName}>
-                    {displayName}
-                  </span>
-                  {ext && (
-                    <span className="shrink-0 rounded bg-foreground/[0.05] px-1 py-px text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-                      {ext}
-                    </span>
+                {/* Title + primary action */}
+                <div className="flex items-center gap-2">
+                  <div className="min-w-0 flex-1">
+                    <div className="flex items-center gap-1.5">
+                      <span
+                        className="truncate text-[13px] font-medium leading-snug"
+                        title={displayName}
+                      >
+                        {displayName}
+                      </span>
+                      {ext && (
+                        <span className="shrink-0 rounded bg-foreground/[0.04] px-1 py-px text-[9px] font-semibold uppercase tracking-wider text-muted-foreground/50">
+                          {ext}
+                        </span>
+                      )}
+                    </div>
+                    {host && (
+                      <span className="block truncate text-[11px] text-muted-foreground/50">
+                        {host}
+                      </span>
+                    )}
+                  </div>
+
+                  {/* Single primary action */}
+                  {item.status === 'downloading' && (
+                    <button
+                      type="button"
+                      onClick={() => onPause(item)}
+                      className="flex size-6 shrink-0 items-center justify-center rounded-full bg-foreground/[0.04] text-muted-foreground/60 transition-colors hover:bg-foreground/10 hover:text-foreground"
+                      title={_(msg`Pause`)}
+                    >
+                      <HugeiconsIcon icon={PauseIcon} className="size-3" />
+                    </button>
+                  )}
+                  {item.status === 'paused' && (
+                    <button
+                      type="button"
+                      onClick={() => onResume(item)}
+                      className="flex size-6 shrink-0 items-center justify-center rounded-full bg-foreground/[0.04] text-muted-foreground/60 transition-colors hover:bg-foreground/10 hover:text-foreground"
+                      title={_(msg`Resume`)}
+                    >
+                      <HugeiconsIcon icon={PlayIcon} className="size-3" />
+                    </button>
+                  )}
+                  {(item.status === 'failed' || item.status === 'cancelled') && (
+                    <button
+                      type="button"
+                      onClick={() => onRetry(item)}
+                      className="flex size-6 shrink-0 items-center justify-center rounded-full bg-foreground/[0.04] text-muted-foreground/60 transition-colors hover:bg-foreground/10 hover:text-foreground"
+                      title={_(msg`Retry`)}
+                    >
+                      <HugeiconsIcon icon={RefreshIcon} className="size-3" />
+                    </button>
+                  )}
+                  {item.status === 'completed' && (
+                    <button
+                      type="button"
+                      onClick={() =>
+                        item.filePath ? onOpenFile(item.filePath) : onCopyUrl(item.url)
+                      }
+                      className="flex size-6 shrink-0 items-center justify-center rounded-full bg-foreground/[0.04] text-muted-foreground/60 transition-colors hover:bg-foreground/10 hover:text-foreground"
+                      title={item.filePath ? _(msg`Open`) : _(msg`Copy URL`)}
+                    >
+                      <HugeiconsIcon icon={ViewIcon} className="size-3" />
+                    </button>
                   )}
                 </div>
 
-                {/* Meta row */}
-                <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground/70">
-                  {item.status === 'downloading' ? (
+                {/* Progress bar — active/paused downloads */}
+                {(item.status === 'downloading' || item.status === 'paused') && (
+                  <div className="mt-1.5 h-1 overflow-hidden rounded-full bg-foreground/[0.06]">
+                    <div
+                      className={cn(
+                        'h-full rounded-full transition-[width] duration-500 ease-out',
+                        item.status === 'downloading' && 'bg-foreground/35',
+                        item.status === 'paused' && 'bg-amber-500/40'
+                      )}
+                      style={{ width: `${item.progress}%` }}
+                    />
+                  </div>
+                )}
+
+                {/* Stat badges — pill style */}
+                <div className="mt-1.5 flex flex-wrap items-center gap-1">
+                  {item.status === 'downloading' && (
                     <>
-                      <span className="tabular-nums">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-foreground/[0.04] px-1.5 py-0.5 text-[10px] tabular-nums text-muted-foreground/70">
+                        <HugeiconsIcon icon={ArrowDown01Icon} className="size-2.5" />
                         {formatBytes(item.downloadedBytes)}
                         {item.totalBytes > 0 && ` / ${formatBytes(item.totalBytes)}`}
                       </span>
                       {item.speed !== undefined && item.speed > 0 && (
-                        <>
-                          <span className="text-muted-foreground/30">·</span>
-                          <span className="tabular-nums text-foreground/50">
-                            {formatSpeed(item.speed)}
-                          </span>
-                        </>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-foreground/[0.04] px-1.5 py-0.5 text-[10px] tabular-nums text-foreground/60">
+                          {formatSpeed(item.speed)}
+                        </span>
                       )}
                       {item.eta && (
-                        <>
-                          <span className="text-muted-foreground/30">·</span>
-                          <span className="tabular-nums">{item.eta}</span>
-                        </>
-                      )}
-                      <span className="text-muted-foreground/30">·</span>
-                      <span className="tabular-nums">{item.progress}%</span>
-                    </>
-                  ) : item.status === 'completed' ? (
-                    <>
-                      {item.totalBytes > 0 && (
-                        <span className="tabular-nums">{formatBytes(item.totalBytes)}</span>
-                      )}
-                      {host && (
-                        <>
-                          {item.totalBytes > 0 && (
-                            <span className="text-muted-foreground/30">·</span>
-                          )}
-                          <span className="truncate">{host}</span>
-                        </>
+                        <span className="inline-flex items-center gap-1 rounded-full bg-foreground/[0.04] px-1.5 py-0.5 text-[10px] tabular-nums text-muted-foreground/70">
+                          <HugeiconsIcon icon={Clock01Icon} className="size-2.5" />
+                          {item.eta}
+                        </span>
                       )}
                     </>
-                  ) : item.status === 'paused' ? (
+                  )}
+                  {item.status === 'paused' && (
                     <>
-                      <span className="tabular-nums">
+                      <span className="inline-flex items-center gap-1 rounded-full bg-amber-500/10 px-1.5 py-0.5 text-[10px] font-medium text-amber-600/80 dark:text-amber-400/80">
+                        {_(msg`Paused`)} · {item.progress}%
+                      </span>
+                      <span className="inline-flex items-center gap-1 rounded-full bg-foreground/[0.04] px-1.5 py-0.5 text-[10px] tabular-nums text-muted-foreground/70">
                         {formatBytes(item.downloadedBytes)}
                         {item.totalBytes > 0 && ` / ${formatBytes(item.totalBytes)}`}
                       </span>
-                      <span className="text-muted-foreground/30">·</span>
-                      <span className="text-amber-500/80">{_(msg`Paused`)}</span>
-                      <span className="text-muted-foreground/30">·</span>
-                      <span className="tabular-nums">{item.progress}%</span>
                     </>
-                  ) : item.status === 'failed' ? (
-                    <span className="truncate text-destructive/80" title={item.error}>
-                      {item.error || _(msg`Download failed`)}
+                  )}
+                  {item.status === 'completed' && item.totalBytes > 0 && (
+                    <span className="inline-flex items-center gap-1 rounded-full bg-emerald-500/10 px-1.5 py-0.5 text-[10px] tabular-nums text-emerald-600/80 dark:text-emerald-400/70">
+                      <HugeiconsIcon icon={Tick02Icon} className="size-2.5" />
+                      {formatBytes(item.totalBytes)}
                     </span>
-                  ) : (
-                    <span>{_(msg`Cancelled`)}</span>
+                  )}
+                  {item.status === 'failed' && (
+                    <span
+                      className="inline-flex max-w-full items-center gap-1 truncate rounded-full bg-destructive/10 px-1.5 py-0.5 text-[10px] text-destructive/80"
+                      title={item.error}
+                    >
+                      <HugeiconsIcon icon={AlertCircleIcon} className="size-2.5 shrink-0" />
+                      <span className="truncate">{item.error || _(msg`Download failed`)}</span>
+                    </span>
+                  )}
+                  {item.status === 'cancelled' && (
+                    <span className="inline-flex items-center rounded-full bg-foreground/[0.04] px-1.5 py-0.5 text-[10px] text-muted-foreground/60">
+                      {_(msg`Cancelled`)}
+                    </span>
                   )}
                 </div>
               </div>
-
-              {/* Actions — always visible for primary, hover for secondary */}
-              <div className="flex shrink-0 items-center">
-                {item.status === 'downloading' && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => onPause(item)}
-                      className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
-                      title={_(msg`Pause`)}
-                    >
-                      <HugeiconsIcon icon={PauseIcon} className="size-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onCancel(item)}
-                      className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
-                      title={_(msg`Cancel`)}
-                    >
-                      <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
-                    </button>
-                  </>
-                )}
-
-                {item.status === 'paused' && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => onResume(item)}
-                      className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
-                      title={_(msg`Resume`)}
-                    >
-                      <HugeiconsIcon icon={PlayIcon} className="size-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => onCancel(item)}
-                      className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
-                      title={_(msg`Cancel`)}
-                    >
-                      <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
-                    </button>
-                  </>
-                )}
-
-                {(item.status === 'failed' || item.status === 'cancelled') && (
-                  <button
-                    type="button"
-                    onClick={() => onRetry(item)}
-                    className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
-                    title={_(msg`Retry`)}
-                  >
-                    <HugeiconsIcon icon={RefreshIcon} className="size-3.5" />
-                  </button>
-                )}
-
-                {item.status === 'completed' && inferMediaType(item.fileName) === 'audio' && (
-                  <button
-                    type="button"
-                    onClick={() => onPlay(item)}
-                    className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
-                    title={_(msg`Play`)}
-                  >
-                    <HugeiconsIcon icon={PlayIcon} className="size-3.5" />
-                  </button>
-                )}
-
-                {item.status === 'completed' && item.filePath && (
-                  <>
-                    <button
-                      type="button"
-                      onClick={() => item.filePath && onOpenFile(item.filePath)}
-                      className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
-                      title={_(msg`Open`)}
-                    >
-                      <HugeiconsIcon icon={ViewIcon} className="size-3.5" />
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => item.filePath && onOpenFolder(item.filePath)}
-                      className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
-                      title={_(msg`Show in folder`)}
-                    >
-                      <HugeiconsIcon icon={Folder01Icon} className="size-3.5" />
-                    </button>
-                  </>
-                )}
-
-                <button
-                  type="button"
-                  onClick={() => onCopyUrl(item.url)}
-                  className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
-                  title={_(msg`Copy URL`)}
-                >
-                  <HugeiconsIcon icon={Copy01Icon} className="size-3" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => onRemove(item.enclosureId)}
-                  className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
-                  title={_(msg`Remove`)}
-                >
-                  <HugeiconsIcon icon={Delete02Icon} className="size-3" />
-                </button>
-              </div>
-
-              {/* Linear progress bar for active downloads */}
-              {item.status === 'downloading' && (
-                <div className="absolute inset-x-0 bottom-0 h-0.5 overflow-hidden rounded-full bg-foreground/5">
-                  <div
-                    className="h-full bg-foreground/40 transition-[width] duration-500 ease-out"
-                    style={{ width: `${item.progress}%` }}
-                  />
-                </div>
-              )}
-              {item.status === 'paused' && (
-                <div className="absolute inset-x-0 bottom-0 h-0.5 overflow-hidden rounded-full bg-foreground/5">
-                  <div
-                    className="h-full bg-foreground/20"
-                    style={{
-                      width: `${item.progress}%`,
-                      backgroundImage:
-                        'repeating-linear-gradient(135deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px)',
-                    }}
-                  />
-                </div>
-              )}
             </>
           )}
         </motion.div>
