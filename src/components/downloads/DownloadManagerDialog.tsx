@@ -405,58 +405,69 @@ export function DownloadManagerDialog() {
       try {
         const result = await commands.getDownloadsFromDb();
         if (result.status === 'ok') {
-          setDownloads(
-            result.data.map((h) => {
-              if ('Downloading' in h) {
-                const d = h.Downloading;
-                return {
-                  enclosureId: Number(d.id),
-                  url: d.url,
-                  fileName: d.url.split('/').pop() ?? '',
-                  status: 'downloading' as DownloadStatus,
-                  progress: d.progress,
-                  downloadedBytes: Number(d.downloaded_bytes),
-                  totalBytes: Number(d.total_bytes),
-                };
-              }
-              if ('Completed' in h) {
-                const d = h.Completed;
-                return {
-                  enclosureId: Number(d.id),
-                  url: d.url,
-                  fileName: d.file_path?.split(/[/\\]/).pop() ?? '',
-                  status: 'completed' as DownloadStatus,
-                  progress: d.progress,
-                  downloadedBytes: Number(d.total_bytes),
-                  totalBytes: Number(d.total_bytes),
-                  filePath: d.file_path,
-                };
-              }
-              if ('Failed' in h) {
-                const d = h.Failed;
-                return {
-                  enclosureId: Number(d.id),
-                  url: d.url,
-                  fileName: d.url.split('/').pop() ?? '',
-                  status: 'failed' as DownloadStatus,
-                  progress: d.progress,
-                  downloadedBytes: 0,
-                  totalBytes: 0,
-                  error: d.error,
-                };
-              }
-              const d = h.Cancelled;
+          const mapped = result.data.map((h): DownloadItem => {
+            if ('Downloading' in h) {
+              const d = h.Downloading;
               return {
                 enclosureId: Number(d.id),
                 url: d.url,
                 fileName: d.url.split('/').pop() ?? '',
-                status: 'cancelled' as DownloadStatus,
+                status: 'downloading',
+                progress: d.progress,
+                downloadedBytes: Number(d.downloaded_bytes),
+                totalBytes: Number(d.total_bytes),
+              };
+            }
+            if ('Completed' in h) {
+              const d = h.Completed;
+              return {
+                enclosureId: Number(d.id),
+                url: d.url,
+                fileName: d.file_path?.split(/[/\\]/).pop() ?? '',
+                status: 'completed',
+                progress: d.progress,
+                downloadedBytes: Number(d.total_bytes),
+                totalBytes: Number(d.total_bytes),
+                filePath: d.file_path,
+              };
+            }
+            if ('Failed' in h) {
+              const d = h.Failed;
+              return {
+                enclosureId: Number(d.id),
+                url: d.url,
+                fileName: d.url.split('/').pop() ?? '',
+                status: 'failed',
                 progress: d.progress,
                 downloadedBytes: 0,
                 totalBytes: 0,
+                error: d.error,
               };
-            })
+            }
+            const d = h.Cancelled;
+            return {
+              enclosureId: Number(d.id),
+              url: d.url,
+              fileName: d.url.split('/').pop() ?? '',
+              status: 'cancelled',
+              progress: d.progress,
+              downloadedBytes: 0,
+              totalBytes: 0,
+            };
+          });
+
+          // Mark stale "downloading" items as failed (interrupted by app close)
+          const cleaned = mapped.map((item) =>
+            item.status === 'downloading'
+              ? {
+                  ...item,
+                  status: 'failed' as DownloadStatus,
+                  error: 'Interrupted — app was closed',
+                }
+              : item
           );
+
+          setDownloads(cleaned);
         }
       } catch (error) {
         console.error('Failed to load download history:', error);
