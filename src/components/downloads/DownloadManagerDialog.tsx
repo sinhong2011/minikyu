@@ -30,7 +30,7 @@ import { useUIStore } from '@/store/ui-store';
 
 // ── Types ────────────────────────────────────────────────────────────
 
-type DownloadStatus = 'downloading' | 'completed' | 'failed' | 'cancelled';
+type DownloadStatus = 'downloading' | 'completed' | 'failed' | 'cancelled' | 'paused';
 type FilterTab = 'all' | 'active' | 'completed' | 'failed';
 
 type DownloadItem = {
@@ -207,9 +207,12 @@ function DownloadRow({
       exit={{ opacity: 0, y: -8 }}
       transition={{ duration: 0.2 }}
       className={cn(
-        'flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors',
+        'relative flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors',
         'hover:bg-foreground/[0.03]',
-        item.status === 'downloading' && 'bg-accent/30'
+        item.status === 'downloading' && 'bg-accent/30',
+        item.status === 'completed' && 'border-l-2 border-l-emerald-500/30',
+        item.status === 'failed' && 'border-l-2 border-l-destructive/30',
+        item.status === 'paused' && 'border-l-2 border-l-amber-500/30'
       )}
     >
       <DownloadIcon item={item} />
@@ -339,6 +342,28 @@ function DownloadRow({
           <HugeiconsIcon icon={Delete02Icon} className="size-3" />
         </button>
       </div>
+
+      {/* Linear progress bar for active downloads */}
+      {item.status === 'downloading' && (
+        <div className="absolute inset-x-0 bottom-0 h-0.5 overflow-hidden rounded-full bg-foreground/5">
+          <div
+            className="h-full bg-foreground/40 transition-[width] duration-500 ease-out"
+            style={{ width: `${item.progress}%` }}
+          />
+        </div>
+      )}
+      {item.status === 'paused' && (
+        <div className="absolute inset-x-0 bottom-0 h-0.5 overflow-hidden rounded-full bg-foreground/5">
+          <div
+            className="h-full bg-foreground/20"
+            style={{
+              width: `${item.progress}%`,
+              backgroundImage:
+                'repeating-linear-gradient(135deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px)',
+            }}
+          />
+        </div>
+      )}
     </motion.div>
   );
 }
