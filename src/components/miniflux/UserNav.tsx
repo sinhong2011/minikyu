@@ -1,15 +1,16 @@
 import {
   AddCircleIcon,
-  FileDownloadIcon,
-  FileUploadIcon,
-  Logout01Icon,
+  Clock01Icon,
+  Delete02Icon,
+  LanguageCircleIcon,
+  ShieldUserIcon,
   Tick01Icon,
+  UserCircleIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { confirm, open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
-import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
+import { confirm } from '@tauri-apps/plugin-dialog';
 import { toast } from 'sonner';
 
 import {
@@ -21,11 +22,11 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from '@/components/animate-ui/components/base/menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+
 import { Badge } from '@/components/ui/badge';
 import { resetAccountState } from '@/lib/account-reset';
 import { logger } from '@/lib/logger';
-import { queryClient } from '@/lib/query-client';
+import type { MinifluxConnection } from '@/lib/tauri-bindings';
 import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
 import { useAccounts, useActiveAccount } from '@/services/miniflux/accounts';
@@ -48,10 +49,6 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
     logger.debug('[UserNav] No current account found, returning null');
     return null;
   }
-
-  const getInitials = (username: string) => {
-    return username.slice(0, 2).toUpperCase();
-  };
 
   const getDomain = (url: string) => {
     try {
@@ -76,20 +73,37 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
     }
   };
 
-  const handleDeleteAccount = async () => {
-    if (!currentAccount) return;
+  const handleDeleteAccount = async (account: MinifluxConnection) => {
+    const domain = getDomain(account.server_url);
+    const isActive = account.id === currentAccount.id;
+    const isLastAccount = accounts.length <= 1;
+    const otherAccounts = accounts.filter((a) => a.id !== account.id);
+    const nextAccount = otherAccounts[0];
 
-    const confirmed = await confirm(
-      _(
-        msg`Are you sure you want to delete this account? This will remove all credentials and data associated with "${currentAccount.username}" on ${getDomain(currentAccount.server_url)}.`
-      ),
-      { title: _(msg`Delete Account`), kind: 'warning' }
-    );
-
-    if (!confirmed) return;
+    let message: string;
+    if (isLastAccount) {
+      message = _(
+        msg`Delete account "${account.username}" on ${domain}? This is your only account. Deleting it will disconnect you completely.`
+      );
+    } else if (isActive && nextAccount) {
+      message = _(
+        msg`Delete account "${account.username}" on ${domain}? You are currently connected to this account. You'll be switched to "${nextAccount.username}" automatically.`
+      );
+    } else {
+      message = _(
+        msg`Delete account "${account.username}" on ${domain}? This will remove all saved credentials.`
+      );
+    }
 
     try {
-      const result = await commands.deleteMinifluxAccount(currentAccount.id);
+      const confirmed = await confirm(message, {
+        title: _(msg`Delete Account`),
+        kind: 'warning',
+      });
+
+      if (!confirmed) return;
+
+      const result = await commands.deleteMinifluxAccount(account.id);
       if (result.status === 'ok') {
         await resetAccountState();
         toast.success(_(msg`Account deleted successfully`));
@@ -102,97 +116,6 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
     }
   };
 
-  const handleExportOpml = async () => {
-    try {
-      const date = new Date().toISOString().split('T')[0];
-      const filePath = await saveDialog({
-        title: _(msg`Export OPML`),
-        defaultPath: `miniflux-feeds-${date}.opml`,
-        filters: [
-          {
-            name: 'OPML',
-            extensions: ['opml'],
-          },
-          {
-            name: 'XML',
-            extensions: ['xml'],
-          },
-        ],
-      });
-
-      if (!filePath) {
-        return;
-      }
-
-      const result = await commands.exportOpml();
-
-      if (result.status === 'error') {
-        toast.error(_(msg`Failed to export OPML`), {
-          description: result.error,
-        });
-        return;
-      }
-
-      await writeTextFile(filePath, result.data);
-
-      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
-
-      toast.success(_(msg`OPML exported successfully`));
-    } catch (error) {
-      logger.error('Failed to export OPML', { error });
-      toast.error(_(msg`Failed to export OPML`), {
-        description: error instanceof Error ? error.message : String(error),
-      });
-    }
-  };
-
-  const handleImportOpml = async () => {
-    try {
-      const filePath = await openDialog({
-        title: _(msg`Import OPML`),
-        multiple: false,
-        filters: [
-          {
-            name: 'OPML',
-            extensions: ['opml'],
-          },
-          {
-            name: 'XML',
-            extensions: ['xml'],
-          },
-          {
-            name: 'All Files',
-            extensions: ['*'],
-          },
-        ],
-      });
-
-      if (!filePath) {
-        return;
-      }
-
-      const opmlContent = await readTextFile(filePath);
-
-      const result = await commands.importOpml(opmlContent);
-
-      if (result.status === 'error') {
-        toast.error(_(msg`Failed to import OPML`), {
-          description: result.error,
-        });
-        return;
-      }
-
-      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
-
-      toast.success(_(msg`OPML imported successfully`));
-    } catch (error) {
-      logger.error('Failed to import OPML', { error });
-      toast.error(_(msg`Failed to import OPML`), {
-        description: error instanceof Error ? error.message : String(error),
-      });
-    }
-  };
-
   return (
     <Menu>
       <MenuTrigger className={cn('w-full outline-none', compact && 'flex justify-center')}>
@@ -201,19 +124,121 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
             className="flex items-center justify-center rounded-lg p-1.5 text-left transition-colors hover:bg-accent"
             title={currentAccount.username}
           >
-            <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-medium">
-                {getInitials(currentAccount.username)}
-              </AvatarFallback>
-            </Avatar>
+            <svg
+              viewBox="0 0 32 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="size-8"
+            >
+              <rect width="32" height="32" rx="8" fill="#1a1a1a" />
+              <circle cx="16" cy="11" r="5.5" fill="#f5ead6" />
+              <circle cx="13.8" cy="10.2" r="1" fill="#2d2d2d" />
+              <circle cx="18.2" cy="10.2" r="1" fill="#2d2d2d" />
+              <path
+                d="M14.2 13c.5.8 1.2 1.2 1.8 1.2s1.3-.4 1.8-1.2"
+                stroke="#2d2d2d"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+                fill="none"
+              />
+              <rect x="10" y="18" width="12" height="8" rx="3" fill="#4a9eff" />
+              <line x1="16" y1="19" x2="16" y2="25" stroke="#3a8aee" strokeWidth="0.8" />
+              <line
+                x1="12"
+                y1="20.5"
+                x2="14.5"
+                y2="20.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+              <line
+                x1="17.5"
+                y1="20.5"
+                x2="20"
+                y2="20.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+              <line
+                x1="12"
+                y1="22.5"
+                x2="14.5"
+                y2="22.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+              <line
+                x1="17.5"
+                y1="22.5"
+                x2="20"
+                y2="22.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+            </svg>
           </div>
         ) : (
           <div className="flex items-center gap-3 rounded-lg p-2 text-left transition-colors hover:bg-accent">
-            <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-medium">
-                {getInitials(currentAccount.username)}
-              </AvatarFallback>
-            </Avatar>
+            <svg
+              viewBox="0 0 32 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="size-8 shrink-0"
+            >
+              <rect width="32" height="32" rx="8" fill="#1a1a1a" />
+              <circle cx="16" cy="11" r="5.5" fill="#f5ead6" />
+              <circle cx="13.8" cy="10.2" r="1" fill="#2d2d2d" />
+              <circle cx="18.2" cy="10.2" r="1" fill="#2d2d2d" />
+              <path
+                d="M14.2 13c.5.8 1.2 1.2 1.8 1.2s1.3-.4 1.8-1.2"
+                stroke="#2d2d2d"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+                fill="none"
+              />
+              <rect x="10" y="18" width="12" height="8" rx="3" fill="#4a9eff" />
+              <line x1="16" y1="19" x2="16" y2="25" stroke="#3a8aee" strokeWidth="0.8" />
+              <line
+                x1="12"
+                y1="20.5"
+                x2="14.5"
+                y2="20.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+              <line
+                x1="17.5"
+                y1="20.5"
+                x2="20"
+                y2="20.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+              <line
+                x1="12"
+                y1="22.5"
+                x2="14.5"
+                y2="22.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+              <line
+                x1="17.5"
+                y1="22.5"
+                x2="20"
+                y2="22.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+            </svg>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <div className="flex items-center gap-2">
                 <span className="truncate font-semibold">{currentAccount.username}</span>
@@ -243,18 +268,27 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
               <div className="px-2 py-1.5 text-sm">
                 <div className="flex flex-col gap-1">
                   <div className="flex items-center justify-between">
-                    <span className="text-muted-foreground">{_(msg`Role`)}</span>
+                    <span className="flex items-center gap-1.5 text-muted-foreground">
+                      <HugeiconsIcon icon={ShieldUserIcon} className="size-3.5" />
+                      {_(msg`Role`)}
+                    </span>
                     <span>{currentUser.is_admin ? _(msg`Administrator`) : _(msg`User`)}</span>
                   </div>
                   {currentUser.language && (
                     <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">{_(msg`Language`)}</span>
+                      <span className="flex items-center gap-1.5 text-muted-foreground">
+                        <HugeiconsIcon icon={LanguageCircleIcon} className="size-3.5" />
+                        {_(msg`Language`)}
+                      </span>
                       <span className="uppercase">{currentUser.language}</span>
                     </div>
                   )}
                   {currentUser.timezone && (
                     <div className="flex items-center justify-between">
-                      <span className="text-muted-foreground">{_(msg`Timezone`)}</span>
+                      <span className="flex items-center gap-1.5 text-muted-foreground">
+                        <HugeiconsIcon icon={Clock01Icon} className="size-3.5" />
+                        {_(msg`Timezone`)}
+                      </span>
                       <span className="text-xs">{currentUser.timezone}</span>
                     </div>
                   )}
@@ -270,46 +304,42 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
             <MenuItem
               key={account.id}
               onClick={() => handleSwitchAccount(account.id)}
-              className="justify-between"
+              className="group justify-between"
             >
-              <div className="flex flex-col gap-0.5 overflow-hidden">
-                <span className="truncate font-medium">{account.username}</span>
-                <span className="truncate text-xs text-muted-foreground">
-                  {getDomain(account.server_url)}
-                </span>
+              <div className="flex items-center gap-2 overflow-hidden">
+                <HugeiconsIcon
+                  icon={UserCircleIcon}
+                  className="size-4 shrink-0 text-muted-foreground"
+                />
+                <div className="flex flex-col gap-0.5 overflow-hidden">
+                  <span className="truncate font-medium">{account.username}</span>
+                  <span className="truncate text-xs text-muted-foreground">
+                    {getDomain(account.server_url)}
+                  </span>
+                </div>
               </div>
-              {account.id === currentAccount.id && (
-                <HugeiconsIcon icon={Tick01Icon} className="size-4 text-primary shrink-0" />
-              )}
+              <div className="flex items-center gap-1 shrink-0">
+                {account.id === currentAccount.id && (
+                  <HugeiconsIcon icon={Tick01Icon} className="size-4 text-primary" />
+                )}
+                <button
+                  type="button"
+                  className="size-5 items-center justify-center rounded opacity-0 transition-opacity hover:bg-destructive/10 group-hover:opacity-100 flex"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    handleDeleteAccount(account);
+                  }}
+                  title={_(msg`Delete account`)}
+                >
+                  <HugeiconsIcon icon={Delete02Icon} className="size-3.5 text-destructive" />
+                </button>
+              </div>
             </MenuItem>
           ))}
           <MenuSeparator />
           <MenuItem onClick={() => useUIStore.getState().setShowConnectionDialog(true)}>
             <HugeiconsIcon icon={AddCircleIcon} className="mr-2 size-4" />
             {_(msg`Add Account`)}
-          </MenuItem>
-        </MenuGroup>
-        {isConnected && (
-          <>
-            <MenuSeparator />
-            <MenuGroup>
-              <MenuGroupLabel>{_(msg`Manage`)}</MenuGroupLabel>
-              <MenuItem onClick={handleExportOpml}>
-                <HugeiconsIcon icon={FileDownloadIcon} className="mr-2 size-4" />
-                {_(msg`Export OPML`)}
-              </MenuItem>
-              <MenuItem onClick={handleImportOpml}>
-                <HugeiconsIcon icon={FileUploadIcon} className="mr-2 size-4" />
-                {_(msg`Import OPML`)}
-              </MenuItem>
-            </MenuGroup>
-          </>
-        )}
-        <MenuSeparator />
-        <MenuGroup>
-          <MenuItem variant="destructive" onClick={handleDeleteAccount}>
-            <HugeiconsIcon icon={Logout01Icon} className="mr-2 size-4" />
-            {_(msg`Delete Account`)}
           </MenuItem>
         </MenuGroup>
       </MenuPanel>

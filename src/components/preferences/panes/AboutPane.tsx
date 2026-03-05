@@ -9,6 +9,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { AppLogo } from '@/components/brand/AppLogo';
 import { Button } from '@/components/ui/button';
 import { checkForUpdate, downloadUpdate, installAndRelaunch } from '@/lib/updater';
@@ -118,12 +119,29 @@ export function AboutPane() {
                   {_(msg`Download Update`)}
                 </Button>
               ) : (
-                <Button variant="outline" onClick={() => checkForUpdate()} disabled={isBusy}>
-                  <HugeiconsIcon
-                    icon={isChecking ? Loading03Icon : RefreshIcon}
-                    className={cn('size-4', isChecking && 'animate-spin')}
-                  />
-                  {isChecking ? _(msg`Checking...`) : _(msg`Check latest version`)}
+                <Button
+                  variant="outline"
+                  onClick={() => {
+                    if (!isBusy) checkForUpdate();
+                  }}
+                  className={cn(isBusy && 'pointer-events-none')}
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.span
+                      key={isChecking ? 'checking' : 'idle'}
+                      className="inline-flex items-center gap-1.5"
+                      initial={{ opacity: 0, y: 6 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      exit={{ opacity: 0, y: -6 }}
+                      transition={{ duration: 0.15 }}
+                    >
+                      <HugeiconsIcon
+                        icon={isChecking ? Loading03Icon : RefreshIcon}
+                        className={cn('size-4', isChecking && 'animate-spin')}
+                      />
+                      {isChecking ? _(msg`Checking...`) : _(msg`Check latest version`)}
+                    </motion.span>
+                  </AnimatePresence>
                 </Button>
               )}
 

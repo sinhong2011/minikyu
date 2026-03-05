@@ -14,7 +14,8 @@ export type PreferencesPane =
   | 'feeds'
   | 'users'
   | 'token'
-  | 'integrations';
+  | 'integrations'
+  | 'sync';
 
 interface UIState {
   leftSidebarVisible: boolean;
@@ -22,6 +23,7 @@ interface UIState {
   preferencesOpen: boolean;
   preferencesActivePane: PreferencesPane;
   downloadsOpen: boolean;
+  downloadsCompact: boolean;
   lastQuickPaneEntry: string | null;
   selectedEntryId: string | undefined;
   selectionMode: boolean;
@@ -41,6 +43,7 @@ interface UIState {
   openPreferencesToPane: (pane: PreferencesPane) => void;
   toggleDownloads: () => void;
   setDownloadsOpen: (open: boolean) => void;
+  toggleDownloadsCompact: () => void;
   setLastQuickPaneEntry: (text: string) => void;
   setSelectedEntryId: (entryId: string | undefined) => void;
   toggleEntrySelection: (entryId: string) => void;
@@ -66,6 +69,7 @@ export const useUIStore = create<UIState>()(
           preferencesOpen: false,
           preferencesActivePane: 'general',
           downloadsOpen: false,
+          downloadsCompact: false,
           lastQuickPaneEntry: null,
           selectedEntryId: undefined,
           selectionMode: false,
@@ -132,6 +136,13 @@ export const useUIStore = create<UIState>()(
 
           setDownloadsOpen: (open: boolean) =>
             set({ downloadsOpen: open }, undefined, 'setDownloadsOpen'),
+
+          toggleDownloadsCompact: () =>
+            set(
+              (state) => ({ downloadsCompact: !state.downloadsCompact }),
+              undefined,
+              'toggleDownloadsCompact'
+            ),
 
           setLastQuickPaneEntry: (text: string | null) =>
             set({ lastQuickPaneEntry: text }, undefined, 'setLastQuickPaneEntry'),

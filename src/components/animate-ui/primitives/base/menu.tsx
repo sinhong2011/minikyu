@@ -179,7 +179,7 @@ function MenuPopup({
           animate={{ opacity: 1, scale: 1 }}
           exit={{ opacity: 0, scale: 0.95 }}
           transition={transition}
-          style={{ willChange: 'opacity, transform', ...style }}
+          style={style}
           {...props}
         />
       }

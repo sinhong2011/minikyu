@@ -1,14 +1,17 @@
 import {
   AlertCircleIcon,
   Book01Icon,
+  CheckmarkCircle02Icon,
   ColorsIcon,
   Delete02Icon,
   Edit02Icon,
   Folder01Icon,
+  FolderTransferIcon,
   InformationCircleIcon,
   Key01Icon,
   KeyboardIcon,
   Link02Icon,
+  ReloadIcon,
   RssIcon,
   Settings01Icon,
   SparklesIcon,
@@ -19,16 +22,14 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import type { ColumnDef } from '@tanstack/react-table';
-import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
-import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import * as React from 'react';
-import { toast } from 'sonner';
 import { DeleteEntityDialog } from '@/components/miniflux/settings/DeleteEntityDialog';
 import type {
   DeleteDialogState,
   UserDialogState,
 } from '@/components/miniflux/settings/dialog-state';
 import { FeedCategoryDialogsHost } from '@/components/miniflux/settings/FeedCategoryDialogsHost';
+import { MoveFeedDialog } from '@/components/miniflux/settings/MoveFeedDialog';
 import { useMinifluxSettingsDialogStore } from '@/components/miniflux/settings/store';
 import { UserFormDialog } from '@/components/miniflux/settings/UserFormDialog';
 import {
@@ -53,9 +54,7 @@ import {
   SidebarProvider,
 } from '@/components/ui/sidebar';
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
-import { logger } from '@/lib/logger';
-import { queryClient } from '@/lib/query-client';
-import { commands, type Feed } from '@/lib/tauri-bindings';
+import type { Feed } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
 import {
   useCategories,
@@ -67,6 +66,8 @@ import {
   useFeeds,
   useIntegrations,
   useIsConnected,
+  useMarkCategoryAsRead,
+  useMarkFeedAsRead,
   useMinifluxUsers,
   useRefreshAllFeeds,
   useUpdateMinifluxUser,
@@ -82,6 +83,7 @@ import { GeneralPane } from './panes/GeneralPane';
 import { IntegrationsPane } from './panes/IntegrationsPane';
 import { ReaderPane } from './panes/ReaderPane';
 import { ShortcutsPane } from './panes/ShortcutsPane';
+import { SyncPane } from './panes/SyncPane';
 import { TranslationPane } from './panes/TranslationPane';
 import { UsersPane } from './panes/UsersPane';
 
@@ -149,6 +151,11 @@ const serverSettingsItems = [
     label: msg`Integrations`,
     icon: Link02Icon,
   },
+  {
+    id: 'sync' as const,
+    label: msg`Sync`,
+    icon: ReloadIcon,
+  },
 ] as const;
 
 function ConnectionStatePane() {
@@ -187,6 +194,9 @@ export function PreferencesDialog() {
   const [userDialogState, setUserDialogState] = React.useState<UserDialogState | null>(null);
   const [deleteDialogState, setDeleteDialogState] = React.useState<DeleteDialogState | null>(null);
 
+  // Local state for move feed dialog
+  const [moveFeedState, setMoveFeedState] = React.useState<Feed | null>(null);
+
   // Local state for search queries
   const [categorySearchQuery, setCategorySearchQuery] = React.useState('');
   const [feedSearchQuery, setFeedSearchQuery] = React.useState('');
@@ -197,6 +207,8 @@ export function PreferencesDialog() {
   const deleteUser = useDeleteMinifluxUser();
   const deleteCategory = useDeleteCategory();
   const deleteFeed = useDeleteFeed();
+  const markFeedAsRead = useMarkFeedAsRead();
+  const markCategoryAsRead = useMarkCategoryAsRead();
   const refreshAllFeeds = useRefreshAllFeeds();
 
   // Filtered data
@@ -286,7 +298,8 @@ export function PreferencesDialog() {
         },
       },
       {
-        accessorKey: 'category',
+        id: 'category',
+        accessorFn: (row) => row.category?.title ?? '',
         header: _(msg`Category`),
         size: 120,
         cell: ({ row }) => {
@@ -312,11 +325,28 @@ export function PreferencesDialog() {
       {
         id: 'actions',
         header: _(msg`Actions`),
-        size: 80,
+        size: 110,
+        enableSorting: false,
         cell: ({ row }) => {
           const feed = row.original;
           return (
-            <div className="flex items-center gap-1">
+            <div className="flex items-center gap-2">
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => {
+                        markFeedAsRead.mutateAsync(feed.id).catch(() => {});
+                      }}
+                    />
+                  }
+                >
+                  <HugeiconsIcon icon={CheckmarkCircle02Icon} className="size-4" />
+                </TooltipTrigger>
+                <TooltipPanel>{_(msg`Mark as read`)}</TooltipPanel>
+              </Tooltip>
               <Button
                 size="sm"
                 variant="ghost"
@@ -329,6 +359,16 @@ export function PreferencesDialog() {
               >
                 <HugeiconsIcon icon={Edit02Icon} className="size-4" />
               </Button>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button size="sm" variant="ghost" onClick={() => setMoveFeedState(feed)} />
+                  }
+                >
+                  <HugeiconsIcon icon={FolderTransferIcon} className="size-4" />
+                </TooltipTrigger>
+                <TooltipPanel>{_(msg`Move to category`)}</TooltipPanel>
+              </Tooltip>
               <Button
                 size="sm"
                 variant="ghost"
@@ -347,7 +387,7 @@ export function PreferencesDialog() {
         },
       },
     ],
-    [_, formatRelativeTime, setFeedDialogState]
+    [_, formatRelativeTime, markFeedAsRead, setFeedDialogState]
   );
 
   // Handler functions
@@ -393,70 +433,6 @@ export function PreferencesDialog() {
     }
   };
 
-  const handleExportOpml = async () => {
-    try {
-      const date = new Date().toISOString().split('T')[0];
-      const filePath = await saveDialog({
-        title: _(msg`Export OPML`),
-        defaultPath: `miniflux-feeds-${date}.opml`,
-        filters: [
-          { name: 'OPML', extensions: ['opml'] },
-          { name: 'XML', extensions: ['xml'] },
-        ],
-      });
-
-      if (!filePath) return;
-
-      const result = await commands.exportOpml();
-
-      if (result.status === 'error') {
-        toast.error(_(msg`Failed to export OPML`), { description: result.error });
-        return;
-      }
-
-      await writeTextFile(filePath, result.data);
-      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
-      toast.success(_(msg`OPML exported successfully`));
-    } catch (error) {
-      logger.error('Failed to export OPML', { error });
-      toast.error(_(msg`Failed to export OPML`), {
-        description: error instanceof Error ? error.message : String(error),
-      });
-    }
-  };
-
-  const handleImportOpml = async () => {
-    try {
-      const filePath = await openDialog({
-        title: _(msg`Import OPML`),
-        multiple: false,
-        filters: [
-          { name: 'OPML', extensions: ['opml'] },
-          { name: 'XML', extensions: ['xml'] },
-          { name: 'All Files', extensions: ['*'] },
-        ],
-      });
-
-      if (!filePath) return;
-
-      const opmlContent = await readTextFile(filePath);
-      const result = await commands.importOpml(opmlContent);
-
-      if (result.status === 'error') {
-        toast.error(_(msg`Failed to import OPML`), { description: result.error });
-        return;
-      }
-
-      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
-      toast.success(_(msg`OPML imported successfully`));
-    } catch (error) {
-      logger.error('Failed to import OPML', { error });
-      toast.error(_(msg`Failed to import OPML`), {
-        description: error instanceof Error ? error.message : String(error),
-      });
-    }
-  };
-
   const getPaneTitle = (pane: PreferencesPane): string => {
     const allItems = [...appSettingsItems, ...serverSettingsItems];
     const item = allItems.find((i) => i.id === pane);
@@ -472,7 +448,7 @@ export function PreferencesDialog() {
         </DialogDescription>
 
         <SidebarProvider className="flex-1 min-h-0">
-          <Sidebar collapsible="none" className="hidden md:flex bg-background py-4">
+          <Sidebar collapsible="none" className="hidden md:flex bg-transparent py-4">
             <SidebarContent>
               {/* App Settings Section */}
               <SidebarGroup>
@@ -502,7 +478,7 @@ export function PreferencesDialog() {
                     <SidebarMenu className="gap-1">
                       {serverSettingsItems
                         .filter((item) => {
-                          const adminOnly = item.id === 'users' || item.id === 'token';
+                          const adminOnly = item.id === 'users';
                           return !adminOnly || (currentUser?.is_admin ?? false);
                         })
                         .map((item) => (
@@ -572,7 +548,7 @@ export function PreferencesDialog() {
                     <div className="grid grid-cols-2 gap-1">
                       {serverSettingsItems
                         .filter((item) => {
-                          const adminOnly = item.id === 'users' || item.id === 'token';
+                          const adminOnly = item.id === 'users';
                           return !adminOnly || (currentUser?.is_admin ?? false);
                         })
                         .map((item) => (
@@ -627,12 +603,7 @@ export function PreferencesDialog() {
               {activePane === 'about' && <AboutPane />}
 
               {/* Server Settings - shown when connected, otherwise show message */}
-              {activePane === 'token' &&
-                (isConnected ? (
-                  <ApiTokenPane isAdmin={currentUser?.is_admin ?? false} />
-                ) : (
-                  <ConnectionStatePane />
-                ))}
+              {activePane === 'token' && (isConnected ? <ApiTokenPane /> : <ConnectionStatePane />)}
 
               {/* Categories pane */}
               {activePane === 'categories' &&
@@ -651,8 +622,14 @@ export function PreferencesDialog() {
                         type: 'category',
                         id: category.id,
                         title: category.title,
+                        feedCount: feeds.filter(
+                          (f) => String(f.category?.id) === String(category.id)
+                        ).length,
                       })
                     }
+                    onMarkAsRead={(category) => {
+                      markCategoryAsRead.mutateAsync(category.id).catch(() => {});
+                    }}
                   />
                 ) : (
                   <ConnectionStatePane />
@@ -674,8 +651,6 @@ export function PreferencesDialog() {
                       })
                     }
                     onRefreshAll={() => refreshAllFeeds.mutate()}
-                    onExportOpml={handleExportOpml}
-                    onImportOpml={handleImportOpml}
                     isRefreshingAll={refreshAllFeeds.isPending}
                     columns={feedColumns}
                   />
@@ -714,6 +689,9 @@ export function PreferencesDialog() {
                 ) : (
                   <ConnectionStatePane />
                 ))}
+
+              {/* Sync pane */}
+              {activePane === 'sync' && (isConnected ? <SyncPane /> : <ConnectionStatePane />)}
             </div>
           </main>
         </SidebarProvider>
@@ -737,6 +715,14 @@ export function PreferencesDialog() {
           if (!open) setUserDialogState(null);
         }}
         onSubmit={handleSubmitUser}
+      />
+
+      {/* Move feed dialog */}
+      <MoveFeedDialog
+        feed={moveFeedState}
+        onOpenChange={(open) => {
+          if (!open) setMoveFeedState(null);
+        }}
       />
 
       {/* Delete confirmation dialog */}

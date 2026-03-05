@@ -27,14 +27,15 @@ const Toaster = ({ ...props }: ToasterProps) => {
       }}
       toastOptions={{
         classNames: {
+          toast: 'backdrop-blur-xl! backdrop-saturate-150! border-white/10!',
           description: 'text-muted-foreground! text-[13px]!',
         },
       }}
       style={
         {
-          '--normal-bg': 'var(--popover)',
+          '--normal-bg': 'color-mix(in oklch, var(--background) 80%, transparent)',
           '--normal-text': 'var(--popover-foreground)',
-          '--normal-border': 'var(--border)',
+          '--normal-border': 'color-mix(in oklch, white 10%, transparent)',
         } as React.CSSProperties
       }
       {...props}

@@ -99,6 +99,8 @@ export function usePreferences() {
           log_level: 'info',
           // biome-ignore lint/style/useNamingConvention: preferences field name
           time_format: '24h',
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          sync_interval: 15,
         };
       }
 

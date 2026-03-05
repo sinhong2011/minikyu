@@ -1,4 +1,10 @@
-import { Delete01Icon, Search01Icon, Sorting01Icon, WifiOffIcon } from '@hugeicons/core-free-icons';
+import {
+  CheckmarkCircle02Icon,
+  Delete01Icon,
+  Search01Icon,
+  Sorting01Icon,
+  WifiOffIcon,
+} from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
@@ -19,19 +25,21 @@ import {
 import { MainWindowContent } from '@/components/layout/MainWindowContent';
 import { Button } from '@/components/ui/button';
 import { useAudioEngine } from '@/hooks/use-audio-engine';
+import { useAutoSync } from '@/hooks/use-auto-sync';
 import { usePlayerCommandListener } from '@/hooks/use-player-command-listener';
 import { useSyncProgressListener } from '@/hooks/use-sync-progress-listener';
+import { resetAccountState } from '@/lib/account-reset';
 import { logger } from '@/lib/logger';
 import { queryClient } from '@/lib/query-client';
 import type { EntryFilters } from '@/lib/tauri-bindings';
 import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
-import { useActiveAccount } from '@/services/miniflux/accounts';
+import { useAccounts, useActiveAccount } from '@/services/miniflux/accounts';
 import { useIsConnected } from '@/services/miniflux/auth';
-import { useCategories } from '@/services/miniflux/categories';
+import { useCategories, useMarkCategoryAsRead } from '@/services/miniflux/categories';
 import { useUnreadCounts } from '@/services/miniflux/counters';
 import { useEntries, usePrefetchEntry } from '@/services/miniflux/entries';
-import { useSyncMiniflux } from '@/services/miniflux/feeds';
+import { useMarkFeedAsRead, useSyncMiniflux } from '@/services/miniflux/feeds';
 import { useLastReadingEntry, useSaveLastReading } from '@/services/reading-state';
 import { useSyncStore } from '@/store/sync-store';
 import { useUIStore } from '@/store/ui-store';
@@ -47,6 +55,7 @@ type SortDirection = 'asc' | 'desc';
 export function MinifluxLayout() {
   const { _, i18n } = useLingui();
   useAudioEngine();
+  useAutoSync();
   usePlayerCommandListener();
   const search = useSearch({ from: '/' });
   const filter: FilterType = search.filter || 'all';
@@ -54,6 +63,7 @@ export function MinifluxLayout() {
   const feedId = search.feedId;
   const { data: isConnected, isLoading } = useIsConnected();
   const { data: activeAccount } = useActiveAccount();
+  const { data: allAccounts = [] } = useAccounts();
   const { data: categories } = useCategories();
   const { data: unreadCounts } = useUnreadCounts();
   const showConnectionDialog = useUIStore((state) => state.showConnectionDialog);
@@ -83,6 +93,8 @@ export function MinifluxLayout() {
   }, [filter]);
 
   const syncMiniflux = useSyncMiniflux();
+  const markFeedAsRead = useMarkFeedAsRead();
+  const markCategoryAsRead = useMarkCategoryAsRead();
   const syncing = useSyncStore((state) => state.syncing);
   const hasAutoSyncedRef = useRef(false);
   const suppressAutoSelectRef = useRef(false);
@@ -340,15 +352,70 @@ export function MinifluxLayout() {
     );
   }
 
+  const handleReconnectAccount = async (accountId: string) => {
+    try {
+      const result = await commands.switchMinifluxAccount(accountId);
+      if (result.status === 'ok') {
+        await resetAccountState();
+      } else {
+        logger.error('Failed to reconnect account:', { error: result.error });
+        toast.error(_(msg`Failed to reconnect account`));
+      }
+    } catch (error) {
+      logger.error('Error reconnecting account:', { error });
+      toast.error(_(msg`Failed to reconnect account`));
+    }
+  };
+
+  const getDomain = (url: string) => {
+    try {
+      return new URL(url).hostname;
+    } catch {
+      return url;
+    }
+  };
+
   if (!isConnected && !hasCachedContent) {
+    const inactiveAccounts = allAccounts.filter((a) => !a.is_active);
+
     return (
       <div className="flex h-full items-center justify-center">
-        <div className="text-center max-w-md">
-          <h2 className="text-2xl font-bold mb-2">{_(msg`Welcome to Miniflux`)}</h2>
-          <p className="text-muted-foreground mb-4">
-            {_(msg`Connect to your Miniflux server to get started`)}
+        <div className="flex flex-col items-center max-w-xs w-full">
+          <h2 className="text-2xl font-bold mb-1">{_(msg`Welcome to Miniflux`)}</h2>
+          <p className="text-sm text-muted-foreground mb-6">
+            {inactiveAccounts.length > 0
+              ? _(msg`Reconnect to an existing account or add a new one`)
+              : _(msg`Connect to your Miniflux server to get started`)}
           </p>
-          <Button onClick={() => setShowConnectionDialog(true)}>{_(msg`Connect to Server`)}</Button>
+          {inactiveAccounts.length > 0 && (
+            <div className="flex flex-col gap-1.5 w-full mb-4">
+              {inactiveAccounts.map((account) => (
+                <button
+                  key={account.id}
+                  type="button"
+                  className="flex items-center gap-3 rounded-lg border border-border/50 px-3 py-2.5 text-left transition-colors hover:bg-accent/50 hover:border-border"
+                  onClick={() => handleReconnectAccount(account.id)}
+                >
+                  <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10 text-primary text-xs font-semibold shrink-0">
+                    {account.username.slice(0, 2).toUpperCase()}
+                  </div>
+                  <div className="flex flex-col min-w-0">
+                    <span className="text-sm font-medium truncate">{account.username}</span>
+                    <span className="text-[11px] text-muted-foreground truncate">
+                      {getDomain(account.server_url)}
+                    </span>
+                  </div>
+                </button>
+              ))}
+            </div>
+          )}
+          <Button
+            variant={inactiveAccounts.length > 0 ? 'ghost' : 'default'}
+            size="sm"
+            onClick={() => setShowConnectionDialog(true)}
+          >
+            {inactiveAccounts.length > 0 ? _(msg`Add New Account`) : _(msg`Connect to Server`)}
+          </Button>
           <ConnectionDialog open={showConnectionDialog} onOpenChange={setShowConnectionDialog} />
         </div>
       </div>
@@ -500,6 +567,23 @@ export function MinifluxLayout() {
             </AnimatePresence>
           </div>
           <div className="flex items-center gap-2">
+            {(feedId || categoryId) && (
+              <Button
+                variant="ghost"
+                size="icon"
+                className="h-8 w-8"
+                onClick={() => {
+                  if (feedId) {
+                    markFeedAsRead.mutateAsync(feedId).catch(() => {});
+                  } else if (categoryId) {
+                    markCategoryAsRead.mutateAsync(categoryId).catch(() => {});
+                  }
+                }}
+                title={_(msg`Mark all as read`)}
+              >
+                <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-4 w-4" />
+              </Button>
+            )}
             {filter === 'history' && (
               <Button
                 variant="ghost"
@@ -523,13 +607,13 @@ export function MinifluxLayout() {
                   <MenuGroupLabel>{_(msg`Sort by`)}</MenuGroupLabel>
                   <MenuItem
                     onClick={() => setSortOrder('published_at')}
-                    className={cn(sortOrder === 'published_at' && 'bg-accent')}
+                    className={cn(sortOrder === 'published_at' && 'bg-white/10')}
                   >
                     {_(msg`Published date`)}
                   </MenuItem>
                   <MenuItem
                     onClick={() => setSortOrder('changed_at')}
-                    className={cn(sortOrder === 'changed_at' && 'bg-accent')}
+                    className={cn(sortOrder === 'changed_at' && 'bg-white/10')}
                   >
                     {_(msg`Last read date`)}
                   </MenuItem>
@@ -539,13 +623,13 @@ export function MinifluxLayout() {
                   <MenuGroupLabel>{_(msg`Direction`)}</MenuGroupLabel>
                   <MenuItem
                     onClick={() => setSortDirection('asc')}
-                    className={cn(sortDirection === 'asc' && 'bg-accent')}
+                    className={cn(sortDirection === 'asc' && 'bg-white/10')}
                   >
                     {_(msg`Ascending`)}
                   </MenuItem>
                   <MenuItem
                     onClick={() => setSortDirection('desc')}
-                    className={cn(sortDirection === 'desc' && 'bg-accent')}
+                    className={cn(sortDirection === 'desc' && 'bg-white/10')}
                   >
                     {_(msg`Descending`)}
                   </MenuItem>

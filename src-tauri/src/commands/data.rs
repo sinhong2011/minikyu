@@ -161,12 +161,11 @@ pub async fn clear_local_data(
     let user_id = match user_id {
         Some(id) => id,
         None => {
-            let maybe: Option<i64> = sqlx::query_scalar(
-                "SELECT DISTINCT user_id FROM entries LIMIT 1",
-            )
-            .fetch_optional(&pool)
-            .await
-            .map_err(|e| format!("Failed to determine user_id: {e}"))?;
+            let maybe: Option<i64> =
+                sqlx::query_scalar("SELECT DISTINCT user_id FROM entries LIMIT 1")
+                    .fetch_optional(&pool)
+                    .await
+                    .map_err(|e| format!("Failed to determine user_id: {e}"))?;
 
             maybe.ok_or("Cannot determine user_id for cleanup")?
         }
@@ -229,7 +228,11 @@ pub async fn clear_local_data(
     *state.miniflux.client.lock().await = None;
     *state.miniflux.user_id.lock().await = None;
 
-    log::info!("Local data cleared for account {} ({})", account_id, username);
+    log::info!(
+        "Local data cleared for account {} ({})",
+        account_id,
+        username
+    );
     Ok(())
 }
 

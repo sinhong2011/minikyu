@@ -2,14 +2,15 @@ import { Calendar01Icon, Clock01Icon, FilterIcon, Search01Icon } from '@hugeicon
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { Button, buttonVariants } from '@/components/ui/button';
 import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
+  Menu,
+  MenuGroup,
+  MenuGroupLabel,
+  MenuItem,
+  MenuPanel,
+  MenuTrigger,
+} from '@/components/animate-ui/components/base/menu';
+import { Button, buttonVariants } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import type { EntryFilters } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
@@ -63,29 +64,31 @@ export function EntryFiltersUI({
           />
         </div>
 
-        <DropdownMenu>
-          <DropdownMenuTrigger
+        <Menu>
+          <MenuTrigger
             className={cn(buttonVariants({ variant: 'outline', size: 'icon' }), 'h-9 w-9 shrink-0')}
           >
             <HugeiconsIcon icon={FilterIcon} strokeWidth={2} className="h-4 w-4" />
-          </DropdownMenuTrigger>
-          <DropdownMenuContent align="end" className="w-48">
-            <DropdownMenuLabel>{_(msg`Date Range`)}</DropdownMenuLabel>
-            <DropdownMenuItem onClick={() => onFiltersChange({ ...filters, after: null })}>
-              <HugeiconsIcon icon={Clock01Icon} className="mr-2 h-4 w-4" strokeWidth={2} />
-              {_(msg`Any time`)}
-            </DropdownMenuItem>
-            <DropdownMenuItem
-              onClick={() => {
-                const yesterday = Math.floor(Date.now() / 1000) - 86400;
-                onFiltersChange({ ...filters, after: yesterday.toString() });
-              }}
-            >
-              <HugeiconsIcon icon={Calendar01Icon} className="mr-2 h-4 w-4" strokeWidth={2} />
-              {_(msg`Last 24 hours`)}
-            </DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
+          </MenuTrigger>
+          <MenuPanel align="end" className="w-48">
+            <MenuGroup>
+              <MenuGroupLabel>{_(msg`Date Range`)}</MenuGroupLabel>
+              <MenuItem onClick={() => onFiltersChange({ ...filters, after: null })}>
+                <HugeiconsIcon icon={Clock01Icon} className="mr-2 h-4 w-4" strokeWidth={2} />
+                {_(msg`Any time`)}
+              </MenuItem>
+              <MenuItem
+                onClick={() => {
+                  const yesterday = Math.floor(Date.now() / 1000) - 86400;
+                  onFiltersChange({ ...filters, after: yesterday.toString() });
+                }}
+              >
+                <HugeiconsIcon icon={Calendar01Icon} className="mr-2 h-4 w-4" strokeWidth={2} />
+                {_(msg`Last 24 hours`)}
+              </MenuItem>
+            </MenuGroup>
+          </MenuPanel>
+        </Menu>
       </div>
 
       {!hideToggleBar && (

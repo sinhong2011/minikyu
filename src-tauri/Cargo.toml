@@ -83,6 +83,7 @@ base64 = "0.22"
 urlencoding = "2.1"
 tokio = { version = "1", features = ["sync", "fs"] }
 futures-util = "0.3"
+tokio-util = { version = "0.7", features = ["rt"] }
 bytes = "1.0"
 
 [target.'cfg(not(any(target_os = "android", target_os = "ios")))'.dependencies]

@@ -3,7 +3,7 @@ import { Label } from '@/components/ui/label';
 import { Separator } from '@/components/ui/separator';
 
 interface SettingsFieldProps {
-  label: string;
+  label: ReactNode;
   children: ReactNode;
   description?: string;
 }

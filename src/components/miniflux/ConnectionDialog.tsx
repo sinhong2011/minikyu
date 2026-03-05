@@ -134,10 +134,10 @@ export function ConnectionDialog({
       try {
         await connect.mutateAsync(config);
 
-        await resetAccountState();
-
         onOpenChange(false);
         form.reset();
+
+        await resetAccountState();
       } catch {
         // Error is handled by the mutation
       }

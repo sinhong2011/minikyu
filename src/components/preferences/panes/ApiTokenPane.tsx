@@ -22,18 +22,14 @@ import { commands } from '@/lib/tauri-bindings';
 import { useActiveAccount } from '@/services/miniflux/accounts';
 import { useApiKeys, useCreateApiKey, useDeleteApiKey } from '@/services/miniflux/api-keys';
 
-interface ApiTokenPaneProps {
-  isAdmin: boolean;
-}
-
-export function ApiTokenPane({ isAdmin }: ApiTokenPaneProps) {
+export function ApiTokenPane() {
   const { _ } = useLingui();
   const { data: currentAccount } = useActiveAccount();
   const [tokenValue, setTokenValue] = React.useState('');
   const [isSavingToken, setIsSavingToken] = React.useState(false);
 
   // API key management
-  const { data: apiKeys = [], isError: apiKeysError } = useApiKeys(isAdmin);
+  const { data: apiKeys = [], isError: apiKeysError } = useApiKeys();
   const createApiKey = useCreateApiKey();
   const deleteApiKey = useDeleteApiKey();
 
@@ -113,57 +109,50 @@ export function ApiTokenPane({ isAdmin }: ApiTokenPaneProps) {
   return (
     <>
       {/* API Keys Section */}
-      {isAdmin && (
-        <section className="space-y-3 rounded-md border p-4">
+      <section className="space-y-3 rounded-md border p-4">
+        <div className="flex items-center justify-between">
           <div className="flex items-center gap-2">
             <HugeiconsIcon icon={Key01Icon} className="size-4 text-muted-foreground" />
             <h3 className="text-sm font-semibold">{_(msg`API keys`)}</h3>
           </div>
+          {!apiKeysError && (
+            <Button size="sm" variant="outline" onClick={() => setCreateDialogOpen(true)}>
+              <HugeiconsIcon icon={Add01Icon} className="mr-1.5 size-4" />
+              {_(msg`Create API key`)}
+            </Button>
+          )}
+        </div>
 
-          {apiKeysError ? (
-            <div className="text-sm text-destructive">{_(msg`Failed to load API keys`)}</div>
-          ) : (
-            <>
-              <div className="flex justify-end">
-                <Button size="sm" variant="outline" onClick={() => setCreateDialogOpen(true)}>
-                  <HugeiconsIcon icon={Add01Icon} className="mr-1.5 size-4" />
-                  {_(msg`Create API key`)}
+        {apiKeysError ? (
+          <div className="text-sm text-destructive">{_(msg`Failed to load API keys`)}</div>
+        ) : apiKeys.length === 0 ? (
+          <div className="text-sm text-muted-foreground">{_(msg`No API keys created yet.`)}</div>
+        ) : (
+          <div className="space-y-2">
+            {apiKeys.map((key) => (
+              <div
+                key={key.id}
+                className="flex items-center justify-between rounded-md border px-3 py-2"
+              >
+                <div className="flex flex-col gap-0.5">
+                  <span className="text-sm font-medium">{key.description}</span>
+                  <div className="flex items-center gap-3 text-xs text-muted-foreground">
+                    <span>
+                      {_(msg`Created`)}: {formatDate(key.created_at)}
+                    </span>
+                    <span>
+                      {_(msg`Last used`)}: {formatDate(key.last_used_at)}
+                    </span>
+                  </div>
+                </div>
+                <Button size="sm" variant="ghost" onClick={() => setDeleteConfirmKey(key)}>
+                  <HugeiconsIcon icon={Delete02Icon} className="size-4 text-destructive" />
                 </Button>
               </div>
-
-              {apiKeys.length === 0 ? (
-                <div className="text-sm text-muted-foreground">
-                  {_(msg`No API keys created yet.`)}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  {apiKeys.map((key) => (
-                    <div
-                      key={key.id}
-                      className="flex items-center justify-between rounded-md border px-3 py-2"
-                    >
-                      <div className="flex flex-col gap-0.5">
-                        <span className="text-sm font-medium">{key.description}</span>
-                        <div className="flex items-center gap-3 text-xs text-muted-foreground">
-                          <span>
-                            {_(msg`Created`)}: {formatDate(key.created_at)}
-                          </span>
-                          <span>
-                            {_(msg`Last used`)}: {formatDate(key.last_used_at)}
-                          </span>
-                        </div>
-                      </div>
-                      <Button size="sm" variant="ghost" onClick={() => setDeleteConfirmKey(key)}>
-                        <HugeiconsIcon icon={Delete02Icon} className="size-4 text-destructive" />
-                      </Button>
-                    </div>
-                  ))}
-                </div>
-              )}
-            </>
-          )}
-        </section>
-      )}
+            ))}
+          </div>
+        )}
+      </section>
 
       {/* Update Connection Token Section */}
       <section className="space-y-3 rounded-md border p-4">
