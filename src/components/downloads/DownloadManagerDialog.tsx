@@ -315,7 +315,7 @@ function DownloadRow({
               type="button"
               onClick={() => item.filePath && onOpenFolder(item.filePath)}
               className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
-              title={_(msg`Show in Finder`)}
+              title={_(msg`Show in folder`)}
             >
               <HugeiconsIcon icon={Folder01Icon} className="size-3.5" />
             </button>
@@ -364,20 +364,54 @@ export function DownloadManagerDialog() {
         const result = await commands.getDownloadsFromDb();
         if (result.status === 'ok') {
           setDownloads(
-            result.data.map((h: any) => {
-              const variant = Object.keys(h)[0] as string;
-              const data = h[variant];
+            result.data.map((h) => {
+              if ('Downloading' in h) {
+                const d = h.Downloading;
+                return {
+                  enclosureId: Number(d.id),
+                  url: d.url,
+                  fileName: d.url.split('/').pop() ?? '',
+                  status: 'downloading' as DownloadStatus,
+                  progress: d.progress,
+                  downloadedBytes: Number(d.downloaded_bytes),
+                  totalBytes: Number(d.total_bytes),
+                };
+              }
+              if ('Completed' in h) {
+                const d = h.Completed;
+                return {
+                  enclosureId: Number(d.id),
+                  url: d.url,
+                  fileName: d.file_path?.split(/[/\\]/).pop() ?? '',
+                  status: 'completed' as DownloadStatus,
+                  progress: d.progress,
+                  downloadedBytes: Number(d.total_bytes),
+                  totalBytes: Number(d.total_bytes),
+                  filePath: d.file_path,
+                };
+              }
+              if ('Failed' in h) {
+                const d = h.Failed;
+                return {
+                  enclosureId: Number(d.id),
+                  url: d.url,
+                  fileName: d.url.split('/').pop() ?? '',
+                  status: 'failed' as DownloadStatus,
+                  progress: d.progress,
+                  downloadedBytes: 0,
+                  totalBytes: 0,
+                  error: d.error,
+                };
+              }
+              const d = h.Cancelled;
               return {
-                enclosureId: data.id || 0,
-                url: data.url || '',
-                fileName:
-                  data.file_name || (data.file_path ? data.file_path.split(/[/\\]/).pop() : ''),
-                status: variant.toLowerCase() as DownloadStatus,
-                progress: data.progress || 0,
-                downloadedBytes: data.downloaded_bytes || 0,
-                totalBytes: data.total_bytes || 0,
-                filePath: data.file_path,
-                error: data.error,
+                enclosureId: Number(d.id),
+                url: d.url,
+                fileName: d.url.split('/').pop() ?? '',
+                status: 'cancelled' as DownloadStatus,
+                progress: d.progress,
+                downloadedBytes: 0,
+                totalBytes: 0,
               };
             })
           );
@@ -491,7 +525,7 @@ export function DownloadManagerDialog() {
     return () => {
       unlisten?.();
     };
-  }, [_]);
+  }, []);
 
   // ── Computed ──
 
@@ -585,7 +619,7 @@ export function DownloadManagerDialog() {
     if (dl.status !== 'downloading') return;
     const result = await commands.cancelDownload(dl.url);
     if (result.status === 'error') {
-      console.error('Failed to cancel download:', result.error);
+      toast.error(_(msg`Failed to cancel download`));
     }
   };
 
