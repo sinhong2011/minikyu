@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.6.0](https://github.com/sinhong2011/minikyu/compare/v1.5.0...v1.6.0) (2026-03-05)
+
+
+### Features
+
+* Reader improvements, translation UI, updater, and bug fixes ([#54](https://github.com/sinhong2011/minikyu/issues/54)) ([4395107](https://github.com/sinhong2011/minikyu/commit/43951077f735eb0cb8ee20899d5ce4b75cb785d6))
+
 ## [1.5.0](https://github.com/sinhong2011/minikyu/compare/v1.4.0...v1.5.0) (2026-03-05)
 
 
