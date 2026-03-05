@@ -340,6 +340,16 @@ pub async fn download_file(
 ) -> Result<String, String> {
     log::info!("Starting download from: {}", url);
 
+    // Check for active download with same URL
+    {
+        let downloads = get_download_manager().active_downloads.lock().unwrap();
+        if downloads.iter().any(|d| {
+            matches!(d, DownloadState::Downloading { url: dl_url, .. } if dl_url == &url)
+        }) {
+            return Err("Download already in progress for this URL".to_string());
+        }
+    }
+
     let download_id = get_next_download_id();
     let file_name_str = file_name
         .clone()
