@@ -1381,7 +1381,7 @@ msgstr "업데이트 v{0} 다운로드 중... {1}%"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:914
 #: src/components/preferences/panes/AdvancedPane.tsx:79
-#: src/components/titlebar/WindowTitleBar.tsx:138
+#: src/components/titlebar/WindowTitleBar.tsx:135
 msgid "Downloads"
 msgstr "다운로드"
 
