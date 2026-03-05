@@ -387,7 +387,7 @@ export function PreferencesDialog() {
         },
       },
     ],
-    [_, formatRelativeTime, markFeedAsRead, setFeedDialogState, setMoveFeedState]
+    [_, formatRelativeTime, markFeedAsRead, setFeedDialogState]
   );
 
   // Handler functions
