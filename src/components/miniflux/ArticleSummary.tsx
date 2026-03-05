@@ -215,12 +215,15 @@ function SummaryContent({ text }: { text: string }) {
 
   return (
     <ul className="flex flex-col gap-1.5 pl-1">
-      {lines.map((line, i) => (
-        <li key={i} className="flex gap-2">
-          <span className="mt-[0.55em] size-1 shrink-0 rounded-full bg-foreground/40" />
-          <span>{line.replace(BULLET_RE, '').replace(NUMBERED_RE, '')}</span>
-        </li>
-      ))}
+      {lines.map((line) => {
+        const text = line.replace(BULLET_RE, '').replace(NUMBERED_RE, '');
+        return (
+          <li key={text} className="flex gap-2">
+            <span className="mt-[0.55em] size-1 shrink-0 rounded-full bg-foreground/40" />
+            <span>{text}</span>
+          </li>
+        );
+      })}
     </ul>
   );
 }

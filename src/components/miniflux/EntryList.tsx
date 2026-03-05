@@ -184,7 +184,7 @@ export function EntryList({
     });
 
     return rows;
-  }, [_, entriesData?.entries]);
+  }, [_, entriesData?.entries, i18n.locale]);
 
   // Track new entries for animation
   const filtersKey = JSON.stringify(filters ?? {});
