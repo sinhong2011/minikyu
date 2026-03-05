@@ -137,10 +137,10 @@ describe('UserNav', () => {
     } as any);
   });
 
-  it('renders user avatar with initials', () => {
+  it('renders user avatar', () => {
     customRender(<UserNav />);
-    // user1 -> US
-    expect(screen.getByText('US')).toBeInTheDocument();
+    // Avatar is now an SVG mascot, verify the username is displayed
+    expect(screen.getByText('user1')).toBeInTheDocument();
   });
 
   it('renders server domain', () => {
