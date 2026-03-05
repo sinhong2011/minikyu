@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.5.0](https://github.com/sinhong2011/minikyu/compare/v1.4.0...v1.5.0) (2026-03-05)
+
+
+### Features
+
+* **release:** Download manager, glass UI, menu migration, account management ([#52](https://github.com/sinhong2011/minikyu/issues/52)) ([f4e0d27](https://github.com/sinhong2011/minikyu/commit/f4e0d279ed26f78857e775c2eac7df567677999f))
+
 ## [1.4.0](https://github.com/sinhong2011/minikyu/compare/v1.3.2...v1.4.0) (2026-03-04)
 
 
