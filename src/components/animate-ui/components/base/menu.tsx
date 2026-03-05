@@ -78,7 +78,7 @@ function MenuPanel({
           transition={transition}
           id={id}
           className={cn(
-            'bg-popover text-popover-foreground max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md outline-none',
+            'bg-popover/80 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 text-popover-foreground max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md outline-none',
             className
           )}
         >
@@ -281,7 +281,7 @@ function MenuSubmenuPanel({
           transition={transition}
           id={id}
           className={cn(
-            'bg-popover text-popover-foreground max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md',
+            'bg-popover/80 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 text-popover-foreground max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md',
             className
           )}
         >
