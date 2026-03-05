@@ -46,10 +46,6 @@ msgstr "{0} 个分类已同步"
 msgid "{0} entries synced"
 msgstr "{0} 篇文章已同步"
 
-#: src/components/preferences/panes/SyncPane.tsx:56
-#~ msgid "{0} entries, {1} feeds, {2} categories synced"
-#~ msgstr ""
-
 #. placeholder {0}: queue.length
 #: src/components/podcast/PlayerWindowQueue.tsx:35
 msgid "{0} episodes"
@@ -89,7 +85,7 @@ msgid "{0} timeout (ms)"
 msgstr "{0} 超时时间 (ms)"
 
 #. placeholder {0}: table.getFilteredRowModel().rows.length
-#: src/components/ui/data-table.tsx:135
+#: src/components/ui/data-table.tsx:211
 msgid "{0} total"
 msgstr "共 {0} 条"
 
@@ -112,6 +108,10 @@ msgstr "剩余 {minutesLeft} 分钟"
 #: src/components/miniflux/EntryReading.tsx:278
 msgid "{progressPercent}% read"
 msgstr "已读 {progressPercent}%"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:661
+msgid "0 sec"
+msgstr "0 秒"
 
 #: src/components/podcast/PlayerWindowQueue.tsx:35
 msgid "1 episode"
@@ -149,11 +149,11 @@ msgstr "关于 Minikyu"
 msgid "Account data cleared"
 msgstr "账户数据已清除"
 
-#: src/components/miniflux/UserNav.tsx:95
+#: src/components/miniflux/UserNav.tsx:91
 msgid "Account deleted successfully"
 msgstr "账户已成功删除"
 
-#: src/components/miniflux/UserNav.tsx:268
+#: src/components/miniflux/UserNav.tsx:366
 msgid "Accounts"
 msgstr "账户"
 
@@ -161,7 +161,7 @@ msgstr "账户"
 msgid "Actions"
 msgstr "操作"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:884
+#: src/components/downloads/DownloadManagerDialog.tsx:554
 msgid "Active"
 msgstr "进行中"
 
@@ -169,7 +169,7 @@ msgstr "进行中"
 msgid "Add a tag..."
 msgstr "添加标签..."
 
-#: src/components/miniflux/UserNav.tsx:289
+#: src/components/miniflux/UserNav.tsx:387
 #: src/lib/commands/account-commands.ts:12
 msgid "Add Account"
 msgstr "添加账户"
@@ -236,13 +236,13 @@ msgstr "添加用户"
 msgid "Added to playlist"
 msgstr "已添加到播放列表"
 
-#: src/components/miniflux/UserNav.tsx:222
+#: src/components/miniflux/UserNav.tsx:320
 #: src/components/preferences/panes/UsersPane.tsx:60
 msgid "Admin"
 msgstr "管理员"
 
 #: src/components/miniflux/settings/UserFormDialog.tsx:141
-#: src/components/miniflux/UserNav.tsx:247
+#: src/components/miniflux/UserNav.tsx:345
 msgid "Administrator"
 msgstr "管理员"
 
@@ -266,7 +266,7 @@ msgstr "AI"
 msgid "AI Summary"
 msgstr "AI 摘要"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:883
+#: src/components/downloads/DownloadManagerDialog.tsx:553
 #: src/components/layout/AppSidebar.tsx:430
 #: src/components/layout/AppSidebar.tsx:441
 #: src/components/miniflux/EntryFilters.tsx:99
@@ -386,7 +386,7 @@ msgstr "确定要删除 API 密钥\"{0}\"吗？此操作无法撤销。"
 
 #. placeholder {0}: currentAccount.username
 #. placeholder {1}: getDomain(currentAccount.server_url)
-#: src/components/miniflux/UserNav.tsx:84
+#: src/components/miniflux/UserNav.tsx:80
 msgid "Are you sure you want to delete this account? This will remove all credentials and data associated with \"{0}\" on {1}."
 msgstr "确定要删除此账户吗？这将删除与 {1} 上\"{0}\"关联的所有凭证和数据。"
 
@@ -437,10 +437,6 @@ msgstr "自动"
 #: src/components/preferences/panes/TranslationPane.tsx:1728
 msgid "Auto-summarize"
 msgstr "自动摘要"
-
-#: src/components/preferences/panes/SyncPane.tsx:71
-#~ msgid "Auto-sync interval"
-#~ msgstr ""
 
 #: src/components/preferences/panes/TranslationPane.tsx:1729
 msgid "Automatically generate an AI summary when opening an article"
@@ -503,8 +499,6 @@ msgstr "构建日期"
 msgid "Can’t find a category? Create a new one."
 msgstr "找不到分类？创建一个新的。"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:420
-#: src/components/downloads/DownloadManagerDialog.tsx:428
 #: src/components/miniflux/AddCategoryDialog.tsx:97
 #: src/components/miniflux/AddFeedDialog.tsx:862
 #: src/components/miniflux/ConnectionDialog.tsx:359
@@ -524,7 +518,7 @@ msgstr "找不到分类？创建一个新的。"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:406
+#: src/components/downloads/DownloadManagerDialog.tsx:624
 msgid "Cancelled"
 msgstr "已取消"
 
@@ -691,7 +685,7 @@ msgstr "清理"
 msgid "Cleanup complete"
 msgstr "清理完成"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:968
+#: src/components/downloads/DownloadManagerDialog.tsx:882
 msgid "Clear"
 msgstr "清除"
 
@@ -727,6 +721,7 @@ msgid "Clearing..."
 msgstr "正在清除..."
 
 #: src/components/command-palette/CommandPalette.tsx:229
+#: src/components/downloads/DownloadManagerDialog.tsx:831
 #: src/components/miniflux/EntryReadingHeader.tsx:318
 #: src/components/miniflux/EntryReadingHeader.tsx:324
 #: src/components/miniflux/ImageViewer.tsx:236
@@ -795,9 +790,9 @@ msgstr "提交"
 msgid "Compact tray popover"
 msgstr "紧凑型托盘弹窗"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:913
-msgid "Compact view"
-msgstr ""
+#: src/components/downloads/DownloadManagerDialog.tsx:290
+#~ msgid "Complete"
+#~ msgstr "已完成"
 
 #: src/components/ErrorBoundary.tsx:445
 msgid "Component Stack"
@@ -925,10 +920,9 @@ msgstr "请立即复制此令牌，它将不会再次显示。"
 msgid "Copy translation"
 msgstr "复制译文"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:333
-#: src/components/downloads/DownloadManagerDialog.tsx:463
-msgid "Copy URL"
-msgstr "复制链接"
+#: src/components/downloads/DownloadManagerDialog.tsx:1166
+#~ msgid "Copy URL"
+#~ msgstr "复制链接"
 
 #: src/lib/commands/help-commands.ts:31
 #: src/lib/menu.ts:449
@@ -943,11 +937,11 @@ msgstr "无法检查更新，请重试。"
 msgid "Could not connect to saved account. Please update your credentials."
 msgstr "无法连接至已保存的账号。请更新您的凭证。"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:753
+#: src/components/downloads/DownloadManagerDialog.tsx:405
 msgid "Could not find podcast entry"
 msgstr "找不到播客条目"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:758
+#: src/components/downloads/DownloadManagerDialog.tsx:411
 msgid "Could not load podcast entry"
 msgstr "无法加载播客条目"
 
@@ -955,11 +949,11 @@ msgstr "无法加载播客条目"
 msgid "Could not load server version information."
 msgstr "无法加载服务器版本信息。"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:730
+#: src/components/downloads/DownloadManagerDialog.tsx:382
 msgid "Could not open file"
 msgstr "无法打开文件"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:740
+#: src/components/downloads/DownloadManagerDialog.tsx:392
 msgid "Could not reveal in folder"
 msgstr "无法在文件夹中显示"
 
@@ -1012,7 +1006,7 @@ msgstr "正在创建..."
 
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:78
 msgid "Current category"
-msgstr ""
+msgstr "当前分类"
 
 #: src/components/preferences/panes/AboutPane.tsx:101
 msgid "Current version"
@@ -1119,8 +1113,8 @@ msgstr "视频保存的默认文件夹。留空则每次询问。"
 msgid "Delete"
 msgstr "删除"
 
-#: src/components/miniflux/UserNav.tsx:86
-#: src/components/miniflux/UserNav.tsx:312
+#: src/components/miniflux/UserNav.tsx:82
+#: src/components/miniflux/UserNav.tsx:410
 #: src/lib/commands/account-commands.ts:23
 #: src/lib/commands/account-commands.ts:40
 #: src/lib/menu.ts:501
@@ -1192,10 +1186,6 @@ msgstr "禁用订阅源"
 msgid "Disabled"
 msgstr "已禁用"
 
-#: src/components/preferences/panes/SyncPane.tsx:26
-#~ msgid "Disabled (manual only)"
-#~ msgstr ""
-
 #: src/lib/commands/podcast-commands.ts:147
 #: src/lib/menu.ts:349
 msgid "Dismiss Player"
@@ -1217,12 +1207,14 @@ msgstr "显示移动端侧边栏。"
 msgid "Documentation"
 msgstr "文档"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:885
+#: src/components/downloads/DownloadManagerDialog.tsx:555
+#: src/components/downloads/DownloadManagerDialog.tsx:621
 #: src/components/preferences/panes/ApiTokenPane.tsx:261
 #: src/components/sync/SyncProgressPopover.tsx:119
 msgid "Done"
 msgstr "完成"
 
+#: src/components/downloads/DownloadManagerDialog.tsx:567
 #: src/components/miniflux/EntryList.tsx:712
 #: src/components/podcast/PlayerWindowControls.tsx:313
 #: src/components/podcast/PodcastPlayer.tsx:261
@@ -1230,15 +1222,11 @@ msgstr "完成"
 msgid "Download"
 msgstr "下载"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:605
+#: src/components/downloads/DownloadManagerDialog.tsx:286
 msgid "Download Completed"
 msgstr "下载完成"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:400
-msgid "Download failed"
-msgstr "下载失败"
-
-#: src/components/downloads/DownloadManagerDialog.tsx:613
+#: src/components/downloads/DownloadManagerDialog.tsx:294
 #: src/components/miniflux/EntryList.tsx:462
 #: src/components/podcast/PodcastPlayer.tsx:240
 #: src/hooks/use-player-command-listener.ts:59
@@ -1267,6 +1255,7 @@ msgstr "从原始来源下载完整文章"
 msgid "Download Update"
 msgstr "下载更新"
 
+#: src/components/downloads/DownloadManagerDialog.tsx:617
 #: src/components/miniflux/EntryList.tsx:458
 #: src/components/podcast/PodcastPlayer.tsx:231
 msgid "Downloading"
@@ -1285,7 +1274,7 @@ msgstr "正在从服务器下载最近的文章"
 msgid "Downloading update v{0}... {1}%"
 msgstr "正在下载更新 v{0}... {1}%"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:900
+#: src/components/downloads/DownloadManagerDialog.tsx:838
 #: src/components/titlebar/WindowTitleBar.tsx:138
 msgid "Downloads"
 msgstr "下载"
@@ -1360,7 +1349,7 @@ msgstr "已启用"
 msgid "Enabled Services"
 msgstr "已启用的服务"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:764
+#: src/components/downloads/DownloadManagerDialog.tsx:418
 msgid "Enclosure not found for this entry"
 msgstr "未找到此条目的附件"
 
@@ -1434,26 +1423,6 @@ msgstr "未找到文章"
 msgid "Entry sent to services"
 msgstr "条目已发送至服务"
 
-#: src/components/preferences/panes/SyncPane.tsx:30
-#~ msgid "Every 1 hour"
-#~ msgstr ""
-
-#: src/components/preferences/panes/SyncPane.tsx:28
-#~ msgid "Every 15 minutes"
-#~ msgstr ""
-
-#: src/components/preferences/panes/SyncPane.tsx:31
-#~ msgid "Every 2 hours"
-#~ msgstr ""
-
-#: src/components/preferences/panes/SyncPane.tsx:29
-#~ msgid "Every 30 minutes"
-#~ msgstr ""
-
-#: src/components/preferences/panes/SyncPane.tsx:27
-#~ msgid "Every 5 minutes"
-#~ msgstr ""
-
 #: src/components/sync/SyncProgressPopover.tsx:169
 msgid "Everything is up to date"
 msgstr "一切都是最新的"
@@ -1475,13 +1444,9 @@ msgid "Exit fullscreen mode"
 msgstr "退出全屏模式"
 
 #: src/components/titlebar/WindowTitleBar.tsx:95
-#: src/components/zen-mode/ZenModeView.tsx:171
+#: src/components/zen-mode/ZenModeView.tsx:161
 msgid "Exit Zen Mode"
 msgstr "退出专注模式"
-
-#: src/components/downloads/DownloadManagerDialog.tsx:913
-msgid "Expanded view"
-msgstr ""
 
 #: src/pages/HomePage.tsx:61
 msgid "Explore Features"
@@ -1495,8 +1460,8 @@ msgstr "导出"
 msgid "Export feeds to an OPML file"
 msgstr "将订阅源导出为 OPML 文件"
 
-#: src/components/miniflux/UserNav.tsx:109
-#: src/components/miniflux/UserNav.tsx:299
+#: src/components/miniflux/UserNav.tsx:105
+#: src/components/miniflux/UserNav.tsx:397
 #: src/components/preferences/panes/FeedsPane.tsx:77
 #: src/components/preferences/PreferencesDialog.tsx:400
 msgid "Export OPML"
@@ -1532,15 +1497,15 @@ msgstr "恢复出厂设置失败"
 msgid "Factory reset?"
 msgstr "恢复出厂设置？"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:258
-#: src/components/downloads/DownloadManagerDialog.tsx:886
+#: src/components/downloads/DownloadManagerDialog.tsx:556
+#: src/components/downloads/DownloadManagerDialog.tsx:623
 #: src/components/sync/SyncProgressPopover.tsx:117
 msgid "Failed"
 msgstr "失败"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:783
+#: src/components/downloads/DownloadManagerDialog.tsx:438
 msgid "Failed to cancel download"
-msgstr ""
+msgstr "取消下载失败"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:136
 msgid "Failed to clear local data"
@@ -1575,8 +1540,8 @@ msgstr "创建订阅源失败"
 msgid "Failed to create user"
 msgstr "创建用户失败"
 
+#: src/components/miniflux/UserNav.tsx:93
 #: src/components/miniflux/UserNav.tsx:97
-#: src/components/miniflux/UserNav.tsx:101
 msgid "Failed to delete account"
 msgstr "删除账户失败"
 
@@ -1608,8 +1573,8 @@ msgstr "进入全屏失败：{message}"
 msgid "Failed to exit fullscreen: {message}"
 msgstr "退出全屏失败：{message}"
 
-#: src/components/miniflux/UserNav.tsx:130
-#: src/components/miniflux/UserNav.tsx:143
+#: src/components/miniflux/UserNav.tsx:126
+#: src/components/miniflux/UserNav.tsx:139
 #: src/components/preferences/PreferencesDialog.tsx:413
 #: src/components/preferences/PreferencesDialog.tsx:422
 msgid "Failed to export OPML"
@@ -1633,8 +1598,8 @@ msgstr "获取内容失败"
 msgid "Failed to flush history"
 msgstr "清除历史记录失败"
 
-#: src/components/miniflux/UserNav.tsx:179
-#: src/components/miniflux/UserNav.tsx:190
+#: src/components/miniflux/UserNav.tsx:175
+#: src/components/miniflux/UserNav.tsx:186
 #: src/components/preferences/PreferencesDialog.tsx:446
 #: src/components/preferences/PreferencesDialog.tsx:454
 msgid "Failed to import OPML"
@@ -1670,9 +1635,9 @@ msgstr "加载用户失败"
 msgid "Failed to minimize window: {message}"
 msgstr "最小化窗口失败：{message}"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:791
+#: src/components/downloads/DownloadManagerDialog.tsx:446
 msgid "Failed to pause download"
-msgstr ""
+msgstr "暂停下载失败"
 
 #: src/services/miniflux/feeds.ts:278
 msgid "Failed to refresh feed"
@@ -1690,9 +1655,9 @@ msgstr "重置偏好设置失败"
 msgid "Failed to resort providers"
 msgstr "重排提供商失败"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:800
+#: src/components/downloads/DownloadManagerDialog.tsx:455
 msgid "Failed to resume download"
-msgstr ""
+msgstr "恢复下载失败"
 
 #: src/components/miniflux/EntryReading.tsx:502
 #: src/components/miniflux/EntryReading.tsx:508
@@ -1956,20 +1921,6 @@ msgstr "法语"
 msgid "From"
 msgstr "来源"
 
-#: src/components/preferences/panes/SyncPane.tsx:89
-#: src/components/preferences/panes/SyncPane.tsx:98
-#~ msgid "Full Sync"
-#~ msgstr ""
-
-#: src/components/preferences/panes/SyncPane.tsx:54
-#~ msgid "Full sync completed"
-#~ msgstr ""
-
-#: src/components/preferences/panes/SyncPane.tsx:51
-#: src/components/preferences/panes/SyncPane.tsx:61
-#~ msgid "Full sync failed"
-#~ msgstr ""
-
 #: src/components/preferences/panes/TranslationPane.tsx:643
 msgid "Gemini"
 msgstr "Gemini"
@@ -2005,19 +1956,19 @@ msgstr "Git 提交哈希值。"
 msgid "GLM"
 msgstr "GLM"
 
-#: src/components/ui/data-table.tsx:169
+#: src/components/ui/data-table.tsx:264
 msgid "Go to first page"
 msgstr "跳转到第一页"
 
-#: src/components/ui/data-table.tsx:196
+#: src/components/ui/data-table.tsx:291
 msgid "Go to last page"
 msgstr "跳转到最后一页"
 
-#: src/components/ui/data-table.tsx:187
+#: src/components/ui/data-table.tsx:282
 msgid "Go to next page"
 msgstr "下一页"
 
-#: src/components/ui/data-table.tsx:178
+#: src/components/ui/data-table.tsx:273
 msgid "Go to previous page"
 msgstr "上一页"
 
@@ -2082,10 +2033,6 @@ msgstr "历史条目"
 msgid "History page is only available when connected to Miniflux server."
 msgstr "历史记录页面仅在连接到 Miniflux 服务器时可用。"
 
-#: src/components/preferences/panes/SyncPane.tsx:72
-#~ msgid "How often to automatically sync with your Miniflux server."
-#~ msgstr ""
-
 #: src/components/miniflux/AddFeedDialog.tsx:689
 #: src/components/miniflux/EditFeedDialog.tsx:289
 #: src/components/miniflux/settings/FeedFormDialog.tsx:508
@@ -2145,8 +2092,8 @@ msgstr "导入"
 msgid "Import feeds from an OPML file"
 msgstr "从 OPML 文件导入订阅源"
 
-#: src/components/miniflux/UserNav.tsx:152
-#: src/components/miniflux/UserNav.tsx:303
+#: src/components/miniflux/UserNav.tsx:148
+#: src/components/miniflux/UserNav.tsx:401
 #: src/components/preferences/panes/FeedsPane.tsx:68
 #: src/components/preferences/PreferencesDialog.tsx:431
 msgid "Import OPML"
@@ -2219,6 +2166,10 @@ msgstr "集成服务"
 msgid "Integrations"
 msgstr "集成"
 
+#: src/components/downloads/DownloadManagerDialog.tsx:259
+msgid "Interrupted — app was closed"
+msgstr "已中断 — 应用已关闭"
+
 #: src/components/miniflux/EntryReadingHeader.tsx:164
 #: src/components/preferences/panes/TranslationPane.tsx:1613
 msgid "Japanese"
@@ -2244,7 +2195,7 @@ msgid "Korean"
 msgstr "韩语"
 
 #: src/components/miniflux/SafeHtml.tsx:694
-#: src/components/miniflux/UserNav.tsx:251
+#: src/components/miniflux/UserNav.tsx:349
 #: src/components/preferences/panes/AppearancePane.tsx:85
 #: src/components/preferences/panes/AppearancePane.tsx:87
 msgid "Language"
@@ -2262,13 +2213,13 @@ msgstr "最近 24 小时"
 msgid "Last login"
 msgstr "上次登录"
 
+#: src/components/downloads/DownloadManagerDialog.tsx:674
+msgid "Last Modified"
+msgstr "最后修改"
+
 #: src/components/miniflux/MinifluxLayout.tsx:534
 msgid "Last read date"
 msgstr "最近阅读日期"
-
-#: src/components/preferences/panes/SyncPane.tsx:102
-#~ msgid "Last synced"
-#~ msgstr ""
 
 #. placeholder {0}: formatSyncTime(lastSyncedAt)
 #: src/components/sync/SyncProgressPopover.tsx:181
@@ -2369,7 +2320,7 @@ msgstr "放大文字"
 msgid "Make text smaller"
 msgstr "缩小文字"
 
-#: src/components/miniflux/UserNav.tsx:296
+#: src/components/miniflux/UserNav.tsx:394
 msgid "Manage"
 msgstr "管理"
 
@@ -2502,20 +2453,20 @@ msgstr "更多"
 
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:103
 msgid "Move"
-msgstr ""
+msgstr "移动"
 
 #. placeholder {0}: feed.title
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:71
 msgid "Move \"{0}\" to a different category."
-msgstr ""
+msgstr "将\"{0}\"移动到其他分类。"
 
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:67
 msgid "Move feed"
-msgstr ""
+msgstr "移动订阅源"
 
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:103
 msgid "Moving..."
-msgstr ""
+msgstr "移动中..."
 
 #: src/components/podcast/PlayerWindowControls.tsx:324
 #: src/components/podcast/PodcastPlayer.tsx:623
@@ -2527,6 +2478,10 @@ msgstr "静音"
 #: src/lib/menu.ts:322
 msgid "Mute / Unmute"
 msgstr "静音 / 取消静音"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:562
+msgid "Name"
+msgstr "名称"
 
 #: src/lib/shortcut-registry.ts:64
 msgid "Narrow content"
@@ -2566,7 +2521,7 @@ msgid "New password (optional)"
 msgstr "新密码（可选）"
 
 #: src/components/podcast/PlayerWindowControls.tsx:291
-#: src/components/zen-mode/ZenModeView.tsx:207
+#: src/components/zen-mode/ZenModeView.tsx:197
 #: src/pages/TrayPopover.tsx:233
 msgid "Next"
 msgstr "下一个"
@@ -2593,7 +2548,7 @@ msgstr "下一部分"
 msgid "No active account"
 msgstr "无活跃账户"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:991
+#: src/components/downloads/DownloadManagerDialog.tsx:812
 msgid "No active downloads"
 msgstr "无进行中的下载"
 
@@ -2622,7 +2577,7 @@ msgstr "暂无分类"
 msgid "No category"
 msgstr "无分类"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:993
+#: src/components/downloads/DownloadManagerDialog.tsx:814
 msgid "No completed downloads"
 msgstr "没有已完成的下载"
 
@@ -2634,7 +2589,11 @@ msgstr "暂无内容"
 msgid "No custom rules yet"
 msgstr "暂无自定义规则"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:989
+#: src/components/downloads/DownloadManagerDialog.tsx:808
+msgid "No downloads match your search"
+msgstr "没有匹配搜索的下载"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:810
 msgid "No downloads yet"
 msgstr "暂无下载"
 
@@ -2646,7 +2605,7 @@ msgstr "未找到文章"
 msgid "No episode playing"
 msgstr "没有正在播放的节目"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:994
+#: src/components/downloads/DownloadManagerDialog.tsx:815
 msgid "No failed downloads"
 msgstr "没有失败的下载"
 
@@ -2689,7 +2648,7 @@ msgstr "没有新文章"
 msgid "No results found."
 msgstr "未找到结果。"
 
-#: src/components/ui/data-table.tsx:124
+#: src/components/ui/data-table.tsx:189
 msgid "No results."
 msgstr "无结果。"
 
@@ -2702,7 +2661,7 @@ msgstr "找不到服务器 URL。"
 msgid "No sources found"
 msgstr "未找到来源"
 
-#: src/components/zen-mode/ZenModeView.tsx:161
+#: src/components/zen-mode/ZenModeView.tsx:151
 msgid "No unread entries available"
 msgstr "没有未读条目"
 
@@ -2731,7 +2690,7 @@ msgid "Off"
 msgstr "关闭"
 
 #: src/components/layout/AppSidebar.tsx:575
-#: src/components/miniflux/UserNav.tsx:231
+#: src/components/miniflux/UserNav.tsx:329
 msgid "Offline cached data"
 msgstr "离线缓存数据"
 
@@ -2749,8 +2708,8 @@ msgstr "OLED"
 msgid "Ollama"
 msgstr "Ollama"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:333
-#: src/components/downloads/DownloadManagerDialog.tsx:608
+#: src/components/downloads/DownloadManagerDialog.tsx:289
+#: src/components/downloads/DownloadManagerDialog.tsx:701
 #: src/components/podcast/PodcastPlayer.tsx:259
 #: src/components/podcast/PodcastPlayer.tsx:265
 msgid "Open"
@@ -2760,9 +2719,10 @@ msgstr "打开"
 msgid "Open appearance preferences"
 msgstr "打开外观偏好设置"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:437
-msgid "Open File"
-msgstr ""
+#: src/components/downloads/DownloadManagerDialog.tsx:403
+#: src/components/downloads/DownloadManagerDialog.tsx:1127
+#~ msgid "Open File"
+#~ msgstr "打开文件"
 
 #: src/lib/shortcut-registry.ts:93
 msgid "Open in app browser"
@@ -2833,12 +2793,12 @@ msgstr "OpenAI"
 msgid "OpenRouter"
 msgstr "OpenRouter"
 
-#: src/components/miniflux/UserNav.tsx:140
+#: src/components/miniflux/UserNav.tsx:136
 #: src/components/preferences/PreferencesDialog.tsx:419
 msgid "OPML exported successfully"
 msgstr "OPML 导出成功"
 
-#: src/components/miniflux/UserNav.tsx:187
+#: src/components/miniflux/UserNav.tsx:183
 #: src/components/preferences/PreferencesDialog.tsx:451
 msgid "OPML imported successfully"
 msgstr "OPML 导入成功"
@@ -2882,7 +2842,7 @@ msgstr "覆盖默认翻译指令。支持 {source_lang} 和 {target_lang} 占位
 
 #. placeholder {0}: table.getState().pagination.pageIndex + 1
 #. placeholder {1}: table.getPageCount()
-#: src/components/ui/data-table.tsx:160
+#: src/components/ui/data-table.tsx:254
 msgid "Page {0} of {1}"
 msgstr "第 {0} 页，共 {1} 页"
 
@@ -2918,8 +2878,7 @@ msgstr "粘贴密钥"
 msgid "Paste new API token"
 msgstr "粘贴新的 API 令牌"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:301
-#: src/components/downloads/DownloadManagerDialog.tsx:418
+#: src/components/downloads/DownloadManagerDialog.tsx:739
 #: src/components/miniflux/EntryReadingHeader.tsx:269
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PodcastPlayer.tsx:576
@@ -2927,14 +2886,9 @@ msgstr "粘贴新的 API 令牌"
 msgid "Pause"
 msgstr "暂停"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:255
-#: src/components/downloads/DownloadManagerDialog.tsx:379
+#: src/components/downloads/DownloadManagerDialog.tsx:619
 msgid "Paused"
-msgstr ""
-
-#: src/components/preferences/panes/SyncPane.tsx:93
-#~ msgid "Performs a complete sync from scratch, re-downloading all categories, feeds, and entries. Use this if your data seems out of sync."
-#~ msgstr ""
+msgstr "已暂停"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:551
 msgid "Permanently deletes everything — all accounts, synced data, preferences, downloads, and credentials. This cannot be undone."
@@ -2944,7 +2898,7 @@ msgstr "永久删除所有内容——包括所有账户、同步数据、偏好
 msgid "Phrase"
 msgstr "短语"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:445
+#: src/components/downloads/DownloadManagerDialog.tsx:724
 #: src/components/miniflux/EntryList.tsx:725
 #: src/components/miniflux/EntryReadingHeader.tsx:270
 #: src/components/podcast/PlayerWindowControls.tsx:270
@@ -3154,10 +3108,6 @@ msgstr "随机排列播放队列顺序"
 msgid "Re-summarize"
 msgstr "重新摘要"
 
-#: src/components/preferences/panes/SyncPane.tsx:91
-#~ msgid "Re-sync all data"
-#~ msgstr ""
-
 #: src/pages/HomePage.tsx:28
 msgid "React 19"
 msgstr "React 19"
@@ -3224,6 +3174,10 @@ msgstr "就绪"
 msgid "Recent"
 msgstr "最近"
 
+#: src/components/downloads/DownloadManagerDialog.tsx:907
+msgid "records"
+msgstr "条记录"
+
 #: src/components/miniflux/InAppBrowserPane.tsx:65
 #: src/components/miniflux/InAppBrowserPane.tsx:71
 msgid "Refresh"
@@ -3269,8 +3223,7 @@ msgstr "松手刷新"
 msgid "Reload App"
 msgstr "重新加载应用"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:449
-#: src/components/downloads/DownloadManagerDialog.tsx:458
+#: src/components/downloads/DownloadManagerDialog.tsx:795
 #: src/components/podcast/PlayerWindowQueue.tsx:110
 #: src/components/preferences/panes/TranslationPane.tsx:1873
 msgid "Remove"
@@ -3404,13 +3357,11 @@ msgstr "从之前导出的 JSON 文件恢复设置。"
 msgid "Restore window"
 msgstr "恢复窗口"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:311
-#: src/components/downloads/DownloadManagerDialog.tsx:426
+#: src/components/downloads/DownloadManagerDialog.tsx:762
 msgid "Resume"
-msgstr ""
+msgstr "恢复"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:321
-#: src/components/downloads/DownloadManagerDialog.tsx:455
+#: src/components/downloads/DownloadManagerDialog.tsx:784
 #: src/components/miniflux/ArticleSummary.tsx:258
 #: src/components/miniflux/ImmersiveTranslationLayer.tsx:812
 #: src/components/podcast/PodcastPlayer.tsx:260
@@ -3418,9 +3369,9 @@ msgstr ""
 msgid "Retry"
 msgstr "重试"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:809
+#: src/components/downloads/DownloadManagerDialog.tsx:464
 msgid "Retry failed"
-msgstr ""
+msgstr "重试失败"
 
 #: src/components/miniflux/SafeHtml.tsx:690
 msgid "Retry translation"
@@ -3433,7 +3384,7 @@ msgid "Rewrite rules"
 msgstr "重写规则"
 
 #: src/components/miniflux/settings/UserFormDialog.tsx:132
-#: src/components/miniflux/UserNav.tsx:246
+#: src/components/miniflux/UserNav.tsx:344
 msgid "Role"
 msgstr "角色"
 
@@ -3441,7 +3392,7 @@ msgstr "角色"
 msgid "Route strategy"
 msgstr "路由策略"
 
-#: src/components/ui/data-table.tsx:139
+#: src/components/ui/data-table.tsx:221
 msgid "Rows per page"
 msgstr "每页行数"
 
@@ -3575,6 +3526,10 @@ msgstr "搜索字体..."
 msgid "Search for websites or blog URLs to discover available feeds."
 msgstr "搜索网站或博客 URL 以发现可用的订阅源。"
 
+#: src/components/downloads/DownloadManagerDialog.tsx:851
+msgid "Search in downloads"
+msgstr "搜索下载"
+
 #: src/components/titlebar/CommandSearchButton.tsx:21
 msgid "Search or type a command..."
 msgstr "搜索或输入命令..."
@@ -3604,6 +3559,10 @@ msgstr "正在搜索来源..."
 #: src/components/miniflux/SearchSourceDialog.tsx:163
 msgid "Searching..."
 msgstr "正在搜索..."
+
+#: src/components/downloads/DownloadManagerDialog.tsx:906
+#~ msgid "sec"
+#~ msgstr "秒"
 
 #: src/components/miniflux/EditFeedDialog.tsx:225
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:84
@@ -3714,13 +3673,9 @@ msgstr "显示测试通知"
 msgid "Show All"
 msgstr "显示全部"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:318
-#~ msgid "Show in Finder"
-#~ msgstr "在访达中显示"
-
-#: src/components/downloads/DownloadManagerDialog.tsx:440
+#: src/components/downloads/DownloadManagerDialog.tsx:713
 msgid "Show in folder"
-msgstr ""
+msgstr "在文件夹中显示"
 
 #: src/components/titlebar/LinuxTitleBar.tsx:35
 #: src/components/titlebar/WindowTitleBar.tsx:67
@@ -3783,6 +3738,10 @@ msgstr "随机播放队列"
 #: src/components/ui/sidebar.tsx:194
 msgid "Sidebar"
 msgstr "侧边栏"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:593
+msgid "Size"
+msgstr "大小"
 
 #: src/lib/commands/podcast-commands.ts:37
 msgid "Skip back 15 seconds"
@@ -3898,6 +3857,10 @@ msgstr "启动时最小化设置已更新"
 msgid "Start the application minimized to the system tray"
 msgstr "启动应用程序时最小化到系统托盘"
 
+#: src/components/downloads/DownloadManagerDialog.tsx:610
+msgid "Status"
+msgstr "状态"
+
 #: src/components/miniflux/EntryReadingHeader.tsx:633
 #: src/components/preferences/panes/ReaderPane.tsx:414
 msgid "Status Bar"
@@ -3909,6 +3872,8 @@ msgstr "状态栏"
 msgid "Step {0} of {totalSteps}: {1}"
 msgstr "步骤 {0} / {totalSteps}：{1}"
 
+#: src/components/downloads/DownloadManagerDialog.tsx:748
+#: src/components/downloads/DownloadManagerDialog.tsx:771
 #: src/components/podcast/PlayerWindowControls.tsx:339
 msgid "Stop"
 msgstr "停止"
@@ -4013,10 +3978,6 @@ msgstr "同步失败：{message}"
 #: src/components/sync/SyncProgressPopover.tsx:57
 msgid "Sync feed sources in each category"
 msgstr "同步各分类中的订阅源"
-
-#: src/components/preferences/panes/SyncPane.tsx:69
-#~ msgid "Sync Interval"
-#~ msgstr ""
 
 #: src/components/sync/SyncProgressPopover.tsx:170
 msgid "Sync is idle"
@@ -4151,11 +4112,15 @@ msgstr "此操作将从 Miniflux 中删除该分类。"
 msgid "Time Format"
 msgstr "时间格式"
 
+#: src/components/downloads/DownloadManagerDialog.tsx:653
+msgid "Time Left"
+msgstr "剩余时间"
+
 #: src/components/preferences/panes/TranslationPane.tsx:1010
 msgid "Timeout must be a positive number"
 msgstr "超时时间必须为正数"
 
-#: src/components/miniflux/UserNav.tsx:257
+#: src/components/miniflux/UserNav.tsx:355
 msgid "Timezone"
 msgstr "时区"
 
@@ -4288,6 +4253,14 @@ msgstr "令牌已复制到剪贴板"
 #: src/components/miniflux/SafeHtml.tsx:689
 msgid "Top bar"
 msgstr "顶部栏"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:1048
+#~ msgid "Total downloaded"
+#~ msgstr "总下载量"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:907
+msgid "Total downloaded:"
+msgstr "总下载量:"
 
 #: src/components/miniflux/EntryReading.tsx:1091
 #: src/lib/commands/translation-commands.ts:7
@@ -4486,7 +4459,7 @@ msgstr "更新用户名或密码。"
 msgid "Update v{0} is ready"
 msgstr "更新 v{0} 已就绪"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:747
+#: src/components/downloads/DownloadManagerDialog.tsx:399
 msgid "URL copied to clipboard"
 msgstr "链接已复制到剪贴板"
 
@@ -4521,7 +4494,7 @@ msgid "Useful for summary-only feeds"
 msgstr "适用于仅包含摘要的订阅源"
 
 #: src/components/miniflux/settings/UserFormDialog.tsx:140
-#: src/components/miniflux/UserNav.tsx:247
+#: src/components/miniflux/UserNav.tsx:345
 msgid "User"
 msgstr "用户"
 
@@ -4543,7 +4516,7 @@ msgstr "用户已删除"
 msgid "User management requires an administrator account."
 msgstr "用户管理需要管理员账户。"
 
-#: src/components/miniflux/UserNav.tsx:242
+#: src/components/miniflux/UserNav.tsx:340
 msgid "User Profile"
 msgstr "用户资料"
 
@@ -4617,7 +4590,7 @@ msgstr "视频下载路径已更新"
 msgid "View"
 msgstr "视图"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:927
+#: src/components/downloads/DownloadManagerDialog.tsx:824
 #: src/components/podcast/PodcastPlayer.tsx:264
 msgid "View and manage your downloads"
 msgstr "查看和管理你的下载"
