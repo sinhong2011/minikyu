@@ -15,6 +15,8 @@ import {
   useDeleteFeed,
   useFeedUnreadCount,
   useIsConnected,
+  useMarkCategoryAsRead,
+  useMarkFeedAsRead,
   useSearchSources,
   useSyncMiniflux,
   useUnreadCounts,
@@ -74,6 +76,8 @@ vi.mock('@/services/miniflux', () => ({
   useDeleteFeed: vi.fn(),
   useFeedUnreadCount: vi.fn(),
   useIsConnected: vi.fn(),
+  useMarkCategoryAsRead: vi.fn(),
+  useMarkFeedAsRead: vi.fn(),
   useSearchSources: vi.fn(),
   useSyncMiniflux: vi.fn(),
   useUnreadCounts: vi.fn(),
@@ -249,6 +253,14 @@ describe('AppSidebar', () => {
       isPending: false,
     });
     (useDeleteFeed as any).mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false,
+    });
+    (useMarkFeedAsRead as any).mockReturnValue({
+      mutateAsync: vi.fn(),
+      isPending: false,
+    });
+    (useMarkCategoryAsRead as any).mockReturnValue({
       mutateAsync: vi.fn(),
       isPending: false,
     });

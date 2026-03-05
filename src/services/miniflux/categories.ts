@@ -56,6 +56,39 @@ export function useCategories(enabled: boolean = true) {
 }
 
 /**
+ * Hook to mark all entries in a category as read
+ */
+export function useMarkCategoryAsRead() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      logger.debug('Marking category as read', { id });
+      const result = await commands.markCategoryAsRead(id);
+
+      if (result.status === 'error') {
+        logger.error('Failed to mark category as read', {
+          error: result.error,
+          id,
+        });
+        toast.error(translate(msg`Failed to mark category as read`), {
+          description: result.error,
+        });
+        throw new Error(result.error);
+      }
+
+      logger.info('Category marked as read', { id });
+    },
+    onSuccess: async () => {
+      await syncMinifluxCache();
+      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+      queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
+      toast.success(translate(msg`Category marked as read`));
+    },
+  });
+}
+
+/**
  * Hook to create a new category
  */
 export function useCreateCategory() {

@@ -757,7 +757,9 @@ export function EntryList({
                                 </span>
                               </div>
                             ) : (
-                              entry.reading_time && <span>{entry.reading_time} min</span>
+                              entry.reading_time && (
+                                <span>{_(msg`${entry.reading_time} min read`)}</span>
+                              )
                             )}
                             <span className="text-border">•</span>
                             <span className="text-xs text-muted-foreground/70">

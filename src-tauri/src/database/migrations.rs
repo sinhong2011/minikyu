@@ -521,9 +521,7 @@ pub(crate) async fn apply_per_account_sync_state_migration(
 
 /// Ensures sync_state has completion stats columns.
 /// Needed for DBs that ran migration 6 before stats columns were added.
-pub(crate) async fn apply_sync_state_stats_migration(
-    pool: &SqlitePool,
-) -> Result<(), sqlx::Error> {
+pub(crate) async fn apply_sync_state_stats_migration(pool: &SqlitePool) -> Result<(), sqlx::Error> {
     sqlx::query("ALTER TABLE sync_state ADD COLUMN categories_synced INTEGER DEFAULT 0")
         .execute(pool)
         .await

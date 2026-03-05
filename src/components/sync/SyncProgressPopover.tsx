@@ -190,20 +190,22 @@ export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
         <div className="space-y-4">
           <div className="space-y-2 border-b pb-3">
             <div className="flex items-center justify-between">
-              <h4 className="font-medium leading-none">{_(msg`Sync Status`)}</h4>
-              {syncing && (
-                <HugeiconsIcon
-                  icon={Loading03Icon}
-                  className="h-4 w-4 animate-spin text-muted-foreground"
-                />
+              <div className="flex items-center gap-2">
+                <h4 className="font-medium leading-none">{_(msg`Sync Status`)}</h4>
+                {syncing && (
+                  <HugeiconsIcon
+                    icon={Loading03Icon}
+                    className="h-4 w-4 animate-spin text-muted-foreground"
+                  />
+                )}
+              </div>
+              {currentAccount && (
+                <div className="flex items-center gap-1.5 text-xs text-muted-foreground/70">
+                  <HugeiconsIcon icon={UserIcon} className="h-3 w-3" />
+                  <span>{currentAccount.username}</span>
+                </div>
               )}
             </div>
-            {currentAccount && (
-              <div className="flex items-center gap-1.5 text-xs text-muted-foreground/70">
-                <HugeiconsIcon icon={UserIcon} className="h-3 w-3" />
-                <span>{currentAccount.username}</span>
-              </div>
-            )}
             <p className="text-xs text-muted-foreground">{statusTitle}</p>
             <p className={cn('text-xs', error ? 'text-destructive' : 'text-muted-foreground/80')}>
               {statusDescription}

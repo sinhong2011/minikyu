@@ -152,6 +152,37 @@ export function useCreateFeed() {
 }
 
 /**
+ * Hook to mark all entries in a feed as read
+ */
+export function useMarkFeedAsRead() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (id: string) => {
+      logger.debug('Marking feed as read', { id });
+      const result = await commands.markFeedAsRead(id);
+
+      if (result.status === 'error') {
+        logger.error('Failed to mark feed as read', {
+          error: result.error,
+          id,
+        });
+        toast.error(translate(msg`Failed to mark feed as read`), { description: result.error });
+        throw new Error(result.error);
+      }
+
+      logger.info('Feed marked as read', { id });
+    },
+    onSuccess: async () => {
+      await syncMinifluxCache();
+      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+      queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
+      toast.success(translate(msg`Feed marked as read`));
+    },
+  });
+}
+
+/**
  * Hook to update a feed
  */
 export function useUpdateFeed() {

@@ -14,7 +14,7 @@ export const apiKeyQueryKeys = {
 };
 
 /**
- * Hook to list all API keys (admin only).
+ * Hook to list all API keys for the current user.
  */
 export function useApiKeys(enabled: boolean = true) {
   const { data: isConnected } = useIsConnected();

@@ -599,6 +599,28 @@ async markEntriesRead(ids: string[]) : Promise<Result<null, string>> {
 }
 },
 /**
+ * Mark all entries in a feed as read
+ */
+async markFeedAsRead(id: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("mark_feed_as_read", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Mark all entries in a category as read
+ */
+async markCategoryAsRead(id: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("mark_category_as_read", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Toggle entry read status between "read" and "unread"
  */
 async toggleEntryRead(id: string) : Promise<Result<string, string>> {
@@ -808,7 +830,7 @@ async discoverSubscriptions(url: string) : Promise<Result<Subscription[], string
 }
 },
 /**
- * Export OPML
+ * Export OPML — tries online API first, falls back to generating from local cache
  */
 async exportOpml() : Promise<Result<string, string>> {
     try {
@@ -887,6 +909,14 @@ async getFeedIconData(feedId: string) : Promise<Result<string | null, string>> {
 async syncMiniflux() : Promise<Result<SyncSummary, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("sync_miniflux") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+async forceFullSync() : Promise<Result<SyncSummary, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("force_full_sync") };
 } catch (e) {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
@@ -1433,7 +1463,11 @@ log_level?: string;
 /**
  * Time display format: "12h" or "24h". Defaults to "24h".
  */
-time_format?: string }
+time_format?: string; 
+/**
+ * Sync interval in minutes. None or 0 means manual sync only.
+ */
+sync_interval?: number | null }
 export type ArticleSummaryRecord = { entry_id: string; summary: string; provider_used: string | null; model_used: string | null }
 /**
  * Authentication Config

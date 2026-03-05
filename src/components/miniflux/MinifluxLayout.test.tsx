@@ -4,12 +4,12 @@ import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { useSearch } from '@tanstack/react-router';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { useActiveAccount } from '@/services/miniflux/accounts';
+import { useAccounts, useActiveAccount } from '@/services/miniflux/accounts';
 import { useIsConnected } from '@/services/miniflux/auth';
-import { useCategories } from '@/services/miniflux/categories';
+import { useCategories, useMarkCategoryAsRead } from '@/services/miniflux/categories';
 import { useUnreadCounts } from '@/services/miniflux/counters';
 import { useEntries, usePrefetchEntry } from '@/services/miniflux/entries';
-import { useSyncMiniflux } from '@/services/miniflux/feeds';
+import { useMarkFeedAsRead, useSyncMiniflux } from '@/services/miniflux/feeds';
 import { useLastReadingEntry, useSaveLastReading } from '@/services/reading-state';
 import { useSyncStore } from '@/store/sync-store';
 import { useUIStore } from '@/store/ui-store';
@@ -28,11 +28,13 @@ vi.mock('@/services/miniflux/auth', () => ({
 }));
 
 vi.mock('@/services/miniflux/accounts', () => ({
+  useAccounts: vi.fn(),
   useActiveAccount: vi.fn(),
 }));
 
 vi.mock('@/services/miniflux/categories', () => ({
   useCategories: vi.fn(),
+  useMarkCategoryAsRead: vi.fn(),
 }));
 
 vi.mock('@/services/miniflux/counters', () => ({
@@ -46,6 +48,7 @@ vi.mock('@/services/miniflux/entries', () => ({
 }));
 
 vi.mock('@/services/miniflux/feeds', () => ({
+  useMarkFeedAsRead: vi.fn(),
   useSyncMiniflux: vi.fn(),
 }));
 
@@ -89,6 +92,14 @@ vi.mock('./EntryFilters', () => ({
 vi.mock('./ConnectionDialog', () => ({
   // biome-ignore lint/style/useNamingConvention: mock module export name
   ConnectionDialog: () => null,
+}));
+
+vi.mock('@/lib/account-reset', () => ({
+  resetAccountState: vi.fn().mockResolvedValue(undefined),
+}));
+
+vi.mock('@/hooks/use-auto-sync', () => ({
+  useAutoSync: vi.fn(),
 }));
 
 i18n.load('en', {
@@ -135,6 +146,9 @@ describe('MinifluxLayout', () => {
       data: true,
       isLoading: false,
     });
+    (useAccounts as any).mockReturnValue({
+      data: [],
+    });
     (useActiveAccount as any).mockReturnValue({
       data: { id: '1', username: 'minikyu_dev' },
     });
@@ -159,6 +173,12 @@ describe('MinifluxLayout', () => {
     (usePrefetchEntry as any).mockReturnValue(vi.fn());
     (useSyncMiniflux as any).mockReturnValue({
       mutate: vi.fn(),
+    });
+    (useMarkFeedAsRead as any).mockReturnValue({
+      mutateAsync: vi.fn(),
+    });
+    (useMarkCategoryAsRead as any).mockReturnValue({
+      mutateAsync: vi.fn(),
     });
     (useSaveLastReading as any).mockReturnValue({
       mutate: vi.fn(),

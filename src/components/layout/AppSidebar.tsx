@@ -2,8 +2,12 @@ import {
   Add01Icon,
   ArrowRight01Icon,
   Calendar01Icon,
+  CheckmarkCircle02Icon,
   Delete02Icon,
+  FileDownloadIcon,
+  FileUploadIcon,
   Folder01Icon,
+  FolderTransferIcon,
   MoreVerticalIcon,
   PencilEdit02Icon,
   RefreshIcon,
@@ -16,11 +20,19 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { Link } from '@tanstack/react-router';
+import { confirm, open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
+import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
+import { AnimatePresence, motion } from 'motion/react';
 import * as React from 'react';
+import { toast } from 'sonner';
 import {
   Menu,
   MenuItem,
   MenuPanel,
+  MenuSeparator,
+  MenuSubmenu,
+  MenuSubmenuPanel,
+  MenuSubmenuTrigger,
   MenuTrigger,
 } from '@/components/animate-ui/components/base/menu';
 import {
@@ -54,7 +66,10 @@ import {
   SidebarSeparator,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { logger } from '@/lib/logger';
+import { queryClient } from '@/lib/query-client';
 import type { Category, Feed } from '@/lib/tauri-bindings';
+import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
 import {
   useCategories,
@@ -64,8 +79,11 @@ import {
   useDeleteFeed,
   useFeedUnreadCount,
   useIsConnected,
+  useMarkCategoryAsRead,
+  useMarkFeedAsRead,
   useSyncMiniflux,
   useUnreadCounts,
+  useUpdateFeed,
 } from '@/services/miniflux';
 import { useSyncStore } from '@/store/sync-store';
 
@@ -95,63 +113,117 @@ function FeedItem({ feed }: FeedItemProps) {
   const { _ } = useLingui();
   const unreadCount = useFeedUnreadCount(Number(feed.id));
   const { mutateAsync: deleteFeed } = useDeleteFeed();
+  const { mutateAsync: markFeedAsRead } = useMarkFeedAsRead();
+  const updateFeed = useUpdateFeed();
+  const { data: categories } = useCategories();
   const setFeedDialogState = useMinifluxSettingsDialogStore((state) => state.setFeedDialogState);
+
+  const otherCategories = React.useMemo(
+    () => categories?.filter((c) => String(c.id) !== String(feed.category?.id)) ?? [],
+    [categories, feed.category?.id]
+  );
 
   const handleDelete = async (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
-    if (confirm(_(msg`Are you sure you want to unsubscribe from this feed?`))) {
-      try {
-        await deleteFeed(feed.id);
-      } catch {
-        // Error toast is handled in mutation hook; prevent unhandled rejections in event handler
-      }
+    const confirmed = await confirm(
+      _(msg`Are you sure you want to unsubscribe from "${feed.title}"?`),
+      { title: _(msg`Unsubscribe Feed`), kind: 'warning' }
+    );
+    if (!confirmed) return;
+    try {
+      await deleteFeed(feed.id);
+    } catch {
+      // Error toast is handled in mutation hook; prevent unhandled rejections in event handler
     }
   };
 
   return (
-    <SidebarMenuSubItem key={feed.id}>
-      <Link to="/" search={{ feedId: feed.id.toString() }} className="block w-full">
-        {({ isActive }) => (
-          <div className="group/feed-item relative">
-            <SidebarMenuSubButton isActive={isActive} className="w-full pr-8">
-              <div className="flex w-full min-w-0 items-center gap-2">
-                <FeedAvatar className="size-5!" domain={feed.site_url} title={feed.title} />
-                <span className="min-w-0 flex-1 truncate text-md">{feed.title}</span>
-              </div>
-            </SidebarMenuSubButton>
-            <div className="pointer-events-none absolute right-2 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center">
-              <div className="flex items-center justify-center transition-all duration-200 group-hover/feed-item:scale-50 group-hover/feed-item:opacity-0">
-                <AnimatedBadge count={unreadCount} className="text-[12px]" animateOnMount={false} />
-              </div>
-              <div className="pointer-events-auto absolute inset-0 flex items-center justify-center scale-50 opacity-0 transition-all duration-200 group-hover/feed-item:scale-100 group-hover/feed-item:opacity-100">
-                <Menu>
-                  <MenuTrigger
-                    className="size-6 flex items-center justify-center rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent-foreground/10 hover:text-sidebar-foreground"
-                    onClick={(event) => {
-                      event.preventDefault();
-                      event.stopPropagation();
-                    }}
-                  >
-                    <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
-                  </MenuTrigger>
-                  <MenuPanel side="right" align="start">
-                    <MenuItem onClick={() => setFeedDialogState({ mode: 'edit', feed })}>
-                      <HugeiconsIcon icon={PencilEdit02Icon} />
-                      {_(msg`Edit`)}
-                    </MenuItem>
-                    <MenuItem variant="destructive" onClick={handleDelete}>
-                      <HugeiconsIcon icon={Delete02Icon} />
-                      {_(msg`Unsubscribe`)}
-                    </MenuItem>
-                  </MenuPanel>
-                </Menu>
+    <motion.div
+      layout
+      initial={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }}
+      transition={{ duration: 0.2, ease: 'easeOut' }}
+    >
+      <SidebarMenuSubItem key={feed.id}>
+        <Link to="/" search={{ feedId: feed.id.toString() }} className="block w-full">
+          {({ isActive }) => (
+            <div className="group/feed-item relative">
+              <SidebarMenuSubButton isActive={isActive} className="w-full pr-8">
+                <div className="flex w-full min-w-0 items-center gap-2">
+                  <FeedAvatar className="size-5!" domain={feed.site_url} title={feed.title} />
+                  <span className="min-w-0 flex-1 truncate text-md">{feed.title}</span>
+                </div>
+              </SidebarMenuSubButton>
+              <div className="pointer-events-none absolute right-2 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center">
+                <div className="flex items-center justify-center transition-all duration-200 group-hover/feed-item:scale-50 group-hover/feed-item:opacity-0">
+                  <AnimatedBadge
+                    count={unreadCount}
+                    className="text-[12px]"
+                    animateOnMount={false}
+                  />
+                </div>
+                <div className="pointer-events-auto absolute inset-0 flex items-center justify-center scale-50 opacity-0 transition-all duration-200 group-hover/feed-item:scale-100 group-hover/feed-item:opacity-100">
+                  <Menu>
+                    <MenuTrigger
+                      className="size-6 flex items-center justify-center rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent-foreground/10 hover:text-sidebar-foreground"
+                      onClick={(event) => {
+                        event.preventDefault();
+                        event.stopPropagation();
+                      }}
+                    >
+                      <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
+                    </MenuTrigger>
+                    <MenuPanel side="right" align="start">
+                      <MenuItem
+                        onClick={() => {
+                          markFeedAsRead(feed.id).catch(() => {});
+                        }}
+                      >
+                        <HugeiconsIcon icon={CheckmarkCircle02Icon} />
+                        {_(msg`Mark as read`)}
+                      </MenuItem>
+                      <MenuItem onClick={() => setFeedDialogState({ mode: 'edit', feed })}>
+                        <HugeiconsIcon icon={PencilEdit02Icon} />
+                        {_(msg`Edit`)}
+                      </MenuItem>
+                      {otherCategories.length > 0 && (
+                        <MenuSubmenu>
+                          <MenuSubmenuTrigger className="[&_svg:not([class*='text-'])]:text-muted-foreground gap-2 [&_svg]:pointer-events-none [&_svg]:shrink-0 [&_svg:not([class*='size-'])]:size-4">
+                            <HugeiconsIcon icon={FolderTransferIcon} />
+                            {_(msg`Move to`)}
+                          </MenuSubmenuTrigger>
+                          <MenuSubmenuPanel>
+                            {otherCategories.map((category) => (
+                              <MenuItem
+                                key={category.id}
+                                onClick={() => {
+                                  updateFeed.mutateAsync({
+                                    id: feed.id,
+                                    updates: { category_id: category.id },
+                                  });
+                                }}
+                              >
+                                <HugeiconsIcon icon={Folder01Icon} />
+                                {category.title}
+                              </MenuItem>
+                            ))}
+                          </MenuSubmenuPanel>
+                        </MenuSubmenu>
+                      )}
+                      <MenuItem variant="destructive" onClick={handleDelete}>
+                        <HugeiconsIcon icon={Delete02Icon} />
+                        {_(msg`Unsubscribe`)}
+                      </MenuItem>
+                    </MenuPanel>
+                  </Menu>
+                </div>
               </div>
             </div>
-          </div>
-        )}
-      </Link>
-    </SidebarMenuSubItem>
+          )}
+        </Link>
+      </SidebarMenuSubItem>
+    </motion.div>
   );
 }
 
@@ -202,9 +274,11 @@ function CategoryFeeds({ categoryId }: CategoryFeedsProps) {
   return (
     <CollapsiblePanel>
       <SidebarMenuSub className="ml-3.5 mr-0 space-y-1 pl-2.5 pr-0 pt-1">
-        {filteredFeeds.map((feed) => (
-          <FeedItem key={feed.id} feed={feed} />
-        ))}
+        <AnimatePresence initial={false}>
+          {filteredFeeds.map((feed) => (
+            <FeedItem key={feed.id} feed={feed} />
+          ))}
+        </AnimatePresence>
       </SidebarMenuSub>
     </CollapsiblePanel>
   );
@@ -218,81 +292,118 @@ interface CategoryItemProps {
 function CategoryItem({ category, index }: CategoryItemProps) {
   const { _ } = useLingui();
   const unreadCount = useCategoryUnreadCount(Number(category.id));
+  const { data: feeds } = useCategoryFeeds(category.id);
   const { mutateAsync: deleteCategory } = useDeleteCategory();
+  const { mutateAsync: markCategoryAsRead } = useMarkCategoryAsRead();
   const setCategoryDialogState = useMinifluxSettingsDialogStore(
     (state) => state.setCategoryDialogState
   );
 
+  const feedCount = feeds?.filter((f) => f.title.trim().toLowerCase() !== 'all').length ?? 0;
+
   const handleDelete = async (event: React.MouseEvent) => {
     event.preventDefault();
     event.stopPropagation();
-    if (confirm(_(msg`Are you sure you want to delete this category and all its feeds?`))) {
-      try {
-        await deleteCategory(category.id);
-      } catch {
-        // Error toast is handled in mutation hook; prevent unhandled rejections in event handler
-      }
+    if (feedCount > 0) {
+      await confirm(
+        _(
+          msg`Cannot delete "${category.title}" because it still has ${String(feedCount)} feed(s). Move or remove all feeds first.`
+        ),
+        { title: _(msg`Category Not Empty`), kind: 'info' }
+      );
+      return;
+    }
+    const confirmed = await confirm(_(msg`Are you sure you want to delete "${category.title}"?`), {
+      title: _(msg`Delete Category`),
+      kind: 'warning',
+    });
+    if (!confirmed) return;
+    try {
+      await deleteCategory(category.id);
+    } catch {
+      // Error toast is handled in mutation hook; prevent unhandled rejections in event handler
     }
   };
 
   return (
-    <Collapsible key={category.id} defaultOpen={index === 0} className="group/collapsible">
-      <SidebarMenuItem className="group/category-item relative">
-        <Link to="/" search={{ categoryId: category.id.toString() }} className="min-w-0 flex-1">
-          {({ isActive }) => (
-            <SidebarMenuButton tooltip={category.title} isActive={isActive} className="pl-8 pr-10">
-              <span
-                className={cn(
-                  'truncate transition-colors duration-200',
-                  isActive ? 'font-semibold text-sidebar-foreground' : 'text-sidebar-foreground/80'
-                )}
+    <motion.div
+      layout
+      initial={{ opacity: 1, height: 'auto' }}
+      exit={{ opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }}
+      transition={{ duration: 0.25, ease: 'easeOut' }}
+    >
+      <Collapsible key={category.id} defaultOpen={index === 0} className="group/collapsible">
+        <SidebarMenuItem className="group/category-item relative">
+          <Link to="/" search={{ categoryId: category.id.toString() }} className="min-w-0 flex-1">
+            {({ isActive }) => (
+              <SidebarMenuButton
+                tooltip={category.title}
+                isActive={isActive}
+                className="pl-8 pr-10"
               >
-                {category.title}
-              </span>
-            </SidebarMenuButton>
-          )}
-        </Link>
-        <div className="pointer-events-none absolute right-2 top-1.5 flex size-6 items-center justify-center">
-          <div className="flex items-center justify-center transition-all duration-200 group-hover/category-item:scale-50 group-hover/category-item:opacity-0">
-            <AnimatedBadge count={unreadCount} className="text-[12px]" />
+                <span
+                  className={cn(
+                    'truncate transition-colors duration-200',
+                    isActive
+                      ? 'font-semibold text-sidebar-foreground'
+                      : 'text-sidebar-foreground/80'
+                  )}
+                >
+                  {category.title}
+                </span>
+              </SidebarMenuButton>
+            )}
+          </Link>
+          <div className="pointer-events-none absolute right-2 top-1.5 flex size-6 items-center justify-center">
+            <div className="flex items-center justify-center transition-all duration-200 group-hover/category-item:scale-50 group-hover/category-item:opacity-0">
+              <AnimatedBadge count={unreadCount} className="text-[12px]" />
+            </div>
+            <div className="pointer-events-auto absolute inset-0 flex items-center justify-center scale-50 opacity-0 transition-all duration-200 group-hover/category-item:scale-100 group-hover/category-item:opacity-100">
+              <Menu>
+                <MenuTrigger
+                  className="size-6 flex items-center justify-center rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent-foreground/10 hover:text-sidebar-foreground"
+                  onClick={(event) => {
+                    event.preventDefault();
+                    event.stopPropagation();
+                  }}
+                >
+                  <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
+                </MenuTrigger>
+                <MenuPanel side="right" align="start">
+                  <MenuItem
+                    onClick={() => {
+                      markCategoryAsRead(category.id).catch(() => {});
+                    }}
+                  >
+                    <HugeiconsIcon icon={CheckmarkCircle02Icon} />
+                    {_(msg`Mark as read`)}
+                  </MenuItem>
+                  <MenuItem onClick={() => setCategoryDialogState({ mode: 'edit', category })}>
+                    <HugeiconsIcon icon={PencilEdit02Icon} />
+                    {_(msg`Edit`)}
+                  </MenuItem>
+                  <MenuItem variant="destructive" onClick={handleDelete}>
+                    <HugeiconsIcon icon={Delete02Icon} />
+                    {_(msg`Delete`)}
+                  </MenuItem>
+                </MenuPanel>
+              </Menu>
+            </div>
           </div>
-          <div className="pointer-events-auto absolute inset-0 flex items-center justify-center scale-50 opacity-0 transition-all duration-200 group-hover/category-item:scale-100 group-hover/category-item:opacity-100">
-            <Menu>
-              <MenuTrigger
-                className="size-6 flex items-center justify-center rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent-foreground/10 hover:text-sidebar-foreground"
-                onClick={(event) => {
-                  event.preventDefault();
-                  event.stopPropagation();
-                }}
-              >
-                <HugeiconsIcon icon={MoreVerticalIcon} className="size-4" />
-              </MenuTrigger>
-              <MenuPanel side="right" align="start">
-                <MenuItem onClick={() => setCategoryDialogState({ mode: 'edit', category })}>
-                  <HugeiconsIcon icon={PencilEdit02Icon} />
-                  {_(msg`Edit`)}
-                </MenuItem>
-                <MenuItem variant="destructive" onClick={handleDelete}>
-                  <HugeiconsIcon icon={Delete02Icon} />
-                  {_(msg`Delete`)}
-                </MenuItem>
-              </MenuPanel>
-            </Menu>
-          </div>
-        </div>
-        <CollapsibleTrigger
-          render={
-            <SidebarMenuAction
-              aria-label={_(msg`Toggle category feeds`)}
-              className="left-1 right-auto data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
-            />
-          }
-        >
-          <CategoryChevron />
-        </CollapsibleTrigger>
-        <CategoryFeeds categoryId={category.id} />
-      </SidebarMenuItem>
-    </Collapsible>
+          <CollapsibleTrigger
+            render={
+              <SidebarMenuAction
+                aria-label={_(msg`Toggle category feeds`)}
+                className="left-1 right-auto data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+              />
+            }
+          >
+            <CategoryChevron />
+          </CollapsibleTrigger>
+          <CategoryFeeds categoryId={category.id} />
+        </SidebarMenuItem>
+      </Collapsible>
+    </motion.div>
   );
 }
 
@@ -341,6 +452,66 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
   const handleShowCategories = React.useCallback(() => {
     setOpen(true);
   }, [setOpen]);
+  const handleExportOpml = React.useCallback(async () => {
+    try {
+      const date = new Date().toISOString().split('T')[0];
+      const filePath = await saveDialog({
+        title: _(msg`Export OPML`),
+        defaultPath: `miniflux-feeds-${date}.opml`,
+        filters: [
+          { name: 'OPML', extensions: ['opml'] },
+          { name: 'XML', extensions: ['xml'] },
+        ],
+      });
+      if (!filePath) return;
+
+      const result = await commands.exportOpml();
+      if (result.status === 'error') {
+        toast.error(_(msg`Failed to export OPML`), { description: result.error });
+        return;
+      }
+
+      await writeTextFile(filePath, result.data);
+      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+      toast.success(_(msg`OPML exported successfully`));
+    } catch (error) {
+      logger.error('Failed to export OPML', { error });
+      toast.error(_(msg`Failed to export OPML`), {
+        description: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }, [_]);
+
+  const handleImportOpml = React.useCallback(async () => {
+    try {
+      const filePath = await openDialog({
+        title: _(msg`Import OPML`),
+        multiple: false,
+        filters: [
+          { name: 'OPML', extensions: ['opml'] },
+          { name: 'XML', extensions: ['xml'] },
+          { name: 'All Files', extensions: ['*'] },
+        ],
+      });
+      if (!filePath) return;
+
+      const opmlContent = await readTextFile(filePath);
+      const result = await commands.importOpml(opmlContent);
+      if (result.status === 'error') {
+        toast.error(_(msg`Failed to import OPML`), { description: result.error });
+        return;
+      }
+
+      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+      toast.success(_(msg`OPML imported successfully`));
+    } catch (error) {
+      logger.error('Failed to import OPML', { error });
+      toast.error(_(msg`Failed to import OPML`), {
+        description: error instanceof Error ? error.message : String(error),
+      });
+    }
+  }, [_]);
+
   const headerActionButtonClass = 'h-8 w-8';
   const headerRefreshIconClass = 'h-4 w-4';
   const headerAddIconClass = 'h-[18px] w-[18px]';
@@ -401,6 +572,15 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
                 <MenuItem onClick={() => setCategoryDialogState({ mode: 'create' })}>
                   <HugeiconsIcon icon={Folder01Icon} />
                   {_(msg`Add Category`)}
+                </MenuItem>
+                <MenuSeparator />
+                <MenuItem onClick={handleExportOpml}>
+                  <HugeiconsIcon icon={FileDownloadIcon} />
+                  {_(msg`Export OPML`)}
+                </MenuItem>
+                <MenuItem onClick={handleImportOpml}>
+                  <HugeiconsIcon icon={FileUploadIcon} />
+                  {_(msg`Import OPML`)}
                 </MenuItem>
               </MenuPanel>
             </Menu>
@@ -566,9 +746,11 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
                       </SidebarMenuItem>
                     ))
                   ) : categories && categories.length > 0 ? (
-                    categories.map((category, index) => (
-                      <CategoryItem key={category.id} category={category} index={index} />
-                    ))
+                    <AnimatePresence initial={false}>
+                      {categories.map((category, index) => (
+                        <CategoryItem key={category.id} category={category} index={index} />
+                      ))}
+                    </AnimatePresence>
                   ) : !isConnected ? (
                     <SidebarMenuItem>
                       <SidebarMenuButton disabled>
