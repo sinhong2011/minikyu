@@ -309,6 +309,34 @@ pub async fn mark_entries_read(state: State<'_, AppState>, ids: Vec<String>) -> 
     client.update_entries(ids_parsed, "read".to_string()).await
 }
 
+/// Mark all entries in a feed as read
+#[tauri::command]
+#[specta::specta]
+pub async fn mark_feed_as_read(state: State<'_, AppState>, id: String) -> Result<(), String> {
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid feed ID: {}", e))?;
+
+    client.mark_feed_as_read(id_parsed).await
+}
+
+/// Mark all entries in a category as read
+#[tauri::command]
+#[specta::specta]
+pub async fn mark_category_as_read(state: State<'_, AppState>, id: String) -> Result<(), String> {
+    let guard = state.miniflux.client.lock().await;
+    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+
+    let id_parsed = id
+        .parse::<i64>()
+        .map_err(|e| format!("Invalid category ID: {}", e))?;
+
+    client.mark_category_as_read(id_parsed).await
+}
+
 /// Toggle entry star
 #[tauri::command]
 #[specta::specta]
@@ -725,14 +753,87 @@ pub async fn discover_subscriptions(
     client.discover(url).await
 }
 
-/// Export OPML
+/// Export OPML — tries online API first, falls back to generating from local cache
 #[tauri::command]
 #[specta::specta]
 pub async fn export_opml(state: State<'_, AppState>) -> Result<String, String> {
-    let guard = state.miniflux.client.lock().await;
-    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
+    // Try online export first
+    {
+        let guard = state.miniflux.client.lock().await;
+        if let Some(client) = guard.as_ref() {
+            match client.export_opml().await {
+                Ok(opml) => return Ok(opml),
+                Err(e) => log::warn!("Online OPML export failed, falling back to local cache: {e}"),
+            }
+        }
+    }
 
-    client.export_opml().await
+    // Fallback: generate OPML from locally cached feeds
+    let pool = state
+        .db_pool
+        .lock()
+        .await
+        .as_ref()
+        .ok_or("Database not initialized")?
+        .clone();
+
+    let user_id = get_active_user_id(&state).await?;
+
+    let feeds = get_feeds_from_db(&pool, user_id).await?;
+    Ok(generate_opml_from_feeds(&feeds))
+}
+
+/// Generate OPML XML from cached feeds
+fn generate_opml_from_feeds(feeds: &[crate::miniflux::Feed]) -> String {
+    use std::collections::BTreeMap;
+
+    // Group feeds by category
+    let mut categories: BTreeMap<String, Vec<&crate::miniflux::Feed>> = BTreeMap::new();
+    for feed in feeds {
+        let cat_title = feed
+            .category
+            .as_ref()
+            .map(|c| c.title.clone())
+            .unwrap_or_else(|| "Uncategorized".to_string());
+        categories.entry(cat_title).or_default().push(feed);
+    }
+
+    let mut xml = String::new();
+    xml.push_str("<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n");
+    xml.push_str("<opml version=\"2.0\">\n");
+    xml.push_str("  <head>\n");
+    xml.push_str("    <title>Minikyu Feed Export</title>\n");
+    xml.push_str("  </head>\n");
+    xml.push_str("  <body>\n");
+
+    for (cat_title, cat_feeds) in &categories {
+        xml.push_str(&format!(
+            "    <outline text=\"{}\">\n",
+            escape_xml(cat_title)
+        ));
+        for feed in cat_feeds {
+            xml.push_str(&format!(
+                "      <outline type=\"rss\" text=\"{}\" title=\"{}\" xmlUrl=\"{}\" htmlUrl=\"{}\" />\n",
+                escape_xml(&feed.title),
+                escape_xml(&feed.title),
+                escape_xml(&feed.feed_url),
+                escape_xml(&feed.site_url),
+            ));
+        }
+        xml.push_str("    </outline>\n");
+    }
+
+    xml.push_str("  </body>\n");
+    xml.push_str("</opml>\n");
+    xml
+}
+
+fn escape_xml(s: &str) -> String {
+    s.replace('&', "&amp;")
+        .replace('<', "&lt;")
+        .replace('>', "&gt;")
+        .replace('"', "&quot;")
+        .replace('\'', "&apos;")
 }
 
 /// Import OPML

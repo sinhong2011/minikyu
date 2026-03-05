@@ -488,6 +488,21 @@ impl MinifluxClient {
         .await
     }
 
+    /// Mark all entries in a feed as read
+    pub async fn mark_feed_as_read(&self, feed_id: i64) -> Result<(), String> {
+        self.put_empty(&format!("feeds/{}/mark-all-as-read", feed_id), &())
+            .await
+    }
+
+    /// Mark all entries in a category as read
+    pub async fn mark_category_as_read(&self, category_id: i64) -> Result<(), String> {
+        self.put_empty(
+            &format!("categories/{}/mark-all-as-read", category_id),
+            &(),
+        )
+        .await
+    }
+
     /// Toggle entry bookmark
     pub async fn toggle_bookmark(&self, id: i64) -> Result<(), String> {
         // Miniflux API requires PUT (not POST) for bookmark toggle
@@ -563,9 +578,24 @@ impl MinifluxClient {
 
     // ==================== OPML ====================
 
-    /// Export OPML
+    /// Export OPML (returns raw XML text, not JSON)
     pub async fn export_opml(&self) -> Result<String, String> {
-        self.get("export").await
+        let response = self
+            .build_request("export")
+            .send()
+            .await
+            .map_err(|e| format!("Network error: {e}"))?;
+
+        if !response.status().is_success() {
+            let status = response.status();
+            let url = response.url().clone();
+            return Err(format!("API error: {status} - {url}"));
+        }
+
+        response
+            .text()
+            .await
+            .map_err(|e| format!("Failed to read response body: {e}"))
     }
 
     /// Import OPML
