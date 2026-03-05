@@ -472,7 +472,7 @@ export function PreferencesDialog() {
         </DialogDescription>
 
         <SidebarProvider className="flex-1 min-h-0">
-          <Sidebar collapsible="none" className="hidden md:flex bg-background py-4">
+          <Sidebar collapsible="none" className="hidden md:flex bg-transparent py-4">
             <SidebarContent>
               {/* App Settings Section */}
               <SidebarGroup>

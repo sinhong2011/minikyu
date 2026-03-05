@@ -95,17 +95,7 @@ export function ZenModeView() {
 
   return (
     <>
-      <motion.div
-        initial={{ opacity: 0, scale: 1.5, backdropFilter: 'blur(0px)' }}
-        animate={{ opacity: 1, scale: 1, backdropFilter: 'blur(12px)' }}
-        exit={{ opacity: 0, scale: 1.3, backdropFilter: 'blur(0px)' }}
-        transition={{
-          duration: 0.5,
-          ease: [0.4, 0, 0.2, 1],
-          scale: { type: 'spring', stiffness: 200, damping: 25 },
-        }}
-        className="fixed inset-0 z-40 bg-black/30"
-      />
+      <div className="fixed inset-0 z-40 bg-black" />
       <motion.div
         initial={{
           opacity: 0,

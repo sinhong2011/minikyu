@@ -475,6 +475,7 @@ pub struct DownloadProgress {
     pub total_bytes: i64,
     pub status: String, // "downloading", "completed", "failed", "cancelled"
     pub file_path: Option<String>,
+    pub media_type: Option<String>,
 }
 
 /// Per-feed podcast settings
