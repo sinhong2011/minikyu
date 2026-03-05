@@ -4,6 +4,7 @@ import { toast } from 'sonner';
 import i18n from '@/i18n/config';
 import { logger } from '@/lib/logger';
 import { checkForUpdate, downloadUpdate, installAndRelaunch } from '@/lib/updater';
+import { usePreferences } from '@/services/preferences';
 import { useUpdaterStore } from '@/store/updater-store';
 
 const CHECK_INTERVAL_MS = 4 * 60 * 60 * 1000; // 4 hours
@@ -13,9 +14,13 @@ const ERROR_RETRY_MS = 60 * 60 * 1000; // 1 hour
 export function useAutoUpdater() {
   const status = useUpdaterStore((s) => s.status);
   const toastIdRef = useRef<string | number | undefined>(undefined);
+  const { data: preferences } = usePreferences();
+  const autoCheckEnabled = preferences?.auto_check_updates ?? true;
 
   // Initial check + periodic interval
   useEffect(() => {
+    if (!autoCheckEnabled) return;
+
     const initialTimer = setTimeout(() => {
       checkForUpdate();
     }, INITIAL_DELAY_MS);
@@ -32,7 +37,7 @@ export function useAutoUpdater() {
       clearTimeout(initialTimer);
       clearInterval(interval);
     };
-  }, []);
+  }, [autoCheckEnabled]);
 
   // React to state changes with toasts
   useEffect(() => {

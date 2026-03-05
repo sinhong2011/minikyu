@@ -2,6 +2,7 @@ import {
   AlertCircleIcon,
   Cancel01Icon,
   Clock01Icon,
+  CloudDownloadIcon,
   Delete02Icon,
   Download01Icon,
   FolderOpenIcon,
@@ -30,9 +31,11 @@ import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/compone
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import { commands } from '@/lib/tauri-bindings';
+import { installAndRelaunch } from '@/lib/updater';
 import { cn } from '@/lib/utils';
 import { usePlayerStore } from '@/store/player-store';
 import { useUIStore } from '@/store/ui-store';
+import { useUpdaterStore } from '@/store/updater-store';
 
 type DownloadStatus = 'downloading' | 'completed' | 'failed' | 'cancelled' | 'paused';
 type FilterTab = 'all' | 'active' | 'completed' | 'failed';
@@ -139,6 +142,8 @@ function statusPriority(status: DownloadStatus): number {
   return 2;
 }
 
+const UPDATER_SENTINEL_ID = -1;
+
 const MEDIA_ICONS = {
   audio: HeadphonesIcon,
   image: Image01Icon,
@@ -147,8 +152,9 @@ const MEDIA_ICONS = {
 } as const;
 
 function DownloadIcon({ item }: { item: DownloadItem }) {
+  const isUpdater = item.enclosureId === UPDATER_SENTINEL_ID;
   const type = inferMediaType(item.fileName);
-  const icon = MEDIA_ICONS[type];
+  const icon = isUpdater ? CloudDownloadIcon : MEDIA_ICONS[type];
 
   return (
     <div
@@ -173,6 +179,13 @@ export function DownloadManagerDialog() {
   const [searchQuery, setSearchQuery] = useState('');
   const downloadsOpen = useUIStore((state) => state.downloadsOpen);
   const setDownloadsOpen = useUIStore((state) => state.setDownloadsOpen);
+  const updaterStatus = useUpdaterStore((state) => state.status);
+  const updaterVersion = useUpdaterStore((state) =>
+    'version' in state ? (state as { version: string }).version : ''
+  );
+  const updaterProgress = useUpdaterStore((state) =>
+    'progress' in state ? (state as { progress: number }).progress : 0
+  );
   const speedRef = useRef<Record<number, { bytes: number; time: number; ema: number }>>({});
   const completedRef = useRef<Set<number>>(new Set());
 
@@ -425,6 +438,7 @@ export function DownloadManagerDialog() {
   };
 
   const handleRemove = async (id: number) => {
+    if (id === UPDATER_SENTINEL_ID) return;
     setDownloads((prev) => prev.filter((d) => d.enclosureId !== id));
     const result = await commands.deleteDownload(String(id));
     if (result.status === 'error') {
@@ -433,6 +447,7 @@ export function DownloadManagerDialog() {
   };
 
   const handleCancel = async (dl: DownloadItem) => {
+    if (dl.enclosureId === UPDATER_SENTINEL_ID) return;
     if (dl.status !== 'downloading' && dl.status !== 'paused') return;
     const result = await commands.cancelDownload(dl.url);
     if (result.status === 'error') {
@@ -441,6 +456,7 @@ export function DownloadManagerDialog() {
   };
 
   const handlePause = async (dl: DownloadItem) => {
+    if (dl.enclosureId === UPDATER_SENTINEL_ID) return;
     if (dl.status !== 'downloading') return;
     const result = await commands.pauseDownload(dl.url);
     if (result.status === 'error') {
@@ -449,6 +465,7 @@ export function DownloadManagerDialog() {
   };
 
   const handleResume = async (dl: DownloadItem) => {
+    if (dl.enclosureId === UPDATER_SENTINEL_ID) return;
     if (dl.status !== 'paused') return;
     const mediaType = dl.mediaType ?? (inferMediaType(dl.fileName) === 'audio' ? 'audio' : null);
     const result = await commands.resumeDownload(dl.url, dl.fileName, mediaType);
@@ -458,6 +475,7 @@ export function DownloadManagerDialog() {
   };
 
   const handleRetry = async (dl: DownloadItem) => {
+    if (dl.enclosureId === UPDATER_SENTINEL_ID) return;
     if (dl.status !== 'failed' && dl.status !== 'cancelled') return;
     const mediaType = dl.mediaType ?? (inferMediaType(dl.fileName) === 'audio' ? 'audio' : null);
     const result = await commands.retryDownload(dl.url, dl.fileName, mediaType);
@@ -485,6 +503,21 @@ export function DownloadManagerDialog() {
     };
   }, [downloads]);
 
+  const syntheticUpdaterEntry = useMemo((): DownloadItem | null => {
+    if (updaterStatus !== 'downloading' && updaterStatus !== 'ready') return null;
+    return {
+      enclosureId: UPDATER_SENTINEL_ID,
+      url: 'app-update',
+      fileName: `Minikyu v${updaterVersion}`,
+      status: updaterStatus === 'ready' ? 'completed' : 'downloading',
+      progress: updaterStatus === 'ready' ? 100 : updaterProgress,
+      downloadedBytes: 0,
+      totalBytes: 0,
+      mediaType: 'application/octet-stream',
+      updatedAt: Math.floor(Date.now() / 1000),
+    };
+  }, [updaterStatus, updaterVersion, updaterProgress]);
+
   const filteredDownloads = useMemo(() => {
     const tabFiltered =
       activeTab === 'all'
@@ -509,13 +542,18 @@ export function DownloadManagerDialog() {
           })
         : tabFiltered;
 
-    return [...searchFiltered].sort((a, b) => {
+    const sorted = [...searchFiltered].sort((a, b) => {
       const statusDiff = statusPriority(a.status) - statusPriority(b.status);
       if (statusDiff !== 0) return statusDiff;
       if (b.updatedAt !== a.updatedAt) return b.updatedAt - a.updatedAt;
       return b.enclosureId - a.enclosureId;
     });
-  }, [activeTab, downloads, searchQuery]);
+
+    if (syntheticUpdaterEntry) {
+      return [syntheticUpdaterEntry, ...sorted];
+    }
+    return sorted;
+  }, [activeTab, downloads, searchQuery, syntheticUpdaterEntry]);
 
   const totalDownloadedBytes = useMemo(
     () =>
@@ -707,6 +745,26 @@ export function DownloadManagerDialog() {
       size: 190,
       cell: ({ row }) => {
         const item = row.original;
+        const isUpdater = item.enclosureId === UPDATER_SENTINEL_ID;
+
+        if (isUpdater) {
+          return (
+            <div className="flex items-center justify-end gap-1">
+              {item.status === 'completed' && (
+                <Button
+                  variant="ghost"
+                  size="icon-sm"
+                  className="h-7 rounded-lg bg-emerald-500/10 px-2.5 text-xs font-medium text-emerald-300 hover:bg-emerald-500/20"
+                  title={_(msg`Install & Restart`)}
+                  onClick={() => installAndRelaunch()}
+                >
+                  <HugeiconsIcon icon={CloudDownloadIcon} className="size-3.5" />
+                  <span>{_(msg`Install & Restart`)}</span>
+                </Button>
+              )}
+            </div>
+          );
+        }
 
         return (
           <div className="flex items-center justify-end gap-1">

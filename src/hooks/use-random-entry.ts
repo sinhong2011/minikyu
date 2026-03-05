@@ -65,7 +65,7 @@ export function useRandomEntry() {
       };
 
       logger.debug('Fetching entries for Zen Mode', { filters });
-      const result = await commands.getEntries(filters);
+      const result = await commands.getEntriesList(filters);
 
       if (result.status === 'error') {
         const isNotConnected = result.error === 'Not connected to Miniflux server';

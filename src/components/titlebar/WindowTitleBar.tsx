@@ -1,9 +1,9 @@
 import {
-  CenterFocusIcon,
   PanelLeftCloseIcon,
   PanelLeftIcon,
   Settings01Icon,
   ViewOffIcon,
+  YogaIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
@@ -94,10 +94,7 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
             )}
             title={_(zenModeEnabled ? msg`Exit Zen Mode` : msg`Enter Zen Mode`)}
           >
-            <HugeiconsIcon
-              icon={zenModeEnabled ? ViewOffIcon : CenterFocusIcon}
-              className="h-4 w-4"
-            />
+            <HugeiconsIcon icon={zenModeEnabled ? ViewOffIcon : YogaIcon} className="h-4 w-4" />
           </Button>
         )}
       </div>

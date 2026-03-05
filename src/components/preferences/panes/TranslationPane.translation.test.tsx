@@ -188,7 +188,7 @@ describe('TranslationPane settings', () => {
     );
     expect(screen.getByLabelText('Google Translate base URL')).toHaveAttribute(
       'placeholder',
-      'https://translation.googleapis.com/language/translate/v2'
+      'https://translation.googleapis.com'
     );
     fireEvent.click(
       within(screen.getByTestId('translation-provider-row-ollama')).getByText('Ollama')

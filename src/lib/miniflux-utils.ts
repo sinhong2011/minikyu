@@ -1,5 +1,50 @@
-import { differenceInCalendarDays, format, formatDistanceToNow, parseISO } from 'date-fns';
+import {
+  differenceInCalendarDays,
+  format,
+  formatDistanceToNow,
+  type Locale,
+  parseISO,
+} from 'date-fns';
+import { enUS, ja, ko, zhCN, zhTW } from 'date-fns/locale';
 import type { Entry } from '@/lib/tauri-bindings';
+
+const DATE_LOCALE_MAP: Record<string, Locale> = {
+  en: enUS,
+  ja,
+  ko,
+  'zh-CN': zhCN,
+  'zh-TW': zhTW,
+};
+
+export function getDateLocale(appLocale: string): Locale {
+  return DATE_LOCALE_MAP[appLocale] ?? enUS;
+}
+
+const SECTION_DATE_FORMATS: Record<string, string> = {
+  ja: 'yyyy年M月d日 EEEE',
+  ko: 'yyyy년 M월 d일 EEEE',
+  'zh-CN': 'yyyy年M月d日 EEEE',
+  'zh-TW': 'yyyy年M月d日 EEEE',
+};
+
+const SHORT_DATE_FORMATS: Record<string, string> = {
+  ja: 'yyyy年M月d日（EEEE）',
+  ko: 'yyyy년 M월 d일 (EEEE)',
+  'zh-CN': 'yyyy年M月d日 EEEE',
+  'zh-TW': 'yyyy年M月d日 EEEE',
+};
+
+export function formatSectionDate(date: Date, appLocale: string): string {
+  const locale = getDateLocale(appLocale);
+  const pattern = SECTION_DATE_FORMATS[appLocale] ?? 'EEEE, MMMM d, yyyy';
+  return format(date, pattern, { locale });
+}
+
+export function formatShortDate(date: Date, appLocale: string): string {
+  const locale = getDateLocale(appLocale);
+  const pattern = SHORT_DATE_FORMATS[appLocale] ?? 'EEEE, MMM d, yyyy';
+  return format(date, pattern, { locale });
+}
 
 export type EntryDateSectionType = 'today' | 'yesterday' | 'weekday' | 'full-date';
 

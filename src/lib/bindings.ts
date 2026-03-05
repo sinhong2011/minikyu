@@ -1369,6 +1369,10 @@ reader_bionic_reading: boolean;
  */
 reader_status_bar: boolean; 
 /**
+ * Whether to enable focus mode (paragraph dimming) in the reader.
+ */
+reader_focus_mode?: boolean; 
+/**
  * User-defined term conversion rules applied after Chinese conversion.
  */
 reader_custom_conversions?: ChineseConversionRule[]; 
@@ -1467,7 +1471,11 @@ time_format?: string;
 /**
  * Sync interval in minutes. None or 0 means manual sync only.
  */
-sync_interval?: number | null }
+sync_interval?: number | null; 
+/**
+ * Whether to automatically check for app updates.
+ */
+auto_check_updates?: boolean }
 export type ArticleSummaryRecord = { entry_id: string; summary: string; provider_used: string | null; model_used: string | null }
 /**
  * Authentication Config

@@ -10,7 +10,6 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { format } from 'date-fns';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -28,6 +27,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { extractThumbnail } from '@/lib/media-utils';
 import {
   formatEntryTime,
+  formatSectionDate,
   getEntryDateSectionType,
   groupEntriesByCalendarDate,
 } from '@/lib/miniflux-utils';
@@ -82,7 +82,7 @@ export function EntryList({
   onPullToRefresh,
   isRefreshing = false,
 }: EntryListProps) {
-  const { _ } = useLingui();
+  const { _, i18n } = useLingui();
   const { data: preferences } = usePreferences();
   const use24h = preferences?.time_format !== '12h';
   const {
@@ -165,7 +165,7 @@ export function EntryList({
           ? _(msg`Today`)
           : sectionType === 'yesterday'
             ? _(msg`Yesterday`)
-            : format(section.date, 'EEEE, MMMM d, yyyy');
+            : formatSectionDate(section.date, i18n.locale);
 
       rows.push({
         type: 'section',
@@ -184,7 +184,7 @@ export function EntryList({
     });
 
     return rows;
-  }, [_, entriesData?.entries]);
+  }, [_, entriesData?.entries, i18n.locale]);
 
   // Track new entries for animation
   const filtersKey = JSON.stringify(filters ?? {});

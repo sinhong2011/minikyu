@@ -123,7 +123,9 @@ export function EntryReading({
     translationExcludedFeedIds,
     translationExcludedCategoryIds,
     translationProviderSettings,
+    focusMode,
     aiSummaryAutoEnabled,
+    setFocusMode,
     setTranslationAutoEnabled,
     setTranslationExcludedFeedIds,
     setTranslationExcludedCategoryIds,
@@ -183,6 +185,7 @@ export function EntryReading({
   const previousEntryIdRef = useRef<string | null>(null);
   const previousContentRef = useRef<string | null>(null);
   const previousDownloadStatusEntryIdRef = useRef<string | null>(null);
+  const [swipeHintProgress, setSwipeHintProgress] = useState(0);
   const [translationEnabled, setTranslationEnabled] = useState(false);
   const translationEnabledRef = useRef(translationEnabled);
   translationEnabledRef.current = translationEnabled;
@@ -621,6 +624,146 @@ export function EntryReading({
     return () => viewport.removeEventListener('scroll', handleScroll);
   }, [cancelScrollAnimation, readingContent.tocItems, scrollY, showToc]);
 
+  // Focus mode: dim all reader nodes except the one closest to viewport center
+  useEffect(() => {
+    if (!focusMode) {
+      // Remove all focus attributes when disabled
+      const viewport = scrollViewportRef.current;
+      if (viewport) {
+        for (const node of viewport.querySelectorAll<HTMLElement>('[data-reader-node]')) {
+          node.removeAttribute('data-focused');
+        }
+      }
+      return;
+    }
+
+    const viewport = scrollViewportRef.current;
+    if (!viewport) return;
+
+    let rafId: number | null = null;
+
+    const updateFocus = () => {
+      rafId = null;
+      const nodes = viewport.querySelectorAll<HTMLElement>('[data-reader-node]');
+      if (!nodes.length) return;
+
+      const viewportRect = viewport.getBoundingClientRect();
+      const centerY = viewportRect.top + viewportRect.height / 2;
+      let closestNode: HTMLElement | null = null;
+      let closestDistance = Number.POSITIVE_INFINITY;
+
+      for (const node of nodes) {
+        const rect = node.getBoundingClientRect();
+        const nodeCenter = rect.top + rect.height / 2;
+        const distance = Math.abs(nodeCenter - centerY);
+        if (distance < closestDistance) {
+          closestDistance = distance;
+          closestNode = node;
+        }
+      }
+
+      for (const node of nodes) {
+        if (node === closestNode) {
+          node.setAttribute('data-focused', 'true');
+        } else {
+          node.removeAttribute('data-focused');
+        }
+      }
+    };
+
+    const handleFocusScroll = () => {
+      if (rafId === null) {
+        rafId = requestAnimationFrame(updateFocus);
+      }
+    };
+
+    updateFocus();
+    viewport.addEventListener('scroll', handleFocusScroll, { passive: true });
+    return () => {
+      viewport.removeEventListener('scroll', handleFocusScroll);
+      if (rafId !== null) cancelAnimationFrame(rafId);
+      // Clean up focus attributes
+      for (const node of viewport.querySelectorAll<HTMLElement>('[data-reader-node]')) {
+        node.removeAttribute('data-focused');
+      }
+    };
+  }, [focusMode]);
+
+  // Swipe left → open in-app browser
+  useEffect(() => {
+    const viewport = scrollViewportRef.current;
+    if (!viewport || !onOpenInAppBrowserRef.current) return;
+
+    let startX = 0;
+    let startY = 0;
+    let tracking = false;
+    let pointerId: number | null = null;
+
+    const onPointerDown = (e: PointerEvent) => {
+      // Ignore if multiple pointers or if text is selected
+      if (pointerId !== null) return;
+      const selection = window.getSelection();
+      if (selection && selection.toString().length > 0) return;
+
+      startX = e.clientX;
+      startY = e.clientY;
+      tracking = true;
+      pointerId = e.pointerId;
+    };
+
+    const onPointerMove = (e: PointerEvent) => {
+      if (!tracking || e.pointerId !== pointerId) return;
+
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+
+      // Only track horizontal left swipes
+      if (deltaX >= 0 || Math.abs(deltaY) > 50) {
+        setSwipeHintProgress(0);
+        return;
+      }
+
+      const progress = Math.min(1, Math.abs(deltaX) / 100);
+      setSwipeHintProgress(progress);
+    };
+
+    const onPointerUp = (e: PointerEvent) => {
+      if (e.pointerId !== pointerId) return;
+
+      const deltaX = e.clientX - startX;
+      const deltaY = e.clientY - startY;
+
+      if (deltaX < -100 && Math.abs(deltaY) < 50) {
+        const currentEntry = entryRef.current;
+        if (currentEntry?.url && onOpenInAppBrowserRef.current) {
+          onOpenInAppBrowserRef.current(currentEntry.url);
+        }
+      }
+
+      tracking = false;
+      pointerId = null;
+      setSwipeHintProgress(0);
+    };
+
+    const onPointerCancel = (e: PointerEvent) => {
+      if (e.pointerId !== pointerId) return;
+      tracking = false;
+      pointerId = null;
+      setSwipeHintProgress(0);
+    };
+
+    viewport.addEventListener('pointerdown', onPointerDown);
+    viewport.addEventListener('pointermove', onPointerMove);
+    viewport.addEventListener('pointerup', onPointerUp);
+    viewport.addEventListener('pointercancel', onPointerCancel);
+    return () => {
+      viewport.removeEventListener('pointerdown', onPointerDown);
+      viewport.removeEventListener('pointermove', onPointerMove);
+      viewport.removeEventListener('pointerup', onPointerUp);
+      viewport.removeEventListener('pointercancel', onPointerCancel);
+    };
+  }, []);
+
   const handleTranslationEnabledChange = useCallback(
     (enabled: boolean) => {
       setTranslationEnabled(enabled);
@@ -926,6 +1069,8 @@ export function EntryReading({
         onSummarize={articleSummary.handleSummarize}
         isSummarizing={articleSummary.loading}
         hasSummary={!!articleSummary.summary}
+        focusMode={focusMode}
+        onFocusModeChange={setFocusMode}
       />
 
       <div className="relative flex-1 min-h-0">
@@ -996,7 +1141,9 @@ export function EntryReading({
                         '[&_hr]:my-8 [&_hr]:border-border/60',
                         '[&_table]:text-sm [&_table]:leading-relaxed',
                         '[&_img]:my-8',
-                        '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0'
+                        '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0',
+                        focusMode &&
+                          '[&_[data-reader-node]]:opacity-25 [&_[data-reader-node]]:transition-opacity [&_[data-reader-node]]:duration-300 [&_[data-reader-node][data-focused="true"]]:opacity-100'
                       )}
                       style={readerProseStyle}
                     />
@@ -1195,6 +1342,20 @@ export function EntryReading({
                   {formatShortcutDisplay(shortcuts['fetch-content'])}
                 </ContextMenuShortcut>
               </ContextMenuItem>
+              <ContextMenuItem onClick={() => setFocusMode(!focusMode)}>
+                <HugeiconsIcon
+                  icon={ViewIcon}
+                  strokeWidth={2}
+                  className="size-4 text-muted-foreground"
+                />
+                {_(msg`Focus Mode`)}
+                <span
+                  className={cn(
+                    'ml-auto size-2 rounded-full shrink-0 transition-colors',
+                    focusMode ? 'bg-primary' : 'border border-muted-foreground/40'
+                  )}
+                />
+              </ContextMenuItem>
             </ContextMenuGroup>
 
             {entry.url && (
@@ -1380,13 +1541,13 @@ export function EntryReading({
         </AnimatePresence>
 
         <AnimatePresence>
-          {readingProgress > 8 && (
+          {readingProgress > 8 && !(isAtBottom && hasNext && nextEntryTitle) && (
             <motion.div
               initial={{ opacity: 0, y: 12 }}
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 12 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="absolute right-4 bottom-14 z-20"
+              className="absolute right-4 bottom-4 z-20"
             >
               <Button
                 type="button"
@@ -1409,13 +1570,13 @@ export function EntryReading({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 5 }}
               transition={{ duration: 0.2 }}
-              className="absolute bottom-2 left-1/2 -translate-x-1/2"
+              className="absolute right-4 bottom-4 left-4 z-20 flex justify-center"
             >
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="gap-1.5 text-sm opacity-50 hover:opacity-80"
+                className="gap-1.5 rounded-xl border border-white/10 bg-background/80 px-4 text-sm backdrop-blur-sm hover:bg-accent/70"
                 onClick={() => {
                   if (onNavigateNext) {
                     onNavigateNext();
@@ -1425,6 +1586,23 @@ export function EntryReading({
                 <span className="max-w-48 truncate">{nextEntryTitle}</span>
                 <HugeiconsIcon icon={ArrowRightIcon} className="h-3 w-3" />
               </Button>
+            </motion.div>
+          )}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {swipeHintProgress > 0 && (
+            <motion.div
+              initial={{ opacity: 0, x: 20 }}
+              animate={{ opacity: swipeHintProgress, x: 0 }}
+              exit={{ opacity: 0, x: 20 }}
+              transition={{ duration: 0.15 }}
+              className="pointer-events-none absolute inset-y-0 right-0 z-30 flex items-center pr-3"
+            >
+              <div className="flex items-center gap-1.5 rounded-xl border border-border/60 bg-background/90 px-3 py-2 text-sm text-muted-foreground shadow-lg backdrop-blur-sm">
+                <HugeiconsIcon icon={Globe02Icon} className="h-4 w-4" strokeWidth={2} />
+                <span>{_(msg`Open original`)}</span>
+              </div>
             </motion.div>
           )}
         </AnimatePresence>

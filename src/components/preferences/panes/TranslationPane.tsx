@@ -15,6 +15,8 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import {
+  ArrowDown01Icon,
+  ArrowUp01Icon,
   Cancel01Icon,
   Globe02Icon,
   InformationCircleIcon,
@@ -24,12 +26,13 @@ import {
   RssIcon,
   Settings01Icon,
   Sorting01Icon,
+  Tick01Icon,
   ZapIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon, type IconSvgElement } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { motion } from 'motion/react';
+import { AnimatePresence, motion } from 'motion/react';
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { Switch } from '@/components/animate-ui/components/base/switch';
 import { Badge } from '@/components/ui/badge';
@@ -43,6 +46,12 @@ import {
   ComboboxList,
 } from '@/components/ui/combobox';
 import { Input } from '@/components/ui/input';
+import {
+  InputGroup,
+  InputGroupAddon,
+  InputGroupButton,
+  InputGroupInput,
+} from '@/components/ui/input-group';
 import { Label } from '@/components/ui/label';
 import {
   Select,
@@ -61,6 +70,7 @@ import {
   type ReaderTranslationRouteMode,
   type TranslationSegmentRequest,
 } from '@/lib/tauri-bindings';
+import { cn } from '@/lib/utils';
 import { useCategories } from '@/services/miniflux/categories';
 import { useFeeds } from '@/services/miniflux/feeds';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
@@ -105,8 +115,17 @@ const DEFAULT_LLM_PROVIDER_IDS = TRANSLATION_PROVIDERS.filter(
 const PROVIDER_ENDPOINT_PLACEHOLDERS: Readonly<Record<string, string>> = {
   deepl: 'https://api-free.deepl.com/v2',
   // biome-ignore lint/style/useNamingConvention: provider ID from backend
-  google_translate: 'https://translation.googleapis.com/language/translate/v2',
+  google_translate: 'https://translation.googleapis.com',
   ollama: 'http://localhost:11434',
+  openai: 'https://api.openai.com',
+  anthropic: 'https://api.anthropic.com',
+  gemini: 'https://generativelanguage.googleapis.com',
+  openrouter: 'https://openrouter.ai',
+  glm: 'https://open.bigmodel.cn/api/paas/v4',
+  kimi: 'https://api.moonshot.cn',
+  minimax: 'https://api.minimax.io',
+  qwen: 'https://dashscope.aliyuncs.com/compatible-mode',
+  deepseek: 'https://api.deepseek.com',
 };
 
 type ProviderIconSpec = {
@@ -288,6 +307,70 @@ function toRuntimeInputState(
   };
 }
 
+function ModelSuggestionList({
+  models,
+  query,
+  onSelect,
+  visible,
+  onHide,
+  selectingRef,
+}: {
+  models: string[];
+  query: string;
+  onSelect: (model: string) => void;
+  visible: boolean;
+  onHide: () => void;
+  selectingRef: React.RefObject<boolean>;
+}) {
+  const q = query.toLowerCase();
+  const filtered =
+    models.length === 0 ? [] : q ? models.filter((m) => m.toLowerCase().includes(q)) : models;
+
+  const showList =
+    visible && filtered.length > 0 && !(filtered.length === 1 && filtered[0] === query);
+
+  return (
+    <AnimatePresence>
+      {showList && (
+        <motion.div
+          initial={{ opacity: 0, y: -4, scaleY: 0.95 }}
+          animate={{ opacity: 1, y: 0, scaleY: 1 }}
+          exit={{ opacity: 0, y: -4, scaleY: 0.95 }}
+          transition={{ duration: 0.15, ease: 'easeOut' }}
+          style={{ originY: 0 }}
+          className="absolute left-0 right-0 z-50 mt-1 max-h-48 overflow-y-auto rounded-md border bg-popover/65 p-1 shadow-md backdrop-blur-2xl backdrop-saturate-150"
+          onMouseDown={() => {
+            selectingRef.current = true;
+          }}
+        >
+          {filtered.map((modelName) => (
+            <button
+              key={modelName}
+              type="button"
+              className={cn(
+                'relative flex w-full items-center rounded-sm py-1.5 pr-8 pl-2 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground',
+                modelName === query && 'font-medium text-foreground bg-accent/50'
+              )}
+              onClick={() => {
+                selectingRef.current = false;
+                onSelect(modelName);
+                onHide();
+              }}
+            >
+              {modelName}
+              {modelName === query && (
+                <span className="absolute right-2 flex size-4 items-center justify-center">
+                  <HugeiconsIcon icon={Tick01Icon} className="size-4 text-primary" />
+                </span>
+              )}
+            </button>
+          ))}
+        </motion.div>
+      )}
+    </AnimatePresence>
+  );
+}
+
 interface SettingsRowProps {
   children: ReactNode;
   description?: string;
@@ -359,8 +442,8 @@ function SortableProviderRow({
   });
 
   const cardClassName = selected
-    ? 'border-primary/60 bg-primary/[0.08] shadow-[0_0_0_1px_hsl(var(--primary)/0.22)]'
-    : 'border-border/60 bg-background/70 hover:border-border hover:bg-muted/[0.22]';
+    ? 'border-border bg-muted/60'
+    : 'border-border/40 bg-muted/20 hover:bg-muted/40';
   const hasMissingRequiredFields = runtimeEnabled && missingRequiredFields.length > 0;
 
   return (
@@ -384,7 +467,7 @@ function SortableProviderRow({
         }`}
         data-testid={`translation-provider-row-${providerId}`}
       >
-        <div className="pointer-events-none absolute inset-x-0 top-0 h-10 bg-gradient-to-b from-background/30 to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 top-0 h-8 bg-gradient-to-b from-background/20 to-transparent" />
 
         <div className="relative flex items-center justify-between gap-2 pr-3">
           <div className="flex min-w-0 flex-1 items-start gap-2.5">
@@ -428,7 +511,7 @@ function SortableProviderRow({
 
         <button
           type="button"
-          className="absolute inset-y-0 right-0 inline-flex w-4 touch-none cursor-grab items-center justify-center border-l border-border/40 bg-background/45 px-1 text-muted-foreground/70 transition-colors hover:bg-muted/45 hover:text-foreground active:cursor-grabbing"
+          className="absolute inset-y-0 right-0 inline-flex w-4 touch-none cursor-grab items-center justify-center border-l border-border/40 px-1 text-muted-foreground/50 transition-colors hover:bg-muted/40 hover:text-foreground active:cursor-grabbing"
           aria-label={rowDragLabel}
           {...attributes}
           {...listeners}
@@ -515,6 +598,10 @@ export function TranslationPane() {
   const [summaryModelInput, setSummaryModelInput] = useState(preferences?.ai_summary_model ?? '');
   const [summaryAvailableModels, setSummaryAvailableModels] = useState<string[] | null>(null);
   const [isFetchingSummaryModels, setIsFetchingSummaryModels] = useState(false);
+  const [providerModelFocused, setProviderModelFocused] = useState(false);
+  const [summaryModelFocused, setSummaryModelFocused] = useState(false);
+  const providerModelSelectingRef = useRef(false);
+  const summaryModelSelectingRef = useRef(false);
   const didHydrateProviderOrder = useRef(false);
 
   const [customRulesDraft, setCustomRulesDraft] = useState<CustomRuleDraft[]>([]);
@@ -1283,8 +1370,8 @@ export function TranslationPane() {
             </DndContext>
           </div>
 
-          <div className="rounded-xl border border-border/60 bg-gradient-to-b from-muted/20 to-background p-4 shadow-sm">
-            <div className="mb-4 flex items-start justify-between gap-3 border-b border-border/50 pb-3">
+          <div className="space-y-4">
+            <div className="flex items-start justify-between gap-3 pb-1">
               {!selectedProvider || !selectedProviderDisplay ? (
                 <p className="text-xs font-medium text-muted-foreground">
                   {_(msg`Provider settings`)}
@@ -1316,7 +1403,7 @@ export function TranslationPane() {
             </div>
             {!selectedProvider || !selectedProviderDisplay ? null : (
               <div className="space-y-4">
-                <div className="rounded-lg border border-border/50 bg-background/70 p-3">
+                <div className="rounded-lg border border-border bg-muted/30 p-3">
                   <div className="flex flex-wrap items-center gap-1.5">
                     <span
                       className={
@@ -1400,57 +1487,89 @@ export function TranslationPane() {
                 {selectedProvider.kind === 'llm' && (
                   <SettingsRow label={_(msg`${selectedProviderDisplay.providerName} model`)}>
                     <div className="flex items-center gap-1.5">
-                      <div className="min-w-0 flex-1">
-                        <Combobox
-                          value={selectedProviderDisplay.runtimeInput.model}
-                          onValueChange={(value) => {
-                            if (value === null) return;
-                            setProviderRuntimeInputs((previous) => ({
-                              ...previous,
-                              [selectedProvider.id]: {
-                                ...(previous[selectedProvider.id] ??
-                                  toRuntimeInputState(selectedProviderDisplay.runtimeSettings)),
-                                model: value,
-                              },
-                            }));
-                            void handleProviderRuntimeBlur(selectedProvider);
-                          }}
-                          inputValue={selectedProviderDisplay.runtimeInput.model}
-                          onInputValueChange={(value) => {
-                            setProviderRuntimeInputs((previous) => ({
-                              ...previous,
-                              [selectedProvider.id]: {
-                                ...(previous[selectedProvider.id] ??
-                                  toRuntimeInputState(selectedProviderDisplay.runtimeSettings)),
-                                model: value,
-                              },
-                            }));
-                          }}
-                        >
-                          <ComboboxInput
+                      <div className="relative flex-1">
+                        <InputGroup>
+                          <InputGroupInput
+                            value={selectedProviderDisplay.runtimeInput.model}
                             placeholder={
                               isFetchingModels
                                 ? _(msg`Fetching...`)
                                 : _(msg`Type or fetch to pick a model`)
                             }
+                            onChange={(event) =>
+                              setProviderRuntimeInputs((previous) => ({
+                                ...previous,
+                                [selectedProvider.id]: {
+                                  ...(previous[selectedProvider.id] ??
+                                    toRuntimeInputState(selectedProviderDisplay.runtimeSettings)),
+                                  model: event.target.value,
+                                },
+                              }))
+                            }
+                            onFocus={() => setProviderModelFocused(true)}
                             onBlur={() => {
+                              if (providerModelSelectingRef.current) return;
+                              setProviderModelFocused(false);
                               void handleProviderRuntimeBlur(selectedProvider);
                             }}
                           />
-                          <ComboboxContent>
-                            <ComboboxList>
-                              <ComboboxEmpty>{_(msg`No models found`)}</ComboboxEmpty>
-                              {(
-                                providerAvailableModels[getModelsCacheKey(selectedProvider.id)] ??
-                                []
-                              ).map((modelName) => (
-                                <ComboboxItem key={modelName} value={modelName}>
-                                  {modelName}
-                                </ComboboxItem>
-                              ))}
-                            </ComboboxList>
-                          </ComboboxContent>
-                        </Combobox>
+                          <InputGroupAddon align="inline-end">
+                            <InputGroupButton
+                              variant="ghost"
+                              size="icon-xs"
+                              aria-label={_(msg`Toggle model list`)}
+                              disabled={
+                                (
+                                  providerAvailableModels[getModelsCacheKey(selectedProvider.id)] ??
+                                  []
+                                ).length === 0
+                              }
+                              onMouseDown={(e) => e.preventDefault()}
+                              onClick={() => setProviderModelFocused((prev) => !prev)}
+                            >
+                              <HugeiconsIcon
+                                icon={providerModelFocused ? ArrowUp01Icon : ArrowDown01Icon}
+                                className="size-3.5"
+                              />
+                            </InputGroupButton>
+                          </InputGroupAddon>
+                        </InputGroup>
+                        <ModelSuggestionList
+                          models={
+                            providerAvailableModels[getModelsCacheKey(selectedProvider.id)] ?? []
+                          }
+                          query={selectedProviderDisplay.runtimeInput.model}
+                          visible={providerModelFocused}
+                          onHide={() => setProviderModelFocused(false)}
+                          selectingRef={providerModelSelectingRef}
+                          onSelect={(modelName) => {
+                            setProviderRuntimeInputs((previous) => {
+                              const updated = {
+                                ...(previous[selectedProvider.id] ??
+                                  toRuntimeInputState(selectedProviderDisplay.runtimeSettings)),
+                                model: modelName,
+                              };
+                              // Save directly with the new value to avoid stale state
+                              void saveProviderRuntimeSettings(selectedProvider, {
+                                // biome-ignore lint/style/useNamingConvention: backend field
+                                base_url:
+                                  updated.baseUrl.trim().length > 0 ? updated.baseUrl.trim() : null,
+                                model: modelName.trim().length > 0 ? modelName.trim() : null,
+                                // biome-ignore lint/style/useNamingConvention: backend field
+                                timeout_ms:
+                                  updated.timeoutMs.trim().length > 0
+                                    ? Math.round(Number(updated.timeoutMs))
+                                    : null,
+                                // biome-ignore lint/style/useNamingConvention: backend field
+                                system_prompt:
+                                  updated.systemPrompt.trim().length > 0
+                                    ? updated.systemPrompt.trim()
+                                    : null,
+                              });
+                              return { ...previous, [selectedProvider.id]: updated };
+                            });
+                          }}
+                        />
                       </div>
                       <Button
                         type="button"
@@ -1498,7 +1617,7 @@ export function TranslationPane() {
                       onBlur={() => {
                         void handleProviderRuntimeBlur(selectedProvider);
                       }}
-                      placeholder={_(msg`Leave empty to use default prompt`)}
+                      placeholder="You are a professional {source_lang} to {target_lang} translator. Accurately convey the meaning and nuances of the original text while adhering to {target_lang} grammar, vocabulary, and cultural sensitivities. Produce only the {target_lang} translation, without any additional explanations or commentary."
                     />
                   </SettingsRow>
                 )}
@@ -1678,32 +1797,60 @@ export function TranslationPane() {
             )}
           >
             <div className="flex items-center gap-2">
-              <div className="flex-1">
-                <Combobox
-                  value={summaryModelInput}
-                  onValueChange={(value) => {
-                    setSummaryModelInput(value ?? '');
+              <div className="relative flex-1">
+                <InputGroup>
+                  <InputGroupInput
+                    value={summaryModelInput}
+                    placeholder={_(msg`Type or fetch to pick a model`)}
+                    onChange={(e) => {
+                      setSummaryModelInput(e.target.value);
+                      if (preferences) {
+                        savePreferences.mutate({
+                          ...preferences,
+                          // biome-ignore lint/style/useNamingConvention: preferences field name
+                          ai_summary_model: e.target.value || null,
+                        });
+                      }
+                    }}
+                    onFocus={() => setSummaryModelFocused(true)}
+                    onBlur={() => {
+                      if (summaryModelSelectingRef.current) return;
+                      setSummaryModelFocused(false);
+                    }}
+                  />
+                  <InputGroupAddon align="inline-end">
+                    <InputGroupButton
+                      variant="ghost"
+                      size="icon-xs"
+                      aria-label={_(msg`Toggle model list`)}
+                      disabled={(summaryAvailableModels ?? []).length === 0}
+                      onMouseDown={(e) => e.preventDefault()}
+                      onClick={() => setSummaryModelFocused((prev) => !prev)}
+                    >
+                      <HugeiconsIcon
+                        icon={summaryModelFocused ? ArrowUp01Icon : ArrowDown01Icon}
+                        className="size-3.5"
+                      />
+                    </InputGroupButton>
+                  </InputGroupAddon>
+                </InputGroup>
+                <ModelSuggestionList
+                  models={summaryAvailableModels ?? []}
+                  query={summaryModelInput}
+                  visible={summaryModelFocused}
+                  onHide={() => setSummaryModelFocused(false)}
+                  selectingRef={summaryModelSelectingRef}
+                  onSelect={(modelName) => {
+                    setSummaryModelInput(modelName);
                     if (preferences) {
                       savePreferences.mutate({
                         ...preferences,
                         // biome-ignore lint/style/useNamingConvention: preferences field name
-                        ai_summary_model: value || null,
+                        ai_summary_model: modelName || null,
                       });
                     }
                   }}
-                >
-                  <ComboboxInput placeholder={_(msg`Type or fetch to pick a model`)} />
-                  <ComboboxContent>
-                    <ComboboxList>
-                      <ComboboxEmpty>{_(msg`No models found`)}</ComboboxEmpty>
-                      {(summaryAvailableModels ?? []).map((modelName) => (
-                        <ComboboxItem key={modelName} value={modelName}>
-                          {modelName}
-                        </ComboboxItem>
-                      ))}
-                    </ComboboxList>
-                  </ComboboxContent>
-                </Combobox>
+                />
               </div>
               <Button
                 type="button"

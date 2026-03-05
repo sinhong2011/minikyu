@@ -153,6 +153,9 @@ pub struct AppPreferences {
     pub reader_bionic_reading: bool,
     /// Whether to show the compact reading status bar.
     pub reader_status_bar: bool,
+    /// Whether to enable focus mode (paragraph dimming) in the reader.
+    #[serde(default)]
+    pub reader_focus_mode: bool,
     /// User-defined term conversion rules applied after Chinese conversion.
     #[serde(default)]
     pub reader_custom_conversions: Vec<ChineseConversionRule>,
@@ -219,6 +222,13 @@ pub struct AppPreferences {
     /// Sync interval in minutes. None or 0 means manual sync only.
     #[serde(default)]
     pub sync_interval: Option<u32>,
+    /// Whether to automatically check for app updates.
+    #[serde(default = "default_auto_check_updates")]
+    pub auto_check_updates: bool,
+}
+
+fn default_auto_check_updates() -> bool {
+    true
 }
 
 fn default_log_level() -> String {
@@ -243,6 +253,7 @@ impl Default for AppPreferences {
             reader_chinese_conversion: ChineseConversionMode::S2tw,
             reader_bionic_reading: false,
             reader_status_bar: false,
+            reader_focus_mode: false,
             reader_custom_conversions: vec![],
             reader_translation_display_mode: ReaderTranslationDisplayMode::Bilingual,
             reader_translation_trigger_mode: ReaderTranslationTriggerMode::Manual,
@@ -268,6 +279,7 @@ impl Default for AppPreferences {
             log_level: default_log_level(),
             time_format: default_time_format(),
             sync_interval: Some(15),
+            auto_check_updates: true,
         }
     }
 }

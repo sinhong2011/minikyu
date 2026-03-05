@@ -83,5 +83,11 @@ export async function downloadUpdate(): Promise<void> {
  */
 export async function installAndRelaunch(): Promise<void> {
   useUpdaterStore.getState().setInstalling();
-  await relaunch();
+  try {
+    logger.info('Relaunching app to apply update');
+    await relaunch();
+  } catch (error) {
+    logger.error('Relaunch failed', { error });
+    useUpdaterStore.getState().setError(error instanceof Error ? error.message : String(error));
+  }
 }
