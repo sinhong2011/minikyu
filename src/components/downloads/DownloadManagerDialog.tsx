@@ -567,8 +567,12 @@ export function DownloadManagerDialog() {
     setDownloadsOpen(false);
   };
 
-  const handleRemove = (id: number) => {
+  const handleRemove = async (id: number) => {
     setDownloads((prev) => prev.filter((d) => d.enclosureId !== id));
+    const result = await commands.deleteDownload(String(id));
+    if (result.status === 'error') {
+      console.error('Failed to delete download:', result.error);
+    }
   };
 
   const handleCancel = async (dl: DownloadItem) => {
@@ -588,14 +592,17 @@ export function DownloadManagerDialog() {
     }
   };
 
-  const handleClearTab = () => {
+  const handleClearTab = async () => {
     if (activeTab === 'completed') {
       setDownloads((prev) => prev.filter((d) => d.status !== 'completed'));
+      await commands.clearDownloads('completed');
     } else if (activeTab === 'failed') {
       setDownloads((prev) => prev.filter((d) => d.status !== 'failed' && d.status !== 'cancelled'));
+      await commands.clearDownloads('failed');
+      await commands.clearDownloads('cancelled');
     } else {
-      // Clear all non-active
       setDownloads((prev) => prev.filter((d) => d.status === 'downloading'));
+      await commands.clearDownloads(null);
     }
   };
 

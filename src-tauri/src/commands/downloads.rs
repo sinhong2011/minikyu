@@ -596,6 +596,80 @@ pub async fn cancel_download(app: tauri::AppHandle, url: String) -> Result<(), S
     }
 }
 
+/// Delete a download record from the database
+#[tauri::command]
+#[specta::specta]
+pub async fn delete_download(app: tauri::AppHandle, id: i64) -> Result<(), String> {
+    let state: tauri::State<'_, AppState> = app.state();
+    let pool_lock = state.db_pool.lock().await;
+    if let Some(pool) = &*pool_lock {
+        sqlx::query("DELETE FROM downloads WHERE id = ?")
+            .bind(id)
+            .execute(pool)
+            .await
+            .map_err(|e| e.to_string())?;
+
+        let mut downloads = get_download_manager().active_downloads.lock().unwrap();
+        downloads.retain(|d| {
+            let dl_id = match d {
+                DownloadState::Downloading { id, .. }
+                | DownloadState::Completed { id, .. }
+                | DownloadState::Failed { id, .. }
+                | DownloadState::Cancelled { id, .. } => *id,
+            };
+            dl_id != id as usize
+        });
+
+        Ok(())
+    } else {
+        Err("Database pool not initialized".to_string())
+    }
+}
+
+/// Clear downloads from database by status filter
+#[tauri::command]
+#[specta::specta]
+pub async fn clear_downloads(
+    app: tauri::AppHandle,
+    status: Option<String>,
+) -> Result<i64, String> {
+    let state: tauri::State<'_, AppState> = app.state();
+    let pool_lock = state.db_pool.lock().await;
+    if let Some(pool) = &*pool_lock {
+        let result = if let Some(ref status) = status {
+            sqlx::query("DELETE FROM downloads WHERE status = ?")
+                .bind(status)
+                .execute(pool)
+                .await
+        } else {
+            sqlx::query("DELETE FROM downloads WHERE status != 'downloading'")
+                .execute(pool)
+                .await
+        };
+
+        let rows = result.map_err(|e| e.to_string())?.rows_affected() as i64;
+
+        let mut downloads = get_download_manager().active_downloads.lock().unwrap();
+        if let Some(ref status_filter) = status {
+            downloads.retain(|d| {
+                let s = match d {
+                    DownloadState::Downloading { .. } => "downloading",
+                    DownloadState::Completed { .. } => "completed",
+                    DownloadState::Failed { .. } => "failed",
+                    DownloadState::Cancelled { .. } => "cancelled",
+                };
+                s != status_filter
+            });
+        } else {
+            downloads.retain(|d| matches!(d, DownloadState::Downloading { .. }));
+        }
+
+        Ok(rows)
+    } else {
+        Err("Database pool not initialized".to_string())
+    }
+}
+
 /// Retry a failed download
 #[tauri::command]
 #[specta::specta]

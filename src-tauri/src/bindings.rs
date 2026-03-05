@@ -14,6 +14,8 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         downloads::get_downloads,
         downloads::get_downloads_from_db,
         downloads::get_downloaded_file_path,
+        downloads::delete_download,
+        downloads::clear_downloads,
         data::clear_local_data,
         data::get_local_data_size,
         data::factory_reset,

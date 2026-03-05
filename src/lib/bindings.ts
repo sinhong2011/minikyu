@@ -70,6 +70,28 @@ async getDownloadedFilePath(url: string) : Promise<Result<string | null, string>
 }
 },
 /**
+ * Delete a download record from the database
+ */
+async deleteDownload(id: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("delete_download", { id }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Clear downloads from database by status filter
+ */
+async clearDownloads(status: string | null) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("clear_downloads", { status }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Clears synced data for the current active account only.
  * 
  * Removes entries, feeds, categories, enclosures, and sync state for the
