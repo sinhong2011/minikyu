@@ -21,7 +21,7 @@ import {
   MenuSeparator,
   MenuTrigger,
 } from '@/components/animate-ui/components/base/menu';
-import { Avatar, AvatarFallback } from '@/components/ui/avatar';
+
 import { Badge } from '@/components/ui/badge';
 import { resetAccountState } from '@/lib/account-reset';
 import { logger } from '@/lib/logger';
@@ -48,10 +48,6 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
     logger.debug('[UserNav] No current account found, returning null');
     return null;
   }
-
-  const getInitials = (username: string) => {
-    return username.slice(0, 2).toUpperCase();
-  };
 
   const getDomain = (url: string) => {
     try {
@@ -201,19 +197,121 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
             className="flex items-center justify-center rounded-lg p-1.5 text-left transition-colors hover:bg-accent"
             title={currentAccount.username}
           >
-            <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-medium">
-                {getInitials(currentAccount.username)}
-              </AvatarFallback>
-            </Avatar>
+            <svg
+              viewBox="0 0 32 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="size-8"
+            >
+              <rect width="32" height="32" rx="8" fill="#1a1a1a" />
+              <circle cx="16" cy="11" r="5.5" fill="#f5ead6" />
+              <circle cx="13.8" cy="10.2" r="1" fill="#2d2d2d" />
+              <circle cx="18.2" cy="10.2" r="1" fill="#2d2d2d" />
+              <path
+                d="M14.2 13c.5.8 1.2 1.2 1.8 1.2s1.3-.4 1.8-1.2"
+                stroke="#2d2d2d"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+                fill="none"
+              />
+              <rect x="10" y="18" width="12" height="8" rx="3" fill="#4a9eff" />
+              <line x1="16" y1="19" x2="16" y2="25" stroke="#3a8aee" strokeWidth="0.8" />
+              <line
+                x1="12"
+                y1="20.5"
+                x2="14.5"
+                y2="20.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+              <line
+                x1="17.5"
+                y1="20.5"
+                x2="20"
+                y2="20.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+              <line
+                x1="12"
+                y1="22.5"
+                x2="14.5"
+                y2="22.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+              <line
+                x1="17.5"
+                y1="22.5"
+                x2="20"
+                y2="22.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+            </svg>
           </div>
         ) : (
           <div className="flex items-center gap-3 rounded-lg p-2 text-left transition-colors hover:bg-accent">
-            <Avatar className="h-8 w-8 rounded-lg">
-              <AvatarFallback className="rounded-lg bg-primary/10 text-primary font-medium">
-                {getInitials(currentAccount.username)}
-              </AvatarFallback>
-            </Avatar>
+            <svg
+              viewBox="0 0 32 32"
+              fill="none"
+              xmlns="http://www.w3.org/2000/svg"
+              className="size-8 shrink-0"
+            >
+              <rect width="32" height="32" rx="8" fill="#1a1a1a" />
+              <circle cx="16" cy="11" r="5.5" fill="#f5ead6" />
+              <circle cx="13.8" cy="10.2" r="1" fill="#2d2d2d" />
+              <circle cx="18.2" cy="10.2" r="1" fill="#2d2d2d" />
+              <path
+                d="M14.2 13c.5.8 1.2 1.2 1.8 1.2s1.3-.4 1.8-1.2"
+                stroke="#2d2d2d"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+                fill="none"
+              />
+              <rect x="10" y="18" width="12" height="8" rx="3" fill="#4a9eff" />
+              <line x1="16" y1="19" x2="16" y2="25" stroke="#3a8aee" strokeWidth="0.8" />
+              <line
+                x1="12"
+                y1="20.5"
+                x2="14.5"
+                y2="20.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+              <line
+                x1="17.5"
+                y1="20.5"
+                x2="20"
+                y2="20.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+              <line
+                x1="12"
+                y1="22.5"
+                x2="14.5"
+                y2="22.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+              <line
+                x1="17.5"
+                y1="22.5"
+                x2="20"
+                y2="22.5"
+                stroke="white"
+                strokeWidth="0.8"
+                strokeLinecap="round"
+              />
+            </svg>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <div className="flex items-center gap-2">
                 <span className="truncate font-semibold">{currentAccount.username}</span>
