@@ -216,6 +216,9 @@ pub struct AppPreferences {
     /// Time display format: "12h" or "24h". Defaults to "24h".
     #[serde(default = "default_time_format")]
     pub time_format: String,
+    /// Sync interval in minutes. None or 0 means manual sync only.
+    #[serde(default)]
+    pub sync_interval: Option<u32>,
 }
 
 fn default_log_level() -> String {
@@ -264,6 +267,7 @@ impl Default for AppPreferences {
             keyboard_shortcuts: HashMap::new(),
             log_level: default_log_level(),
             time_format: default_time_format(),
+            sync_interval: Some(15),
         }
     }
 }
