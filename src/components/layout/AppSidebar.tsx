@@ -200,6 +200,7 @@ function FeedItem({ feed }: FeedItemProps) {
                                 onClick={() => {
                                   updateFeed.mutateAsync({
                                     id: feed.id,
+                                    // biome-ignore lint/style/useNamingConvention: API field name
                                     updates: { category_id: category.id },
                                   });
                                 }}

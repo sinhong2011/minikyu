@@ -50,6 +50,7 @@ export function MoveFeedDialog({ feed, onOpenChange }: MoveFeedDialogProps) {
     try {
       await updateFeed.mutateAsync({
         id: feed.id,
+        // biome-ignore lint/style/useNamingConvention: API field name
         updates: { category_id: selectedCategoryId },
       });
       onOpenChange(false);
