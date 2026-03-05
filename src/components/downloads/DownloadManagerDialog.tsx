@@ -23,6 +23,13 @@ import { openPath, revealItemInDir } from '@tauri-apps/plugin-opener';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuSeparator,
+  ContextMenuTrigger,
+} from '@/components/ui/context-menu';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
@@ -216,219 +223,275 @@ function DownloadRow({
   const displayName = item.fileName || `Download ${item.enclosureId}`;
 
   return (
-    <motion.div
-      layout
-      initial={{ opacity: 0, y: 8 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -8 }}
-      transition={{ duration: 0.2 }}
-      className={cn(
-        'relative flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors',
-        'hover:bg-foreground/[0.03]',
-        item.status === 'downloading' && 'bg-accent/30',
-        item.status === 'completed' && 'border-l-2 border-l-emerald-500/30',
-        item.status === 'failed' && 'border-l-2 border-l-destructive/30',
-        item.status === 'paused' && 'border-l-2 border-l-amber-500/30'
-      )}
-    >
-      <DownloadIcon item={item} />
-
-      <div className="min-w-0 flex-1">
-        {/* Name row */}
-        <div className="flex items-center gap-1.5">
-          <span className="truncate text-sm font-medium leading-snug" title={displayName}>
-            {displayName}
-          </span>
-          {ext && (
-            <span className="shrink-0 rounded bg-foreground/[0.05] px-1 py-px text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
-              {ext}
-            </span>
+    <ContextMenu>
+      <ContextMenuTrigger>
+        <motion.div
+          layout
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -8 }}
+          transition={{ duration: 0.2 }}
+          className={cn(
+            'relative flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors',
+            'hover:bg-foreground/[0.03]',
+            item.status === 'downloading' && 'bg-accent/30',
+            item.status === 'completed' && 'border-l-2 border-l-emerald-500/30',
+            item.status === 'failed' && 'border-l-2 border-l-destructive/30',
+            item.status === 'paused' && 'border-l-2 border-l-amber-500/30'
           )}
-        </div>
+        >
+          <DownloadIcon item={item} />
 
-        {/* Meta row */}
-        <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground/70">
-          {item.status === 'downloading' ? (
-            <>
-              <span className="tabular-nums">
-                {formatBytes(item.downloadedBytes)}
-                {item.totalBytes > 0 && ` / ${formatBytes(item.totalBytes)}`}
+          <div className="min-w-0 flex-1">
+            {/* Name row */}
+            <div className="flex items-center gap-1.5">
+              <span className="truncate text-sm font-medium leading-snug" title={displayName}>
+                {displayName}
               </span>
-              {item.speed !== undefined && item.speed > 0 && (
+              {ext && (
+                <span className="shrink-0 rounded bg-foreground/[0.05] px-1 py-px text-[10px] font-semibold uppercase tracking-wider text-muted-foreground/60">
+                  {ext}
+                </span>
+              )}
+            </div>
+
+            {/* Meta row */}
+            <div className="mt-0.5 flex items-center gap-1.5 text-xs text-muted-foreground/70">
+              {item.status === 'downloading' ? (
                 <>
+                  <span className="tabular-nums">
+                    {formatBytes(item.downloadedBytes)}
+                    {item.totalBytes > 0 && ` / ${formatBytes(item.totalBytes)}`}
+                  </span>
+                  {item.speed !== undefined && item.speed > 0 && (
+                    <>
+                      <span className="text-muted-foreground/30">·</span>
+                      <span className="tabular-nums text-foreground/50">
+                        {formatSpeed(item.speed)}
+                      </span>
+                    </>
+                  )}
+                  {item.eta && (
+                    <>
+                      <span className="text-muted-foreground/30">·</span>
+                      <span className="tabular-nums">{item.eta}</span>
+                    </>
+                  )}
                   <span className="text-muted-foreground/30">·</span>
-                  <span className="tabular-nums text-foreground/50">{formatSpeed(item.speed)}</span>
+                  <span className="tabular-nums">{item.progress}%</span>
                 </>
-              )}
-              {item.eta && (
+              ) : item.status === 'completed' ? (
                 <>
+                  {item.totalBytes > 0 && (
+                    <span className="tabular-nums">{formatBytes(item.totalBytes)}</span>
+                  )}
+                  {host && (
+                    <>
+                      {item.totalBytes > 0 && <span className="text-muted-foreground/30">·</span>}
+                      <span className="truncate">{host}</span>
+                    </>
+                  )}
+                </>
+              ) : item.status === 'paused' ? (
+                <>
+                  <span className="tabular-nums">
+                    {formatBytes(item.downloadedBytes)}
+                    {item.totalBytes > 0 && ` / ${formatBytes(item.totalBytes)}`}
+                  </span>
                   <span className="text-muted-foreground/30">·</span>
-                  <span className="tabular-nums">{item.eta}</span>
+                  <span className="text-amber-500/80">{_(msg`Paused`)}</span>
+                  <span className="text-muted-foreground/30">·</span>
+                  <span className="tabular-nums">{item.progress}%</span>
                 </>
+              ) : item.status === 'failed' ? (
+                <span className="truncate text-destructive/80" title={item.error}>
+                  {item.error || _(msg`Download failed`)}
+                </span>
+              ) : (
+                <span>{_(msg`Cancelled`)}</span>
               )}
-              <span className="text-muted-foreground/30">·</span>
-              <span className="tabular-nums">{item.progress}%</span>
-            </>
-          ) : item.status === 'completed' ? (
-            <>
-              {item.totalBytes > 0 && (
-                <span className="tabular-nums">{formatBytes(item.totalBytes)}</span>
-              )}
-              {host && (
-                <>
-                  {item.totalBytes > 0 && <span className="text-muted-foreground/30">·</span>}
-                  <span className="truncate">{host}</span>
-                </>
-              )}
-            </>
-          ) : item.status === 'paused' ? (
-            <>
-              <span className="tabular-nums">
-                {formatBytes(item.downloadedBytes)}
-                {item.totalBytes > 0 && ` / ${formatBytes(item.totalBytes)}`}
-              </span>
-              <span className="text-muted-foreground/30">·</span>
-              <span className="text-amber-500/80">{_(msg`Paused`)}</span>
-              <span className="text-muted-foreground/30">·</span>
-              <span className="tabular-nums">{item.progress}%</span>
-            </>
-          ) : item.status === 'failed' ? (
-            <span className="truncate text-destructive/80" title={item.error}>
-              {item.error || _(msg`Download failed`)}
-            </span>
-          ) : (
-            <span>{_(msg`Cancelled`)}</span>
+            </div>
+          </div>
+
+          {/* Actions — always visible for primary, hover for secondary */}
+          <div className="flex shrink-0 items-center">
+            {item.status === 'downloading' && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => onPause(item)}
+                  className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+                  title={_(msg`Pause`)}
+                >
+                  <HugeiconsIcon icon={PauseIcon} className="size-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onCancel(item)}
+                  className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
+                  title={_(msg`Cancel`)}
+                >
+                  <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
+                </button>
+              </>
+            )}
+
+            {item.status === 'paused' && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => onResume(item)}
+                  className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+                  title={_(msg`Resume`)}
+                >
+                  <HugeiconsIcon icon={PlayIcon} className="size-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => onCancel(item)}
+                  className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
+                  title={_(msg`Cancel`)}
+                >
+                  <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
+                </button>
+              </>
+            )}
+
+            {(item.status === 'failed' || item.status === 'cancelled') && (
+              <button
+                type="button"
+                onClick={() => onRetry(item)}
+                className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+                title={_(msg`Retry`)}
+              >
+                <HugeiconsIcon icon={RefreshIcon} className="size-3.5" />
+              </button>
+            )}
+
+            {item.status === 'completed' && inferMediaType(item.fileName) === 'audio' && (
+              <button
+                type="button"
+                onClick={() => onPlay(item)}
+                className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+                title={_(msg`Play`)}
+              >
+                <HugeiconsIcon icon={PlayIcon} className="size-3.5" />
+              </button>
+            )}
+
+            {item.status === 'completed' && item.filePath && (
+              <>
+                <button
+                  type="button"
+                  onClick={() => item.filePath && onOpenFile(item.filePath)}
+                  className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+                  title={_(msg`Open`)}
+                >
+                  <HugeiconsIcon icon={ViewIcon} className="size-3.5" />
+                </button>
+                <button
+                  type="button"
+                  onClick={() => item.filePath && onOpenFolder(item.filePath)}
+                  className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+                  title={_(msg`Show in folder`)}
+                >
+                  <HugeiconsIcon icon={Folder01Icon} className="size-3.5" />
+                </button>
+              </>
+            )}
+
+            <button
+              type="button"
+              onClick={() => onCopyUrl(item.url)}
+              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+              title={_(msg`Copy URL`)}
+            >
+              <HugeiconsIcon icon={Copy01Icon} className="size-3" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onRemove(item.enclosureId)}
+              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
+              title={_(msg`Remove`)}
+            >
+              <HugeiconsIcon icon={Delete02Icon} className="size-3" />
+            </button>
+          </div>
+
+          {/* Linear progress bar for active downloads */}
+          {item.status === 'downloading' && (
+            <div className="absolute inset-x-0 bottom-0 h-0.5 overflow-hidden rounded-full bg-foreground/5">
+              <div
+                className="h-full bg-foreground/40 transition-[width] duration-500 ease-out"
+                style={{ width: `${item.progress}%` }}
+              />
+            </div>
           )}
-        </div>
-      </div>
-
-      {/* Actions — always visible for primary, hover for secondary */}
-      <div className="flex shrink-0 items-center">
+          {item.status === 'paused' && (
+            <div className="absolute inset-x-0 bottom-0 h-0.5 overflow-hidden rounded-full bg-foreground/5">
+              <div
+                className="h-full bg-foreground/20"
+                style={{
+                  width: `${item.progress}%`,
+                  backgroundImage:
+                    'repeating-linear-gradient(135deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px)',
+                }}
+              />
+            </div>
+          )}
+        </motion.div>
+      </ContextMenuTrigger>
+      <ContextMenuContent className="w-48">
         {item.status === 'downloading' && (
           <>
-            <button
-              type="button"
-              onClick={() => onPause(item)}
-              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
-              title={_(msg`Pause`)}
-            >
-              <HugeiconsIcon icon={PauseIcon} className="size-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => onCancel(item)}
-              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
-              title={_(msg`Cancel`)}
-            >
-              <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
-            </button>
+            <ContextMenuItem onClick={() => onPause(item)}>{_(msg`Pause`)}</ContextMenuItem>
+            <ContextMenuItem variant="destructive" onClick={() => onCancel(item)}>
+              {_(msg`Cancel`)}
+            </ContextMenuItem>
           </>
         )}
-
         {item.status === 'paused' && (
           <>
-            <button
-              type="button"
-              onClick={() => onResume(item)}
-              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
-              title={_(msg`Resume`)}
-            >
-              <HugeiconsIcon icon={PlayIcon} className="size-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => onCancel(item)}
-              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
-              title={_(msg`Cancel`)}
-            >
-              <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
-            </button>
+            <ContextMenuItem onClick={() => onResume(item)}>{_(msg`Resume`)}</ContextMenuItem>
+            <ContextMenuItem variant="destructive" onClick={() => onCancel(item)}>
+              {_(msg`Cancel`)}
+            </ContextMenuItem>
           </>
         )}
-
-        {(item.status === 'failed' || item.status === 'cancelled') && (
-          <button
-            type="button"
-            onClick={() => onRetry(item)}
-            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
-            title={_(msg`Retry`)}
-          >
-            <HugeiconsIcon icon={RefreshIcon} className="size-3.5" />
-          </button>
-        )}
-
-        {item.status === 'completed' && inferMediaType(item.fileName) === 'audio' && (
-          <button
-            type="button"
-            onClick={() => onPlay(item)}
-            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
-            title={_(msg`Play`)}
-          >
-            <HugeiconsIcon icon={PlayIcon} className="size-3.5" />
-          </button>
-        )}
-
-        {item.status === 'completed' && item.filePath && (
+        {item.status === 'completed' && (
           <>
-            <button
-              type="button"
-              onClick={() => item.filePath && onOpenFile(item.filePath)}
-              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
-              title={_(msg`Open`)}
-            >
-              <HugeiconsIcon icon={ViewIcon} className="size-3.5" />
-            </button>
-            <button
-              type="button"
-              onClick={() => item.filePath && onOpenFolder(item.filePath)}
-              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
-              title={_(msg`Show in folder`)}
-            >
-              <HugeiconsIcon icon={Folder01Icon} className="size-3.5" />
-            </button>
+            {item.filePath && (
+              <>
+                <ContextMenuItem onClick={() => onOpenFile(item.filePath!)}>
+                  {_(msg`Open File`)}
+                </ContextMenuItem>
+                <ContextMenuItem onClick={() => onOpenFolder(item.filePath!)}>
+                  {_(msg`Show in folder`)}
+                </ContextMenuItem>
+              </>
+            )}
+            {inferMediaType(item.fileName) === 'audio' && (
+              <ContextMenuItem onClick={() => onPlay(item)}>{_(msg`Play`)}</ContextMenuItem>
+            )}
+            <ContextMenuSeparator />
+            <ContextMenuItem variant="destructive" onClick={() => onRemove(item.enclosureId)}>
+              {_(msg`Remove`)}
+            </ContextMenuItem>
           </>
         )}
-
-        <button
-          type="button"
-          onClick={() => onCopyUrl(item.url)}
-          className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
-          title={_(msg`Copy URL`)}
-        >
-          <HugeiconsIcon icon={Copy01Icon} className="size-3" />
-        </button>
-        <button
-          type="button"
-          onClick={() => onRemove(item.enclosureId)}
-          className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
-          title={_(msg`Remove`)}
-        >
-          <HugeiconsIcon icon={Delete02Icon} className="size-3" />
-        </button>
-      </div>
-
-      {/* Linear progress bar for active downloads */}
-      {item.status === 'downloading' && (
-        <div className="absolute inset-x-0 bottom-0 h-0.5 overflow-hidden rounded-full bg-foreground/5">
-          <div
-            className="h-full bg-foreground/40 transition-[width] duration-500 ease-out"
-            style={{ width: `${item.progress}%` }}
-          />
-        </div>
-      )}
-      {item.status === 'paused' && (
-        <div className="absolute inset-x-0 bottom-0 h-0.5 overflow-hidden rounded-full bg-foreground/5">
-          <div
-            className="h-full bg-foreground/20"
-            style={{
-              width: `${item.progress}%`,
-              backgroundImage:
-                'repeating-linear-gradient(135deg, transparent, transparent 2px, rgba(0,0,0,0.05) 2px, rgba(0,0,0,0.05) 4px)',
-            }}
-          />
-        </div>
-      )}
-    </motion.div>
+        {(item.status === 'failed' || item.status === 'cancelled') && (
+          <>
+            <ContextMenuItem onClick={() => onRetry(item)}>{_(msg`Retry`)}</ContextMenuItem>
+            <ContextMenuSeparator />
+            <ContextMenuItem variant="destructive" onClick={() => onRemove(item.enclosureId)}>
+              {_(msg`Remove`)}
+            </ContextMenuItem>
+          </>
+        )}
+        <ContextMenuSeparator />
+        <ContextMenuItem onClick={() => onCopyUrl(item.url)}>{_(msg`Copy URL`)}</ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
   );
 }
 
