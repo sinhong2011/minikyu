@@ -7,6 +7,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { commands } from '@/lib/tauri-bindings';
+import { cn } from '@/lib/utils';
 
 interface SummarizeStreamEvent {
   // biome-ignore lint/style/useNamingConvention: Tauri event payload field name
@@ -199,6 +200,31 @@ export function useArticleSummary(
   };
 }
 
+// ── Summary text renderer — renders bullet/numbered lines as a list ──
+
+const BULLET_RE = /^[\s]*[-•–—*]\s+/;
+const NUMBERED_RE = /^[\s]*\d+[.)]\s+/;
+
+function SummaryContent({ text }: { text: string }) {
+  const lines = text.split('\n').filter((l) => l.trim().length > 0);
+  const isList = lines.length > 1 && lines.every((l) => BULLET_RE.test(l) || NUMBERED_RE.test(l));
+
+  if (!isList) {
+    return <p className="whitespace-pre-wrap">{text}</p>;
+  }
+
+  return (
+    <ul className="flex flex-col gap-1.5 pl-1">
+      {lines.map((line, i) => (
+        <li key={i} className="flex gap-2">
+          <span className="mt-[0.55em] size-1 shrink-0 rounded-full bg-foreground/40" />
+          <span>{line.replace(BULLET_RE, '').replace(NUMBERED_RE, '')}</span>
+        </li>
+      ))}
+    </ul>
+  );
+}
+
 // ── Display component (body area) ──
 
 interface ArticleSummaryCardProps {
@@ -235,7 +261,7 @@ export function ArticleSummaryCard({
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
-            className="rounded-lg border border-dashed p-3"
+            className="rounded-lg border border-dashed bg-muted/30 p-3"
           >
             <div className="flex items-center gap-2 text-sm text-muted-foreground">
               <HugeiconsIcon icon={SparklesIcon} className="h-3.5 w-3.5 animate-pulse" />
@@ -272,21 +298,36 @@ export function ArticleSummaryCard({
             <button
               type="button"
               onClick={onToggleCollapse}
-              className="flex w-full items-center gap-1.5 text-left"
+              className="flex w-full items-center gap-2 text-left"
             >
-              <HugeiconsIcon icon={SparklesIcon} className="h-3.5 w-3.5 shrink-0 text-primary" />
+              <HugeiconsIcon icon={SparklesIcon} className="size-4 shrink-0 text-primary" />
               <span className="flex-1 text-xs font-medium">{_(msg`AI Summary`)}</span>
-              {providerUsed && modelUsed && (
-                <span className="text-[10px] text-muted-foreground">
-                  {providerUsed} / {modelUsed}
-                </span>
-              )}
               {loading && (
-                <span className="text-[10px] text-muted-foreground animate-pulse">
+                <span className="rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-medium text-primary animate-pulse">
                   {_(msg`streaming...`)}
                 </span>
               )}
-              <span className="text-xs text-muted-foreground">{collapsed ? '▸' : '▾'}</span>
+              {!loading && providerUsed && modelUsed && (
+                <span className="rounded-full bg-muted px-2 py-0.5 text-[10px] text-muted-foreground">
+                  {modelUsed}
+                </span>
+              )}
+              <svg
+                className={cn(
+                  'size-3 shrink-0 text-muted-foreground transition-transform duration-200',
+                  collapsed && '-rotate-90'
+                )}
+                viewBox="0 0 12 12"
+                fill="none"
+              >
+                <path
+                  d="M3 4.5L6 7.5L9 4.5"
+                  stroke="currentColor"
+                  strokeWidth="1.5"
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                />
+              </svg>
             </button>
             <AnimatePresence>
               {!collapsed && (
@@ -294,10 +335,11 @@ export function ArticleSummaryCard({
                   initial={{ height: 0, opacity: 0 }}
                   animate={{ height: 'auto', opacity: 1 }}
                   exit={{ height: 0, opacity: 0 }}
+                  transition={{ duration: 0.2, ease: 'easeOut' }}
                   className="overflow-hidden"
                 >
-                  <div className="mt-2 whitespace-pre-wrap text-sm leading-relaxed text-foreground/80">
-                    {summary}
+                  <div className="mt-2 border-t border-border/50 pt-2.5 text-sm leading-relaxed text-foreground/80">
+                    <SummaryContent text={summary} />
                   </div>
                 </motion.div>
               )}
