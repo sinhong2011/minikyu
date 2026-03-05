@@ -196,6 +196,8 @@ function DownloadIcon({ item }: { item: DownloadItem }) {
 
 function DownloadRow({
   item,
+  tabIndex,
+  rowRef,
   onOpenFile,
   onOpenFolder,
   onCopyUrl,
@@ -207,6 +209,8 @@ function DownloadRow({
   onPlay,
 }: {
   item: DownloadItem;
+  tabIndex?: number;
+  rowRef?: React.Ref<HTMLDivElement>;
   onOpenFile: (path: string) => void;
   onOpenFolder: (path: string) => void;
   onCopyUrl: (url: string) => void;
@@ -226,14 +230,18 @@ function DownloadRow({
     <ContextMenu>
       <ContextMenuTrigger>
         <motion.div
+          ref={rowRef}
+          role="option"
+          tabIndex={tabIndex}
           layout
           initial={{ opacity: 0, y: 8 }}
           animate={{ opacity: 1, y: 0 }}
           exit={{ opacity: 0, y: -8 }}
           transition={{ duration: 0.2 }}
           className={cn(
-            'relative flex items-center gap-3 rounded-xl px-3 py-2.5 transition-colors',
+            'relative flex items-center gap-3 rounded-xl px-3 py-2.5 outline-none transition-colors',
             'hover:bg-foreground/[0.03]',
+            'focus-visible:ring-1 focus-visible:ring-ring',
             item.status === 'downloading' && 'bg-accent/30',
             item.status === 'completed' && 'border-l-2 border-l-emerald-500/30',
             item.status === 'failed' && 'border-l-2 border-l-destructive/30',
@@ -462,10 +470,10 @@ function DownloadRow({
           <>
             {item.filePath && (
               <>
-                <ContextMenuItem onClick={() => onOpenFile(item.filePath!)}>
+                <ContextMenuItem onClick={() => onOpenFile(item.filePath as string)}>
                   {_(msg`Open File`)}
                 </ContextMenuItem>
-                <ContextMenuItem onClick={() => onOpenFolder(item.filePath!)}>
+                <ContextMenuItem onClick={() => onOpenFolder(item.filePath as string)}>
                   {_(msg`Show in folder`)}
                 </ContextMenuItem>
               </>
@@ -505,6 +513,8 @@ export function DownloadManagerDialog() {
   const setDownloadsOpen = useUIStore((state) => state.setDownloadsOpen);
   const speedRef = useRef<Record<number, { bytes: number; time: number; ema: number }>>({});
   const completedRef = useRef<Set<number>>(new Set());
+  const [focusedIndex, setFocusedIndex] = useState(-1);
+  const rowRefs = useRef<(HTMLDivElement | null)[]>([]);
 
   // ── Data loading & event listening ──
 
@@ -856,6 +866,54 @@ export function DownloadManagerDialog() {
         ? counts.failed > 0
         : counts.completed + counts.failed > 0;
 
+  const handleListKeyDown = (e: React.KeyboardEvent) => {
+    const maxIndex = filtered.length - 1;
+    if (maxIndex < 0) return;
+
+    switch (e.key) {
+      case 'ArrowDown': {
+        e.preventDefault();
+        const next = Math.min(focusedIndex + 1, maxIndex);
+        setFocusedIndex(next);
+        rowRefs.current[next]?.focus();
+        break;
+      }
+      case 'ArrowUp': {
+        e.preventDefault();
+        const prev = Math.max(focusedIndex - 1, 0);
+        setFocusedIndex(prev);
+        rowRefs.current[prev]?.focus();
+        break;
+      }
+      case 'Enter': {
+        e.preventDefault();
+        const item = filtered[focusedIndex];
+        if (!item) break;
+        if (item.status === 'completed' && item.filePath) handleOpenFile(item.filePath);
+        else if (item.status === 'failed' || item.status === 'cancelled') handleRetry(item);
+        break;
+      }
+      case 'Delete':
+      case 'Backspace': {
+        e.preventDefault();
+        const item = filtered[focusedIndex];
+        if (!item) break;
+        if (item.status !== 'downloading' && item.status !== 'paused') {
+          handleRemove(item.enclosureId);
+        }
+        break;
+      }
+      case ' ': {
+        e.preventDefault();
+        const item = filtered[focusedIndex];
+        if (!item) break;
+        if (item.status === 'downloading') handlePause(item);
+        else if (item.status === 'paused') handleResume(item);
+        break;
+      }
+    }
+  };
+
   const tabs: { key: FilterTab; label: string; count: number }[] = [
     { key: 'all', label: _(msg`All`), count: counts.all },
     { key: 'active', label: _(msg`Active`), count: counts.active },
@@ -941,7 +999,11 @@ export function DownloadManagerDialog() {
         <div className="mx-5 h-px bg-border/40" />
 
         {/* ── List ── */}
-        <div className="flex flex-1 flex-col gap-1 overflow-y-auto px-2 py-1">
+        <div
+          role="listbox"
+          className="flex flex-1 flex-col gap-1 overflow-y-auto px-2 py-1"
+          onKeyDown={handleListKeyDown}
+        >
           {filtered.length === 0 ? (
             <div className="flex flex-col items-center justify-center py-20 text-center">
               <div className="flex size-12 items-center justify-center rounded-2xl bg-foreground/[0.03]">
@@ -959,10 +1021,14 @@ export function DownloadManagerDialog() {
             </div>
           ) : (
             <AnimatePresence initial={false}>
-              {filtered.map((dl) => (
+              {filtered.map((dl, i) => (
                 <DownloadRow
                   key={dl.enclosureId}
                   item={dl}
+                  tabIndex={i === focusedIndex ? 0 : -1}
+                  rowRef={(el) => {
+                    rowRefs.current[i] = el;
+                  }}
                   onOpenFile={handleOpenFile}
                   onOpenFolder={handleOpenFolder}
                   onCopyUrl={handleCopyUrl}
