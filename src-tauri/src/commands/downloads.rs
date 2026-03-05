@@ -757,6 +757,9 @@ async fn perform_download(
         .await
         .map_err(|e| format!("Failed to create file: {}", e))?;
 
+    let mut last_emit_time = std::time::Instant::now();
+    let mut last_emit_progress: i32 = 0;
+
     while let Some(chunk_result) = reader.next().await {
         if cancel_token.is_cancelled() {
             drop(file);
@@ -776,40 +779,50 @@ async fn perform_download(
             0
         };
 
-        // Update DB periodically (every 10%) or at specific intervals
-        if progress % 10 == 0 || downloaded_bytes == total_bytes {
-            save_download_to_db(
+        let now = std::time::Instant::now();
+        let elapsed = now.duration_since(last_emit_time);
+        let progress_delta = (progress - last_emit_progress).abs();
+
+        // Emit at most every 250ms or when progress jumps ≥1%
+        if elapsed.as_millis() >= 250 || progress_delta >= 1 || downloaded_bytes == total_bytes {
+            last_emit_time = now;
+            last_emit_progress = progress;
+
+            // DB update every 10%
+            if progress % 10 == 0 || downloaded_bytes == total_bytes {
+                save_download_to_db(
+                    app,
+                    download_id,
+                    url,
+                    &file_name,
+                    DownloadDbParams {
+                        status: "downloading",
+                        progress,
+                        downloaded_bytes,
+                        total_bytes,
+                        file_path: None,
+                        error: None,
+                        media_type: None,
+                    },
+                )
+                .await;
+            }
+
+            emit_download_event_with_id(
                 app,
                 download_id,
-                url,
-                &file_name,
-                DownloadDbParams {
-                    status: "downloading",
+                file_name.clone(),
+                url.to_string(),
+                DownloadEventParams {
                     progress,
                     downloaded_bytes,
                     total_bytes,
+                    status: "downloading".to_string(),
                     file_path: None,
-                    error: None,
                     media_type: None,
                 },
-            )
-            .await;
+            );
         }
-
-        emit_download_event_with_id(
-            app,
-            download_id,
-            file_name.clone(),
-            url.to_string(),
-            DownloadEventParams {
-                progress,
-                downloaded_bytes,
-                total_bytes,
-                status: "downloading".to_string(),
-                file_path: None,
-                media_type: None,
-            },
-        );
     }
 
     file.flush()
