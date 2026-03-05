@@ -10,11 +10,13 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { AnimatePresence, motion } from 'motion/react';
+import { Switch } from '@/components/animate-ui/components/base/switch';
 import { AppLogo } from '@/components/brand/AppLogo';
 import { Button } from '@/components/ui/button';
 import { checkForUpdate, downloadUpdate, installAndRelaunch } from '@/lib/updater';
 import { cn } from '@/lib/utils';
 import { useMinifluxVersion } from '@/services/miniflux';
+import { usePreferences, useSavePreferences } from '@/services/preferences';
 import { useUpdaterStore } from '@/store/updater-store';
 import { SettingsField, SettingsSection } from '../shared/SettingsComponents';
 
@@ -25,6 +27,8 @@ export function AboutPane() {
     isLoading: versionLoading,
     error: versionError,
   } = useMinifluxVersion();
+  const { data: preferences } = usePreferences();
+  const savePreferences = useSavePreferences();
   const updaterStatus = useUpdaterStore((s) => s.status);
   const updaterVersion = useUpdaterStore((s) =>
     s.status === 'available' || s.status === 'downloading' || s.status === 'ready'
@@ -82,7 +86,7 @@ export function AboutPane() {
 
   return (
     <div className="space-y-6">
-      <div className="rounded-xl border border-border/60 bg-card p-4">
+      <div className="p-0">
         <div className="flex items-center gap-3">
           <AppLogo showWordmark={false} markClassName="size-12" />
           <div>
@@ -159,6 +163,24 @@ export function AboutPane() {
               </div>
             )}
           </div>
+        </SettingsField>
+
+        <SettingsField
+          label={_(msg`Automatic updates`)}
+          description={_(msg`Check for updates automatically on app launch.`)}
+        >
+          <Switch
+            checked={preferences?.auto_check_updates ?? true}
+            onCheckedChange={async (checked) => {
+              if (!preferences) return;
+              await savePreferences.mutateAsync({
+                ...preferences,
+                // biome-ignore lint/style/useNamingConvention: preferences field name
+                auto_check_updates: checked,
+              });
+            }}
+            disabled={!preferences || savePreferences.isPending}
+          />
         </SettingsField>
       </SettingsSection>
 

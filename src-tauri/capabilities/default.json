@@ -36,6 +36,7 @@
     "log:default",
     "notification:default",
     "process:default",
+    "process:allow-restart",
     "os:default",
     "global-shortcut:default",
     "mcp-bridge:default"
