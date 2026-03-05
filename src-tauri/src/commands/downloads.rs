@@ -116,6 +116,7 @@ struct DownloadDbParams<'a> {
     total_bytes: i64,
     file_path: Option<&'a str>,
     error: Option<&'a str>,
+    media_type: Option<&'a str>,
 }
 
 async fn save_download_to_db(
@@ -131,8 +132,8 @@ async fn save_download_to_db(
         let now = Utc::now().to_rfc3339();
         let _ = sqlx::query(
             r#"
-            INSERT INTO downloads (id, url, file_name, status, progress, downloaded_bytes, total_bytes, file_path, error, created_at, updated_at)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            INSERT INTO downloads (id, url, file_name, status, progress, downloaded_bytes, total_bytes, file_path, error, media_type, created_at, updated_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
             ON CONFLICT(id) DO UPDATE SET
                 status = excluded.status,
                 progress = excluded.progress,
@@ -140,6 +141,7 @@ async fn save_download_to_db(
                 total_bytes = excluded.total_bytes,
                 file_path = COALESCE(excluded.file_path, downloads.file_path),
                 error = excluded.error,
+                media_type = COALESCE(excluded.media_type, downloads.media_type),
                 updated_at = excluded.updated_at
             "#,
         )
@@ -152,6 +154,7 @@ async fn save_download_to_db(
         .bind(params.total_bytes)
         .bind(params.file_path)
         .bind(params.error)
+        .bind(params.media_type)
         .bind(&now)
         .bind(&now)
         .execute(pool)
@@ -288,6 +291,7 @@ struct DownloadEventParams {
     total_bytes: i64,
     status: String,
     file_path: Option<String>,
+    media_type: Option<String>,
 }
 
 fn emit_download_event_with_id(
@@ -308,6 +312,7 @@ fn emit_download_event_with_id(
             total_bytes: params.total_bytes,
             status: params.status,
             file_path: params.file_path,
+            media_type: params.media_type,
         },
     );
 }
@@ -373,6 +378,7 @@ pub async fn download_file(
             total_bytes: 0,
             file_path: None,
             error: None,
+            media_type: media_type.as_deref(),
         },
     )
     .await;
@@ -403,6 +409,7 @@ pub async fn download_file(
             total_bytes: 0,
             status: "downloading".to_string(),
             file_path: None,
+            media_type: media_type.clone(),
         },
     );
 
@@ -435,6 +442,7 @@ pub async fn download_file(
                     total_bytes,
                     file_path: Some(file_path),
                     error: None,
+                    media_type: None,
                 },
             )
             .await;
@@ -462,6 +470,7 @@ pub async fn download_file(
                     total_bytes,
                     status: "completed".to_string(),
                     file_path: Some(file_path.clone()),
+                    media_type: None,
                 },
             );
         }
@@ -478,6 +487,7 @@ pub async fn download_file(
                     total_bytes: 0,
                     file_path: None,
                     error: Some(error),
+                    media_type: None,
                 },
             )
             .await;
@@ -504,6 +514,7 @@ pub async fn download_file(
                     total_bytes: 0,
                     status: "failed".to_string(),
                     file_path: None,
+                    media_type: None,
                 },
             );
         }
@@ -571,6 +582,7 @@ pub async fn cancel_download(app: tauri::AppHandle, url: String) -> Result<(), S
                 total_bytes: 0,
                 file_path: None,
                 error: None,
+                media_type: None,
             },
         )
         .await;
@@ -586,6 +598,7 @@ pub async fn cancel_download(app: tauri::AppHandle, url: String) -> Result<(), S
                 total_bytes: 0,
                 status: "cancelled".to_string(),
                 file_path: None,
+                media_type: None,
             },
         );
 
@@ -777,6 +790,7 @@ async fn perform_download(
                     total_bytes,
                     file_path: None,
                     error: None,
+                    media_type: None,
                 },
             )
             .await;
@@ -793,6 +807,7 @@ async fn perform_download(
                 total_bytes,
                 status: "downloading".to_string(),
                 file_path: None,
+                media_type: None,
             },
         );
     }

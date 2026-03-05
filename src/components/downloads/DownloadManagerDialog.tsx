@@ -44,6 +44,7 @@ type DownloadItem = {
   filePath?: string;
   error?: string;
   speed?: number;
+  mediaType?: string;
 };
 
 // ── Helpers ──────────────────────────────────────────────────────────
@@ -400,6 +401,8 @@ export function DownloadManagerDialog() {
           status: string;
           // biome-ignore lint/style/useNamingConvention: API event payload
           file_path?: string;
+          // biome-ignore lint/style/useNamingConvention: API event payload
+          media_type?: string;
         }>('download-progress', (event) => {
           const {
             enclosure_id,
@@ -410,6 +413,7 @@ export function DownloadManagerDialog() {
             total_bytes,
             status,
             file_path,
+            media_type,
           } = event.payload;
 
           if (status === 'completed' && !completedRef.current.has(enclosure_id)) {
@@ -455,6 +459,7 @@ export function DownloadManagerDialog() {
                       status: status as DownloadStatus,
                       speed: speed === -1 ? d.speed : speed,
                       filePath: file_path || d.filePath,
+                      mediaType: media_type || d.mediaType,
                     }
                   : d
               );
@@ -471,6 +476,7 @@ export function DownloadManagerDialog() {
                 totalBytes: total_bytes,
                 speed: 0,
                 filePath: file_path,
+                mediaType: media_type,
               },
             ];
           });
@@ -585,10 +591,10 @@ export function DownloadManagerDialog() {
 
   const handleRetry = async (dl: DownloadItem) => {
     if (dl.status !== 'failed' && dl.status !== 'cancelled') return;
-    const mediaType = inferMediaType(dl.fileName) === 'audio' ? 'audio' : 'image';
+    const mediaType = dl.mediaType ?? (inferMediaType(dl.fileName) === 'audio' ? 'audio' : null);
     const result = await commands.retryDownload(dl.url, dl.fileName, mediaType);
     if (result.status === 'error') {
-      console.error('Failed to retry download:', result.error);
+      toast.error(_(msg`Retry failed`), { description: result.error });
     }
   };
 
