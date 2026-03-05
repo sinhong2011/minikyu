@@ -191,7 +191,7 @@ describe('UserNav', () => {
     expect(tauriBindings.commands.switchMinifluxAccount).toHaveBeenCalledWith('2');
   });
 
-  it('calls deleteMinifluxAccount when delete account is clicked', async () => {
+  it('calls deleteMinifluxAccount when per-account delete button is clicked', async () => {
     vi.spyOn(tauriBindings.commands, 'deleteMinifluxAccount').mockResolvedValue({
       status: 'ok',
       data: null,
@@ -201,11 +201,14 @@ describe('UserNav', () => {
     const trigger = screen.getByRole('button');
     fireEvent.click(trigger);
 
-    const deleteAccount = await screen.findByText('Delete Account');
-    fireEvent.click(deleteAccount);
+    // Wait for the menu to open and find the per-account delete buttons
+    const deleteButtons = await screen.findAllByTitle('Delete account');
+    expect(deleteButtons.length).toBeGreaterThan(0);
+    // Click the delete button for the first account
+    fireEvent.click(deleteButtons[0] as HTMLElement);
 
     await waitFor(() => {
-      expect(tauriBindings.commands.deleteMinifluxAccount).toHaveBeenCalled();
+      expect(tauriBindings.commands.deleteMinifluxAccount).toHaveBeenCalledWith('1');
     });
   });
 

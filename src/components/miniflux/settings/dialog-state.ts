@@ -16,6 +16,6 @@ export type FeedDialogState =
 export type UserDialogState = { mode: 'create' } | { mode: 'edit'; user: User };
 
 export type DeleteDialogState =
-  | { type: 'category'; id: string; title: string }
+  | { type: 'category'; id: string; title: string; feedCount: number }
   | { type: 'feed'; id: string; title: string }
   | { type: 'user'; id: string; title: string };

@@ -103,12 +103,10 @@ pub async fn save_miniflux_account(
             // Clear categories
             sqlx::query("DELETE FROM categories").execute(&pool).await?;
             // Clear sync state for this account to force a full resync
-            sqlx::query(
-                "DELETE FROM sync_state WHERE account_id = ?",
-            )
-            .bind(id)
-            .execute(&pool)
-            .await?;
+            sqlx::query("DELETE FROM sync_state WHERE account_id = ?")
+                .bind(id)
+                .execute(&pool)
+                .await?;
             log::info!("Old synced data cleared successfully");
         }
 
@@ -267,7 +265,7 @@ pub async fn get_active_miniflux_account(
 #[tauri::command]
 #[specta::specta]
 pub async fn delete_miniflux_account(
-    _app_handle: AppHandle,
+    app_handle: AppHandle,
     state: State<'_, AppState>,
     id: String,
 ) -> Result<(), AccountError> {
@@ -297,6 +295,31 @@ pub async fn delete_miniflux_account(
     if is_active == Some(true) {
         *state.miniflux.user_id.lock().await = None;
         *state.miniflux.client.lock().await = None;
+
+        // Promote next available account to active and auto-reconnect
+        let next_account_id: Option<i64> = sqlx::query_scalar(
+            "SELECT id FROM miniflux_connections ORDER BY updated_at DESC LIMIT 1",
+        )
+        .fetch_optional(&pool)
+        .await
+        .map_err(|e| AccountError::DatabaseError(e.to_string()))?;
+
+        if let Some(next_id) = next_account_id {
+            log::info!(
+                "Promoting account {} to active after deleting active account",
+                next_id
+            );
+            sqlx::query("UPDATE miniflux_connections SET is_active = 1 WHERE id = ?")
+                .bind(next_id)
+                .execute(&pool)
+                .await
+                .map_err(|e| AccountError::DatabaseError(e.to_string()))?;
+
+            // Auto-reconnect to the newly promoted account
+            if let Err(e) = auto_reconnect_miniflux(app_handle.clone(), state.clone()).await {
+                log::warn!("Auto-reconnect after account promotion failed: {:?}", e);
+            }
+        }
     }
 
     Ok(())
