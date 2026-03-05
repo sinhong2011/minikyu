@@ -179,10 +179,11 @@ export function PreferencesDialog() {
   // Miniflux data fetching
   const { data: categories = [] } = useCategories(isConnected);
   const { data: feeds = [] } = useFeeds(isConnected);
-  const { data: users = [], isError: usersError } = useMinifluxUsers(
-    isConnected && (currentUser?.is_admin ?? false)
+  const isAdmin = currentUser?.is_admin ?? false;
+  const { data: users = [], isError: usersError } = useMinifluxUsers(isConnected && isAdmin);
+  const { data: integrations, isLoading: integrationsLoading } = useIntegrations(
+    isConnected && isAdmin
   );
-  const { data: integrations, isLoading: integrationsLoading } = useIntegrations();
 
   // Dialog state from MinifluxSettingsDialogStore
   const setCategoryDialogState = useMinifluxSettingsDialogStore(
@@ -478,8 +479,8 @@ export function PreferencesDialog() {
                     <SidebarMenu className="gap-1">
                       {serverSettingsItems
                         .filter((item) => {
-                          const adminOnly = item.id === 'users';
-                          return !adminOnly || (currentUser?.is_admin ?? false);
+                          const adminOnly = item.id === 'users' || item.id === 'integrations';
+                          return !adminOnly || isAdmin;
                         })
                         .map((item) => (
                           <SidebarMenuItem key={item.id}>
@@ -548,8 +549,8 @@ export function PreferencesDialog() {
                     <div className="grid grid-cols-2 gap-1">
                       {serverSettingsItems
                         .filter((item) => {
-                          const adminOnly = item.id === 'users';
-                          return !adminOnly || (currentUser?.is_admin ?? false);
+                          const adminOnly = item.id === 'users' || item.id === 'integrations';
+                          return !adminOnly || isAdmin;
                         })
                         .map((item) => (
                           <Button

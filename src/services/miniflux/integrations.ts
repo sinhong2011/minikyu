@@ -1,7 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { logger } from '@/lib/logger';
 import { commands } from '@/lib/tauri-bindings';
-import { useIsConnected } from '@/services/miniflux/auth';
 
 // Query keys for integration data
 export const integrationsQueryKeys = {
@@ -13,9 +12,7 @@ export const integrationsQueryKeys = {
  * Hook to get user integration settings
  * Use this in any component that needs integration status (e.g., Integrations pane)
  */
-export function useIntegrations() {
-  const { data: isConnected } = useIsConnected();
-
+export function useIntegrations(enabled = false) {
   return useQuery({
     queryKey: integrationsQueryKeys.current(),
     queryFn: async () => {
@@ -39,7 +36,7 @@ export function useIntegrations() {
       });
       return result.data;
     },
-    enabled: isConnected ?? false,
+    enabled,
     staleTime: 1000 * 60 * 5, // 5 minutes - integration settings don't change often
     gcTime: 1000 * 60 * 30, // 30 minutes
     retry: 1,
