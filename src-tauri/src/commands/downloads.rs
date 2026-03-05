@@ -41,6 +41,7 @@ pub enum DownloadState {
         url: String,
         error: String,
         progress: i32,
+        downloaded_bytes: i64,
         failed_at: SystemTime,
     },
     /// Download was cancelled
@@ -260,8 +261,16 @@ pub async fn get_downloads_from_db(app: tauri::AppHandle) -> Result<Vec<Download
             let total_bytes: i64 = row.get("total_bytes");
             let file_path: Option<String> = row.get("file_path");
             let error: Option<String> = row.get("error");
+            let created_at_str: String = row.get("created_at");
+            let updated_at_str: String = row.get("updated_at");
 
-            let dummy_time = SystemTime::now();
+            let parse_time = |s: &str| -> SystemTime {
+                chrono::DateTime::parse_from_rfc3339(s)
+                    .map(|dt| SystemTime::from(dt))
+                    .unwrap_or_else(|_| SystemTime::now())
+            };
+            let created_time = parse_time(&created_at_str);
+            let updated_time = parse_time(&updated_at_str);
 
             let state = match status.as_str() {
                 "downloading" => DownloadState::Downloading {
@@ -270,7 +279,7 @@ pub async fn get_downloads_from_db(app: tauri::AppHandle) -> Result<Vec<Download
                     progress,
                     downloaded_bytes,
                     total_bytes,
-                    started_at: dummy_time,
+                    started_at: created_time,
                 },
                 "completed" => DownloadState::Completed {
                     id: id as usize,
@@ -278,20 +287,21 @@ pub async fn get_downloads_from_db(app: tauri::AppHandle) -> Result<Vec<Download
                     file_path: file_path.unwrap_or_default(),
                     total_bytes,
                     progress,
-                    completed_at: dummy_time,
+                    completed_at: updated_time,
                 },
                 "failed" => DownloadState::Failed {
                     id: id as usize,
                     url,
                     error: error.unwrap_or_default(),
                     progress,
-                    failed_at: dummy_time,
+                    downloaded_bytes,
+                    failed_at: updated_time,
                 },
                 "cancelled" => DownloadState::Cancelled {
                     id: id as usize,
                     url,
                     progress,
-                    cancelled_at: dummy_time,
+                    cancelled_at: updated_time,
                 },
                 "paused" => DownloadState::Paused {
                     id: id as usize,
@@ -299,13 +309,13 @@ pub async fn get_downloads_from_db(app: tauri::AppHandle) -> Result<Vec<Download
                     progress,
                     downloaded_bytes,
                     total_bytes,
-                    paused_at: dummy_time,
+                    paused_at: updated_time,
                 },
                 _ => DownloadState::Cancelled {
                     id: id as usize,
                     url,
                     progress,
-                    cancelled_at: dummy_time,
+                    cancelled_at: updated_time,
                 },
             };
             downloads.push(state);
@@ -547,6 +557,7 @@ pub async fn download_file(
                 url: url.clone(),
                 error: error.clone(),
                 progress: 0,
+                downloaded_bytes: 0,
                 failed_at: SystemTime::now(),
             };
             downloads.push(failed_state);

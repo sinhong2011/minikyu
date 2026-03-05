@@ -1530,7 +1530,7 @@ export type DownloadState =
 /**
  * Download failed
  */
-{ Failed: { id: string; url: string; error: string; progress: number; failed_at: SystemTime } } | 
+{ Failed: { id: string; url: string; error: string; progress: number; downloaded_bytes: string; failed_at: SystemTime } } | 
 /**
  * Download was cancelled
  */
