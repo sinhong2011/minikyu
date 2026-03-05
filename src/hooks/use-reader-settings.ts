@@ -73,6 +73,7 @@ export function useReaderSettings() {
     customConversionRules: preferences?.reader_custom_conversions ?? [],
     bionicReading: preferences?.reader_bionic_reading ?? false,
     statusBarVisible: preferences?.reader_status_bar ?? false,
+    focusMode: preferences?.reader_focus_mode ?? false,
     translationDisplayMode: preferences?.reader_translation_display_mode ?? 'bilingual',
     translationTriggerMode: preferences?.reader_translation_trigger_mode ?? 'manual',
     translationRouteMode: preferences?.reader_translation_route_mode ?? 'engine_first',
@@ -115,6 +116,7 @@ export function useReaderSettings() {
       updateSetting('reader_chinese_conversion', mode),
     setBionicReading: (enabled: boolean) => updateSetting('reader_bionic_reading', enabled),
     setStatusBarVisible: (enabled: boolean) => updateSetting('reader_status_bar', enabled),
+    setFocusMode: (enabled: boolean) => updateSetting('reader_focus_mode', enabled),
     setTranslationDisplayMode: (mode: AppPreferences['reader_translation_display_mode']) =>
       updateSetting('reader_translation_display_mode', mode),
     setTranslationTriggerMode: (mode: AppPreferences['reader_translation_trigger_mode']) =>

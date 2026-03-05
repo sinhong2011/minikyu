@@ -1400,10 +1400,14 @@ export function SafeHtml({
                   {...imgProps}
                   src={src}
                   alt={alt}
+                  loading="lazy"
                   className={cn(
-                    'block h-auto max-w-full rounded-2xl mx-auto transition-all group-hover/img:ring-4 group-hover/img:ring-border/70',
+                    'block h-auto max-w-full rounded-2xl mx-auto transition-all group-hover/img:ring-4 group-hover/img:ring-border/70 opacity-0 transition-opacity duration-300',
                     imgProps.className as string
                   )}
+                  onLoad={(e) => {
+                    (e.currentTarget as HTMLImageElement).style.opacity = '1';
+                  }}
                 />
               </button>
             );
@@ -1431,10 +1435,14 @@ export function SafeHtml({
                 {...props}
                 src={src}
                 alt={alt}
+                loading="lazy"
                 className={cn(
-                  'block h-auto max-w-full rounded-2xl mx-auto transition-all group-hover/img:ring-4 group-hover/img:ring-border/70',
+                  'block h-auto max-w-full rounded-2xl mx-auto transition-all group-hover/img:ring-4 group-hover/img:ring-border/70 opacity-0 transition-opacity duration-300',
                   props.className as string
                 )}
+                onLoad={(e) => {
+                  (e.currentTarget as HTMLImageElement).style.opacity = '1';
+                }}
               />
             </button>
           );

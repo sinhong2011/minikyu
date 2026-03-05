@@ -52,6 +52,8 @@ export function usePreferences() {
           // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_status_bar: false,
           // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_focus_mode: false,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_custom_conversions: [],
           // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_translation_display_mode: 'bilingual',
@@ -101,6 +103,8 @@ export function usePreferences() {
           time_format: '24h',
           // biome-ignore lint/style/useNamingConvention: preferences field name
           sync_interval: 15,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          auto_check_updates: true,
         };
       }
 

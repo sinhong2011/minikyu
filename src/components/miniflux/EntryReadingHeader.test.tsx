@@ -82,6 +82,8 @@ function renderHeader(overrides: { isExcludedFeed?: boolean; entry?: Entry } = {
         onSummarize={vi.fn()}
         isSummarizing={false}
         hasSummary={false}
+        focusMode={false}
+        onFocusModeChange={vi.fn()}
       />
     </I18nProvider>
   );

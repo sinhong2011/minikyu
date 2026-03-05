@@ -2,6 +2,7 @@ import {
   ArrowLeft02Icon,
   ArrowRight02Icon,
   Cancel01Icon,
+  CenterFocusIcon,
   CheckmarkCircle02Icon,
   Copy01Icon,
   Download01Icon,
@@ -21,7 +22,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
-import { format, parseISO } from 'date-fns';
+import { parseISO } from 'date-fns';
 import { AnimatePresence, type MotionValue, motion } from 'motion/react';
 import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
@@ -46,6 +47,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import type { Entry } from '@/lib/bindings';
+import { formatShortDate } from '@/lib/miniflux-utils';
 import { getPodcastEnclosure } from '@/lib/podcast-utils';
 import { normalizeReaderTheme, type ReaderTheme, readerThemeOptions } from '@/lib/reader-theme';
 import { type ReaderCodeTheme, readerCodeThemeOptions } from '@/lib/shiki-highlight';
@@ -93,6 +95,8 @@ interface EntryReadingHeaderProps {
   onSummarize: () => void;
   isSummarizing: boolean;
   hasSummary: boolean;
+  focusMode: boolean;
+  onFocusModeChange: (enabled: boolean) => void;
 }
 
 export function EntryReadingHeader({
@@ -131,8 +135,10 @@ export function EntryReadingHeader({
   onSummarize,
   isSummarizing,
   hasSummary,
+  focusMode,
+  onFocusModeChange,
 }: EntryReadingHeaderProps) {
-  const { _ } = useLingui();
+  const { _, i18n } = useLingui();
   const {
     chineseConversionMode,
     bionicReading,
@@ -548,6 +554,28 @@ export function EntryReadingHeader({
 
             <ReaderSettings />
 
+            <Tooltip>
+              <TooltipTrigger
+                render={
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className={cn(
+                      toolbarButtonClass,
+                      focusMode && 'border-border/60 bg-accent/70 text-foreground'
+                    )}
+                    onClick={() => onFocusModeChange(!focusMode)}
+                    aria-label={_(msg`Focus mode`)}
+                    aria-pressed={focusMode}
+                  />
+                }
+              >
+                <HugeiconsIcon icon={CenterFocusIcon} className="h-5 w-5" strokeWidth={2} />
+              </TooltipTrigger>
+              <TooltipPanel>{_(msg`Focus mode`)}</TooltipPanel>
+            </Tooltip>
+
             <Popover>
               <PopoverTrigger
                 render={
@@ -862,7 +890,7 @@ export function EntryReadingHeader({
             )}
             <span className="text-muted-foreground/30">·</span>
             <time className="text-muted-foreground/70" dateTime={entry.published_at}>
-              {format(parseISO(entry.published_at), 'MMM d, yyyy')}
+              {formatShortDate(parseISO(entry.published_at), i18n.locale)}
             </time>
             {entry.reading_time && (
               <>
