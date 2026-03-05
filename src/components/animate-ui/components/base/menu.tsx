@@ -72,17 +72,21 @@ function MenuPanel({
 }: MenuPanelProps) {
   return (
     <MenuPortal>
-      <MenuPositionerPrimitive className="z-50" sideOffset={sideOffset} {...props}>
+      <MenuPositionerPrimitive
+        className="z-50 bg-popover/65 backdrop-blur-2xl backdrop-saturate-150 rounded-md border shadow-md"
+        sideOffset={sideOffset}
+        {...props}
+      >
         <MenuPopupPrimitive
           finalFocus={finalFocus}
           transition={transition}
           id={id}
           className={cn(
-            'bg-popover/80 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 text-popover-foreground max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md outline-none',
+            'text-popover-foreground max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto p-1 outline-none space-y-0.5',
             className
           )}
         >
-          <MenuHighlightPrimitive className="absolute inset-0 bg-accent z-0 rounded-sm">
+          <MenuHighlightPrimitive className="absolute inset-0 bg-white/10 z-0 rounded-sm">
             {children}
           </MenuHighlightPrimitive>
         </MenuPopupPrimitive>
@@ -93,8 +97,8 @@ function MenuPanel({
 
 type MenuGroupProps = MenuGroupPrimitiveProps;
 
-function MenuGroup(props: MenuGroupProps) {
-  return <MenuGroupPrimitive {...props} />;
+function MenuGroup({ className, ...props }: MenuGroupProps) {
+  return <MenuGroupPrimitive className={cn('space-y-0.5', className)} {...props} />;
 }
 
 type MenuGroupLabelProps = MenuGroupLabelPrimitiveProps & {
@@ -105,7 +109,10 @@ function MenuGroupLabel({ className, inset, ...props }: MenuGroupLabelProps) {
   return (
     <MenuGroupLabelPrimitive
       data-inset={inset}
-      className={cn('px-2 py-1.5 text-sm font-medium data-[inset]:pl-8', className)}
+      className={cn(
+        'px-2 py-1.5 text-xs font-medium text-muted-foreground data-[inset]:pl-8',
+        className
+      )}
       {...props}
     />
   );
@@ -119,7 +126,7 @@ type MenuItemProps = MenuItemPrimitiveProps & {
 function MenuItem({ className, inset, variant = 'default', disabled, ...props }: MenuItemProps) {
   return (
     <MenuHighlightItemPrimitive
-      activeClassName={variant === 'destructive' ? 'bg-destructive/10 dark:bg-destructive/20' : ''}
+      activeClassName={variant === 'destructive' ? 'bg-destructive/15' : ''}
       disabled={disabled}
     >
       <MenuItemPrimitive
@@ -190,7 +197,7 @@ function MenuRadioItem({ className, children, disabled, ...props }: MenuRadioIte
         {...props}
       >
         <span className="pointer-events-none absolute left-2 flex size-3.5 items-center justify-center">
-          <MenuRadioItemIndicatorPrimitive layoutId="dropdown-menu-item-indicator-radio">
+          <MenuRadioItemIndicatorPrimitive layoutId="menu-item-indicator-radio">
             <HugeiconsIcon icon={CircleIcon} className="size-2 fill-current" />
           </MenuRadioItemIndicatorPrimitive>
         </span>
@@ -275,13 +282,17 @@ function MenuSubmenuPanel({
 }: MenuSubmenuPanelProps) {
   return (
     <MenuPortal>
-      <MenuPositionerPrimitive className="z-50" sideOffset={sideOffset} {...props}>
+      <MenuPositionerPrimitive
+        className="z-50 bg-popover/65 backdrop-blur-2xl backdrop-saturate-150 rounded-md border shadow-md"
+        sideOffset={sideOffset}
+        {...props}
+      >
         <MenuPopupPrimitive
           finalFocus={finalFocus}
           transition={transition}
           id={id}
           className={cn(
-            'bg-popover/80 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 text-popover-foreground max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-md border p-1 shadow-md',
+            'text-popover-foreground max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto p-1',
             className
           )}
         >
