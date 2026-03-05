@@ -257,12 +257,19 @@ export function MinifluxLayout() {
     }
   }, [lastReadingEntry, selectedEntryId, setSelectedEntryId]);
 
-  // Reset state when account changes (skip initial mount)
+  // Reset state when account changes (skip initial load from undefined → first account)
   const activeAccountId = activeAccount?.id;
-  const prevAccountIdRef = useRef(activeAccountId);
+  const prevAccountIdRef = useRef<string | undefined>(activeAccountId);
+  const hasInitialAccountRef = useRef(false);
   useEffect(() => {
     if (prevAccountIdRef.current === activeAccountId) return;
+    const isInitialLoad = !hasInitialAccountRef.current && activeAccountId != null;
     prevAccountIdRef.current = activeAccountId;
+    if (isInitialLoad) {
+      hasInitialAccountRef.current = true;
+      return;
+    }
+    hasInitialAccountRef.current = true;
     hasAutoSyncedRef.current = false;
     suppressAutoSelectRef.current = false;
     setSelectedEntryId(undefined);
