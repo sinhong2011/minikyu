@@ -151,12 +151,10 @@ export function ZenModeView() {
                 {_(msg`No unread entries available`)}
               </p>
               <Button
-                variant="outline"
+                variant="ghost"
                 onClick={handleExit}
-                style={{
-                  borderColor: readerThemePalette.text,
-                  color: readerThemePalette.text,
-                }}
+                className="rounded-xl border border-white/10 bg-white/[0.04] px-5 backdrop-blur-sm hover:bg-white/[0.08]"
+                style={{ color: readerThemePalette.text }}
               >
                 {_(msg`Exit Zen Mode`)}
               </Button>
@@ -189,10 +187,8 @@ export function ZenModeView() {
                 onClick={handleNextArticle}
                 size="sm"
                 variant="ghost"
-                className="gap-1.5 text-sm opacity-50 hover:opacity-80"
-                style={{
-                  color: readerThemePalette.text,
-                }}
+                className="gap-1.5 rounded-xl border border-white/10 bg-white/[0.04] px-4 text-sm backdrop-blur-sm hover:bg-white/[0.08]"
+                style={{ color: readerThemePalette.text }}
               >
                 {_(msg`Next`)}
                 <HugeiconsIcon icon={ArrowRightIcon} className="h-3 w-3" />

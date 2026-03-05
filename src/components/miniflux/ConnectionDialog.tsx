@@ -338,7 +338,7 @@ export function ConnectionDialog({
             </form.Field>
           </div>
 
-          <DialogFooter className="bg-background border-0">
+          <DialogFooter className="bg-transparent border-0">
             {import.meta.env.DEV && (
               <Button
                 type="button"
