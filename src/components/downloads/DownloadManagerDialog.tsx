@@ -28,6 +28,7 @@ import { Button } from '@/components/ui/button';
 import { DataTable } from '@/components/ui/data-table';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
 import { usePlayerStore } from '@/store/player-store';
@@ -569,19 +570,22 @@ export function DownloadManagerDialog() {
         return (
           <div className="flex min-w-0 items-center gap-3">
             <DownloadIcon item={item} />
-            <div className="min-w-0">
+            <div className="min-w-0 flex-1">
               <div className="truncate text-xs font-semibold text-foreground" title={displayName}>
                 {displayName}
               </div>
-              <div className="truncate text-[11px] text-muted-foreground">
-                {host || item.url}
-                {item.status === 'failed' && item.error ? (
-                  <span className="ml-2 inline-flex items-center gap-1 text-destructive">
-                    <HugeiconsIcon icon={AlertCircleIcon} className="size-3.5 shrink-0" />
-                    {item.error}
-                  </span>
-                ) : null}
-              </div>
+              <div className="truncate text-[11px] text-muted-foreground">{host || item.url}</div>
+              {(item.status === 'downloading' || item.status === 'paused') && (
+                <div className="mt-1.5 h-1 w-full overflow-hidden rounded-full bg-white/10">
+                  <div
+                    className={cn(
+                      'h-full rounded-full transition-all duration-300',
+                      item.status === 'downloading' ? 'bg-cyan-400' : 'bg-amber-400'
+                    )}
+                    style={{ width: `${Math.min(item.progress, 100)}%` }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         );
@@ -623,20 +627,34 @@ export function DownloadManagerDialog() {
                   ? _(msg`Failed`)
                   : _(msg`Cancelled`);
 
+        const pill = (
+          <span
+            className={cn(
+              'inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-semibold leading-none',
+              item.status === 'completed' && 'bg-fuchsia-500/20 text-fuchsia-200',
+              item.status === 'downloading' && 'bg-cyan-500/20 text-cyan-200',
+              item.status === 'paused' && 'bg-amber-500/20 text-amber-200',
+              (item.status === 'failed' || item.status === 'cancelled') &&
+                'bg-destructive/20 text-destructive'
+            )}
+          >
+            {(item.status === 'failed' || item.status === 'cancelled') && item.error && (
+              <HugeiconsIcon icon={AlertCircleIcon} className="size-3" />
+            )}
+            {statusLabel}
+          </span>
+        );
+
         return (
           <div className="flex items-center gap-2">
-            <span
-              className={cn(
-                'inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-semibold leading-none',
-                item.status === 'completed' && 'bg-fuchsia-500/20 text-fuchsia-200',
-                item.status === 'downloading' && 'bg-cyan-500/20 text-cyan-200',
-                item.status === 'paused' && 'bg-amber-500/20 text-amber-200',
-                (item.status === 'failed' || item.status === 'cancelled') &&
-                  'bg-destructive/20 text-destructive'
-              )}
-            >
-              {statusLabel}
-            </span>
+            {(item.status === 'failed' || item.status === 'cancelled') && item.error ? (
+              <Tooltip>
+                <TooltipTrigger>{pill}</TooltipTrigger>
+                <TooltipPanel className="max-w-64 text-xs">{item.error}</TooltipPanel>
+              </Tooltip>
+            ) : (
+              pill
+            )}
             {item.status === 'downloading' ? (
               <span className="text-xs tabular-nums text-muted-foreground">{item.progress}%</span>
             ) : null}
@@ -897,9 +915,9 @@ export function DownloadManagerDialog() {
             tableClassName="[border-collapse:separate] border-separate [border-spacing:0_10px] w-[calc(100%-24px)] mx-3 [&_thead_th]:px-4 [&_thead_th]:text-[11px] [&_thead_th]:font-medium [&_tbody_td]:px-4 [&_tbody_td]:py-3 [&_tbody_td:first-child]:rounded-l-xl [&_tbody_td:last-child]:rounded-r-xl"
             getRowProps={(row) => ({
               className: cn(
-                'border border-white/5 bg-black/35 backdrop-blur-sm transition-colors hover:bg-white/[0.04]',
+                'border border-white/5 transition-colors hover:bg-white/[0.04]',
                 (row.original.status === 'failed' || row.original.status === 'cancelled') &&
-                  'border-destructive/35 bg-destructive/[0.08] hover:bg-destructive/[0.14]'
+                  'border-destructive/35 hover:bg-destructive/[0.14]'
               ),
             })}
             footerLeftContent={
