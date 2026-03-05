@@ -161,7 +161,7 @@ msgstr "Accounts"
 msgid "Actions"
 msgstr "Actions"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:658
+#: src/components/downloads/DownloadManagerDialog.tsx:798
 msgid "Active"
 msgstr "Active"
 
@@ -266,7 +266,7 @@ msgstr "AI"
 msgid "AI Summary"
 msgstr "AI Summary"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:657
+#: src/components/downloads/DownloadManagerDialog.tsx:797
 #: src/components/layout/AppSidebar.tsx:430
 #: src/components/layout/AppSidebar.tsx:441
 #: src/components/miniflux/EntryFilters.tsx:99
@@ -503,7 +503,8 @@ msgstr "Build date"
 msgid "Can’t find a category? Create a new one."
 msgstr "Can’t find a category? Create a new one."
 
-#: src/components/downloads/DownloadManagerDialog.tsx:276
+#: src/components/downloads/DownloadManagerDialog.tsx:321
+#: src/components/downloads/DownloadManagerDialog.tsx:342
 #: src/components/miniflux/AddCategoryDialog.tsx:97
 #: src/components/miniflux/AddFeedDialog.tsx:862
 #: src/components/miniflux/ConnectionDialog.tsx:359
@@ -523,7 +524,7 @@ msgstr "Can’t find a category? Create a new one."
 msgid "Cancel"
 msgstr "Cancel"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:264
+#: src/components/downloads/DownloadManagerDialog.tsx:300
 msgid "Cancelled"
 msgstr "Cancelled"
 
@@ -690,7 +691,7 @@ msgstr "Cleanup"
 msgid "Cleanup complete"
 msgstr "Cleanup complete"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:732
+#: src/components/downloads/DownloadManagerDialog.tsx:872
 msgid "Clear"
 msgstr "Clear"
 
@@ -920,7 +921,7 @@ msgstr "Copy this token now. It will not be shown again."
 msgid "Copy translation"
 msgstr "Copy translation"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:329
+#: src/components/downloads/DownloadManagerDialog.tsx:396
 msgid "Copy URL"
 msgstr "Copy URL"
 
@@ -937,11 +938,11 @@ msgstr "Could not check for updates. Please try again."
 msgid "Could not connect to saved account. Please update your credentials."
 msgstr "Could not connect to saved account. Please update your credentials."
 
-#: src/components/downloads/DownloadManagerDialog.tsx:592
+#: src/components/downloads/DownloadManagerDialog.tsx:715
 msgid "Could not find podcast entry"
 msgstr "Could not find podcast entry"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:597
+#: src/components/downloads/DownloadManagerDialog.tsx:720
 msgid "Could not load podcast entry"
 msgstr "Could not load podcast entry"
 
@@ -949,11 +950,11 @@ msgstr "Could not load podcast entry"
 msgid "Could not load server version information."
 msgstr "Could not load server version information."
 
-#: src/components/downloads/DownloadManagerDialog.tsx:569
+#: src/components/downloads/DownloadManagerDialog.tsx:692
 msgid "Could not open file"
 msgstr "Could not open file"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:579
+#: src/components/downloads/DownloadManagerDialog.tsx:702
 msgid "Could not reveal in folder"
 msgstr "Could not reveal in folder"
 
@@ -1211,7 +1212,7 @@ msgstr "Displays the mobile sidebar."
 msgid "Documentation"
 msgstr "Documentation"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:659
+#: src/components/downloads/DownloadManagerDialog.tsx:799
 #: src/components/preferences/panes/ApiTokenPane.tsx:261
 #: src/components/sync/SyncProgressPopover.tsx:119
 msgid "Done"
@@ -1224,15 +1225,15 @@ msgstr "Done"
 msgid "Download"
 msgstr "Download"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:455
+#: src/components/downloads/DownloadManagerDialog.tsx:567
 msgid "Download Completed"
 msgstr "Download Completed"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:261
+#: src/components/downloads/DownloadManagerDialog.tsx:297
 msgid "Download failed"
 msgstr "Download failed"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:463
+#: src/components/downloads/DownloadManagerDialog.tsx:575
 #: src/components/miniflux/EntryList.tsx:462
 #: src/components/podcast/PodcastPlayer.tsx:240
 #: src/hooks/use-player-command-listener.ts:59
@@ -1279,7 +1280,7 @@ msgstr "Downloading recent entries from server"
 msgid "Downloading update v{0}... {1}%"
 msgstr "Downloading update v{0}... {1}%"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:674
+#: src/components/downloads/DownloadManagerDialog.tsx:814
 #: src/components/titlebar/WindowTitleBar.tsx:138
 msgid "Downloads"
 msgstr "Downloads"
@@ -1354,7 +1355,7 @@ msgstr "Enabled"
 msgid "Enabled Services"
 msgstr "Enabled Services"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:603
+#: src/components/downloads/DownloadManagerDialog.tsx:726
 msgid "Enclosure not found for this entry"
 msgstr "Enclosure not found for this entry"
 
@@ -1522,12 +1523,12 @@ msgstr "Factory reset failed"
 msgid "Factory reset?"
 msgstr "Factory reset?"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:660
+#: src/components/downloads/DownloadManagerDialog.tsx:800
 #: src/components/sync/SyncProgressPopover.tsx:117
 msgid "Failed"
 msgstr "Failed"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:622
+#: src/components/downloads/DownloadManagerDialog.tsx:745
 msgid "Failed to cancel download"
 msgstr "Failed to cancel download"
 
@@ -1659,6 +1660,10 @@ msgstr "Failed to load users"
 msgid "Failed to minimize window: {message}"
 msgstr "Failed to minimize window: {message}"
 
+#: src/components/downloads/DownloadManagerDialog.tsx:753
+msgid "Failed to pause download"
+msgstr "Failed to pause download"
+
 #: src/services/miniflux/feeds.ts:278
 msgid "Failed to refresh feed"
 msgstr "Failed to refresh feed"
@@ -1674,6 +1679,10 @@ msgstr "Failed to reset preferences"
 #: src/components/preferences/panes/TranslationPane.tsx:954
 msgid "Failed to resort providers"
 msgstr "Failed to resort providers"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:762
+msgid "Failed to resume download"
+msgstr "Failed to resume download"
 
 #: src/components/miniflux/EntryReading.tsx:502
 #: src/components/miniflux/EntryReading.tsx:508
@@ -2574,7 +2583,7 @@ msgstr "Next section"
 msgid "No active account"
 msgstr "No active account"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:751
+#: src/components/downloads/DownloadManagerDialog.tsx:891
 msgid "No active downloads"
 msgstr "No active downloads"
 
@@ -2603,7 +2612,7 @@ msgstr "No categories yet"
 msgid "No category"
 msgstr "No category"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:753
+#: src/components/downloads/DownloadManagerDialog.tsx:893
 msgid "No completed downloads"
 msgstr "No completed downloads"
 
@@ -2615,7 +2624,7 @@ msgstr "No content available"
 msgid "No custom rules yet"
 msgstr "No custom rules yet"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:749
+#: src/components/downloads/DownloadManagerDialog.tsx:889
 msgid "No downloads yet"
 msgstr "No downloads yet"
 
@@ -2627,7 +2636,7 @@ msgstr "No entries found"
 msgid "No episode playing"
 msgstr "No episode playing"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:754
+#: src/components/downloads/DownloadManagerDialog.tsx:894
 msgid "No failed downloads"
 msgstr "No failed downloads"
 
@@ -2730,8 +2739,8 @@ msgstr "OLED"
 msgid "Ollama"
 msgstr "Ollama"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:310
-#: src/components/downloads/DownloadManagerDialog.tsx:458
+#: src/components/downloads/DownloadManagerDialog.tsx:377
+#: src/components/downloads/DownloadManagerDialog.tsx:570
 #: src/components/podcast/PodcastPlayer.tsx:259
 #: src/components/podcast/PodcastPlayer.tsx:265
 msgid "Open"
@@ -2895,12 +2904,17 @@ msgstr "Paste key"
 msgid "Paste new API token"
 msgstr "Paste new API token"
 
+#: src/components/downloads/DownloadManagerDialog.tsx:313
 #: src/components/miniflux/EntryReadingHeader.tsx:269
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PodcastPlayer.tsx:576
 #: src/pages/TrayPopover.tsx:226
 msgid "Pause"
 msgstr "Pause"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:291
+msgid "Paused"
+msgstr "Paused"
 
 #: src/components/preferences/panes/SyncPane.tsx:93
 #~ msgid "Performs a complete sync from scratch, re-downloading all categories, feeds, and entries. Use this if your data seems out of sync."
@@ -2914,7 +2928,7 @@ msgstr "Permanently deletes everything — all accounts, synced data, preference
 msgid "Phrase"
 msgstr "Phrase"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:298
+#: src/components/downloads/DownloadManagerDialog.tsx:365
 #: src/components/miniflux/EntryList.tsx:725
 #: src/components/miniflux/EntryReadingHeader.tsx:270
 #: src/components/podcast/PlayerWindowControls.tsx:270
@@ -3239,7 +3253,7 @@ msgstr "Release to refresh"
 msgid "Reload App"
 msgstr "Reload App"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:337
+#: src/components/downloads/DownloadManagerDialog.tsx:404
 #: src/components/podcast/PlayerWindowQueue.tsx:110
 #: src/components/preferences/panes/TranslationPane.tsx:1873
 msgid "Remove"
@@ -3373,7 +3387,11 @@ msgstr "Restore settings from a previously exported JSON file."
 msgid "Restore window"
 msgstr "Restore window"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:287
+#: src/components/downloads/DownloadManagerDialog.tsx:334
+msgid "Resume"
+msgstr "Resume"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:354
 #: src/components/miniflux/ArticleSummary.tsx:258
 #: src/components/miniflux/ImmersiveTranslationLayer.tsx:812
 #: src/components/podcast/PodcastPlayer.tsx:260
@@ -3381,7 +3399,7 @@ msgstr "Restore window"
 msgid "Retry"
 msgstr "Retry"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:631
+#: src/components/downloads/DownloadManagerDialog.tsx:771
 msgid "Retry failed"
 msgstr "Retry failed"
 
@@ -3681,7 +3699,7 @@ msgstr "Show All"
 #~ msgid "Show in Finder"
 #~ msgstr "Show in Finder"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:318
+#: src/components/downloads/DownloadManagerDialog.tsx:385
 msgid "Show in folder"
 msgstr "Show in folder"
 
@@ -4449,7 +4467,7 @@ msgstr "Update username or password."
 msgid "Update v{0} is ready"
 msgstr "Update v{0} is ready"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:586
+#: src/components/downloads/DownloadManagerDialog.tsx:709
 msgid "URL copied to clipboard"
 msgstr "URL copied to clipboard"
 
@@ -4580,7 +4598,7 @@ msgstr "Video download path updated"
 msgid "View"
 msgstr "View"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:691
+#: src/components/downloads/DownloadManagerDialog.tsx:831
 #: src/components/podcast/PodcastPlayer.tsx:264
 msgid "View and manage your downloads"
 msgstr "View and manage your downloads"

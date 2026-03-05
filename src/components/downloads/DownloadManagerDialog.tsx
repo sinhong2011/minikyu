@@ -7,6 +7,7 @@ import {
   Folder01Icon,
   HeadphonesIcon,
   Image01Icon,
+  PauseIcon,
   PlayIcon,
   RefreshIcon,
   Tick02Icon,
@@ -192,6 +193,8 @@ function DownloadRow({
   onOpenFolder,
   onCopyUrl,
   onCancel,
+  onPause,
+  onResume,
   onRetry,
   onRemove,
   onPlay,
@@ -201,6 +204,8 @@ function DownloadRow({
   onOpenFolder: (path: string) => void;
   onCopyUrl: (url: string) => void;
   onCancel: (item: DownloadItem) => void;
+  onPause: (item: DownloadItem) => void;
+  onResume: (item: DownloadItem) => void;
   onRetry: (item: DownloadItem) => void;
   onRemove: (id: number) => void;
   onPlay: (item: DownloadItem) => void;
@@ -276,6 +281,17 @@ function DownloadRow({
                 </>
               )}
             </>
+          ) : item.status === 'paused' ? (
+            <>
+              <span className="tabular-nums">
+                {formatBytes(item.downloadedBytes)}
+                {item.totalBytes > 0 && ` / ${formatBytes(item.totalBytes)}`}
+              </span>
+              <span className="text-muted-foreground/30">·</span>
+              <span className="text-amber-500/80">{_(msg`Paused`)}</span>
+              <span className="text-muted-foreground/30">·</span>
+              <span className="tabular-nums">{item.progress}%</span>
+            </>
           ) : item.status === 'failed' ? (
             <span className="truncate text-destructive/80" title={item.error}>
               {item.error || _(msg`Download failed`)}
@@ -289,14 +305,45 @@ function DownloadRow({
       {/* Actions — always visible for primary, hover for secondary */}
       <div className="flex shrink-0 items-center">
         {item.status === 'downloading' && (
-          <button
-            type="button"
-            onClick={() => onCancel(item)}
-            className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
-            title={_(msg`Cancel`)}
-          >
-            <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
-          </button>
+          <>
+            <button
+              type="button"
+              onClick={() => onPause(item)}
+              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+              title={_(msg`Pause`)}
+            >
+              <HugeiconsIcon icon={PauseIcon} className="size-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onCancel(item)}
+              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
+              title={_(msg`Cancel`)}
+            >
+              <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
+            </button>
+          </>
+        )}
+
+        {item.status === 'paused' && (
+          <>
+            <button
+              type="button"
+              onClick={() => onResume(item)}
+              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-foreground/5 hover:text-foreground"
+              title={_(msg`Resume`)}
+            >
+              <HugeiconsIcon icon={PlayIcon} className="size-3.5" />
+            </button>
+            <button
+              type="button"
+              onClick={() => onCancel(item)}
+              className="flex size-7 items-center justify-center rounded-lg text-muted-foreground/60 transition-colors hover:bg-destructive/10 hover:text-destructive"
+              title={_(msg`Cancel`)}
+            >
+              <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
+            </button>
+          </>
         )}
 
         {(item.status === 'failed' || item.status === 'cancelled') && (
@@ -442,6 +489,18 @@ export function DownloadManagerDialog() {
                 downloadedBytes: 0,
                 totalBytes: 0,
                 error: d.error,
+              };
+            }
+            if ('Paused' in h) {
+              const d = h.Paused;
+              return {
+                enclosureId: Number(d.id),
+                url: d.url,
+                fileName: d.url.split('/').pop() ?? '',
+                status: 'paused',
+                progress: d.progress,
+                downloadedBytes: Number(d.downloaded_bytes),
+                totalBytes: Number(d.total_bytes),
               };
             }
             const d = h.Cancelled;
@@ -597,7 +656,7 @@ export function DownloadManagerDialog() {
     let completed = 0;
     let failed = 0;
     for (const d of downloads) {
-      if (d.status === 'downloading') active++;
+      if (d.status === 'downloading' || d.status === 'paused') active++;
       else if (d.status === 'completed') completed++;
       else failed++;
     }
@@ -609,15 +668,16 @@ export function DownloadManagerDialog() {
       activeTab === 'all'
         ? downloads
         : activeTab === 'active'
-          ? downloads.filter((d) => d.status === 'downloading')
+          ? downloads.filter((d) => d.status === 'downloading' || d.status === 'paused')
           : activeTab === 'completed'
             ? downloads.filter((d) => d.status === 'completed')
             : downloads.filter((d) => d.status === 'failed' || d.status === 'cancelled');
 
+    const isActive = (s: DownloadStatus) => s === 'downloading' || s === 'paused';
     // Active downloads first, then recent first
     return [...list].sort((a, b) => {
-      if (a.status === 'downloading' && b.status !== 'downloading') return -1;
-      if (a.status !== 'downloading' && b.status === 'downloading') return 1;
+      if (isActive(a.status) && !isActive(b.status)) return -1;
+      if (!isActive(a.status) && isActive(b.status)) return 1;
       return b.enclosureId - a.enclosureId;
     });
   }, [downloads, activeTab]);
@@ -679,10 +739,27 @@ export function DownloadManagerDialog() {
   };
 
   const handleCancel = async (dl: DownloadItem) => {
-    if (dl.status !== 'downloading') return;
+    if (dl.status !== 'downloading' && dl.status !== 'paused') return;
     const result = await commands.cancelDownload(dl.url);
     if (result.status === 'error') {
       toast.error(_(msg`Failed to cancel download`));
+    }
+  };
+
+  const handlePause = async (dl: DownloadItem) => {
+    if (dl.status !== 'downloading') return;
+    const result = await commands.pauseDownload(dl.url);
+    if (result.status === 'error') {
+      toast.error(_(msg`Failed to pause download`));
+    }
+  };
+
+  const handleResume = async (dl: DownloadItem) => {
+    if (dl.status !== 'paused') return;
+    const mediaType = dl.mediaType ?? (inferMediaType(dl.fileName) === 'audio' ? 'audio' : null);
+    const result = await commands.resumeDownload(dl.url, dl.fileName, mediaType);
+    if (result.status === 'error') {
+      toast.error(_(msg`Failed to resume download`), { description: result.error });
     }
   };
 
@@ -827,6 +904,8 @@ export function DownloadManagerDialog() {
                   onOpenFolder={handleOpenFolder}
                   onCopyUrl={handleCopyUrl}
                   onCancel={handleCancel}
+                  onPause={handlePause}
+                  onResume={handleResume}
                   onRetry={handleRetry}
                   onRemove={handleRemove}
                   onPlay={handlePlay}

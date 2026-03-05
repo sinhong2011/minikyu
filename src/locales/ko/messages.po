@@ -161,7 +161,7 @@ msgstr "계정"
 msgid "Actions"
 msgstr "작업"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:658
+#: src/components/downloads/DownloadManagerDialog.tsx:798
 msgid "Active"
 msgstr "활성"
 
@@ -266,7 +266,7 @@ msgstr "AI"
 msgid "AI Summary"
 msgstr "AI 요약"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:657
+#: src/components/downloads/DownloadManagerDialog.tsx:797
 #: src/components/layout/AppSidebar.tsx:430
 #: src/components/layout/AppSidebar.tsx:441
 #: src/components/miniflux/EntryFilters.tsx:99
@@ -503,7 +503,8 @@ msgstr "빌드 날짜"
 msgid "Can’t find a category? Create a new one."
 msgstr "카테고리를 찾을 수 없나요? 새로 만들어 보세요."
 
-#: src/components/downloads/DownloadManagerDialog.tsx:276
+#: src/components/downloads/DownloadManagerDialog.tsx:321
+#: src/components/downloads/DownloadManagerDialog.tsx:342
 #: src/components/miniflux/AddCategoryDialog.tsx:97
 #: src/components/miniflux/AddFeedDialog.tsx:862
 #: src/components/miniflux/ConnectionDialog.tsx:359
@@ -523,7 +524,7 @@ msgstr "카테고리를 찾을 수 없나요? 새로 만들어 보세요."
 msgid "Cancel"
 msgstr "취소"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:264
+#: src/components/downloads/DownloadManagerDialog.tsx:300
 msgid "Cancelled"
 msgstr "취소됨"
 
@@ -690,7 +691,7 @@ msgstr "정리"
 msgid "Cleanup complete"
 msgstr "정리 완료"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:732
+#: src/components/downloads/DownloadManagerDialog.tsx:872
 msgid "Clear"
 msgstr "지우기"
 
@@ -920,7 +921,7 @@ msgstr "지금 이 토큰을 복사하세요. 다시 표시되지 않습니다."
 msgid "Copy translation"
 msgstr "번역 복사"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:329
+#: src/components/downloads/DownloadManagerDialog.tsx:396
 msgid "Copy URL"
 msgstr "URL 복사"
 
@@ -937,11 +938,11 @@ msgstr "업데이트를 확인할 수 없습니다. 다시 시도해 주세요."
 msgid "Could not connect to saved account. Please update your credentials."
 msgstr "저장된 계정에 연결할 수 없습니다. 자격 증명을 업데이트하세요."
 
-#: src/components/downloads/DownloadManagerDialog.tsx:592
+#: src/components/downloads/DownloadManagerDialog.tsx:715
 msgid "Could not find podcast entry"
 msgstr "팟캐스트 항목을 찾을 수 없습니다"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:597
+#: src/components/downloads/DownloadManagerDialog.tsx:720
 msgid "Could not load podcast entry"
 msgstr "팟캐스트 항목을 불러올 수 없습니다"
 
@@ -949,11 +950,11 @@ msgstr "팟캐스트 항목을 불러올 수 없습니다"
 msgid "Could not load server version information."
 msgstr "서버 버전 정보를 불러올 수 없습니다."
 
-#: src/components/downloads/DownloadManagerDialog.tsx:569
+#: src/components/downloads/DownloadManagerDialog.tsx:692
 msgid "Could not open file"
 msgstr "파일을 열 수 없습니다"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:579
+#: src/components/downloads/DownloadManagerDialog.tsx:702
 msgid "Could not reveal in folder"
 msgstr "폴더에서 표시할 수 없습니다"
 
@@ -1211,7 +1212,7 @@ msgstr "모바일 사이드바를 표시합니다."
 msgid "Documentation"
 msgstr "문서"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:659
+#: src/components/downloads/DownloadManagerDialog.tsx:799
 #: src/components/preferences/panes/ApiTokenPane.tsx:261
 #: src/components/sync/SyncProgressPopover.tsx:119
 msgid "Done"
@@ -1224,15 +1225,15 @@ msgstr "완료"
 msgid "Download"
 msgstr "다운로드"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:455
+#: src/components/downloads/DownloadManagerDialog.tsx:567
 msgid "Download Completed"
 msgstr "다운로드 완료"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:261
+#: src/components/downloads/DownloadManagerDialog.tsx:297
 msgid "Download failed"
 msgstr "다운로드 실패"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:463
+#: src/components/downloads/DownloadManagerDialog.tsx:575
 #: src/components/miniflux/EntryList.tsx:462
 #: src/components/podcast/PodcastPlayer.tsx:240
 #: src/hooks/use-player-command-listener.ts:59
@@ -1279,7 +1280,7 @@ msgstr "서버에서 최근 항목을 다운로드하는 중"
 msgid "Downloading update v{0}... {1}%"
 msgstr "업데이트 v{0} 다운로드 중... {1}%"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:674
+#: src/components/downloads/DownloadManagerDialog.tsx:814
 #: src/components/titlebar/WindowTitleBar.tsx:138
 msgid "Downloads"
 msgstr "다운로드"
@@ -1354,7 +1355,7 @@ msgstr "활성화됨"
 msgid "Enabled Services"
 msgstr "활성화된 서비스"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:603
+#: src/components/downloads/DownloadManagerDialog.tsx:726
 msgid "Enclosure not found for this entry"
 msgstr "이 항목의 첨부 파일을 찾을 수 없습니다"
 
@@ -1522,12 +1523,12 @@ msgstr "초기화 실패"
 msgid "Factory reset?"
 msgstr "초기화하시겠습니까?"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:660
+#: src/components/downloads/DownloadManagerDialog.tsx:800
 #: src/components/sync/SyncProgressPopover.tsx:117
 msgid "Failed"
 msgstr "실패"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:622
+#: src/components/downloads/DownloadManagerDialog.tsx:745
 msgid "Failed to cancel download"
 msgstr ""
 
@@ -1659,6 +1660,10 @@ msgstr "사용자 불러오기에 실패했습니다"
 msgid "Failed to minimize window: {message}"
 msgstr "창을 최소화하는 데 실패했습니다: {message}"
 
+#: src/components/downloads/DownloadManagerDialog.tsx:753
+msgid "Failed to pause download"
+msgstr ""
+
 #: src/services/miniflux/feeds.ts:278
 msgid "Failed to refresh feed"
 msgstr "피드 새로고침에 실패했습니다"
@@ -1674,6 +1679,10 @@ msgstr "설정 재설정에 실패했습니다"
 #: src/components/preferences/panes/TranslationPane.tsx:954
 msgid "Failed to resort providers"
 msgstr "제공자 재정렬에 실패했습니다"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:762
+msgid "Failed to resume download"
+msgstr ""
 
 #: src/components/miniflux/EntryReading.tsx:502
 #: src/components/miniflux/EntryReading.tsx:508
@@ -2574,7 +2583,7 @@ msgstr "다음 섹션"
 msgid "No active account"
 msgstr "활성 계정 없음"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:751
+#: src/components/downloads/DownloadManagerDialog.tsx:891
 msgid "No active downloads"
 msgstr "활성 다운로드 없음"
 
@@ -2603,7 +2612,7 @@ msgstr "카테고리가 없습니다"
 msgid "No category"
 msgstr "카테고리 없음"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:753
+#: src/components/downloads/DownloadManagerDialog.tsx:893
 msgid "No completed downloads"
 msgstr "완료된 다운로드 없음"
 
@@ -2615,7 +2624,7 @@ msgstr "사용 가능한 콘텐츠가 없습니다"
 msgid "No custom rules yet"
 msgstr "사용자 정의 규칙이 없습니다"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:749
+#: src/components/downloads/DownloadManagerDialog.tsx:889
 msgid "No downloads yet"
 msgstr "다운로드 없음"
 
@@ -2627,7 +2636,7 @@ msgstr "항목을 찾을 수 없습니다"
 msgid "No episode playing"
 msgstr "재생 중인 에피소드 없음"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:754
+#: src/components/downloads/DownloadManagerDialog.tsx:894
 msgid "No failed downloads"
 msgstr "실패한 다운로드 없음"
 
@@ -2730,8 +2739,8 @@ msgstr "OLED"
 msgid "Ollama"
 msgstr "Ollama"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:310
-#: src/components/downloads/DownloadManagerDialog.tsx:458
+#: src/components/downloads/DownloadManagerDialog.tsx:377
+#: src/components/downloads/DownloadManagerDialog.tsx:570
 #: src/components/podcast/PodcastPlayer.tsx:259
 #: src/components/podcast/PodcastPlayer.tsx:265
 msgid "Open"
@@ -2895,12 +2904,17 @@ msgstr "키 붙여넣기"
 msgid "Paste new API token"
 msgstr "새 API 토큰 붙여넣기"
 
+#: src/components/downloads/DownloadManagerDialog.tsx:313
 #: src/components/miniflux/EntryReadingHeader.tsx:269
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PodcastPlayer.tsx:576
 #: src/pages/TrayPopover.tsx:226
 msgid "Pause"
 msgstr "일시정지"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:291
+msgid "Paused"
+msgstr ""
 
 #: src/components/preferences/panes/SyncPane.tsx:93
 #~ msgid "Performs a complete sync from scratch, re-downloading all categories, feeds, and entries. Use this if your data seems out of sync."
@@ -2914,7 +2928,7 @@ msgstr "모든 항목을 영구 삭제합니다 — 계정, 동기화 데이터,
 msgid "Phrase"
 msgstr "구문"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:298
+#: src/components/downloads/DownloadManagerDialog.tsx:365
 #: src/components/miniflux/EntryList.tsx:725
 #: src/components/miniflux/EntryReadingHeader.tsx:270
 #: src/components/podcast/PlayerWindowControls.tsx:270
@@ -3239,7 +3253,7 @@ msgstr "놓아서 새로고침"
 msgid "Reload App"
 msgstr "앱 다시 로드"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:337
+#: src/components/downloads/DownloadManagerDialog.tsx:404
 #: src/components/podcast/PlayerWindowQueue.tsx:110
 #: src/components/preferences/panes/TranslationPane.tsx:1873
 msgid "Remove"
@@ -3373,7 +3387,11 @@ msgstr "이전에 내보낸 JSON 파일에서 설정을 복원합니다."
 msgid "Restore window"
 msgstr "창 복원"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:287
+#: src/components/downloads/DownloadManagerDialog.tsx:334
+msgid "Resume"
+msgstr ""
+
+#: src/components/downloads/DownloadManagerDialog.tsx:354
 #: src/components/miniflux/ArticleSummary.tsx:258
 #: src/components/miniflux/ImmersiveTranslationLayer.tsx:812
 #: src/components/podcast/PodcastPlayer.tsx:260
@@ -3381,7 +3399,7 @@ msgstr "창 복원"
 msgid "Retry"
 msgstr "재시도"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:631
+#: src/components/downloads/DownloadManagerDialog.tsx:771
 msgid "Retry failed"
 msgstr ""
 
@@ -3681,7 +3699,7 @@ msgstr "모두 표시"
 #~ msgid "Show in Finder"
 #~ msgstr "Finder에서 보기"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:318
+#: src/components/downloads/DownloadManagerDialog.tsx:385
 msgid "Show in folder"
 msgstr ""
 
@@ -4449,7 +4467,7 @@ msgstr "사용자 이름 또는 비밀번호를 업데이트하세요."
 msgid "Update v{0} is ready"
 msgstr "업데이트 v{0} 준비 완료"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:586
+#: src/components/downloads/DownloadManagerDialog.tsx:709
 msgid "URL copied to clipboard"
 msgstr "URL이 클립보드에 복사되었습니다"
 
@@ -4580,7 +4598,7 @@ msgstr "동영상 다운로드 경로가 업데이트되었습니다"
 msgid "View"
 msgstr "보기"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:691
+#: src/components/downloads/DownloadManagerDialog.tsx:831
 #: src/components/podcast/PodcastPlayer.tsx:264
 msgid "View and manage your downloads"
 msgstr "다운로드 보기 및 관리"

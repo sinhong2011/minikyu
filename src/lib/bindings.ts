@@ -92,6 +92,28 @@ async clearDownloads(status: string | null) : Promise<Result<string, string>> {
 }
 },
 /**
+ * Pause an active download
+ */
+async pauseDownload(url: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("pause_download", { url }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Resume a paused download using HTTP Range header
+ */
+async resumeDownload(url: string, fileName: string | null, mediaType: string | null) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("resume_download", { url, fileName, mediaType }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Clears synced data for the current active account only.
  * 
  * Removes entries, feeds, categories, enclosures, and sync state for the
@@ -1512,7 +1534,11 @@ export type DownloadState =
 /**
  * Download was cancelled
  */
-{ Cancelled: { id: string; url: string; progress: number; cancelled_at: SystemTime } }
+{ Cancelled: { id: string; url: string; progress: number; cancelled_at: SystemTime } } | 
+/**
+ * Download is paused
+ */
+{ Paused: { id: string; url: string; progress: number; downloaded_bytes: string; total_bytes: string; paused_at: SystemTime } }
 /**
  * Enclosure (for podcasts/videos)
  */

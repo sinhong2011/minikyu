@@ -161,7 +161,7 @@ msgstr "帳號"
 msgid "Actions"
 msgstr "操作"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:658
+#: src/components/downloads/DownloadManagerDialog.tsx:798
 msgid "Active"
 msgstr "進行中"
 
@@ -266,7 +266,7 @@ msgstr "AI"
 msgid "AI Summary"
 msgstr "AI 摘要"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:657
+#: src/components/downloads/DownloadManagerDialog.tsx:797
 #: src/components/layout/AppSidebar.tsx:430
 #: src/components/layout/AppSidebar.tsx:441
 #: src/components/miniflux/EntryFilters.tsx:99
@@ -503,7 +503,8 @@ msgstr "建置日期"
 msgid "Can’t find a category? Create a new one."
 msgstr "找不到分類？建立一個新的。"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:276
+#: src/components/downloads/DownloadManagerDialog.tsx:321
+#: src/components/downloads/DownloadManagerDialog.tsx:342
 #: src/components/miniflux/AddCategoryDialog.tsx:97
 #: src/components/miniflux/AddFeedDialog.tsx:862
 #: src/components/miniflux/ConnectionDialog.tsx:359
@@ -523,7 +524,7 @@ msgstr "找不到分類？建立一個新的。"
 msgid "Cancel"
 msgstr "取消"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:264
+#: src/components/downloads/DownloadManagerDialog.tsx:300
 msgid "Cancelled"
 msgstr "已取消"
 
@@ -690,7 +691,7 @@ msgstr "清理"
 msgid "Cleanup complete"
 msgstr "清理完成"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:732
+#: src/components/downloads/DownloadManagerDialog.tsx:872
 msgid "Clear"
 msgstr "清除"
 
@@ -920,7 +921,7 @@ msgstr "請立即複製此令牌，之後將不再顯示。"
 msgid "Copy translation"
 msgstr "複製翻譯"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:329
+#: src/components/downloads/DownloadManagerDialog.tsx:396
 msgid "Copy URL"
 msgstr "複製網址"
 
@@ -937,11 +938,11 @@ msgstr "無法檢查更新，請重試。"
 msgid "Could not connect to saved account. Please update your credentials."
 msgstr "無法連線至已儲存的帳號。請更新您的憑證。"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:592
+#: src/components/downloads/DownloadManagerDialog.tsx:715
 msgid "Could not find podcast entry"
 msgstr "找不到 Podcast 項目"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:597
+#: src/components/downloads/DownloadManagerDialog.tsx:720
 msgid "Could not load podcast entry"
 msgstr "無法載入 Podcast 項目"
 
@@ -949,11 +950,11 @@ msgstr "無法載入 Podcast 項目"
 msgid "Could not load server version information."
 msgstr "無法載入伺服器版本資訊。"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:569
+#: src/components/downloads/DownloadManagerDialog.tsx:692
 msgid "Could not open file"
 msgstr "無法開啟檔案"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:579
+#: src/components/downloads/DownloadManagerDialog.tsx:702
 msgid "Could not reveal in folder"
 msgstr "無法在資料夾中顯示"
 
@@ -1211,7 +1212,7 @@ msgstr "顯示行動版側邊欄。"
 msgid "Documentation"
 msgstr "文件"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:659
+#: src/components/downloads/DownloadManagerDialog.tsx:799
 #: src/components/preferences/panes/ApiTokenPane.tsx:261
 #: src/components/sync/SyncProgressPopover.tsx:119
 msgid "Done"
@@ -1224,15 +1225,15 @@ msgstr "完成"
 msgid "Download"
 msgstr "下載"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:455
+#: src/components/downloads/DownloadManagerDialog.tsx:567
 msgid "Download Completed"
 msgstr "下載完成"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:261
+#: src/components/downloads/DownloadManagerDialog.tsx:297
 msgid "Download failed"
 msgstr "下載失敗"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:463
+#: src/components/downloads/DownloadManagerDialog.tsx:575
 #: src/components/miniflux/EntryList.tsx:462
 #: src/components/podcast/PodcastPlayer.tsx:240
 #: src/hooks/use-player-command-listener.ts:59
@@ -1279,7 +1280,7 @@ msgstr "正在從伺服器下載最近的文章"
 msgid "Downloading update v{0}... {1}%"
 msgstr "正在下載更新 v{0}... {1}%"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:674
+#: src/components/downloads/DownloadManagerDialog.tsx:814
 #: src/components/titlebar/WindowTitleBar.tsx:138
 msgid "Downloads"
 msgstr "下載"
@@ -1354,7 +1355,7 @@ msgstr "已啟用"
 msgid "Enabled Services"
 msgstr "已啟用的服務"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:603
+#: src/components/downloads/DownloadManagerDialog.tsx:726
 msgid "Enclosure not found for this entry"
 msgstr "找不到此文章的附件"
 
@@ -1522,12 +1523,12 @@ msgstr "恢復原廠設定失敗"
 msgid "Factory reset?"
 msgstr "恢復原廠設定？"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:660
+#: src/components/downloads/DownloadManagerDialog.tsx:800
 #: src/components/sync/SyncProgressPopover.tsx:117
 msgid "Failed"
 msgstr "失敗"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:622
+#: src/components/downloads/DownloadManagerDialog.tsx:745
 msgid "Failed to cancel download"
 msgstr ""
 
@@ -1659,6 +1660,10 @@ msgstr "載入使用者失敗"
 msgid "Failed to minimize window: {message}"
 msgstr "最小化視窗失敗：{message}"
 
+#: src/components/downloads/DownloadManagerDialog.tsx:753
+msgid "Failed to pause download"
+msgstr ""
+
 #: src/services/miniflux/feeds.ts:278
 msgid "Failed to refresh feed"
 msgstr "重新整理訂閱源失敗"
@@ -1674,6 +1679,10 @@ msgstr "重置偏好設定失敗"
 #: src/components/preferences/panes/TranslationPane.tsx:954
 msgid "Failed to resort providers"
 msgstr "重新排列提供者失敗"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:762
+msgid "Failed to resume download"
+msgstr ""
 
 #: src/components/miniflux/EntryReading.tsx:502
 #: src/components/miniflux/EntryReading.tsx:508
@@ -2574,7 +2583,7 @@ msgstr "下一區段"
 msgid "No active account"
 msgstr "沒有使用中的帳號"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:751
+#: src/components/downloads/DownloadManagerDialog.tsx:891
 msgid "No active downloads"
 msgstr "沒有進行中的下載"
 
@@ -2603,7 +2612,7 @@ msgstr "尚無分類"
 msgid "No category"
 msgstr "無分類"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:753
+#: src/components/downloads/DownloadManagerDialog.tsx:893
 msgid "No completed downloads"
 msgstr "沒有已完成的下載"
 
@@ -2615,7 +2624,7 @@ msgstr "沒有可用的內容"
 msgid "No custom rules yet"
 msgstr "尚無自訂規則"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:749
+#: src/components/downloads/DownloadManagerDialog.tsx:889
 msgid "No downloads yet"
 msgstr "尚無下載項目"
 
@@ -2627,7 +2636,7 @@ msgstr "找不到文章"
 msgid "No episode playing"
 msgstr "沒有正在播放的節目"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:754
+#: src/components/downloads/DownloadManagerDialog.tsx:894
 msgid "No failed downloads"
 msgstr "沒有失敗的下載"
 
@@ -2730,8 +2739,8 @@ msgstr "OLED"
 msgid "Ollama"
 msgstr "Ollama"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:310
-#: src/components/downloads/DownloadManagerDialog.tsx:458
+#: src/components/downloads/DownloadManagerDialog.tsx:377
+#: src/components/downloads/DownloadManagerDialog.tsx:570
 #: src/components/podcast/PodcastPlayer.tsx:259
 #: src/components/podcast/PodcastPlayer.tsx:265
 msgid "Open"
@@ -2895,12 +2904,17 @@ msgstr "貼上金鑰"
 msgid "Paste new API token"
 msgstr "貼上新的 API 權杖"
 
+#: src/components/downloads/DownloadManagerDialog.tsx:313
 #: src/components/miniflux/EntryReadingHeader.tsx:269
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PodcastPlayer.tsx:576
 #: src/pages/TrayPopover.tsx:226
 msgid "Pause"
 msgstr "暫停"
+
+#: src/components/downloads/DownloadManagerDialog.tsx:291
+msgid "Paused"
+msgstr ""
 
 #: src/components/preferences/panes/SyncPane.tsx:93
 #~ msgid "Performs a complete sync from scratch, re-downloading all categories, feeds, and entries. Use this if your data seems out of sync."
@@ -2914,7 +2928,7 @@ msgstr "永久刪除所有內容 — 包括所有帳號、同步資料、偏好�
 msgid "Phrase"
 msgstr "詞句"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:298
+#: src/components/downloads/DownloadManagerDialog.tsx:365
 #: src/components/miniflux/EntryList.tsx:725
 #: src/components/miniflux/EntryReadingHeader.tsx:270
 #: src/components/podcast/PlayerWindowControls.tsx:270
@@ -3239,7 +3253,7 @@ msgstr "放開以重新整理"
 msgid "Reload App"
 msgstr "重新載入應用程式"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:337
+#: src/components/downloads/DownloadManagerDialog.tsx:404
 #: src/components/podcast/PlayerWindowQueue.tsx:110
 #: src/components/preferences/panes/TranslationPane.tsx:1873
 msgid "Remove"
@@ -3373,7 +3387,11 @@ msgstr "從先前匯出的 JSON 檔案還原設定。"
 msgid "Restore window"
 msgstr "還原視窗"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:287
+#: src/components/downloads/DownloadManagerDialog.tsx:334
+msgid "Resume"
+msgstr ""
+
+#: src/components/downloads/DownloadManagerDialog.tsx:354
 #: src/components/miniflux/ArticleSummary.tsx:258
 #: src/components/miniflux/ImmersiveTranslationLayer.tsx:812
 #: src/components/podcast/PodcastPlayer.tsx:260
@@ -3381,7 +3399,7 @@ msgstr "還原視窗"
 msgid "Retry"
 msgstr "重試"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:631
+#: src/components/downloads/DownloadManagerDialog.tsx:771
 msgid "Retry failed"
 msgstr ""
 
@@ -3681,7 +3699,7 @@ msgstr "顯示全部"
 #~ msgid "Show in Finder"
 #~ msgstr "在 Finder 中顯示"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:318
+#: src/components/downloads/DownloadManagerDialog.tsx:385
 msgid "Show in folder"
 msgstr ""
 
@@ -4449,7 +4467,7 @@ msgstr "更新使用者名稱或密碼。"
 msgid "Update v{0} is ready"
 msgstr "更新 v{0} 已就緒"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:586
+#: src/components/downloads/DownloadManagerDialog.tsx:709
 msgid "URL copied to clipboard"
 msgstr "網址已複製到剪貼簿"
 
@@ -4580,7 +4598,7 @@ msgstr "影片下載路徑已更新"
 msgid "View"
 msgstr "檢視"
 
-#: src/components/downloads/DownloadManagerDialog.tsx:691
+#: src/components/downloads/DownloadManagerDialog.tsx:831
 #: src/components/podcast/PodcastPlayer.tsx:264
 msgid "View and manage your downloads"
 msgstr "檢視並管理您的下載"

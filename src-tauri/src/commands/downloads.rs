@@ -50,6 +50,15 @@ pub enum DownloadState {
         progress: i32,
         cancelled_at: SystemTime,
     },
+    /// Download is paused
+    Paused {
+        id: usize,
+        url: String,
+        progress: i32,
+        downloaded_bytes: i64,
+        total_bytes: i64,
+        paused_at: SystemTime,
+    },
 }
 
 /// Download manager with active download tracking and cancellation
@@ -57,6 +66,8 @@ pub enum DownloadState {
 pub struct DownloadManager {
     active_downloads: Arc<Mutex<Vec<DownloadState>>>,
     cancellation_tokens: Arc<Mutex<HashMap<usize, CancellationToken>>>,
+    /// IDs that were paused (not cancelled) — controls whether partial file is kept
+    paused_ids: Arc<Mutex<std::collections::HashSet<usize>>>,
 }
 
 impl DownloadManager {
@@ -64,6 +75,7 @@ impl DownloadManager {
         Self {
             active_downloads: Arc::new(Mutex::new(Vec::new())),
             cancellation_tokens: Arc::new(Mutex::new(HashMap::new())),
+            paused_ids: Arc::new(Mutex::new(std::collections::HashSet::new())),
         }
     }
 
@@ -88,6 +100,18 @@ impl DownloadManager {
 
     pub fn remove_token(&self, id: usize) {
         self.cancellation_tokens.lock().unwrap().remove(&id);
+    }
+
+    pub fn mark_paused(&self, id: usize) {
+        self.paused_ids.lock().unwrap().insert(id);
+    }
+
+    pub fn is_paused(&self, id: usize) -> bool {
+        self.paused_ids.lock().unwrap().contains(&id)
+    }
+
+    pub fn clear_paused(&self, id: usize) {
+        self.paused_ids.lock().unwrap().remove(&id);
     }
 }
 
@@ -269,6 +293,14 @@ pub async fn get_downloads_from_db(app: tauri::AppHandle) -> Result<Vec<Download
                     progress,
                     cancelled_at: dummy_time,
                 },
+                "paused" => DownloadState::Paused {
+                    id: id as usize,
+                    url,
+                    progress,
+                    downloaded_bytes,
+                    total_bytes,
+                    paused_at: dummy_time,
+                },
                 _ => DownloadState::Cancelled {
                     id: id as usize,
                     url,
@@ -436,6 +468,8 @@ pub async fn download_file(
     .await;
 
     get_download_manager().remove_token(download_id);
+    let was_paused = get_download_manager().is_paused(download_id);
+    get_download_manager().clear_paused(download_id);
 
     match &result {
         Ok(file_path) => {
@@ -485,6 +519,11 @@ pub async fn download_file(
             );
         }
         Err(error) => {
+            if was_paused {
+                // Paused — state already set by pause_download, don't overwrite
+                return result;
+            }
+
             save_download_to_db(
                 &app,
                 download_id,
@@ -549,24 +588,29 @@ pub async fn cancel_download(app: tauri::AppHandle, url: String) -> Result<(), S
     let mut id_opt = None;
     {
         let downloads = get_download_manager().active_downloads.lock().unwrap();
-        if let Some(index) = downloads.iter().position(|d| match d {
-            DownloadState::Downloading { url: dl_url, .. } => dl_url == &url,
-            _ => false,
-        }) {
-            if let DownloadState::Downloading { id, .. } = downloads[index] {
-                id_opt = Some(id);
+        for dl in downloads.iter() {
+            match dl {
+                DownloadState::Downloading { id, url: dl_url, .. }
+                | DownloadState::Paused { id, url: dl_url, .. } => {
+                    if dl_url == &url {
+                        id_opt = Some(*id);
+                        break;
+                    }
+                }
+                _ => {}
             }
         }
     }
 
     if let Some(id) = id_opt {
-        // Cancel the running download task via token
+        // Cancel the running download task via token (no-op if already paused)
         get_download_manager().cancel(id);
 
         {
             let mut downloads = get_download_manager().active_downloads.lock().unwrap();
             if let Some(index) = downloads.iter().position(|d| match d {
-                DownloadState::Downloading { id: dl_id, .. } => *dl_id == id,
+                DownloadState::Downloading { id: dl_id, .. }
+                | DownloadState::Paused { id: dl_id, .. } => *dl_id == id,
                 _ => false,
             }) {
                 downloads[index] = DownloadState::Cancelled {
@@ -638,7 +682,8 @@ pub async fn delete_download(app: tauri::AppHandle, id: i64) -> Result<(), Strin
                 DownloadState::Downloading { id, .. }
                 | DownloadState::Completed { id, .. }
                 | DownloadState::Failed { id, .. }
-                | DownloadState::Cancelled { id, .. } => *id,
+                | DownloadState::Cancelled { id, .. }
+                | DownloadState::Paused { id, .. } => *id,
             };
             dl_id != id as usize
         });
@@ -680,6 +725,7 @@ pub async fn clear_downloads(
                     DownloadState::Completed { .. } => "completed",
                     DownloadState::Failed { .. } => "failed",
                     DownloadState::Cancelled { .. } => "cancelled",
+                    DownloadState::Paused { .. } => "paused",
                 };
                 s != status_filter
             });
@@ -704,6 +750,309 @@ pub async fn retry_download(
 ) -> Result<String, String> {
     log::info!("Retrying download: {}", url);
     download_file(app, url, file_name, media_type).await
+}
+
+/// Pause an active download
+#[tauri::command]
+#[specta::specta]
+pub async fn pause_download(app: tauri::AppHandle, url: String) -> Result<(), String> {
+    log::info!("Pausing download: {url}");
+
+    let mut info = None;
+    {
+        let downloads = get_download_manager().active_downloads.lock().unwrap();
+        for dl in downloads.iter() {
+            if let DownloadState::Downloading {
+                id,
+                url: dl_url,
+                downloaded_bytes,
+                total_bytes,
+                progress,
+                ..
+            } = dl
+            {
+                if dl_url == &url {
+                    info = Some((*id, *downloaded_bytes, *total_bytes, *progress));
+                    break;
+                }
+            }
+        }
+    }
+
+    let (id, downloaded_bytes, total_bytes, progress) =
+        info.ok_or_else(|| format!("Active download not found for URL: {url}"))?;
+
+    // Mark as paused BEFORE cancelling so perform_download keeps the file
+    get_download_manager().mark_paused(id);
+    get_download_manager().cancel(id);
+
+    // Update in-memory state to Paused
+    {
+        let mut downloads = get_download_manager().active_downloads.lock().unwrap();
+        if let Some(idx) = downloads
+            .iter()
+            .position(|d| matches!(d, DownloadState::Downloading { id: did, .. } if *did == id))
+        {
+            downloads[idx] = DownloadState::Paused {
+                id,
+                url: url.clone(),
+                progress,
+                downloaded_bytes,
+                total_bytes,
+                paused_at: SystemTime::now(),
+            };
+        }
+    }
+
+    let file_name = extract_filename(&url).unwrap_or_else(|| "download.bin".to_string());
+
+    save_download_to_db(
+        &app,
+        id,
+        &url,
+        &file_name,
+        DownloadDbParams {
+            status: "paused",
+            progress,
+            downloaded_bytes,
+            total_bytes,
+            file_path: None,
+            error: None,
+            media_type: None,
+        },
+    )
+    .await;
+
+    emit_download_event_with_id(
+        &app,
+        id,
+        file_name,
+        url,
+        DownloadEventParams {
+            progress,
+            downloaded_bytes,
+            total_bytes,
+            status: "paused".to_string(),
+            file_path: None,
+            media_type: None,
+        },
+    );
+
+    Ok(())
+}
+
+/// Resume a paused download using HTTP Range header
+#[tauri::command]
+#[specta::specta]
+pub async fn resume_download(
+    app: tauri::AppHandle,
+    url: String,
+    file_name: Option<String>,
+    media_type: Option<String>,
+) -> Result<String, String> {
+    log::info!("Resuming download: {url}");
+
+    // Look up paused state
+    let mut paused_info = None;
+    {
+        let downloads = get_download_manager().active_downloads.lock().unwrap();
+        for dl in downloads.iter() {
+            if let DownloadState::Paused {
+                id,
+                url: dl_url,
+                downloaded_bytes,
+                total_bytes,
+                ..
+            } = dl
+            {
+                if dl_url == &url {
+                    paused_info = Some((*id, *downloaded_bytes, *total_bytes));
+                    break;
+                }
+            }
+        }
+    }
+
+    if let Some((id, downloaded_bytes, total_bytes)) = paused_info {
+        let file_name_str = file_name
+            .unwrap_or_else(|| extract_filename(&url).unwrap_or_else(|| "download.bin".to_string()));
+
+        let cancel_token = get_download_manager().create_cancellation_token(id);
+
+        let progress = if total_bytes > 0 {
+            (downloaded_bytes * 100 / total_bytes) as i32
+        } else {
+            0
+        };
+
+        // Update state to Downloading
+        {
+            let mut downloads = get_download_manager().active_downloads.lock().unwrap();
+            if let Some(idx) = downloads
+                .iter()
+                .position(|d| matches!(d, DownloadState::Paused { id: did, .. } if *did == id))
+            {
+                downloads[idx] = DownloadState::Downloading {
+                    id,
+                    url: url.clone(),
+                    progress,
+                    downloaded_bytes,
+                    total_bytes,
+                    started_at: SystemTime::now(),
+                };
+            }
+        }
+
+        save_download_to_db(
+            &app,
+            id,
+            &url,
+            &file_name_str,
+            DownloadDbParams {
+                status: "downloading",
+                progress,
+                downloaded_bytes,
+                total_bytes,
+                file_path: None,
+                error: None,
+                media_type: None,
+            },
+        )
+        .await;
+
+        emit_download_event_with_id(
+            &app,
+            id,
+            file_name_str.clone(),
+            url.clone(),
+            DownloadEventParams {
+                progress,
+                downloaded_bytes,
+                total_bytes,
+                status: "downloading".to_string(),
+                file_path: None,
+                media_type: None,
+            },
+        );
+
+        // Look up partial file path from DB
+        let state: tauri::State<'_, AppState> = app.state();
+        let file_path = {
+            let pool_lock = state.db_pool.lock().await;
+            if let Some(pool) = &*pool_lock {
+                let row = sqlx::query("SELECT file_path FROM downloads WHERE id = ?")
+                    .bind(id as i64)
+                    .fetch_optional(pool)
+                    .await
+                    .ok()
+                    .flatten();
+                row.and_then(|r| r.get::<Option<String>, _>("file_path"))
+            } else {
+                None
+            }
+        };
+
+        // If we have a partial file, resume with Range header
+        if let Some(ref path) = file_path {
+            if std::path::Path::new(path).exists() && downloaded_bytes > 0 {
+                let result = perform_download_resume(
+                    &app,
+                    &url,
+                    id,
+                    file_name_str.clone(),
+                    path,
+                    downloaded_bytes,
+                    cancel_token,
+                )
+                .await;
+
+                get_download_manager().remove_token(id);
+                let was_paused = get_download_manager().is_paused(id);
+                get_download_manager().clear_paused(id);
+
+                match &result {
+                    Ok(fp) => {
+                        let total = get_file_size(fp).unwrap_or(0);
+                        save_download_to_db(
+                            &app,
+                            id,
+                            &url,
+                            &file_name_str,
+                            DownloadDbParams {
+                                status: "completed",
+                                progress: 100,
+                                downloaded_bytes: total,
+                                total_bytes: total,
+                                file_path: Some(fp),
+                                error: None,
+                                media_type: None,
+                            },
+                        )
+                        .await;
+                        emit_download_event_with_id(
+                            &app,
+                            id,
+                            file_name_str,
+                            url,
+                            DownloadEventParams {
+                                progress: 100,
+                                downloaded_bytes: total,
+                                total_bytes: total,
+                                status: "completed".to_string(),
+                                file_path: Some(fp.clone()),
+                                media_type: None,
+                            },
+                        );
+                    }
+                    Err(e) => {
+                        if was_paused {
+                            // Paused again during resume — state already set
+                        } else {
+                            save_download_to_db(
+                                &app,
+                                id,
+                                &url,
+                                &file_name_str,
+                                DownloadDbParams {
+                                    status: "failed",
+                                    progress: 0,
+                                    downloaded_bytes: 0,
+                                    total_bytes: 0,
+                                    file_path: None,
+                                    error: Some(e),
+                                    media_type: None,
+                                },
+                            )
+                            .await;
+                            emit_download_event_with_id(
+                                &app,
+                                id,
+                                file_name_str,
+                                url,
+                                DownloadEventParams {
+                                    progress: 0,
+                                    downloaded_bytes: 0,
+                                    total_bytes: 0,
+                                    status: "failed".to_string(),
+                                    file_path: None,
+                                    media_type: None,
+                                },
+                            );
+                        }
+                    }
+                }
+
+                return result;
+            }
+        }
+
+        // Fallback: restart from scratch
+        get_download_manager().remove_token(id);
+        download_file(app, url, Some(file_name_str), media_type).await
+    } else {
+        // Not paused — treat as fresh retry
+        download_file(app, url, file_name, media_type).await
+    }
 }
 
 /// Perform actual download operation
@@ -773,6 +1122,10 @@ async fn perform_download(
     while let Some(chunk_result) = reader.next().await {
         if cancel_token.is_cancelled() {
             drop(file);
+            if get_download_manager().is_paused(download_id) {
+                // Paused: keep the partial file for resume
+                return Err("Download paused".to_string());
+            }
             let _ = tokio::fs::remove_file(&file_path_buf).await;
             return Err("Download cancelled".to_string());
         }
@@ -810,7 +1163,7 @@ async fn perform_download(
                         progress,
                         downloaded_bytes,
                         total_bytes,
-                        file_path: None,
+                        file_path: Some(&file_path),
                         error: None,
                         media_type: None,
                     },
@@ -840,4 +1193,116 @@ async fn perform_download(
         .map_err(|e| format!("Failed to flush file: {}", e))?;
 
     Ok(file_path)
+}
+
+/// Resume a download from where it left off using HTTP Range header
+async fn perform_download_resume(
+    app: &tauri::AppHandle,
+    url: &str,
+    download_id: usize,
+    file_name: String,
+    file_path: &str,
+    start_bytes: i64,
+    cancel_token: CancellationToken,
+) -> Result<String, String> {
+    let client = reqwest::Client::builder()
+        .timeout(std::time::Duration::from_secs(30))
+        .build()
+        .map_err(|e| format!("Failed to create HTTP client: {e}"))?;
+
+    let response = client
+        .get(url)
+        .header("Range", format!("bytes={start_bytes}-"))
+        .send()
+        .await
+        .map_err(|e| format!("Failed to fetch URL: {e}"))?;
+
+    // Check if server supports Range (206 Partial Content)
+    if response.status() != reqwest::StatusCode::PARTIAL_CONTENT {
+        return Err("Server does not support resume — retry will restart download".to_string());
+    }
+
+    let content_length = response.content_length().unwrap_or(0) as i64;
+    let total_bytes = start_bytes + content_length;
+    let mut downloaded_bytes = start_bytes;
+    let mut reader = response.bytes_stream();
+
+    let file_path_buf = std::path::PathBuf::from(file_path);
+    let mut file = tokio::fs::OpenOptions::new()
+        .append(true)
+        .open(&file_path_buf)
+        .await
+        .map_err(|e| format!("Failed to open file for resume: {e}"))?;
+
+    let mut last_emit_time = std::time::Instant::now();
+    let mut last_emit_progress: i32 = 0;
+
+    while let Some(chunk_result) = reader.next().await {
+        if cancel_token.is_cancelled() {
+            if get_download_manager().is_paused(download_id) {
+                return Err("Download paused".to_string());
+            }
+            return Err("Download cancelled".to_string());
+        }
+
+        let chunk = chunk_result.map_err(|e| format!("Download chunk error: {e}"))?;
+        downloaded_bytes += chunk.len() as i64;
+        file.write_all(&chunk)
+            .await
+            .map_err(|e| format!("Failed to write file: {e}"))?;
+
+        let progress = if total_bytes > 0 {
+            (downloaded_bytes * 100 / total_bytes) as i32
+        } else {
+            0
+        };
+
+        let now = std::time::Instant::now();
+        let elapsed = now.duration_since(last_emit_time);
+        let progress_delta = (progress - last_emit_progress).abs();
+
+        if elapsed.as_millis() >= 250 || progress_delta >= 1 || downloaded_bytes == total_bytes {
+            last_emit_time = now;
+            last_emit_progress = progress;
+
+            if progress % 10 == 0 || downloaded_bytes == total_bytes {
+                save_download_to_db(
+                    app,
+                    download_id,
+                    url,
+                    &file_name,
+                    DownloadDbParams {
+                        status: "downloading",
+                        progress,
+                        downloaded_bytes,
+                        total_bytes,
+                        file_path: Some(file_path),
+                        error: None,
+                        media_type: None,
+                    },
+                )
+                .await;
+            }
+
+            emit_download_event_with_id(
+                app,
+                download_id,
+                file_name.clone(),
+                url.to_string(),
+                DownloadEventParams {
+                    progress,
+                    downloaded_bytes,
+                    total_bytes,
+                    status: "downloading".to_string(),
+                    file_path: None,
+                    media_type: None,
+                },
+            );
+        }
+    }
+
+    file.flush()
+        .await
+        .map_err(|e| format!("Failed to flush file: {e}"))?;
+    Ok(file_path.to_string())
 }
