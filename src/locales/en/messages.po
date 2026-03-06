@@ -169,7 +169,7 @@ msgstr "About Minikyu"
 msgid "Account data cleared"
 msgstr "Account data cleared"
 
-#: src/components/miniflux/UserNav.tsx:108
+#: src/components/miniflux/UserNav.tsx:109
 msgid "Account deleted successfully"
 msgstr "Account deleted successfully"
 
@@ -1211,7 +1211,7 @@ msgstr "Delete"
 msgid "Delete account"
 msgstr "Delete account"
 
-#: src/components/miniflux/UserNav.tsx:99
+#: src/components/miniflux/UserNav.tsx:100
 #: src/lib/commands/account-commands.ts:23
 #: src/lib/commands/account-commands.ts:40
 #: src/lib/menu.ts:501
@@ -1219,18 +1219,18 @@ msgid "Delete Account"
 msgstr "Delete Account"
 
 #. placeholder {0}: account.username
-#: src/components/miniflux/UserNav.tsx:85
+#: src/components/miniflux/UserNav.tsx:86
 msgid "Delete account \"{0}\" on {domain}? This is your only account. Deleting it will disconnect you completely."
 msgstr "Delete account \"{0}\" on {domain}? This is your only account. Deleting it will disconnect you completely."
 
 #. placeholder {0}: account.username
-#: src/components/miniflux/UserNav.tsx:93
+#: src/components/miniflux/UserNav.tsx:94
 msgid "Delete account \"{0}\" on {domain}? This will remove all saved credentials."
 msgstr "Delete account \"{0}\" on {domain}? This will remove all saved credentials."
 
 #. placeholder {0}: account.username
 #. placeholder {1}: nextAccount.username
-#: src/components/miniflux/UserNav.tsx:89
+#: src/components/miniflux/UserNav.tsx:90
 msgid "Delete account \"{0}\" on {domain}? You are currently connected to this account. You'll be switched to \"{1}\" automatically."
 msgstr "Delete account \"{0}\" on {domain}? You are currently connected to this account. You'll be switched to \"{1}\" automatically."
 
@@ -1706,8 +1706,8 @@ msgstr "Failed to create feed"
 msgid "Failed to create user"
 msgstr "Failed to create user"
 
-#: src/components/miniflux/UserNav.tsx:110
-#: src/components/miniflux/UserNav.tsx:114
+#: src/components/miniflux/UserNav.tsx:111
+#: src/components/miniflux/UserNav.tsx:115
 msgid "Failed to delete account"
 msgstr "Failed to delete account"
 

@@ -457,11 +457,11 @@ function SidebarMenuItem({ className, ...props }: React.ComponentProps<'li'>) {
 }
 
 const sidebarMenuButtonVariants = cva(
-  'ring-sidebar-ring hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground active:bg-sidebar-accent/60 active:text-sidebar-accent-foreground data-active:bg-white/10 data-active:text-sidebar-accent-foreground data-active:ring-1 data-active:ring-white/10 data-open:hover:bg-sidebar-accent/60 data-open:hover:text-sidebar-accent-foreground gap-2 rounded-md py-1 px-2 text-left text-sm transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! focus-visible:ring-2 data-active:font-medium peer/menu-button flex w-full items-center overflow-hidden outline-hidden group/menu-button disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&_svg]:size-4 [&_svg]:shrink-0',
+  'hover:bg-white/10 hover:text-sidebar-accent-foreground active:bg-white/10 active:text-sidebar-accent-foreground data-active:bg-white/10 data-active:text-sidebar-accent-foreground data-open:hover:bg-white/10 data-open:hover:text-sidebar-accent-foreground gap-2 rounded-md py-1 px-2 text-left text-sm transition-[width,height,padding] group-has-data-[sidebar=menu-action]/menu-item:pr-8 group-data-[collapsible=icon]:size-8! group-data-[collapsible=icon]:p-2! data-active:font-medium peer/menu-button flex w-full items-center overflow-hidden outline-hidden group/menu-button disabled:pointer-events-none disabled:opacity-50 aria-disabled:pointer-events-none aria-disabled:opacity-50 [&>span:last-child]:truncate [&_svg]:size-4 [&_svg]:shrink-0',
   {
     variants: {
       variant: {
-        default: 'hover:bg-sidebar-accent/60 hover:text-sidebar-accent-foreground',
+        default: 'hover:bg-white/10 hover:text-sidebar-accent-foreground',
         outline:
           'bg-background hover:bg-sidebar-accent hover:text-sidebar-accent-foreground shadow-[0_0_0_1px_hsl(var(--sidebar-border))] hover:shadow-[0_0_0_1px_hsl(var(--sidebar-accent))]',
       },

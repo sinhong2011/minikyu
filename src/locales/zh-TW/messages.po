@@ -169,7 +169,7 @@ msgstr "關於 Minikyu"
 msgid "Account data cleared"
 msgstr "帳號資料已清除"
 
-#: src/components/miniflux/UserNav.tsx:108
+#: src/components/miniflux/UserNav.tsx:109
 msgid "Account deleted successfully"
 msgstr "帳號已成功刪除"
 
@@ -1211,7 +1211,7 @@ msgstr "刪除"
 msgid "Delete account"
 msgstr "刪除帳戶"
 
-#: src/components/miniflux/UserNav.tsx:99
+#: src/components/miniflux/UserNav.tsx:100
 #: src/lib/commands/account-commands.ts:23
 #: src/lib/commands/account-commands.ts:40
 #: src/lib/menu.ts:501
@@ -1219,18 +1219,18 @@ msgid "Delete Account"
 msgstr "刪除帳號"
 
 #. placeholder {0}: account.username
-#: src/components/miniflux/UserNav.tsx:85
+#: src/components/miniflux/UserNav.tsx:86
 msgid "Delete account \"{0}\" on {domain}? This is your only account. Deleting it will disconnect you completely."
 msgstr "刪除 {domain} 上的帳戶「{0}」嗎？這是你唯一的帳戶。刪除後將完全中斷連線。"
 
 #. placeholder {0}: account.username
-#: src/components/miniflux/UserNav.tsx:93
+#: src/components/miniflux/UserNav.tsx:94
 msgid "Delete account \"{0}\" on {domain}? This will remove all saved credentials."
 msgstr "刪除 {domain} 上的帳戶「{0}」嗎？這將移除所有已儲存的憑證。"
 
 #. placeholder {0}: account.username
 #. placeholder {1}: nextAccount.username
-#: src/components/miniflux/UserNav.tsx:89
+#: src/components/miniflux/UserNav.tsx:90
 msgid "Delete account \"{0}\" on {domain}? You are currently connected to this account. You'll be switched to \"{1}\" automatically."
 msgstr "刪除 {domain} 上的帳戶「{0}」嗎？你目前正連線到此帳戶。將自動切換到「{1}」。"
 
@@ -1706,8 +1706,8 @@ msgstr "建立訂閱源失敗"
 msgid "Failed to create user"
 msgstr "建立使用者失敗"
 
-#: src/components/miniflux/UserNav.tsx:110
-#: src/components/miniflux/UserNav.tsx:114
+#: src/components/miniflux/UserNav.tsx:111
+#: src/components/miniflux/UserNav.tsx:115
 msgid "Failed to delete account"
 msgstr "刪除帳號失敗"
 

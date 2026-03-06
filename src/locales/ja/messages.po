@@ -169,7 +169,7 @@ msgstr "Minikyu について"
 msgid "Account data cleared"
 msgstr "アカウントデータを消去しました"
 
-#: src/components/miniflux/UserNav.tsx:108
+#: src/components/miniflux/UserNav.tsx:109
 msgid "Account deleted successfully"
 msgstr "アカウントを削除しました"
 
@@ -1211,7 +1211,7 @@ msgstr "削除"
 msgid "Delete account"
 msgstr "アカウントを削除"
 
-#: src/components/miniflux/UserNav.tsx:99
+#: src/components/miniflux/UserNav.tsx:100
 #: src/lib/commands/account-commands.ts:23
 #: src/lib/commands/account-commands.ts:40
 #: src/lib/menu.ts:501
@@ -1219,18 +1219,18 @@ msgid "Delete Account"
 msgstr "アカウントを削除"
 
 #. placeholder {0}: account.username
-#: src/components/miniflux/UserNav.tsx:85
+#: src/components/miniflux/UserNav.tsx:86
 msgid "Delete account \"{0}\" on {domain}? This is your only account. Deleting it will disconnect you completely."
 msgstr "{domain} のアカウント「{0}」を削除しますか？これは唯一のアカウントです。削除すると完全に切断されます。"
 
 #. placeholder {0}: account.username
-#: src/components/miniflux/UserNav.tsx:93
+#: src/components/miniflux/UserNav.tsx:94
 msgid "Delete account \"{0}\" on {domain}? This will remove all saved credentials."
 msgstr "{domain} のアカウント「{0}」を削除しますか？保存されたすべての認証情報が削除されます。"
 
 #. placeholder {0}: account.username
 #. placeholder {1}: nextAccount.username
-#: src/components/miniflux/UserNav.tsx:89
+#: src/components/miniflux/UserNav.tsx:90
 msgid "Delete account \"{0}\" on {domain}? You are currently connected to this account. You'll be switched to \"{1}\" automatically."
 msgstr "{domain} のアカウント「{0}」を削除しますか？現在このアカウントに接続中です。自動的に「{1}」に切り替わります。"
 
@@ -1706,8 +1706,8 @@ msgstr "フィードの作成に失敗しました"
 msgid "Failed to create user"
 msgstr "ユーザーの作成に失敗しました"
 
-#: src/components/miniflux/UserNav.tsx:110
-#: src/components/miniflux/UserNav.tsx:114
+#: src/components/miniflux/UserNav.tsx:111
+#: src/components/miniflux/UserNav.tsx:115
 msgid "Failed to delete account"
 msgstr "アカウントの削除に失敗しました"
 

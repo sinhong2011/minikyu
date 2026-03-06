@@ -169,7 +169,7 @@ msgstr "Minikyu 정보"
 msgid "Account data cleared"
 msgstr "계정 데이터가 삭제되었습니다"
 
-#: src/components/miniflux/UserNav.tsx:108
+#: src/components/miniflux/UserNav.tsx:109
 msgid "Account deleted successfully"
 msgstr "계정이 삭제되었습니다"
 
@@ -1211,7 +1211,7 @@ msgstr "삭제"
 msgid "Delete account"
 msgstr "계정 삭제"
 
-#: src/components/miniflux/UserNav.tsx:99
+#: src/components/miniflux/UserNav.tsx:100
 #: src/lib/commands/account-commands.ts:23
 #: src/lib/commands/account-commands.ts:40
 #: src/lib/menu.ts:501
@@ -1219,18 +1219,18 @@ msgid "Delete Account"
 msgstr "계정 삭제"
 
 #. placeholder {0}: account.username
-#: src/components/miniflux/UserNav.tsx:85
+#: src/components/miniflux/UserNav.tsx:86
 msgid "Delete account \"{0}\" on {domain}? This is your only account. Deleting it will disconnect you completely."
 msgstr "{domain}의 계정 \"{0}\"을(를) 삭제하시겠습니까? 이것이 유일한 계정입니다. 삭제하면 완전히 연결이 해제됩니다."
 
 #. placeholder {0}: account.username
-#: src/components/miniflux/UserNav.tsx:93
+#: src/components/miniflux/UserNav.tsx:94
 msgid "Delete account \"{0}\" on {domain}? This will remove all saved credentials."
 msgstr "{domain}의 계정 \"{0}\"을(를) 삭제하시겠습니까? 저장된 모든 자격 증명이 삭제됩니다."
 
 #. placeholder {0}: account.username
 #. placeholder {1}: nextAccount.username
-#: src/components/miniflux/UserNav.tsx:89
+#: src/components/miniflux/UserNav.tsx:90
 msgid "Delete account \"{0}\" on {domain}? You are currently connected to this account. You'll be switched to \"{1}\" automatically."
 msgstr "{domain}의 계정 \"{0}\"을(를) 삭제하시겠습니까? 현재 이 계정에 연결되어 있습니다. 자동으로 \"{1}\"로 전환됩니다."
 
@@ -1706,8 +1706,8 @@ msgstr "피드 생성에 실패했습니다"
 msgid "Failed to create user"
 msgstr "사용자 생성에 실패했습니다"
 
-#: src/components/miniflux/UserNav.tsx:110
-#: src/components/miniflux/UserNav.tsx:114
+#: src/components/miniflux/UserNav.tsx:111
+#: src/components/miniflux/UserNav.tsx:115
 msgid "Failed to delete account"
 msgstr "계정 삭제에 실패했습니다"
 

@@ -84,33 +84,24 @@ export function SyncPane() {
             <span className="text-sm text-muted-foreground">{_(msg`Current state`)}</span>
             <div className="flex items-center gap-1.5">
               {syncing ? (
-                <>
-                  <HugeiconsIcon
-                    icon={Loading03Icon}
-                    className="size-3.5 animate-spin text-primary"
-                  />
-                  <Badge variant="secondary" className="text-xs">
-                    {currentStage === 'cleanup'
-                      ? _(msg`Cleaning up`)
-                      : currentStage === 'idle'
-                        ? _(msg`Starting`)
-                        : _(msg`Syncing ${currentStage}`)}
-                  </Badge>
-                </>
+                <Badge variant="secondary" className="text-xs gap-1">
+                  <HugeiconsIcon icon={Loading03Icon} className="size-3 animate-spin" />
+                  {currentStage === 'cleanup'
+                    ? _(msg`Cleaning up`)
+                    : currentStage === 'idle'
+                      ? _(msg`Starting`)
+                      : _(msg`Syncing ${currentStage}`)}
+                </Badge>
               ) : error || currentStage === 'failed' ? (
-                <>
-                  <HugeiconsIcon icon={Alert01Icon} className="size-3.5 text-destructive" />
-                  <Badge variant="destructive" className="text-xs">
-                    {_(msg`Failed`)}
-                  </Badge>
-                </>
+                <Badge variant="destructive" className="text-xs gap-1">
+                  <HugeiconsIcon icon={Alert01Icon} className="size-3" />
+                  {_(msg`Failed`)}
+                </Badge>
               ) : currentStage === 'completed' ? (
-                <>
-                  <HugeiconsIcon icon={CheckmarkCircle01Icon} className="size-3.5 text-primary" />
-                  <Badge variant="secondary" className="text-xs">
-                    {_(msg`Up to date`)}
-                  </Badge>
-                </>
+                <Badge variant="secondary" className="text-xs gap-1">
+                  <HugeiconsIcon icon={CheckmarkCircle01Icon} className="size-3" />
+                  {_(msg`Up to date`)}
+                </Badge>
               ) : (
                 <span className="text-sm text-muted-foreground">{_(msg`Idle`)}</span>
               )}
