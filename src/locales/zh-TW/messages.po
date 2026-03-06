@@ -169,7 +169,7 @@ msgstr "關於 Minikyu"
 msgid "Account data cleared"
 msgstr "帳號資料已清除"
 
-#: src/components/miniflux/UserNav.tsx:113
+#: src/components/miniflux/UserNav.tsx:112
 msgid "Account deleted successfully"
 msgstr "帳號已成功刪除"
 
@@ -245,8 +245,8 @@ msgid "Add Rule"
 msgstr "新增規則"
 
 #: src/components/miniflux/EntryList.tsx:737
-#: src/components/miniflux/EntryReadingHeader.tsx:983
-#: src/components/miniflux/EntryReadingHeader.tsx:990
+#: src/components/miniflux/EntryReadingHeader.tsx:1000
+#: src/components/miniflux/EntryReadingHeader.tsx:1007
 msgid "Add to playlist"
 msgstr "加入播放清單"
 
@@ -256,7 +256,7 @@ msgid "Add user"
 msgstr "新增使用者"
 
 #: src/components/miniflux/EntryList.tsx:743
-#: src/components/miniflux/EntryReadingHeader.tsx:981
+#: src/components/miniflux/EntryReadingHeader.tsx:998
 msgid "Added to playlist"
 msgstr "已加入播放清單"
 
@@ -394,11 +394,11 @@ msgstr "外觀"
 msgid "Appearance Settings"
 msgstr "外觀設定"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:205
+#: src/components/miniflux/EntryReadingHeader.tsx:220
 msgid "Apple Built-in"
 msgstr "Apple 內建"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:466
+#: src/components/miniflux/EntryReadingHeader.tsx:481
 msgid "Applies to all articles when enabled"
 msgstr "啟用時套用至所有文章"
 
@@ -464,7 +464,7 @@ msgstr "文章字體大小（像素，14-24）"
 msgid "Ascending"
 msgstr "升序"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:179
+#: src/components/miniflux/EntryReadingHeader.tsx:194
 #: src/components/preferences/panes/ReaderPane.tsx:165
 msgid "Auto"
 msgstr "自動"
@@ -505,11 +505,11 @@ msgstr "百度翻譯"
 msgid "Beautiful, accessible components"
 msgstr "美觀且易於使用的元件"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:509
+#: src/components/miniflux/EntryReadingHeader.tsx:524
 msgid "Bilingual"
 msgstr "雙語"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:649
+#: src/components/miniflux/EntryReadingHeader.tsx:664
 #: src/components/preferences/panes/ReaderPane.tsx:397
 msgid "Bionic Reading"
 msgstr "仿生閱讀"
@@ -529,7 +529,7 @@ msgstr "書本襯線體"
 msgid "Book-like rhythm"
 msgstr "書本般的節奏"
 
-#: src/components/ui/breadcrumb.tsx:11
+#: src/components/ui/breadcrumb.tsx:10
 msgid "breadcrumb"
 msgstr "導覽路徑"
 
@@ -692,12 +692,12 @@ msgstr "正在檢查更新..."
 msgid "Checking..."
 msgstr "檢查中..."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:168
+#: src/components/miniflux/EntryReadingHeader.tsx:183
 #: src/components/preferences/panes/TranslationPane.tsx:1730
 msgid "Chinese (Simplified)"
 msgstr "中文（簡體）"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:169
+#: src/components/miniflux/EntryReadingHeader.tsx:184
 #: src/components/preferences/panes/TranslationPane.tsx:1731
 msgid "Chinese (Traditional)"
 msgstr "中文（繁體）"
@@ -811,8 +811,8 @@ msgstr "清除中⋯"
 
 #: src/components/command-palette/CommandPalette.tsx:229
 #: src/components/downloads/DownloadManagerDialog.tsx:907
-#: src/components/miniflux/EntryReadingHeader.tsx:324
-#: src/components/miniflux/EntryReadingHeader.tsx:330
+#: src/components/miniflux/EntryReadingHeader.tsx:339
+#: src/components/miniflux/EntryReadingHeader.tsx:345
 #: src/components/miniflux/ImageViewer.tsx:236
 #: src/components/miniflux/InAppBrowserPane.tsx:267
 #: src/components/miniflux/ReaderSettings.tsx:226
@@ -859,7 +859,7 @@ msgstr "程式碼與精準"
 msgid "Code Blocks"
 msgstr "程式碼區塊"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:604
+#: src/components/miniflux/EntryReadingHeader.tsx:619
 #: src/components/preferences/panes/ReaderPane.tsx:372
 msgid "Code theme"
 msgstr "程式碼主題"
@@ -961,11 +961,11 @@ msgstr "複製"
 msgid "Copy app version, OS, and environment details for bug reports."
 msgstr "複製應用程式版本、作業系統和環境詳情以用於錯誤回報。"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:791
+#: src/components/miniflux/EntryReadingHeader.tsx:806
 msgid "Copy article URL"
 msgstr "複製文章 URL"
 
-#: src/components/miniflux/SafeHtml.tsx:682
+#: src/components/miniflux/SafeHtml.tsx:718
 msgid "Copy code"
 msgstr "複製程式碼"
 
@@ -987,11 +987,11 @@ msgstr "複製連結"
 msgid "Copy message"
 msgstr "複製訊息"
 
-#: src/components/miniflux/SafeHtml.tsx:686
+#: src/components/miniflux/SafeHtml.tsx:722
 msgid "Copy phrase text"
 msgstr "複製詞句文字"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:807
+#: src/components/miniflux/EntryReadingHeader.tsx:822
 msgid "Copy share link"
 msgstr "複製分享連結"
 
@@ -1003,7 +1003,7 @@ msgstr "將文章連結複製到剪貼簿"
 msgid "Copy this token now. It will not be shown again."
 msgstr "請立即複製此令牌，之後將不再顯示。"
 
-#: src/components/miniflux/SafeHtml.tsx:692
+#: src/components/miniflux/SafeHtml.tsx:728
 msgid "Copy translation"
 msgstr "複製翻譯"
 
@@ -1189,8 +1189,8 @@ msgstr "DeepL"
 msgid "DeepSeek"
 msgstr "DeepSeek"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:190
-#: src/components/miniflux/EntryReadingHeader.tsx:200
+#: src/components/miniflux/EntryReadingHeader.tsx:205
+#: src/components/miniflux/EntryReadingHeader.tsx:215
 #: src/components/preferences/panes/ReaderPane.tsx:65
 #: src/lib/menu.ts:141
 msgid "Default"
@@ -1213,7 +1213,7 @@ msgstr "刪除"
 msgid "Delete account"
 msgstr "刪除帳戶"
 
-#: src/components/miniflux/UserNav.tsx:100
+#: src/components/miniflux/UserNav.tsx:99
 #: src/lib/commands/account-commands.ts:23
 #: src/lib/commands/account-commands.ts:40
 #: src/lib/menu.ts:501
@@ -1221,18 +1221,18 @@ msgid "Delete Account"
 msgstr "刪除帳號"
 
 #. placeholder {0}: account.username
-#: src/components/miniflux/UserNav.tsx:86
+#: src/components/miniflux/UserNav.tsx:85
 msgid "Delete account \"{0}\" on {domain}? This is your only account. Deleting it will disconnect you completely."
 msgstr "刪除 {domain} 上的帳戶「{0}」嗎？這是你唯一的帳戶。刪除後將完全中斷連線。"
 
 #. placeholder {0}: account.username
-#: src/components/miniflux/UserNav.tsx:94
+#: src/components/miniflux/UserNav.tsx:93
 msgid "Delete account \"{0}\" on {domain}? This will remove all saved credentials."
 msgstr "刪除 {domain} 上的帳戶「{0}」嗎？這將移除所有已儲存的憑證。"
 
 #. placeholder {0}: account.username
 #. placeholder {1}: nextAccount.username
-#: src/components/miniflux/UserNav.tsx:90
+#: src/components/miniflux/UserNav.tsx:89
 msgid "Delete account \"{0}\" on {domain}? You are currently connected to this account. You'll be switched to \"{1}\" automatically."
 msgstr "刪除 {domain} 上的帳戶「{0}」嗎？你目前正連線到此帳戶。將自動切換到「{1}」。"
 
@@ -1315,7 +1315,7 @@ msgstr "已停用"
 msgid "Dismiss Player"
 msgstr "關閉播放器"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:496
+#: src/components/miniflux/EntryReadingHeader.tsx:511
 msgid "Display mode"
 msgstr "顯示模式"
 
@@ -1365,7 +1365,7 @@ msgstr "下載完成"
 msgid "Download Failed"
 msgstr "下載失敗"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:269
+#: src/components/miniflux/EntryReadingHeader.tsx:284
 msgid "Download original content"
 msgstr "下載原始內容"
 
@@ -1498,12 +1498,12 @@ msgstr "引擎"
 msgid "Engine first"
 msgstr "引擎優先"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:167
+#: src/components/miniflux/EntryReadingHeader.tsx:182
 #: src/components/preferences/panes/TranslationPane.tsx:1729
 msgid "English"
 msgstr "英文"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:650
+#: src/components/miniflux/EntryReadingHeader.tsx:665
 msgid "English only"
 msgstr "僅英文"
 
@@ -1557,7 +1557,7 @@ msgid "Entry not found"
 msgstr "找不到文章"
 
 #: src/components/miniflux/EntryReading.tsx:619
-#: src/components/miniflux/EntryReadingHeader.tsx:259
+#: src/components/miniflux/EntryReadingHeader.tsx:274
 msgid "Entry sent to services"
 msgstr "文章已傳送至服務"
 
@@ -1712,8 +1712,8 @@ msgstr "建立訂閱源失敗"
 msgid "Failed to create user"
 msgstr "建立使用者失敗"
 
-#: src/components/miniflux/UserNav.tsx:115
-#: src/components/miniflux/UserNav.tsx:119
+#: src/components/miniflux/UserNav.tsx:114
+#: src/components/miniflux/UserNav.tsx:118
 msgid "Failed to delete account"
 msgstr "刪除帳號失敗"
 
@@ -1846,8 +1846,8 @@ msgstr "繼續下載失敗"
 
 #: src/components/miniflux/EntryReading.tsx:616
 #: src/components/miniflux/EntryReading.tsx:622
-#: src/components/miniflux/EntryReadingHeader.tsx:255
-#: src/components/miniflux/EntryReadingHeader.tsx:262
+#: src/components/miniflux/EntryReadingHeader.tsx:270
+#: src/components/miniflux/EntryReadingHeader.tsx:277
 msgid "Failed to save entry"
 msgstr "儲存文章失敗"
 
@@ -2060,7 +2060,7 @@ msgstr "取得原始內容"
 msgid "Fetch via proxy"
 msgstr "透過代理擷取"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:270
+#: src/components/miniflux/EntryReadingHeader.tsx:285
 msgid "Fetching original content..."
 msgstr "正在取得原始內容..."
 
@@ -2088,8 +2088,8 @@ msgstr "清除歷史記錄"
 msgid "Flush History"
 msgstr "清除歷史記錄"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:569
-#: src/components/miniflux/EntryReadingHeader.tsx:576
+#: src/components/miniflux/EntryReadingHeader.tsx:584
+#: src/components/miniflux/EntryReadingHeader.tsx:591
 msgid "Focus mode"
 msgstr "專注模式"
 
@@ -2115,7 +2115,7 @@ msgstr "字型大小"
 msgid "Found sources"
 msgstr "已找到來源"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:173
+#: src/components/miniflux/EntryReadingHeader.tsx:188
 #: src/components/preferences/panes/TranslationPane.tsx:1735
 msgid "French"
 msgstr "法文"
@@ -2160,7 +2160,7 @@ msgstr "正在產生摘要..."
 msgid "Georgia"
 msgstr "Georgia"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:174
+#: src/components/miniflux/EntryReadingHeader.tsx:189
 #: src/components/preferences/panes/TranslationPane.tsx:1736
 msgid "German"
 msgstr "德文"
@@ -2315,7 +2315,7 @@ msgstr "閒置"
 msgid "Ignore HTTP cache"
 msgstr "忽略 HTTP 快取"
 
-#: src/components/miniflux/SafeHtml.tsx:695
+#: src/components/miniflux/SafeHtml.tsx:731
 msgid "Image"
 msgstr "圖片"
 
@@ -2431,7 +2431,7 @@ msgstr "整合"
 msgid "Interrupted — app was closed"
 msgstr "已中斷 — 應用程式已關閉"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:170
+#: src/components/miniflux/EntryReadingHeader.tsx:185
 #: src/components/preferences/panes/TranslationPane.tsx:1732
 msgid "Japanese"
 msgstr "日文"
@@ -2450,12 +2450,12 @@ msgstr "保留規則"
 msgid "Kimi"
 msgstr "Kimi"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:171
+#: src/components/miniflux/EntryReadingHeader.tsx:186
 #: src/components/preferences/panes/TranslationPane.tsx:1733
 msgid "Korean"
 msgstr "韓文"
 
-#: src/components/miniflux/SafeHtml.tsx:694
+#: src/components/miniflux/SafeHtml.tsx:730
 #: src/components/miniflux/UserNav.tsx:285
 #: src/components/preferences/panes/AppearancePane.tsx:85
 #: src/components/preferences/panes/AppearancePane.tsx:87
@@ -2553,7 +2553,7 @@ msgid "Loading version information..."
 msgstr "正在載入版本資訊..."
 
 #: src/components/layout/AppSidebar.tsx:601
-#: src/components/miniflux/EntryReadingHeader.tsx:273
+#: src/components/miniflux/EntryReadingHeader.tsx:288
 #: src/components/miniflux/MinifluxLayout.tsx:333
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PodcastPlayer.tsx:574
@@ -2604,8 +2604,8 @@ msgstr "全部標記為已讀"
 #: src/components/layout/AppSidebar.tsx:184
 #: src/components/layout/AppSidebar.tsx:380
 #: src/components/miniflux/EntryReading.tsx:1588
-#: src/components/miniflux/EntryReadingHeader.tsx:685
-#: src/components/miniflux/EntryReadingHeader.tsx:704
+#: src/components/miniflux/EntryReadingHeader.tsx:700
+#: src/components/miniflux/EntryReadingHeader.tsx:719
 #: src/components/preferences/panes/CategoriesPane.tsx:84
 #: src/components/preferences/PreferencesDialog.tsx:368
 msgid "Mark as read"
@@ -2617,8 +2617,8 @@ msgid "Mark as Read/Unread"
 msgstr "標記為已讀/未讀"
 
 #: src/components/miniflux/EntryReading.tsx:1588
-#: src/components/miniflux/EntryReadingHeader.tsx:685
-#: src/components/miniflux/EntryReadingHeader.tsx:704
+#: src/components/miniflux/EntryReadingHeader.tsx:700
+#: src/components/miniflux/EntryReadingHeader.tsx:719
 msgid "Mark as unread"
 msgstr "標記為未讀"
 
@@ -2647,7 +2647,7 @@ msgstr "文章文字的最大寬度（字元數，45-80）"
 msgid "Microsoft Translator"
 msgstr "Microsoft 翻譯"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:899
+#: src/components/miniflux/EntryReadingHeader.tsx:916
 msgid "min read"
 msgstr "分鐘閱讀"
 
@@ -2724,7 +2724,7 @@ msgstr "現代 Rust 驅動的桌面框架"
 msgid "Monospace"
 msgstr "等寬字體"
 
-#: src/components/ui/breadcrumb.tsx:91
+#: src/components/ui/breadcrumb.tsx:106
 msgid "More"
 msgstr "更多"
 
@@ -2821,8 +2821,8 @@ msgstr "下一篇文章"
 msgid "Next Article"
 msgstr "下一篇文章"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:365
-#: src/components/miniflux/EntryReadingHeader.tsx:371
+#: src/components/miniflux/EntryReadingHeader.tsx:380
+#: src/components/miniflux/EntryReadingHeader.tsx:386
 msgid "Next entry (j or →)"
 msgstr "下一篇文章（j 或 →）"
 
@@ -2908,9 +2908,9 @@ msgstr "找不到訂閱源"
 msgid "No feeds yet"
 msgstr "尚無訂閱源"
 
-#: src/components/miniflux/ReaderSettings.tsx:466
-msgid "No fonts found."
-msgstr "找不到字型。"
+#: src/components/miniflux/ReaderSettings.tsx:471
+#~ msgid "No fonts found."
+#~ msgstr "找不到字型。"
 
 #: src/components/preferences/panes/IntegrationsPane.tsx:306
 msgid "No integration services enabled"
@@ -2975,7 +2975,7 @@ msgstr "目前沒有播放內容"
 msgid "of"
 msgstr "之"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:161
+#: src/components/miniflux/EntryReadingHeader.tsx:176
 msgid "Off"
 msgstr "關閉"
 
@@ -2992,7 +2992,7 @@ msgstr "離線模式"
 msgid "OK"
 msgstr "確定"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:198
+#: src/components/miniflux/EntryReadingHeader.tsx:213
 #: src/components/preferences/panes/ReaderPane.tsx:69
 #: src/lib/menu.ts:161
 msgid "OLED"
@@ -3023,7 +3023,7 @@ msgstr "在應用程式瀏覽器中開啟"
 msgid "Open in App Browser"
 msgstr "在應用程式瀏覽器中開啟"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:817
+#: src/components/miniflux/EntryReadingHeader.tsx:832
 #: src/components/miniflux/InAppBrowserPane.tsx:206
 #: src/components/miniflux/InAppBrowserPane.tsx:212
 #: src/lib/gesture-actions.ts:20
@@ -3121,7 +3121,7 @@ msgstr "選填逾時"
 msgid "Optional. Leave empty for local Ollama. Required for the Ollama cloud API (ollama.com)."
 msgstr "選填。本機 Ollama 請留空。Ollama 雲端 API (ollama.com) 則為必填。"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:271
+#: src/components/miniflux/EntryReadingHeader.tsx:286
 #: src/services/miniflux/entries.ts:544
 msgid "Original content downloaded"
 msgstr "原始內容已下載"
@@ -3148,7 +3148,7 @@ msgstr "覆寫預設翻譯指令。支援 {source_lang} 和 {target_lang} 佔位
 msgid "Page {0} of {1}"
 msgstr "第 {0} 頁，共 {1} 頁"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:192
+#: src/components/miniflux/EntryReadingHeader.tsx:207
 #: src/components/preferences/panes/ReaderPane.tsx:66
 #: src/lib/menu.ts:146
 msgid "Paper"
@@ -3181,7 +3181,7 @@ msgid "Paste new API token"
 msgstr "貼上新的 API 權杖"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:815
-#: src/components/miniflux/EntryReadingHeader.tsx:275
+#: src/components/miniflux/EntryReadingHeader.tsx:290
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PodcastPlayer.tsx:576
 #: src/pages/TrayPopover.tsx:226
@@ -3200,13 +3200,13 @@ msgstr "已暫停"
 msgid "Permanently deletes everything — all accounts, synced data, preferences, downloads, and credentials. This cannot be undone."
 msgstr "永久刪除所有內容 — 包括所有帳號、同步資料、偏好設定、下載項目和憑證。此操作無法復原。"
 
-#: src/components/miniflux/SafeHtml.tsx:683
+#: src/components/miniflux/SafeHtml.tsx:719
 msgid "Phrase"
 msgstr "詞句"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:800
 #: src/components/miniflux/EntryList.tsx:724
-#: src/components/miniflux/EntryReadingHeader.tsx:276
+#: src/components/miniflux/EntryReadingHeader.tsx:291
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PlayerWindowQueue.tsx:102
 #: src/components/podcast/PodcastPlayer.tsx:577
@@ -3315,8 +3315,8 @@ msgstr "上一篇文章"
 msgid "Previous Article"
 msgstr "上一篇文章"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:346
-#: src/components/miniflux/EntryReadingHeader.tsx:352
+#: src/components/miniflux/EntryReadingHeader.tsx:361
+#: src/components/miniflux/EntryReadingHeader.tsx:367
 msgid "Previous entry (h or ←)"
 msgstr "上一篇文章（h 或 ←）"
 
@@ -3324,7 +3324,7 @@ msgstr "上一篇文章（h 或 ←）"
 msgid "Previous section"
 msgstr "上一區段"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:520
+#: src/components/miniflux/EntryReadingHeader.tsx:535
 #: src/components/preferences/panes/TranslationPane.tsx:1763
 msgid "Provider"
 msgstr "提供者"
@@ -3472,8 +3472,8 @@ msgstr "閱讀器字型排版設定"
 msgid "Reading"
 msgstr "閱讀"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:587
-#: src/components/miniflux/EntryReadingHeader.tsx:600
+#: src/components/miniflux/EntryReadingHeader.tsx:602
+#: src/components/miniflux/EntryReadingHeader.tsx:615
 msgid "Reading display"
 msgstr "閱讀顯示"
 
@@ -3481,7 +3481,7 @@ msgstr "閱讀顯示"
 msgid "Reading Features"
 msgstr "閱讀功能"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:628
+#: src/components/miniflux/EntryReadingHeader.tsx:643
 msgid "Reading theme"
 msgstr "閱讀主題"
 
@@ -3704,7 +3704,7 @@ msgstr "重試"
 msgid "Retry failed"
 msgstr "重試失敗"
 
-#: src/components/miniflux/SafeHtml.tsx:690
+#: src/components/miniflux/SafeHtml.tsx:726
 msgid "Retry translation"
 msgstr "重試翻譯"
 
@@ -3773,7 +3773,7 @@ msgid "Save Rules"
 msgstr "儲存規則"
 
 #: src/components/miniflux/EntryReading.tsx:1668
-#: src/components/miniflux/EntryReadingHeader.tsx:832
+#: src/components/miniflux/EntryReadingHeader.tsx:847
 msgid "Save to services"
 msgstr "儲存至服務"
 
@@ -3781,7 +3781,7 @@ msgstr "儲存至服務"
 msgid "Save your current settings to a JSON file for backup or migration."
 msgstr "將目前設定儲存為 JSON 檔案以備份或遷移。"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:832
+#: src/components/miniflux/EntryReadingHeader.tsx:847
 msgid "Saved!"
 msgstr "已儲存！"
 
@@ -3857,7 +3857,7 @@ msgstr "搜尋要排除的訂閱源..."
 msgid "Search feeds..."
 msgstr "搜尋訂閱源⋯"
 
-#: src/components/miniflux/ReaderSettings.tsx:461
+#: src/components/miniflux/ReaderSettings.tsx:464
 msgid "Search fonts..."
 msgstr "搜尋字型⋯"
 
@@ -3916,7 +3916,7 @@ msgstr "選擇圖片下載資料夾"
 msgid "Select or enter server URL"
 msgstr "選擇或輸入伺服器 URL"
 
-#: src/components/miniflux/SafeHtml.tsx:685
+#: src/components/miniflux/SafeHtml.tsx:721
 msgid "Select phrase text"
 msgstr "選取詞句文字"
 
@@ -3932,7 +3932,7 @@ msgstr "選擇影片下載資料夾"
 msgid "Sensitivity"
 msgstr "靈敏度"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:194
+#: src/components/miniflux/EntryReadingHeader.tsx:209
 #: src/components/preferences/panes/ReaderPane.tsx:67
 #: src/lib/menu.ts:151
 msgid "Sepia"
@@ -3990,11 +3990,11 @@ msgstr "設定"
 msgid "shadcn/ui"
 msgstr "shadcn/ui"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:770
+#: src/components/miniflux/EntryReadingHeader.tsx:785
 msgid "Share"
 msgstr "分享"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:807
+#: src/components/miniflux/EntryReadingHeader.tsx:822
 msgid "Share link copied!"
 msgstr "分享連結已複製！"
 
@@ -4053,7 +4053,7 @@ msgstr "在翻譯旁顯示原文"
 msgid "Show playlist"
 msgstr "顯示播放清單"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:663
+#: src/components/miniflux/EntryReadingHeader.tsx:678
 msgid "Show reading progress at bottom-left"
 msgstr "在左下角顯示閱讀進度"
 
@@ -4127,7 +4127,7 @@ msgstr "略過此分類"
 msgid "Skip this feed"
 msgstr "略過此訂閱源"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:196
+#: src/components/miniflux/EntryReadingHeader.tsx:211
 #: src/components/preferences/panes/ReaderPane.tsx:68
 #: src/lib/menu.ts:156
 msgid "Slate"
@@ -4156,7 +4156,7 @@ msgstr "來源網址為必填"
 msgid "Spacing between lines of text (1.4-2.2)"
 msgstr "文字行間距（1.4-2.2）"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:172
+#: src/components/miniflux/EntryReadingHeader.tsx:187
 #: src/components/preferences/panes/TranslationPane.tsx:1734
 msgid "Spanish"
 msgstr "西班牙文"
@@ -4166,8 +4166,8 @@ msgid "Stack Trace"
 msgstr "堆疊追蹤"
 
 #: src/components/miniflux/EntryReading.tsx:1439
-#: src/components/miniflux/EntryReadingHeader.tsx:716
-#: src/components/miniflux/EntryReadingHeader.tsx:722
+#: src/components/miniflux/EntryReadingHeader.tsx:731
+#: src/components/miniflux/EntryReadingHeader.tsx:737
 msgid "Star"
 msgstr "加星號"
 
@@ -4212,7 +4212,7 @@ msgstr "正在啟動"
 msgid "Status"
 msgstr "狀態"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:661
+#: src/components/miniflux/EntryReadingHeader.tsx:676
 #: src/components/preferences/panes/ReaderPane.tsx:414
 msgid "Status Bar"
 msgstr "狀態列"
@@ -4273,14 +4273,14 @@ msgstr "摘要文章"
 msgid "Summarize Article"
 msgstr "摘要文章"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:392
-#: src/components/miniflux/EntryReadingHeader.tsx:409
+#: src/components/miniflux/EntryReadingHeader.tsx:407
+#: src/components/miniflux/EntryReadingHeader.tsx:424
 #: src/lib/commands/article-commands.ts:112
 #: src/lib/menu.ts:244
 msgid "Summarize with AI"
 msgstr "使用 AI 摘要"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:409
+#: src/components/miniflux/EntryReadingHeader.tsx:424
 msgid "Summarizing..."
 msgstr "正在產生摘要..."
 
@@ -4432,7 +4432,7 @@ msgstr "系統 UI"
 msgid "TanStack"
 msgstr "TanStack"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:477
+#: src/components/miniflux/EntryReadingHeader.tsx:492
 #: src/components/preferences/panes/TranslationPane.tsx:1717
 msgid "Target language"
 msgstr "目標語言"
@@ -4657,7 +4657,7 @@ msgstr "切換禪模式"
 msgid "Token copied to clipboard"
 msgstr "令牌已複製到剪貼簿"
 
-#: src/components/miniflux/SafeHtml.tsx:689
+#: src/components/miniflux/SafeHtml.tsx:725
 msgid "Top bar"
 msgstr "頂部列"
 
@@ -4675,8 +4675,8 @@ msgstr "追蹤"
 msgid "Translate Article"
 msgstr "翻譯文章"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:464
-#: src/components/miniflux/EntryReadingHeader.tsx:472
+#: src/components/miniflux/EntryReadingHeader.tsx:479
+#: src/components/miniflux/EntryReadingHeader.tsx:487
 msgid "Translate now"
 msgstr "立即翻譯"
 
@@ -4684,31 +4684,31 @@ msgstr "立即翻譯"
 msgid "Translate selection"
 msgstr "翻譯選取文字"
 
-#: src/components/miniflux/SafeHtml.tsx:688
+#: src/components/miniflux/SafeHtml.tsx:724
 msgid "Translate this paragraph"
 msgstr "翻譯此段落"
 
-#: src/components/miniflux/SafeHtml.tsx:691
+#: src/components/miniflux/SafeHtml.tsx:727
 msgid "Translate with..."
 msgstr "使用...翻譯"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:510
+#: src/components/miniflux/EntryReadingHeader.tsx:525
 msgid "Translated only"
 msgstr "僅翻譯"
 
 #: src/components/miniflux/EntryReading.tsx:1482
-#: src/components/miniflux/EntryReadingHeader.tsx:443
-#: src/components/miniflux/EntryReadingHeader.tsx:451
-#: src/components/miniflux/SafeHtml.tsx:684
+#: src/components/miniflux/EntryReadingHeader.tsx:458
+#: src/components/miniflux/EntryReadingHeader.tsx:466
+#: src/components/miniflux/SafeHtml.tsx:720
 #: src/components/preferences/panes/TranslationPane.tsx:1693
 msgid "Translation"
 msgstr "翻譯"
 
-#: src/components/miniflux/SafeHtml.tsx:687
+#: src/components/miniflux/SafeHtml.tsx:723
 msgid "Translation controls in top bar"
 msgstr "頂部列中的翻譯控制"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:457
+#: src/components/miniflux/EntryReadingHeader.tsx:472
 msgid "Translation disabled for this feed"
 msgstr "此訂閱源的翻譯已停用"
 
@@ -4718,11 +4718,11 @@ msgstr "翻譯引擎"
 
 #: src/components/miniflux/ImmersiveTranslationLayer.tsx:811
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:270
-#: src/components/miniflux/SafeHtml.tsx:693
+#: src/components/miniflux/SafeHtml.tsx:729
 msgid "Translation failed"
 msgstr "翻譯失敗"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:429
+#: src/components/miniflux/EntryReadingHeader.tsx:444
 msgid "Translation options"
 msgstr "翻譯選項"
 
@@ -4813,8 +4813,8 @@ msgid "unread items"
 msgstr "未讀項目"
 
 #: src/components/miniflux/EntryReading.tsx:1439
-#: src/components/miniflux/EntryReadingHeader.tsx:716
-#: src/components/miniflux/EntryReadingHeader.tsx:722
+#: src/components/miniflux/EntryReadingHeader.tsx:731
+#: src/components/miniflux/EntryReadingHeader.tsx:737
 msgid "Unstar"
 msgstr "取消星號"
 
@@ -4878,7 +4878,7 @@ msgstr "更新 v{0} 已就緒"
 msgid "URL copied to clipboard"
 msgstr "網址已複製到剪貼簿"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:791
+#: src/components/miniflux/EntryReadingHeader.tsx:806
 msgid "URL copied!"
 msgstr "URL 已複製！"
 
@@ -5082,21 +5082,21 @@ msgstr "您的資料已自動儲存。"
 msgid "Zen Mode"
 msgstr "禪模式"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:532
+#: src/components/miniflux/EntryReadingHeader.tsx:547
 msgid "中文顯示"
 msgstr "中文顯示"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:164
+#: src/components/miniflux/EntryReadingHeader.tsx:179
 #: src/components/preferences/panes/TranslationPane.tsx:1984
 msgid "簡體中文"
 msgstr "簡體中文"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:163
+#: src/components/miniflux/EntryReadingHeader.tsx:178
 #: src/components/preferences/panes/TranslationPane.tsx:1983
 msgid "繁體中文（台灣）"
 msgstr "繁體中文（台灣）"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:162
+#: src/components/miniflux/EntryReadingHeader.tsx:177
 #: src/components/preferences/panes/TranslationPane.tsx:1982
 msgid "繁體中文（香港）"
 msgstr "繁體中文（香港）"

@@ -169,7 +169,7 @@ msgstr "Minikyu 정보"
 msgid "Account data cleared"
 msgstr "계정 데이터가 삭제되었습니다"
 
-#: src/components/miniflux/UserNav.tsx:113
+#: src/components/miniflux/UserNav.tsx:112
 msgid "Account deleted successfully"
 msgstr "계정이 삭제되었습니다"
 
@@ -245,8 +245,8 @@ msgid "Add Rule"
 msgstr "규칙 추가"
 
 #: src/components/miniflux/EntryList.tsx:737
-#: src/components/miniflux/EntryReadingHeader.tsx:983
-#: src/components/miniflux/EntryReadingHeader.tsx:990
+#: src/components/miniflux/EntryReadingHeader.tsx:1000
+#: src/components/miniflux/EntryReadingHeader.tsx:1007
 msgid "Add to playlist"
 msgstr "재생목록에 추가"
 
@@ -256,7 +256,7 @@ msgid "Add user"
 msgstr "사용자 추가"
 
 #: src/components/miniflux/EntryList.tsx:743
-#: src/components/miniflux/EntryReadingHeader.tsx:981
+#: src/components/miniflux/EntryReadingHeader.tsx:998
 msgid "Added to playlist"
 msgstr "재생목록에 추가됨"
 
@@ -394,11 +394,11 @@ msgstr "외관"
 msgid "Appearance Settings"
 msgstr "외관 설정"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:205
+#: src/components/miniflux/EntryReadingHeader.tsx:220
 msgid "Apple Built-in"
 msgstr "Apple 내장"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:466
+#: src/components/miniflux/EntryReadingHeader.tsx:481
 msgid "Applies to all articles when enabled"
 msgstr "활성화하면 모든 글에 적용됩니다"
 
@@ -464,7 +464,7 @@ msgstr "글 텍스트 크기(픽셀, 14-24)"
 msgid "Ascending"
 msgstr "오름차순"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:179
+#: src/components/miniflux/EntryReadingHeader.tsx:194
 #: src/components/preferences/panes/ReaderPane.tsx:165
 msgid "Auto"
 msgstr "자동"
@@ -505,11 +505,11 @@ msgstr "Baidu 번역"
 msgid "Beautiful, accessible components"
 msgstr "아름답고 접근하기 쉬운 컴포넌트"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:509
+#: src/components/miniflux/EntryReadingHeader.tsx:524
 msgid "Bilingual"
 msgstr "이중 언어"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:649
+#: src/components/miniflux/EntryReadingHeader.tsx:664
 #: src/components/preferences/panes/ReaderPane.tsx:397
 msgid "Bionic Reading"
 msgstr "바이오닉 리딩"
@@ -529,7 +529,7 @@ msgstr "북 세리프"
 msgid "Book-like rhythm"
 msgstr "책과 같은 리듬"
 
-#: src/components/ui/breadcrumb.tsx:11
+#: src/components/ui/breadcrumb.tsx:10
 msgid "breadcrumb"
 msgstr "탐색 경로"
 
@@ -692,12 +692,12 @@ msgstr "업데이트 확인 중..."
 msgid "Checking..."
 msgstr "확인 중..."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:168
+#: src/components/miniflux/EntryReadingHeader.tsx:183
 #: src/components/preferences/panes/TranslationPane.tsx:1730
 msgid "Chinese (Simplified)"
 msgstr "중국어 (간체)"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:169
+#: src/components/miniflux/EntryReadingHeader.tsx:184
 #: src/components/preferences/panes/TranslationPane.tsx:1731
 msgid "Chinese (Traditional)"
 msgstr "중국어 (번체)"
@@ -811,8 +811,8 @@ msgstr "지우는 중..."
 
 #: src/components/command-palette/CommandPalette.tsx:229
 #: src/components/downloads/DownloadManagerDialog.tsx:907
-#: src/components/miniflux/EntryReadingHeader.tsx:324
-#: src/components/miniflux/EntryReadingHeader.tsx:330
+#: src/components/miniflux/EntryReadingHeader.tsx:339
+#: src/components/miniflux/EntryReadingHeader.tsx:345
 #: src/components/miniflux/ImageViewer.tsx:236
 #: src/components/miniflux/InAppBrowserPane.tsx:267
 #: src/components/miniflux/ReaderSettings.tsx:226
@@ -859,7 +859,7 @@ msgstr "코드와 정밀함"
 msgid "Code Blocks"
 msgstr "코드 블록"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:604
+#: src/components/miniflux/EntryReadingHeader.tsx:619
 #: src/components/preferences/panes/ReaderPane.tsx:372
 msgid "Code theme"
 msgstr "코드 테마"
@@ -961,11 +961,11 @@ msgstr "복사"
 msgid "Copy app version, OS, and environment details for bug reports."
 msgstr "버그 보고를 위해 앱 버전, OS, 환경 정보를 복사합니다."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:791
+#: src/components/miniflux/EntryReadingHeader.tsx:806
 msgid "Copy article URL"
 msgstr "글 URL 복사"
 
-#: src/components/miniflux/SafeHtml.tsx:682
+#: src/components/miniflux/SafeHtml.tsx:718
 msgid "Copy code"
 msgstr "코드 복사"
 
@@ -987,11 +987,11 @@ msgstr "링크 복사"
 msgid "Copy message"
 msgstr "메시지 복사"
 
-#: src/components/miniflux/SafeHtml.tsx:686
+#: src/components/miniflux/SafeHtml.tsx:722
 msgid "Copy phrase text"
 msgstr "구문 텍스트 복사"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:807
+#: src/components/miniflux/EntryReadingHeader.tsx:822
 msgid "Copy share link"
 msgstr "공유 링크 복사"
 
@@ -1003,7 +1003,7 @@ msgstr "글 링크를 클립보드에 복사합니다"
 msgid "Copy this token now. It will not be shown again."
 msgstr "지금 이 토큰을 복사하세요. 다시 표시되지 않습니다."
 
-#: src/components/miniflux/SafeHtml.tsx:692
+#: src/components/miniflux/SafeHtml.tsx:728
 msgid "Copy translation"
 msgstr "번역 복사"
 
@@ -1189,8 +1189,8 @@ msgstr "DeepL"
 msgid "DeepSeek"
 msgstr "DeepSeek"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:190
-#: src/components/miniflux/EntryReadingHeader.tsx:200
+#: src/components/miniflux/EntryReadingHeader.tsx:205
+#: src/components/miniflux/EntryReadingHeader.tsx:215
 #: src/components/preferences/panes/ReaderPane.tsx:65
 #: src/lib/menu.ts:141
 msgid "Default"
@@ -1213,7 +1213,7 @@ msgstr "삭제"
 msgid "Delete account"
 msgstr "계정 삭제"
 
-#: src/components/miniflux/UserNav.tsx:100
+#: src/components/miniflux/UserNav.tsx:99
 #: src/lib/commands/account-commands.ts:23
 #: src/lib/commands/account-commands.ts:40
 #: src/lib/menu.ts:501
@@ -1221,18 +1221,18 @@ msgid "Delete Account"
 msgstr "계정 삭제"
 
 #. placeholder {0}: account.username
-#: src/components/miniflux/UserNav.tsx:86
+#: src/components/miniflux/UserNav.tsx:85
 msgid "Delete account \"{0}\" on {domain}? This is your only account. Deleting it will disconnect you completely."
 msgstr "{domain}의 계정 \"{0}\"을(를) 삭제하시겠습니까? 이것이 유일한 계정입니다. 삭제하면 완전히 연결이 해제됩니다."
 
 #. placeholder {0}: account.username
-#: src/components/miniflux/UserNav.tsx:94
+#: src/components/miniflux/UserNav.tsx:93
 msgid "Delete account \"{0}\" on {domain}? This will remove all saved credentials."
 msgstr "{domain}의 계정 \"{0}\"을(를) 삭제하시겠습니까? 저장된 모든 자격 증명이 삭제됩니다."
 
 #. placeholder {0}: account.username
 #. placeholder {1}: nextAccount.username
-#: src/components/miniflux/UserNav.tsx:90
+#: src/components/miniflux/UserNav.tsx:89
 msgid "Delete account \"{0}\" on {domain}? You are currently connected to this account. You'll be switched to \"{1}\" automatically."
 msgstr "{domain}의 계정 \"{0}\"을(를) 삭제하시겠습니까? 현재 이 계정에 연결되어 있습니다. 자동으로 \"{1}\"로 전환됩니다."
 
@@ -1315,7 +1315,7 @@ msgstr "비활성화됨"
 msgid "Dismiss Player"
 msgstr "플레이어 닫기"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:496
+#: src/components/miniflux/EntryReadingHeader.tsx:511
 msgid "Display mode"
 msgstr "표시 모드"
 
@@ -1365,7 +1365,7 @@ msgstr "다운로드 완료"
 msgid "Download Failed"
 msgstr "다운로드 실패"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:269
+#: src/components/miniflux/EntryReadingHeader.tsx:284
 msgid "Download original content"
 msgstr "원본 콘텐츠 다운로드"
 
@@ -1498,12 +1498,12 @@ msgstr "엔진"
 msgid "Engine first"
 msgstr "엔진 우선"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:167
+#: src/components/miniflux/EntryReadingHeader.tsx:182
 #: src/components/preferences/panes/TranslationPane.tsx:1729
 msgid "English"
 msgstr "영어"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:650
+#: src/components/miniflux/EntryReadingHeader.tsx:665
 msgid "English only"
 msgstr "영어만"
 
@@ -1557,7 +1557,7 @@ msgid "Entry not found"
 msgstr "항목을 찾을 수 없습니다"
 
 #: src/components/miniflux/EntryReading.tsx:619
-#: src/components/miniflux/EntryReadingHeader.tsx:259
+#: src/components/miniflux/EntryReadingHeader.tsx:274
 msgid "Entry sent to services"
 msgstr "항목이 서비스로 전송되었습니다"
 
@@ -1712,8 +1712,8 @@ msgstr "피드 생성에 실패했습니다"
 msgid "Failed to create user"
 msgstr "사용자 생성에 실패했습니다"
 
-#: src/components/miniflux/UserNav.tsx:115
-#: src/components/miniflux/UserNav.tsx:119
+#: src/components/miniflux/UserNav.tsx:114
+#: src/components/miniflux/UserNav.tsx:118
 msgid "Failed to delete account"
 msgstr "계정 삭제에 실패했습니다"
 
@@ -1846,8 +1846,8 @@ msgstr "다운로드 재개에 실패했습니다"
 
 #: src/components/miniflux/EntryReading.tsx:616
 #: src/components/miniflux/EntryReading.tsx:622
-#: src/components/miniflux/EntryReadingHeader.tsx:255
-#: src/components/miniflux/EntryReadingHeader.tsx:262
+#: src/components/miniflux/EntryReadingHeader.tsx:270
+#: src/components/miniflux/EntryReadingHeader.tsx:277
 msgid "Failed to save entry"
 msgstr "항목 저장에 실패했습니다"
 
@@ -2060,7 +2060,7 @@ msgstr "원본 콘텐츠 가져오기"
 msgid "Fetch via proxy"
 msgstr "프록시를 통해 가져오기"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:270
+#: src/components/miniflux/EntryReadingHeader.tsx:285
 msgid "Fetching original content..."
 msgstr "원본 콘텐츠를 가져오는 중..."
 
@@ -2088,8 +2088,8 @@ msgstr "히스토리 비우기"
 msgid "Flush History"
 msgstr "히스토리 비우기"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:569
-#: src/components/miniflux/EntryReadingHeader.tsx:576
+#: src/components/miniflux/EntryReadingHeader.tsx:584
+#: src/components/miniflux/EntryReadingHeader.tsx:591
 msgid "Focus mode"
 msgstr "집중 모드"
 
@@ -2115,7 +2115,7 @@ msgstr "글꼴 크기"
 msgid "Found sources"
 msgstr "발견된 소스"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:173
+#: src/components/miniflux/EntryReadingHeader.tsx:188
 #: src/components/preferences/panes/TranslationPane.tsx:1735
 msgid "French"
 msgstr "프랑스어"
@@ -2160,7 +2160,7 @@ msgstr "요약 생성 중..."
 msgid "Georgia"
 msgstr "Georgia"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:174
+#: src/components/miniflux/EntryReadingHeader.tsx:189
 #: src/components/preferences/panes/TranslationPane.tsx:1736
 msgid "German"
 msgstr "독일어"
@@ -2315,7 +2315,7 @@ msgstr "대기 중"
 msgid "Ignore HTTP cache"
 msgstr "HTTP 캐시 무시"
 
-#: src/components/miniflux/SafeHtml.tsx:695
+#: src/components/miniflux/SafeHtml.tsx:731
 msgid "Image"
 msgstr "이미지"
 
@@ -2431,7 +2431,7 @@ msgstr "연동"
 msgid "Interrupted — app was closed"
 msgstr "중단됨 — 앱이 닫혔습니다"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:170
+#: src/components/miniflux/EntryReadingHeader.tsx:185
 #: src/components/preferences/panes/TranslationPane.tsx:1732
 msgid "Japanese"
 msgstr "일본어"
@@ -2450,12 +2450,12 @@ msgstr "유지 목록 규칙"
 msgid "Kimi"
 msgstr "Kimi"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:171
+#: src/components/miniflux/EntryReadingHeader.tsx:186
 #: src/components/preferences/panes/TranslationPane.tsx:1733
 msgid "Korean"
 msgstr "한국어"
 
-#: src/components/miniflux/SafeHtml.tsx:694
+#: src/components/miniflux/SafeHtml.tsx:730
 #: src/components/miniflux/UserNav.tsx:285
 #: src/components/preferences/panes/AppearancePane.tsx:85
 #: src/components/preferences/panes/AppearancePane.tsx:87
@@ -2553,7 +2553,7 @@ msgid "Loading version information..."
 msgstr "버전 정보를 불러오는 중..."
 
 #: src/components/layout/AppSidebar.tsx:601
-#: src/components/miniflux/EntryReadingHeader.tsx:273
+#: src/components/miniflux/EntryReadingHeader.tsx:288
 #: src/components/miniflux/MinifluxLayout.tsx:333
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PodcastPlayer.tsx:574
@@ -2604,8 +2604,8 @@ msgstr "모두 읽음으로 표시"
 #: src/components/layout/AppSidebar.tsx:184
 #: src/components/layout/AppSidebar.tsx:380
 #: src/components/miniflux/EntryReading.tsx:1588
-#: src/components/miniflux/EntryReadingHeader.tsx:685
-#: src/components/miniflux/EntryReadingHeader.tsx:704
+#: src/components/miniflux/EntryReadingHeader.tsx:700
+#: src/components/miniflux/EntryReadingHeader.tsx:719
 #: src/components/preferences/panes/CategoriesPane.tsx:84
 #: src/components/preferences/PreferencesDialog.tsx:368
 msgid "Mark as read"
@@ -2617,8 +2617,8 @@ msgid "Mark as Read/Unread"
 msgstr "읽음/안 읽음으로 표시"
 
 #: src/components/miniflux/EntryReading.tsx:1588
-#: src/components/miniflux/EntryReadingHeader.tsx:685
-#: src/components/miniflux/EntryReadingHeader.tsx:704
+#: src/components/miniflux/EntryReadingHeader.tsx:700
+#: src/components/miniflux/EntryReadingHeader.tsx:719
 msgid "Mark as unread"
 msgstr "안 읽음으로 표시"
 
@@ -2647,7 +2647,7 @@ msgstr "글 텍스트의 최대 너비(문자 수, 45-80)"
 msgid "Microsoft Translator"
 msgstr "Microsoft 번역기"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:899
+#: src/components/miniflux/EntryReadingHeader.tsx:916
 msgid "min read"
 msgstr "분 소요"
 
@@ -2724,7 +2724,7 @@ msgstr "현대적인 Rust 기반 데스크톱 프레임워크"
 msgid "Monospace"
 msgstr "고정폭"
 
-#: src/components/ui/breadcrumb.tsx:91
+#: src/components/ui/breadcrumb.tsx:106
 msgid "More"
 msgstr "더 보기"
 
@@ -2821,8 +2821,8 @@ msgstr "다음 글"
 msgid "Next Article"
 msgstr "다음 글"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:365
-#: src/components/miniflux/EntryReadingHeader.tsx:371
+#: src/components/miniflux/EntryReadingHeader.tsx:380
+#: src/components/miniflux/EntryReadingHeader.tsx:386
 msgid "Next entry (j or →)"
 msgstr "다음 항목 (j 또는 →)"
 
@@ -2908,9 +2908,9 @@ msgstr "피드를 찾을 수 없습니다"
 msgid "No feeds yet"
 msgstr "피드가 없습니다"
 
-#: src/components/miniflux/ReaderSettings.tsx:466
-msgid "No fonts found."
-msgstr "글꼴을 찾을 수 없습니다."
+#: src/components/miniflux/ReaderSettings.tsx:471
+#~ msgid "No fonts found."
+#~ msgstr "글꼴을 찾을 수 없습니다."
 
 #: src/components/preferences/panes/IntegrationsPane.tsx:306
 msgid "No integration services enabled"
@@ -2975,7 +2975,7 @@ msgstr "재생 중인 항목 없음"
 msgid "of"
 msgstr "/"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:161
+#: src/components/miniflux/EntryReadingHeader.tsx:176
 msgid "Off"
 msgstr "끄기"
 
@@ -2992,7 +2992,7 @@ msgstr "오프라인 모드"
 msgid "OK"
 msgstr "확인"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:198
+#: src/components/miniflux/EntryReadingHeader.tsx:213
 #: src/components/preferences/panes/ReaderPane.tsx:69
 #: src/lib/menu.ts:161
 msgid "OLED"
@@ -3023,7 +3023,7 @@ msgstr "앱 내 브라우저에서 열기"
 msgid "Open in App Browser"
 msgstr "앱 내 브라우저에서 열기"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:817
+#: src/components/miniflux/EntryReadingHeader.tsx:832
 #: src/components/miniflux/InAppBrowserPane.tsx:206
 #: src/components/miniflux/InAppBrowserPane.tsx:212
 #: src/lib/gesture-actions.ts:20
@@ -3121,7 +3121,7 @@ msgstr "타임아웃 (선택 사항)"
 msgid "Optional. Leave empty for local Ollama. Required for the Ollama cloud API (ollama.com)."
 msgstr "선택 사항입니다. 로컬 Ollama는 비워 두세요. Ollama 클라우드 API(ollama.com)에는 필수입니다."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:271
+#: src/components/miniflux/EntryReadingHeader.tsx:286
 #: src/services/miniflux/entries.ts:544
 msgid "Original content downloaded"
 msgstr "원본 콘텐츠가 다운로드되었습니다"
@@ -3148,7 +3148,7 @@ msgstr "기본 번역 지침을 재정의합니다. {source_lang} 및 {target_la
 msgid "Page {0} of {1}"
 msgstr "{1}페이지 중 {0}페이지"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:192
+#: src/components/miniflux/EntryReadingHeader.tsx:207
 #: src/components/preferences/panes/ReaderPane.tsx:66
 #: src/lib/menu.ts:146
 msgid "Paper"
@@ -3181,7 +3181,7 @@ msgid "Paste new API token"
 msgstr "새 API 토큰 붙여넣기"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:815
-#: src/components/miniflux/EntryReadingHeader.tsx:275
+#: src/components/miniflux/EntryReadingHeader.tsx:290
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PodcastPlayer.tsx:576
 #: src/pages/TrayPopover.tsx:226
@@ -3200,13 +3200,13 @@ msgstr "일시 중지됨"
 msgid "Permanently deletes everything — all accounts, synced data, preferences, downloads, and credentials. This cannot be undone."
 msgstr "모든 항목을 영구 삭제합니다 — 계정, 동기화 데이터, 설정, 다운로드, 자격 증명 전부 포함. 되돌릴 수 없습니다."
 
-#: src/components/miniflux/SafeHtml.tsx:683
+#: src/components/miniflux/SafeHtml.tsx:719
 msgid "Phrase"
 msgstr "구문"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:800
 #: src/components/miniflux/EntryList.tsx:724
-#: src/components/miniflux/EntryReadingHeader.tsx:276
+#: src/components/miniflux/EntryReadingHeader.tsx:291
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PlayerWindowQueue.tsx:102
 #: src/components/podcast/PodcastPlayer.tsx:577
@@ -3315,8 +3315,8 @@ msgstr "이전 글"
 msgid "Previous Article"
 msgstr "이전 글"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:346
-#: src/components/miniflux/EntryReadingHeader.tsx:352
+#: src/components/miniflux/EntryReadingHeader.tsx:361
+#: src/components/miniflux/EntryReadingHeader.tsx:367
 msgid "Previous entry (h or ←)"
 msgstr "이전 항목 (h 또는 ←)"
 
@@ -3324,7 +3324,7 @@ msgstr "이전 항목 (h 또는 ←)"
 msgid "Previous section"
 msgstr "이전 섹션"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:520
+#: src/components/miniflux/EntryReadingHeader.tsx:535
 #: src/components/preferences/panes/TranslationPane.tsx:1763
 msgid "Provider"
 msgstr "제공자"
@@ -3472,8 +3472,8 @@ msgstr "리더 타이포그래피 설정"
 msgid "Reading"
 msgstr "읽기"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:587
-#: src/components/miniflux/EntryReadingHeader.tsx:600
+#: src/components/miniflux/EntryReadingHeader.tsx:602
+#: src/components/miniflux/EntryReadingHeader.tsx:615
 msgid "Reading display"
 msgstr "읽기 화면"
 
@@ -3481,7 +3481,7 @@ msgstr "읽기 화면"
 msgid "Reading Features"
 msgstr "읽기 기능"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:628
+#: src/components/miniflux/EntryReadingHeader.tsx:643
 msgid "Reading theme"
 msgstr "읽기 테마"
 
@@ -3704,7 +3704,7 @@ msgstr "재시도"
 msgid "Retry failed"
 msgstr "재시도 실패"
 
-#: src/components/miniflux/SafeHtml.tsx:690
+#: src/components/miniflux/SafeHtml.tsx:726
 msgid "Retry translation"
 msgstr "번역 재시도"
 
@@ -3773,7 +3773,7 @@ msgid "Save Rules"
 msgstr "규칙 저장"
 
 #: src/components/miniflux/EntryReading.tsx:1668
-#: src/components/miniflux/EntryReadingHeader.tsx:832
+#: src/components/miniflux/EntryReadingHeader.tsx:847
 msgid "Save to services"
 msgstr "서비스에 저장"
 
@@ -3781,7 +3781,7 @@ msgstr "서비스에 저장"
 msgid "Save your current settings to a JSON file for backup or migration."
 msgstr "백업 또는 마이그레이션을 위해 현재 설정을 JSON 파일로 저장합니다."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:832
+#: src/components/miniflux/EntryReadingHeader.tsx:847
 msgid "Saved!"
 msgstr "저장됨!"
 
@@ -3857,7 +3857,7 @@ msgstr "제외할 피드 검색..."
 msgid "Search feeds..."
 msgstr "피드 검색..."
 
-#: src/components/miniflux/ReaderSettings.tsx:461
+#: src/components/miniflux/ReaderSettings.tsx:464
 msgid "Search fonts..."
 msgstr "글꼴 검색..."
 
@@ -3916,7 +3916,7 @@ msgstr "이미지 다운로드 폴더 선택"
 msgid "Select or enter server URL"
 msgstr "서버 URL 선택 또는 입력"
 
-#: src/components/miniflux/SafeHtml.tsx:685
+#: src/components/miniflux/SafeHtml.tsx:721
 msgid "Select phrase text"
 msgstr "구문 텍스트 선택"
 
@@ -3932,7 +3932,7 @@ msgstr "동영상 다운로드 폴더 선택"
 msgid "Sensitivity"
 msgstr "감도"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:194
+#: src/components/miniflux/EntryReadingHeader.tsx:209
 #: src/components/preferences/panes/ReaderPane.tsx:67
 #: src/lib/menu.ts:151
 msgid "Sepia"
@@ -3990,11 +3990,11 @@ msgstr "설정"
 msgid "shadcn/ui"
 msgstr "shadcn/ui"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:770
+#: src/components/miniflux/EntryReadingHeader.tsx:785
 msgid "Share"
 msgstr "공유"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:807
+#: src/components/miniflux/EntryReadingHeader.tsx:822
 msgid "Share link copied!"
 msgstr "공유 링크가 복사되었습니다!"
 
@@ -4053,7 +4053,7 @@ msgstr "번역과 함께 원문을 표시합니다"
 msgid "Show playlist"
 msgstr "재생목록 표시"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:663
+#: src/components/miniflux/EntryReadingHeader.tsx:678
 msgid "Show reading progress at bottom-left"
 msgstr "왼쪽 하단에 읽기 진행률 표시"
 
@@ -4127,7 +4127,7 @@ msgstr "이 카테고리 건너뛰기"
 msgid "Skip this feed"
 msgstr "이 피드 건너뛰기"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:196
+#: src/components/miniflux/EntryReadingHeader.tsx:211
 #: src/components/preferences/panes/ReaderPane.tsx:68
 #: src/lib/menu.ts:156
 msgid "Slate"
@@ -4156,7 +4156,7 @@ msgstr "소스 URL은 필수입니다"
 msgid "Spacing between lines of text (1.4-2.2)"
 msgstr "텍스트 줄 간격 (1.4-2.2)"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:172
+#: src/components/miniflux/EntryReadingHeader.tsx:187
 #: src/components/preferences/panes/TranslationPane.tsx:1734
 msgid "Spanish"
 msgstr "스페인어"
@@ -4166,8 +4166,8 @@ msgid "Stack Trace"
 msgstr "스택 트레이스"
 
 #: src/components/miniflux/EntryReading.tsx:1439
-#: src/components/miniflux/EntryReadingHeader.tsx:716
-#: src/components/miniflux/EntryReadingHeader.tsx:722
+#: src/components/miniflux/EntryReadingHeader.tsx:731
+#: src/components/miniflux/EntryReadingHeader.tsx:737
 msgid "Star"
 msgstr "즐겨찾기"
 
@@ -4212,7 +4212,7 @@ msgstr "시작 중"
 msgid "Status"
 msgstr "상태"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:661
+#: src/components/miniflux/EntryReadingHeader.tsx:676
 #: src/components/preferences/panes/ReaderPane.tsx:414
 msgid "Status Bar"
 msgstr "상태 표시줄"
@@ -4273,14 +4273,14 @@ msgstr "글 요약"
 msgid "Summarize Article"
 msgstr "글 요약"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:392
-#: src/components/miniflux/EntryReadingHeader.tsx:409
+#: src/components/miniflux/EntryReadingHeader.tsx:407
+#: src/components/miniflux/EntryReadingHeader.tsx:424
 #: src/lib/commands/article-commands.ts:112
 #: src/lib/menu.ts:244
 msgid "Summarize with AI"
 msgstr "AI로 요약"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:409
+#: src/components/miniflux/EntryReadingHeader.tsx:424
 msgid "Summarizing..."
 msgstr "요약 중..."
 
@@ -4432,7 +4432,7 @@ msgstr "시스템 UI"
 msgid "TanStack"
 msgstr "TanStack"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:477
+#: src/components/miniflux/EntryReadingHeader.tsx:492
 #: src/components/preferences/panes/TranslationPane.tsx:1717
 msgid "Target language"
 msgstr "대상 언어"
@@ -4657,7 +4657,7 @@ msgstr "젠 모드 전환"
 msgid "Token copied to clipboard"
 msgstr "토큰이 클립보드에 복사되었습니다"
 
-#: src/components/miniflux/SafeHtml.tsx:689
+#: src/components/miniflux/SafeHtml.tsx:725
 msgid "Top bar"
 msgstr "상단 바"
 
@@ -4675,8 +4675,8 @@ msgstr "추적"
 msgid "Translate Article"
 msgstr "글 번역"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:464
-#: src/components/miniflux/EntryReadingHeader.tsx:472
+#: src/components/miniflux/EntryReadingHeader.tsx:479
+#: src/components/miniflux/EntryReadingHeader.tsx:487
 msgid "Translate now"
 msgstr "지금 번역"
 
@@ -4684,31 +4684,31 @@ msgstr "지금 번역"
 msgid "Translate selection"
 msgstr "선택 항목 번역"
 
-#: src/components/miniflux/SafeHtml.tsx:688
+#: src/components/miniflux/SafeHtml.tsx:724
 msgid "Translate this paragraph"
 msgstr "이 문단 번역"
 
-#: src/components/miniflux/SafeHtml.tsx:691
+#: src/components/miniflux/SafeHtml.tsx:727
 msgid "Translate with..."
 msgstr "다음으로 번역..."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:510
+#: src/components/miniflux/EntryReadingHeader.tsx:525
 msgid "Translated only"
 msgstr "번역만 표시"
 
 #: src/components/miniflux/EntryReading.tsx:1482
-#: src/components/miniflux/EntryReadingHeader.tsx:443
-#: src/components/miniflux/EntryReadingHeader.tsx:451
-#: src/components/miniflux/SafeHtml.tsx:684
+#: src/components/miniflux/EntryReadingHeader.tsx:458
+#: src/components/miniflux/EntryReadingHeader.tsx:466
+#: src/components/miniflux/SafeHtml.tsx:720
 #: src/components/preferences/panes/TranslationPane.tsx:1693
 msgid "Translation"
 msgstr "번역"
 
-#: src/components/miniflux/SafeHtml.tsx:687
+#: src/components/miniflux/SafeHtml.tsx:723
 msgid "Translation controls in top bar"
 msgstr "상단 바의 번역 컨트롤"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:457
+#: src/components/miniflux/EntryReadingHeader.tsx:472
 msgid "Translation disabled for this feed"
 msgstr "이 피드에서 번역이 비활성화되어 있습니다"
 
@@ -4718,11 +4718,11 @@ msgstr "번역 엔진"
 
 #: src/components/miniflux/ImmersiveTranslationLayer.tsx:811
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:270
-#: src/components/miniflux/SafeHtml.tsx:693
+#: src/components/miniflux/SafeHtml.tsx:729
 msgid "Translation failed"
 msgstr "번역 실패"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:429
+#: src/components/miniflux/EntryReadingHeader.tsx:444
 msgid "Translation options"
 msgstr "번역 옵션"
 
@@ -4813,8 +4813,8 @@ msgid "unread items"
 msgstr "안 읽은 항목"
 
 #: src/components/miniflux/EntryReading.tsx:1439
-#: src/components/miniflux/EntryReadingHeader.tsx:716
-#: src/components/miniflux/EntryReadingHeader.tsx:722
+#: src/components/miniflux/EntryReadingHeader.tsx:731
+#: src/components/miniflux/EntryReadingHeader.tsx:737
 msgid "Unstar"
 msgstr "즐겨찾기 해제"
 
@@ -4878,7 +4878,7 @@ msgstr "업데이트 v{0} 준비 완료"
 msgid "URL copied to clipboard"
 msgstr "URL이 클립보드에 복사되었습니다"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:791
+#: src/components/miniflux/EntryReadingHeader.tsx:806
 msgid "URL copied!"
 msgstr "URL이 복사되었습니다!"
 
@@ -5082,21 +5082,21 @@ msgstr "데이터가 자동으로 저장되었습니다."
 msgid "Zen Mode"
 msgstr "젠 모드"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:532
+#: src/components/miniflux/EntryReadingHeader.tsx:547
 msgid "中文顯示"
 msgstr "중국어 표시"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:164
+#: src/components/miniflux/EntryReadingHeader.tsx:179
 #: src/components/preferences/panes/TranslationPane.tsx:1984
 msgid "簡體中文"
 msgstr "중국어 간체"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:163
+#: src/components/miniflux/EntryReadingHeader.tsx:178
 #: src/components/preferences/panes/TranslationPane.tsx:1983
 msgid "繁體中文（台灣）"
 msgstr "중국어 번체 (대만)"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:162
+#: src/components/miniflux/EntryReadingHeader.tsx:177
 #: src/components/preferences/panes/TranslationPane.tsx:1982
 msgid "繁體中文（香港）"
 msgstr "중국어 번체 (홍콩)"
