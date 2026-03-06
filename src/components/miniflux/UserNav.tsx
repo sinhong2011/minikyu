@@ -23,7 +23,6 @@ import {
   MenuTrigger,
 } from '@/components/animate-ui/components/base/menu';
 
-import { Badge } from '@/components/ui/badge';
 import { resetAccountState } from '@/lib/account-reset';
 import { logger } from '@/lib/logger';
 import type { MinifluxConnection } from '@/lib/tauri-bindings';
@@ -240,12 +239,13 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
               />
             </svg>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <div className="flex items-center gap-2">
+              <div className="flex items-center gap-1.5">
                 <span className="truncate font-semibold">{currentAccount.username}</span>
-                {!isUserLoading && !isUserError && currentUser?.is_admin && (
-                  <Badge variant="secondary" className="text-xs px-1.5 py-0">
-                    {_(msg`Admin`)}
-                  </Badge>
+                {currentAccount.is_admin && (
+                  <HugeiconsIcon
+                    icon={ShieldUserIcon}
+                    className="size-3.5 shrink-0 text-muted-foreground"
+                  />
                 )}
               </div>
               <span className="truncate text-xs text-muted-foreground">
@@ -308,7 +308,7 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
             >
               <div className="flex items-center gap-2 overflow-hidden">
                 <HugeiconsIcon
-                  icon={UserCircleIcon}
+                  icon={account.is_admin ? ShieldUserIcon : UserCircleIcon}
                   className="size-4 shrink-0 text-muted-foreground"
                 />
                 <div className="flex flex-col gap-0.5 overflow-hidden">

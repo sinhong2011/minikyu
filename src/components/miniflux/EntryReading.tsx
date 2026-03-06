@@ -805,6 +805,14 @@ export function EntryReading({
         e.preventDefault();
         const amount = viewport.clientHeight * 0.8;
         animateViewportScrollTo(viewport, viewport.scrollTop - amount);
+      } else if (match('scroll-line-down', e)) {
+        if (!viewport) return;
+        e.preventDefault();
+        animateViewportScrollTo(viewport, viewport.scrollTop + 80);
+      } else if (match('scroll-line-up', e)) {
+        if (!viewport) return;
+        e.preventDefault();
+        animateViewportScrollTo(viewport, viewport.scrollTop - 80);
       }
       // Reading — typography
       else if (match('increase-line-height', e)) {
@@ -901,8 +909,8 @@ export function EntryReading({
       }
     };
 
-    window.addEventListener('keydown', handleKeyDown);
-    return () => window.removeEventListener('keydown', handleKeyDown);
+    window.addEventListener('keydown', handleKeyDown, true);
+    return () => window.removeEventListener('keydown', handleKeyDown, true);
   }, [
     animateViewportScrollTo,
     fontSize,

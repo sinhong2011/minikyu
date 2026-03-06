@@ -6,6 +6,7 @@ import {
   UserIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
+import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -18,7 +19,7 @@ interface SyncProgressPopoverProps {
   children: React.ReactElement;
 }
 
-type StageId = 'categories' | 'feeds' | 'entries' | 'cleanup';
+type StageId = 'categories' | 'feeds' | 'entries';
 type StageStatus = 'active' | 'completed' | 'pending' | 'error';
 type EntryProgress = { pulled: number; total: number; percentage: number };
 
@@ -30,7 +31,7 @@ interface SyncStageDefinition {
   progress?: EntryProgress;
 }
 
-const stageOrder: StageId[] = ['categories', 'feeds', 'entries', 'cleanup'];
+const stageOrder: StageId[] = ['categories', 'feeds', 'entries'];
 
 export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
   const { _ } = useLingui();
@@ -63,11 +64,6 @@ export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
       description: _(msg`Sync article content and metadata`),
       progress: entriesProgress,
     },
-    {
-      id: 'cleanup',
-      label: _(msg`Cleanup`),
-      description: _(msg`Clean up local items removed from server`),
-    },
   ];
 
   const getStageStatus = (stageId: StageId): StageStatus => {
@@ -81,10 +77,12 @@ export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
     if (currentStage === 'completed') return 'completed';
     if (currentStage === 'idle') return 'pending';
 
-    const currentIndex = stageOrder.indexOf(currentStage);
+    // Treat cleanup as entries still finalizing
+    const effectiveStage = currentStage === 'cleanup' ? 'entries' : currentStage;
+    const currentIndex = stageOrder.indexOf(effectiveStage as StageId);
     const stageIndex = stageOrder.indexOf(stageId);
 
-    if (currentStage === stageId) return 'active';
+    if (effectiveStage === stageId) return 'active';
     if (stageIndex < currentIndex) return 'completed';
     return 'pending';
   };
@@ -95,7 +93,10 @@ export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
       stage.progress &&
       (status === 'active' || status === 'completed')
     ) {
-      return _(msg`${stage.progress.pulled} / ${stage.progress.total} entries`);
+      if (status === 'active' && stage.progress.pulled < stage.progress.total) {
+        return _(msg`${stage.progress.pulled} / ${stage.progress.total} entries`);
+      }
+      return _(msg`${stage.progress.total} entries`);
     }
 
     if (
@@ -124,11 +125,13 @@ export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
     if (status === 'active') {
       if (stage.id === 'categories') return _(msg`Pulling category groups from server`);
       if (stage.id === 'feeds') return _(msg`Pulling feed subscriptions from server`);
+      if (stage.id === 'entries' && currentStage === 'cleanup') {
+        return _(msg`Cleaning up stale local records`);
+      }
       if (stage.id === 'entries' && stage.progress) {
         return _(msg`${stage.progress.pulled} of ${stage.progress.total} entries downloaded`);
       }
       if (stage.id === 'entries') return _(msg`Downloading recent entries from server`);
-      return _(msg`Removing stale local records`);
     }
 
     if (status === 'completed') {
@@ -141,7 +144,6 @@ export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
       if (stage.id === 'entries' && stage.progress) {
         return _(msg`${stage.progress.total} entries synced`);
       }
-      return _(msg`Cleanup complete`);
     }
 
     if (status === 'error') return _(msg`This step did not finish`);
@@ -153,7 +155,10 @@ export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
 
   const use24h = preferences?.time_format !== '12h';
   const formatSyncTime = (date: Date) =>
-    new Intl.DateTimeFormat(undefined, {
+    new Intl.DateTimeFormat(i18n.locale || undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
@@ -313,9 +318,7 @@ export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
           )}
 
           <div className="rounded-md border border-border/70 bg-muted/20 p-2 text-xs text-muted-foreground">
-            {_(
-              msg`Tip: "Categories" means folders, "Feeds" means subscriptions, and "Entries" means articles.`
-            )}
+            {_(msg`Categories are folders, Feeds are subscriptions, and Entries are articles.`)}
           </div>
         </div>
       </PopoverContent>

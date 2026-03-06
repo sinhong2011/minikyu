@@ -91,9 +91,9 @@ export const useSyncStore = create<SyncState>()(
               error: null,
               currentStage: status.lastSyncAt ? 'completed' : 'idle',
               lastSyncedAt: status.lastSyncAt ? new Date(status.lastSyncAt) : null,
-              categoriesCount: status.categoriesSynced || undefined,
-              feedsCount: status.feedsSynced || undefined,
-              entriesProgress: status.entriesSynced
+              categoriesCount: status.lastSyncAt ? status.categoriesSynced : undefined,
+              feedsCount: status.lastSyncAt ? status.feedsSynced : undefined,
+              entriesProgress: status.lastSyncAt
                 ? { pulled: status.entriesSynced, total: status.entriesSynced, percentage: 100 }
                 : undefined,
             },

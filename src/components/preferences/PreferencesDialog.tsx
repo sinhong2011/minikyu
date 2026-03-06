@@ -32,6 +32,7 @@ import { FeedCategoryDialogsHost } from '@/components/miniflux/settings/FeedCate
 import { MoveFeedDialog } from '@/components/miniflux/settings/MoveFeedDialog';
 import { useMinifluxSettingsDialogStore } from '@/components/miniflux/settings/store';
 import { UserFormDialog } from '@/components/miniflux/settings/UserFormDialog';
+import { Badge } from '@/components/ui/badge';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -72,6 +73,7 @@ import {
   useRefreshAllFeeds,
   useUpdateMinifluxUser,
 } from '@/services/miniflux';
+import { useActiveAccount } from '@/services/miniflux/accounts';
 import { type PreferencesPane, useUIStore } from '@/store/ui-store';
 import { AboutPane } from './panes/AboutPane';
 import { AdvancedPane } from './panes/AdvancedPane';
@@ -175,6 +177,16 @@ export function PreferencesDialog() {
   const setPreferencesActivePane = useUIStore((state) => state.setPreferencesActivePane);
   const { data: isConnected } = useIsConnected();
   const { data: currentUser } = useCurrentUser();
+  const { data: activeAccount } = useActiveAccount();
+
+  const serverDomain = React.useMemo(() => {
+    if (!activeAccount?.server_url) return null;
+    try {
+      return new URL(activeAccount.server_url).hostname;
+    } catch {
+      return activeAccount.server_url;
+    }
+  }, [activeAccount?.server_url]);
 
   // Miniflux data fetching
   const { data: categories = [] } = useCategories(isConnected);
@@ -474,7 +486,14 @@ export function PreferencesDialog() {
               {/* Server Settings Section */}
               {isConnected && (
                 <SidebarGroup>
-                  <SidebarGroupLabel>{_(msg`Server Settings`)}</SidebarGroupLabel>
+                  <SidebarGroupLabel className="gap-1.5">
+                    {_(msg`Server`)}
+                    {serverDomain && (
+                      <Badge variant="secondary" className="h-4 px-1.5 text-[10px] font-normal">
+                        {serverDomain}
+                      </Badge>
+                    )}
+                  </SidebarGroupLabel>
                   <SidebarGroupContent>
                     <SidebarMenu className="gap-1">
                       {serverSettingsItems
@@ -543,8 +562,13 @@ export function PreferencesDialog() {
                 {/* Server Settings */}
                 {isConnected && (
                   <>
-                    <div className="text-xs font-semibold text-muted-foreground px-2 pt-2">
-                      {_(msg`Server Settings`)}
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground px-2 pt-2">
+                      {_(msg`Server`)}
+                      {serverDomain && (
+                        <Badge variant="secondary" className="h-4 px-1.5 text-[10px] font-normal">
+                          {serverDomain}
+                        </Badge>
+                      )}
                     </div>
                     <div className="grid grid-cols-2 gap-1">
                       {serverSettingsItems

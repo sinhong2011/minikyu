@@ -69,8 +69,17 @@ pub async fn miniflux_connect(
             {
                 let error_msg = format!("Failed to save credentials: {}", e);
                 log::error!("{}", error_msg);
-                // Don't return error here - authentication was successful, just log the issue
-                // The user can still use the app, just won't have credentials saved
+            }
+
+            // Update is_admin flag on the account
+            if let Some(pool) = state.db_pool.lock().await.as_ref() {
+                let _ = sqlx::query(
+                    "UPDATE miniflux_connections SET is_admin = ? WHERE username = ? AND is_active = 1",
+                )
+                .bind(user.is_admin)
+                .bind(&user.username)
+                .execute(pool)
+                .await;
             }
 
             // Emit after account is saved so the frontend sync doesn't

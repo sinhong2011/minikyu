@@ -30,6 +30,8 @@ describe('account-store', () => {
         // biome-ignore lint/style/useNamingConvention: API response format
         is_active: true,
         // biome-ignore lint/style/useNamingConvention: API response format
+        is_admin: false,
+        // biome-ignore lint/style/useNamingConvention: API response format
         created_at: '2025-01-01',
         // biome-ignore lint/style/useNamingConvention: API response format
         updated_at: '2025-01-01',
@@ -43,6 +45,8 @@ describe('account-store', () => {
         auth_method: 'password',
         // biome-ignore lint/style/useNamingConvention: API response format
         is_active: false,
+        // biome-ignore lint/style/useNamingConvention: API response format
+        is_admin: false,
         // biome-ignore lint/style/useNamingConvention: API response format
         created_at: '2025-01-02',
         // biome-ignore lint/style/useNamingConvention: API response format
@@ -75,6 +79,8 @@ describe('account-store', () => {
       // biome-ignore lint/style/useNamingConvention: API response format
       is_active: false,
       // biome-ignore lint/style/useNamingConvention: API response format
+      is_admin: false,
+      // biome-ignore lint/style/useNamingConvention: API response format
       created_at: '2025-01-03',
       // biome-ignore lint/style/useNamingConvention: API response format
       updated_at: '2025-01-03',
@@ -99,6 +105,8 @@ describe('account-store', () => {
         // biome-ignore lint/style/useNamingConvention: API response format
         is_active: true,
         // biome-ignore lint/style/useNamingConvention: API response format
+        is_admin: false,
+        // biome-ignore lint/style/useNamingConvention: API response format
         created_at: '2025-01-01',
         // biome-ignore lint/style/useNamingConvention: API response format
         updated_at: '2025-01-01',
@@ -112,6 +120,8 @@ describe('account-store', () => {
         auth_method: 'password',
         // biome-ignore lint/style/useNamingConvention: API response format
         is_active: false,
+        // biome-ignore lint/style/useNamingConvention: API response format
+        is_admin: false,
         // biome-ignore lint/style/useNamingConvention: API response format
         created_at: '2025-01-02',
         // biome-ignore lint/style/useNamingConvention: API response format
@@ -143,6 +153,8 @@ describe('account-store', () => {
         auth_method: 'token',
         // biome-ignore lint/style/useNamingConvention: API response format
         is_active: true,
+        // biome-ignore lint/style/useNamingConvention: API response format
+        is_admin: false,
         // biome-ignore lint/style/useNamingConvention: API response format
         created_at: '2025-01-01',
         // biome-ignore lint/style/useNamingConvention: API response format

@@ -48,6 +48,8 @@ const mockAccounts = [
     // biome-ignore lint/style/useNamingConvention: API response format
     is_active: true,
     // biome-ignore lint/style/useNamingConvention: API response format
+    is_admin: true,
+    // biome-ignore lint/style/useNamingConvention: API response format
     auth_method: 'token',
     // biome-ignore lint/style/useNamingConvention: API response format
     created_at: '',
@@ -61,6 +63,8 @@ const mockAccounts = [
     server_url: 'https://server2.com',
     // biome-ignore lint/style/useNamingConvention: API response format
     is_active: false,
+    // biome-ignore lint/style/useNamingConvention: API response format
+    is_admin: false,
     // biome-ignore lint/style/useNamingConvention: API response format
     auth_method: 'token',
     // biome-ignore lint/style/useNamingConvention: API response format
