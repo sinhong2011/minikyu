@@ -9,7 +9,17 @@ import parse, {
   Element,
   type HTMLReactParserOptions,
 } from 'html-react-parser';
-import { createElement, useCallback, useEffect, useId, useMemo, useRef, useState } from 'react';
+import {
+  createElement,
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useId,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
   Menu,
   MenuGroup,
@@ -45,7 +55,9 @@ import {
 } from '@/lib/shiki-highlight';
 import type { ChineseConversionMode, ChineseConversionRule } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
-import { ImageViewer } from './ImageViewer';
+
+const ImageViewer = lazy(() => import('./ImageViewer').then((m) => ({ default: m.ImageViewer })));
+
 import { ParticleColumn } from './ParticleColumn';
 
 interface Image {
@@ -635,8 +647,29 @@ function applyBionicReadingToHtml(html: string): string {
   return doc.body.innerHTML;
 }
 
+// Strip text-align from inline styles and align attributes to prevent
+// RSS feed content from overriding the reader's prose layout
+function stripTextAlignStyles(sanitizedHtml: string): string {
+  if (typeof document === 'undefined') return sanitizedHtml;
+  const template = document.createElement('template');
+  // SAFE: input is already sanitized by DOMPurify above
+  template.innerHTML = sanitizedHtml;
+  for (const el of template.content.querySelectorAll<HTMLElement>('[style]')) {
+    if (el.style.textAlign) {
+      el.style.removeProperty('text-align');
+      if (!el.getAttribute('style')) {
+        el.removeAttribute('style');
+      }
+    }
+  }
+  for (const el of template.content.querySelectorAll<HTMLElement>('[align]')) {
+    el.removeAttribute('align');
+  }
+  return template.innerHTML;
+}
+
 export function sanitizeReaderHtml(html: string): string {
-  return DOMPurify.sanitize(html, {
+  const sanitized = DOMPurify.sanitize(html, {
     // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
     USE_PROFILES: { html: true },
     // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
@@ -649,7 +682,10 @@ export function sanitizeReaderHtml(html: string): string {
       'data-translation-segment-id',
       'data-testid',
     ],
+    // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
+    FORBID_TAGS: ['center'],
   });
+  return stripTextAlignStyles(sanitized);
 }
 
 export function SafeHtml({
@@ -1606,12 +1642,20 @@ export function SafeHtml({
     [customConversionRules]
   );
 
-  const chineseConvertedHtml = useMemo(() => {
-    return convertChineseHtml(
-      sanitizedHtml,
-      chineseConversionMode,
-      normalizedCustomConversionRules
+  const [chineseConvertedHtml, setChineseConvertedHtml] = useState(sanitizedHtml);
+
+  useEffect(() => {
+    let cancelled = false;
+    convertChineseHtml(sanitizedHtml, chineseConversionMode, normalizedCustomConversionRules).then(
+      (result) => {
+        if (!cancelled) {
+          setChineseConvertedHtml(result);
+        }
+      }
     );
+    return () => {
+      cancelled = true;
+    };
   }, [sanitizedHtml, chineseConversionMode, normalizedCustomConversionRules]);
 
   const displayHtml = useMemo(() => {
@@ -1629,18 +1673,22 @@ export function SafeHtml({
         {parsedHtml}
       </div>
 
-      <ImageViewer
-        images={viewerImages}
-        startIndex={viewerIndex}
-        open={showViewer}
-        onOpenChange={(open) => {
-          if (!open) {
-            closeImageViewer();
-          }
-        }}
-        onRequestClose={closeImageViewer}
-        onViewIndexChange={setViewerCurrentIndex}
-      />
+      {showViewer && (
+        <Suspense fallback={null}>
+          <ImageViewer
+            images={viewerImages}
+            startIndex={viewerIndex}
+            open={showViewer}
+            onOpenChange={(open) => {
+              if (!open) {
+                closeImageViewer();
+              }
+            }}
+            onRequestClose={closeImageViewer}
+            onViewIndexChange={setViewerCurrentIndex}
+          />
+        </Suspense>
+      )}
     </>
   );
 }
