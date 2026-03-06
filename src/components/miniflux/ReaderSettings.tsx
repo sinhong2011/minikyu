@@ -31,6 +31,7 @@ import { Slider } from '@/components/ui/slider';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import {
   getReaderFontStack,
+  isReaderFontFamily,
   normalizeReaderFontFamily,
   type ReaderFontFamily,
   readerFontFamilies,
@@ -455,6 +456,9 @@ export function ReaderSettings() {
                     setFontFamily(value);
                   }
                 }}
+                itemToStringLabel={(value) =>
+                  isReaderFontFamily(value) ? getFontLabel(value) : String(value)
+                }
                 disabled={isLoading}
               >
                 <ComboboxInput
