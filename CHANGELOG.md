@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.7.0](https://github.com/sinhong2011/minikyu/compare/v1.6.0...v1.7.0) (2026-03-06)
+
+
+### Features
+
+* Configurable gesture system, browser nav, and account fixes ([#56](https://github.com/sinhong2011/minikyu/issues/56)) ([93a39dd](https://github.com/sinhong2011/minikyu/commit/93a39ddbcf42500ec027e650d505581cf11eb4a5))
+
 ## [1.6.0](https://github.com/sinhong2011/minikyu/compare/v1.5.0...v1.6.0) (2026-03-05)
 
 
