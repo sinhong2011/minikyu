@@ -24,7 +24,7 @@ import { useLingui } from '@lingui/react';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
 import { parseISO } from 'date-fns';
 import { AnimatePresence, type MotionValue, motion } from 'motion/react';
-import { useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Switch } from '@/components/animate-ui/components/base/switch';
 import { FeedAvatar } from '@/components/miniflux/FeedAvatar';
@@ -47,6 +47,7 @@ import { Spinner } from '@/components/ui/spinner';
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import type { Entry } from '@/lib/bindings';
+import { convertChineseText, normalizeCustomConversionRules } from '@/lib/chinese-conversion';
 import { formatShortDate } from '@/lib/miniflux-utils';
 import { getPodcastEnclosure } from '@/lib/podcast-utils';
 import { normalizeReaderTheme, type ReaderTheme, readerThemeOptions } from '@/lib/reader-theme';
@@ -141,6 +142,7 @@ export function EntryReadingHeader({
   const { _, i18n } = useLingui();
   const {
     chineseConversionMode,
+    customConversionRules,
     bionicReading,
     codeTheme,
     readerTheme,
@@ -153,6 +155,19 @@ export function EntryReadingHeader({
     isLoading,
   } = useReaderSettings();
   const selectedReaderTheme = normalizeReaderTheme(readerTheme);
+
+  const [convertedTitle, setConvertedTitle] = useState(entry.title);
+  const normalizedRules = useMemo(
+    () => normalizeCustomConversionRules(customConversionRules),
+    [customConversionRules]
+  );
+  useEffect(() => {
+    if (chineseConversionMode === 'off' && normalizedRules.length === 0) {
+      setConvertedTitle(entry.title);
+      return;
+    }
+    convertChineseText(entry.title, chineseConversionMode, normalizedRules).then(setConvertedTitle);
+  }, [entry.title, chineseConversionMode, normalizedRules]);
 
   const conversionOptions: Array<{
     value: ChineseConversionMode;
@@ -294,7 +309,7 @@ export function EntryReadingHeader({
 
   return (
     <motion.header
-      className="sticky top-0 z-10 shrink-0 bg-gradient-to-b from-background/75 via-background/58 to-background/45 shadow-[0_10px_28px_-24px_hsl(var(--foreground)/0.65)] supports-[backdrop-filter]:bg-background/35 backdrop-blur-2xl"
+      className="sticky top-0 z-10 w-full min-w-0 max-w-full shrink-0 bg-gradient-to-b from-background/75 via-background/58 to-background/45 shadow-[0_10px_28px_-24px_hsl(var(--foreground)/0.65)] supports-[backdrop-filter]:bg-background/35 backdrop-blur-2xl"
       style={{
         paddingLeft: 24,
         paddingRight: 24,
@@ -841,7 +856,7 @@ export function EntryReadingHeader({
           className="overflow-hidden px-3"
           style={{ opacity: smallTitleOpacity, height: smallTitleHeight }}
         >
-          <h2 className="text-sm font-semibold truncate">{entry.title}</h2>
+          <h2 className="text-sm font-semibold truncate">{convertedTitle}</h2>
         </motion.div>
       </div>
 
@@ -855,14 +870,14 @@ export function EntryReadingHeader({
           originY: 0,
           overflow: 'hidden',
         }}
-        className="mt-1 flex items-start justify-between px-3"
+        className="mt-1 flex w-full min-w-0 items-start justify-between gap-3 px-3"
       >
-        <div className="flex flex-col flex-1 space-y-2.5 pb-2">
+        <div className="flex w-full min-w-0 flex-1 basis-0 flex-col space-y-2.5 pb-2">
           <a
             href={entry.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="hover:underline decoration-primary/50 underline-offset-4"
+            className="block min-w-0 max-w-full hover:underline decoration-primary/50 underline-offset-4 [overflow-wrap:anywhere]"
             onClick={(e) => {
               if (onOpenInAppBrowser) {
                 e.preventDefault();
@@ -870,9 +885,11 @@ export function EntryReadingHeader({
               }
             }}
           >
-            <h1 className="text-2xl font-bold leading-tight tracking-tight">{entry.title}</h1>
+            <h1 className="max-w-full text-2xl font-bold leading-tight tracking-tight break-words [overflow-wrap:anywhere]">
+              {convertedTitle}
+            </h1>
           </a>
-          <div className="flex items-center gap-2 text-[13px] text-muted-foreground">
+          <div className="flex min-w-0 flex-wrap items-center gap-2 text-[13px] text-muted-foreground">
             <FeedAvatar title={entry.feed.title} domain={entry.feed.site_url} className="size-5!" />
             <a
               href={entry.feed.site_url}

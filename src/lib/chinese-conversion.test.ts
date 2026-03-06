@@ -9,21 +9,21 @@ import {
 } from './chinese-conversion';
 
 describe('chinese-conversion', () => {
-  it('converts plain text with selected mode', () => {
-    const output = convertChineseText('汉语测试', 's2tw', []);
+  it('converts plain text with selected mode', async () => {
+    const output = await convertChineseText('汉语测试', 's2tw', []);
     expect(output).toBe('漢語測試');
   });
 
-  it('preserves style block content while converting html text nodes', () => {
+  it('preserves style block content while converting html text nodes', async () => {
     const input = '<style>.title::before{content:"汉语"}</style><div class="title">汉语测试</div>';
-    const output = convertChineseHtml(input, 's2tw', []);
+    const output = await convertChineseHtml(input, 's2tw', []);
 
     expect(output).toContain('<style>.title::before{content:"汉语"}</style>');
     expect(output).toContain('<div class="title">漢語測試</div>');
   });
 
-  it('applies custom rules after conversion', () => {
-    const output = convertChineseText('开放中文', 's2tw', [{ from: '開放', to: '开放' }]);
+  it('applies custom rules after conversion', async () => {
+    const output = await convertChineseText('开放中文', 's2tw', [{ from: '開放', to: '开放' }]);
     expect(output).toBe('开放中文');
   });
 
@@ -36,13 +36,13 @@ describe('chinese-conversion', () => {
     expect(first).toBe(second);
   });
 
-  it('returns original entry when conversion is off and no custom rules', () => {
+  it('returns original entry when conversion is off and no custom rules', async () => {
     const entry = {
       title: '汉语',
       content: '<p>汉语</p>',
     } as unknown as Entry;
 
-    const output = convertEntryChinese(entry, 'off', []);
+    const output = await convertEntryChinese(entry, 'off', []);
     expect(output).toBe(entry);
   });
 });
