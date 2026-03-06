@@ -294,7 +294,7 @@ export function EntryReadingHeader({
 
   return (
     <motion.header
-      className="sticky top-0 z-10 shrink-0 border-b border-border/50 bg-gradient-to-b from-background/75 via-background/58 to-background/45 shadow-[0_10px_28px_-24px_hsl(var(--foreground)/0.65)] supports-[backdrop-filter]:bg-background/35 backdrop-blur-2xl"
+      className="sticky top-0 z-10 shrink-0 bg-gradient-to-b from-background/75 via-background/58 to-background/45 shadow-[0_10px_28px_-24px_hsl(var(--foreground)/0.65)] supports-[backdrop-filter]:bg-background/35 backdrop-blur-2xl"
       style={{
         paddingLeft: 24,
         paddingRight: 24,

@@ -43,7 +43,7 @@ export function MainWindowContent({
           </ResizablePanel>
           <ResizableHandle withHandle />
           <ResizablePanel>
-            <div className="flex h-full flex-col border-l">
+            <div className="flex h-full flex-col">
               <AnimatePresence mode="sync">
                 {inAppBrowserUrl ? (
                   <motion.div

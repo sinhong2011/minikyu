@@ -201,7 +201,7 @@ export function EntryReading({
   const titleMaxHeight = useTransform(scrollY, [0, 100], [200, 0], { ease: easeOutCubic });
   const smallTitleOpacity = useTransform(scrollY, [60, 120], [0, 1], { ease: easeOutCubic });
   const smallTitleHeight = useTransform(scrollY, [60, 120], [0, 32], { ease: easeOutCubic });
-  const headerPadding = useTransform(scrollY, [0, 100], [14, 8], { ease: easeOutCubic });
+  const headerPadding = useTransform(scrollY, [0, 100], [8, 4], { ease: easeOutCubic });
   const readingContent = useMemo(
     () => buildEntryContentWithToc(entry?.content ?? ''),
     [entry?.content]
