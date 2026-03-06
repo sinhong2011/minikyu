@@ -216,13 +216,22 @@ describe('UserNav', () => {
     });
   });
 
-  it('displays admin badge when user is admin', async () => {
+  it('displays admin icon when user is admin', async () => {
+    // Override mock to include is_admin on the active account
+    const adminAccounts = mockAccounts.map((a) => (a.id === '1' ? { ...a, is_admin: true } : a));
+    vi.spyOn(accountsService, 'useActiveAccount').mockReturnValue({
+      data: adminAccounts[0],
+      isLoading: false,
+      isError: false,
+      accounts: adminAccounts,
+    } as any);
+
     customRender(<UserNav />);
 
     await waitFor(() => {
-      // Admin badge renders a shield icon inside a Badge, no text
-      const badges = document.querySelectorAll('[class*="badge"]');
-      expect(badges.length).toBeGreaterThan(0);
+      // Admin icon renders as an SVG inside the username row
+      const svgIcons = document.querySelectorAll('svg');
+      expect(svgIcons.length).toBeGreaterThan(0);
     });
   });
 

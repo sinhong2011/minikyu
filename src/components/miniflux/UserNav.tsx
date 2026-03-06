@@ -23,7 +23,6 @@ import {
   MenuTrigger,
 } from '@/components/animate-ui/components/base/menu';
 
-import { Badge } from '@/components/ui/badge';
 import { resetAccountState } from '@/lib/account-reset';
 import { logger } from '@/lib/logger';
 import type { MinifluxConnection } from '@/lib/tauri-bindings';
@@ -245,12 +244,13 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
             </svg>
             <div className="grid flex-1 text-left text-sm leading-tight">
               <div className="flex items-center gap-1.5">
-                <span className="truncate font-semibold">{currentAccount.username}</span>
                 {currentAccount.is_admin && (
-                  <Badge variant="secondary" className="px-1 py-0">
-                    <HugeiconsIcon icon={ShieldUserIcon} className="size-3 shrink-0" />
-                  </Badge>
+                  <HugeiconsIcon
+                    icon={ShieldUserIcon}
+                    className="size-3 shrink-0 text-muted-foreground"
+                  />
                 )}
+                <span className="truncate font-semibold">{currentAccount.username}</span>
               </div>
               <span className="truncate text-xs text-muted-foreground">
                 {getDomain(currentAccount.server_url)}
