@@ -492,7 +492,7 @@ export function EntryReadingHeader({
                       <p className="text-xs text-muted-foreground">{_(msg`Target language`)}</p>
                       <Select
                         value={translationTargetLanguage ?? 'en'}
-                        onValueChange={(value) => onTranslationTargetLanguageChange(value)}
+                        onValueChange={(value: string) => onTranslationTargetLanguageChange(value)}
                       >
                         <SelectTrigger className="h-8 w-full text-xs">
                           <SelectValue />
@@ -511,7 +511,7 @@ export function EntryReadingHeader({
                       <p className="text-xs text-muted-foreground">{_(msg`Display mode`)}</p>
                       <Select
                         value={translationDisplayMode}
-                        onValueChange={(value) =>
+                        onValueChange={(value: string) =>
                           onTranslationDisplayModeChange(
                             value as AppPreferences['reader_translation_display_mode']
                           )
@@ -547,7 +547,7 @@ export function EntryReadingHeader({
                   <p className="text-xs text-muted-foreground">{_(msg`中文顯示`)}</p>
                   <Select
                     value={chineseConversionMode}
-                    onValueChange={(value) =>
+                    onValueChange={(value: string) =>
                       setChineseConversionMode(value as ChineseConversionMode)
                     }
                     disabled={isLoading}
@@ -619,7 +619,7 @@ export function EntryReadingHeader({
                   <p className="text-xs text-muted-foreground">{_(msg`Code theme`)}</p>
                   <Select
                     value={codeTheme}
-                    onValueChange={(value) => {
+                    onValueChange={(value: string) => {
                       if ((readerCodeThemeOptions as readonly string[]).includes(value)) {
                         setCodeTheme(value as ReaderCodeTheme);
                       }
@@ -643,7 +643,7 @@ export function EntryReadingHeader({
                   <p className="text-xs text-muted-foreground">{_(msg`Reading theme`)}</p>
                   <Select
                     value={selectedReaderTheme}
-                    onValueChange={(value) => setReaderTheme(value)}
+                    onValueChange={(value: string) => setReaderTheme(value)}
                     disabled={isLoading}
                   >
                     <SelectTrigger className="h-8 w-full text-xs">

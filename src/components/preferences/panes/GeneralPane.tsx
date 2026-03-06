@@ -172,7 +172,7 @@ export function GeneralPane() {
         >
           <Select
             value={preferences?.close_behavior ?? 'minimize_to_tray'}
-            onValueChange={(value) => handleCloseBehaviorChange(value as CloseBehavior)}
+            onValueChange={(value: string) => handleCloseBehaviorChange(value as CloseBehavior)}
             disabled={!preferences || savePreferences.isPending}
           >
             <SelectTrigger className="w-full">
@@ -227,7 +227,9 @@ export function GeneralPane() {
         >
           <Select
             value={preferences?.player_display_mode ?? 'FloatingWindow'}
-            onValueChange={(value) => handlePlayerDisplayModeChange(value as PlayerDisplayMode)}
+            onValueChange={(value: string) =>
+              handlePlayerDisplayModeChange(value as PlayerDisplayMode)
+            }
             disabled={!preferences || savePreferences.isPending}
           >
             <SelectTrigger className="w-full">
