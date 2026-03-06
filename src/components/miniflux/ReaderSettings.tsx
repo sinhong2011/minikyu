@@ -13,7 +13,6 @@ import { Button } from '@/components/ui/button';
 import {
   Combobox,
   ComboboxContent,
-  ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
@@ -467,7 +466,6 @@ export function ReaderSettings() {
                 />
                 <ComboboxContent>
                   <ComboboxList>
-                    <ComboboxEmpty>{_(msg`No fonts found.`)}</ComboboxEmpty>
                     {readerFontFamilies.map((family) => (
                       <ComboboxItem key={family} value={family}>
                         <span className="flex flex-col items-start gap-0.5 leading-tight">
