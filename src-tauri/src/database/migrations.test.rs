@@ -69,10 +69,10 @@ mod tests {
             .await
             .unwrap();
 
-        // Should have exactly 7 migrations
+        // Should have exactly 9 migrations
         assert_eq!(
-            count, 7,
-            "Should have exactly 7 migration entries after running twice"
+            count, 9,
+            "Should have exactly 9 migration entries after running twice"
         );
     }
 
@@ -139,7 +139,7 @@ mod tests {
         .await
         .unwrap();
 
-        assert_eq!(columns.len(), 7, "Should have 7 columns");
+        assert_eq!(columns.len(), 8, "Should have 8 columns");
         assert_eq!(columns[0].0, "id", "First column should be id");
         assert_eq!(columns[0].1, "INTEGER", "id should be INTEGER type");
         assert_eq!(columns[1].0, "username", "Second column should be username");
@@ -169,6 +169,11 @@ mod tests {
             "Seventh column should be updated_at"
         );
         assert_eq!(columns[6].1, "TEXT", "updated_at should be TEXT type");
+        assert_eq!(
+            columns[7].0, "is_admin",
+            "Eighth column should be is_admin"
+        );
+        assert_eq!(columns[7].1, "INTEGER", "is_admin should be INTEGER type");
 
         // Verify migration was tracked
         let migrations: Vec<(i32, String)> =

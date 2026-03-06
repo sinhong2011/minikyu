@@ -23,7 +23,6 @@ import {
   MenuTrigger,
 } from '@/components/animate-ui/components/base/menu';
 
-import { Badge } from '@/components/ui/badge';
 import { resetAccountState } from '@/lib/account-reset';
 import { logger } from '@/lib/logger';
 import type { MinifluxConnection } from '@/lib/tauri-bindings';
@@ -105,7 +104,11 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
 
       const result = await commands.deleteMinifluxAccount(account.id);
       if (result.status === 'ok') {
-        await resetAccountState();
+        try {
+          await resetAccountState();
+        } catch (resetError) {
+          logger.warn('Reset after account delete had non-fatal errors:', { error: resetError });
+        }
         toast.success(_(msg`Account deleted successfully`));
       } else {
         toast.error(_(msg`Failed to delete account`));
@@ -240,13 +243,14 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
               />
             </svg>
             <div className="grid flex-1 text-left text-sm leading-tight">
-              <div className="flex items-center gap-2">
-                <span className="truncate font-semibold">{currentAccount.username}</span>
-                {!isUserLoading && !isUserError && currentUser?.is_admin && (
-                  <Badge variant="secondary" className="text-xs px-1.5 py-0">
-                    {_(msg`Admin`)}
-                  </Badge>
+              <div className="flex items-center gap-1.5">
+                {currentAccount.is_admin && (
+                  <HugeiconsIcon
+                    icon={ShieldUserIcon}
+                    className="size-3 shrink-0 text-muted-foreground"
+                  />
                 )}
+                <span className="truncate font-semibold">{currentAccount.username}</span>
               </div>
               <span className="truncate text-xs text-muted-foreground">
                 {getDomain(currentAccount.server_url)}
@@ -308,7 +312,7 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
             >
               <div className="flex items-center gap-2 overflow-hidden">
                 <HugeiconsIcon
-                  icon={UserCircleIcon}
+                  icon={account.is_admin ? ShieldUserIcon : UserCircleIcon}
                   className="size-4 shrink-0 text-muted-foreground"
                 />
                 <div className="flex flex-col gap-0.5 overflow-hidden">

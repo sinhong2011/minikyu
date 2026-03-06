@@ -1,4 +1,3 @@
-import { Converter } from 'opencc-js';
 import type { ChineseConversionMode, ChineseConversionRule, Entry } from '@/lib/tauri-bindings';
 
 type ConverterFn = (text: string) => string;
@@ -7,7 +6,7 @@ const SKIP_TEXT_NODE_TAGS = new Set(['STYLE', 'SCRIPT', 'CODE', 'PRE', 'TEXTAREA
 
 const converterCache = new Map<Exclude<ChineseConversionMode, 'off'>, ConverterFn>();
 
-function getConverter(mode: ChineseConversionMode): ConverterFn | null {
+async function getConverter(mode: ChineseConversionMode): Promise<ConverterFn | null> {
   if (mode === 'off') {
     return null;
   }
@@ -19,15 +18,21 @@ function getConverter(mode: ChineseConversionMode): ConverterFn | null {
 
   let converter: ConverterFn;
   switch (mode) {
-    case 's2tw':
+    case 's2tw': {
+      const { Converter } = await import('@willh/opencc-js/cn2t');
       converter = Converter({ from: 'cn', to: 'tw' });
       break;
-    case 's2hk':
+    }
+    case 's2hk': {
+      const { Converter } = await import('@willh/opencc-js/cn2t');
       converter = Converter({ from: 'cn', to: 'hk' });
       break;
-    case 't2s':
+    }
+    case 't2s': {
+      const { Converter } = await import('@willh/opencc-js/t2cn');
       converter = Converter({ from: 't', to: 'cn' });
       break;
+    }
     default:
       return null;
   }
@@ -60,12 +65,12 @@ function applyCustomRules(text: string, rules: ChineseConversionRule[]): string 
   return output;
 }
 
-export function convertChineseText(
+export async function convertChineseText(
   text: string,
   mode: ChineseConversionMode,
   rules: ChineseConversionRule[]
-): string {
-  const converter = getConverter(mode);
+): Promise<string> {
+  const converter = await getConverter(mode);
   const converted = converter ? converter(text) : text;
   return rules.length > 0 ? applyCustomRules(converted, rules) : converted;
 }
@@ -84,41 +89,42 @@ function shouldSkipTextNode(textNode: Text): boolean {
   return false;
 }
 
-export function convertChineseHtml(
+export async function convertChineseHtml(
   html: string,
   mode: ChineseConversionMode,
   rules: ChineseConversionRule[]
-): string {
+): Promise<string> {
   if (!html) return html;
   if (mode === 'off' && rules.length === 0) return html;
   if (typeof document === 'undefined') return html;
 
+  // Content is already sanitized by DOMPurify upstream in SafeHtml
   const template = document.createElement('template');
-  template.innerHTML = html;
+  template.innerHTML = html; // SAFE: pre-sanitized HTML
 
-  const walk = (node: Node) => {
+  const walk = async (node: Node): Promise<void> => {
     if (node.nodeType === 3) {
       const textNode = node as Text;
       if (!shouldSkipTextNode(textNode) && textNode.data.trim().length > 0) {
-        textNode.data = convertChineseText(textNode.data, mode, rules);
+        textNode.data = await convertChineseText(textNode.data, mode, rules);
       }
       return;
     }
 
     for (const child of Array.from(node.childNodes)) {
-      walk(child);
+      await walk(child);
     }
   };
 
-  walk(template.content);
-  return template.innerHTML;
+  await walk(template.content);
+  return template.innerHTML; // SAFE: pre-sanitized HTML
 }
 
-export function convertEntryChinese(
+export async function convertEntryChinese(
   entry: Entry,
   mode: ChineseConversionMode,
   customRules: ChineseConversionRule[] | undefined
-): Entry {
+): Promise<Entry> {
   const rules = normalizeCustomConversionRules(customRules);
   if (mode === 'off' && rules.length === 0) {
     return entry;
@@ -126,7 +132,7 @@ export function convertEntryChinese(
 
   return {
     ...entry,
-    title: convertChineseText(entry.title, mode, rules),
-    content: entry.content ? convertChineseHtml(entry.content, mode, rules) : entry.content,
+    title: await convertChineseText(entry.title, mode, rules),
+    content: entry.content ? await convertChineseHtml(entry.content, mode, rules) : entry.content,
   };
 }

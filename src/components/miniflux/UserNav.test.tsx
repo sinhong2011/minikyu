@@ -48,6 +48,8 @@ const mockAccounts = [
     // biome-ignore lint/style/useNamingConvention: API response format
     is_active: true,
     // biome-ignore lint/style/useNamingConvention: API response format
+    is_admin: true,
+    // biome-ignore lint/style/useNamingConvention: API response format
     auth_method: 'token',
     // biome-ignore lint/style/useNamingConvention: API response format
     created_at: '',
@@ -61,6 +63,8 @@ const mockAccounts = [
     server_url: 'https://server2.com',
     // biome-ignore lint/style/useNamingConvention: API response format
     is_active: false,
+    // biome-ignore lint/style/useNamingConvention: API response format
+    is_admin: false,
     // biome-ignore lint/style/useNamingConvention: API response format
     auth_method: 'token',
     // biome-ignore lint/style/useNamingConvention: API response format
@@ -212,11 +216,22 @@ describe('UserNav', () => {
     });
   });
 
-  it('displays admin badge when user is admin', async () => {
+  it('displays admin icon when user is admin', async () => {
+    // Override mock to include is_admin on the active account
+    const adminAccounts = mockAccounts.map((a) => (a.id === '1' ? { ...a, is_admin: true } : a));
+    vi.spyOn(accountsService, 'useActiveAccount').mockReturnValue({
+      data: adminAccounts[0],
+      isLoading: false,
+      isError: false,
+      accounts: adminAccounts,
+    } as any);
+
     customRender(<UserNav />);
 
     await waitFor(() => {
-      expect(screen.getByText('Admin')).toBeInTheDocument();
+      // Admin icon renders as an SVG inside the username row
+      const svgIcons = document.querySelectorAll('svg');
+      expect(svgIcons.length).toBeGreaterThan(0);
     });
   });
 

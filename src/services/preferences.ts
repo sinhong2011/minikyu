@@ -105,6 +105,16 @@ export function usePreferences() {
           sync_interval: 15,
           // biome-ignore lint/style/useNamingConvention: preferences field name
           auto_check_updates: true,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          gesture_swipe_left_action: 'open_in_app_browser',
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          gesture_swipe_right_action: 'close_browser',
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          gesture_pull_top_action: 'prev_article',
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          gesture_pull_bottom_action: 'next_article',
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          gesture_swipe_threshold: 250,
         };
       }
 

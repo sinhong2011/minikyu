@@ -222,7 +222,7 @@ export function DataTable<TData, TValue>({
               </p>
               <Select
                 value={`${table.getState().pagination.pageSize}`}
-                onValueChange={(value) => {
+                onValueChange={(value: string) => {
                   table.setPageSize(Number(value));
                 }}
               >

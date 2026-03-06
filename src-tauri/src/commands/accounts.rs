@@ -22,6 +22,7 @@ pub struct MinifluxConnection {
     pub server_url: String,
     pub auth_method: String,
     pub is_active: bool,
+    pub is_admin: bool,
     pub created_at: String,
     pub updated_at: String,
 }
@@ -196,7 +197,7 @@ pub async fn get_miniflux_accounts(
     log::info!("[get_miniflux_accounts] Database pool acquired, querying accounts");
 
     let accounts: Vec<MinifluxConnection> = sqlx::query_as(
-        "SELECT id, username, server_url, auth_method, is_active, created_at, updated_at
+        "SELECT id, username, server_url, auth_method, is_active, is_admin, created_at, updated_at
          FROM miniflux_connections
          ORDER BY created_at DESC",
     )
@@ -241,7 +242,7 @@ pub async fn get_active_miniflux_account(
         .clone();
 
     let account: Option<MinifluxConnection> = sqlx::query_as(
-        "SELECT id, username, server_url, auth_method, is_active, created_at, updated_at
+        "SELECT id, username, server_url, auth_method, is_active, is_admin, created_at, updated_at
          FROM miniflux_connections
          WHERE is_active = 1
          LIMIT 1",
@@ -336,17 +337,7 @@ async fn delete_miniflux_account_impl(pool: &SqlitePool, id: i64) -> Result<(), 
 
     log::debug!("Deleting account for username: {}", username);
 
-    sqlx::query("DELETE FROM miniflux_connections WHERE id = ?")
-        .bind(id)
-        .execute(pool)
-        .await?;
-
-    // Clean up per-account sync state
-    let _ = sqlx::query("DELETE FROM sync_state WHERE account_id = ?")
-        .bind(id)
-        .execute(pool)
-        .await;
-
+    // Delete keyring credentials first — if this fails, the DB row is untouched
     match delete_credentials(&server_url, &username).await {
         Ok(_) => {
             log::debug!("Deleted credentials from keyring");
@@ -359,6 +350,17 @@ async fn delete_miniflux_account_impl(pool: &SqlitePool, id: i64) -> Result<(), 
             return Err(e);
         }
     }
+
+    sqlx::query("DELETE FROM miniflux_connections WHERE id = ?")
+        .bind(id)
+        .execute(pool)
+        .await?;
+
+    // Clean up per-account sync state
+    let _ = sqlx::query("DELETE FROM sync_state WHERE account_id = ?")
+        .bind(id)
+        .execute(pool)
+        .await;
 
     log::info!("Successfully deleted account with ID: {}", id);
 

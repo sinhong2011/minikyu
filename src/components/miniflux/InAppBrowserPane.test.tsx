@@ -1,5 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { render, screen } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import type React from 'react';
@@ -8,6 +9,10 @@ import { describe, expect, it, vi } from 'vitest';
 vi.mock('@/lib/tauri-bindings', () => ({
   commands: {
     resizeBrowserWebview: vi.fn().mockResolvedValue(undefined),
+    browserGoBack: vi.fn().mockResolvedValue(undefined),
+    browserGoForward: vi.fn().mockResolvedValue(undefined),
+    reloadBrowserWebview: vi.fn().mockResolvedValue(undefined),
+    loadPreferences: vi.fn().mockResolvedValue({ status: 'ok', data: {} }),
   },
 }));
 
@@ -24,11 +29,19 @@ globalThis.ResizeObserver = ResizeObserverMock as unknown as typeof ResizeObserv
 
 import { InAppBrowserPane } from './InAppBrowserPane';
 
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: { retry: false },
+  },
+});
+
 function renderPane(props: React.ComponentProps<typeof InAppBrowserPane>) {
   return render(
-    <I18nProvider i18n={i18n}>
-      <InAppBrowserPane {...props} />
-    </I18nProvider>
+    <QueryClientProvider client={queryClient}>
+      <I18nProvider i18n={i18n}>
+        <InAppBrowserPane {...props} />
+      </I18nProvider>
+    </QueryClientProvider>
   );
 }
 

@@ -58,6 +58,8 @@ export const SHORTCUT_ACTIONS: ShortcutAction[] = [
   // Reading
   { id: 'scroll-down', defaultKey: 'Space', group: 'reading', label: msg`Scroll page` },
   { id: 'scroll-up', defaultKey: 'shift+Space', group: 'reading', label: msg`Scroll page up` },
+  { id: 'scroll-line-down', defaultKey: 'ArrowDown', group: 'reading', label: msg`Scroll down` },
+  { id: 'scroll-line-up', defaultKey: 'ArrowUp', group: 'reading', label: msg`Scroll up` },
   { id: 'increase-font', defaultKey: '=', group: 'reading', label: msg`Increase font size` },
   { id: 'decrease-font', defaultKey: '-', group: 'reading', label: msg`Decrease font size` },
   { id: 'widen-content', defaultKey: ']', group: 'reading', label: msg`Widen content` },

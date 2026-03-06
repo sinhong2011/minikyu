@@ -2,8 +2,7 @@ import { ArrowRight01Icon, MoreHorizontalIcon } from '@hugeicons/core-free-icons
 import { HugeiconsIcon } from '@hugeicons/react';
 import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { Slot } from '@radix-ui/react-slot';
-import type * as React from 'react';
+import { Children, cloneElement, isValidElement } from 'react';
 
 import { cn } from '@/lib/utils';
 
@@ -37,18 +36,34 @@ function BreadcrumbItem({ className, ...props }: React.ComponentProps<'li'>) {
 function BreadcrumbLink({
   asChild,
   className,
+  children,
   ...props
 }: React.ComponentProps<'a'> & {
   asChild?: boolean;
 }) {
-  const Comp = asChild ? Slot : 'a';
+  if (asChild) {
+    const child = Children.only(children);
+    if (isValidElement<Record<string, unknown>>(child)) {
+      return cloneElement(child, {
+        'data-slot': 'breadcrumb-link',
+        className: cn(
+          'hover:text-foreground transition-colors',
+          className,
+          child.props.className as string
+        ),
+        ...props,
+      });
+    }
+  }
 
   return (
-    <Comp
+    <a
       data-slot="breadcrumb-link"
       className={cn('hover:text-foreground transition-colors', className)}
       {...props}
-    />
+    >
+      {children}
+    </a>
   );
 }
 

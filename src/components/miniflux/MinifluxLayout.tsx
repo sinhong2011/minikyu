@@ -537,7 +537,7 @@ export function MinifluxLayout() {
       entryTransitionDirection={entryTransitionDirection}
     >
       <div className="flex flex-col h-full relative">
-        <div className="px-2.5 py-3 flex items-center justify-between border-b">
+        <div className="px-2.5 pt-2 pb-3 flex items-center justify-between">
           <div className="flex flex-col overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.h1
@@ -661,7 +661,7 @@ export function MinifluxLayout() {
               animate={{ height: 'auto', opacity: 1 }}
               exit={{ height: 0, opacity: 0 }}
               transition={{ duration: 0.2 }}
-              className="overflow-hidden border-b"
+              className="overflow-hidden"
             >
               <EntryFiltersUI
                 filters={mergedFilters}

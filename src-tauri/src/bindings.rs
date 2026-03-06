@@ -99,6 +99,8 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         in_app_browser::close_in_app_browser,
         in_app_browser::resize_browser_webview,
         in_app_browser::reload_browser_webview,
+        in_app_browser::browser_go_back,
+        in_app_browser::browser_go_forward,
         in_app_browser::sync_browser_theme,
         summarize::summarize_article,
         summarize::summarize_article_stream,

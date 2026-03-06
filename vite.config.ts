@@ -26,6 +26,10 @@ export default defineConfig(async () => ({
     lingui(),
     tailwindcss(),
   ],
+  css: {
+    transformer: 'lightningcss',
+    minifier: 'lightningcss',
+  },
   build: {
     chunkSizeWarningLimit: 600, // Prevent warnings for template's bundled components
     rollupOptions: {
@@ -34,6 +38,14 @@ export default defineConfig(async () => ({
         'quick-pane': resolve(__dirname, 'quick-pane.html'),
         'player-window': resolve(__dirname, 'player-window.html'),
         'tray-popover': resolve(__dirname, 'tray-popover.html'),
+      },
+      output: {
+        manualChunks(id) {
+          if (id.includes('@base-ui/react')) return 'base-ui';
+          if (id.includes('@tanstack')) return 'tanstack';
+          if (id.includes('date-fns')) return 'date-fns';
+          if (id.includes('@dnd-kit')) return 'dnd-kit';
+        },
       },
     },
   },

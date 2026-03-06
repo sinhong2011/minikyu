@@ -8,7 +8,12 @@
 
 @layer base {
   * {
-    @apply border-border outline-ring/50;
+    @apply border-border outline-none ring-0;
+  }
+  *:focus,
+  *:focus-visible {
+    outline: none !important;
+    --tw-ring-shadow: 0 0 #0000 !important;
   }
   :where(*):not(.no-scrollbar) {
     scrollbar-width: thin;

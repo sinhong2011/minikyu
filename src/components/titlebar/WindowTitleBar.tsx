@@ -51,10 +51,7 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
   return (
     <div
       data-tauri-drag-region
-      className={cn(
-        'flex h-10 w-full shrink-0 items-center gap-2 bg-background px-2 border-b',
-        className
-      )}
+      className={cn('flex h-10 w-full shrink-0 items-center gap-2 bg-background px-2', className)}
     >
       {/* Left section */}
       <div data-tauri-drag-region className="flex items-center gap-2">

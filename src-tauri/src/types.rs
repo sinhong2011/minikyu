@@ -225,10 +225,45 @@ pub struct AppPreferences {
     /// Whether to automatically check for app updates.
     #[serde(default = "default_auto_check_updates")]
     pub auto_check_updates: bool,
+    /// Action for swipe-left gesture in reader (e.g. "open_in_app_browser", "toggle_read", "none").
+    #[serde(default = "default_gesture_swipe_left_action")]
+    pub gesture_swipe_left_action: String,
+    /// Action for swipe-right gesture in reader (e.g. "close_browser", "toggle_star", "none").
+    #[serde(default = "default_gesture_swipe_right_action")]
+    pub gesture_swipe_right_action: String,
+    /// Action for pull-from-top gesture in reader (e.g. "prev_article", "none").
+    #[serde(default = "default_gesture_pull_top_action")]
+    pub gesture_pull_top_action: String,
+    /// Action for pull-from-bottom gesture in reader (e.g. "next_article", "none").
+    #[serde(default = "default_gesture_pull_bottom_action")]
+    pub gesture_pull_bottom_action: String,
+    /// Swipe distance threshold in pixels (100-400).
+    #[serde(default = "default_gesture_swipe_threshold")]
+    pub gesture_swipe_threshold: u32,
 }
 
 fn default_auto_check_updates() -> bool {
     true
+}
+
+fn default_gesture_swipe_left_action() -> String {
+    "open_in_app_browser".to_string()
+}
+
+fn default_gesture_swipe_right_action() -> String {
+    "close_browser".to_string()
+}
+
+fn default_gesture_pull_top_action() -> String {
+    "prev_article".to_string()
+}
+
+fn default_gesture_pull_bottom_action() -> String {
+    "next_article".to_string()
+}
+
+const fn default_gesture_swipe_threshold() -> u32 {
+    250
 }
 
 fn default_log_level() -> String {
@@ -280,6 +315,11 @@ impl Default for AppPreferences {
             time_format: default_time_format(),
             sync_interval: Some(15),
             auto_check_updates: true,
+            gesture_swipe_left_action: default_gesture_swipe_left_action(),
+            gesture_swipe_right_action: default_gesture_swipe_right_action(),
+            gesture_pull_top_action: default_gesture_pull_top_action(),
+            gesture_pull_bottom_action: default_gesture_pull_bottom_action(),
+            gesture_swipe_threshold: default_gesture_swipe_threshold(),
         }
     }
 }

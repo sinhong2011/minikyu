@@ -13,7 +13,6 @@ import { Button } from '@/components/ui/button';
 import {
   Combobox,
   ComboboxContent,
-  ComboboxEmpty,
   ComboboxInput,
   ComboboxItem,
   ComboboxList,
@@ -31,6 +30,7 @@ import { Slider } from '@/components/ui/slider';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import {
   getReaderFontStack,
+  isReaderFontFamily,
   normalizeReaderFontFamily,
   type ReaderFontFamily,
   readerFontFamilies,
@@ -455,6 +455,9 @@ export function ReaderSettings() {
                     setFontFamily(value);
                   }
                 }}
+                itemToStringLabel={(value) =>
+                  isReaderFontFamily(value) ? getFontLabel(value) : String(value)
+                }
                 disabled={isLoading}
               >
                 <ComboboxInput
@@ -463,7 +466,6 @@ export function ReaderSettings() {
                 />
                 <ComboboxContent>
                   <ComboboxList>
-                    <ComboboxEmpty>{_(msg`No fonts found.`)}</ComboboxEmpty>
                     {readerFontFamilies.map((family) => (
                       <ComboboxItem key={family} value={family}>
                         <span className="flex flex-col items-start gap-0.5 leading-tight">

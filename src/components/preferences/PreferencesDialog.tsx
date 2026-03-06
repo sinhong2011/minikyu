@@ -15,6 +15,7 @@ import {
   RssIcon,
   Settings01Icon,
   SparklesIcon,
+  Touch01Icon,
   UserGroupIcon,
   ZapIcon,
 } from '@hugeicons/core-free-icons';
@@ -32,6 +33,7 @@ import { FeedCategoryDialogsHost } from '@/components/miniflux/settings/FeedCate
 import { MoveFeedDialog } from '@/components/miniflux/settings/MoveFeedDialog';
 import { useMinifluxSettingsDialogStore } from '@/components/miniflux/settings/store';
 import { UserFormDialog } from '@/components/miniflux/settings/UserFormDialog';
+import { Badge } from '@/components/ui/badge';
 import {
   Breadcrumb,
   BreadcrumbItem,
@@ -72,6 +74,7 @@ import {
   useRefreshAllFeeds,
   useUpdateMinifluxUser,
 } from '@/services/miniflux';
+import { useActiveAccount } from '@/services/miniflux/accounts';
 import { type PreferencesPane, useUIStore } from '@/store/ui-store';
 import { AboutPane } from './panes/AboutPane';
 import { AdvancedPane } from './panes/AdvancedPane';
@@ -80,6 +83,7 @@ import { AppearancePane } from './panes/AppearancePane';
 import { CategoriesPane } from './panes/CategoriesPane';
 import { FeedsPane } from './panes/FeedsPane';
 import { GeneralPane } from './panes/GeneralPane';
+import { GesturePane } from './panes/GesturePane';
 import { IntegrationsPane } from './panes/IntegrationsPane';
 import { ReaderPane } from './panes/ReaderPane';
 import { ShortcutsPane } from './panes/ShortcutsPane';
@@ -112,6 +116,11 @@ const appSettingsItems = [
     id: 'shortcuts' as const,
     label: msg`Shortcuts`,
     icon: KeyboardIcon,
+  },
+  {
+    id: 'gesture' as const,
+    label: msg`Gestures`,
+    icon: Touch01Icon,
   },
   {
     id: 'advanced' as const,
@@ -175,6 +184,16 @@ export function PreferencesDialog() {
   const setPreferencesActivePane = useUIStore((state) => state.setPreferencesActivePane);
   const { data: isConnected } = useIsConnected();
   const { data: currentUser } = useCurrentUser();
+  const { data: activeAccount } = useActiveAccount();
+
+  const serverDomain = React.useMemo(() => {
+    if (!activeAccount?.server_url) return null;
+    try {
+      return new URL(activeAccount.server_url).hostname;
+    } catch {
+      return activeAccount.server_url;
+    }
+  }, [activeAccount?.server_url]);
 
   // Miniflux data fetching
   const { data: categories = [] } = useCategories(isConnected);
@@ -474,7 +493,14 @@ export function PreferencesDialog() {
               {/* Server Settings Section */}
               {isConnected && (
                 <SidebarGroup>
-                  <SidebarGroupLabel>{_(msg`Server Settings`)}</SidebarGroupLabel>
+                  <SidebarGroupLabel className="gap-1.5">
+                    {_(msg`Server`)}
+                    {serverDomain && (
+                      <Badge variant="secondary" className="h-4 px-1.5 text-[10px] font-normal">
+                        {serverDomain}
+                      </Badge>
+                    )}
+                  </SidebarGroupLabel>
                   <SidebarGroupContent>
                     <SidebarMenu className="gap-1">
                       {serverSettingsItems
@@ -543,8 +569,13 @@ export function PreferencesDialog() {
                 {/* Server Settings */}
                 {isConnected && (
                   <>
-                    <div className="text-xs font-semibold text-muted-foreground px-2 pt-2">
-                      {_(msg`Server Settings`)}
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground px-2 pt-2">
+                      {_(msg`Server`)}
+                      {serverDomain && (
+                        <Badge variant="secondary" className="h-4 px-1.5 text-[10px] font-normal">
+                          {serverDomain}
+                        </Badge>
+                      )}
                     </div>
                     <div className="grid grid-cols-2 gap-1">
                       {serverSettingsItems
@@ -600,6 +631,7 @@ export function PreferencesDialog() {
               {activePane === 'reader' && <ReaderPane />}
               {activePane === 'translation' && <TranslationPane />}
               {activePane === 'shortcuts' && <ShortcutsPane />}
+              {activePane === 'gesture' && <GesturePane />}
               {activePane === 'advanced' && <AdvancedPane />}
               {activePane === 'about' && <AboutPane />}
 

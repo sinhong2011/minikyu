@@ -46,6 +46,11 @@ pub async fn run_migrations(pool: &SqlitePool) -> Result<(), sqlx::Error> {
         record_migration(pool, 8, "downloads_media_type").await?;
     }
 
+    if !applied_migrations.contains(&9) {
+        apply_account_is_admin_migration(pool).await?;
+        record_migration(pool, 9, "account_is_admin").await?;
+    }
+
     Ok(())
 }
 
@@ -548,6 +553,18 @@ pub(crate) async fn apply_downloads_media_type_migration(
         .ok(); // OK if column already exists
 
     log::info!("Downloads media_type migration applied (version 8)");
+    Ok(())
+}
+
+pub(crate) async fn apply_account_is_admin_migration(
+    pool: &SqlitePool,
+) -> Result<(), sqlx::Error> {
+    sqlx::query("ALTER TABLE miniflux_connections ADD COLUMN is_admin INTEGER DEFAULT 0")
+        .execute(pool)
+        .await
+        .ok(); // OK if column already exists
+
+    log::info!("Account is_admin migration applied (version 9)");
     Ok(())
 }
 

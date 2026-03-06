@@ -995,6 +995,28 @@ async reloadBrowserWebview() : Promise<Result<null, string>> {
 }
 },
 /**
+ * Navigates the in-app browser webview back in history.
+ */
+async browserGoBack() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("browser_go_back") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Navigates the in-app browser webview forward in history.
+ */
+async browserGoForward() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("browser_go_forward") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Synchronises the browser webview's color scheme with the app theme.
  * 
  * Uses Tauri's Webview::eval() API to set colorScheme on the page root.
@@ -1475,7 +1497,27 @@ sync_interval?: number | null;
 /**
  * Whether to automatically check for app updates.
  */
-auto_check_updates?: boolean }
+auto_check_updates?: boolean; 
+/**
+ * Action for swipe-left gesture in reader (e.g. "open_in_app_browser", "toggle_read", "none").
+ */
+gesture_swipe_left_action?: string; 
+/**
+ * Action for swipe-right gesture in reader (e.g. "close_browser", "toggle_star", "none").
+ */
+gesture_swipe_right_action?: string; 
+/**
+ * Action for pull-from-top gesture in reader (e.g. "prev_article", "none").
+ */
+gesture_pull_top_action?: string; 
+/**
+ * Action for pull-from-bottom gesture in reader (e.g. "next_article", "none").
+ */
+gesture_pull_bottom_action?: string; 
+/**
+ * Swipe distance threshold in pixels (100-400).
+ */
+gesture_swipe_threshold?: number }
 export type ArticleSummaryRecord = { entry_id: string; summary: string; provider_used: string | null; model_used: string | null }
 /**
  * Authentication Config
@@ -1635,7 +1677,7 @@ files: DataFileSize[];
  * Total size in bytes
  */
 total_bytes: string }
-export type MinifluxConnection = { id: string; username: string; server_url: string; auth_method: string; is_active: boolean; created_at: string; updated_at: string }
+export type MinifluxConnection = { id: string; username: string; server_url: string; auth_method: string; is_active: boolean; is_admin: boolean; created_at: string; updated_at: string }
 /**
  * Miniflux Version Information
  */

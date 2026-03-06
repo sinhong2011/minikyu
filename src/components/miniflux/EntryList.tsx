@@ -22,7 +22,6 @@ import {
   ItemHeader,
   ItemTitle,
 } from '@/components/ui/item';
-import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { extractThumbnail } from '@/lib/media-utils';
 import {
@@ -805,7 +804,7 @@ export function EntryList({
                     </Item>
                   </button>
 
-                  {row.showSeparator && <Separator className="my-2" />}
+                  {row.showSeparator && <div className="my-2" />}
                 </motion.div>
               );
             })}

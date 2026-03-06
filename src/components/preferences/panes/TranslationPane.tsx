@@ -1767,7 +1767,7 @@ export function TranslationPane() {
         >
           <Select
             value={preferences?.ai_summary_provider ?? ''}
-            onValueChange={(value) => {
+            onValueChange={(value: string) => {
               if (preferences) {
                 savePreferences.mutate({
                   ...preferences,
@@ -1964,7 +1964,7 @@ export function TranslationPane() {
             >
               <Select
                 value={preferences?.reader_chinese_conversion ?? 's2tw'}
-                onValueChange={(value) => {
+                onValueChange={(value: string) => {
                   if (preferences) {
                     savePreferences.mutate({
                       ...preferences,
