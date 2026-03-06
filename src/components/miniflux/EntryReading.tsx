@@ -760,7 +760,6 @@ export function EntryReading({
         case 'close_browser':
           // close_browser only applies in browser pane context, no-op in reader
           break;
-        case 'none':
         default:
           break;
       }
