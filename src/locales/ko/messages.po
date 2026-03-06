@@ -50,7 +50,7 @@ msgstr "{0}개 카테고리 동기화됨"
 #. placeholder {0}: stage.progress.total
 #: src/components/sync/SyncProgressPopover.tsx:99
 msgid "{0} entries"
-msgstr ""
+msgstr "{0}개 항목"
 
 #. placeholder {0}: stage.progress.total
 #: src/components/sync/SyncProgressPopover.tsx:145

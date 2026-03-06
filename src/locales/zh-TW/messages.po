@@ -50,7 +50,7 @@ msgstr "已同步 {0} 個分類"
 #. placeholder {0}: stage.progress.total
 #: src/components/sync/SyncProgressPopover.tsx:99
 msgid "{0} entries"
-msgstr ""
+msgstr "{0} 篇文章"
 
 #. placeholder {0}: stage.progress.total
 #: src/components/sync/SyncProgressPopover.tsx:145
