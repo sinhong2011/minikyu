@@ -121,11 +121,11 @@ msgstr "{diffHours} 小時前"
 msgid "{diffMins}m ago"
 msgstr "{diffMins} 分鐘前"
 
-#: src/components/miniflux/EntryReading.tsx:334
+#: src/components/miniflux/EntryReading.tsx:393
 msgid "{minutesLeft} min left"
 msgstr "還剩 {minutesLeft} 分鐘"
 
-#: src/components/miniflux/EntryReading.tsx:333
+#: src/components/miniflux/EntryReading.tsx:392
 msgid "{progressPercent}% read"
 msgstr "已讀 {progressPercent}%"
 
@@ -169,11 +169,11 @@ msgstr "關於 Minikyu"
 msgid "Account data cleared"
 msgstr "帳號資料已清除"
 
-#: src/components/miniflux/UserNav.tsx:109
+#: src/components/miniflux/UserNav.tsx:113
 msgid "Account deleted successfully"
 msgstr "帳號已成功刪除"
 
-#: src/components/miniflux/UserNav.tsx:302
+#: src/components/miniflux/UserNav.tsx:306
 msgid "Accounts"
 msgstr "帳號"
 
@@ -189,7 +189,7 @@ msgstr "進行中"
 msgid "Add a tag..."
 msgstr "新增標籤..."
 
-#: src/components/miniflux/UserNav.tsx:342
+#: src/components/miniflux/UserNav.tsx:346
 #: src/lib/commands/account-commands.ts:12
 msgid "Add Account"
 msgstr "新增帳號"
@@ -265,7 +265,7 @@ msgid "Admin"
 msgstr "管理員"
 
 #: src/components/miniflux/settings/UserFormDialog.tsx:141
-#: src/components/miniflux/UserNav.tsx:275
+#: src/components/miniflux/UserNav.tsx:279
 msgid "Administrator"
 msgstr "管理員"
 
@@ -279,7 +279,7 @@ msgstr "進階"
 msgid "Advanced settings"
 msgstr "進階設定"
 
-#: src/components/miniflux/EntryReading.tsx:1378
+#: src/components/miniflux/EntryReading.tsx:1462
 #: src/components/preferences/PreferencesDialog.tsx:112
 msgid "AI"
 msgstr "AI"
@@ -443,7 +443,7 @@ msgstr "確定要取消訂閱「{0}」嗎？"
 #~ msgstr "確定要取消訂閱此訂閱源嗎？"
 
 #: src/components/command-palette/CommandPalette.tsx:142
-#: src/components/miniflux/EntryReading.tsx:1489
+#: src/components/miniflux/EntryReading.tsx:1581
 #: src/lib/menu.ts:215
 msgid "Article"
 msgstr "文章"
@@ -452,7 +452,7 @@ msgstr "文章"
 msgid "Article Actions"
 msgstr "文章操作"
 
-#: src/components/miniflux/EntryReading.tsx:283
+#: src/components/miniflux/EntryReading.tsx:342
 msgid "Article table of contents"
 msgstr "文章目錄"
 
@@ -538,7 +538,7 @@ msgstr "導覽路徑"
 msgid "Browse categories"
 msgstr "瀏覽分類"
 
-#: src/components/miniflux/InAppBrowserPane.tsx:230
+#: src/components/miniflux/InAppBrowserPane.tsx:237
 msgid "Browser content"
 msgstr "瀏覽器內容"
 
@@ -615,7 +615,7 @@ msgstr "分類已建立"
 msgid "Category deleted"
 msgstr "分類已刪除"
 
-#: src/components/miniflux/EntryReading.tsx:1463
+#: src/components/miniflux/EntryReading.tsx:1555
 msgid "Category excluded from translation"
 msgstr "已將此分類排除翻譯"
 
@@ -644,7 +644,7 @@ msgstr "分類不為空"
 msgid "Category Title"
 msgstr "分類標題"
 
-#: src/components/miniflux/EntryReading.tsx:1458
+#: src/components/miniflux/EntryReading.tsx:1550
 msgid "Category translation re-enabled"
 msgstr "已重新啟用分類翻譯"
 
@@ -814,7 +814,7 @@ msgstr "清除中⋯"
 #: src/components/miniflux/EntryReadingHeader.tsx:324
 #: src/components/miniflux/EntryReadingHeader.tsx:330
 #: src/components/miniflux/ImageViewer.tsx:236
-#: src/components/miniflux/InAppBrowserPane.tsx:256
+#: src/components/miniflux/InAppBrowserPane.tsx:267
 #: src/components/miniflux/ReaderSettings.tsx:226
 #: src/components/titlebar/WindowsWindowControls.tsx:118
 #: src/components/ui/dialog.tsx:65
@@ -828,8 +828,8 @@ msgstr "關閉"
 msgid "Close behavior updated"
 msgstr "關閉行為已更新"
 
-#: src/components/miniflux/InAppBrowserPane.tsx:217
-#: src/components/miniflux/InAppBrowserPane.tsx:223
+#: src/components/miniflux/InAppBrowserPane.tsx:224
+#: src/components/miniflux/InAppBrowserPane.tsx:230
 #: src/lib/gesture-actions.ts:26
 msgid "Close browser"
 msgstr "關閉瀏覽器"
@@ -977,7 +977,7 @@ msgstr "複製除錯資訊"
 msgid "Copy link"
 msgstr "複製連結"
 
-#: src/components/miniflux/EntryReading.tsx:1565
+#: src/components/miniflux/EntryReading.tsx:1657
 #: src/lib/commands/article-commands.ts:100
 #: src/lib/menu.ts:261
 msgid "Copy Link"
@@ -1209,7 +1209,7 @@ msgstr "儲存影片的預設資料夾。留空則每次詢問。"
 msgid "Delete"
 msgstr "刪除"
 
-#: src/components/miniflux/UserNav.tsx:332
+#: src/components/miniflux/UserNav.tsx:336
 msgid "Delete account"
 msgstr "刪除帳戶"
 
@@ -1327,7 +1327,7 @@ msgstr "在系統匣中顯示應用程式圖示。停用時需要重新啟動才
 msgid "Displays the mobile sidebar."
 msgstr "顯示行動版側邊欄。"
 
-#: src/components/preferences/panes/GesturePane.tsx:111
+#: src/components/preferences/panes/GesturePane.tsx:109
 msgid "Distance in pixels required to trigger a swipe action ({swipeThreshold}px)"
 msgstr "觸發滑動操作所需的像素距離（{swipeThreshold}px）"
 
@@ -1552,11 +1552,11 @@ msgstr "進入禪模式"
 msgid "Entries"
 msgstr "文章"
 
-#: src/components/miniflux/EntryReading.tsx:1188
+#: src/components/miniflux/EntryReading.tsx:1271
 msgid "Entry not found"
 msgstr "找不到文章"
 
-#: src/components/miniflux/EntryReading.tsx:560
+#: src/components/miniflux/EntryReading.tsx:619
 #: src/components/miniflux/EntryReadingHeader.tsx:259
 msgid "Entry sent to services"
 msgstr "文章已傳送至服務"
@@ -1712,8 +1712,8 @@ msgstr "建立訂閱源失敗"
 msgid "Failed to create user"
 msgstr "建立使用者失敗"
 
-#: src/components/miniflux/UserNav.tsx:111
 #: src/components/miniflux/UserNav.tsx:115
+#: src/components/miniflux/UserNav.tsx:119
 msgid "Failed to delete account"
 msgstr "刪除帳號失敗"
 
@@ -1844,8 +1844,8 @@ msgstr "重新排列提供者失敗"
 msgid "Failed to resume download"
 msgstr "繼續下載失敗"
 
-#: src/components/miniflux/EntryReading.tsx:557
-#: src/components/miniflux/EntryReading.tsx:563
+#: src/components/miniflux/EntryReading.tsx:616
+#: src/components/miniflux/EntryReading.tsx:622
 #: src/components/miniflux/EntryReadingHeader.tsx:255
 #: src/components/miniflux/EntryReadingHeader.tsx:262
 msgid "Failed to save entry"
@@ -1979,7 +1979,7 @@ msgstr "訂閱源已建立（部分設定）"
 msgid "Feed deleted"
 msgstr "訂閱源已刪除"
 
-#: src/components/miniflux/EntryReading.tsx:1423
+#: src/components/miniflux/EntryReading.tsx:1513
 msgid "Feed excluded from translation"
 msgstr "已將此訂閱源排除翻譯"
 
@@ -2003,7 +2003,7 @@ msgstr "訂閱源標題"
 msgid "Feed Title"
 msgstr "訂閱源標題"
 
-#: src/components/miniflux/EntryReading.tsx:1421
+#: src/components/miniflux/EntryReading.tsx:1508
 msgid "Feed translation re-enabled"
 msgstr "已重新啟用訂閱源翻譯"
 
@@ -2048,7 +2048,7 @@ msgstr "從所有訂閱源取得新文章"
 msgid "Fetch original content"
 msgstr "取得原始內容"
 
-#: src/components/miniflux/EntryReading.tsx:1507
+#: src/components/miniflux/EntryReading.tsx:1599
 #: src/lib/commands/article-commands.ts:53
 #: src/lib/menu.ts:232
 msgid "Fetch Original Content"
@@ -2093,7 +2093,7 @@ msgstr "清除歷史記錄"
 msgid "Focus mode"
 msgstr "專注模式"
 
-#: src/components/miniflux/EntryReading.tsx:1518
+#: src/components/miniflux/EntryReading.tsx:1610
 msgid "Focus Mode"
 msgstr "專注模式"
 
@@ -2177,13 +2177,13 @@ msgstr "Git 提交雜湊值。"
 msgid "GLM"
 msgstr "GLM"
 
-#: src/components/miniflux/InAppBrowserPane.tsx:141
-#: src/components/miniflux/InAppBrowserPane.tsx:147
+#: src/components/miniflux/InAppBrowserPane.tsx:148
+#: src/components/miniflux/InAppBrowserPane.tsx:154
 msgid "Go back"
 msgstr "返回"
 
-#: src/components/miniflux/InAppBrowserPane.tsx:159
-#: src/components/miniflux/InAppBrowserPane.tsx:165
+#: src/components/miniflux/InAppBrowserPane.tsx:166
+#: src/components/miniflux/InAppBrowserPane.tsx:172
 msgid "Go forward"
 msgstr "前進"
 
@@ -2211,7 +2211,7 @@ msgstr "前往上一頁"
 msgid "Go to top"
 msgstr "回到頂部"
 
-#: src/components/miniflux/EntryReading.tsx:1368
+#: src/components/miniflux/EntryReading.tsx:1452
 msgid "Go to Top"
 msgstr "回到頂部"
 
@@ -2242,7 +2242,7 @@ msgstr "隱藏其他"
 msgid "Hide playlist"
 msgstr "隱藏播放清單"
 
-#: src/components/miniflux/EntryReading.tsx:335
+#: src/components/miniflux/EntryReading.tsx:394
 msgid "Hide reading status"
 msgstr "隱藏閱讀狀態"
 
@@ -2456,7 +2456,7 @@ msgid "Korean"
 msgstr "韓文"
 
 #: src/components/miniflux/SafeHtml.tsx:694
-#: src/components/miniflux/UserNav.tsx:281
+#: src/components/miniflux/UserNav.tsx:285
 #: src/components/preferences/panes/AppearancePane.tsx:85
 #: src/components/preferences/panes/AppearancePane.tsx:87
 msgid "Language"
@@ -2527,7 +2527,7 @@ msgstr "行高"
 msgid "Line Width"
 msgstr "行寬"
 
-#: src/components/miniflux/EntryReading.tsx:1532
+#: src/components/miniflux/EntryReading.tsx:1624
 #: src/lib/shortcut-registry.ts:29
 msgid "Links"
 msgstr "連結"
@@ -2603,7 +2603,7 @@ msgstr "全部標記為已讀"
 
 #: src/components/layout/AppSidebar.tsx:184
 #: src/components/layout/AppSidebar.tsx:380
-#: src/components/miniflux/EntryReading.tsx:1496
+#: src/components/miniflux/EntryReading.tsx:1588
 #: src/components/miniflux/EntryReadingHeader.tsx:685
 #: src/components/miniflux/EntryReadingHeader.tsx:704
 #: src/components/preferences/panes/CategoriesPane.tsx:84
@@ -2616,7 +2616,7 @@ msgstr "標記為已讀"
 msgid "Mark as Read/Unread"
 msgstr "標記為已讀/未讀"
 
-#: src/components/miniflux/EntryReading.tsx:1496
+#: src/components/miniflux/EntryReading.tsx:1588
 #: src/components/miniflux/EntryReadingHeader.tsx:685
 #: src/components/miniflux/EntryReadingHeader.tsx:704
 msgid "Mark as unread"
@@ -2816,7 +2816,7 @@ msgstr "下一個"
 msgid "Next article"
 msgstr "下一篇文章"
 
-#: src/components/miniflux/EntryReading.tsx:1343
+#: src/components/miniflux/EntryReading.tsx:1427
 #: src/lib/menu.ts:274
 msgid "Next Article"
 msgstr "下一篇文章"
@@ -2826,7 +2826,7 @@ msgstr "下一篇文章"
 msgid "Next entry (j or →)"
 msgstr "下一篇文章（j 或 →）"
 
-#: src/components/miniflux/EntryReading.tsx:282
+#: src/components/miniflux/EntryReading.tsx:341
 msgid "Next section"
 msgstr "下一區段"
 
@@ -2867,7 +2867,7 @@ msgstr "無分類"
 msgid "No completed downloads"
 msgstr "沒有已完成的下載"
 
-#: src/components/miniflux/EntryReading.tsx:1319
+#: src/components/miniflux/EntryReading.tsx:1403
 msgid "No content available"
 msgstr "沒有可用的內容"
 
@@ -2980,7 +2980,7 @@ msgid "Off"
 msgstr "關閉"
 
 #: src/components/layout/AppSidebar.tsx:758
-#: src/components/miniflux/UserNav.tsx:256
+#: src/components/miniflux/UserNav.tsx:260
 msgid "Offline cached data"
 msgstr "離線快取資料"
 
@@ -3017,21 +3017,21 @@ msgstr "開啟外觀偏好設定"
 msgid "Open in app browser"
 msgstr "在應用程式瀏覽器中開啟"
 
-#: src/components/miniflux/EntryReading.tsx:1553
+#: src/components/miniflux/EntryReading.tsx:1645
 #: src/lib/commands/article-commands.ts:89
 #: src/lib/menu.ts:256
 msgid "Open in App Browser"
 msgstr "在應用程式瀏覽器中開啟"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:817
-#: src/components/miniflux/InAppBrowserPane.tsx:199
-#: src/components/miniflux/InAppBrowserPane.tsx:205
+#: src/components/miniflux/InAppBrowserPane.tsx:206
+#: src/components/miniflux/InAppBrowserPane.tsx:212
 #: src/lib/gesture-actions.ts:20
 #: src/lib/shortcut-registry.ts:94
 msgid "Open in browser"
 msgstr "在瀏覽器中開啟"
 
-#: src/components/miniflux/EntryReading.tsx:1541
+#: src/components/miniflux/EntryReading.tsx:1633
 #: src/lib/commands/article-commands.ts:77
 #: src/lib/menu.ts:250
 msgid "Open in Browser"
@@ -3310,7 +3310,7 @@ msgstr "上一個"
 msgid "Previous article"
 msgstr "上一篇文章"
 
-#: src/components/miniflux/EntryReading.tsx:1334
+#: src/components/miniflux/EntryReading.tsx:1418
 #: src/lib/menu.ts:268
 msgid "Previous Article"
 msgstr "上一篇文章"
@@ -3320,7 +3320,7 @@ msgstr "上一篇文章"
 msgid "Previous entry (h or ←)"
 msgstr "上一篇文章（h 或 ←）"
 
-#: src/components/miniflux/EntryReading.tsx:281
+#: src/components/miniflux/EntryReading.tsx:340
 msgid "Previous section"
 msgstr "上一區段"
 
@@ -3419,7 +3419,7 @@ msgstr "Qwen-MT"
 msgid "Randomize the playback queue order"
 msgstr "隨機排列播放佇列順序"
 
-#: src/components/miniflux/EntryReading.tsx:1388
+#: src/components/miniflux/EntryReading.tsx:1472
 msgid "Re-summarize"
 msgstr "重新摘要"
 
@@ -3509,8 +3509,8 @@ msgstr "筆"
 msgid "Recovery"
 msgstr "復原"
 
-#: src/components/miniflux/InAppBrowserPane.tsx:181
-#: src/components/miniflux/InAppBrowserPane.tsx:187
+#: src/components/miniflux/InAppBrowserPane.tsx:188
+#: src/components/miniflux/InAppBrowserPane.tsx:194
 msgid "Refresh"
 msgstr "重新整理"
 
@@ -3715,7 +3715,7 @@ msgid "Rewrite rules"
 msgstr "改寫規則"
 
 #: src/components/miniflux/settings/UserFormDialog.tsx:132
-#: src/components/miniflux/UserNav.tsx:273
+#: src/components/miniflux/UserNav.tsx:277
 msgid "Role"
 msgstr "角色"
 
@@ -3772,7 +3772,7 @@ msgstr "儲存變更"
 msgid "Save Rules"
 msgstr "儲存規則"
 
-#: src/components/miniflux/EntryReading.tsx:1576
+#: src/components/miniflux/EntryReading.tsx:1668
 #: src/components/miniflux/EntryReadingHeader.tsx:832
 msgid "Save to services"
 msgstr "儲存至服務"
@@ -3809,7 +3809,7 @@ msgstr "捲動頁面"
 msgid "Scroll page up"
 msgstr "向上捲動頁面"
 
-#: src/components/miniflux/EntryReading.tsx:337
+#: src/components/miniflux/EntryReading.tsx:396
 msgid "Scroll to top"
 msgstr "捲動至頂部"
 
@@ -4057,7 +4057,7 @@ msgstr "顯示播放清單"
 msgid "Show reading progress at bottom-left"
 msgstr "在左下角顯示閱讀進度"
 
-#: src/components/miniflux/EntryReading.tsx:336
+#: src/components/miniflux/EntryReading.tsx:395
 msgid "Show reading status"
 msgstr "顯示閱讀狀態"
 
@@ -4119,11 +4119,11 @@ msgstr "快進 30 秒"
 msgid "Skip Forward 30s"
 msgstr "快進 30 秒"
 
-#: src/components/miniflux/EntryReading.tsx:1474
+#: src/components/miniflux/EntryReading.tsx:1566
 msgid "Skip this category"
 msgstr "略過此分類"
 
-#: src/components/miniflux/EntryReading.tsx:1432
+#: src/components/miniflux/EntryReading.tsx:1524
 msgid "Skip this feed"
 msgstr "略過此訂閱源"
 
@@ -4165,7 +4165,7 @@ msgstr "西班牙文"
 msgid "Stack Trace"
 msgstr "堆疊追蹤"
 
-#: src/components/miniflux/EntryReading.tsx:1355
+#: src/components/miniflux/EntryReading.tsx:1439
 #: src/components/miniflux/EntryReadingHeader.tsx:716
 #: src/components/miniflux/EntryReadingHeader.tsx:722
 msgid "Star"
@@ -4269,7 +4269,7 @@ msgstr "訂閱新的 RSS 訂閱源"
 msgid "Summarize article"
 msgstr "摘要文章"
 
-#: src/components/miniflux/EntryReading.tsx:1388
+#: src/components/miniflux/EntryReading.tsx:1472
 msgid "Summarize Article"
 msgstr "摘要文章"
 
@@ -4288,7 +4288,7 @@ msgstr "正在產生摘要..."
 msgid "Surface Theme"
 msgstr "表面主題"
 
-#: src/components/preferences/panes/GesturePane.tsx:97
+#: src/components/preferences/panes/GesturePane.tsx:96
 msgid "Swipe distance"
 msgstr "滑動距離"
 
@@ -4520,7 +4520,7 @@ msgstr "剩餘時間"
 msgid "Timeout must be a positive number"
 msgstr "逾時必須為正數"
 
-#: src/components/miniflux/UserNav.tsx:290
+#: src/components/miniflux/UserNav.tsx:294
 msgid "Timezone"
 msgstr "時區"
 
@@ -4669,7 +4669,7 @@ msgstr "總下載量："
 msgid "Trace"
 msgstr "追蹤"
 
-#: src/components/miniflux/EntryReading.tsx:1405
+#: src/components/miniflux/EntryReading.tsx:1491
 #: src/lib/commands/translation-commands.ts:7
 #: src/lib/menu.ts:238
 msgid "Translate Article"
@@ -4696,7 +4696,7 @@ msgstr "使用...翻譯"
 msgid "Translated only"
 msgstr "僅翻譯"
 
-#: src/components/miniflux/EntryReading.tsx:1398
+#: src/components/miniflux/EntryReading.tsx:1482
 #: src/components/miniflux/EntryReadingHeader.tsx:443
 #: src/components/miniflux/EntryReadingHeader.tsx:451
 #: src/components/miniflux/SafeHtml.tsx:684
@@ -4812,7 +4812,7 @@ msgstr "未讀"
 msgid "unread items"
 msgstr "未讀項目"
 
-#: src/components/miniflux/EntryReading.tsx:1355
+#: src/components/miniflux/EntryReading.tsx:1439
 #: src/components/miniflux/EntryReadingHeader.tsx:716
 #: src/components/miniflux/EntryReadingHeader.tsx:722
 msgid "Unstar"
@@ -4909,7 +4909,7 @@ msgid "Useful for summary-only feeds"
 msgstr "適用於僅包含摘要的訂閱源"
 
 #: src/components/miniflux/settings/UserFormDialog.tsx:140
-#: src/components/miniflux/UserNav.tsx:275
+#: src/components/miniflux/UserNav.tsx:279
 msgid "User"
 msgstr "使用者"
 
@@ -4931,7 +4931,7 @@ msgstr "使用者已刪除"
 msgid "User management requires an administrator account."
 msgstr "使用者管理需要管理員帳號。"
 
-#: src/components/miniflux/UserNav.tsx:267
+#: src/components/miniflux/UserNav.tsx:271
 msgid "User Profile"
 msgstr "使用者資料"
 
