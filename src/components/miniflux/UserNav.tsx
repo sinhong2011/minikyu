@@ -105,7 +105,11 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
 
       const result = await commands.deleteMinifluxAccount(account.id);
       if (result.status === 'ok') {
-        await resetAccountState();
+        try {
+          await resetAccountState();
+        } catch (resetError) {
+          logger.warn('Reset after account delete had non-fatal errors:', { error: resetError });
+        }
         toast.success(_(msg`Account deleted successfully`));
       } else {
         toast.error(_(msg`Failed to delete account`));

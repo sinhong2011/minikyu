@@ -35,8 +35,10 @@ import {
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { showToast } from '@/components/ui/sonner';
+import { useGestureSettings } from '@/hooks/use-gesture-settings';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import { useShortcutConfig } from '@/hooks/use-shortcut-config';
+import { getGestureAction } from '@/lib/gesture-actions';
 import { logger } from '@/lib/logger';
 import { getReaderFontStack } from '@/lib/reader-fonts';
 import {
@@ -137,6 +139,8 @@ export function EntryReading({
     setTranslationDisplayMode,
     setTranslationTargetLanguage,
   } = useReaderSettings();
+  const { swipeLeftAction, swipeRightAction, pullTopAction, pullBottomAction, swipeThreshold } =
+    useGestureSettings();
   const { resolved: shortcuts } = useShortcutConfig();
   const shortcutsRef = useRef(shortcuts);
   shortcutsRef.current = shortcuts;
@@ -150,6 +154,20 @@ export function EntryReading({
   toggleStarRef.current = toggleStar;
   const onOpenInAppBrowserRef = useRef(onOpenInAppBrowser);
   onOpenInAppBrowserRef.current = onOpenInAppBrowser;
+  const swipeLeftActionRef = useRef(swipeLeftAction);
+  swipeLeftActionRef.current = swipeLeftAction;
+  const swipeRightActionRef = useRef(swipeRightAction);
+  swipeRightActionRef.current = swipeRightAction;
+  const pullTopActionRef = useRef(pullTopAction);
+  pullTopActionRef.current = pullTopAction;
+  const pullBottomActionRef = useRef(pullBottomAction);
+  pullBottomActionRef.current = pullBottomAction;
+  const onNavigateNextRef = useRef(onNavigateNext);
+  onNavigateNextRef.current = onNavigateNext;
+  const onNavigatePrevRef = useRef(onNavigatePrev);
+  onNavigatePrevRef.current = onNavigatePrev;
+  const swipeThresholdRef = useRef(swipeThreshold);
+  swipeThresholdRef.current = swipeThreshold;
   const translationAutoEnabledRef = useRef(translationAutoEnabled);
   translationAutoEnabledRef.current = translationAutoEnabled;
   const articleSummary = useArticleSummary(
@@ -185,7 +203,100 @@ export function EntryReading({
   const previousEntryIdRef = useRef<string | null>(null);
   const previousContentRef = useRef<string | null>(null);
   const previousDownloadStatusEntryIdRef = useRef<string | null>(null);
-  const [swipeHintProgress, setSwipeHintProgress] = useState(0);
+  const swipeLeftProgress = useMotionValue(0);
+  const swipeLeftHintX = useTransform(swipeLeftProgress, [0, 1], [64, 0]);
+  const swipeLeftHintOpacity = useTransform(swipeLeftProgress, [0, 0.15, 1], [0, 0.8, 1]);
+  const swipeLeftHintScale = useTransform(
+    swipeLeftProgress,
+    [0, 0.3, 0.8, 1],
+    [0.4, 0.85, 1, 1.05]
+  );
+  const swipeLeftIconScale = useTransform(
+    swipeLeftProgress,
+    [0, 0.5, 0.85, 1],
+    [0.3, 0.8, 1, 1.25]
+  );
+  const swipeLeftIconRotate = useTransform(swipeLeftProgress, [0, 0.6, 1], [-90, -15, 0]);
+  const swipeLeftLabelOpacity = useTransform(swipeLeftProgress, [0, 0.4, 0.7, 1], [0, 0, 0.6, 1]);
+  const swipeLeftLabelX = useTransform(swipeLeftProgress, [0, 0.5, 1], [-8, -4, 0]);
+  const [swipeLeftHintVisible, setSwipeLeftHintVisible] = useState(false);
+  const swipeRightProgress = useMotionValue(0);
+  const swipeRightHintX = useTransform(swipeRightProgress, [0, 1], [-64, 0]);
+  const swipeRightHintOpacity = useTransform(swipeRightProgress, [0, 0.15, 1], [0, 0.8, 1]);
+  const swipeRightHintScale = useTransform(
+    swipeRightProgress,
+    [0, 0.3, 0.8, 1],
+    [0.4, 0.85, 1, 1.05]
+  );
+  const swipeRightIconScale = useTransform(
+    swipeRightProgress,
+    [0, 0.5, 0.85, 1],
+    [0.3, 0.8, 1, 1.25]
+  );
+  const swipeRightIconRotate = useTransform(swipeRightProgress, [0, 0.6, 1], [90, 15, 0]);
+  const swipeRightLabelOpacity = useTransform(swipeRightProgress, [0, 0.4, 0.7, 1], [0, 0, 0.6, 1]);
+  const swipeRightLabelX = useTransform(swipeRightProgress, [0, 0.5, 1], [8, 4, 0]);
+  const [swipeRightHintVisible, setSwipeRightHintVisible] = useState(false);
+  // Content slides with swipe — skip translation for browser-open actions (they open a side panel, not navigate away)
+  const browserActions = new Set(['open_in_app_browser', 'open_in_external_browser']);
+  const swipeContentX = useTransform(
+    [swipeLeftProgress, swipeRightProgress],
+    (values: number[]) => {
+      const left = values[0] ?? 0;
+      const right = values[1] ?? 0;
+      if (left > 0 && browserActions.has(swipeLeftActionRef.current)) return 0;
+      if (right > 0 && browserActions.has(swipeRightActionRef.current)) return 0;
+      return left > 0 ? -left * 60 : right * 60;
+    }
+  );
+  // Pull from top/bottom progress and animation
+  const pullTopProgress = useMotionValue(0);
+  const pullTopHintY = useTransform(pullTopProgress, [0, 1], [-48, 0]);
+  const pullTopHintOpacity = useTransform(pullTopProgress, [0, 0.15, 1], [0, 0.8, 1]);
+  const pullTopHintScale = useTransform(pullTopProgress, [0, 0.3, 0.8, 1], [0.4, 0.85, 1, 1.05]);
+  const pullTopIconScale = useTransform(pullTopProgress, [0, 0.5, 0.85, 1], [0.3, 0.8, 1, 1.25]);
+  const pullTopIconRotate = useTransform(pullTopProgress, [0, 0.6, 1], [90, 15, 0]);
+  const pullTopLabelOpacity = useTransform(pullTopProgress, [0, 0.4, 0.7, 1], [0, 0, 0.6, 1]);
+  const pullTopLabelY = useTransform(pullTopProgress, [0, 0.5, 1], [8, 4, 0]);
+  const [pullTopHintVisible, setPullTopHintVisible] = useState(false);
+  const pullBottomProgress = useMotionValue(0);
+  const pullBottomHintY = useTransform(pullBottomProgress, [0, 1], [48, 0]);
+  const pullBottomHintOpacity = useTransform(pullBottomProgress, [0, 0.15, 1], [0, 0.8, 1]);
+  const pullBottomHintScale = useTransform(
+    pullBottomProgress,
+    [0, 0.3, 0.8, 1],
+    [0.4, 0.85, 1, 1.05]
+  );
+  const pullBottomIconScale = useTransform(
+    pullBottomProgress,
+    [0, 0.5, 0.85, 1],
+    [0.3, 0.8, 1, 1.25]
+  );
+  const pullBottomIconRotate = useTransform(pullBottomProgress, [0, 0.6, 1], [-90, -15, 0]);
+  const pullBottomLabelOpacity = useTransform(pullBottomProgress, [0, 0.4, 0.7, 1], [0, 0, 0.6, 1]);
+  const pullBottomLabelY = useTransform(pullBottomProgress, [0, 0.5, 1], [-8, -4, 0]);
+  const [pullBottomHintVisible, setPullBottomHintVisible] = useState(false);
+  // Content shifts vertically with pull gestures — rubber-band drag feel
+  const pullContentY = useTransform([pullTopProgress, pullBottomProgress], (values: number[]) => {
+    const top = values[0] ?? 0;
+    const bottom = values[1] ?? 0;
+    if (top > 0) return top ** 0.7 * 80;
+    if (bottom > 0) return -(bottom ** 0.7) * 80;
+    return 0;
+  });
+  // Combined scale from swipe + pull gestures (skip for browser-open actions)
+  const contentScale = useTransform(
+    [swipeLeftProgress, swipeRightProgress, pullTopProgress, pullBottomProgress],
+    (values: number[]) => {
+      let swipeMax = 0;
+      if ((values[0] ?? 0) > 0 && !browserActions.has(swipeLeftActionRef.current))
+        swipeMax = values[0] ?? 0;
+      if ((values[1] ?? 0) > 0 && !browserActions.has(swipeRightActionRef.current))
+        swipeMax = Math.max(swipeMax, values[1] ?? 0);
+      const pullProgress = Math.max(values[2] ?? 0, values[3] ?? 0);
+      return (1 - swipeMax * 0.02) * (1 - pullProgress * 0.015);
+    }
+  );
   const [translationEnabled, setTranslationEnabled] = useState(false);
   const translationEnabledRef = useRef(translationEnabled);
   translationEnabledRef.current = translationEnabled;
@@ -621,8 +732,206 @@ export function EntryReading({
 
     handleScroll();
     viewport.addEventListener('scroll', handleScroll, { passive: true });
-    return () => viewport.removeEventListener('scroll', handleScroll);
-  }, [cancelScrollAnimation, readingContent.tocItems, scrollY, showToc]);
+
+    // Dispatch a gesture action by id
+    const dispatchGestureAction = (actionId: string) => {
+      const currentEntry = entryRef.current;
+      switch (actionId) {
+        case 'open_in_app_browser':
+          if (currentEntry?.url && onOpenInAppBrowserRef.current) {
+            onOpenInAppBrowserRef.current(currentEntry.url);
+          }
+          break;
+        case 'open_in_external_browser':
+          if (currentEntry?.url) window.open(currentEntry.url, '_blank', 'noopener,noreferrer');
+          break;
+        case 'toggle_read':
+          if (currentEntry) toggleEntryReadRef.current.mutate(currentEntry.id);
+          break;
+        case 'toggle_star':
+          if (currentEntry) toggleStarRef.current.mutate(currentEntry.id);
+          break;
+        case 'next_article':
+          onNavigateNextRef.current?.();
+          break;
+        case 'prev_article':
+          onNavigatePrevRef.current?.();
+          break;
+        case 'close_browser':
+          // close_browser only applies in browser pane context, no-op in reader
+          break;
+        case 'none':
+        default:
+          break;
+      }
+    };
+
+    // Horizontal swipe gestures (trackpad scroll)
+    let swipeLeftCumulativeX = 0;
+    let swipeRightCumulativeX = 0;
+    let swipeResetTimer: ReturnType<typeof setTimeout> | null = null;
+    let swipeLeftTriggered = false;
+    let swipeRightTriggered = false;
+    // Pull-from-bottom accumulator
+    let pullTopCumulativeY = 0;
+    let pullTopResetTimer: ReturnType<typeof setTimeout> | null = null;
+    let pullTopTriggered = false;
+    let pullBottomCumulativeY = 0;
+    let pullBottomResetTimer: ReturnType<typeof setTimeout> | null = null;
+    let pullBottomTriggered = false;
+
+    const onWheel = (e: WheelEvent) => {
+      const isHorizontal = Math.abs(e.deltaX) > Math.abs(e.deltaY);
+
+      if (isHorizontal) {
+        // Swipe left = positive deltaX
+        if (e.deltaX > 0) {
+          // Reset right-swipe state
+          swipeRightCumulativeX = 0;
+          swipeRightProgress.set(0);
+          setSwipeRightHintVisible(false);
+
+          const leftAction = swipeLeftActionRef.current;
+          if (leftAction === 'none') return;
+
+          swipeLeftCumulativeX += e.deltaX;
+          const threshold = swipeThresholdRef.current;
+          const progress = Math.min(1, swipeLeftCumulativeX / threshold);
+          swipeLeftProgress.set(progress);
+          if (progress > 0) setSwipeLeftHintVisible(true);
+
+          if (swipeLeftCumulativeX >= threshold && !swipeLeftTriggered) {
+            swipeLeftTriggered = true;
+            dispatchGestureAction(leftAction);
+          }
+        } else if (e.deltaX < 0) {
+          // Swipe right = negative deltaX
+          // Reset left-swipe state
+          swipeLeftCumulativeX = 0;
+          swipeLeftProgress.set(0);
+          setSwipeLeftHintVisible(false);
+
+          const rightAction = swipeRightActionRef.current;
+          // close_browser only works in browser pane, skip in reader
+          if (rightAction === 'none' || rightAction === 'close_browser') return;
+
+          swipeRightCumulativeX += Math.abs(e.deltaX);
+          const threshold = swipeThresholdRef.current;
+          const progress = Math.min(1, swipeRightCumulativeX / threshold);
+          swipeRightProgress.set(progress);
+          if (progress > 0) setSwipeRightHintVisible(true);
+
+          if (swipeRightCumulativeX >= threshold && !swipeRightTriggered) {
+            swipeRightTriggered = true;
+            dispatchGestureAction(rightAction);
+          }
+        }
+
+        if (swipeResetTimer) clearTimeout(swipeResetTimer);
+        swipeResetTimer = setTimeout(() => {
+          swipeLeftCumulativeX = 0;
+          swipeRightCumulativeX = 0;
+          swipeLeftTriggered = false;
+          swipeRightTriggered = false;
+          swipeLeftProgress.set(0);
+          swipeRightProgress.set(0);
+          setSwipeLeftHintVisible(false);
+          setSwipeRightHintVisible(false);
+        }, 300);
+      }
+
+      // Pull from top → configurable action (1.5x threshold for vertical pulls)
+      if (e.deltaY < 0) {
+        const topAction = pullTopActionRef.current;
+        if (topAction === 'none') return;
+
+        const vp = scrollViewportRef.current;
+        if (!vp) return;
+        const atTop = vp.scrollTop < 2;
+        if (!atTop) {
+          pullTopCumulativeY = 0;
+          pullTopTriggered = false;
+          pullTopProgress.set(0);
+          setPullTopHintVisible(false);
+          return;
+        }
+
+        pullTopCumulativeY += Math.abs(e.deltaY);
+        const threshold = Math.round(swipeThresholdRef.current * 2.25);
+        const progress = Math.min(1, pullTopCumulativeY / threshold);
+        pullTopProgress.set(progress);
+        if (progress > 0) setPullTopHintVisible(true);
+
+        if (pullTopCumulativeY >= threshold && !pullTopTriggered) {
+          pullTopTriggered = true;
+          dispatchGestureAction(topAction);
+        }
+
+        if (pullTopResetTimer) clearTimeout(pullTopResetTimer);
+        pullTopResetTimer = setTimeout(() => {
+          pullTopCumulativeY = 0;
+          pullTopTriggered = false;
+          pullTopProgress.set(0);
+          setPullTopHintVisible(false);
+        }, 400);
+      }
+
+      // Pull from bottom → configurable action (1.5x threshold for vertical pulls)
+      if (e.deltaY > 0) {
+        const bottomAction = pullBottomActionRef.current;
+        if (bottomAction === 'none') return;
+
+        const vp = scrollViewportRef.current;
+        if (!vp) return;
+        const atBottom = vp.scrollHeight - vp.scrollTop - vp.clientHeight < 2;
+        if (!atBottom) {
+          pullBottomCumulativeY = 0;
+          pullBottomTriggered = false;
+          pullBottomProgress.set(0);
+          setPullBottomHintVisible(false);
+          return;
+        }
+
+        pullBottomCumulativeY += e.deltaY;
+        const threshold = Math.round(swipeThresholdRef.current * 2.25);
+        const progress = Math.min(1, pullBottomCumulativeY / threshold);
+        pullBottomProgress.set(progress);
+        if (progress > 0) setPullBottomHintVisible(true);
+
+        if (pullBottomCumulativeY >= threshold && !pullBottomTriggered) {
+          pullBottomTriggered = true;
+          dispatchGestureAction(bottomAction);
+        }
+
+        if (pullBottomResetTimer) clearTimeout(pullBottomResetTimer);
+        pullBottomResetTimer = setTimeout(() => {
+          pullBottomCumulativeY = 0;
+          pullBottomTriggered = false;
+          pullBottomProgress.set(0);
+          setPullBottomHintVisible(false);
+        }, 400);
+      }
+    };
+
+    viewport.addEventListener('wheel', onWheel, { passive: true });
+
+    return () => {
+      viewport.removeEventListener('scroll', handleScroll);
+      viewport.removeEventListener('wheel', onWheel);
+      if (swipeResetTimer) clearTimeout(swipeResetTimer);
+      if (pullTopResetTimer) clearTimeout(pullTopResetTimer);
+      if (pullBottomResetTimer) clearTimeout(pullBottomResetTimer);
+    };
+  }, [
+    cancelScrollAnimation,
+    readingContent.tocItems,
+    scrollY,
+    showToc,
+    swipeLeftProgress,
+    swipeRightProgress,
+    pullTopProgress,
+    pullBottomProgress,
+  ]);
 
   // Focus mode: dim all reader nodes except the one closest to viewport center
   useEffect(() => {
@@ -688,81 +997,6 @@ export function EntryReading({
       }
     };
   }, [focusMode]);
-
-  // Swipe left → open in-app browser
-  useEffect(() => {
-    const viewport = scrollViewportRef.current;
-    if (!viewport || !onOpenInAppBrowserRef.current) return;
-
-    let startX = 0;
-    let startY = 0;
-    let tracking = false;
-    let pointerId: number | null = null;
-
-    const onPointerDown = (e: PointerEvent) => {
-      // Ignore if multiple pointers or if text is selected
-      if (pointerId !== null) return;
-      const selection = window.getSelection();
-      if (selection && selection.toString().length > 0) return;
-
-      startX = e.clientX;
-      startY = e.clientY;
-      tracking = true;
-      pointerId = e.pointerId;
-    };
-
-    const onPointerMove = (e: PointerEvent) => {
-      if (!tracking || e.pointerId !== pointerId) return;
-
-      const deltaX = e.clientX - startX;
-      const deltaY = e.clientY - startY;
-
-      // Only track horizontal left swipes
-      if (deltaX >= 0 || Math.abs(deltaY) > 50) {
-        setSwipeHintProgress(0);
-        return;
-      }
-
-      const progress = Math.min(1, Math.abs(deltaX) / 100);
-      setSwipeHintProgress(progress);
-    };
-
-    const onPointerUp = (e: PointerEvent) => {
-      if (e.pointerId !== pointerId) return;
-
-      const deltaX = e.clientX - startX;
-      const deltaY = e.clientY - startY;
-
-      if (deltaX < -100 && Math.abs(deltaY) < 50) {
-        const currentEntry = entryRef.current;
-        if (currentEntry?.url && onOpenInAppBrowserRef.current) {
-          onOpenInAppBrowserRef.current(currentEntry.url);
-        }
-      }
-
-      tracking = false;
-      pointerId = null;
-      setSwipeHintProgress(0);
-    };
-
-    const onPointerCancel = (e: PointerEvent) => {
-      if (e.pointerId !== pointerId) return;
-      tracking = false;
-      pointerId = null;
-      setSwipeHintProgress(0);
-    };
-
-    viewport.addEventListener('pointerdown', onPointerDown);
-    viewport.addEventListener('pointermove', onPointerMove);
-    viewport.addEventListener('pointerup', onPointerUp);
-    viewport.addEventListener('pointercancel', onPointerCancel);
-    return () => {
-      viewport.removeEventListener('pointerdown', onPointerDown);
-      viewport.removeEventListener('pointermove', onPointerMove);
-      viewport.removeEventListener('pointerup', onPointerUp);
-      viewport.removeEventListener('pointercancel', onPointerCancel);
-    };
-  }, []);
 
   const handleTranslationEnabledChange = useCallback(
     (enabled: boolean) => {
@@ -1081,346 +1315,365 @@ export function EntryReading({
         onFocusModeChange={setFocusMode}
       />
 
-      <div className="relative flex-1 min-h-0">
+      <div className="relative flex-1 min-h-0 overflow-hidden">
         <ReaderSelectionToolbar
           containerRef={scrollViewportRef}
           translationPreferences={translationPreferences}
           sourceLanguage={null}
         />
-        <ContextMenu>
-          <ContextMenuTrigger className="h-full">
-            <ScrollArea className="h-full min-h-0" ref={scrollRef}>
-              <AnimatePresence mode="wait">
-                <motion.div
-                  key={`${entry.id}:${contentRevision}`}
-                  initial={{
-                    opacity: articleEnterOpacity,
-                    y: directionalEnterY,
-                    filter: 'blur(0.8px)',
-                  }}
-                  animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
-                  exit={{
-                    opacity: articleExitOpacity,
-                    y: directionalExitY,
-                    filter: 'blur(0.8px)',
-                    transition: articleExitTransition,
-                  }}
-                  transition={articleEnterTransition}
-                  className="px-4 py-8 transition-colors duration-300 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
-                  style={readerSurfaceStyle}
-                >
-                  <ArticleSummaryCard
-                    summary={articleSummary.summary}
-                    loading={articleSummary.loading}
-                    error={articleSummary.error}
-                    modelUsed={articleSummary.modelUsed}
-                    providerUsed={articleSummary.providerUsed}
-                    collapsed={articleSummary.collapsed}
-                    onToggleCollapse={articleSummary.onToggleCollapse}
-                    onRetry={articleSummary.handleSummarize}
-                  />
-                  {entry.content ? (
-                    <ImmersiveTranslationLayer
-                      entryId={entry.id}
-                      html={readingContent.html}
-                      translationEnabled={translationEnabled}
-                      translationDisplayMode={translationDisplayMode}
-                      translateRequestToken={translateRequestToken}
-                      translationPreferences={translationPreferences}
-                      providerSettings={translationProviderSettings}
-                      bionicEnglish={bionicReading}
-                      chineseConversionMode={chineseConversionMode}
-                      customConversionRules={customConversionRules}
-                      codeTheme={codeTheme}
-                      onActiveProviderChange={setActiveTranslationProvider}
-                      onTranslationProgressChange={(completed, total) =>
-                        setTranslationProgress({ completed, total })
-                      }
-                      className={cn(
-                        'mx-auto max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
-                        useInvertedProse && 'prose-invert',
-                        '[&_h1]:mb-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold',
-                        '[&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:leading-snug [&_h2]:font-semibold',
-                        '[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:leading-snug [&_h3]:font-semibold',
-                        '[&_p]:my-5 [&_p]:tracking-[0.01em]',
-                        '[&_ul]:my-5 [&_ol]:my-5 [&_li]:my-1.5',
-                        '[&_a]:break-all [&_a]:underline [&_a]:decoration-[color:var(--reader-link)] [&_a]:underline-offset-4',
-                        '[&_blockquote]:my-8 [&_blockquote]:rounded-r-xl [&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:bg-primary/5 [&_blockquote]:px-4 [&_blockquote]:py-2 [&_blockquote]:text-foreground/90',
-                        '[&_hr]:my-8 [&_hr]:border-border/60',
-                        '[&_table]:text-sm [&_table]:leading-relaxed',
-                        '[&_img]:my-8',
-                        '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0',
-                        focusMode &&
-                          '[&_[data-reader-node]]:opacity-25 [&_[data-reader-node]]:transition-opacity [&_[data-reader-node]]:duration-300 [&_[data-reader-node][data-focused="true"]]:opacity-100'
-                      )}
-                      style={readerProseStyle}
-                    />
-                  ) : (
-                    <p className="text-muted-foreground italic text-center py-20">
-                      {_(msg`No content available`)}
-                    </p>
-                  )}
-                </motion.div>
-              </AnimatePresence>
-            </ScrollArea>
-          </ContextMenuTrigger>
-          <ContextMenuContent className="w-64">
-            {/* Quick actions toolbar */}
-            <div className="flex items-center gap-1 px-1.5 py-1">
-              <button
-                type="button"
-                disabled={!hasPrev || !onNavigatePrev}
-                onClick={onNavigatePrev}
-                className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
-                title={_(msg`Previous Article`)}
-              >
-                <HugeiconsIcon icon={ArrowUp01Icon} strokeWidth={2} className="size-4" />
-              </button>
-              <button
-                type="button"
-                disabled={!hasNext || !onNavigateNext}
-                onClick={onNavigateNext}
-                className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
-                title={_(msg`Next Article`)}
-              >
-                <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2} className="size-4" />
-              </button>
-              <div className="ml-auto flex items-center gap-1">
-                <button
-                  type="button"
-                  onClick={() => toggleStar.mutate(entry.id)}
-                  className={cn(
-                    'flex size-7 items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground',
-                    entry.starred ? 'text-yellow-500' : 'text-muted-foreground'
-                  )}
-                  title={entry.starred ? _(msg`Unstar`) : _(msg`Star`)}
-                >
-                  <HugeiconsIcon icon={StarIcon} strokeWidth={2} className="size-4" />
-                </button>
-                <button
-                  type="button"
-                  onClick={() => {
-                    const viewport = scrollRef.current?.querySelector<HTMLElement>(
-                      '[data-slot="scroll-area-viewport"]'
-                    );
-                    if (viewport) animateViewportScrollTo(viewport, 0);
-                  }}
-                  className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground"
-                  title={_(msg`Go to Top`)}
-                >
-                  <HugeiconsIcon icon={ArrowTurnUpIcon} strokeWidth={2} className="size-4" />
-                </button>
-              </div>
-            </div>
-
-            <ContextMenuSeparator />
-
-            <ContextMenuGroup>
-              <ContextMenuLabel>{_(msg`AI`)}</ContextMenuLabel>
-              <ContextMenuItem
-                onClick={articleSummary.handleSummarize}
-                disabled={articleSummary.loading}
-              >
-                <HugeiconsIcon
-                  icon={SparklesIcon}
-                  strokeWidth={2}
-                  className="size-4 text-muted-foreground"
-                />
-                {articleSummary.summary ? _(msg`Re-summarize`) : _(msg`Summarize Article`)}
-                <ContextMenuShortcut>
-                  {formatShortcutDisplay(shortcuts.summarize)}
-                </ContextMenuShortcut>
-              </ContextMenuItem>
-            </ContextMenuGroup>
-
-            <ContextMenuSeparator />
-
-            <ContextMenuGroup>
-              <ContextMenuLabel>{_(msg`Translation`)}</ContextMenuLabel>
-              <ContextMenuItem onClick={() => handleTranslationEnabledChange(!translationEnabled)}>
-                <HugeiconsIcon
-                  icon={Globe02Icon}
-                  strokeWidth={2}
-                  className="size-4 text-muted-foreground"
-                />
-                {_(msg`Translate Article`)}
-                <ContextMenuShortcut>
-                  {formatShortcutDisplay(shortcuts['toggle-translation'])}
-                </ContextMenuShortcut>
-              </ContextMenuItem>
-              {entry.feed &&
-                (() => {
-                  const isFeedExcluded = translationExcludedFeedIds.includes(entry.feed_id);
-                  return (
-                    <ContextMenuItem
-                      onClick={() => {
-                        const next = isFeedExcluded
-                          ? translationExcludedFeedIds.filter((id) => id !== entry.feed_id)
-                          : [...translationExcludedFeedIds, entry.feed_id];
-                        setTranslationExcludedFeedIds(next);
-                        if (isFeedExcluded) {
-                          showToast.success(_(msg`Feed translation re-enabled`), entry.feed.title);
-                        } else {
-                          showToast.info(_(msg`Feed excluded from translation`), entry.feed.title);
-                        }
-                      }}
-                    >
-                      <HugeiconsIcon
-                        icon={ViewOffIcon}
-                        strokeWidth={2}
-                        className="size-4 text-muted-foreground"
-                      />
-                      {_(msg`Skip this feed`)}
-                      <span
-                        className={cn(
-                          'ml-auto size-2 rounded-full shrink-0 transition-colors',
-                          isFeedExcluded ? 'bg-primary' : 'border border-muted-foreground/40'
-                        )}
-                      />
-                    </ContextMenuItem>
-                  );
-                })()}
-              {entry.feed.category &&
-                (() => {
-                  const isCategoryExcluded = translationExcludedCategoryIds.includes(
-                    entry.feed.category.id
-                  );
-                  return (
-                    <ContextMenuItem
-                      onClick={() => {
-                        const categoryId = entry.feed.category?.id;
-                        if (!categoryId) return;
-                        const next = isCategoryExcluded
-                          ? translationExcludedCategoryIds.filter((id) => id !== categoryId)
-                          : [...translationExcludedCategoryIds, categoryId];
-                        setTranslationExcludedCategoryIds(next);
-                        if (isCategoryExcluded) {
-                          showToast.success(
-                            _(msg`Category translation re-enabled`),
-                            entry.feed.category?.title
-                          );
-                        } else {
-                          showToast.info(
-                            _(msg`Category excluded from translation`),
-                            entry.feed.category?.title
-                          );
-                        }
-                      }}
-                    >
-                      <HugeiconsIcon
-                        icon={ViewOffIcon}
-                        strokeWidth={2}
-                        className="size-4 text-muted-foreground"
-                      />
-                      {_(msg`Skip this category`)}
-                      <span
-                        className={cn(
-                          'ml-auto size-2 rounded-full shrink-0 transition-colors',
-                          isCategoryExcluded ? 'bg-primary' : 'border border-muted-foreground/40'
-                        )}
-                      />
-                    </ContextMenuItem>
-                  );
-                })()}
-            </ContextMenuGroup>
-
-            <ContextMenuSeparator />
-
-            <ContextMenuGroup>
-              <ContextMenuLabel>{_(msg`Article`)}</ContextMenuLabel>
-              <ContextMenuItem onClick={() => toggleEntryRead.mutate(entry.id)}>
-                <HugeiconsIcon
-                  icon={entry.status === 'read' ? Mail01Icon : MailOpen01Icon}
-                  strokeWidth={2}
-                  className="size-4 text-muted-foreground"
-                />
-                {entry.status === 'read' ? _(msg`Mark as unread`) : _(msg`Mark as read`)}
-                <ContextMenuShortcut>
-                  {formatShortcutDisplay(shortcuts['toggle-read'])}
-                </ContextMenuShortcut>
-              </ContextMenuItem>
-              <ContextMenuItem onClick={handleFetchOriginalContent}>
-                <HugeiconsIcon
-                  icon={Download01Icon}
-                  strokeWidth={2}
-                  className="size-4 text-muted-foreground"
-                />
-                {_(msg`Fetch Original Content`)}
-                <ContextMenuShortcut>
-                  {formatShortcutDisplay(shortcuts['fetch-content'])}
-                </ContextMenuShortcut>
-              </ContextMenuItem>
-              <ContextMenuItem onClick={() => setFocusMode(!focusMode)}>
-                <HugeiconsIcon
-                  icon={ViewIcon}
-                  strokeWidth={2}
-                  className="size-4 text-muted-foreground"
-                />
-                {_(msg`Focus Mode`)}
-                <span
-                  className={cn(
-                    'ml-auto size-2 rounded-full shrink-0 transition-colors',
-                    focusMode ? 'bg-primary' : 'border border-muted-foreground/40'
-                  )}
-                />
-              </ContextMenuItem>
-            </ContextMenuGroup>
-
-            {entry.url && (
-              <>
-                <ContextMenuSeparator />
-                <ContextMenuGroup>
-                  <ContextMenuLabel>{_(msg`Links`)}</ContextMenuLabel>
-                  <ContextMenuItem
-                    onClick={() => window.open(entry.url, '_blank', 'noopener,noreferrer')}
+        <motion.div
+          className="h-full"
+          style={{
+            x: swipeContentX,
+            y: pullContentY,
+            scale: contentScale,
+            overflow: 'hidden',
+            willChange: 'transform',
+          }}
+        >
+          <ContextMenu>
+            <ContextMenuTrigger className="h-full">
+              <ScrollArea className="h-full min-h-0" ref={scrollRef}>
+                <AnimatePresence mode="wait">
+                  <motion.div
+                    key={`${entry.id}:${contentRevision}`}
+                    initial={{
+                      opacity: articleEnterOpacity,
+                      y: directionalEnterY,
+                      filter: 'blur(0.8px)',
+                    }}
+                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    exit={{
+                      opacity: articleExitOpacity,
+                      y: directionalExitY,
+                      filter: 'blur(0.8px)',
+                      transition: articleExitTransition,
+                    }}
+                    transition={articleEnterTransition}
+                    className="px-4 py-8 transition-colors duration-300 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
+                    style={readerSurfaceStyle}
                   >
-                    <HugeiconsIcon
-                      icon={Link01Icon}
-                      strokeWidth={2}
-                      className="size-4 text-muted-foreground"
+                    <ArticleSummaryCard
+                      summary={articleSummary.summary}
+                      loading={articleSummary.loading}
+                      error={articleSummary.error}
+                      modelUsed={articleSummary.modelUsed}
+                      providerUsed={articleSummary.providerUsed}
+                      collapsed={articleSummary.collapsed}
+                      onToggleCollapse={articleSummary.onToggleCollapse}
+                      onRetry={articleSummary.handleSummarize}
                     />
-                    {_(msg`Open in Browser`)}
-                    <ContextMenuShortcut>
-                      {formatShortcutDisplay(shortcuts['open-browser'])}
-                    </ContextMenuShortcut>
-                  </ContextMenuItem>
-                  {onOpenInAppBrowser && (
-                    <ContextMenuItem onClick={() => onOpenInAppBrowser(entry.url)}>
+                    {entry.content ? (
+                      <ImmersiveTranslationLayer
+                        entryId={entry.id}
+                        html={readingContent.html}
+                        translationEnabled={translationEnabled}
+                        translationDisplayMode={translationDisplayMode}
+                        translateRequestToken={translateRequestToken}
+                        translationPreferences={translationPreferences}
+                        providerSettings={translationProviderSettings}
+                        bionicEnglish={bionicReading}
+                        chineseConversionMode={chineseConversionMode}
+                        customConversionRules={customConversionRules}
+                        codeTheme={codeTheme}
+                        onActiveProviderChange={setActiveTranslationProvider}
+                        onTranslationProgressChange={(completed, total) =>
+                          setTranslationProgress({ completed, total })
+                        }
+                        className={cn(
+                          'mx-auto max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
+                          useInvertedProse && 'prose-invert',
+                          '[&_h1]:mb-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold',
+                          '[&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:leading-snug [&_h2]:font-semibold',
+                          '[&_h3]:mt-8 [&_h3]:mb-3 [&_h3]:text-xl [&_h3]:leading-snug [&_h3]:font-semibold',
+                          '[&_p]:my-5 [&_p]:tracking-[0.01em]',
+                          '[&_ul]:my-5 [&_ol]:my-5 [&_li]:my-1.5',
+                          '[&_a]:break-all [&_a]:underline [&_a]:decoration-[color:var(--reader-link)] [&_a]:underline-offset-4',
+                          '[&_blockquote]:my-8 [&_blockquote]:rounded-r-xl [&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:bg-primary/5 [&_blockquote]:px-4 [&_blockquote]:py-2 [&_blockquote]:text-foreground/90',
+                          '[&_hr]:my-8 [&_hr]:border-border/60',
+                          '[&_table]:text-sm [&_table]:leading-relaxed',
+                          '[&_img]:my-8',
+                          '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0',
+                          focusMode &&
+                            '[&_[data-reader-node]]:opacity-25 [&_[data-reader-node]]:transition-opacity [&_[data-reader-node]]:duration-300 [&_[data-reader-node][data-focused="true"]]:opacity-100'
+                        )}
+                        style={readerProseStyle}
+                      />
+                    ) : (
+                      <p className="text-muted-foreground italic text-center py-20">
+                        {_(msg`No content available`)}
+                      </p>
+                    )}
+                  </motion.div>
+                </AnimatePresence>
+              </ScrollArea>
+            </ContextMenuTrigger>
+            <ContextMenuContent className="w-64">
+              {/* Quick actions toolbar */}
+              <div className="flex items-center gap-1 px-1.5 py-1">
+                <button
+                  type="button"
+                  disabled={!hasPrev || !onNavigatePrev}
+                  onClick={onNavigatePrev}
+                  className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+                  title={_(msg`Previous Article`)}
+                >
+                  <HugeiconsIcon icon={ArrowUp01Icon} strokeWidth={2} className="size-4" />
+                </button>
+                <button
+                  type="button"
+                  disabled={!hasNext || !onNavigateNext}
+                  onClick={onNavigateNext}
+                  className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+                  title={_(msg`Next Article`)}
+                >
+                  <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2} className="size-4" />
+                </button>
+                <div className="ml-auto flex items-center gap-1">
+                  <button
+                    type="button"
+                    onClick={() => toggleStar.mutate(entry.id)}
+                    className={cn(
+                      'flex size-7 items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground',
+                      entry.starred ? 'text-yellow-500' : 'text-muted-foreground'
+                    )}
+                    title={entry.starred ? _(msg`Unstar`) : _(msg`Star`)}
+                  >
+                    <HugeiconsIcon icon={StarIcon} strokeWidth={2} className="size-4" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => {
+                      const viewport = scrollRef.current?.querySelector<HTMLElement>(
+                        '[data-slot="scroll-area-viewport"]'
+                      );
+                      if (viewport) animateViewportScrollTo(viewport, 0);
+                    }}
+                    className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    title={_(msg`Go to Top`)}
+                  >
+                    <HugeiconsIcon icon={ArrowTurnUpIcon} strokeWidth={2} className="size-4" />
+                  </button>
+                </div>
+              </div>
+
+              <ContextMenuSeparator />
+
+              <ContextMenuGroup>
+                <ContextMenuLabel>{_(msg`AI`)}</ContextMenuLabel>
+                <ContextMenuItem
+                  onClick={articleSummary.handleSummarize}
+                  disabled={articleSummary.loading}
+                >
+                  <HugeiconsIcon
+                    icon={SparklesIcon}
+                    strokeWidth={2}
+                    className="size-4 text-muted-foreground"
+                  />
+                  {articleSummary.summary ? _(msg`Re-summarize`) : _(msg`Summarize Article`)}
+                  <ContextMenuShortcut>
+                    {formatShortcutDisplay(shortcuts.summarize)}
+                  </ContextMenuShortcut>
+                </ContextMenuItem>
+              </ContextMenuGroup>
+
+              <ContextMenuSeparator />
+
+              <ContextMenuGroup>
+                <ContextMenuLabel>{_(msg`Translation`)}</ContextMenuLabel>
+                <ContextMenuItem
+                  onClick={() => handleTranslationEnabledChange(!translationEnabled)}
+                >
+                  <HugeiconsIcon
+                    icon={Globe02Icon}
+                    strokeWidth={2}
+                    className="size-4 text-muted-foreground"
+                  />
+                  {_(msg`Translate Article`)}
+                  <ContextMenuShortcut>
+                    {formatShortcutDisplay(shortcuts['toggle-translation'])}
+                  </ContextMenuShortcut>
+                </ContextMenuItem>
+                {entry.feed &&
+                  (() => {
+                    const isFeedExcluded = translationExcludedFeedIds.includes(entry.feed_id);
+                    return (
+                      <ContextMenuItem
+                        onClick={() => {
+                          const next = isFeedExcluded
+                            ? translationExcludedFeedIds.filter((id) => id !== entry.feed_id)
+                            : [...translationExcludedFeedIds, entry.feed_id];
+                          setTranslationExcludedFeedIds(next);
+                          if (isFeedExcluded) {
+                            showToast.success(
+                              _(msg`Feed translation re-enabled`),
+                              entry.feed.title
+                            );
+                          } else {
+                            showToast.info(
+                              _(msg`Feed excluded from translation`),
+                              entry.feed.title
+                            );
+                          }
+                        }}
+                      >
+                        <HugeiconsIcon
+                          icon={ViewOffIcon}
+                          strokeWidth={2}
+                          className="size-4 text-muted-foreground"
+                        />
+                        {_(msg`Skip this feed`)}
+                        <span
+                          className={cn(
+                            'ml-auto size-2 rounded-full shrink-0 transition-colors',
+                            isFeedExcluded ? 'bg-primary' : 'border border-muted-foreground/40'
+                          )}
+                        />
+                      </ContextMenuItem>
+                    );
+                  })()}
+                {entry.feed.category &&
+                  (() => {
+                    const isCategoryExcluded = translationExcludedCategoryIds.includes(
+                      entry.feed.category.id
+                    );
+                    return (
+                      <ContextMenuItem
+                        onClick={() => {
+                          const categoryId = entry.feed.category?.id;
+                          if (!categoryId) return;
+                          const next = isCategoryExcluded
+                            ? translationExcludedCategoryIds.filter((id) => id !== categoryId)
+                            : [...translationExcludedCategoryIds, categoryId];
+                          setTranslationExcludedCategoryIds(next);
+                          if (isCategoryExcluded) {
+                            showToast.success(
+                              _(msg`Category translation re-enabled`),
+                              entry.feed.category?.title
+                            );
+                          } else {
+                            showToast.info(
+                              _(msg`Category excluded from translation`),
+                              entry.feed.category?.title
+                            );
+                          }
+                        }}
+                      >
+                        <HugeiconsIcon
+                          icon={ViewOffIcon}
+                          strokeWidth={2}
+                          className="size-4 text-muted-foreground"
+                        />
+                        {_(msg`Skip this category`)}
+                        <span
+                          className={cn(
+                            'ml-auto size-2 rounded-full shrink-0 transition-colors',
+                            isCategoryExcluded ? 'bg-primary' : 'border border-muted-foreground/40'
+                          )}
+                        />
+                      </ContextMenuItem>
+                    );
+                  })()}
+              </ContextMenuGroup>
+
+              <ContextMenuSeparator />
+
+              <ContextMenuGroup>
+                <ContextMenuLabel>{_(msg`Article`)}</ContextMenuLabel>
+                <ContextMenuItem onClick={() => toggleEntryRead.mutate(entry.id)}>
+                  <HugeiconsIcon
+                    icon={entry.status === 'read' ? Mail01Icon : MailOpen01Icon}
+                    strokeWidth={2}
+                    className="size-4 text-muted-foreground"
+                  />
+                  {entry.status === 'read' ? _(msg`Mark as unread`) : _(msg`Mark as read`)}
+                  <ContextMenuShortcut>
+                    {formatShortcutDisplay(shortcuts['toggle-read'])}
+                  </ContextMenuShortcut>
+                </ContextMenuItem>
+                <ContextMenuItem onClick={handleFetchOriginalContent}>
+                  <HugeiconsIcon
+                    icon={Download01Icon}
+                    strokeWidth={2}
+                    className="size-4 text-muted-foreground"
+                  />
+                  {_(msg`Fetch Original Content`)}
+                  <ContextMenuShortcut>
+                    {formatShortcutDisplay(shortcuts['fetch-content'])}
+                  </ContextMenuShortcut>
+                </ContextMenuItem>
+                <ContextMenuItem onClick={() => setFocusMode(!focusMode)}>
+                  <HugeiconsIcon
+                    icon={ViewIcon}
+                    strokeWidth={2}
+                    className="size-4 text-muted-foreground"
+                  />
+                  {_(msg`Focus Mode`)}
+                  <span
+                    className={cn(
+                      'ml-auto size-2 rounded-full shrink-0 transition-colors',
+                      focusMode ? 'bg-primary' : 'border border-muted-foreground/40'
+                    )}
+                  />
+                </ContextMenuItem>
+              </ContextMenuGroup>
+
+              {entry.url && (
+                <>
+                  <ContextMenuSeparator />
+                  <ContextMenuGroup>
+                    <ContextMenuLabel>{_(msg`Links`)}</ContextMenuLabel>
+                    <ContextMenuItem
+                      onClick={() => window.open(entry.url, '_blank', 'noopener,noreferrer')}
+                    >
                       <HugeiconsIcon
-                        icon={ViewIcon}
+                        icon={Link01Icon}
                         strokeWidth={2}
                         className="size-4 text-muted-foreground"
                       />
-                      {_(msg`Open in App Browser`)}
+                      {_(msg`Open in Browser`)}
                       <ContextMenuShortcut>
-                        {formatShortcutDisplay(shortcuts['open-app-browser'])}
+                        {formatShortcutDisplay(shortcuts['open-browser'])}
                       </ContextMenuShortcut>
                     </ContextMenuItem>
-                  )}
-                  <ContextMenuItem onClick={() => navigator.clipboard.writeText(entry.url)}>
-                    <HugeiconsIcon
-                      icon={Copy01Icon}
-                      strokeWidth={2}
-                      className="size-4 text-muted-foreground"
-                    />
-                    {_(msg`Copy Link`)}
-                    <ContextMenuShortcut>
-                      {formatShortcutDisplay(shortcuts['copy-link'])}
-                    </ContextMenuShortcut>
-                  </ContextMenuItem>
-                  <ContextMenuItem onClick={handleSaveToServices}>
-                    <HugeiconsIcon
-                      icon={SentIcon}
-                      strokeWidth={2}
-                      className="size-4 text-muted-foreground"
-                    />
-                    {_(msg`Save to services`)}
-                  </ContextMenuItem>
-                </ContextMenuGroup>
-              </>
-            )}
-          </ContextMenuContent>
-        </ContextMenu>
+                    {onOpenInAppBrowser && (
+                      <ContextMenuItem onClick={() => onOpenInAppBrowser(entry.url)}>
+                        <HugeiconsIcon
+                          icon={ViewIcon}
+                          strokeWidth={2}
+                          className="size-4 text-muted-foreground"
+                        />
+                        {_(msg`Open in App Browser`)}
+                        <ContextMenuShortcut>
+                          {formatShortcutDisplay(shortcuts['open-app-browser'])}
+                        </ContextMenuShortcut>
+                      </ContextMenuItem>
+                    )}
+                    <ContextMenuItem onClick={() => navigator.clipboard.writeText(entry.url)}>
+                      <HugeiconsIcon
+                        icon={Copy01Icon}
+                        strokeWidth={2}
+                        className="size-4 text-muted-foreground"
+                      />
+                      {_(msg`Copy Link`)}
+                      <ContextMenuShortcut>
+                        {formatShortcutDisplay(shortcuts['copy-link'])}
+                      </ContextMenuShortcut>
+                    </ContextMenuItem>
+                    <ContextMenuItem onClick={handleSaveToServices}>
+                      <HugeiconsIcon
+                        icon={SentIcon}
+                        strokeWidth={2}
+                        className="size-4 text-muted-foreground"
+                      />
+                      {_(msg`Save to services`)}
+                    </ContextMenuItem>
+                  </ContextMenuGroup>
+                </>
+              )}
+            </ContextMenuContent>
+          </ContextMenu>
+        </motion.div>
 
         <AnimatePresence>
           {showToc && (
@@ -1599,20 +1852,174 @@ export function EntryReading({
         </AnimatePresence>
 
         <AnimatePresence>
-          {swipeHintProgress > 0 && (
-            <motion.div
-              initial={{ opacity: 0, x: 20 }}
-              animate={{ opacity: swipeHintProgress, x: 0 }}
-              exit={{ opacity: 0, x: 20 }}
-              transition={{ duration: 0.15 }}
-              className="pointer-events-none absolute inset-y-0 right-0 z-30 flex items-center pr-3"
-            >
-              <div className="flex items-center gap-1.5 rounded-xl border border-border/60 bg-background/90 px-3 py-2 text-sm text-muted-foreground shadow-lg backdrop-blur-sm">
-                <HugeiconsIcon icon={Globe02Icon} className="h-4 w-4" strokeWidth={2} />
-                <span>{_(msg`Open original`)}</span>
-              </div>
-            </motion.div>
-          )}
+          {swipeLeftHintVisible &&
+            (() => {
+              const action = getGestureAction(swipeLeftAction);
+              return (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="pointer-events-none absolute inset-y-0 right-0 z-30 flex items-center"
+                >
+                  <motion.div
+                    className="flex items-center gap-2 rounded-l-2xl bg-background/80 px-4 py-2.5 backdrop-blur-md"
+                    style={{
+                      x: swipeLeftHintX,
+                      opacity: swipeLeftHintOpacity,
+                      scale: swipeLeftHintScale,
+                    }}
+                  >
+                    {action?.icon && (
+                      <motion.div
+                        style={{ scale: swipeLeftIconScale, rotate: swipeLeftIconRotate }}
+                      >
+                        <HugeiconsIcon
+                          icon={action.icon}
+                          className="h-4 w-4 text-muted-foreground"
+                          strokeWidth={2}
+                        />
+                      </motion.div>
+                    )}
+                    <motion.span
+                      className="whitespace-nowrap text-xs font-medium text-muted-foreground"
+                      style={{ opacity: swipeLeftLabelOpacity, x: swipeLeftLabelX }}
+                    >
+                      {action ? _(action.label) : ''}
+                    </motion.span>
+                  </motion.div>
+                </motion.div>
+              );
+            })()}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {swipeRightHintVisible &&
+            swipeRightAction !== 'close_browser' &&
+            (() => {
+              const action = getGestureAction(swipeRightAction);
+              return (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="pointer-events-none absolute inset-y-0 left-0 z-30 flex items-center"
+                >
+                  <motion.div
+                    className="flex items-center gap-2 rounded-r-2xl bg-background/80 px-4 py-2.5 backdrop-blur-md"
+                    style={{
+                      x: swipeRightHintX,
+                      opacity: swipeRightHintOpacity,
+                      scale: swipeRightHintScale,
+                    }}
+                  >
+                    {action?.icon && (
+                      <motion.div
+                        style={{ scale: swipeRightIconScale, rotate: swipeRightIconRotate }}
+                      >
+                        <HugeiconsIcon
+                          icon={action.icon}
+                          className="h-4 w-4 text-muted-foreground"
+                          strokeWidth={2}
+                        />
+                      </motion.div>
+                    )}
+                    <motion.span
+                      className="whitespace-nowrap text-xs font-medium text-muted-foreground"
+                      style={{ opacity: swipeRightLabelOpacity, x: swipeRightLabelX }}
+                    >
+                      {action ? _(action.label) : ''}
+                    </motion.span>
+                  </motion.div>
+                </motion.div>
+              );
+            })()}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {pullTopHintVisible &&
+            (() => {
+              const action = getGestureAction(pullTopAction);
+              return (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="pointer-events-none absolute inset-x-0 top-0 z-30 flex justify-center"
+                >
+                  <motion.div
+                    className="flex w-full items-center justify-center gap-2 rounded-b-2xl bg-background/80 px-4 py-2 backdrop-blur-md"
+                    style={{
+                      y: pullTopHintY,
+                      opacity: pullTopHintOpacity,
+                      scale: pullTopHintScale,
+                    }}
+                  >
+                    {action?.icon && (
+                      <motion.div style={{ scale: pullTopIconScale, rotate: pullTopIconRotate }}>
+                        <HugeiconsIcon
+                          icon={action.icon}
+                          className="h-4 w-4 text-muted-foreground"
+                          strokeWidth={2}
+                        />
+                      </motion.div>
+                    )}
+                    <motion.span
+                      className="text-xs font-medium text-muted-foreground"
+                      style={{ opacity: pullTopLabelOpacity, y: pullTopLabelY }}
+                    >
+                      {action ? _(action.label) : ''}
+                    </motion.span>
+                  </motion.div>
+                </motion.div>
+              );
+            })()}
+        </AnimatePresence>
+
+        <AnimatePresence>
+          {pullBottomHintVisible &&
+            (() => {
+              const action = getGestureAction(pullBottomAction);
+              return (
+                <motion.div
+                  initial={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                  exit={{ opacity: 0 }}
+                  transition={{ duration: 0.15 }}
+                  className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex justify-center"
+                >
+                  <motion.div
+                    className="flex w-full items-center justify-center gap-2 rounded-t-2xl bg-background/80 px-4 py-2 backdrop-blur-md"
+                    style={{
+                      y: pullBottomHintY,
+                      opacity: pullBottomHintOpacity,
+                      scale: pullBottomHintScale,
+                    }}
+                  >
+                    {action?.icon && (
+                      <motion.div
+                        style={{ scale: pullBottomIconScale, rotate: pullBottomIconRotate }}
+                      >
+                        <HugeiconsIcon
+                          icon={action.icon}
+                          className="h-4 w-4 text-muted-foreground"
+                          strokeWidth={2}
+                        />
+                      </motion.div>
+                    )}
+                    <motion.span
+                      className="text-xs font-medium text-muted-foreground"
+                      style={{ opacity: pullBottomLabelOpacity, y: pullBottomLabelY }}
+                    >
+                      {action ? _(action.label) : ''}
+                    </motion.span>
+                  </motion.div>
+                </motion.div>
+              );
+            })()}
         </AnimatePresence>
 
         {translationEnabled && (

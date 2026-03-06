@@ -15,6 +15,7 @@ import {
   RssIcon,
   Settings01Icon,
   SparklesIcon,
+  Touch01Icon,
   UserGroupIcon,
   ZapIcon,
 } from '@hugeicons/core-free-icons';
@@ -82,6 +83,7 @@ import { AppearancePane } from './panes/AppearancePane';
 import { CategoriesPane } from './panes/CategoriesPane';
 import { FeedsPane } from './panes/FeedsPane';
 import { GeneralPane } from './panes/GeneralPane';
+import { GesturePane } from './panes/GesturePane';
 import { IntegrationsPane } from './panes/IntegrationsPane';
 import { ReaderPane } from './panes/ReaderPane';
 import { ShortcutsPane } from './panes/ShortcutsPane';
@@ -114,6 +116,11 @@ const appSettingsItems = [
     id: 'shortcuts' as const,
     label: msg`Shortcuts`,
     icon: KeyboardIcon,
+  },
+  {
+    id: 'gesture' as const,
+    label: msg`Gestures`,
+    icon: Touch01Icon,
   },
   {
     id: 'advanced' as const,
@@ -624,6 +631,7 @@ export function PreferencesDialog() {
               {activePane === 'reader' && <ReaderPane />}
               {activePane === 'translation' && <TranslationPane />}
               {activePane === 'shortcuts' && <ShortcutsPane />}
+              {activePane === 'gesture' && <GesturePane />}
               {activePane === 'advanced' && <AdvancedPane />}
               {activePane === 'about' && <AboutPane />}
 

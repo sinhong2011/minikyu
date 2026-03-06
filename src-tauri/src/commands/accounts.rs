@@ -337,17 +337,7 @@ async fn delete_miniflux_account_impl(pool: &SqlitePool, id: i64) -> Result<(), 
 
     log::debug!("Deleting account for username: {}", username);
 
-    sqlx::query("DELETE FROM miniflux_connections WHERE id = ?")
-        .bind(id)
-        .execute(pool)
-        .await?;
-
-    // Clean up per-account sync state
-    let _ = sqlx::query("DELETE FROM sync_state WHERE account_id = ?")
-        .bind(id)
-        .execute(pool)
-        .await;
-
+    // Delete keyring credentials first — if this fails, the DB row is untouched
     match delete_credentials(&server_url, &username).await {
         Ok(_) => {
             log::debug!("Deleted credentials from keyring");
@@ -360,6 +350,17 @@ async fn delete_miniflux_account_impl(pool: &SqlitePool, id: i64) -> Result<(), 
             return Err(e);
         }
     }
+
+    sqlx::query("DELETE FROM miniflux_connections WHERE id = ?")
+        .bind(id)
+        .execute(pool)
+        .await?;
+
+    // Clean up per-account sync state
+    let _ = sqlx::query("DELETE FROM sync_state WHERE account_id = ?")
+        .bind(id)
+        .execute(pool)
+        .await;
 
     log::info!("Successfully deleted account with ID: {}", id);
 

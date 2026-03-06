@@ -123,6 +123,32 @@ pub async fn reload_browser_webview(app: AppHandle) -> Result<(), String> {
     Ok(())
 }
 
+/// Navigates the in-app browser webview back in history.
+#[tauri::command]
+#[specta::specta]
+pub async fn browser_go_back(app: AppHandle) -> Result<(), String> {
+    if let Some(webview) = app.get_webview(BROWSER_LABEL) {
+        // SAFETY: hardcoded literal, no user input involved.
+        webview
+            .eval("window.history.back()")
+            .map_err(|e| format!("browser_go_back failed: {e}"))?;
+    }
+    Ok(())
+}
+
+/// Navigates the in-app browser webview forward in history.
+#[tauri::command]
+#[specta::specta]
+pub async fn browser_go_forward(app: AppHandle) -> Result<(), String> {
+    if let Some(webview) = app.get_webview(BROWSER_LABEL) {
+        // SAFETY: hardcoded literal, no user input involved.
+        webview
+            .eval("window.history.forward()")
+            .map_err(|e| format!("browser_go_forward failed: {e}"))?;
+    }
+    Ok(())
+}
+
 /// Synchronises the browser webview's color scheme with the app theme.
 ///
 /// Uses Tauri's Webview::eval() API to set colorScheme on the page root.

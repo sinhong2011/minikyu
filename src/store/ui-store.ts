@@ -8,6 +8,7 @@ export type PreferencesPane =
   | 'reader'
   | 'translation'
   | 'shortcuts'
+  | 'gesture'
   | 'advanced'
   | 'about'
   | 'categories'
