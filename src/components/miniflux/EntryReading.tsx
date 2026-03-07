@@ -885,7 +885,7 @@ export function EntryReading({
         }
 
         pullTopCumulativeY += Math.abs(e.deltaY);
-        const threshold = Math.round(swipeThresholdRef.current * 1.5);
+        const threshold = Math.round(swipeThresholdRef.current * 2.5);
         const progress = Math.min(1, pullTopCumulativeY / threshold);
         pullTopProgress.set(progress);
         if (progress > 0) setPullTopHintVisible(true);
@@ -923,7 +923,7 @@ export function EntryReading({
         }
 
         pullBottomCumulativeY += e.deltaY;
-        const threshold = Math.round(swipeThresholdRef.current * 1.5);
+        const threshold = Math.round(swipeThresholdRef.current * 2.5);
         const progress = Math.min(1, pullBottomCumulativeY / threshold);
         pullBottomProgress.set(progress);
         if (progress > 0) setPullBottomHintVisible(true);
