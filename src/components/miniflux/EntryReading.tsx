@@ -20,7 +20,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { AnimatePresence, motion, useMotionValue, useTransform } from 'motion/react';
+import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArticleSummaryCard, useArticleSummary } from '@/components/miniflux/ArticleSummary';
 import { Button } from '@/components/ui/button';
@@ -254,7 +254,7 @@ export function EntryReading({
   );
   // Pull from top/bottom progress and animation
   const pullTopProgress = useMotionValue(0);
-  const pullTopHintY = useTransform(pullTopProgress, [0, 1], [-48, 0]);
+  const pullTopHintY = useTransform(pullTopProgress, [0, 1], [-64, 0]);
   const pullTopHintOpacity = useTransform(pullTopProgress, [0, 0.15, 1], [0, 0.8, 1]);
   const pullTopHintScale = useTransform(pullTopProgress, [0, 0.3, 0.8, 1], [0.4, 0.85, 1, 1.05]);
   const pullTopIconScale = useTransform(pullTopProgress, [0, 0.5, 0.85, 1], [0.3, 0.8, 1, 1.25]);
@@ -263,7 +263,7 @@ export function EntryReading({
   const pullTopLabelY = useTransform(pullTopProgress, [0, 0.5, 1], [8, 4, 0]);
   const [pullTopHintVisible, setPullTopHintVisible] = useState(false);
   const pullBottomProgress = useMotionValue(0);
-  const pullBottomHintY = useTransform(pullBottomProgress, [0, 1], [48, 0]);
+  const pullBottomHintY = useTransform(pullBottomProgress, [0, 1], [64, 0]);
   const pullBottomHintOpacity = useTransform(pullBottomProgress, [0, 0.15, 1], [0, 0.8, 1]);
   const pullBottomHintScale = useTransform(
     pullBottomProgress,
@@ -283,8 +283,8 @@ export function EntryReading({
   const pullContentY = useTransform([pullTopProgress, pullBottomProgress], (values: number[]) => {
     const top = values[0] ?? 0;
     const bottom = values[1] ?? 0;
-    if (top > 0) return top ** 0.7 * 80;
-    if (bottom > 0) return -(bottom ** 0.7) * 80;
+    if (top > 0) return top ** 0.6 * 120;
+    if (bottom > 0) return -(bottom ** 0.6) * 120;
     return 0;
   });
   // Combined scale from swipe + pull gestures (skip for browser-open actions)
@@ -297,7 +297,7 @@ export function EntryReading({
       if ((values[1] ?? 0) > 0 && !browserActions.has(swipeRightActionRef.current))
         swipeMax = Math.max(swipeMax, values[1] ?? 0);
       const pullProgress = Math.max(values[2] ?? 0, values[3] ?? 0);
-      return (1 - swipeMax * 0.02) * (1 - pullProgress * 0.015);
+      return (1 - swipeMax * 0.02) * (1 - pullProgress * 0.025);
     }
   );
   const [translationEnabled, setTranslationEnabled] = useState(false);
@@ -835,10 +835,9 @@ export function EntryReading({
           swipeRightCumulativeX = 0;
           swipeLeftTriggered = false;
           swipeRightTriggered = false;
-          swipeLeftProgress.set(0);
-          swipeRightProgress.set(0);
-          setSwipeLeftHintVisible(false);
-          setSwipeRightHintVisible(false);
+          const springConfig = { type: 'spring' as const, stiffness: 300, damping: 25 };
+          animate(swipeLeftProgress, 0, springConfig).then(() => setSwipeLeftHintVisible(false));
+          animate(swipeRightProgress, 0, springConfig).then(() => setSwipeRightHintVisible(false));
         }, 300);
       }
 
@@ -853,13 +852,14 @@ export function EntryReading({
         if (!atTop) {
           pullTopCumulativeY = 0;
           pullTopTriggered = false;
-          pullTopProgress.set(0);
-          setPullTopHintVisible(false);
+          animate(pullTopProgress, 0, { type: 'spring', stiffness: 300, damping: 25 }).then(() =>
+            setPullTopHintVisible(false)
+          );
           return;
         }
 
         pullTopCumulativeY += Math.abs(e.deltaY);
-        const threshold = Math.round(swipeThresholdRef.current * 2.25);
+        const threshold = Math.round(swipeThresholdRef.current * 1.5);
         const progress = Math.min(1, pullTopCumulativeY / threshold);
         pullTopProgress.set(progress);
         if (progress > 0) setPullTopHintVisible(true);
@@ -873,8 +873,9 @@ export function EntryReading({
         pullTopResetTimer = setTimeout(() => {
           pullTopCumulativeY = 0;
           pullTopTriggered = false;
-          pullTopProgress.set(0);
-          setPullTopHintVisible(false);
+          animate(pullTopProgress, 0, { type: 'spring', stiffness: 300, damping: 25 }).then(() =>
+            setPullTopHintVisible(false)
+          );
         }, 400);
       }
 
@@ -889,13 +890,14 @@ export function EntryReading({
         if (!atBottom) {
           pullBottomCumulativeY = 0;
           pullBottomTriggered = false;
-          pullBottomProgress.set(0);
-          setPullBottomHintVisible(false);
+          animate(pullBottomProgress, 0, { type: 'spring', stiffness: 300, damping: 25 }).then(() =>
+            setPullBottomHintVisible(false)
+          );
           return;
         }
 
         pullBottomCumulativeY += e.deltaY;
-        const threshold = Math.round(swipeThresholdRef.current * 2.25);
+        const threshold = Math.round(swipeThresholdRef.current * 1.5);
         const progress = Math.min(1, pullBottomCumulativeY / threshold);
         pullBottomProgress.set(progress);
         if (progress > 0) setPullBottomHintVisible(true);
@@ -909,8 +911,9 @@ export function EntryReading({
         pullBottomResetTimer = setTimeout(() => {
           pullBottomCumulativeY = 0;
           pullBottomTriggered = false;
-          pullBottomProgress.set(0);
-          setPullBottomHintVisible(false);
+          animate(pullBottomProgress, 0, { type: 'spring', stiffness: 300, damping: 25 }).then(() =>
+            setPullBottomHintVisible(false)
+          );
         }, 400);
       }
     };
