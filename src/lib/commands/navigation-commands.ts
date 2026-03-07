@@ -50,6 +50,8 @@ export const navigationCommands: AppCommand[] = [
     label: msg`Toggle Zen Mode`,
     description: msg`Enter or exit distraction-free reading mode`,
     group: 'navigation',
+    shortcut: 'Z',
+    keywords: ['zen', 'focus', 'distraction', 'reading'],
     execute: () => {
       useUIStore.getState().toggleZenMode();
     },

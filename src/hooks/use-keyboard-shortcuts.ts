@@ -46,9 +46,16 @@ export function useKeyboardShortcuts(commandContext: CommandContext) {
         return;
       }
 
-      // ── Podcast shortcuts (no modifier, skip if typing) ──
+      // ── Single-key shortcuts (skip if typing) ──
       if (isTyping(e)) return;
 
+      if (match('toggle-zen-mode', e)) {
+        e.preventDefault();
+        useUIStore.getState().toggleZenMode();
+        return;
+      }
+
+      // ── Podcast shortcuts ──
       const player = usePlayerStore.getState();
       const hasPodcast = player.currentEntry !== null;
       if (!hasPodcast) return;
