@@ -307,6 +307,23 @@ export function EntryReadingHeader({
     play(entry, podcastEnclosure);
   };
 
+  const handleAddToPlaylist = () => {
+    if (!podcastEnclosure) return;
+    usePlayerStore.getState().addToQueue(entry, podcastEnclosure);
+    toast.message(_(msg`Added to playlist`), { description: entry.title });
+  };
+
+  useEffect(() => {
+    const onPlayPause = () => handlePodcastPlayPause();
+    const onAddToPlaylist = () => handleAddToPlaylist();
+    document.addEventListener('command:podcast-play-pause', onPlayPause);
+    document.addEventListener('command:podcast-add-to-playlist', onAddToPlaylist);
+    return () => {
+      document.removeEventListener('command:podcast-play-pause', onPlayPause);
+      document.removeEventListener('command:podcast-add-to-playlist', onAddToPlaylist);
+    };
+  });
+
   return (
     <motion.header
       className="sticky top-0 z-10 w-full min-w-0 max-w-full shrink-0 bg-gradient-to-b from-background/75 via-background/58 to-background/45 shadow-[0_10px_28px_-24px_hsl(var(--foreground)/0.65)] supports-[backdrop-filter]:bg-background/35 backdrop-blur-2xl"
@@ -384,6 +401,92 @@ export function EntryReadingHeader({
                     <HugeiconsIcon icon={ArrowRight02Icon} className="h-5 w-5" strokeWidth={2} />
                   </TooltipTrigger>
                   <TooltipPanel>{_(msg`Next entry (j or →)`)}</TooltipPanel>
+                </Tooltip>
+              </>
+            )}
+
+            {podcastEnclosure && (
+              <>
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className={cn(toolbarButtonClass, 'relative')}
+                        onClick={handlePodcastPlayPause}
+                        aria-label={podcastPlayLabel}
+                        data-testid="entry-header-podcast-play"
+                      />
+                    }
+                  >
+                    <span className="relative inline-flex">
+                      {podcastBuffering && (
+                        <motion.span
+                          aria-hidden
+                          className="pointer-events-none absolute -inset-1 rounded-full border border-primary/35"
+                          animate={{ rotate: 360 }}
+                          transition={{
+                            duration: 1.1,
+                            repeat: Number.POSITIVE_INFINITY,
+                            ease: 'linear',
+                          }}
+                        />
+                      )}
+                      {podcastPlaying && !podcastBuffering && (
+                        <motion.span
+                          aria-hidden
+                          className="pointer-events-none absolute inset-0 rounded-full bg-primary/20"
+                          animate={{ scale: [1, 1.32], opacity: [0.45, 0] }}
+                          transition={{
+                            duration: 1.15,
+                            repeat: Number.POSITIVE_INFINITY,
+                            ease: 'easeOut',
+                          }}
+                        />
+                      )}
+                      <AnimatePresence mode="wait" initial={false}>
+                        <motion.span
+                          key={podcastBuffering ? 'loading' : podcastPlaying ? 'pause' : 'play'}
+                          initial={{ opacity: 0, scale: 0.84, y: 1 }}
+                          animate={{ opacity: 1, scale: 1, y: 0 }}
+                          exit={{ opacity: 0, scale: 0.84, y: -1 }}
+                          transition={{ duration: 0.16 }}
+                        >
+                          {podcastBuffering ? (
+                            <Spinner className="h-5 w-5" />
+                          ) : (
+                            <HugeiconsIcon
+                              icon={podcastPlaying ? PauseIcon : PlayIcon}
+                              className="h-5 w-5"
+                              strokeWidth={2}
+                            />
+                          )}
+                        </motion.span>
+                      </AnimatePresence>
+                    </span>
+                  </TooltipTrigger>
+                  <TooltipPanel>{podcastPlayLabel} (P)</TooltipPanel>
+                </Tooltip>
+
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className={toolbarButtonClass}
+                        onClick={handleAddToPlaylist}
+                        aria-label={_(msg`Add to playlist`)}
+                        data-testid="entry-header-podcast-queue"
+                      />
+                    }
+                  >
+                    <HugeiconsIcon icon={Playlist03Icon} className="h-5 w-5" strokeWidth={2} />
+                  </TooltipTrigger>
+                  <TooltipPanel>{_(msg`Add to playlist`)} (Q)</TooltipPanel>
                 </Tooltip>
               </>
             )}
@@ -919,95 +1022,6 @@ export function EntryReadingHeader({
             )}
           </div>
         </div>
-
-        {podcastEnclosure && (
-          <div className="ml-3 shrink-0 pt-1">
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-10 w-10 rounded-xl text-muted-foreground hover:text-foreground transition-all"
-                    onClick={handlePodcastPlayPause}
-                    aria-label={podcastPlayLabel}
-                    data-testid="entry-header-podcast-play"
-                  />
-                }
-              >
-                <span className="relative inline-flex">
-                  {podcastBuffering && (
-                    <motion.span
-                      aria-hidden
-                      className="pointer-events-none absolute -inset-1 rounded-full border border-primary/35"
-                      animate={{ rotate: 360 }}
-                      transition={{
-                        duration: 1.1,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: 'linear',
-                      }}
-                    />
-                  )}
-                  {podcastPlaying && !podcastBuffering && (
-                    <motion.span
-                      aria-hidden
-                      className="pointer-events-none absolute inset-0 rounded-full bg-primary/20"
-                      animate={{ scale: [1, 1.32], opacity: [0.45, 0] }}
-                      transition={{
-                        duration: 1.15,
-                        repeat: Number.POSITIVE_INFINITY,
-                        ease: 'easeOut',
-                      }}
-                    />
-                  )}
-                  <AnimatePresence mode="wait" initial={false}>
-                    <motion.span
-                      key={podcastBuffering ? 'loading' : podcastPlaying ? 'pause' : 'play'}
-                      initial={{ opacity: 0, scale: 0.84, y: 1 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.84, y: -1 }}
-                      transition={{ duration: 0.16 }}
-                    >
-                      {podcastBuffering ? (
-                        <Spinner className="h-5 w-5" />
-                      ) : (
-                        <HugeiconsIcon
-                          icon={podcastPlaying ? PauseIcon : PlayIcon}
-                          className="h-5 w-5"
-                        />
-                      )}
-                    </motion.span>
-                  </AnimatePresence>
-                </span>
-              </TooltipTrigger>
-              <TooltipPanel>{podcastPlayLabel}</TooltipPanel>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className="h-10 w-10 rounded-xl text-muted-foreground hover:text-foreground"
-                    onClick={() => {
-                      if (!podcastEnclosure) return;
-                      usePlayerStore.getState().addToQueue(entry, podcastEnclosure);
-                      toast.message(_(msg`Added to playlist`), { description: entry.title });
-                    }}
-                    aria-label={_(msg`Add to playlist`)}
-                    data-testid="entry-header-podcast-queue"
-                  />
-                }
-              >
-                <HugeiconsIcon icon={Playlist03Icon} className="h-5 w-5" />
-              </TooltipTrigger>
-              <TooltipPanel>{_(msg`Add to playlist`)}</TooltipPanel>
-            </Tooltip>
-          </div>
-        )}
       </motion.div>
     </motion.header>
   );

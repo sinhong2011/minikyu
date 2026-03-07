@@ -9,6 +9,8 @@ import {
   Link01Icon,
   Mail01Icon,
   MailOpen01Icon,
+  PlayIcon,
+  Playlist03Icon,
   SentIcon,
   SparklesIcon,
   StarIcon,
@@ -40,6 +42,7 @@ import { useReaderSettings } from '@/hooks/use-reader-settings';
 import { useShortcutConfig } from '@/hooks/use-shortcut-config';
 import { getGestureAction } from '@/lib/gesture-actions';
 import { logger } from '@/lib/logger';
+import { getPodcastEnclosure } from '@/lib/podcast-utils';
 import { getReaderFontStack } from '@/lib/reader-fonts';
 import {
   getReaderThemePalette,
@@ -1140,6 +1143,14 @@ export function EntryReading({
           navigator.clipboard.writeText(currentEntry.url);
         }
       }
+      // Podcast
+      else if (match('podcast-play', e)) {
+        e.preventDefault();
+        document.dispatchEvent(new CustomEvent('command:podcast-play-pause'));
+      } else if (match('podcast-queue', e)) {
+        e.preventDefault();
+        document.dispatchEvent(new CustomEvent('command:podcast-add-to-playlist'));
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown, true);
@@ -1666,6 +1677,45 @@ export function EntryReading({
                         className="size-4 text-muted-foreground"
                       />
                       {_(msg`Save to services`)}
+                    </ContextMenuItem>
+                  </ContextMenuGroup>
+                </>
+              )}
+
+              {getPodcastEnclosure(entry) && (
+                <>
+                  <ContextMenuSeparator />
+                  <ContextMenuGroup>
+                    <ContextMenuLabel>{_(msg`Podcast`)}</ContextMenuLabel>
+                    <ContextMenuItem
+                      onClick={() =>
+                        document.dispatchEvent(new CustomEvent('command:podcast-play-pause'))
+                      }
+                    >
+                      <HugeiconsIcon
+                        icon={PlayIcon}
+                        strokeWidth={2}
+                        className="size-4 text-muted-foreground"
+                      />
+                      {_(msg`Play / Pause`)}
+                      <ContextMenuShortcut>
+                        {formatShortcutDisplay(shortcuts['podcast-play'])}
+                      </ContextMenuShortcut>
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                      onClick={() =>
+                        document.dispatchEvent(new CustomEvent('command:podcast-add-to-playlist'))
+                      }
+                    >
+                      <HugeiconsIcon
+                        icon={Playlist03Icon}
+                        strokeWidth={2}
+                        className="size-4 text-muted-foreground"
+                      />
+                      {_(msg`Add to Playlist`)}
+                      <ContextMenuShortcut>
+                        {formatShortcutDisplay(shortcuts['podcast-queue'])}
+                      </ContextMenuShortcut>
                     </ContextMenuItem>
                   </ContextMenuGroup>
                 </>

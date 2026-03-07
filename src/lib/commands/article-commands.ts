@@ -118,4 +118,28 @@ export const articleCommands: AppCommand[] = [
       document.dispatchEvent(new CustomEvent('command:summarize-article'));
     },
   },
+  {
+    id: 'article-podcast-play',
+    label: msg`Play / Pause Podcast`,
+    description: msg`Toggle podcast playback for the current article`,
+    group: 'article',
+    shortcut: 'P',
+    keywords: ['play', 'pause', 'podcast', 'audio', 'episode'],
+    isAvailable: (context) => context.getSelectedEntryId() !== undefined,
+    execute: () => {
+      document.dispatchEvent(new CustomEvent('command:podcast-play-pause'));
+    },
+  },
+  {
+    id: 'article-podcast-queue',
+    label: msg`Add to Playlist`,
+    description: msg`Add the current article's podcast to the playlist`,
+    group: 'article',
+    shortcut: 'Q',
+    keywords: ['queue', 'playlist', 'add', 'podcast'],
+    isAvailable: (context) => context.getSelectedEntryId() !== undefined,
+    execute: () => {
+      document.dispatchEvent(new CustomEvent('command:podcast-add-to-playlist'));
+    },
+  },
 ];
