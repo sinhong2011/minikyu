@@ -251,7 +251,7 @@ fn default_gesture_swipe_left_action() -> String {
 }
 
 fn default_gesture_swipe_right_action() -> String {
-    "close_browser".to_string()
+    "toggle_read".to_string()
 }
 
 fn default_gesture_pull_top_action() -> String {

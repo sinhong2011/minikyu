@@ -1,7 +1,6 @@
 import {
   ArrowDown01Icon,
   ArrowUp01Icon,
-  Cancel01Icon,
   Globe02Icon,
   MailOpen01Icon,
   StarIcon,
@@ -23,7 +22,6 @@ export const gestureActions: GestureAction[] = [
   { id: 'toggle_star', label: msg`Toggle star`, icon: StarIcon },
   { id: 'next_article', label: msg`Next article`, icon: ArrowDown01Icon },
   { id: 'prev_article', label: msg`Previous article`, icon: ArrowUp01Icon },
-  { id: 'close_browser', label: msg`Close browser`, icon: Cancel01Icon },
   { id: 'none', label: msg`None (disabled)`, icon: null },
 ];
 
