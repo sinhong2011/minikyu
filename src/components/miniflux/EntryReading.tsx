@@ -676,6 +676,25 @@ export function EntryReading({
       viewport.focus({ preventScroll: true });
     });
 
+    // Run an initial scroll check after content renders, so short articles
+    // or the first entry after startup still get auto-marked as read.
+    const initialCheckTimer = setTimeout(() => {
+      const maxScrollable = viewport.scrollHeight - viewport.clientHeight;
+      const progress =
+        maxScrollable <= 0 ? 100 : Math.round((viewport.scrollTop / maxScrollable) * 100);
+      const normalizedProgress = Math.max(0, Math.min(100, progress));
+      const currentEntry = entryRef.current;
+      if (
+        currentEntry &&
+        currentEntry.status !== 'read' &&
+        !hasAutoMarkedAsRead.current &&
+        normalizedProgress >= 20
+      ) {
+        hasAutoMarkedAsRead.current = true;
+        toggleEntryReadRef.current.mutate(currentEntry.id);
+      }
+    }, 500);
+
     const handleScroll = () => {
       scrollY.set(viewport.scrollTop);
       const maxScrollable = viewport.scrollHeight - viewport.clientHeight;
@@ -921,6 +940,7 @@ export function EntryReading({
     viewport.addEventListener('wheel', onWheel, { passive: true });
 
     return () => {
+      clearTimeout(initialCheckTimer);
       viewport.removeEventListener('scroll', handleScroll);
       viewport.removeEventListener('wheel', onWheel);
       if (swipeResetTimer) clearTimeout(swipeResetTimer);
