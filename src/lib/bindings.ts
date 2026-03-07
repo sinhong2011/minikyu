@@ -1395,6 +1395,10 @@ reader_status_bar: boolean;
  */
 reader_focus_mode?: boolean; 
 /**
+ * Whether to automatically mark entries as read when scrolled past 20%.
+ */
+reader_auto_mark_read?: boolean; 
+/**
  * User-defined term conversion rules applied after Chinese conversion.
  */
 reader_custom_conversions?: ChineseConversionRule[]; 

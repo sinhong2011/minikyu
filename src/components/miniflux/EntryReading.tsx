@@ -129,6 +129,7 @@ export function EntryReading({
     translationExcludedCategoryIds,
     translationProviderSettings,
     focusMode,
+    autoMarkRead,
     aiSummaryAutoEnabled,
     setFocusMode,
     setTranslationAutoEnabled,
@@ -171,6 +172,8 @@ export function EntryReading({
   onNavigatePrevRef.current = onNavigatePrev;
   const swipeThresholdRef = useRef(swipeThreshold);
   swipeThresholdRef.current = swipeThreshold;
+  const autoMarkReadRef = useRef(autoMarkRead);
+  autoMarkReadRef.current = autoMarkRead;
   const translationAutoEnabledRef = useRef(translationAutoEnabled);
   translationAutoEnabledRef.current = translationAutoEnabled;
   const articleSummary = useArticleSummary(
@@ -683,15 +686,17 @@ export function EntryReading({
       const progress =
         maxScrollable <= 0 ? 100 : Math.round((viewport.scrollTop / maxScrollable) * 100);
       const normalizedProgress = Math.max(0, Math.min(100, progress));
-      const currentEntry = entryRef.current;
-      if (
-        currentEntry &&
-        currentEntry.status !== 'read' &&
-        !hasAutoMarkedAsRead.current &&
-        normalizedProgress >= 20
-      ) {
-        hasAutoMarkedAsRead.current = true;
-        toggleEntryReadRef.current.mutate(currentEntry.id);
+      if (autoMarkReadRef.current) {
+        const currentEntry = entryRef.current;
+        if (
+          currentEntry &&
+          currentEntry.status !== 'read' &&
+          !hasAutoMarkedAsRead.current &&
+          normalizedProgress >= 20
+        ) {
+          hasAutoMarkedAsRead.current = true;
+          toggleEntryReadRef.current.mutate(currentEntry.id);
+        }
       }
     }, 500);
 
@@ -716,15 +721,17 @@ export function EntryReading({
         });
       }
 
-      const currentEntry = entryRef.current;
-      if (
-        currentEntry &&
-        currentEntry.status !== 'read' &&
-        !hasAutoMarkedAsRead.current &&
-        normalizedProgress >= 20
-      ) {
-        hasAutoMarkedAsRead.current = true;
-        toggleEntryReadRef.current.mutate(currentEntry.id);
+      if (autoMarkReadRef.current) {
+        const currentEntry = entryRef.current;
+        if (
+          currentEntry &&
+          currentEntry.status !== 'read' &&
+          !hasAutoMarkedAsRead.current &&
+          normalizedProgress >= 20
+        ) {
+          hasAutoMarkedAsRead.current = true;
+          toggleEntryReadRef.current.mutate(currentEntry.id);
+        }
       }
 
       if (!showToc) {

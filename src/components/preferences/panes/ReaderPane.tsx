@@ -170,7 +170,7 @@ export function ReaderPane() {
   };
 
   const handleToggle = async (
-    field: 'reader_bionic_reading' | 'reader_status_bar',
+    field: 'reader_bionic_reading' | 'reader_status_bar' | 'reader_auto_mark_read',
     checked: boolean
   ) => {
     if (!preferences) return;
@@ -423,6 +423,23 @@ export function ReaderPane() {
             />
             <Label htmlFor="status-bar" className="text-sm">
               {(preferences?.reader_status_bar ?? false) ? _(msg`Enabled`) : _(msg`Disabled`)}
+            </Label>
+          </div>
+        </SettingsField>
+
+        <SettingsField
+          label={_(msg`Auto mark as read`)}
+          description={_(msg`Automatically mark entries as read when scrolled past 20%`)}
+        >
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="auto-mark-read"
+              checked={preferences?.reader_auto_mark_read ?? false}
+              onCheckedChange={(checked) => handleToggle('reader_auto_mark_read', checked)}
+              disabled={!preferences || savePreferences.isPending}
+            />
+            <Label htmlFor="auto-mark-read" className="text-sm">
+              {(preferences?.reader_auto_mark_read ?? false) ? _(msg`Enabled`) : _(msg`Disabled`)}
             </Label>
           </div>
         </SettingsField>

@@ -156,6 +156,9 @@ pub struct AppPreferences {
     /// Whether to enable focus mode (paragraph dimming) in the reader.
     #[serde(default)]
     pub reader_focus_mode: bool,
+    /// Whether to automatically mark entries as read when scrolled past 20%.
+    #[serde(default)]
+    pub reader_auto_mark_read: bool,
     /// User-defined term conversion rules applied after Chinese conversion.
     #[serde(default)]
     pub reader_custom_conversions: Vec<ChineseConversionRule>,
@@ -289,6 +292,7 @@ impl Default for AppPreferences {
             reader_bionic_reading: false,
             reader_status_bar: false,
             reader_focus_mode: false,
+            reader_auto_mark_read: false,
             reader_custom_conversions: vec![],
             reader_translation_display_mode: ReaderTranslationDisplayMode::Bilingual,
             reader_translation_trigger_mode: ReaderTranslationTriggerMode::Manual,
