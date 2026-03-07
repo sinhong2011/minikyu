@@ -9,7 +9,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { openUrl } from '@tauri-apps/plugin-opener';
-import { AnimatePresence, motion, useMotionValue, useTransform } from 'motion/react';
+import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { type RefObject, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
@@ -84,8 +84,9 @@ export function InAppBrowserPane({
       // Right swipe = negative deltaX
       if (e.deltaX >= 0) {
         swipeCumulativeX = 0;
-        swipeProgress.set(0);
-        setSwipeHintVisible(false);
+        animate(swipeProgress, 0, { type: 'spring', stiffness: 300, damping: 25 }).then(() =>
+          setSwipeHintVisible(false)
+        );
         return;
       }
 
@@ -104,8 +105,9 @@ export function InAppBrowserPane({
       swipeResetTimer = setTimeout(() => {
         swipeCumulativeX = 0;
         swipeTriggered = false;
-        swipeProgress.set(0);
-        setSwipeHintVisible(false);
+        animate(swipeProgress, 0, { type: 'spring', stiffness: 300, damping: 25 }).then(() =>
+          setSwipeHintVisible(false)
+        );
       }, 300);
     };
 
