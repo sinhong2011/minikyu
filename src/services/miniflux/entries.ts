@@ -276,13 +276,41 @@ export function useToggleEntryRead() {
       logger.info('Entry read status toggled', { id, newStatus: result.data });
       return result.data;
     },
-    onSuccess: (newStatus, id) => {
-      queryClient.setQueryData(entryQueryKeys.detail(id), (old: Entry | undefined) => {
-        if (old) {
-          return { ...old, status: newStatus };
+    // Optimistic update — immediately toggle the status in the UI
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: entryQueryKeys.detail(id) });
+      await queryClient.cancelQueries({ queryKey: entryQueryKeys.lists() });
+
+      const previousDetail = queryClient.getQueryData<Entry>(entryQueryKeys.detail(id));
+      const optimisticStatus = previousDetail?.status === 'read' ? 'unread' : 'read';
+
+      queryClient.setQueryData(entryQueryKeys.detail(id), (old: Entry | undefined) =>
+        old ? { ...old, status: optimisticStatus } : old
+      );
+
+      queryClient.setQueriesData<{ pages: EntryResponse[] }>(
+        { queryKey: entryQueryKeys.lists() },
+        (data) => {
+          if (!data?.pages) return data;
+          return {
+            ...data,
+            pages: data.pages.map((page) => ({
+              ...page,
+              entries: page.entries?.map((entry) =>
+                entry.id === id ? { ...entry, status: optimisticStatus } : entry
+              ),
+            })),
+          };
         }
-        return old;
-      });
+      );
+
+      return { previousDetail };
+    },
+    onSuccess: (newStatus, id) => {
+      // Reconcile with actual server response (in case optimistic guess was wrong)
+      queryClient.setQueryData(entryQueryKeys.detail(id), (old: Entry | undefined) =>
+        old ? { ...old, status: newStatus } : old
+      );
 
       queryClient.setQueriesData<{ pages: EntryResponse[] }>(
         { queryKey: entryQueryKeys.lists() },
@@ -301,6 +329,13 @@ export function useToggleEntryRead() {
       );
 
       queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
+    },
+    onError: (_error, id, context) => {
+      // Rollback optimistic update on failure
+      if (context?.previousDetail) {
+        queryClient.setQueryData(entryQueryKeys.detail(id), context.previousDetail);
+      }
+      queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
     },
   });
 }
