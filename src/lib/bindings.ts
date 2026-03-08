@@ -1331,6 +1331,26 @@ export type ApiKeyCreate = { description: string }
  */
 export type AppPreferences = { theme: string; 
 /**
+ * Background image file path. None means no background image.
+ */
+background_image_path?: string | null; 
+/**
+ * Background image opacity (0.0 to 1.0). Defaults to 0.15.
+ */
+background_image_opacity?: number; 
+/**
+ * Background image blur amount in pixels. Defaults to 0.
+ */
+background_image_blur?: number; 
+/**
+ * Background image size mode: "cover", "contain", "fill", "tile". Defaults to "cover".
+ */
+background_image_size?: string; 
+/**
+ * UI background transparency (0.0 to 1.0). 0 = fully opaque, 1 = fully transparent. Defaults to 0.
+ */
+background_transparency?: number; 
+/**
  * Global shortcut for quick pane (e.g., "CommandOrControl+Shift+.")
  * If None, uses to default shortcut
  */
@@ -1451,6 +1471,10 @@ reader_translation_excluded_feed_ids?: string[];
  */
 reader_translation_excluded_category_ids?: string[]; 
 /**
+ * Source language codes that skip auto-translation (e.g. ["zh", "zh-CN", "zh-TW"]).
+ */
+reader_translation_skip_source_languages?: string[]; 
+/**
  * Default download path for images (null = ask every time)
  */
 image_download_path: string | null; 
@@ -1521,7 +1545,11 @@ gesture_pull_bottom_action?: string;
 /**
  * Swipe distance threshold in pixels (100-400).
  */
-gesture_swipe_threshold?: number }
+gesture_swipe_threshold?: number; 
+/**
+ * Entry list panel width in pixels. None means use default (435).
+ */
+layout_entry_list_width?: number | null }
 export type ArticleSummaryRecord = { entry_id: string; summary: string; provider_used: string | null; model_used: string | null }
 /**
  * Authentication Config
@@ -1738,7 +1766,7 @@ system_prompt: string | null }
 /**
  * Reader translation routing strategy mode.
  */
-export type ReaderTranslationRouteMode = "engine_first" | "hybrid_auto"
+export type ReaderTranslationRouteMode = "engine_first" | "llm_first" | "hybrid_auto"
 /**
  * Reader translation trigger mode.
  */

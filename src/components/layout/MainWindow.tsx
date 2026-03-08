@@ -1,3 +1,5 @@
+import { convertFileSrc } from '@tauri-apps/api/core';
+import { useEffect } from 'react';
 import { CommandPalette } from '@/components/command-palette/CommandPalette';
 import { DownloadManagerDialog } from '@/components/downloads/DownloadManagerDialog';
 import { MinifluxSettingsDialogProvider } from '@/components/miniflux/settings/store';
@@ -8,6 +10,7 @@ import { Toaster } from '@/components/ui/sonner';
 import { ZenModeView } from '@/components/zen-mode';
 import { useTheme } from '@/hooks/use-theme';
 import { useMainWindowEventListeners } from '@/hooks/useMainWindowEventListeners';
+import { usePreferences } from '@/services/preferences';
 import { useUIStore } from '@/store/ui-store';
 import { AppSidebar } from './AppSidebar';
 
@@ -20,11 +23,73 @@ export function MainWindow({ children }: MainWindowProps = {}) {
   const leftSidebarVisible = useUIStore((state) => state.leftSidebarVisible);
   const setLeftSidebarVisible = useUIStore((state) => state.setLeftSidebarVisible);
   const zenModeEnabled = useUIStore((state) => state.zenModeEnabled);
+  const { data: preferences } = usePreferences();
 
   useMainWindowEventListeners();
 
+  const bgImagePath = preferences?.background_image_path;
+  const bgImageOpacity = preferences?.background_image_opacity ?? 0.15;
+  const bgImageBlur = preferences?.background_image_blur ?? 0;
+  const bgImageSize = preferences?.background_image_size ?? 'cover';
+  const bgTransparency = preferences?.background_transparency ?? 0;
+  const isTransparent = !!(bgImagePath && bgTransparency > 0);
+
+  useEffect(() => {
+    const html = document.documentElement;
+    if (isTransparent) {
+      html.setAttribute('data-bg-transparent', '');
+      html.style.setProperty('--bg-panel-opacity', String(1 - bgTransparency));
+    } else {
+      html.removeAttribute('data-bg-transparent');
+      html.style.removeProperty('--bg-panel-opacity');
+    }
+    return () => {
+      html.removeAttribute('data-bg-transparent');
+      html.style.removeProperty('--bg-panel-opacity');
+    };
+  }, [isTransparent, bgTransparency]);
+
   return (
-    <div className="relative flex h-screen w-full flex-col overflow-hidden rounded-xl bg-background">
+    <div
+      className="relative flex h-screen w-full flex-col overflow-hidden rounded-xl bg-background [clip-path:inset(0_round_var(--radius-xl))]"
+      style={
+        {
+          ...(bgImagePath && bgImageSize === 'tile'
+            ? {
+                backgroundImage: `url(${convertFileSrc(bgImagePath)})`,
+                backgroundRepeat: 'repeat',
+                backgroundSize: 'auto',
+              }
+            : {}),
+        } as React.CSSProperties
+      }
+    >
+      {bgImagePath && bgImageSize !== 'tile' && (
+        <img
+          src={convertFileSrc(bgImagePath)}
+          alt=""
+          className="pointer-events-none absolute -z-10 select-none"
+          style={{
+            inset: bgImageBlur > 0 ? `${-bgImageBlur * 3}px` : 0,
+            objectFit: bgImageSize as 'cover' | 'contain' | 'fill',
+            opacity: bgImageOpacity,
+            filter: bgImageBlur > 0 ? `blur(${bgImageBlur}px)` : undefined,
+          }}
+        />
+      )}
+      {bgImagePath && bgImageSize === 'tile' && (
+        <div
+          className="pointer-events-none absolute -z-10 select-none"
+          style={{
+            inset: bgImageBlur > 0 ? `${-bgImageBlur * 3}px` : 0,
+            backgroundImage: `url(${convertFileSrc(bgImagePath)})`,
+            backgroundRepeat: 'repeat',
+            backgroundSize: 'auto',
+            opacity: bgImageOpacity,
+            filter: bgImageBlur > 0 ? `blur(${bgImageBlur}px)` : undefined,
+          }}
+        />
+      )}
       {!zenModeEnabled && <TitleBar />}
       <SidebarProvider
         open={leftSidebarVisible}

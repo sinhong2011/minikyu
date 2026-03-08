@@ -78,6 +78,7 @@ pub enum ReaderTranslationTriggerMode {
 pub enum ReaderTranslationRouteMode {
     #[default]
     EngineFirst,
+    LlmFirst,
     HybridAuto,
 }
 
@@ -121,6 +122,21 @@ fn default_time_format() -> String {
 #[serde(default)]
 pub struct AppPreferences {
     pub theme: String,
+    /// Background image file path. None means no background image.
+    #[serde(default)]
+    pub background_image_path: Option<String>,
+    /// Background image opacity (0.0 to 1.0). Defaults to 0.15.
+    #[serde(default = "default_background_image_opacity")]
+    pub background_image_opacity: f64,
+    /// Background image blur amount in pixels. Defaults to 0.
+    #[serde(default)]
+    pub background_image_blur: u32,
+    /// Background image size mode: "cover", "contain", "fill", "tile". Defaults to "cover".
+    #[serde(default = "default_background_image_size")]
+    pub background_image_size: String,
+    /// UI background transparency (0.0 to 1.0). 0 = fully opaque, 1 = fully transparent. Defaults to 0.
+    #[serde(default)]
+    pub background_transparency: f64,
     /// Global shortcut for quick pane (e.g., "CommandOrControl+Shift+.")
     /// If None, uses to default shortcut
     pub quick_pane_shortcut: Option<String>,
@@ -192,6 +208,9 @@ pub struct AppPreferences {
     /// Category IDs excluded from immersive translation.
     #[serde(default)]
     pub reader_translation_excluded_category_ids: Vec<String>,
+    /// Source language codes that skip auto-translation (e.g. ["zh", "zh-CN", "zh-TW"]).
+    #[serde(default)]
+    pub reader_translation_skip_source_languages: Vec<String>,
     /// Default download path for images (null = ask every time)
     pub image_download_path: Option<String>,
     /// Default download path for videos (null = ask every time)
@@ -243,6 +262,9 @@ pub struct AppPreferences {
     /// Swipe distance threshold in pixels (100-400).
     #[serde(default = "default_gesture_swipe_threshold")]
     pub gesture_swipe_threshold: u32,
+    /// Entry list panel width in pixels. None means use default (435).
+    #[serde(default)]
+    pub layout_entry_list_width: Option<u32>,
 }
 
 fn default_auto_check_updates() -> bool {
@@ -269,6 +291,14 @@ const fn default_gesture_swipe_threshold() -> u32 {
     250
 }
 
+fn default_background_image_opacity() -> f64 {
+    0.15
+}
+
+fn default_background_image_size() -> String {
+    "cover".to_string()
+}
+
 fn default_log_level() -> String {
     "info".to_string()
 }
@@ -277,6 +307,11 @@ impl Default for AppPreferences {
     fn default() -> Self {
         Self {
             theme: "system".to_string(),
+            background_image_path: None,
+            background_image_opacity: default_background_image_opacity(),
+            background_image_blur: 0,
+            background_image_size: default_background_image_size(),
+            background_transparency: 0.0,
             quick_pane_shortcut: None, // None means use default
             language: None,            // None means use system locale
             close_behavior: CloseBehavior::default(),
@@ -306,6 +341,7 @@ impl Default for AppPreferences {
             reader_translation_auto_enabled: false,
             reader_translation_excluded_feed_ids: vec![],
             reader_translation_excluded_category_ids: vec![],
+            reader_translation_skip_source_languages: vec![],
             ai_summary_auto_enabled: false,
             ai_summary_custom_prompt: None,
             ai_summary_provider: None,
@@ -324,6 +360,7 @@ impl Default for AppPreferences {
             gesture_pull_top_action: default_gesture_pull_top_action(),
             gesture_pull_bottom_action: default_gesture_pull_bottom_action(),
             gesture_swipe_threshold: default_gesture_swipe_threshold(),
+            layout_entry_list_width: None,
         }
     }
 }

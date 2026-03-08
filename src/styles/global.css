@@ -86,3 +86,33 @@
     filter: none;
   }
 }
+
+/* Background transparency: when data-bg-transparent is set, make ALL bg-background/bg-sidebar
+   fully transparent by default. Only [data-frosted] elements get visible frosted backgrounds. */
+[data-bg-transparent] {
+  --background: transparent;
+  --sidebar: transparent;
+}
+
+/* Main panels: the only elements with visible frosted glass backgrounds */
+[data-bg-transparent] [data-frosted] {
+  --background: color-mix(
+    in oklch,
+    var(--background-base) calc(var(--bg-panel-opacity) * 100%),
+    transparent
+  );
+  --sidebar: color-mix(
+    in oklch,
+    var(--sidebar-base) calc(var(--bg-panel-opacity) * 100%),
+    transparent
+  );
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+}
+
+/* Frosted glass elements (gesture hints, overlays): restore base colors so
+   bg-background/XX utilities remain visible; their own backdrop-blur handles the glass effect */
+[data-bg-transparent] [data-glass] {
+  --background: var(--background-base);
+  --sidebar: var(--sidebar-base);
+}
