@@ -133,7 +133,7 @@ export function InAppBrowserPane({
         {/* Toolbar — React content rendered above the native webview area */}
         <motion.div
           ref={toolbarRef}
-          className="flex h-12 shrink-0 items-center gap-1 border-b bg-background px-3"
+          className="flex h-12 shrink-0 items-center gap-1 border-b px-3"
           initial={{ opacity: 0, y: -8 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.18, ease: [0.22, 1, 0.36, 1], delay: 0.08 }}
@@ -239,6 +239,11 @@ export function InAppBrowserPane({
           aria-label={_(msg`Browser content`)}
           className="min-h-0 flex-1"
         />
+
+        {/* Spacer so the native webview stops before the container's rounded
+            bottom corners. The parent rounded-xl (12px) + overflow-hidden clips
+            this strip, creating visible rounded corners below the webview. */}
+        <div className="h-3 shrink-0" />
       </motion.div>
 
       {/* Swipe-right close hint */}
@@ -252,7 +257,7 @@ export function InAppBrowserPane({
             className="pointer-events-none absolute inset-y-0 left-0 z-30 flex items-center"
           >
             <motion.div
-              className="flex h-full w-12 flex-col items-center justify-center gap-1 rounded-r-2xl bg-background/80 backdrop-blur-md"
+              className="flex h-full w-12 flex-col items-center justify-center gap-1 rounded-r-2xl"
               style={{ x: swipeHintX, opacity: swipeHintOpacity }}
             >
               <motion.div style={{ scale: swipeIconScale }}>

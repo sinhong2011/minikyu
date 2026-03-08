@@ -38,7 +38,7 @@ import { useAccounts, useActiveAccount } from '@/services/miniflux/accounts';
 import { useIsConnected } from '@/services/miniflux/auth';
 import { useCategories, useMarkCategoryAsRead } from '@/services/miniflux/categories';
 import { useUnreadCounts } from '@/services/miniflux/counters';
-import { useEntries, usePrefetchEntry } from '@/services/miniflux/entries';
+import { useEntries, usePrefetchEntry, useToggleEntryRead } from '@/services/miniflux/entries';
 import { useMarkFeedAsRead, useSyncMiniflux } from '@/services/miniflux/feeds';
 import { useLastReadingEntry, useSaveLastReading } from '@/services/reading-state';
 import { useSyncStore } from '@/store/sync-store';
@@ -114,6 +114,7 @@ export function MinifluxLayout() {
   const prefetchEntry = usePrefetchEntry();
   const { data: lastReadingEntry } = useLastReadingEntry();
   const saveLastReading = useSaveLastReading();
+  const toggleEntryRead = useToggleEntryRead();
   const countFormatter = new Intl.NumberFormat(i18n.locale, {
     notation: 'compact',
     maximumFractionDigits: 1,
@@ -226,6 +227,11 @@ export function MinifluxLayout() {
         url: entry.url,
         publishedAt: entry.published_at,
       });
+
+      // Mark unread entries as read on selection
+      if (entry.status === 'unread') {
+        toggleEntryRead.mutate(entry.id);
+      }
 
       // Save last reading entry.
       saveLastReading.mutate({
@@ -424,7 +430,7 @@ export function MinifluxLayout() {
                 <button
                   key={account.id}
                   type="button"
-                  className="flex items-center gap-3 rounded-lg border border-border/50 px-3 py-2.5 text-left transition-colors hover:bg-accent/50 hover:border-border"
+                  className="flex items-center gap-3 rounded-lg border border-border/50 px-3 py-2.5 text-left transition-colors hover:bg-black/[0.04] dark:hover:bg-white/[0.07] hover:border-border"
                   onClick={() => handleReconnectAccount(account.id)}
                 >
                   <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10 text-primary text-xs font-semibold shrink-0">
@@ -628,7 +634,7 @@ export function MinifluxLayout() {
             )}
             <Menu>
               <MenuTrigger
-                className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-accent"
+                className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10"
                 title={_(msg`Sort by`)}
               >
                 <HugeiconsIcon icon={Sorting01Icon} className="h-4 w-4" />

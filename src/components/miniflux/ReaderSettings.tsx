@@ -192,7 +192,7 @@ export function ReaderSettings() {
         type="button"
         variant="ghost"
         size="icon"
-        className="h-9 w-9 rounded-xl border border-transparent text-muted-foreground/90 hover:bg-accent/70 hover:text-muted-foreground"
+        className="h-9 w-9 rounded-xl border border-transparent text-muted-foreground/90 hover:bg-black/[0.08] dark:hover:bg-white/[0.12] hover:text-muted-foreground"
         aria-label={_(msg`Reader typography settings`)}
         onClick={() => setOpen(true)}
       >
@@ -200,7 +200,7 @@ export function ReaderSettings() {
       </Button>
       <DialogContent
         showCloseButton={false}
-        className="w-[min(30rem,calc(100%-1.5rem))] max-h-[76vh] overflow-hidden rounded-2xl border-border/60 bg-popover/95 p-0 shadow-xl sm:max-w-[30rem]"
+        className="w-[min(30rem,calc(100%-1.5rem))] max-h-[76vh] overflow-hidden rounded-2xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 p-0 shadow-xl sm:max-w-[30rem]"
       >
         <DialogHeader className="space-y-0.5 px-3.5 pt-3 pb-0">
           <div className="flex items-center justify-between gap-2">
@@ -222,7 +222,7 @@ export function ReaderSettings() {
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="h-7 w-7 rounded-full text-muted-foreground hover:bg-accent/70 hover:text-muted-foreground"
+                    className="h-7 w-7 rounded-full text-muted-foreground hover:bg-black/[0.08] dark:hover:bg-white/[0.12] hover:text-muted-foreground"
                     aria-label={_(msg`Close`)}
                   />
                 }

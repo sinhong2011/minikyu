@@ -74,8 +74,9 @@ export function EntryListFloatingFilterBar({
           scale: { type: 'spring', stiffness: 400, damping: 30, mass: 0.65 },
           filter: { duration: 0.2, ease: 'easeOut' },
         }}
+        data-glass
         className={cn(
-          'w-full max-w-[332px] rounded-[1.35rem] border border-white/12 bg-[linear-gradient(90deg,color-mix(in_oklch,var(--color-background)_62%,transparent),color-mix(in_oklch,var(--color-background)_50%,transparent)_52%,color-mix(in_oklch,var(--color-background)_62%,transparent))] p-1 shadow-[0_22px_40px_-28px_color-mix(in_oklch,var(--color-foreground)_72%,transparent),inset_0_1px_0_color-mix(in_oklch,var(--color-background)_60%,transparent)] backdrop-blur-2xl',
+          'w-full max-w-[332px] rounded-[1.35rem] border border-white/12 bg-[linear-gradient(90deg,color-mix(in_oklch,var(--background-base)_62%,transparent),color-mix(in_oklch,var(--background-base)_50%,transparent)_52%,color-mix(in_oklch,var(--background-base)_62%,transparent))] p-1 shadow-[0_22px_40px_-28px_color-mix(in_oklch,var(--color-foreground)_72%,transparent),inset_0_1px_0_color-mix(in_oklch,var(--background-base)_60%,transparent)] backdrop-blur-2xl',
           visible ? 'pointer-events-auto' : 'pointer-events-none'
         )}
       >
@@ -91,7 +92,7 @@ export function EntryListFloatingFilterBar({
               scale: { duration: 0.24, ease: 'easeOut' },
             }}
           >
-            <div className="h-full w-full rounded-[1rem] bg-white/5 shadow-[inset_0_1px_0_color-mix(in_oklch,var(--color-background)_72%,transparent)]" />
+            <div className="h-full w-full rounded-[1rem] bg-white/5 shadow-[inset_0_1px_0_color-mix(in_oklch,var(--background-base)_72%,transparent)]" />
           </motion.div>
           {tabs.map((tab) => {
             const isActive = currentStatus === tab.value;

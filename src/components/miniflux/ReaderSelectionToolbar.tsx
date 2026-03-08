@@ -176,7 +176,7 @@ export function ReaderSelectionToolbar({
           style={{ position: 'fixed', top: position.top, left: position.left, zIndex: 50 }}
           className="flex flex-col items-start gap-1"
         >
-          <div className="flex items-center gap-0.5 rounded-xl border border-border/60 bg-popover/95 p-1 shadow-lg backdrop-blur-xl">
+          <div className="flex items-center gap-0.5 rounded-xl border border-border/60 bg-popover/90 supports-[backdrop-filter]:bg-popover/75 p-1 shadow-lg backdrop-blur-xl">
             <Tooltip>
               <TooltipTrigger
                 render={
@@ -184,7 +184,7 @@ export function ReaderSelectionToolbar({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-accent/70 hover:text-foreground"
+                    className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-black/[0.08] dark:hover:bg-white/[0.12] hover:text-foreground"
                     aria-label={translateLabel}
                     onClick={handleTranslate}
                   />
@@ -202,7 +202,7 @@ export function ReaderSelectionToolbar({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-accent/70 hover:text-foreground"
+                    className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-black/[0.08] dark:hover:bg-white/[0.12] hover:text-foreground"
                     aria-label={copyLabel}
                     onClick={handleCopy}
                   />
@@ -224,7 +224,7 @@ export function ReaderSelectionToolbar({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-accent/70 hover:text-foreground"
+                    className="h-8 w-8 rounded-lg text-muted-foreground hover:bg-black/[0.08] dark:hover:bg-white/[0.12] hover:text-foreground"
                     aria-label={searchLabel}
                     onClick={handleSearch}
                   />
@@ -246,7 +246,7 @@ export function ReaderSelectionToolbar({
                 transition={{ duration: 0.18, ease: 'easeOut' }}
                 className="overflow-hidden"
               >
-                <div className="max-w-80 rounded-xl border border-border/60 bg-popover/95 p-3 shadow-lg backdrop-blur-xl">
+                <div className="max-w-80 rounded-xl border border-border/60 bg-popover/90 supports-[backdrop-filter]:bg-popover/75 p-3 shadow-lg backdrop-blur-xl">
                   {translationState.status === 'loading' && (
                     <div className="flex items-center justify-center py-2">
                       <motion.div

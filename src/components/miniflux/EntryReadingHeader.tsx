@@ -227,7 +227,7 @@ export function EntryReadingHeader({
       .join(' ');
   };
   const toolbarButtonClass =
-    'h-9 w-9 rounded-xl border border-transparent text-muted-foreground/90 hover:bg-accent/70 hover:text-foreground data-[state=open]:border-border/60 data-[state=open]:bg-accent/70 data-[state=open]:text-foreground';
+    'h-9 w-9 rounded-xl border border-transparent text-muted-foreground/90 hover:bg-black/[0.08] dark:hover:bg-white/[0.12] hover:text-foreground data-[state=open]:border-border/60 data-[state=open]:bg-black/[0.08] dark:data-[state=open]:bg-white/[0.12] data-[state=open]:text-foreground';
   const translationControlActive = translationEnabled;
   const currentPlayerEntryId = usePlayerStore((state) => state.currentEntry?.id ?? null);
   const playerIsPlaying = usePlayerStore((state) => state.isPlaying);
@@ -326,22 +326,16 @@ export function EntryReadingHeader({
 
   return (
     <motion.header
-      className="sticky top-0 z-10 w-full min-w-0 max-w-full shrink-0 bg-gradient-to-b from-background/75 via-background/58 to-background/45 shadow-[0_10px_28px_-24px_hsl(var(--foreground)/0.65)] supports-[backdrop-filter]:bg-background/35 backdrop-blur-2xl"
+      className="sticky top-0 z-10 w-full min-w-0 max-w-full shrink-0 overflow-hidden text-foreground"
       style={{
         paddingLeft: 24,
         paddingRight: 24,
         paddingTop: headerPadding,
         paddingBottom: headerPadding,
-        // biome-ignore lint/style/useNamingConvention: CSS property
-        WebkitBackdropFilter: 'blur(24px)',
-        backdropFilter: 'blur(24px)',
       }}
     >
-      <div className="flex flex-col gap-3">
-        <div
-          className="flex w-full items-center justify-between gap-1.5 rounded-2xl bg-background/65 px-1.5 py-1 shadow-sm supports-[backdrop-filter]:bg-background/50"
-          role="toolbar"
-        >
+      <div className="flex min-w-0 flex-col gap-3">
+        <div className="flex w-full items-center justify-between gap-1.5" role="toolbar">
           <div className="flex items-center gap-1.5">
             {onClose && (
               <Tooltip>
@@ -561,7 +555,7 @@ export function EntryReadingHeader({
                 <TooltipPanel>{_(msg`Translation`)}</TooltipPanel>
               </Tooltip>
               <PopoverContent
-                className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/95 p-3.5 shadow-xl"
+                className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 p-3.5 shadow-xl"
                 side="bottom"
                 align="end"
               >
@@ -710,7 +704,7 @@ export function EntryReadingHeader({
                 }
               />
               <PopoverContent
-                className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/95 p-3.5 shadow-xl"
+                className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 p-3.5 shadow-xl"
                 side="bottom"
                 align="start"
               >
@@ -892,14 +886,14 @@ export function EntryReadingHeader({
                 <HugeiconsIcon icon={Share01Icon} className="h-5 w-5" />
               </PopoverTrigger>
               <PopoverContent
-                className="w-56 p-1.5 rounded-xl border-border/60 bg-popover/95 shadow-xl"
+                className="w-56 p-1.5 rounded-xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 shadow-xl"
                 side="bottom"
                 align="end"
               >
                 <button
                   type="button"
                   onClick={handleCopyUrl}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent cursor-pointer"
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
                 >
                   <HugeiconsIcon
                     icon={copiedUrl ? CheckmarkCircle02Icon : Copy01Icon}
@@ -913,7 +907,7 @@ export function EntryReadingHeader({
                   <button
                     type="button"
                     onClick={handleCopyShareCode}
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent cursor-pointer"
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
                   >
                     <HugeiconsIcon
                       icon={copiedShareCode ? CheckmarkCircle02Icon : Share01Icon}
@@ -929,7 +923,7 @@ export function EntryReadingHeader({
                 <button
                   type="button"
                   onClick={handleOpenInBrowser}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent cursor-pointer"
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
                 >
                   <HugeiconsIcon icon={Globe02Icon} className="h-4 w-4 text-muted-foreground" />
                   <span>{_(msg`Open in browser`)}</span>
@@ -938,7 +932,7 @@ export function EntryReadingHeader({
                   type="button"
                   onClick={handleSaveToServices}
                   disabled={isSavingToServices}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-accent cursor-pointer disabled:opacity-50"
+                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer disabled:opacity-50"
                 >
                   <HugeiconsIcon
                     icon={SentIcon}
@@ -956,7 +950,7 @@ export function EntryReadingHeader({
         </div>
 
         <motion.div
-          className="overflow-hidden px-3"
+          className="min-w-0 overflow-hidden px-3"
           style={{ opacity: smallTitleOpacity, height: smallTitleHeight }}
         >
           <h2 className="text-sm font-semibold truncate">{convertedTitle}</h2>
@@ -975,12 +969,14 @@ export function EntryReadingHeader({
         }}
         className="mt-1 flex w-full min-w-0 items-start justify-between gap-3 px-3"
       >
-        <div className="flex w-full min-w-0 flex-1 basis-0 flex-col space-y-2.5 pb-2">
-          <a
+        <div className="flex w-full min-w-0 flex-1 basis-0 flex-col space-y-2.5 overflow-hidden pb-2">
+          <motion.a
             href={entry.url}
             target="_blank"
             rel="noopener noreferrer"
-            className="block min-w-0 max-w-full hover:underline decoration-primary/50 underline-offset-4 [overflow-wrap:anywhere]"
+            className="group/title block min-w-0 max-w-full cursor-pointer overflow-hidden rounded-lg [overflow-wrap:anywhere]"
+            whileTap={{ scale: 0.985 }}
+            transition={{ type: 'spring', stiffness: 500, damping: 30 }}
             onClick={(e) => {
               if (onOpenInAppBrowser) {
                 e.preventDefault();
@@ -988,17 +984,17 @@ export function EntryReadingHeader({
               }
             }}
           >
-            <h1 className="max-w-full text-2xl font-bold leading-tight tracking-tight break-words [overflow-wrap:anywhere]">
+            <h1 className="text-2xl font-bold leading-tight tracking-tight break-words decoration-foreground/20 underline-offset-[6px] transition-[text-decoration-color,color] duration-200 group-hover/title:underline group-hover/title:decoration-foreground/40 group-active/title:text-foreground/70 [overflow-wrap:anywhere]">
               {convertedTitle}
             </h1>
-          </a>
+          </motion.a>
           <div className="flex min-w-0 flex-wrap items-center gap-2 text-[13px] text-muted-foreground">
             <FeedAvatar title={entry.feed.title} domain={entry.feed.site_url} className="size-5!" />
             <a
               href={entry.feed.site_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="font-medium text-foreground/80 transition-colors hover:text-foreground hover:underline decoration-primary/40 underline-offset-4"
+              className="font-medium text-foreground/80 transition-colors hover:text-foreground"
             >
               {entry.feed.title}
             </a>

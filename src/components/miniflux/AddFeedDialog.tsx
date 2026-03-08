@@ -3,7 +3,6 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useForm, useStore } from '@tanstack/react-form';
-import { AnimatePresence, motion } from 'motion/react';
 import * as React from 'react';
 import { z } from 'zod';
 import {
@@ -31,9 +30,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { FieldError } from '@/components/ui/field';
+import { Field, FieldError, FieldLabel } from '@/components/ui/field';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Spinner } from '@/components/ui/spinner';
 import { Switch } from '@/components/ui/switch';
@@ -357,12 +355,9 @@ export function AddFeedDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-[680px] h-[calc(86vh-350px)] max-h-[calc(86vh-350px)] overflow-hidden p-6 gap-4 flex flex-col duration-200 data-open:slide-in-from-bottom-2 data-closed:slide-out-to-bottom-2">
+      <DialogContent className="sm:max-w-[720px] h-[55vh] overflow-hidden p-6 gap-6 flex flex-col duration-200 data-open:slide-in-from-bottom-2 data-closed:slide-out-to-bottom-2">
         <DialogHeader className="shrink-0">
-          <DialogTitle className="flex items-center gap-2 text-lg">
-            <HugeiconsIcon icon={Add01Icon} className="size-5" />
-            {_(msg`Add New Feed`)}
-          </DialogTitle>
+          <DialogTitle>{_(msg`Add New Feed`)}</DialogTitle>
           <DialogDescription>
             {_(msg`Search source first, then confirm feed details before subscribing.`)}
           </DialogDescription>
@@ -388,7 +383,10 @@ export function AddFeedDialog({
           </TabsList>
 
           <TabsPanels mode="layout" className="min-h-0 flex-1">
-            <TabsPanel value="search" className="h-full space-y-4 overflow-y-auto pr-1 pt-1">
+            <TabsPanel
+              value="search"
+              className="h-full space-y-4 overflow-y-auto overflow-x-hidden pr-1 pt-1"
+            >
               <p className="text-xs text-muted-foreground">
                 {_(msg`Paste a website URL to discover available RSS/Atom feeds.`)}
               </p>
@@ -398,13 +396,15 @@ export function AddFeedDialog({
                   event.stopPropagation();
                   sourceSearchForm.handleSubmit();
                 }}
-                className="space-y-3"
+                className="space-y-4"
               >
-                <div className="space-y-2">
-                  <Label htmlFor="search-source-url">{_(msg`Search source URL`)}</Label>
-                  <sourceSearchForm.Field name="sourceUrl">
-                    {(field) => (
-                      <div className="space-y-1">
+                <sourceSearchForm.Field name="sourceUrl">
+                  {(field) => (
+                    <Field>
+                      <FieldLabel htmlFor="search-source-url">
+                        {_(msg`Search source URL`)}
+                      </FieldLabel>
+                      <div className="flex gap-2">
                         <Input
                           id="search-source-url"
                           placeholder={_(msg`e.g. blog.example.com`)}
@@ -413,28 +413,25 @@ export function AddFeedDialog({
                           onChange={(event) => field.handleChange(event.target.value)}
                           disabled={searchSources.isPending}
                         />
-                        <FieldError
-                          errors={
-                            field.state.meta.isTouched || sourceSearchForm.state.isSubmitted
-                              ? field.state.meta.errors
-                              : []
-                          }
-                          className="text-[0.8rem] font-medium"
-                        />
+                        <Button type="submit" variant="outline" disabled={searchSources.isPending}>
+                          {searchSources.isPending ? (
+                            <Spinner className="mr-1.5 size-4" />
+                          ) : (
+                            <HugeiconsIcon icon={Search01Icon} className="mr-1.5 size-4" />
+                          )}
+                          {searchSources.isPending ? _(msg`Searching...`) : _(msg`Search`)}
+                        </Button>
                       </div>
-                    )}
-                  </sourceSearchForm.Field>
-                </div>
-                <div className="flex justify-end">
-                  <Button type="submit" variant="outline" disabled={searchSources.isPending}>
-                    {searchSources.isPending ? (
-                      <Spinner className="mr-1.5 size-4" />
-                    ) : (
-                      <HugeiconsIcon icon={Search01Icon} className="mr-1.5 size-4" />
-                    )}
-                    {searchSources.isPending ? _(msg`Searching...`) : _(msg`Search Source`)}
-                  </Button>
-                </div>
+                      <FieldError
+                        errors={
+                          field.state.meta.isTouched || sourceSearchForm.state.isSubmitted
+                            ? field.state.meta.errors
+                            : []
+                        }
+                      />
+                    </Field>
+                  )}
+                </sourceSearchForm.Field>
               </form>
 
               {searchSources.isPending ? (
@@ -445,16 +442,12 @@ export function AddFeedDialog({
                   {Array.from({ length: 3 }).map((_, index) => (
                     <div
                       key={`search-source-skeleton-${index + 1}`}
-                      className="flex items-center justify-between gap-3 rounded-md border px-3 py-2"
+                      className="rounded-md border px-2 py-1.5"
                     >
-                      <div className="min-w-0 flex-1 space-y-2">
+                      <div className="min-w-0 space-y-2">
                         <Skeleton className="h-4 w-2/3" />
-                        <div className="flex items-center gap-2">
-                          <Skeleton className="h-3 w-full max-w-[260px]" />
-                          <Skeleton className="h-4 w-12 rounded-full" />
-                        </div>
+                        <Skeleton className="h-3 w-full max-w-[260px]" />
                       </div>
-                      <Skeleton className="h-8 w-18 shrink-0" />
                     </div>
                   ))}
                 </div>
@@ -464,45 +457,35 @@ export function AddFeedDialog({
                     {_(msg`Found sources`)}
                   </div>
                   {discoveredSources.map((subscription) => (
-                    <div
+                    <button
+                      type="button"
                       key={`${subscription.url}-${subscription.type}`}
                       className={cn(
-                        'flex items-center justify-between gap-3 rounded-md border px-3 py-2 transition-colors',
+                        'w-full rounded-md border px-2 py-1.5 text-left text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10',
                         selectedDiscoveredUrl === subscription.url &&
                           'border-primary/50 bg-primary/5'
                       )}
+                      onClick={() => {
+                        form.setFieldValue('url', subscription.url);
+                        setSelectedDiscoveredUrl(subscription.url);
+                        setActiveTab('feed');
+                        requestAnimationFrame(() => {
+                          feedUrlInputRef.current?.focus();
+                        });
+                      }}
                     >
-                      <div className="min-w-0">
-                        <p className="truncate text-sm font-medium">
-                          {subscription.title || subscription.url}
-                        </p>
-                        <div className="mt-0.5 flex items-center gap-2">
-                          <p className="truncate text-xs text-muted-foreground">
-                            {subscription.url}
-                          </p>
-                          {subscription.type ? (
-                            <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
-                              {subscription.type}
-                            </span>
-                          ) : null}
+                      <div className="font-medium">{subscription.title || subscription.url}</div>
+                      <div className="mt-0.5 flex items-center gap-2">
+                        <div className="truncate text-xs text-muted-foreground">
+                          {subscription.url}
                         </div>
+                        {subscription.type ? (
+                          <span className="shrink-0 rounded-full bg-muted px-1.5 py-0.5 text-[10px] font-medium uppercase tracking-wide text-muted-foreground">
+                            {subscription.type}
+                          </span>
+                        ) : null}
                       </div>
-                      <Button
-                        type="button"
-                        size="sm"
-                        variant="outline"
-                        onClick={() => {
-                          form.setFieldValue('url', subscription.url);
-                          setSelectedDiscoveredUrl(subscription.url);
-                          setActiveTab('feed');
-                          requestAnimationFrame(() => {
-                            feedUrlInputRef.current?.focus();
-                          });
-                        }}
-                      >
-                        {_(msg`Use URL`)}
-                      </Button>
-                    </div>
+                    </button>
                   ))}
                 </div>
               ) : hasSearchedSource ? (
@@ -514,7 +497,7 @@ export function AddFeedDialog({
               )}
             </TabsPanel>
 
-            <TabsPanel value="feed" className="h-full overflow-y-auto pr-1 pt-1">
+            <TabsPanel value="feed" className="h-full overflow-y-auto overflow-x-hidden pr-1 pt-1">
               <form
                 id="add-feed-form"
                 onSubmit={(e) => {
@@ -522,120 +505,110 @@ export function AddFeedDialog({
                   e.stopPropagation();
                   form.handleSubmit();
                 }}
-                className="space-y-6"
+                className="space-y-4"
               >
-                <div className="space-y-2">
-                  <Label htmlFor="url">{_(msg`Feed URL`)}</Label>
-                  <form.Field name="url">
-                    {(field) => (
-                      <div className="space-y-1">
-                        <Input
-                          id="url"
-                          ref={feedUrlInputRef}
-                          placeholder={_(msg`https://example.com/feed.xml`)}
-                          value={field.state.value}
-                          onBlur={field.handleBlur}
-                          onChange={(e) => {
-                            field.handleChange(e.target.value);
-                            if (selectedDiscoveredUrl && e.target.value !== selectedDiscoveredUrl) {
-                              setSelectedDiscoveredUrl('');
+                <form.Field name="url">
+                  {(field) => (
+                    <Field>
+                      <FieldLabel htmlFor="url">{_(msg`Feed URL`)}</FieldLabel>
+                      <Input
+                        id="url"
+                        ref={feedUrlInputRef}
+                        placeholder={_(msg`https://example.com/feed.xml`)}
+                        value={field.state.value}
+                        onBlur={field.handleBlur}
+                        onChange={(e) => {
+                          field.handleChange(e.target.value);
+                          if (selectedDiscoveredUrl && e.target.value !== selectedDiscoveredUrl) {
+                            setSelectedDiscoveredUrl('');
+                          }
+                        }}
+                        disabled={isPending}
+                      />
+                      {selectedDiscoveredUrl && field.state.value === selectedDiscoveredUrl ? (
+                        <p className="text-xs text-muted-foreground">
+                          {_(msg`URL selected from discovered sources`)}
+                        </p>
+                      ) : null}
+                      <FieldError
+                        errors={
+                          field.state.meta.isTouched || form.state.isSubmitted
+                            ? field.state.meta.errors
+                            : []
+                        }
+                      />
+                    </Field>
+                  )}
+                </form.Field>
+
+                <form.Field name="categoryId">
+                  {(field) => {
+                    const selectedCategory =
+                      categoryOptions.find((option) => option.value === field.state.value) ?? null;
+
+                    return (
+                      <Field>
+                        <FieldLabel>{_(msg`Category`)}</FieldLabel>
+                        <Combobox<CategoryOption>
+                          value={selectedCategory}
+                          onValueChange={(value) => {
+                            if (!value) {
+                              return;
                             }
+                            field.handleChange(value.value);
+                            setCategorySearchQuery(value.label);
                           }}
+                          inputValue={categorySearchQuery}
+                          onInputValueChange={setCategorySearchQuery}
+                          itemToStringLabel={(option) => option.label}
+                          isItemEqualToValue={areCategoryOptionsEqual}
                           disabled={isPending}
-                        />
-                        {selectedDiscoveredUrl && field.state.value === selectedDiscoveredUrl ? (
-                          <p className="text-[0.8rem] font-medium text-muted-foreground">
-                            {_(msg`URL selected from discovered sources`)}
-                          </p>
-                        ) : null}
+                        >
+                          <ComboboxInput
+                            id="category"
+                            placeholder={_(msg`Search categories`)}
+                            className="w-full"
+                            disabled={isPending}
+                          />
+                          <ComboboxContent>
+                            <ComboboxList>
+                              <ComboboxEmpty>{_(msg`No categories found`)}</ComboboxEmpty>
+                              {filteredCategoryOptions.map((option) => (
+                                <ComboboxItem key={option.value} value={option}>
+                                  {option.label}
+                                </ComboboxItem>
+                              ))}
+                            </ComboboxList>
+                          </ComboboxContent>
+                        </Combobox>
                         <FieldError
                           errors={
                             field.state.meta.isTouched || form.state.isSubmitted
                               ? field.state.meta.errors
                               : []
                           }
-                          className="text-[0.8rem] font-medium"
                         />
-                      </div>
-                    )}
-                  </form.Field>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="category">{_(msg`Category`)}</Label>
-                  <form.Field name="categoryId">
-                    {(field) => {
-                      const selectedCategory =
-                        categoryOptions.find((option) => option.value === field.state.value) ??
-                        null;
-
-                      return (
-                        <div className="space-y-1">
-                          <Combobox<CategoryOption>
-                            value={selectedCategory}
-                            onValueChange={(value) => {
-                              if (!value) {
-                                return;
-                              }
-                              field.handleChange(value.value);
-                              setCategorySearchQuery(value.label);
-                            }}
-                            inputValue={categorySearchQuery}
-                            onInputValueChange={setCategorySearchQuery}
-                            itemToStringLabel={(option) => option.label}
-                            isItemEqualToValue={areCategoryOptionsEqual}
-                            disabled={isPending}
-                          >
-                            <ComboboxInput
-                              id="category"
-                              placeholder={_(msg`Search categories`)}
-                              className={cn(
-                                'w-full',
-                                field.state.meta.errors.length > 0 ? 'border-destructive' : ''
-                              )}
+                        <div className="rounded-md border border-dashed px-2 py-2">
+                          <div className="flex items-center justify-between gap-2">
+                            <p className="text-xs text-muted-foreground">
+                              {_(msg`Can’t find a category? Create a new one.`)}
+                            </p>
+                            <Button
+                              type="button"
+                              size="sm"
+                              variant="outline"
+                              className="h-8 shrink-0"
+                              onClick={() => setAddCategoryOpen(true)}
                               disabled={isPending}
-                            />
-                            <ComboboxContent>
-                              <ComboboxList>
-                                <ComboboxEmpty>{_(msg`No categories found`)}</ComboboxEmpty>
-                                {filteredCategoryOptions.map((option) => (
-                                  <ComboboxItem key={option.value} value={option}>
-                                    {option.label}
-                                  </ComboboxItem>
-                                ))}
-                              </ComboboxList>
-                            </ComboboxContent>
-                          </Combobox>
-                          <FieldError
-                            errors={
-                              field.state.meta.isTouched || form.state.isSubmitted
-                                ? field.state.meta.errors
-                                : []
-                            }
-                            className="text-[0.8rem] font-medium"
-                          />
-                          <div className="rounded-md border border-dashed px-2 py-2">
-                            <div className="flex items-center justify-between gap-2">
-                              <p className="text-xs text-muted-foreground">
-                                {_(msg`Can’t find a category? Create a new one.`)}
-                              </p>
-                              <Button
-                                type="button"
-                                size="sm"
-                                variant="outline"
-                                className="h-8 shrink-0"
-                                onClick={() => setAddCategoryOpen(true)}
-                                disabled={isPending}
-                              >
-                                {_(msg`Create Category`)}
-                              </Button>
-                            </div>
+                            >
+                              {_(msg`Create Category`)}
+                            </Button>
                           </div>
                         </div>
-                      );
-                    }}
-                  </form.Field>
-                </div>
+                      </Field>
+                    );
+                  }}
+                </form.Field>
 
                 <div className="rounded-md border">
                   <button
@@ -655,8 +628,10 @@ export function AddFeedDialog({
                       <div className="grid gap-3 sm:grid-cols-2">
                         <form.Field name="userAgent">
                           {(field) => (
-                            <div className="space-y-1.5">
-                              <Label htmlFor="feed-user-agent">{_(msg`User agent`)}</Label>
+                            <Field>
+                              <FieldLabel htmlFor="feed-user-agent">
+                                {_(msg`User agent`)}
+                              </FieldLabel>
                               <Input
                                 id="feed-user-agent"
                                 value={field.state.value}
@@ -664,14 +639,16 @@ export function AddFeedDialog({
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 disabled={isPending}
                               />
-                            </div>
+                            </Field>
                           )}
                         </form.Field>
 
                         <form.Field name="username">
                           {(field) => (
-                            <div className="space-y-1.5">
-                              <Label htmlFor="feed-username">{_(msg`HTTP username`)}</Label>
+                            <Field>
+                              <FieldLabel htmlFor="feed-username">
+                                {_(msg`HTTP username`)}
+                              </FieldLabel>
                               <Input
                                 id="feed-username"
                                 value={field.state.value}
@@ -679,14 +656,16 @@ export function AddFeedDialog({
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 disabled={isPending}
                               />
-                            </div>
+                            </Field>
                           )}
                         </form.Field>
 
                         <form.Field name="password">
                           {(field) => (
-                            <div className="space-y-1.5 sm:col-span-2">
-                              <Label htmlFor="feed-password">{_(msg`HTTP password`)}</Label>
+                            <Field className="sm:col-span-2">
+                              <FieldLabel htmlFor="feed-password">
+                                {_(msg`HTTP password`)}
+                              </FieldLabel>
                               <Input
                                 id="feed-password"
                                 type="password"
@@ -695,7 +674,7 @@ export function AddFeedDialog({
                                 onChange={(e) => field.handleChange(e.target.value)}
                                 disabled={isPending}
                               />
-                            </div>
+                            </Field>
                           )}
                         </form.Field>
                       </div>
@@ -779,8 +758,10 @@ export function AddFeedDialog({
 
                       <form.Field name="scraperRules">
                         {(field) => (
-                          <div className="space-y-1.5">
-                            <Label htmlFor="feed-scraper-rules">{_(msg`Scraper rules`)}</Label>
+                          <Field>
+                            <FieldLabel htmlFor="feed-scraper-rules">
+                              {_(msg`Scraper rules`)}
+                            </FieldLabel>
                             <Textarea
                               id="feed-scraper-rules"
                               value={field.state.value}
@@ -789,14 +770,16 @@ export function AddFeedDialog({
                               rows={3}
                               disabled={isPending}
                             />
-                          </div>
+                          </Field>
                         )}
                       </form.Field>
 
                       <form.Field name="rewriteRules">
                         {(field) => (
-                          <div className="space-y-1.5">
-                            <Label htmlFor="feed-rewrite-rules">{_(msg`Rewrite rules`)}</Label>
+                          <Field>
+                            <FieldLabel htmlFor="feed-rewrite-rules">
+                              {_(msg`Rewrite rules`)}
+                            </FieldLabel>
                             <Textarea
                               id="feed-rewrite-rules"
                               value={field.state.value}
@@ -805,17 +788,17 @@ export function AddFeedDialog({
                               rows={3}
                               disabled={isPending}
                             />
-                          </div>
+                          </Field>
                         )}
                       </form.Field>
 
                       <div className="grid gap-3 sm:grid-cols-2">
                         <form.Field name="blocklistRules">
                           {(field) => (
-                            <div className="space-y-1.5">
-                              <Label htmlFor="feed-blocklist-rules">
+                            <Field>
+                              <FieldLabel htmlFor="feed-blocklist-rules">
                                 {_(msg`Blocklist rules`)}
-                              </Label>
+                              </FieldLabel>
                               <Textarea
                                 id="feed-blocklist-rules"
                                 value={field.state.value}
@@ -824,14 +807,16 @@ export function AddFeedDialog({
                                 rows={3}
                                 disabled={isPending}
                               />
-                            </div>
+                            </Field>
                           )}
                         </form.Field>
 
                         <form.Field name="keeplistRules">
                           {(field) => (
-                            <div className="space-y-1.5">
-                              <Label htmlFor="feed-keeplist-rules">{_(msg`Keeplist rules`)}</Label>
+                            <Field>
+                              <FieldLabel htmlFor="feed-keeplist-rules">
+                                {_(msg`Keeplist rules`)}
+                              </FieldLabel>
                               <Textarea
                                 id="feed-keeplist-rules"
                                 value={field.state.value}
@@ -840,7 +825,7 @@ export function AddFeedDialog({
                                 rows={3}
                                 disabled={isPending}
                               />
-                            </div>
+                            </Field>
                           )}
                         </form.Field>
                       </div>
@@ -852,67 +837,23 @@ export function AddFeedDialog({
           </TabsPanels>
         </Tabs>
 
-        <DialogFooter className="shrink-0 border-t border-border/50 pt-3">
-          <Button
-            type="button"
-            variant="outline"
-            className={'w-20'}
-            onClick={() => onOpenChange(false)}
-          >
+        <DialogFooter className="shrink-0">
+          <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
             {_(msg`Cancel`)}
           </Button>
           {activeTab === 'search' ? (
             <Button type="button" onClick={() => setActiveTab('feed')}>
-              <HugeiconsIcon icon={Add01Icon} className="mr-1.5 size-4" />
               {_(msg`Continue to Add Feed`)}
             </Button>
           ) : (
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-              transition={{ type: 'spring', stiffness: 400, damping: 17 }}
+            <Button
+              type="submit"
+              form="add-feed-form"
+              disabled={isPending || !hasRequiredFeedFields}
             >
-              <Button
-                type="submit"
-                form="add-feed-form"
-                className="relative min-w-[5rem] overflow-hidden"
-                disabled={isPending || !hasRequiredFeedFields}
-              >
-                <AnimatePresence mode="wait">
-                  {isPending ? (
-                    <motion.div
-                      key="loading"
-                      initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.8, y: -10 }}
-                      transition={{ duration: 0.15 }}
-                      className="flex items-center justify-center"
-                    >
-                      <motion.div
-                        animate={{ rotate: 360 }}
-                        transition={{
-                          duration: 1,
-                          repeat: Number.POSITIVE_INFINITY,
-                          ease: 'linear',
-                        }}
-                      >
-                        <Spinner className="size-4" />
-                      </motion.div>
-                    </motion.div>
-                  ) : (
-                    <motion.span
-                      key="idle"
-                      initial={{ opacity: 0, scale: 0.8, y: 10 }}
-                      animate={{ opacity: 1, scale: 1, y: 0 }}
-                      exit={{ opacity: 0, scale: 0.8, y: -10 }}
-                      transition={{ duration: 0.15 }}
-                    >
-                      {_(msg`Add Feed`)}
-                    </motion.span>
-                  )}
-                </AnimatePresence>
-              </Button>
-            </motion.div>
+              {isPending ? <Spinner className="mr-1.5 size-4" /> : null}
+              {isPending ? _(msg`Adding...`) : _(msg`Add Feed`)}
+            </Button>
           )}
         </DialogFooter>
       </DialogContent>
