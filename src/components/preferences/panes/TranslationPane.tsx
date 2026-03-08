@@ -348,8 +348,9 @@ function ModelSuggestionList({
               key={modelName}
               type="button"
               className={cn(
-                'relative flex w-full items-center rounded-sm py-1.5 pr-8 pl-2 text-left text-sm transition-colors hover:bg-accent hover:text-accent-foreground',
-                modelName === query && 'font-medium text-foreground bg-accent/50'
+                'relative flex w-full items-center rounded-sm py-1.5 pr-8 pl-2 text-left text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-accent-foreground',
+                modelName === query &&
+                  'font-medium text-foreground bg-black/[0.06] dark:bg-white/10'
               )}
               onClick={() => {
                 selectingRef.current = false;
@@ -442,8 +443,8 @@ function SortableProviderRow({
   });
 
   const cardClassName = selected
-    ? 'border-border bg-muted/60'
-    : 'border-border/40 bg-muted/20 hover:bg-muted/40';
+    ? 'border-border bg-black/[0.06] dark:bg-white/[0.08]'
+    : 'border-border/40 bg-black/[0.02] dark:bg-white/[0.03] hover:bg-black/[0.04] dark:hover:bg-white/[0.06]';
   const hasMissingRequiredFields = runtimeEnabled && missingRequiredFields.length > 0;
 
   return (
@@ -511,7 +512,7 @@ function SortableProviderRow({
 
         <button
           type="button"
-          className="absolute inset-y-0 right-0 inline-flex w-4 touch-none cursor-grab items-center justify-center border-l border-border/40 px-1 text-muted-foreground/50 transition-colors hover:bg-muted/40 hover:text-foreground active:cursor-grabbing"
+          className="absolute inset-y-0 right-0 inline-flex w-4 touch-none cursor-grab items-center justify-center border-l border-border/40 px-1 text-muted-foreground/50 transition-colors hover:bg-black/[0.06] dark:hover:bg-white/[0.07] hover:text-foreground active:cursor-grabbing"
           aria-label={rowDragLabel}
           {...attributes}
           {...listeners}
@@ -1708,6 +1709,7 @@ export function TranslationPane() {
               </SelectTrigger>
               <SelectContent>
                 <SelectItem value="engine_first">{_(msg`Engine first`)}</SelectItem>
+                <SelectItem value="llm_first">{_(msg`LLM first`)}</SelectItem>
                 <SelectItem value="hybrid_auto">{_(msg`Hybrid auto`)}</SelectItem>
               </SelectContent>
             </Select>
@@ -1755,6 +1757,15 @@ export function TranslationPane() {
           )}
         >
           <CategoryExclusionList />
+        </SettingsField>
+
+        <SettingsField
+          label={_(msg`Skip source languages`)}
+          description={_(
+            msg`Auto-translation will be skipped when the entry content is detected as one of these languages.`
+          )}
+        >
+          <SkipSourceLanguagesList />
         </SettingsField>
       </SettingsSection>
 
@@ -2223,6 +2234,109 @@ function CategoryExclusionList() {
                 </ComboboxItem>
               ))}
               <ComboboxEmpty>{_(msg`No categories found`)}</ComboboxEmpty>
+            </ComboboxList>
+          </ComboboxContent>
+        </Combobox>
+      )}
+    </div>
+  );
+}
+
+const AVAILABLE_SOURCE_LANGUAGES = [
+  { value: 'zh', labelKey: 'Chinese' },
+  { value: 'ja', labelKey: 'Japanese' },
+  { value: 'ko', labelKey: 'Korean' },
+  { value: 'en', labelKey: 'English' },
+  { value: 'es', labelKey: 'Spanish' },
+  { value: 'fr', labelKey: 'French' },
+  { value: 'de', labelKey: 'German' },
+] as const;
+
+function SkipSourceLanguagesList() {
+  const { _ } = useLingui();
+  const { data: preferences } = usePreferences();
+  const { mutate: savePreferencesAction, isPending } = useSavePreferences();
+  const skipLangs = preferences?.reader_translation_skip_source_languages ?? [];
+
+  const languageLabels: Record<string, string> = {
+    zh: _(msg`Chinese`),
+    ja: _(msg`Japanese`),
+    ko: _(msg`Korean`),
+    en: _(msg`English`),
+    es: _(msg`Spanish`),
+    fr: _(msg`French`),
+    de: _(msg`German`),
+  };
+
+  const addLanguage = (lang: string) => {
+    if (!preferences || skipLangs.includes(lang)) return;
+    savePreferencesAction({
+      ...preferences,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      reader_translation_skip_source_languages: [...skipLangs, lang],
+    });
+  };
+
+  const removeLanguage = (lang: string) => {
+    if (!preferences) return;
+    savePreferencesAction({
+      ...preferences,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      reader_translation_skip_source_languages: skipLangs.filter((l) => l !== lang),
+    });
+  };
+
+  const availableLanguages = AVAILABLE_SOURCE_LANGUAGES.filter(
+    (lang) => !skipLangs.includes(lang.value)
+  );
+
+  return (
+    <div className="space-y-2">
+      {skipLangs.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {skipLangs.map((lang) => (
+            <Badge key={lang} variant="secondary" className="gap-1 pr-1 h-auto py-0.5">
+              <span>{languageLabels[lang] ?? lang}</span>
+              <button
+                type="button"
+                onClick={() => removeLanguage(lang)}
+                disabled={isPending}
+                aria-label={_(msg`Remove ${languageLabels[lang] ?? lang}`)}
+                className="ml-0.5 rounded-sm opacity-60 hover:opacity-100 disabled:pointer-events-none transition-opacity"
+              >
+                <HugeiconsIcon icon={Cancel01Icon} className="size-3" />
+              </button>
+            </Badge>
+          ))}
+        </div>
+      )}
+
+      {skipLangs.length === 0 && (
+        <p className="text-sm text-muted-foreground">
+          {_(
+            msg`No languages excluded. All entries will be translated when auto-translation is enabled.`
+          )}
+        </p>
+      )}
+
+      {availableLanguages.length > 0 && (
+        <Combobox
+          value=""
+          onValueChange={(value) => {
+            if (value && typeof value === 'string') {
+              addLanguage(value);
+            }
+          }}
+        >
+          <ComboboxInput placeholder={_(msg`Search languages to skip...`)} />
+          <ComboboxContent>
+            <ComboboxList>
+              {availableLanguages.map((lang) => (
+                <ComboboxItem key={lang.value} value={lang.value}>
+                  {languageLabels[lang.value] ?? lang.value}
+                </ComboboxItem>
+              ))}
+              <ComboboxEmpty>{_(msg`No languages found`)}</ComboboxEmpty>
             </ComboboxList>
           </ComboboxContent>
         </Combobox>

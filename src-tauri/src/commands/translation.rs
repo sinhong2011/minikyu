@@ -475,20 +475,37 @@ fn collect_provider_attempts(
     _apple_available: bool,
 ) -> Vec<String> {
     let mut attempts = Vec::new();
-    push_provider_attempt(
-        &mut attempts,
-        request
-            .primary_engine
-            .as_ref()
-            .and_then(|value| normalize_provider_identifier(value)),
-    );
 
-    for fallback in &request.engine_fallbacks {
-        push_provider_attempt(&mut attempts, normalize_provider_identifier(fallback));
-    }
-
-    for fallback in &request.llm_fallbacks {
-        push_provider_attempt(&mut attempts, normalize_provider_identifier(fallback));
+    if request.route_mode == "llm_first" {
+        // LLM providers first, then engines as fallback
+        for fallback in &request.llm_fallbacks {
+            push_provider_attempt(&mut attempts, normalize_provider_identifier(fallback));
+        }
+        push_provider_attempt(
+            &mut attempts,
+            request
+                .primary_engine
+                .as_ref()
+                .and_then(|value| normalize_provider_identifier(value)),
+        );
+        for fallback in &request.engine_fallbacks {
+            push_provider_attempt(&mut attempts, normalize_provider_identifier(fallback));
+        }
+    } else {
+        // engine_first / hybrid_auto: engines first, then LLMs
+        push_provider_attempt(
+            &mut attempts,
+            request
+                .primary_engine
+                .as_ref()
+                .and_then(|value| normalize_provider_identifier(value)),
+        );
+        for fallback in &request.engine_fallbacks {
+            push_provider_attempt(&mut attempts, normalize_provider_identifier(fallback));
+        }
+        for fallback in &request.llm_fallbacks {
+            push_provider_attempt(&mut attempts, normalize_provider_identifier(fallback));
+        }
     }
 
     attempts
@@ -516,7 +533,7 @@ fn validate_translation_segment_request(request: &TranslationSegmentRequest) -> 
     }
 
     match request.route_mode.as_str() {
-        "engine_first" | "hybrid_auto" => Ok(()),
+        "engine_first" | "llm_first" | "hybrid_auto" => Ok(()),
         _ => Err("Unsupported translation route mode".to_string()),
     }
 }
