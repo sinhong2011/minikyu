@@ -23,6 +23,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import type { ColumnDef } from '@tanstack/react-table';
+import { openUrl } from '@tauri-apps/plugin-opener';
 import * as React from 'react';
 import { DeleteEntityDialog } from '@/components/miniflux/settings/DeleteEntityDialog';
 import type {
@@ -453,6 +454,8 @@ export function PreferencesDialog() {
     }
   };
 
+  const isServerPane = serverSettingsItems.some((item) => item.id === activePane);
+
   const getPaneTitle = (pane: PreferencesPane): string => {
     const allItems = [...appSettingsItems, ...serverSettingsItems];
     const item = allItems.find((i) => i.id === pane);
@@ -493,14 +496,7 @@ export function PreferencesDialog() {
               {/* Server Settings Section */}
               {isConnected && (
                 <SidebarGroup>
-                  <SidebarGroupLabel className="gap-1.5">
-                    {_(msg`Server`)}
-                    {serverDomain && (
-                      <Badge variant="secondary" className="h-4 px-1.5 text-[10px] font-normal">
-                        {serverDomain}
-                      </Badge>
-                    )}
-                  </SidebarGroupLabel>
+                  <SidebarGroupLabel>{_(msg`Server`)}</SidebarGroupLabel>
                   <SidebarGroupContent>
                     <SidebarMenu className="gap-1">
                       {serverSettingsItems
@@ -542,6 +538,15 @@ export function PreferencesDialog() {
                     </BreadcrumbItem>
                   </BreadcrumbList>
                 </Breadcrumb>
+                {isServerPane && serverDomain && activeAccount?.server_url && (
+                  <Badge
+                    variant="outline"
+                    className="h-4 cursor-pointer px-1.5 text-[10px] font-normal text-muted-foreground hover:text-foreground"
+                    onClick={() => openUrl(activeAccount.server_url).catch(() => {})}
+                  >
+                    {serverDomain}
+                  </Badge>
+                )}
               </div>
             </header>
 
@@ -569,13 +574,8 @@ export function PreferencesDialog() {
                 {/* Server Settings */}
                 {isConnected && (
                   <>
-                    <div className="flex items-center gap-1.5 text-xs font-semibold text-muted-foreground px-2 pt-2">
+                    <div className="text-xs font-semibold text-muted-foreground px-2 pt-2">
                       {_(msg`Server`)}
-                      {serverDomain && (
-                        <Badge variant="secondary" className="h-4 px-1.5 text-[10px] font-normal">
-                          {serverDomain}
-                        </Badge>
-                      )}
                     </div>
                     <div className="grid grid-cols-2 gap-1">
                       {serverSettingsItems
@@ -616,6 +616,15 @@ export function PreferencesDialog() {
                     </BreadcrumbItem>
                   </BreadcrumbList>
                 </Breadcrumb>
+                {isServerPane && serverDomain && activeAccount?.server_url && (
+                  <Badge
+                    variant="outline"
+                    className="h-4 cursor-pointer px-1.5 text-[10px] font-normal text-muted-foreground hover:text-foreground"
+                    onClick={() => openUrl(activeAccount.server_url).catch(() => {})}
+                  >
+                    {serverDomain}
+                  </Badge>
+                )}
               </div>
             </header>
 

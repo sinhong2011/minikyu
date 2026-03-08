@@ -270,6 +270,7 @@ export function PodcastPlayer({ entry, enclosure }: PodcastPlayerProps) {
   return (
     <div
       className="border-t border-border/70 bg-[radial-gradient(circle_at_top,rgba(255,255,255,0.08),transparent_55%),linear-gradient(180deg,hsl(var(--background)/0.97),hsl(var(--background)/0.91))] backdrop-blur supports-[backdrop-filter]:bg-background/78"
+      data-frosted
       data-testid="podcast-player"
     >
       <div className="space-y-1.5 px-3.5 py-2">
@@ -411,7 +412,7 @@ export function PodcastPlayer({ entry, enclosure }: PodcastPlayerProps) {
           <div className="flex items-center gap-1">
             <Popover open={speedPopoverOpen} onOpenChange={setSpeedPopoverOpen}>
               <PopoverTrigger
-                className="inline-flex h-6.5 items-center gap-1 rounded-full border border-border/60 bg-background/70 px-2 text-[10.5px] font-medium tabular-nums text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                className="inline-flex h-6.5 items-center gap-1 rounded-full border border-border/60 bg-background/70 px-2 text-[10.5px] font-medium tabular-nums text-muted-foreground transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-foreground"
                 title={_(msg`Playback speed`)}
                 data-testid="podcast-speed-trigger"
               >
@@ -619,7 +620,7 @@ export function PodcastPlayer({ entry, enclosure }: PodcastPlayerProps) {
           <div className="flex min-w-[82px] items-center justify-end gap-1">
             <Popover open={volumePopoverOpen} onOpenChange={setVolumePopoverOpen}>
               <PopoverTrigger
-                className="inline-flex h-6.5 w-6.5 items-center justify-center rounded-full border border-border/60 bg-background/70 text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+                className="inline-flex h-6.5 w-6.5 items-center justify-center rounded-full border border-border/60 bg-background/70 text-muted-foreground transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-foreground"
                 title={isMuted ? _(msg`Unmute`) : _(msg`Mute`)}
               >
                 <HugeiconsIcon icon={volumeIcon} className="size-3" />

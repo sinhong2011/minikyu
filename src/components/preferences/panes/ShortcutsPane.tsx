@@ -28,7 +28,7 @@ export function ShortcutsPane() {
               {actions.map((action) => (
                 <div
                   key={action.id}
-                  className="flex items-center justify-between rounded-md px-2 py-1.5 hover:bg-muted/50 transition-colors"
+                  className="flex items-center justify-between rounded-md px-2 py-1.5 hover:bg-black/[0.04] dark:hover:bg-white/[0.07] transition-colors"
                 >
                   <span className="text-sm text-muted-foreground">{_(action.label)}</span>
                   <KeyCapture

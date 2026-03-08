@@ -63,7 +63,6 @@ import {
   SidebarMenuSub,
   SidebarMenuSubButton,
   SidebarMenuSubItem,
-  SidebarSeparator,
   useSidebar,
 } from '@/components/ui/sidebar';
 import { logger } from '@/lib/logger';
@@ -166,7 +165,7 @@ function FeedItem({ feed }: FeedItemProps) {
                 <div className="pointer-events-auto absolute inset-0 flex items-center justify-center scale-50 opacity-0 transition-all duration-200 group-hover/feed-item:scale-100 group-hover/feed-item:opacity-100">
                   <Menu>
                     <MenuTrigger
-                      className="size-6 flex items-center justify-center rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent-foreground/10 hover:text-sidebar-foreground"
+                      className="size-6 flex items-center justify-center rounded-md text-sidebar-foreground/70 hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-sidebar-foreground"
                       onClick={(event) => {
                         event.preventDefault();
                         event.stopPropagation();
@@ -362,7 +361,7 @@ function CategoryItem({ category, index }: CategoryItemProps) {
             <div className="pointer-events-auto absolute inset-0 flex items-center justify-center scale-50 opacity-0 transition-all duration-200 group-hover/category-item:scale-100 group-hover/category-item:opacity-100">
               <Menu>
                 <MenuTrigger
-                  className="size-6 flex items-center justify-center rounded-md text-sidebar-foreground/70 hover:bg-sidebar-accent-foreground/10 hover:text-sidebar-foreground"
+                  className="size-6 flex items-center justify-center rounded-md text-sidebar-foreground/70 hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-sidebar-foreground"
                   onClick={(event) => {
                     event.preventDefault();
                     event.stopPropagation();
@@ -395,7 +394,7 @@ function CategoryItem({ category, index }: CategoryItemProps) {
             render={
               <SidebarMenuAction
                 aria-label={_(msg`Toggle category feeds`)}
-                className="left-1 right-auto data-[state=open]:bg-sidebar-accent data-[state=open]:text-sidebar-accent-foreground"
+                className="left-1 right-auto data-[state=open]:bg-black/[0.06] dark:data-[state=open]:bg-white/10 data-[state=open]:text-sidebar-accent-foreground"
               />
             }
           >
@@ -590,7 +589,7 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
       </SidebarHeader>
 
       <SidebarContent className="flex min-h-0 flex-col gap-0">
-        <SidebarGroup className="sticky top-0 z-10 bg-background">
+        <SidebarGroup className="sticky top-0 z-10">
           <SidebarGroupLabel>{_(msg`Views`)}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-1">
@@ -699,7 +698,6 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
 
         {isCollapsed && (
           <>
-            <SidebarSeparator className="mx-0 sticky top-0 z-10 bg-background" />
             <SidebarGroup className="pt-2">
               <SidebarGroupContent>
                 <SidebarMenu className="gap-1">
@@ -729,8 +727,6 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
 
         {!isCollapsed && (
           <>
-            <SidebarSeparator className="mx-0 sticky top-0 z-10 bg-background" />
-
             <SidebarGroup>
               <SidebarGroupLabel className="gap-2 text-sm font-normal text-sidebar-foreground/80">
                 <HugeiconsIcon icon={Folder01Icon} />

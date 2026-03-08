@@ -2,6 +2,7 @@ import { ArrowRightIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { convertFileSrc } from '@tauri-apps/api/core';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useState } from 'react';
 import { EntryReading } from '@/components/miniflux/EntryReading';
@@ -10,6 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { useRandomEntry } from '@/hooks/use-random-entry';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import { getReaderThemePalette } from '@/lib/reader-theme';
+import { usePreferences } from '@/services/preferences';
 import { useUIStore } from '@/store/ui-store';
 
 export function ZenModeView() {
@@ -21,6 +23,12 @@ export function ZenModeView() {
   const { hasEntries, isLoading, getNextRandomEntry, resetSeenEntries } = useRandomEntry();
   const { readerTheme } = useReaderSettings();
   const readerThemePalette = getReaderThemePalette(readerTheme);
+  const { data: preferences } = usePreferences();
+
+  const bgImagePath = preferences?.background_image_path;
+  const bgImageOpacity = preferences?.background_image_opacity ?? 0.15;
+  const bgImageBlur = preferences?.background_image_blur ?? 0;
+  const bgImageSize = preferences?.background_image_size ?? 'cover';
 
   const [currentEntryId, setCurrentEntryId] = useState<string | null>(null);
   const [isAtBottom, setIsAtBottom] = useState(false);
@@ -97,12 +105,39 @@ export function ZenModeView() {
         <>
           <motion.div
             key="zen-backdrop"
-            className="fixed inset-0 z-40 bg-black"
+            data-glass
+            className="fixed inset-0 z-40 bg-background rounded-xl overflow-hidden"
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
-          />
+          >
+            {bgImagePath && bgImageSize !== 'tile' && (
+              <img
+                src={convertFileSrc(bgImagePath)}
+                alt=""
+                className="pointer-events-none absolute inset-0 size-full select-none"
+                style={{
+                  objectFit: bgImageSize as 'cover' | 'contain' | 'fill',
+                  opacity: bgImageOpacity,
+                  filter: bgImageBlur > 0 ? `blur(${bgImageBlur}px)` : undefined,
+                  ...(bgImageBlur > 0 ? { scale: `${1 + bgImageBlur / 100}` } : {}),
+                }}
+              />
+            )}
+            {bgImagePath && bgImageSize === 'tile' && (
+              <div
+                className="pointer-events-none absolute inset-0 select-none"
+                style={{
+                  backgroundImage: `url(${convertFileSrc(bgImagePath)})`,
+                  backgroundRepeat: 'repeat',
+                  backgroundSize: 'auto',
+                  opacity: bgImageOpacity,
+                  filter: bgImageBlur > 0 ? `blur(${bgImageBlur}px)` : undefined,
+                }}
+              />
+            )}
+          </motion.div>
           <motion.div
             key="zen-content"
             initial={{
@@ -130,8 +165,9 @@ export function ZenModeView() {
               mass: 1,
               filter: { duration: 0.5, ease: 'easeOut' },
             }}
+            data-glass
             className="fixed inset-0 z-50 flex flex-col bg-background rounded-xl overflow-hidden shadow-2xl"
-            style={{ backgroundColor: readerThemePalette.surface }}
+            style={{ backgroundColor: bgImagePath ? 'transparent' : readerThemePalette.surface }}
           >
             <motion.div
               className="flex-1 min-h-0 overflow-hidden"
