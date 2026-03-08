@@ -72,17 +72,13 @@ function MenuPanel({
 }: MenuPanelProps) {
   return (
     <MenuPortal>
-      <MenuPositionerPrimitive
-        className="z-50 bg-popover/65 backdrop-blur-2xl backdrop-saturate-150 rounded-md border shadow-md"
-        sideOffset={sideOffset}
-        {...props}
-      >
+      <MenuPositionerPrimitive className="z-50" sideOffset={sideOffset} {...props}>
         <MenuPopupPrimitive
           finalFocus={finalFocus}
           transition={transition}
           id={id}
           className={cn(
-            'text-popover-foreground max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto p-1 outline-none space-y-0.5',
+            'text-popover-foreground max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-md border shadow-md p-1 outline-none space-y-0.5 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 supports-[backdrop-filter]:backdrop-saturate-150',
             className
           )}
         >
@@ -282,17 +278,13 @@ function MenuSubmenuPanel({
 }: MenuSubmenuPanelProps) {
   return (
     <MenuPortal>
-      <MenuPositionerPrimitive
-        className="z-50 bg-popover/65 backdrop-blur-2xl backdrop-saturate-150 rounded-md border shadow-md"
-        sideOffset={sideOffset}
-        {...props}
-      >
+      <MenuPositionerPrimitive className="z-50" sideOffset={sideOffset} {...props}>
         <MenuPopupPrimitive
           finalFocus={finalFocus}
           transition={transition}
           id={id}
           className={cn(
-            'text-popover-foreground max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto p-1',
+            'text-popover-foreground max-h-(--available-height) min-w-[8rem] origin-(--transform-origin) overflow-x-hidden overflow-y-auto rounded-md border shadow-md p-1 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 supports-[backdrop-filter]:backdrop-saturate-150',
             className
           )}
         >

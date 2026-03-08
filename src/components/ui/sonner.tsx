@@ -60,7 +60,7 @@ const CopyToastAction = ({ message, description }: { message: string; descriptio
     <button
       type="button"
       onClick={handleCopy}
-      className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-muted rounded"
+      className="opacity-0 group-hover:opacity-100 transition-opacity duration-200 p-1 hover:bg-black/[0.06] dark:hover:bg-white/10 rounded"
       aria-label={_(msg`Copy message`)}
     >
       <HugeiconsIcon icon={Copy01Icon} className="size-3" />

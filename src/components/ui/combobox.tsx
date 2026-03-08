@@ -171,16 +171,43 @@ function ComboboxCollection({ ...props }: ComboboxPrimitive.Collection.Props) {
   return <ComboboxPrimitive.Collection data-slot="combobox-collection" {...props} />;
 }
 
-function ComboboxEmpty({ className, ...props }: ComboboxPrimitive.Empty.Props) {
+function ComboboxEmpty({ className, children, ...props }: ComboboxPrimitive.Empty.Props) {
+  const [isEmpty, setIsEmpty] = React.useState(false);
+  const ref = React.useRef<HTMLDivElement>(null);
+
+  React.useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const list = el.closest('[data-slot="combobox-list"]');
+    if (!list) return;
+
+    const check = () => {
+      const hasVisibleItems = list.querySelector('[data-slot="combobox-item"]:not([hidden])');
+      setIsEmpty(!hasVisibleItems);
+    };
+    check();
+    const observer = new MutationObserver(check);
+    observer.observe(list, { childList: true, subtree: true, attributes: true });
+    return () => observer.disconnect();
+  }, []);
+
   return (
-    <ComboboxPrimitive.Empty
+    // biome-ignore lint/a11y/useSemanticElements: custom empty state for combobox
+    <div
+      ref={ref}
       data-slot="combobox-empty"
+      role="status"
+      aria-live="polite"
+      aria-atomic
       className={cn(
-        'text-muted-foreground hidden w-full justify-center py-2 text-center text-sm group-data-empty/combobox-content:flex',
+        'text-muted-foreground w-full justify-center py-2 text-center text-sm',
+        isEmpty ? 'flex' : 'hidden',
         className
       )}
       {...props}
-    />
+    >
+      {children}
+    </div>
   );
 }
 
