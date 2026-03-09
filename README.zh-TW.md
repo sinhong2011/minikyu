@@ -6,7 +6,9 @@
 [![CI](https://github.com/sinhong2011/minikyu/actions/workflows/ci.yml/badge.svg)](https://github.com/sinhong2011/minikyu/actions/workflows/ci.yml)
 [![GitHub Stars](https://img.shields.io/github/stars/sinhong2011/minikyu.svg)](https://github.com/sinhong2011/minikyu/stargazers)
 
-基於 **Tauri v2**、**React 19** 和 **TypeScript** 建構的現代 RSS 閱讀器桌面應用程式。快速、原生、跨平台。
+一款精美的 [Miniflux](https://miniflux.app) 桌面用戶端——Miniflux 是一個極簡且有態度的 RSS 閱讀器。基於 **Tauri v2**、**React 19** 和 **TypeScript** 建構。快速、原生、跨平台。
+
+> **注意：** Minikyu 需要一個正在執行的 [Miniflux](https://miniflux.app) 實例（自架或雲端）作為後端。Miniflux 負責訂閱源的擷取、解析和儲存——Minikyu 在此基礎上提供豐富的桌面體驗。
 
 ## 截圖
 

@@ -6,7 +6,9 @@
 [![CI](https://github.com/sinhong2011/minikyu/actions/workflows/ci.yml/badge.svg)](https://github.com/sinhong2011/minikyu/actions/workflows/ci.yml)
 [![GitHub Stars](https://img.shields.io/github/stars/sinhong2011/minikyu.svg)](https://github.com/sinhong2011/minikyu/stargazers)
 
-A modern RSS reader desktop application built with **Tauri v2**, **React 19**, and **TypeScript**. Fast, native, and cross-platform.
+A modern, beautiful desktop client for [Miniflux](https://miniflux.app) — the minimalist and opinionated RSS reader. Built with **Tauri v2**, **React 19**, and **TypeScript**. Fast, native, and cross-platform.
+
+> **Note:** Minikyu requires a running [Miniflux](https://miniflux.app) instance (self-hosted or cloud) as its backend. Miniflux handles feed fetching, parsing, and storage — Minikyu provides the rich desktop experience on top of it.
 
 ## Screenshots
 

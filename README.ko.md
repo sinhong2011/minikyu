@@ -6,7 +6,9 @@
 [![CI](https://github.com/sinhong2011/minikyu/actions/workflows/ci.yml/badge.svg)](https://github.com/sinhong2011/minikyu/actions/workflows/ci.yml)
 [![GitHub Stars](https://img.shields.io/github/stars/sinhong2011/minikyu.svg)](https://github.com/sinhong2011/minikyu/stargazers)
 
-**Tauri v2**, **React 19**, **TypeScript**로 구축된 모던 RSS 리더 데스크톱 앱. 빠르고, 네이티브하며, 크로스 플랫폼을 지원합니다.
+[Miniflux](https://miniflux.app)를 위한 아름다운 데스크톱 클라이언트 — Miniflux는 미니멀하고 소신 있는 RSS 리더입니다. **Tauri v2**, **React 19**, **TypeScript**로 구축. 빠르고, 네이티브하며, 크로스 플랫폼을 지원합니다.
+
+> **참고:** Minikyu는 백엔드로 실행 중인 [Miniflux](https://miniflux.app) 인스턴스(셀프 호스팅 또는 클라우드)가 필요합니다. Miniflux가 피드 수집, 파싱, 저장을 담당하고 — Minikyu는 그 위에 풍부한 데스크톱 경험을 제공합니다.
 
 ## 스크린샷
 
