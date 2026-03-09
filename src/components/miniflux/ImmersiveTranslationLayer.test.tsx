@@ -28,17 +28,11 @@ const sampleUnsafeHtml =
   '<p>Paragraph one original<script>alert("xss")</script></p><p>Paragraph two original</p>';
 
 const baseTranslationPreferences = {
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_route_mode: 'engine_first' as const,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_target_language: 'zh-CN',
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_primary_engine: 'deepl',
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_engine_fallbacks: ['google_translate'],
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_llm_fallbacks: ['openai'],
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_apple_fallback_enabled: true,
 };
 
@@ -217,11 +211,8 @@ describe('ImmersiveTranslationLayer', () => {
       vi.mocked(commands.getTranslationCacheEntry).mockResolvedValue({
         status: 'ok',
         data: {
-          // biome-ignore lint/style/useNamingConvention: Tauri type field name
           translated_text: 'Cached result',
-          // biome-ignore lint/style/useNamingConvention: Tauri type field name
           provider_used: 'openai',
-          // biome-ignore lint/style/useNamingConvention: Tauri type field name
           cached_at: '1700000000',
         },
       });

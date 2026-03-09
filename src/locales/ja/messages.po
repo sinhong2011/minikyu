@@ -213,8 +213,8 @@ msgid "Add feed"
 msgstr "フィードを追加"
 
 #: src/components/layout/AppSidebar.tsx:566
+#: src/components/layout/AppSidebar.tsx:713
 #: src/components/layout/AppSidebar.tsx:715
-#: src/components/layout/AppSidebar.tsx:719
 #: src/components/miniflux/AddFeedDialog.tsx:380
 #: src/components/miniflux/AddFeedDialog.tsx:855
 msgid "Add Feed"
@@ -575,8 +575,8 @@ msgstr "書籍のようなリズム"
 msgid "breadcrumb"
 msgstr "パンくずリスト"
 
-#: src/components/layout/AppSidebar.tsx:706
-#: src/components/layout/AppSidebar.tsx:710
+#: src/components/layout/AppSidebar.tsx:705
+#: src/components/layout/AppSidebar.tsx:709
 msgid "Browse categories"
 msgstr "カテゴリーを閲覧"
 
@@ -625,7 +625,7 @@ msgstr "「{0}」にはまだ{1}件のフィードがあるため削除できま
 msgid "Cannot delete category"
 msgstr "カテゴリを削除できません"
 
-#: src/components/layout/AppSidebar.tsx:733
+#: src/components/layout/AppSidebar.tsx:727
 #: src/components/preferences/panes/SyncPane.tsx:133
 #: src/components/preferences/PreferencesDialog.tsx:141
 #: src/components/sync/SyncProgressPopover.tsx:51
@@ -3076,7 +3076,7 @@ msgstr "/"
 msgid "Off"
 msgstr "オフ"
 
-#: src/components/layout/AppSidebar.tsx:754
+#: src/components/layout/AppSidebar.tsx:748
 #: src/components/miniflux/UserNav.tsx:260
 msgid "Offline cached data"
 msgstr "オフラインキャッシュデータ"

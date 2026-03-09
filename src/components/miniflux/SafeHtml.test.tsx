@@ -22,7 +22,6 @@ vi.mock('dompurify', () => ({
 }));
 
 vi.mock('./ImageViewer', () => ({
-  // biome-ignore lint/style/useNamingConvention: mock key must match named export
   ImageViewer: () => null,
 }));
 

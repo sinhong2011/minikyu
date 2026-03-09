@@ -697,68 +697,61 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
         </SidebarGroup>
 
         {isCollapsed && (
-          <>
-            <SidebarGroup className="pt-2">
-              <SidebarGroupContent>
-                <SidebarMenu className="gap-1">
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      tooltip={_(msg`Browse categories`)}
-                      onClick={handleShowCategories}
-                    >
-                      <HugeiconsIcon icon={Folder01Icon} className="text-sidebar-foreground/70" />
-                      <span>{_(msg`Browse categories`)}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                  <SidebarMenuItem>
-                    <SidebarMenuButton
-                      tooltip={_(msg`Add Feed`)}
-                      onClick={() => openAddFeedDialog()}
-                    >
-                      <HugeiconsIcon icon={Add01Icon} className="text-sidebar-foreground/70" />
-                      <span>{_(msg`Add Feed`)}</span>
-                    </SidebarMenuButton>
-                  </SidebarMenuItem>
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </>
+          <SidebarGroup className="pt-2">
+            <SidebarGroupContent>
+              <SidebarMenu className="gap-1">
+                <SidebarMenuItem>
+                  <SidebarMenuButton
+                    tooltip={_(msg`Browse categories`)}
+                    onClick={handleShowCategories}
+                  >
+                    <HugeiconsIcon icon={Folder01Icon} className="text-sidebar-foreground/70" />
+                    <span>{_(msg`Browse categories`)}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton tooltip={_(msg`Add Feed`)} onClick={() => openAddFeedDialog()}>
+                    <HugeiconsIcon icon={Add01Icon} className="text-sidebar-foreground/70" />
+                    <span>{_(msg`Add Feed`)}</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
         )}
 
         {!isCollapsed && (
-          <>
-            <SidebarGroup>
-              <SidebarGroupLabel className="gap-2 text-sm font-normal text-sidebar-foreground/80">
-                <HugeiconsIcon icon={Folder01Icon} />
-                <span className="leading-none">{_(msg`Categories`)}</span>
-              </SidebarGroupLabel>
-              <SidebarGroupContent>
-                <SidebarMenu className="space-y-1">
-                  {categoriesLoading ? (
-                    categorySkeletonKeys.map((key) => (
-                      <SidebarMenuItem key={key}>
-                        <SidebarMenuButton disabled>
-                          <div className="bg-muted h-3 w-20 animate-pulse rounded" />
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))
-                  ) : categories && categories.length > 0 ? (
-                    <AnimatePresence initial={false}>
-                      {categories.map((category, index) => (
-                        <CategoryItem key={category.id} category={category} index={index} />
-                      ))}
-                    </AnimatePresence>
-                  ) : !isConnected ? (
-                    <SidebarMenuItem>
+          <SidebarGroup>
+            <SidebarGroupLabel className="gap-2 text-sm font-normal text-sidebar-foreground/80">
+              <HugeiconsIcon icon={Folder01Icon} />
+              <span className="leading-none">{_(msg`Categories`)}</span>
+            </SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu className="space-y-1">
+                {categoriesLoading ? (
+                  categorySkeletonKeys.map((key) => (
+                    <SidebarMenuItem key={key}>
                       <SidebarMenuButton disabled>
-                        <span>{_(msg`Offline cached data`)}</span>
+                        <div className="bg-muted h-3 w-20 animate-pulse rounded" />
                       </SidebarMenuButton>
                     </SidebarMenuItem>
-                  ) : null}
-                </SidebarMenu>
-              </SidebarGroupContent>
-            </SidebarGroup>
-          </>
+                  ))
+                ) : categories && categories.length > 0 ? (
+                  <AnimatePresence initial={false}>
+                    {categories.map((category, index) => (
+                      <CategoryItem key={category.id} category={category} index={index} />
+                    ))}
+                  </AnimatePresence>
+                ) : !isConnected ? (
+                  <SidebarMenuItem>
+                    <SidebarMenuButton disabled>
+                      <span>{_(msg`Offline cached data`)}</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                ) : null}
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
         )}
 
         {children}

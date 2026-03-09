@@ -4,24 +4,18 @@ import type { Enclosure, Entry } from '@/lib/tauri-bindings';
 function createEntry(): Entry {
   return {
     id: 'entry-1',
-    // biome-ignore lint/style/useNamingConvention: Miniflux API field name
     user_id: '1',
-    // biome-ignore lint/style/useNamingConvention: Miniflux API field name
     feed_id: '1',
     title: 'Test episode',
     url: 'https://example.com/episode/1',
     hash: 'hash-1',
-    // biome-ignore lint/style/useNamingConvention: Miniflux API field name
     published_at: '2026-02-25T00:00:00Z',
     status: 'unread',
     feed: {
       id: '1',
-      // biome-ignore lint/style/useNamingConvention: Miniflux API field name
       user_id: '1',
       title: 'Test feed',
-      // biome-ignore lint/style/useNamingConvention: Miniflux API field name
       site_url: 'https://example.com',
-      // biome-ignore lint/style/useNamingConvention: Miniflux API field name
       feed_url: 'https://example.com/feed.xml',
       category: null,
       icon: null,
@@ -33,10 +27,8 @@ function createEntry(): Entry {
 function createEnclosure(): Enclosure {
   return {
     id: 'enc-1',
-    // biome-ignore lint/style/useNamingConvention: Miniflux API field name
     entry_id: 'entry-1',
     url: 'https://example.com/audio.mp3',
-    // biome-ignore lint/style/useNamingConvention: Miniflux API field name
     mime_type: 'audio/mpeg',
     length: '1800',
     position: 0,

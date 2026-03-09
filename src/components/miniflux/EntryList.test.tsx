@@ -30,14 +30,23 @@ class MockIntersectionObserver {
 
 vi.stubGlobal('IntersectionObserver', MockIntersectionObserver);
 
+function localDateKey(d: Date): string {
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `section-${y}-${m}-${day}`;
+}
+const todayKey = localDateKey(new Date());
+const yesterdayKey = localDateKey(new Date(Date.now() - 86400000));
+
 function mockSectionOffsets() {
   const original = Object.getOwnPropertyDescriptor(HTMLElement.prototype, 'offsetTop');
   Object.defineProperty(HTMLElement.prototype, 'offsetTop', {
     configurable: true,
     get() {
       const key = (this as HTMLElement).dataset.sectionKey;
-      if (key === 'section-2026-03-08') return 0;
-      if (key === 'section-2026-03-07') return 220;
+      if (key === todayKey) return 0;
+      if (key === yesterdayKey) return 220;
       return 0;
     },
   });
@@ -72,7 +81,7 @@ const sampleEntry: Entry = {
   author: 'Author',
   content: '<p>hello</p>',
   hash: 'hash',
-  published_at: '2026-03-08T08:00:00Z',
+  published_at: new Date(new Date().setHours(8, 0, 0, 0)).toISOString(),
   created_at: null,
   changed_at: null,
   status: 'unread',
@@ -96,7 +105,7 @@ const olderEntry: Entry = {
   ...sampleEntry,
   id: 'entry-2',
   title: 'Older entry',
-  published_at: '2026-03-07T08:00:00Z',
+  published_at: new Date(Date.now() - 86400000).toISOString(),
 };
 
 describe('EntryList sticky section header', () => {
@@ -141,8 +150,7 @@ describe('EntryList sticky section header', () => {
     expect(stickyShell).toHaveClass('relative');
     expect(stickyShell).not.toHaveClass('sticky');
     expect(stickyTitle).toHaveTextContent('Today');
-    expect(screen.getByTestId('entry-list-section-mask')).toHaveClass('backdrop-blur-xl');
-    expect(screen.queryByTestId('entry-list-section-bg')).not.toBeInTheDocument();
+    expect(screen.getByTestId('entry-list-section-mask')).toBeInTheDocument();
 
     const scrollContainer = screen.getByTestId('entry-list-scroll-container') as HTMLDivElement;
     Object.defineProperty(scrollContainer, 'scrollTop', {

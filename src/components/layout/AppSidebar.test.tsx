@@ -27,11 +27,8 @@ import { useSyncStore } from '@/store/sync-store';
 import { AppSidebar } from './AppSidebar';
 
 i18n.load('en', {
-  // biome-ignore lint/style/useNamingConvention: i18n key
   Minikyu: 'Minikyu',
-  // biome-ignore lint/style/useNamingConvention: i18n key
   Views: 'Views',
-  // biome-ignore lint/style/useNamingConvention: i18n key
   Categories: 'Categories',
   'Not Connected': 'Not Connected',
   'Failed to load feeds': 'Failed to load feeds',
@@ -45,15 +42,10 @@ i18n.load('en', {
   'Search Source': 'Search Source',
   'Search for websites or blog URLs to discover available feeds.':
     'Search for websites or blog URLs to discover available feeds.',
-  // biome-ignore lint/style/useNamingConvention: i18n key
   Sync: 'Sync',
-  // biome-ignore lint/style/useNamingConvention: i18n key
   All: 'All',
-  // biome-ignore lint/style/useNamingConvention: i18n key
   Today: 'Today',
-  // biome-ignore lint/style/useNamingConvention: i18n key
   Starred: 'Starred',
-  // biome-ignore lint/style/useNamingConvention: i18n key
   History: 'History',
 } as Record<string, string>);
 i18n.activate('en');
@@ -89,7 +81,6 @@ vi.mock('@/store/sync-store', () => ({
 }));
 
 vi.mock('@tanstack/react-router', () => ({
-  // biome-ignore lint/style/useNamingConvention: mock component name
   Link: ({ children, to, search, activeOptions }: any) => {
     return (
       <a
@@ -104,9 +95,7 @@ vi.mock('@tanstack/react-router', () => ({
 }));
 
 vi.mock('@/components/miniflux', () => ({
-  // biome-ignore lint/style/useNamingConvention: Mock component name
   UserNav: () => <div data-testid="user-nav">UserNav</div>,
-  // biome-ignore lint/style/useNamingConvention: Mock component name
   FeedAvatar: () => <div data-testid="feed-avatar" />,
 }));
 
@@ -120,7 +109,6 @@ vi.mock('@/components/animate-ui/primitives/base/collapsible', () => {
   });
 
   return {
-    // biome-ignore lint/style/useNamingConvention: Mock component name
     Collapsible: ({ children, defaultOpen = false }: any) => {
       const [isOpen, setIsOpen] = React.useState(defaultOpen);
       return (
@@ -131,7 +119,6 @@ vi.mock('@/components/animate-ui/primitives/base/collapsible', () => {
         </CollapsibleContext.Provider>
       );
     },
-    // biome-ignore lint/style/useNamingConvention: Mock component name
     CollapsibleTrigger: ({ children, className }: any) => {
       const { setIsOpen } = React.useContext(CollapsibleContext);
       return (
@@ -145,7 +132,6 @@ vi.mock('@/components/animate-ui/primitives/base/collapsible', () => {
         </button>
       );
     },
-    // biome-ignore lint/style/useNamingConvention: Mock component name
     CollapsiblePanel: ({ children }: any) => {
       const { isOpen } = React.useContext(CollapsibleContext);
       return isOpen ? <div data-testid="collapsible-panel">{children}</div> : null;
@@ -158,13 +144,11 @@ const mockCategories = [
   {
     id: '1',
     title: 'Tech',
-    // biome-ignore lint/style/useNamingConvention: API response format
     user_id: 1,
   },
   {
     id: '2',
     title: 'News',
-    // biome-ignore lint/style/useNamingConvention: API response format
     user_id: 1,
   },
 ];
@@ -173,28 +157,22 @@ const mockFeeds = [
   {
     id: '101',
     title: 'TechCrunch',
-    // biome-ignore lint/style/useNamingConvention: API response format
     site_url: 'https://techcrunch.com',
-    // biome-ignore lint/style/useNamingConvention: API response format
     feed_url: 'https://techcrunch.com/rss',
     category: {
       id: '1',
       title: 'Tech',
-      // biome-ignore lint/style/useNamingConvention: API response format
       user_id: 1,
     },
   },
   {
     id: '102',
     title: 'Verge',
-    // biome-ignore lint/style/useNamingConvention: API response format
     site_url: 'https://theverge.com',
-    // biome-ignore lint/style/useNamingConvention: API response format
     feed_url: 'https://theverge.com/rss',
     category: {
       id: '1',
       title: 'Tech',
-      // biome-ignore lint/style/useNamingConvention: API response format
       user_id: 1,
     },
   },

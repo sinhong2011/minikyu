@@ -650,6 +650,7 @@ export function EntryList({
                 data-testid="entry-list-section-mask"
                 className="pointer-events-none absolute inset-0"
                 style={{
+                  // biome-ignore lint/style/useNamingConvention: WebKit vendor-prefixed CSS property
                   WebkitMaskImage:
                     'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.98) 62%, rgba(0, 0, 0, 0.7) 82%, rgba(0, 0, 0, 0) 100%)',
                   maskImage:

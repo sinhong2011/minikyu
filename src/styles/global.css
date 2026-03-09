@@ -12,7 +12,9 @@
   }
   *:focus,
   *:focus-visible {
+    /* biome-ignore lint/complexity/noImportantStyles: Required to override framework default focus styles */
     outline: none !important;
+    /* biome-ignore lint/complexity/noImportantStyles: Required to override framework default ring styles */
     --tw-ring-shadow: 0 0 #0000 !important;
   }
   :where(*):not(.no-scrollbar) {

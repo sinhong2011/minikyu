@@ -10,17 +10,11 @@ vi.mock('@/services/translation', () => ({
 }));
 
 const baseTranslationPreferences = {
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_route_mode: 'engine_first' as const,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_target_language: 'zh-CN',
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_primary_engine: 'deepl',
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_engine_fallbacks: ['google_translate'],
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_llm_fallbacks: ['openai'],
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_apple_fallback_enabled: true,
 };
 

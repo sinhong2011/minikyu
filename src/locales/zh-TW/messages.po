@@ -213,8 +213,8 @@ msgid "Add feed"
 msgstr "新增訂閱源"
 
 #: src/components/layout/AppSidebar.tsx:566
+#: src/components/layout/AppSidebar.tsx:713
 #: src/components/layout/AppSidebar.tsx:715
-#: src/components/layout/AppSidebar.tsx:719
 #: src/components/miniflux/AddFeedDialog.tsx:380
 #: src/components/miniflux/AddFeedDialog.tsx:855
 msgid "Add Feed"
@@ -575,8 +575,8 @@ msgstr "書本般的節奏"
 msgid "breadcrumb"
 msgstr "導覽路徑"
 
-#: src/components/layout/AppSidebar.tsx:706
-#: src/components/layout/AppSidebar.tsx:710
+#: src/components/layout/AppSidebar.tsx:705
+#: src/components/layout/AppSidebar.tsx:709
 msgid "Browse categories"
 msgstr "瀏覽分類"
 
@@ -625,7 +625,7 @@ msgstr "無法刪除「{0}」，因為它還有 {1} 個訂閱源。請先移動�
 msgid "Cannot delete category"
 msgstr "無法刪除分類"
 
-#: src/components/layout/AppSidebar.tsx:733
+#: src/components/layout/AppSidebar.tsx:727
 #: src/components/preferences/panes/SyncPane.tsx:133
 #: src/components/preferences/PreferencesDialog.tsx:141
 #: src/components/sync/SyncProgressPopover.tsx:51
@@ -3076,7 +3076,7 @@ msgstr "之"
 msgid "Off"
 msgstr "關閉"
 
-#: src/components/layout/AppSidebar.tsx:754
+#: src/components/layout/AppSidebar.tsx:748
 #: src/components/miniflux/UserNav.tsx:260
 msgid "Offline cached data"
 msgstr "離線快取資料"

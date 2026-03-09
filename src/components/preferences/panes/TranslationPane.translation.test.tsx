@@ -40,62 +40,34 @@ vi.mock('@/lib/tauri-bindings', () => ({
 
 const basePreferences = {
   theme: 'system',
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   quick_pane_shortcut: null,
   language: null,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   close_behavior: 'minimize_to_tray' as const,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   show_tray_icon: true,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   start_minimized: false,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_font_size: 16,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_line_width: 65,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_line_height: 1.75,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_font_family: 'sans-serif',
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_theme: 'default',
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_code_theme: 'auto',
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_chinese_conversion: 's2tw' as const,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_bionic_reading: false,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_status_bar: false,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_custom_conversions: [],
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_display_mode: 'bilingual' as const,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_trigger_mode: 'manual' as const,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_route_mode: 'engine_first' as const,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_target_language: 'zh-TW',
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_primary_engine: 'deepl',
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_engine_fallbacks: ['google_translate'],
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_llm_fallbacks: ['openai'],
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_apple_fallback_enabled: true,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_provider_settings: {},
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_auto_enabled: false,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   reader_translation_excluded_feed_ids: [],
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   image_download_path: null,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   video_download_path: null,
-  // biome-ignore lint/style/useNamingConvention: preferences field name
   player_display_mode: 'FloatingWindow',
 };
 
@@ -120,11 +92,8 @@ describe('TranslationPane settings', () => {
     mockTranslateReaderSegment.mockResolvedValue({
       status: 'ok',
       data: {
-        // biome-ignore lint/style/useNamingConvention: API field names
         translated_text: 'こんにちは世界',
-        // biome-ignore lint/style/useNamingConvention: API field names
         provider_used: 'openai',
-        // biome-ignore lint/style/useNamingConvention: API field names
         fallback_chain: ['openai'],
       },
     });
@@ -226,9 +195,7 @@ describe('TranslationPane settings', () => {
     await waitFor(() => {
       expect(mockTranslateReaderSegment).toHaveBeenCalledWith(
         expect.objectContaining({
-          // biome-ignore lint/style/useNamingConvention: command payload field names
           primary_engine: 'deepl',
-          // biome-ignore lint/style/useNamingConvention: command payload field names
           llm_fallbacks: [],
         })
       );
@@ -271,7 +238,6 @@ describe('TranslationPane settings', () => {
 
     await waitFor(() => {
       expect((mutateAsync as Mock).mock.calls.at(-1)?.[0]).toMatchObject({
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_route_mode: 'hybrid_auto',
       });
     });
@@ -289,7 +255,6 @@ describe('TranslationPane settings', () => {
 
     await waitFor(() => {
       expect((mutateAsync as Mock).mock.calls.at(-1)?.[0]).toMatchObject({
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_target_language: 'ja',
       });
     });
