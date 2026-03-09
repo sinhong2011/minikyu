@@ -573,9 +573,10 @@ export function useFetchEntryContent() {
       return result.data;
     },
     onSuccess: (_, { id }) => {
-      // Invalidate entry queries
+      // Only invalidate the specific entry detail, not the list.
+      // The list doesn't display content, so refetching it is unnecessary
+      // and causes the entry list to re-render, losing scroll position.
       queryClient.invalidateQueries({ queryKey: entryQueryKeys.detail(id) });
-      queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
       toast.success(translate(msg`Original content downloaded`));
     },
   });

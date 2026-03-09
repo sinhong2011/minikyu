@@ -2151,7 +2151,7 @@ export function EntryReading({
               transition={{ duration: 0.2, ease: 'easeOut' }}
               className="pointer-events-none absolute bottom-2 left-2 z-20"
             >
-              <div className="pointer-events-auto flex items-center gap-1.5 rounded-md border border-border/60 bg-background/92 px-2 py-1 text-[10px] leading-none text-muted-foreground shadow-sm">
+              <div className="pointer-events-auto flex items-center gap-1.5 rounded-full bg-popover/75 px-2 py-1 text-[10px] leading-none text-muted-foreground ring-1 ring-foreground/10 shadow-lg backdrop-blur-2xl backdrop-saturate-150">
                 <span className="font-medium tracking-wide">{progressLabel}</span>
                 <span aria-hidden className="opacity-50">
                   •
