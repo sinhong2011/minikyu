@@ -50,56 +50,45 @@ export function MainWindow({ children }: MainWindowProps = {}) {
   }, [isTransparent, bgTransparency]);
 
   return (
-    <div
-      className="relative flex h-screen w-full flex-col overflow-hidden rounded-xl bg-background [clip-path:inset(0_round_var(--radius-xl))]"
-      style={
-        {
-          ...(bgImagePath && bgImageSize === 'tile'
-            ? {
-                backgroundImage: `url(${convertFileSrc(bgImagePath)})`,
-                backgroundRepeat: 'repeat',
-                backgroundSize: 'auto',
-              }
-            : {}),
-        } as React.CSSProperties
-      }
-    >
+    <div className="relative flex h-screen w-full flex-col overflow-hidden rounded-xl bg-background [clip-path:inset(0_round_var(--radius-xl))]">
       {bgImagePath && bgImageSize !== 'tile' && (
         <img
           src={convertFileSrc(bgImagePath)}
           alt=""
-          className="pointer-events-none absolute -z-10 select-none"
+          className="pointer-events-none absolute inset-0 -z-10 size-full select-none"
           style={{
-            inset: bgImageBlur > 0 ? `${-bgImageBlur * 3}px` : 0,
             objectFit: bgImageSize as 'cover' | 'contain' | 'fill',
             opacity: bgImageOpacity,
             filter: bgImageBlur > 0 ? `blur(${bgImageBlur}px)` : undefined,
+            ...(bgImageBlur > 0 ? { scale: `${1 + bgImageBlur / 100}` } : {}),
           }}
         />
       )}
       {bgImagePath && bgImageSize === 'tile' && (
         <div
-          className="pointer-events-none absolute -z-10 select-none"
+          className="pointer-events-none absolute inset-0 -z-10 size-full select-none"
           style={{
-            inset: bgImageBlur > 0 ? `${-bgImageBlur * 3}px` : 0,
             backgroundImage: `url(${convertFileSrc(bgImagePath)})`,
             backgroundRepeat: 'repeat',
             backgroundSize: 'auto',
             opacity: bgImageOpacity,
             filter: bgImageBlur > 0 ? `blur(${bgImageBlur}px)` : undefined,
+            ...(bgImageBlur > 0 ? { scale: `${1 + bgImageBlur / 100}` } : {}),
           }}
         />
       )}
-      {!zenModeEnabled && <TitleBar />}
-      <SidebarProvider
-        open={leftSidebarVisible}
-        onOpenChange={setLeftSidebarVisible}
-        className="overflow-hidden min-h-0 flex-1"
-        style={{ '--sidebar-width': '18rem' } as React.CSSProperties}
-      >
-        <AppSidebar />
-        <SidebarInset>{children}</SidebarInset>
-      </SidebarProvider>
+      <div className="flex min-h-0 flex-1 flex-col" data-frosted-backdrop>
+        {!zenModeEnabled && <TitleBar />}
+        <SidebarProvider
+          open={leftSidebarVisible}
+          onOpenChange={setLeftSidebarVisible}
+          className="overflow-hidden min-h-0 flex-1"
+          style={{ '--sidebar-width': '18rem' } as React.CSSProperties}
+        >
+          <AppSidebar />
+          <SidebarInset>{children}</SidebarInset>
+        </SidebarProvider>
+      </div>
 
       <CommandPalette />
       <DownloadManagerDialog />

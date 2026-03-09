@@ -172,6 +172,35 @@ export function AppearancePane() {
         {preferences?.background_image_path && (
           <>
             <SettingsField
+              label={_(msg`Size`)}
+              description={_(msg`How the image fills the window.`)}
+            >
+              <Select
+                value={preferences.background_image_size ?? 'cover'}
+                onValueChange={(value: string) => {
+                  if (preferences) {
+                    savePreferences.mutate({
+                      ...preferences,
+                      // biome-ignore lint/style/useNamingConvention: preferences field name
+                      background_image_size: value,
+                    });
+                  }
+                }}
+                disabled={savePreferences.isPending}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="cover">{_(msg`Cover`)}</SelectItem>
+                  <SelectItem value="contain">{_(msg`Contain`)}</SelectItem>
+                  <SelectItem value="fill">{_(msg`Fill`)}</SelectItem>
+                  <SelectItem value="tile">{_(msg`Tile`)}</SelectItem>
+                </SelectContent>
+              </Select>
+            </SettingsField>
+
+            <SettingsField
               label={_(msg`Opacity`)}
               description={_(msg`Adjust the background image transparency.`)}
             >
@@ -253,35 +282,6 @@ export function AppearancePane() {
                   {Math.round((preferences.background_transparency ?? 0) * 100)}%
                 </span>
               </div>
-            </SettingsField>
-
-            <SettingsField
-              label={_(msg`Size`)}
-              description={_(msg`How the image fills the window.`)}
-            >
-              <Select
-                value={preferences.background_image_size ?? 'cover'}
-                onValueChange={(value: string) => {
-                  if (preferences) {
-                    savePreferences.mutate({
-                      ...preferences,
-                      // biome-ignore lint/style/useNamingConvention: preferences field name
-                      background_image_size: value,
-                    });
-                  }
-                }}
-                disabled={savePreferences.isPending}
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="cover">{_(msg`Cover`)}</SelectItem>
-                  <SelectItem value="contain">{_(msg`Contain`)}</SelectItem>
-                  <SelectItem value="fill">{_(msg`Fill`)}</SelectItem>
-                  <SelectItem value="tile">{_(msg`Tile`)}</SelectItem>
-                </SelectContent>
-              </Select>
             </SettingsField>
           </>
         )}
