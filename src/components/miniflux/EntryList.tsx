@@ -678,44 +678,42 @@ export function EntryList({
           )}
         >
           {onPullToRefresh && (
-            <>
+            <div
+              className="pointer-events-none sticky top-0 z-20 flex items-center justify-center"
+              style={{
+                height: showPullIndicator ? `${pullVisualOffset}px` : '0px',
+                transition: isPulling
+                  ? 'height 72ms linear'
+                  : 'height 280ms cubic-bezier(0.175, 0.885, 0.32, 1.08)',
+              }}
+            >
               <div
-                className="pointer-events-none sticky top-0 z-20 flex items-center justify-center"
+                className="flex size-7 items-center justify-center rounded-full bg-popover/65 ring-1 ring-foreground/10 shadow-lg backdrop-blur-2xl backdrop-saturate-150"
                 style={{
-                  height: showPullIndicator ? `${pullVisualOffset}px` : '0px',
+                  transform: `scale(${showPullIndicator ? 1 : 0.5})`,
+                  opacity: showPullIndicator ? pullProgress : 0,
                   transition: isPulling
-                    ? 'height 72ms linear'
-                    : 'height 280ms cubic-bezier(0.175, 0.885, 0.32, 1.08)',
+                    ? 'transform 72ms linear, opacity 90ms linear'
+                    : 'transform 280ms cubic-bezier(0.175, 0.885, 0.32, 1.08), opacity 220ms ease',
                 }}
               >
-                <div
-                  className="flex size-7 items-center justify-center rounded-full bg-popover/65 ring-1 ring-foreground/10 shadow-lg backdrop-blur-2xl backdrop-saturate-150"
-                  style={{
-                    transform: `scale(${showPullIndicator ? 1 : 0.5})`,
-                    opacity: showPullIndicator ? pullProgress : 0,
-                    transition: isPulling
-                      ? 'transform 72ms linear, opacity 90ms linear'
-                      : 'transform 280ms cubic-bezier(0.175, 0.885, 0.32, 1.08), opacity 220ms ease',
-                  }}
-                >
-                  <HugeiconsIcon
-                    icon={Refresh04Icon}
-                    className={cn(
-                      'h-3.5 w-3.5 text-muted-foreground transition-[color] duration-200',
-                      (isRefreshing || pullRefreshPending) && 'animate-spin',
-                      pullReady && !isRefreshing && !pullRefreshPending && 'text-foreground'
-                    )}
-                    style={
-                      isRefreshing || pullRefreshPending
-                        ? undefined
-                        : {
-                            transform: `rotate(${Math.round(pullProgress * 260)}deg)`,
-                          }
-                    }
-                  />
-                </div>
+                <HugeiconsIcon
+                  icon={Refresh04Icon}
+                  className={cn(
+                    'h-3.5 w-3.5 text-muted-foreground transition-[color] duration-200',
+                    (isRefreshing || pullRefreshPending) && 'animate-spin',
+                    pullReady && !isRefreshing && !pullRefreshPending && 'text-foreground'
+                  )}
+                  style={
+                    isRefreshing || pullRefreshPending
+                      ? undefined
+                      : {
+                          transform: `rotate(${Math.round(pullProgress * 260)}deg)`,
+                        }
+                  }
+                />
               </div>
-            </>
+            </div>
           )}
           <div
             style={{
