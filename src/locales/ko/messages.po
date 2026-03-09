@@ -145,7 +145,7 @@ msgstr "12시간제"
 msgid "24-hour"
 msgstr "24시간제"
 
-#: src/components/preferences/panes/AboutPane.tsx:99
+#: src/components/preferences/panes/AboutPane.tsx:101
 msgid "A calm, focused space for your Miniflux reading. Catch up faster, stay organized, and enjoy every feed."
 msgstr "Miniflux 읽기에 맞춘 차분하고 집중되는 공간입니다. 더 빠르게 따라잡고, 깔끔하게 정리하며, 모든 피드를 편안하게 즐기세요."
 
@@ -486,6 +486,10 @@ msgstr "글 텍스트 크기(픽셀, 14-24)"
 msgid "Ascending"
 msgstr "오름차순"
 
+#: src/components/preferences/panes/AboutPane.tsx:269
+msgid "Author"
+msgstr "작성자"
+
 #: src/components/miniflux/EntryReadingHeader.tsx:194
 #: src/components/preferences/panes/ReaderPane.tsx:165
 msgid "Auto"
@@ -511,7 +515,7 @@ msgstr "자동 동기화 간격"
 msgid "Auto-translation will be skipped when the entry content is detected as one of these languages."
 msgstr "항목 내용이 이러한 언어로 감지되면 자동 번역이 건너뛰어집니다."
 
-#: src/components/preferences/panes/AboutPane.tsx:169
+#: src/components/preferences/panes/AboutPane.tsx:171
 msgid "Automatic updates"
 msgstr "자동 업데이트"
 
@@ -584,7 +588,7 @@ msgstr "카테고리 찾아보기"
 msgid "Browser content"
 msgstr "브라우저 콘텐츠"
 
-#: src/components/preferences/panes/AboutPane.tsx:228
+#: src/components/preferences/panes/AboutPane.tsx:230
 msgid "Build date"
 msgstr "빌드 날짜"
 
@@ -702,7 +706,7 @@ msgstr "변경"
 msgid "Check for Updates"
 msgstr "업데이트 확인"
 
-#: src/components/preferences/panes/AboutPane.tsx:170
+#: src/components/preferences/panes/AboutPane.tsx:172
 msgid "Check for updates automatically on app launch."
 msgstr "앱 시작 시 자동으로 업데이트를 확인합니다."
 
@@ -714,11 +718,11 @@ msgstr "업데이트 확인..."
 msgid "Check if a newer version is available"
 msgstr "새 버전이 있는지 확인합니다"
 
-#: src/components/preferences/panes/AboutPane.tsx:146
+#: src/components/preferences/panes/AboutPane.tsx:148
 msgid "Check latest version"
 msgstr "최신 버전 확인"
 
-#: src/components/preferences/panes/AboutPane.tsx:63
+#: src/components/preferences/panes/AboutPane.tsx:65
 msgid "Check whether a newer release is available."
 msgstr "최신 릴리스가 있는지 확인합니다."
 
@@ -730,11 +734,11 @@ msgstr "연결 상태를 확인하고 다시 시도하세요"
 msgid "Checked"
 msgstr "확인됨"
 
-#: src/components/preferences/panes/AboutPane.tsx:49
+#: src/components/preferences/panes/AboutPane.tsx:51
 msgid "Checking for updates..."
 msgstr "업데이트 확인 중..."
 
-#: src/components/preferences/panes/AboutPane.tsx:146
+#: src/components/preferences/panes/AboutPane.tsx:148
 msgid "Checking..."
 msgstr "확인 중..."
 
@@ -926,7 +930,7 @@ msgstr "색상 테마"
 msgid "Command Palette"
 msgstr "명령 팔레트"
 
-#: src/components/preferences/panes/AboutPane.tsx:219
+#: src/components/preferences/panes/AboutPane.tsx:221
 msgid "Commit"
 msgstr "커밋"
 
@@ -958,7 +962,7 @@ msgstr "Miniflux 서버에 연결합니다"
 msgid "Connect to Miniflux"
 msgstr "Miniflux에 연결"
 
-#: src/components/preferences/panes/AboutPane.tsx:208
+#: src/components/preferences/panes/AboutPane.tsx:210
 msgid "Connect to Miniflux to see server version."
 msgstr "서버 버전을 확인하려면 Miniflux에 연결하세요."
 
@@ -1073,7 +1077,7 @@ msgstr "번역 복사"
 msgid "Could not check for updates"
 msgstr "업데이트를 확인할 수 없습니다"
 
-#: src/components/preferences/panes/AboutPane.tsx:61
+#: src/components/preferences/panes/AboutPane.tsx:63
 msgid "Could not check for updates. Please try again."
 msgstr "업데이트를 확인할 수 없습니다. 다시 시도해 주세요."
 
@@ -1089,7 +1093,7 @@ msgstr "팟캐스트 항목을 찾을 수 없습니다"
 msgid "Could not load podcast entry"
 msgstr "팟캐스트 항목을 불러올 수 없습니다"
 
-#: src/components/preferences/panes/AboutPane.tsx:201
+#: src/components/preferences/panes/AboutPane.tsx:203
 msgid "Could not load server version information."
 msgstr "서버 버전 정보를 불러올 수 없습니다."
 
@@ -1148,6 +1152,10 @@ msgstr "사용자 만들기"
 msgid "Created"
 msgstr "생성됨"
 
+#: src/components/preferences/panes/AboutPane.tsx:270
+msgid "Created and maintained by sinhong."
+msgstr "sinhong이 제작 및 유지 관리합니다."
+
 #: src/components/miniflux/AddCategoryDialog.tsx:100
 msgid "Creating..."
 msgstr "생성 중..."
@@ -1160,7 +1168,7 @@ msgstr "현재 카테고리"
 msgid "Current state"
 msgstr "현재 상태"
 
-#: src/components/preferences/panes/AboutPane.tsx:106
+#: src/components/preferences/panes/AboutPane.tsx:108
 msgid "Current version"
 msgstr "현재 버전"
 
@@ -1449,7 +1457,7 @@ msgstr "다운로드 설정"
 msgid "Download the full article from the original source"
 msgstr "원본 출처에서 전체 글을 다운로드합니다"
 
-#: src/components/preferences/panes/AboutPane.tsx:123
+#: src/components/preferences/panes/AboutPane.tsx:125
 msgid "Download Update"
 msgstr "업데이트 다운로드"
 
@@ -1467,7 +1475,7 @@ msgstr "서버에서 최근 항목을 다운로드하는 중"
 #. placeholder {0}: updaterVersion ?? ''
 #. placeholder {1}: String(downloadProgress)
 #. placeholder {1}: String(state.progress)
-#: src/components/preferences/panes/AboutPane.tsx:55
+#: src/components/preferences/panes/AboutPane.tsx:57
 #: src/hooks/use-auto-updater.ts:55
 msgid "Downloading update v{0}... {1}%"
 msgstr "업데이트 v{0} 다운로드 중... {1}%"
@@ -2247,7 +2255,7 @@ msgstr "독일어"
 msgid "Gestures"
 msgstr "제스처"
 
-#: src/components/preferences/panes/AboutPane.tsx:219
+#: src/components/preferences/panes/AboutPane.tsx:221
 msgid "Git commit hash."
 msgstr "Git 커밋 해시입니다."
 
@@ -2493,11 +2501,11 @@ msgstr "정보"
 msgid "Install & Restart"
 msgstr "설치 후 재시작"
 
-#: src/components/preferences/panes/AboutPane.tsx:107
+#: src/components/preferences/panes/AboutPane.tsx:109
 msgid "Installed version of Minikyu."
 msgstr "설치된 Minikyu 버전입니다."
 
-#: src/components/preferences/panes/AboutPane.tsx:59
+#: src/components/preferences/panes/AboutPane.tsx:61
 msgid "Installing update..."
 msgstr "업데이트 설치 중..."
 
@@ -2608,13 +2616,17 @@ msgstr "나중에"
 msgid "Latest React with concurrent features"
 msgstr "동시성 기능이 있는 최신 React"
 
-#: src/components/preferences/panes/AboutPane.tsx:112
+#: src/components/preferences/panes/AboutPane.tsx:114
 msgid "Latest version"
 msgstr "최신 버전"
 
 #: src/components/preferences/panes/TranslationPane.tsx:1501
 #~ msgid "Leave empty to use default prompt"
 #~ msgstr "기본 프롬프트를 사용하려면 비워 두세요"
+
+#: src/components/preferences/panes/AboutPane.tsx:283
+msgid "License"
+msgstr "라이선스"
 
 #: src/components/preferences/panes/AppearancePane.tsx:130
 msgid "Light"
@@ -2657,7 +2669,7 @@ msgstr "LLM 제공자"
 msgid "Loading"
 msgstr "로딩 중"
 
-#: src/components/preferences/panes/AboutPane.tsx:191
+#: src/components/preferences/panes/AboutPane.tsx:193
 msgid "Loading version information..."
 msgstr "버전 정보를 불러오는 중..."
 
@@ -2768,19 +2780,23 @@ msgstr "분 소요"
 msgid "Mini player"
 msgstr "미니 플레이어"
 
-#: src/components/preferences/panes/AboutPane.tsx:187
+#: src/components/preferences/panes/AboutPane.tsx:189
 msgid "Miniflux Server"
 msgstr "Miniflux 서버"
 
-#: src/components/preferences/panes/AboutPane.tsx:214
+#: src/components/preferences/panes/AboutPane.tsx:216
 msgid "Miniflux server version."
 msgstr "Miniflux 서버 버전입니다."
 
 #: src/components/brand/AppLogo.tsx:31
 #: src/components/brand/AppLogo.tsx:115
-#: src/components/preferences/panes/AboutPane.tsx:93
+#: src/components/preferences/panes/AboutPane.tsx:95
 msgid "Minikyu"
 msgstr "Minikyu"
+
+#: src/components/preferences/panes/AboutPane.tsx:284
+msgid "Minikyu is open source software."
+msgstr "Minikyu는 오픈소스 소프트웨어입니다."
 
 #: src/components/preferences/panes/TranslationPane.tsx:739
 msgid "MiniMax"
@@ -3459,6 +3475,10 @@ msgstr "이전 항목 (h 또는 ←)"
 msgid "Previous section"
 msgstr "이전 섹션"
 
+#: src/components/preferences/panes/AboutPane.tsx:253
+msgid "Project"
+msgstr "프로젝트"
+
 #: src/components/miniflux/EntryReadingHeader.tsx:633
 #: src/components/preferences/panes/TranslationPane.tsx:1774
 msgid "Provider"
@@ -3805,7 +3825,7 @@ msgstr "지금 재시작"
 msgid "Restart to apply the update."
 msgstr "업데이트를 적용하려면 재시작하세요."
 
-#: src/components/preferences/panes/AboutPane.tsx:118
+#: src/components/preferences/panes/AboutPane.tsx:120
 msgid "Restart to Update"
 msgstr "재시작하여 업데이트"
 
@@ -3865,7 +3885,7 @@ msgid "Rows per page"
 msgstr "페이지당 행 수"
 
 #: src/components/brand/AppLogo.tsx:118
-#: src/components/preferences/panes/AboutPane.tsx:94
+#: src/components/preferences/panes/AboutPane.tsx:96
 msgid "RSS Reader"
 msgstr "RSS 리더"
 
@@ -3881,7 +3901,7 @@ msgstr "동기화를 실행하여 카테고리, 피드, 항목을 새로고침�
 msgid "Running"
 msgstr "실행 중"
 
-#: src/components/preferences/panes/AboutPane.tsx:237
+#: src/components/preferences/panes/AboutPane.tsx:239
 msgid "Runtime"
 msgstr "런타임"
 
@@ -4094,11 +4114,11 @@ msgstr "세리프"
 msgid "Server"
 msgstr "서버"
 
-#: src/components/preferences/panes/AboutPane.tsx:229
+#: src/components/preferences/panes/AboutPane.tsx:231
 msgid "Server build timestamp."
 msgstr "서버 빌드 타임스탬프입니다."
 
-#: src/components/preferences/panes/AboutPane.tsx:238
+#: src/components/preferences/panes/AboutPane.tsx:240
 msgid "Server runtime environment."
 msgstr "서버 런타임 환경입니다."
 
@@ -4115,9 +4135,9 @@ msgstr "서버 URL"
 msgid "Server URL is required"
 msgstr "서버 URL이 필요합니다"
 
-#: src/components/preferences/panes/AboutPane.tsx:190
-#: src/components/preferences/panes/AboutPane.tsx:200
-#: src/components/preferences/panes/AboutPane.tsx:207
+#: src/components/preferences/panes/AboutPane.tsx:192
+#: src/components/preferences/panes/AboutPane.tsx:202
+#: src/components/preferences/panes/AboutPane.tsx:209
 msgid "Server version"
 msgstr "서버 버전"
 
@@ -4300,6 +4320,10 @@ msgstr "문제가 발생했습니다"
 #: src/components/miniflux/MinifluxLayout.tsx:645
 msgid "Sort by"
 msgstr "정렬 기준"
+
+#: src/components/preferences/panes/AboutPane.tsx:255
+msgid "Source code"
+msgstr "소스 코드"
 
 #: src/components/miniflux/AddFeedDialog.tsx:294
 #: src/components/miniflux/SearchSourceDialog.tsx:66
@@ -5160,13 +5184,13 @@ msgstr "확인"
 msgid "Verifying..."
 msgstr "확인 중..."
 
-#: src/components/preferences/panes/AboutPane.tsx:104
-#: src/components/preferences/panes/AboutPane.tsx:214
+#: src/components/preferences/panes/AboutPane.tsx:106
+#: src/components/preferences/panes/AboutPane.tsx:216
 msgid "Version"
 msgstr "버전"
 
 #. placeholder {0}: updaterVersion ?? ''
-#: src/components/preferences/panes/AboutPane.tsx:53
+#: src/components/preferences/panes/AboutPane.tsx:55
 msgid "Version {0} is available."
 msgstr "버전 {0}을(를) 사용할 수 있습니다."
 
@@ -5177,7 +5201,7 @@ msgid "Version {0} is available. Downloading..."
 msgstr "버전 {0}을(를) 사용할 수 있습니다. 다운로드 중..."
 
 #. placeholder {0}: updaterVersion ?? ''
-#: src/components/preferences/panes/AboutPane.tsx:57
+#: src/components/preferences/panes/AboutPane.tsx:59
 msgid "Version {0} is ready to install."
 msgstr "버전 {0} 설치 준비가 완료되었습니다."
 
@@ -5207,6 +5231,10 @@ msgstr "다운로드 보기 및 관리"
 #: src/lib/commands/help-commands.ts:41
 msgid "View app version and information"
 msgstr "앱 버전 및 정보 보기"
+
+#: src/components/preferences/panes/AboutPane.tsx:256
+msgid "View the source code, report issues, or contribute."
+msgstr "소스 코드를 확인하고, 이슈를 보고하거나 기여할 수 있습니다."
 
 #: src/components/layout/AppSidebar.tsx:588
 msgid "Views"
@@ -5260,7 +5288,7 @@ msgstr "어제"
 msgid "You are running the latest version"
 msgstr "최신 버전을 사용 중입니다"
 
-#: src/components/preferences/panes/AboutPane.tsx:51
+#: src/components/preferences/panes/AboutPane.tsx:53
 msgid "You are running the latest version."
 msgstr "최신 버전을 사용 중입니다."
 

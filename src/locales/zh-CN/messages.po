@@ -145,7 +145,7 @@ msgstr "12 小时制"
 msgid "24-hour"
 msgstr "24 小时制"
 
-#: src/components/preferences/panes/AboutPane.tsx:99
+#: src/components/preferences/panes/AboutPane.tsx:101
 msgid "A calm, focused space for your Miniflux reading. Catch up faster, stay organized, and enjoy every feed."
 msgstr "为你的 Miniflux 阅读打造的安静专注空间。更快追上更新，轻松保持有序，享受每一条订阅内容。"
 
@@ -486,6 +486,10 @@ msgstr "文章字号，单位像素 (14-24)"
 msgid "Ascending"
 msgstr "升序"
 
+#: src/components/preferences/panes/AboutPane.tsx:269
+msgid "Author"
+msgstr "作者"
+
 #: src/components/miniflux/EntryReadingHeader.tsx:194
 #: src/components/preferences/panes/ReaderPane.tsx:165
 msgid "Auto"
@@ -511,7 +515,7 @@ msgstr "自动同步间隔"
 msgid "Auto-translation will be skipped when the entry content is detected as one of these languages."
 msgstr "当检测到文章内容为以下语言之一时，将跳过自动翻译。"
 
-#: src/components/preferences/panes/AboutPane.tsx:169
+#: src/components/preferences/panes/AboutPane.tsx:171
 msgid "Automatic updates"
 msgstr "自动更新"
 
@@ -584,7 +588,7 @@ msgstr "浏览分类"
 msgid "Browser content"
 msgstr "浏览器内容"
 
-#: src/components/preferences/panes/AboutPane.tsx:228
+#: src/components/preferences/panes/AboutPane.tsx:230
 msgid "Build date"
 msgstr "构建日期"
 
@@ -702,7 +706,7 @@ msgstr "更换"
 msgid "Check for Updates"
 msgstr "检查更新"
 
-#: src/components/preferences/panes/AboutPane.tsx:170
+#: src/components/preferences/panes/AboutPane.tsx:172
 msgid "Check for updates automatically on app launch."
 msgstr "启动应用时自动检查更新。"
 
@@ -714,11 +718,11 @@ msgstr "检查更新..."
 msgid "Check if a newer version is available"
 msgstr "检查是否有更新版本可用"
 
-#: src/components/preferences/panes/AboutPane.tsx:146
+#: src/components/preferences/panes/AboutPane.tsx:148
 msgid "Check latest version"
 msgstr "检查最新版本"
 
-#: src/components/preferences/panes/AboutPane.tsx:63
+#: src/components/preferences/panes/AboutPane.tsx:65
 msgid "Check whether a newer release is available."
 msgstr "检查是否有更新版本可用。"
 
@@ -730,11 +734,11 @@ msgstr "请检查网络连接后重试"
 msgid "Checked"
 msgstr "已检查"
 
-#: src/components/preferences/panes/AboutPane.tsx:49
+#: src/components/preferences/panes/AboutPane.tsx:51
 msgid "Checking for updates..."
 msgstr "正在检查更新..."
 
-#: src/components/preferences/panes/AboutPane.tsx:146
+#: src/components/preferences/panes/AboutPane.tsx:148
 msgid "Checking..."
 msgstr "检查中..."
 
@@ -926,7 +930,7 @@ msgstr "颜色主题"
 msgid "Command Palette"
 msgstr "命令面板"
 
-#: src/components/preferences/panes/AboutPane.tsx:219
+#: src/components/preferences/panes/AboutPane.tsx:221
 msgid "Commit"
 msgstr "提交"
 
@@ -958,7 +962,7 @@ msgstr "连接到 Miniflux 服务器"
 msgid "Connect to Miniflux"
 msgstr "连接至 Miniflux"
 
-#: src/components/preferences/panes/AboutPane.tsx:208
+#: src/components/preferences/panes/AboutPane.tsx:210
 msgid "Connect to Miniflux to see server version."
 msgstr "连接 Miniflux 以查看服务器版本。"
 
@@ -1073,7 +1077,7 @@ msgstr "复制译文"
 msgid "Could not check for updates"
 msgstr "无法检查更新"
 
-#: src/components/preferences/panes/AboutPane.tsx:61
+#: src/components/preferences/panes/AboutPane.tsx:63
 msgid "Could not check for updates. Please try again."
 msgstr "无法检查更新，请重试。"
 
@@ -1089,7 +1093,7 @@ msgstr "找不到播客条目"
 msgid "Could not load podcast entry"
 msgstr "无法加载播客条目"
 
-#: src/components/preferences/panes/AboutPane.tsx:201
+#: src/components/preferences/panes/AboutPane.tsx:203
 msgid "Could not load server version information."
 msgstr "无法加载服务器版本信息。"
 
@@ -1148,6 +1152,10 @@ msgstr "创建用户"
 msgid "Created"
 msgstr "创建时间"
 
+#: src/components/preferences/panes/AboutPane.tsx:270
+msgid "Created and maintained by sinhong."
+msgstr "由 sinhong 创建和维护。"
+
 #: src/components/miniflux/AddCategoryDialog.tsx:100
 msgid "Creating..."
 msgstr "正在创建..."
@@ -1160,7 +1168,7 @@ msgstr "当前分类"
 msgid "Current state"
 msgstr "当前状态"
 
-#: src/components/preferences/panes/AboutPane.tsx:106
+#: src/components/preferences/panes/AboutPane.tsx:108
 msgid "Current version"
 msgstr "当前版本"
 
@@ -1449,7 +1457,7 @@ msgstr "下载设置"
 msgid "Download the full article from the original source"
 msgstr "从原始来源下载完整文章"
 
-#: src/components/preferences/panes/AboutPane.tsx:123
+#: src/components/preferences/panes/AboutPane.tsx:125
 msgid "Download Update"
 msgstr "下载更新"
 
@@ -1467,7 +1475,7 @@ msgstr "正在从服务器下载最近的文章"
 #. placeholder {0}: updaterVersion ?? ''
 #. placeholder {1}: String(downloadProgress)
 #. placeholder {1}: String(state.progress)
-#: src/components/preferences/panes/AboutPane.tsx:55
+#: src/components/preferences/panes/AboutPane.tsx:57
 #: src/hooks/use-auto-updater.ts:55
 msgid "Downloading update v{0}... {1}%"
 msgstr "正在下载更新 v{0}... {1}%"
@@ -2247,7 +2255,7 @@ msgstr "德语"
 msgid "Gestures"
 msgstr "手势"
 
-#: src/components/preferences/panes/AboutPane.tsx:219
+#: src/components/preferences/panes/AboutPane.tsx:221
 msgid "Git commit hash."
 msgstr "Git 提交哈希值。"
 
@@ -2493,11 +2501,11 @@ msgstr "信息"
 msgid "Install & Restart"
 msgstr "安装并重启"
 
-#: src/components/preferences/panes/AboutPane.tsx:107
+#: src/components/preferences/panes/AboutPane.tsx:109
 msgid "Installed version of Minikyu."
 msgstr "已安装的 Minikyu 版本。"
 
-#: src/components/preferences/panes/AboutPane.tsx:59
+#: src/components/preferences/panes/AboutPane.tsx:61
 msgid "Installing update..."
 msgstr "正在安装更新..."
 
@@ -2608,13 +2616,17 @@ msgstr "稍后"
 msgid "Latest React with concurrent features"
 msgstr "最新的 React 并发特性"
 
-#: src/components/preferences/panes/AboutPane.tsx:112
+#: src/components/preferences/panes/AboutPane.tsx:114
 msgid "Latest version"
 msgstr "最新版本"
 
 #: src/components/preferences/panes/TranslationPane.tsx:1501
 #~ msgid "Leave empty to use default prompt"
 #~ msgstr "留空则使用默认提示词"
+
+#: src/components/preferences/panes/AboutPane.tsx:283
+msgid "License"
+msgstr "许可证"
 
 #: src/components/preferences/panes/AppearancePane.tsx:130
 msgid "Light"
@@ -2657,7 +2669,7 @@ msgstr "大语言模型提供商"
 msgid "Loading"
 msgstr "加载中"
 
-#: src/components/preferences/panes/AboutPane.tsx:191
+#: src/components/preferences/panes/AboutPane.tsx:193
 msgid "Loading version information..."
 msgstr "正在加载版本信息..."
 
@@ -2768,19 +2780,23 @@ msgstr "分钟阅读"
 msgid "Mini player"
 msgstr "迷你播放器"
 
-#: src/components/preferences/panes/AboutPane.tsx:187
+#: src/components/preferences/panes/AboutPane.tsx:189
 msgid "Miniflux Server"
 msgstr "Miniflux 服务器"
 
-#: src/components/preferences/panes/AboutPane.tsx:214
+#: src/components/preferences/panes/AboutPane.tsx:216
 msgid "Miniflux server version."
 msgstr "Miniflux 服务器版本。"
 
 #: src/components/brand/AppLogo.tsx:31
 #: src/components/brand/AppLogo.tsx:115
-#: src/components/preferences/panes/AboutPane.tsx:93
+#: src/components/preferences/panes/AboutPane.tsx:95
 msgid "Minikyu"
 msgstr "Minikyu"
+
+#: src/components/preferences/panes/AboutPane.tsx:284
+msgid "Minikyu is open source software."
+msgstr "Minikyu 是开源软件。"
 
 #: src/components/preferences/panes/TranslationPane.tsx:739
 msgid "MiniMax"
@@ -3459,6 +3475,10 @@ msgstr "上一篇文章（h 或 ←）"
 msgid "Previous section"
 msgstr "上一部分"
 
+#: src/components/preferences/panes/AboutPane.tsx:253
+msgid "Project"
+msgstr "项目"
+
 #: src/components/miniflux/EntryReadingHeader.tsx:633
 #: src/components/preferences/panes/TranslationPane.tsx:1774
 msgid "Provider"
@@ -3805,7 +3825,7 @@ msgstr "立即重启"
 msgid "Restart to apply the update."
 msgstr "重启以应用更新。"
 
-#: src/components/preferences/panes/AboutPane.tsx:118
+#: src/components/preferences/panes/AboutPane.tsx:120
 msgid "Restart to Update"
 msgstr "重启以更新"
 
@@ -3865,7 +3885,7 @@ msgid "Rows per page"
 msgstr "每页行数"
 
 #: src/components/brand/AppLogo.tsx:118
-#: src/components/preferences/panes/AboutPane.tsx:94
+#: src/components/preferences/panes/AboutPane.tsx:96
 msgid "RSS Reader"
 msgstr "RSS 阅读器"
 
@@ -3881,7 +3901,7 @@ msgstr "运行同步以刷新分类、订阅源和文章"
 msgid "Running"
 msgstr "运行中"
 
-#: src/components/preferences/panes/AboutPane.tsx:237
+#: src/components/preferences/panes/AboutPane.tsx:239
 msgid "Runtime"
 msgstr "运行时"
 
@@ -4094,11 +4114,11 @@ msgstr "衬线"
 msgid "Server"
 msgstr "服务器"
 
-#: src/components/preferences/panes/AboutPane.tsx:229
+#: src/components/preferences/panes/AboutPane.tsx:231
 msgid "Server build timestamp."
 msgstr "服务器构建时间戳。"
 
-#: src/components/preferences/panes/AboutPane.tsx:238
+#: src/components/preferences/panes/AboutPane.tsx:240
 msgid "Server runtime environment."
 msgstr "服务器运行时环境。"
 
@@ -4115,9 +4135,9 @@ msgstr "服务器 URL"
 msgid "Server URL is required"
 msgstr "需要提供服务器 URL"
 
-#: src/components/preferences/panes/AboutPane.tsx:190
-#: src/components/preferences/panes/AboutPane.tsx:200
-#: src/components/preferences/panes/AboutPane.tsx:207
+#: src/components/preferences/panes/AboutPane.tsx:192
+#: src/components/preferences/panes/AboutPane.tsx:202
+#: src/components/preferences/panes/AboutPane.tsx:209
 msgid "Server version"
 msgstr "服务器版本"
 
@@ -4300,6 +4320,10 @@ msgstr "出错了"
 #: src/components/miniflux/MinifluxLayout.tsx:645
 msgid "Sort by"
 msgstr "排序方式"
+
+#: src/components/preferences/panes/AboutPane.tsx:255
+msgid "Source code"
+msgstr "源代码"
 
 #: src/components/miniflux/AddFeedDialog.tsx:294
 #: src/components/miniflux/SearchSourceDialog.tsx:66
@@ -5160,13 +5184,13 @@ msgstr "验证"
 msgid "Verifying..."
 msgstr "验证中..."
 
-#: src/components/preferences/panes/AboutPane.tsx:104
-#: src/components/preferences/panes/AboutPane.tsx:214
+#: src/components/preferences/panes/AboutPane.tsx:106
+#: src/components/preferences/panes/AboutPane.tsx:216
 msgid "Version"
 msgstr "版本"
 
 #. placeholder {0}: updaterVersion ?? ''
-#: src/components/preferences/panes/AboutPane.tsx:53
+#: src/components/preferences/panes/AboutPane.tsx:55
 msgid "Version {0} is available."
 msgstr "版本 {0} 可用。"
 
@@ -5177,7 +5201,7 @@ msgid "Version {0} is available. Downloading..."
 msgstr "版本 {0} 可用，正在下载..."
 
 #. placeholder {0}: updaterVersion ?? ''
-#: src/components/preferences/panes/AboutPane.tsx:57
+#: src/components/preferences/panes/AboutPane.tsx:59
 msgid "Version {0} is ready to install."
 msgstr "版本 {0} 已准备好安装。"
 
@@ -5207,6 +5231,10 @@ msgstr "查看和管理你的下载"
 #: src/lib/commands/help-commands.ts:41
 msgid "View app version and information"
 msgstr "查看应用版本和信息"
+
+#: src/components/preferences/panes/AboutPane.tsx:256
+msgid "View the source code, report issues, or contribute."
+msgstr "查看源代码、提交问题或参与贡献。"
 
 #: src/components/layout/AppSidebar.tsx:588
 msgid "Views"
@@ -5260,7 +5288,7 @@ msgstr "昨天"
 msgid "You are running the latest version"
 msgstr "您正在使用最新版本"
 
-#: src/components/preferences/panes/AboutPane.tsx:51
+#: src/components/preferences/panes/AboutPane.tsx:53
 msgid "You are running the latest version."
 msgstr "您正在使用最新版本。"
 
