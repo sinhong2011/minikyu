@@ -6,6 +6,7 @@
 
 mod accounts;
 mod bindings;
+mod cloud_sync;
 mod commands;
 mod database;
 mod miniflux;

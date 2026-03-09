@@ -1565,7 +1565,27 @@ gesture_swipe_threshold?: number;
 /**
  * Entry list panel width in pixels. None means use default (435).
  */
-layout_entry_list_width?: number | null }
+layout_entry_list_width?: number | null; 
+/**
+ * Whether cloud sync is enabled.
+ */
+cloud_sync_enabled?: boolean; 
+/**
+ * S3-compatible endpoint URL (e.g., "https://s3.amazonaws.com").
+ */
+cloud_sync_endpoint?: string | null; 
+/**
+ * S3 bucket name.
+ */
+cloud_sync_bucket?: string | null; 
+/**
+ * S3 region (default: "auto").
+ */
+cloud_sync_region?: string; 
+/**
+ * S3 object key for the sync file.
+ */
+cloud_sync_object_key?: string }
 export type ArticleSummaryRecord = { entry_id: string; summary: string; provider_used: string | null; model_used: string | null }
 /**
  * Authentication Config

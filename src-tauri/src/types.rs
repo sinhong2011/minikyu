@@ -271,6 +271,29 @@ pub struct AppPreferences {
     /// Entry list panel width in pixels. None means use default (435).
     #[serde(default)]
     pub layout_entry_list_width: Option<u32>,
+    /// Whether cloud sync is enabled.
+    #[serde(default)]
+    pub cloud_sync_enabled: bool,
+    /// S3-compatible endpoint URL (e.g., "https://s3.amazonaws.com").
+    #[serde(default)]
+    pub cloud_sync_endpoint: Option<String>,
+    /// S3 bucket name.
+    #[serde(default)]
+    pub cloud_sync_bucket: Option<String>,
+    /// S3 region (default: "auto").
+    #[serde(default = "default_cloud_sync_region")]
+    pub cloud_sync_region: String,
+    /// S3 object key for the sync file.
+    #[serde(default = "default_cloud_sync_object_key")]
+    pub cloud_sync_object_key: String,
+}
+
+fn default_cloud_sync_region() -> String {
+    "auto".to_string()
+}
+
+fn default_cloud_sync_object_key() -> String {
+    "minikyu/preferences-sync.json".to_string()
 }
 
 fn default_reader_code_detection_mode() -> String {
@@ -373,6 +396,11 @@ impl Default for AppPreferences {
             gesture_pull_bottom_action: default_gesture_pull_bottom_action(),
             gesture_swipe_threshold: default_gesture_swipe_threshold(),
             layout_entry_list_width: None,
+            cloud_sync_enabled: false,
+            cloud_sync_endpoint: None,
+            cloud_sync_bucket: None,
+            cloud_sync_region: default_cloud_sync_region(),
+            cloud_sync_object_key: default_cloud_sync_object_key(),
         }
     }
 }
