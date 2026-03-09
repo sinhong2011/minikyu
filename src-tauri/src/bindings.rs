@@ -132,9 +132,12 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         podcast::cleanup_played_episodes,
         podcast::seed_e2e_test_data,
         cloud_sync::cloud_sync_save_credentials,
+        cloud_sync::cloud_sync_save_webdav_password,
         cloud_sync::cloud_sync_delete_credentials,
         cloud_sync::cloud_sync_has_credentials,
+        cloud_sync::cloud_sync_has_webdav_credentials,
         cloud_sync::cloud_sync_test_connection,
+        cloud_sync::cloud_sync_test_webdav_connection,
         cloud_sync::cloud_sync_push,
         cloud_sync::cloud_sync_pull,
     ])

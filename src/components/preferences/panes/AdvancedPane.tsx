@@ -125,6 +125,8 @@ export function AdvancedPane() {
   const [csAccessKey, setCsAccessKey] = useState('');
   const [csSecretKey, setCsSecretKey] = useState('');
   const [csHasCredentials, setCsHasCredentials] = useState(false);
+  const [csWebdavPassword, setCsWebdavPassword] = useState('');
+  const [csHasWebdavCredentials, setCsHasWebdavCredentials] = useState(false);
   const [csTesting, setCsTesting] = useState(false);
   const [csPushing, setCsPushing] = useState(false);
   const [csPulling, setCsPulling] = useState(false);
@@ -132,6 +134,9 @@ export function AdvancedPane() {
   useEffect(() => {
     commands.cloudSyncHasCredentials().then((result) => {
       if (result.status === 'ok') setCsHasCredentials(result.data);
+    });
+    commands.cloudSyncHasWebdavCredentials().then((result) => {
+      if (result.status === 'ok') setCsHasWebdavCredentials(result.data);
     });
   }, []);
 
@@ -523,24 +528,57 @@ export function AdvancedPane() {
     }
   };
 
-  const handleCsTestConnection = async () => {
-    if (!csAccessKey.trim() || !csSecretKey.trim()) {
-      showToast.error(_(msg`Enter credentials to test connection`));
+  const handleCsSaveWebdavPassword = async () => {
+    if (!csWebdavPassword.trim()) {
+      showToast.error(_(msg`Please enter a password`));
       return;
     }
+    const result = await commands.cloudSyncSaveWebdavPassword(csWebdavPassword);
+    if (result.status === 'ok') {
+      setCsHasWebdavCredentials(true);
+      setCsWebdavPassword('');
+      showToast.success(_(msg`Credentials saved`));
+    } else {
+      showToast.error(result.error);
+    }
+  };
+
+  const handleCsTestConnection = async () => {
+    const protocol = preferences?.cloud_sync_protocol ?? 's3';
     setCsTesting(true);
     try {
-      const result = await commands.cloudSyncTestConnection(
-        preferences?.cloud_sync_endpoint ?? '',
-        preferences?.cloud_sync_bucket ?? '',
-        preferences?.cloud_sync_region ?? 'auto',
-        csAccessKey,
-        csSecretKey
-      );
-      if (result.status === 'ok') {
-        showToast.success(_(msg`Connection successful`));
+      if (protocol === 'webdav') {
+        if (!csWebdavPassword.trim()) {
+          showToast.error(_(msg`Enter credentials to test connection`));
+          return;
+        }
+        const result = await commands.cloudSyncTestWebdavConnection(
+          preferences?.cloud_sync_webdav_url ?? '',
+          preferences?.cloud_sync_webdav_username ?? '',
+          csWebdavPassword
+        );
+        if (result.status === 'ok') {
+          showToast.success(_(msg`Connection successful`));
+        } else {
+          showToast.error(result.error);
+        }
       } else {
-        showToast.error(result.error);
+        if (!csAccessKey.trim() || !csSecretKey.trim()) {
+          showToast.error(_(msg`Enter credentials to test connection`));
+          return;
+        }
+        const result = await commands.cloudSyncTestConnection(
+          preferences?.cloud_sync_endpoint ?? '',
+          preferences?.cloud_sync_bucket ?? '',
+          preferences?.cloud_sync_region ?? 'auto',
+          csAccessKey,
+          csSecretKey
+        );
+        if (result.status === 'ok') {
+          showToast.success(_(msg`Connection successful`));
+        } else {
+          showToast.error(result.error);
+        }
       }
     } finally {
       setCsTesting(false);
@@ -614,7 +652,7 @@ export function AdvancedPane() {
             <div>
               <Label className="text-sm font-medium">{_(msg`Cloud Sync`)}</Label>
               <p className="text-sm text-muted-foreground">
-                {_(msg`Automatically sync preferences to S3-compatible storage`)}
+                {_(msg`Sync preferences via S3 or WebDAV`)}
               </p>
             </div>
             <Switch
@@ -625,94 +663,196 @@ export function AdvancedPane() {
 
           {preferences?.cloud_sync_enabled && (
             <div className="space-y-3">
+              {/* Protocol selector */}
               <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">{_(msg`Endpoint URL`)}</Label>
-                <Input
-                  className="h-8 text-sm"
-                  placeholder="https://s3.amazonaws.com"
-                  value={preferences?.cloud_sync_endpoint ?? ''}
-                  onChange={(e) => updatePreference('cloud_sync_endpoint', e.target.value || null)}
-                />
+                <Label className="text-xs text-muted-foreground">{_(msg`Protocol`)}</Label>
+                <Select
+                  value={preferences?.cloud_sync_protocol ?? 's3'}
+                  onValueChange={(value) => updatePreference('cloud_sync_protocol', value)}
+                >
+                  <SelectTrigger className="h-8 text-sm">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="s3">S3</SelectItem>
+                    <SelectItem value="webdav">WebDAV</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              <div className="grid grid-cols-2 gap-3">
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">{_(msg`Bucket`)}</Label>
-                  <Input
-                    className="h-8 text-sm"
-                    placeholder="my-bucket"
-                    value={preferences?.cloud_sync_bucket ?? ''}
-                    onChange={(e) => updatePreference('cloud_sync_bucket', e.target.value || null)}
-                  />
-                </div>
-                <div className="space-y-1.5">
-                  <Label className="text-xs text-muted-foreground">{_(msg`Region`)}</Label>
-                  <Input
-                    className="h-8 text-sm"
-                    value={preferences?.cloud_sync_region ?? 'auto'}
-                    onChange={(e) =>
-                      updatePreference('cloud_sync_region', e.target.value || 'auto')
-                    }
-                  />
-                </div>
-              </div>
-
-              <div className="space-y-1.5">
-                <Label className="text-xs text-muted-foreground">{_(msg`Object Key`)}</Label>
-                <Input
-                  className="h-8 text-sm"
-                  value={preferences?.cloud_sync_object_key ?? 'minikyu/preferences-sync.json'}
-                  onChange={(e) =>
-                    updatePreference(
-                      'cloud_sync_object_key',
-                      e.target.value || 'minikyu/preferences-sync.json'
-                    )
-                  }
-                />
-              </div>
-
-              {/* Credentials */}
-              <div className="space-y-2">
-                <div className="flex items-center justify-between">
-                  <Label className="text-xs text-muted-foreground">{_(msg`Credentials`)}</Label>
-                  {csHasCredentials && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      className="h-6 text-xs"
-                      onClick={handleCsDeleteCredentials}
-                    >
-                      {_(msg`Remove saved credentials`)}
-                    </Button>
-                  )}
-                </div>
-
-                {csHasCredentials ? (
-                  <p className="text-xs text-muted-foreground">
-                    {_(msg`Credentials are saved in your system keyring.`)}
-                  </p>
-                ) : (
-                  <div className="space-y-2">
+              {/* S3 fields */}
+              {(preferences?.cloud_sync_protocol ?? 's3') === 's3' && (
+                <>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">{_(msg`Endpoint URL`)}</Label>
                     <Input
                       className="h-8 text-sm"
-                      type="password"
-                      value={csAccessKey}
-                      onChange={(e) => setCsAccessKey(e.target.value)}
-                      placeholder={_(msg`Access Key ID`)}
+                      placeholder="https://s3.amazonaws.com"
+                      value={preferences?.cloud_sync_endpoint ?? ''}
+                      onChange={(e) =>
+                        updatePreference('cloud_sync_endpoint', e.target.value || null)
+                      }
                     />
-                    <Input
-                      className="h-8 text-sm"
-                      type="password"
-                      value={csSecretKey}
-                      onChange={(e) => setCsSecretKey(e.target.value)}
-                      placeholder={_(msg`Secret Access Key`)}
-                    />
-                    <Button size="sm" className="h-7 text-xs" onClick={handleCsSaveCredentials}>
-                      {_(msg`Save Credentials`)}
-                    </Button>
                   </div>
-                )}
-              </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">{_(msg`Bucket`)}</Label>
+                      <Input
+                        className="h-8 text-sm"
+                        placeholder="my-bucket"
+                        value={preferences?.cloud_sync_bucket ?? ''}
+                        onChange={(e) =>
+                          updatePreference('cloud_sync_bucket', e.target.value || null)
+                        }
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-xs text-muted-foreground">{_(msg`Region`)}</Label>
+                      <Input
+                        className="h-8 text-sm"
+                        value={preferences?.cloud_sync_region ?? 'auto'}
+                        onChange={(e) =>
+                          updatePreference('cloud_sync_region', e.target.value || 'auto')
+                        }
+                      />
+                    </div>
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">{_(msg`Object Key`)}</Label>
+                    <Input
+                      className="h-8 text-sm"
+                      value={preferences?.cloud_sync_object_key ?? 'minikyu/preferences-sync.json'}
+                      onChange={(e) =>
+                        updatePreference(
+                          'cloud_sync_object_key',
+                          e.target.value || 'minikyu/preferences-sync.json'
+                        )
+                      }
+                    />
+                  </div>
+                  {/* S3 Credentials */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs text-muted-foreground">{_(msg`Credentials`)}</Label>
+                      {csHasCredentials && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 text-xs"
+                          onClick={handleCsDeleteCredentials}
+                        >
+                          {_(msg`Remove saved credentials`)}
+                        </Button>
+                      )}
+                    </div>
+                    {csHasCredentials ? (
+                      <p className="text-xs text-muted-foreground">
+                        {_(msg`Credentials are saved in your system keyring.`)}
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        <Input
+                          className="h-8 text-sm"
+                          type="password"
+                          value={csAccessKey}
+                          onChange={(e) => setCsAccessKey(e.target.value)}
+                          placeholder={_(msg`Access Key ID`)}
+                        />
+                        <Input
+                          className="h-8 text-sm"
+                          type="password"
+                          value={csSecretKey}
+                          onChange={(e) => setCsSecretKey(e.target.value)}
+                          placeholder={_(msg`Secret Access Key`)}
+                        />
+                        <Button size="sm" className="h-7 text-xs" onClick={handleCsSaveCredentials}>
+                          {_(msg`Save Credentials`)}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
+
+              {/* WebDAV fields */}
+              {preferences?.cloud_sync_protocol === 'webdav' && (
+                <>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">{_(msg`WebDAV URL`)}</Label>
+                    <Input
+                      className="h-8 text-sm"
+                      placeholder="https://dav.example.com/remote.php/dav/files/user"
+                      value={preferences?.cloud_sync_webdav_url ?? ''}
+                      onChange={(e) =>
+                        updatePreference('cloud_sync_webdav_url', e.target.value || null)
+                      }
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">{_(msg`Username`)}</Label>
+                    <Input
+                      className="h-8 text-sm"
+                      value={preferences?.cloud_sync_webdav_username ?? ''}
+                      onChange={(e) =>
+                        updatePreference('cloud_sync_webdav_username', e.target.value || null)
+                      }
+                    />
+                  </div>
+                  <div className="space-y-1.5">
+                    <Label className="text-xs text-muted-foreground">{_(msg`File Path`)}</Label>
+                    <Input
+                      className="h-8 text-sm"
+                      value={
+                        preferences?.cloud_sync_webdav_path ?? '/minikyu/preferences-sync.json'
+                      }
+                      onChange={(e) =>
+                        updatePreference(
+                          'cloud_sync_webdav_path',
+                          e.target.value || '/minikyu/preferences-sync.json'
+                        )
+                      }
+                    />
+                  </div>
+                  {/* WebDAV Password */}
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <Label className="text-xs text-muted-foreground">{_(msg`Password`)}</Label>
+                      {csHasWebdavCredentials && (
+                        <Button
+                          variant="ghost"
+                          size="sm"
+                          className="h-6 text-xs"
+                          onClick={handleCsDeleteCredentials}
+                        >
+                          {_(msg`Remove saved credentials`)}
+                        </Button>
+                      )}
+                    </div>
+                    {csHasWebdavCredentials ? (
+                      <p className="text-xs text-muted-foreground">
+                        {_(msg`Credentials are saved in your system keyring.`)}
+                      </p>
+                    ) : (
+                      <div className="space-y-2">
+                        <Input
+                          className="h-8 text-sm"
+                          type="password"
+                          value={csWebdavPassword}
+                          onChange={(e) => setCsWebdavPassword(e.target.value)}
+                          placeholder={_(msg`Password`)}
+                        />
+                        <Button
+                          size="sm"
+                          className="h-7 text-xs"
+                          onClick={handleCsSaveWebdavPassword}
+                        >
+                          {_(msg`Save Credentials`)}
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+                </>
+              )}
 
               {/* Actions */}
               <div className="flex gap-2">
@@ -721,7 +861,12 @@ export function AdvancedPane() {
                   size="sm"
                   className="h-7 text-xs"
                   onClick={handleCsTestConnection}
-                  disabled={csTesting || !csAccessKey}
+                  disabled={
+                    csTesting ||
+                    ((preferences?.cloud_sync_protocol ?? 's3') === 's3'
+                      ? !csAccessKey
+                      : !csWebdavPassword)
+                  }
                 >
                   {csTesting ? _(msg`Testing...`) : _(msg`Test Connection`)}
                 </Button>
@@ -730,7 +875,13 @@ export function AdvancedPane() {
                   size="sm"
                   className="h-7 text-xs"
                   onClick={handleCsPush}
-                  disabled={csPushing || !csHasCredentials || !preferences?.cloud_sync_enabled}
+                  disabled={
+                    csPushing ||
+                    !preferences?.cloud_sync_enabled ||
+                    ((preferences?.cloud_sync_protocol ?? 's3') === 's3'
+                      ? !csHasCredentials
+                      : !csHasWebdavCredentials)
+                  }
                 >
                   {csPushing ? _(msg`Pushing...`) : _(msg`Push Now`)}
                 </Button>
@@ -739,7 +890,12 @@ export function AdvancedPane() {
                   size="sm"
                   className="h-7 text-xs"
                   onClick={handleCsPull}
-                  disabled={csPulling || !csHasCredentials}
+                  disabled={
+                    csPulling ||
+                    ((preferences?.cloud_sync_protocol ?? 's3') === 's3'
+                      ? !csHasCredentials
+                      : !csHasWebdavCredentials)
+                  }
                 >
                   {csPulling ? _(msg`Pulling...`) : _(msg`Pull Now`)}
                 </Button>

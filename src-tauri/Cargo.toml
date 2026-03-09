@@ -76,8 +76,9 @@ keyring = { version = "3", features = [
 ] }
 thiserror = "2"
 
-# S3-compatible cloud sync
+# Cloud sync backends
 rust-s3 = { version = "0.35", default-features = false, features = ["tokio-rustls-tls"] }
+reqwest_dav = "0.3"
 
 # HTTP client for Miniflux API
 reqwest = { version = "0.12", features = ["json", "rustls-tls", "stream"] }

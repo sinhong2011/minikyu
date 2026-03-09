@@ -109,15 +109,15 @@ msgstr "{0} timeout (ms)"
 msgid "{0} total"
 msgstr "{0} total"
 
-#: src/components/preferences/PreferencesDialog.tsx:283
+#: src/components/preferences/PreferencesDialog.tsx:276
 msgid "{diffDays}d ago"
 msgstr "{diffDays}d ago"
 
-#: src/components/preferences/PreferencesDialog.tsx:282
+#: src/components/preferences/PreferencesDialog.tsx:275
 msgid "{diffHours}h ago"
 msgstr "{diffHours}h ago"
 
-#: src/components/preferences/PreferencesDialog.tsx:281
+#: src/components/preferences/PreferencesDialog.tsx:274
 msgid "{diffMins}m ago"
 msgstr "{diffMins}m ago"
 
@@ -153,7 +153,7 @@ msgstr "A calm, focused space for your Miniflux reading. Catch up faster, stay o
 msgid "A modern, production-ready template for building cross-platform desktop applications with React, TypeScript, and Rust."
 msgstr "A modern, production-ready template for building cross-platform desktop applications with React, TypeScript, and Rust."
 
-#: src/components/preferences/PreferencesDialog.tsx:140
+#: src/components/preferences/PreferencesDialog.tsx:133
 msgid "About"
 msgstr "About"
 
@@ -165,11 +165,11 @@ msgstr "About {APP_NAME}"
 msgid "About Minikyu"
 msgstr "About Minikyu"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:198
+#: src/components/preferences/panes/AdvancedPane.tsx:761
 msgid "Access Key ID"
 msgstr "Access Key ID"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:153
+#: src/components/preferences/panes/AdvancedPane.tsx:174
 msgid "Account data cleared"
 msgstr "Account data cleared"
 
@@ -181,8 +181,7 @@ msgstr "Account deleted successfully"
 msgid "Accounts"
 msgstr "Accounts"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:224
-#: src/components/preferences/PreferencesDialog.tsx:355
+#: src/components/preferences/PreferencesDialog.tsx:348
 msgid "Actions"
 msgstr "Actions"
 
@@ -292,7 +291,7 @@ msgstr "Admin"
 msgid "Administrator"
 msgstr "Administrator"
 
-#: src/components/preferences/PreferencesDialog.tsx:135
+#: src/components/preferences/PreferencesDialog.tsx:128
 msgid "Advanced"
 msgstr "Advanced"
 
@@ -303,7 +302,7 @@ msgid "Advanced settings"
 msgstr "Advanced settings"
 
 #: src/components/miniflux/EntryReading.tsx:1527
-#: src/components/preferences/PreferencesDialog.tsx:115
+#: src/components/preferences/PreferencesDialog.tsx:113
 msgid "AI"
 msgstr "AI"
 
@@ -326,7 +325,7 @@ msgstr "All"
 msgid "All categories, feeds, and entries are synced"
 msgstr "All categories, feeds, and entries are synced"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:289
+#: src/components/preferences/panes/AdvancedPane.tsx:310
 msgid "All data has been deleted. The app has been reset to its initial state."
 msgstr "All data has been deleted. The app has been reset to its initial state."
 
@@ -352,7 +351,7 @@ msgstr "All read"
 msgid "All read entries have been deleted"
 msgstr "All read entries have been deleted"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:651
+#: src/components/preferences/panes/AdvancedPane.tsx:1058
 msgid "All settings will be restored to their defaults. Your data and accounts will not be affected."
 msgstr "All settings will be restored to their defaults. Your data and accounts will not be affected."
 
@@ -387,7 +386,7 @@ msgstr "API key description"
 msgid "API keys"
 msgstr "API keys"
 
-#: src/components/preferences/PreferencesDialog.tsx:163
+#: src/components/preferences/PreferencesDialog.tsx:156
 msgid "API token"
 msgstr "API token"
 
@@ -404,12 +403,12 @@ msgstr "API Token is required"
 msgid "API token updated"
 msgstr "API token updated"
 
-#: src/components/preferences/PreferencesDialog.tsx:485
-#: src/components/preferences/PreferencesDialog.tsx:564
+#: src/components/preferences/PreferencesDialog.tsx:478
+#: src/components/preferences/PreferencesDialog.tsx:557
 msgid "App Settings"
 msgstr "App Settings"
 
-#: src/components/preferences/PreferencesDialog.tsx:105
+#: src/components/preferences/PreferencesDialog.tsx:103
 msgid "Appearance"
 msgstr "Appearance"
 
@@ -540,9 +539,9 @@ msgstr "Automatically mark entries as read when scrolled past 20%"
 msgid "Automatically sync feeds at the configured interval"
 msgstr "Automatically sync feeds at the configured interval"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:126
-msgid "Automatically sync preferences to S3-compatible storage"
-msgstr "Automatically sync preferences to S3-compatible storage"
+#: src/components/preferences/panes/AdvancedPane.tsx:617
+#~ msgid "Automatically sync preferences to S3-compatible storage"
+#~ msgstr "Automatically sync preferences to S3-compatible storage"
 
 #: src/components/preferences/panes/IntegrationsPane.tsx:282
 msgid "Available Services"
@@ -601,7 +600,7 @@ msgstr "Browse categories"
 msgid "Browser content"
 msgstr "Browser content"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:150
+#: src/components/preferences/panes/AdvancedPane.tsx:699
 msgid "Bucket"
 msgstr "Bucket"
 
@@ -624,9 +623,9 @@ msgstr "Can’t find a category? Create a new one."
 #: src/components/miniflux/settings/FeedFormDialog.tsx:681
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:96
 #: src/components/miniflux/settings/UserFormDialog.tsx:155
-#: src/components/preferences/panes/AdvancedPane.tsx:617
-#: src/components/preferences/panes/AdvancedPane.tsx:656
-#: src/components/preferences/panes/AdvancedPane.tsx:710
+#: src/components/preferences/panes/AdvancedPane.tsx:1024
+#: src/components/preferences/panes/AdvancedPane.tsx:1063
+#: src/components/preferences/panes/AdvancedPane.tsx:1117
 #: src/components/preferences/panes/ApiTokenPane.tsx:204
 #: src/components/preferences/panes/ApiTokenPane.tsx:273
 msgid "Cancel"
@@ -648,7 +647,7 @@ msgstr "Cannot delete category"
 
 #: src/components/layout/AppSidebar.tsx:722
 #: src/components/preferences/panes/SyncPane.tsx:133
-#: src/components/preferences/PreferencesDialog.tsx:148
+#: src/components/preferences/PreferencesDialog.tsx:141
 #: src/components/sync/SyncProgressPopover.tsx:51
 msgid "Categories"
 msgstr "Categories"
@@ -661,7 +660,7 @@ msgstr "Categories are folders, Feeds are subscriptions, and Entries are article
 #: src/components/miniflux/EditFeedDialog.tsx:220
 #: src/components/miniflux/MinifluxLayout.tsx:503
 #: src/components/miniflux/settings/FeedFormDialog.tsx:419
-#: src/components/preferences/PreferencesDialog.tsx:331
+#: src/components/preferences/PreferencesDialog.tsx:324
 msgid "Category"
 msgstr "Category"
 
@@ -747,7 +746,7 @@ msgstr "Check whether a newer release is available."
 msgid "Check your connection and try again"
 msgstr "Check your connection and try again"
 
-#: src/components/preferences/PreferencesDialog.tsx:343
+#: src/components/preferences/PreferencesDialog.tsx:336
 msgid "Checked"
 msgstr "Checked"
 
@@ -850,16 +849,16 @@ msgstr "Cleaning up stale local records"
 msgid "Clear"
 msgstr "Clear"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:589
+#: src/components/preferences/panes/AdvancedPane.tsx:996
 msgid "Clear account data"
 msgstr "Clear account data"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:601
-#: src/components/preferences/panes/AdvancedPane.tsx:623
+#: src/components/preferences/panes/AdvancedPane.tsx:1008
+#: src/components/preferences/panes/AdvancedPane.tsx:1030
 msgid "Clear data"
 msgstr "Clear data"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:582
+#: src/components/preferences/panes/AdvancedPane.tsx:989
 msgid "Clear data for"
 msgstr "Clear data for"
 
@@ -868,7 +867,7 @@ msgstr "Clear data for"
 #~ msgstr "Clear data for {0}"
 
 #. placeholder {0}: activeAccount?.username ?? ''
-#: src/components/preferences/panes/AdvancedPane.tsx:608
+#: src/components/preferences/panes/AdvancedPane.tsx:1015
 msgid "Clear data for {0}?"
 msgstr "Clear data for {0}?"
 
@@ -880,7 +879,7 @@ msgstr "Clear playlist"
 msgid "Clear Queue"
 msgstr "Clear Queue"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:601
+#: src/components/preferences/panes/AdvancedPane.tsx:1008
 msgid "Clearing..."
 msgstr "Clearing..."
 
@@ -925,7 +924,7 @@ msgstr "Close window"
 msgid "Close Window"
 msgstr "Close Window"
 
-#: src/components/preferences/PreferencesDialog.tsx:130
+#: src/components/preferences/panes/AdvancedPane.tsx:653
 msgid "Cloud Sync"
 msgstr "Cloud Sync"
 
@@ -1000,10 +999,11 @@ msgid "Connecting..."
 msgstr "Connecting..."
 
 #: src/components/preferences/panes/CloudSyncPane.tsx:137
-msgid "Connection"
-msgstr "Connection"
+#~ msgid "Connection"
+#~ msgstr "Connection"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:81
+#: src/components/preferences/panes/AdvancedPane.tsx:561
+#: src/components/preferences/panes/AdvancedPane.tsx:578
 msgid "Connection successful"
 msgstr "Connection successful"
 
@@ -1019,7 +1019,7 @@ msgstr "Contain"
 msgid "Continue to Add Feed"
 msgstr "Continue to Add Feed"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:740
+#: src/components/preferences/panes/AdvancedPane.tsx:1147
 msgid "Control the verbosity of frontend log output. More verbose levels include all levels above them."
 msgstr "Control the verbosity of frontend log output. More verbose levels include all levels above them."
 
@@ -1036,18 +1036,18 @@ msgstr "Convert Chinese characters between Simplified and Traditional variants."
 msgid "Copied"
 msgstr "Copied"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:733
+#: src/components/preferences/panes/AdvancedPane.tsx:1140
 #: src/components/ui/sonner.tsx:56
 msgid "Copied!"
 msgstr "Copied!"
 
 #: src/components/ErrorBoundary.tsx:372
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:164
-#: src/components/preferences/panes/AdvancedPane.tsx:733
+#: src/components/preferences/panes/AdvancedPane.tsx:1140
 msgid "Copy"
 msgstr "Copy"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:729
+#: src/components/preferences/panes/AdvancedPane.tsx:1136
 msgid "Copy app version, OS, and environment details for bug reports."
 msgstr "Copy app version, OS, and environment details for bug reports."
 
@@ -1059,7 +1059,7 @@ msgstr "Copy article URL"
 msgid "Copy code"
 msgstr "Copy code"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:728
+#: src/components/preferences/panes/AdvancedPane.tsx:1135
 msgid "Copy debug info"
 msgstr "Copy debug info"
 
@@ -1189,19 +1189,21 @@ msgstr "Created"
 msgid "Creating..."
 msgstr "Creating..."
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:183
+#: src/components/preferences/panes/AdvancedPane.tsx:737
 msgid "Credentials"
 msgstr "Credentials"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:193
+#: src/components/preferences/panes/AdvancedPane.tsx:752
+#: src/components/preferences/panes/AdvancedPane.tsx:841
 msgid "Credentials are saved in your system keyring."
 msgstr "Credentials are saved in your system keyring."
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:61
+#: src/components/preferences/panes/AdvancedPane.tsx:527
 msgid "Credentials removed"
 msgstr "Credentials removed"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:51
+#: src/components/preferences/panes/AdvancedPane.tsx:517
+#: src/components/preferences/panes/AdvancedPane.tsx:540
 msgid "Credentials saved"
 msgstr "Credentials saved"
 
@@ -1233,7 +1235,7 @@ msgstr "Custom Term Conversion"
 msgid "Customizable keyboard shortcuts"
 msgstr "Customizable keyboard shortcuts"
 
-#: src/components/preferences/PreferencesDialog.tsx:477
+#: src/components/preferences/PreferencesDialog.tsx:470
 msgid "Customize your application preferences here."
 msgstr "Customize your application preferences here."
 
@@ -1245,7 +1247,7 @@ msgstr "Cycle reader theme"
 msgid "Dark"
 msgstr "Dark"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:78
+#: src/components/preferences/panes/AdvancedPane.tsx:80
 msgid "Database"
 msgstr "Database"
 
@@ -1258,11 +1260,11 @@ msgid "Date Range"
 msgstr "Date Range"
 
 #: src/components/command-palette/CommandPalette.tsx:148
-#: src/components/preferences/panes/AdvancedPane.tsx:58
+#: src/components/preferences/panes/AdvancedPane.tsx:60
 msgid "Debug"
 msgstr "Debug"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:449
+#: src/components/preferences/panes/AdvancedPane.tsx:470
 msgid "Debug info copied to clipboard"
 msgstr "Debug info copied to clipboard"
 
@@ -1374,7 +1376,7 @@ msgstr "Delete Category"
 msgid "Delete category?"
 msgstr "Delete category?"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:716
+#: src/components/preferences/panes/AdvancedPane.tsx:1123
 msgid "Delete everything"
 msgstr "Delete everything"
 
@@ -1403,7 +1405,7 @@ msgid "Detection prompt"
 msgstr "Detection prompt"
 
 #: src/components/ErrorBoundary.tsx:352
-#: src/components/preferences/panes/AdvancedPane.tsx:726
+#: src/components/preferences/panes/AdvancedPane.tsx:1133
 msgid "Diagnostics"
 msgstr "Diagnostics"
 
@@ -1429,7 +1431,7 @@ msgstr "Disable feed"
 #: src/components/preferences/panes/ReaderPane.tsx:499
 #: src/components/preferences/panes/SyncPane.tsx:28
 #: src/components/preferences/panes/TranslationPane.tsx:1416
-#: src/components/preferences/PreferencesDialog.tsx:320
+#: src/components/preferences/PreferencesDialog.tsx:313
 msgid "Disabled"
 msgstr "Disabled"
 
@@ -1534,7 +1536,7 @@ msgid "Downloading update v{0}... {1}%"
 msgstr "Downloading update v{0}... {1}%"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:914
-#: src/components/preferences/panes/AdvancedPane.tsx:79
+#: src/components/preferences/panes/AdvancedPane.tsx:81
 #: src/components/titlebar/WindowTitleBar.tsx:143
 msgid "Downloads"
 msgstr "Downloads"
@@ -1597,8 +1599,8 @@ msgid "Enable {0}"
 msgstr "Enable {0}"
 
 #: src/components/preferences/panes/CloudSyncPane.tsx:124
-msgid "Enable Cloud Sync"
-msgstr "Enable Cloud Sync"
+#~ msgid "Enable Cloud Sync"
+#~ msgstr "Enable Cloud Sync"
 
 #: src/components/preferences/panes/IntegrationsPane.tsx:233
 msgid "enabled"
@@ -1622,7 +1624,7 @@ msgstr "Enabled Services"
 msgid "Enclosure not found for this entry"
 msgstr "Enclosure not found for this entry"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:140
+#: src/components/preferences/panes/AdvancedPane.tsx:687
 msgid "Endpoint URL"
 msgstr "Endpoint URL"
 
@@ -1648,7 +1650,8 @@ msgstr "English only"
 msgid "Enter a description for the new API key."
 msgstr "Enter a description for the new API key."
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:67
+#: src/components/preferences/panes/AdvancedPane.tsx:552
+#: src/components/preferences/panes/AdvancedPane.tsx:567
 msgid "Enter credentials to test connection"
 msgstr "Enter credentials to test connection"
 
@@ -1702,7 +1705,7 @@ msgstr "Entry not found"
 msgid "Entry sent to services"
 msgstr "Entry sent to services"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:55
+#: src/components/preferences/panes/AdvancedPane.tsx:57
 msgid "Error"
 msgstr "Error"
 
@@ -1759,8 +1762,8 @@ msgstr "Exit Zen Mode"
 msgid "Explore Features"
 msgstr "Explore Features"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:490
-#: src/components/preferences/panes/AdvancedPane.tsx:517
+#: src/components/preferences/panes/AdvancedPane.tsx:631
+#: src/components/preferences/panes/AdvancedPane.tsx:924
 msgid "Export"
 msgstr "Export"
 
@@ -1770,8 +1773,8 @@ msgstr "Export feeds to an OPML file"
 
 #: src/components/layout/AppSidebar.tsx:468
 #: src/components/layout/AppSidebar.tsx:574
-#: src/components/preferences/panes/AdvancedPane.tsx:368
-#: src/components/preferences/panes/AdvancedPane.tsx:512
+#: src/components/preferences/panes/AdvancedPane.tsx:389
+#: src/components/preferences/panes/AdvancedPane.tsx:919
 msgid "Export OPML"
 msgstr "Export OPML"
 
@@ -1780,32 +1783,32 @@ msgstr "Export OPML"
 msgid "Export OPML..."
 msgstr "Export OPML..."
 
-#: src/components/preferences/panes/AdvancedPane.tsx:481
+#: src/components/preferences/panes/AdvancedPane.tsx:622
 msgid "Export preferences"
 msgstr "Export preferences"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:310
+#: src/components/preferences/panes/AdvancedPane.tsx:331
 msgid "Export Preferences"
 msgstr "Export Preferences"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:513
+#: src/components/preferences/panes/AdvancedPane.tsx:920
 msgid "Export your feeds as an OPML file for backup or migration."
 msgstr "Export your feeds as an OPML file for backup or migration."
 
-#: src/components/preferences/panes/AdvancedPane.tsx:667
-#: src/components/preferences/panes/AdvancedPane.tsx:683
+#: src/components/preferences/panes/AdvancedPane.tsx:1074
+#: src/components/preferences/panes/AdvancedPane.tsx:1090
 msgid "Factory reset"
 msgstr "Factory reset"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:288
+#: src/components/preferences/panes/AdvancedPane.tsx:309
 msgid "Factory reset complete"
 msgstr "Factory reset complete"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:294
+#: src/components/preferences/panes/AdvancedPane.tsx:315
 msgid "Factory reset failed"
 msgstr "Factory reset failed"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:689
+#: src/components/preferences/panes/AdvancedPane.tsx:1096
 msgid "Factory reset?"
 msgstr "Factory reset?"
 
@@ -1820,7 +1823,7 @@ msgstr "Failed"
 msgid "Failed to cancel download"
 msgstr "Failed to cancel download"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:159
+#: src/components/preferences/panes/AdvancedPane.tsx:180
 msgid "Failed to clear local data"
 msgstr "Failed to clear local data"
 
@@ -1833,7 +1836,7 @@ msgstr "Failed to close window: {0}"
 msgid "Failed to close window: {message}"
 msgstr "Failed to close window: {message}"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:453
+#: src/components/preferences/panes/AdvancedPane.tsx:474
 msgid "Failed to copy debug info"
 msgstr "Failed to copy debug info"
 
@@ -1888,12 +1891,12 @@ msgstr "Failed to exit fullscreen: {message}"
 
 #: src/components/layout/AppSidebar.tsx:479
 #: src/components/layout/AppSidebar.tsx:488
-#: src/components/preferences/panes/AdvancedPane.tsx:379
-#: src/components/preferences/panes/AdvancedPane.tsx:389
+#: src/components/preferences/panes/AdvancedPane.tsx:400
+#: src/components/preferences/panes/AdvancedPane.tsx:410
 msgid "Failed to export OPML"
 msgstr "Failed to export OPML"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:322
+#: src/components/preferences/panes/AdvancedPane.tsx:343
 msgid "Failed to export preferences"
 msgstr "Failed to export preferences"
 
@@ -1913,12 +1916,12 @@ msgstr "Failed to flush history"
 
 #: src/components/layout/AppSidebar.tsx:510
 #: src/components/layout/AppSidebar.tsx:518
-#: src/components/preferences/panes/AdvancedPane.tsx:411
-#: src/components/preferences/panes/AdvancedPane.tsx:420
+#: src/components/preferences/panes/AdvancedPane.tsx:432
+#: src/components/preferences/panes/AdvancedPane.tsx:441
 msgid "Failed to import OPML"
 msgstr "Failed to import OPML"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:356
+#: src/components/preferences/panes/AdvancedPane.tsx:377
 msgid "Failed to import preferences"
 msgstr "Failed to import preferences"
 
@@ -1973,7 +1976,7 @@ msgstr "Failed to refresh feed"
 msgid "Failed to refresh feeds"
 msgstr "Failed to refresh feeds"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:258
+#: src/components/preferences/panes/AdvancedPane.tsx:279
 msgid "Failed to reset preferences"
 msgstr "Failed to reset preferences"
 
@@ -2046,7 +2049,7 @@ msgstr "Failed to update font family"
 msgid "Failed to update image download path"
 msgstr "Failed to update image download path"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:472
+#: src/components/preferences/panes/AdvancedPane.tsx:493
 msgid "Failed to update log level"
 msgstr "Failed to update log level"
 
@@ -2105,7 +2108,7 @@ msgid "Failed to update video download path"
 msgstr "Failed to update video download path"
 
 #: src/components/miniflux/MinifluxLayout.tsx:508
-#: src/components/preferences/PreferencesDialog.tsx:297
+#: src/components/preferences/PreferencesDialog.tsx:290
 msgid "Feed"
 msgstr "Feed"
 
@@ -2168,7 +2171,7 @@ msgid "Feed URL must be a valid URL"
 msgstr "Feed URL must be a valid URL"
 
 #: src/components/preferences/panes/SyncPane.tsx:139
-#: src/components/preferences/PreferencesDialog.tsx:153
+#: src/components/preferences/PreferencesDialog.tsx:146
 #: src/components/sync/SyncProgressPopover.tsx:57
 msgid "Feeds"
 msgstr "Feeds"
@@ -2213,6 +2216,10 @@ msgstr "Fetching..."
 #: src/lib/menu.ts:67
 msgid "File"
 msgstr "File"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:808
+msgid "File Path"
+msgstr "File Path"
 
 #: src/components/preferences/panes/AppearancePane.tsx:197
 msgid "Fill"
@@ -2293,7 +2300,7 @@ msgstr "From"
 msgid "Gemini"
 msgstr "Gemini"
 
-#: src/components/preferences/PreferencesDialog.tsx:100
+#: src/components/preferences/PreferencesDialog.tsx:98
 #: src/lib/shortcut-registry.ts:25
 msgid "General"
 msgstr "General"
@@ -2317,7 +2324,7 @@ msgstr "Georgia"
 msgid "German"
 msgstr "German"
 
-#: src/components/preferences/PreferencesDialog.tsx:125
+#: src/components/preferences/PreferencesDialog.tsx:123
 msgid "Gestures"
 msgstr "Gestures"
 
@@ -2488,8 +2495,8 @@ msgstr "Image Download Path"
 msgid "Image download path updated"
 msgstr "Image download path updated"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:504
-#: src/components/preferences/panes/AdvancedPane.tsx:527
+#: src/components/preferences/panes/AdvancedPane.tsx:645
+#: src/components/preferences/panes/AdvancedPane.tsx:934
 msgid "Import"
 msgstr "Import"
 
@@ -2497,14 +2504,14 @@ msgstr "Import"
 msgid "Import feeds from an OPML file"
 msgstr "Import feeds from an OPML file"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:523
+#: src/components/preferences/panes/AdvancedPane.tsx:930
 msgid "Import feeds from an OPML file."
 msgstr "Import feeds from an OPML file."
 
 #: src/components/layout/AppSidebar.tsx:497
 #: src/components/layout/AppSidebar.tsx:578
-#: src/components/preferences/panes/AdvancedPane.tsx:398
-#: src/components/preferences/panes/AdvancedPane.tsx:522
+#: src/components/preferences/panes/AdvancedPane.tsx:419
+#: src/components/preferences/panes/AdvancedPane.tsx:929
 msgid "Import OPML"
 msgstr "Import OPML"
 
@@ -2513,11 +2520,11 @@ msgstr "Import OPML"
 msgid "Import OPML..."
 msgstr "Import OPML..."
 
-#: src/components/preferences/panes/AdvancedPane.tsx:495
+#: src/components/preferences/panes/AdvancedPane.tsx:636
 msgid "Import preferences"
 msgstr "Import preferences"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:333
+#: src/components/preferences/panes/AdvancedPane.tsx:354
 msgid "Import Preferences"
 msgstr "Import Preferences"
 
@@ -2562,7 +2569,7 @@ msgstr "Increase speed by 0.25x"
 msgid "Increase volume by 10%"
 msgstr "Increase volume by 10%"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:57
+#: src/components/preferences/panes/AdvancedPane.tsx:59
 msgid "Info"
 msgstr "Info"
 
@@ -2584,7 +2591,7 @@ msgstr "Installing update..."
 msgid "Integration Services"
 msgstr "Integration Services"
 
-#: src/components/preferences/PreferencesDialog.tsx:168
+#: src/components/preferences/PreferencesDialog.tsx:161
 msgid "Integrations"
 msgstr "Integrations"
 
@@ -2598,7 +2605,7 @@ msgstr "Interrupted — app was closed"
 msgid "Japanese"
 msgstr "Japanese"
 
-#: src/components/preferences/PreferencesDialog.tsx:280
+#: src/components/preferences/PreferencesDialog.tsx:273
 msgid "Just now"
 msgstr "Just now"
 
@@ -2760,15 +2767,15 @@ msgstr "Loading..."
 msgid "Local Ollama: leave empty (uses http://localhost:11434). Ollama Cloud: use https://ollama.com — requires an API key and model names with the -cloud suffix (e.g. gpt-oss:120b-cloud)."
 msgstr "Local Ollama: leave empty (uses http://localhost:11434). Ollama Cloud: use https://ollama.com — requires an API key and model names with the -cloud suffix (e.g. gpt-oss:120b-cloud)."
 
-#: src/components/preferences/panes/AdvancedPane.tsx:537
+#: src/components/preferences/panes/AdvancedPane.tsx:944
 msgid "Local storage used"
 msgstr "Local storage used"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:738
+#: src/components/preferences/panes/AdvancedPane.tsx:1145
 msgid "Log level"
 msgstr "Log level"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:469
+#: src/components/preferences/panes/AdvancedPane.tsx:490
 msgid "Log level updated"
 msgstr "Log level updated"
 
@@ -2806,7 +2813,7 @@ msgstr "Mark all as read"
 #: src/components/miniflux/EntryReadingHeader.tsx:799
 #: src/components/miniflux/EntryReadingHeader.tsx:818
 #: src/components/preferences/panes/CategoriesPane.tsx:84
-#: src/components/preferences/PreferencesDialog.tsx:376
+#: src/components/preferences/PreferencesDialog.tsx:369
 msgid "Mark as read"
 msgstr "Mark as read"
 
@@ -2948,7 +2955,7 @@ msgstr "Move feed"
 msgid "Move to"
 msgstr "Move to"
 
-#: src/components/preferences/PreferencesDialog.tsx:398
+#: src/components/preferences/PreferencesDialog.tsx:391
 msgid "Move to category"
 msgstr "Move to category"
 
@@ -3162,7 +3169,7 @@ msgstr "No sources found"
 msgid "No unread entries available"
 msgstr "No unread entries available"
 
-#: src/components/preferences/PreferencesDialog.tsx:336
+#: src/components/preferences/PreferencesDialog.tsx:329
 msgid "None"
 msgstr "None"
 
@@ -3174,7 +3181,7 @@ msgstr "None (disabled)"
 msgid "Not configured"
 msgstr "Not configured"
 
-#: src/components/preferences/PreferencesDialog.tsx:182
+#: src/components/preferences/PreferencesDialog.tsx:175
 msgid "Not connected to Miniflux server"
 msgstr "Not connected to Miniflux server"
 
@@ -3182,7 +3189,7 @@ msgstr "Not connected to Miniflux server"
 msgid "Nothing playing"
 msgstr "Nothing playing"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:167
+#: src/components/preferences/panes/AdvancedPane.tsx:721
 msgid "Object Key"
 msgstr "Object Key"
 
@@ -3310,17 +3317,17 @@ msgstr "OpenAI"
 msgid "OpenRouter"
 msgstr "OpenRouter"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:510
+#: src/components/preferences/panes/AdvancedPane.tsx:917
 msgid "OPML"
 msgstr "OPML"
 
 #: src/components/layout/AppSidebar.tsx:485
-#: src/components/preferences/panes/AdvancedPane.tsx:385
+#: src/components/preferences/panes/AdvancedPane.tsx:406
 msgid "OPML exported successfully"
 msgstr "OPML exported successfully"
 
 #: src/components/layout/AppSidebar.tsx:515
-#: src/components/preferences/panes/AdvancedPane.tsx:416
+#: src/components/preferences/panes/AdvancedPane.tsx:437
 msgid "OPML imported successfully"
 msgstr "OPML imported successfully"
 
@@ -3373,12 +3380,14 @@ msgstr "Page {0} of {1}"
 msgid "Paper"
 msgstr "Paper"
 
-#: src/components/preferences/PreferencesDialog.tsx:315
+#: src/components/preferences/PreferencesDialog.tsx:308
 msgid "Parsing errors"
 msgstr "Parsing errors"
 
 #: src/components/miniflux/ConnectionDialog.tsx:309
 #: src/components/miniflux/settings/UserFormDialog.tsx:106
+#: src/components/preferences/panes/AdvancedPane.tsx:826
+#: src/components/preferences/panes/AdvancedPane.tsx:850
 msgid "Password"
 msgstr "Password"
 
@@ -3415,7 +3424,7 @@ msgstr "Paused"
 #~ msgid "Performs a complete sync from scratch, re-downloading all categories, feeds, and entries. Use this if your data seems out of sync."
 #~ msgstr "Performs a complete sync from scratch, re-downloading all categories, feeds, and entries. Use this if your data seems out of sync."
 
-#: src/components/preferences/panes/AdvancedPane.tsx:669
+#: src/components/preferences/panes/AdvancedPane.tsx:1076
 msgid "Permanently deletes everything — all accounts, synced data, preferences, downloads, and credentials. This cannot be undone."
 msgstr "Permanently deletes everything — all accounts, synced data, preferences, downloads, and credentials. This cannot be undone."
 
@@ -3470,6 +3479,10 @@ msgstr "Playlist"
 msgid "Please connect to your server to use this feature."
 msgstr "Please connect to your server to use this feature."
 
+#: src/components/preferences/panes/AdvancedPane.tsx:533
+msgid "Please enter a password"
+msgstr "Please enter a password"
+
 #: src/components/miniflux/AddFeedDialog.tsx:295
 #: src/components/miniflux/SearchSourceDialog.tsx:67
 msgid "Please enter a valid source URL"
@@ -3480,7 +3493,7 @@ msgstr "Please enter a valid source URL"
 msgid "Please enter a valid URL"
 msgstr "Please enter a valid URL"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:43
+#: src/components/preferences/panes/AdvancedPane.tsx:509
 msgid "Please enter both access key and secret key"
 msgstr "Please enter both access key and secret key"
 
@@ -3495,33 +3508,33 @@ msgstr "Podcast"
 msgid "Podcast Playback"
 msgstr "Podcast Playback"
 
-#: src/components/preferences/PreferencesDialog.tsx:475
-#: src/components/preferences/PreferencesDialog.tsx:539
-#: src/components/preferences/PreferencesDialog.tsx:617
+#: src/components/preferences/PreferencesDialog.tsx:468
+#: src/components/preferences/PreferencesDialog.tsx:532
+#: src/components/preferences/PreferencesDialog.tsx:610
 msgid "Preferences"
 msgstr "Preferences"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:479
+#: src/components/preferences/panes/AdvancedPane.tsx:620
 msgid "Preferences Backup"
 msgstr "Preferences Backup"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:318
+#: src/components/preferences/panes/AdvancedPane.tsx:339
 msgid "Preferences exported successfully"
 msgstr "Preferences exported successfully"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:350
+#: src/components/preferences/panes/AdvancedPane.tsx:371
 msgid "Preferences imported"
 msgstr "Preferences imported"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:95
+#: src/components/preferences/panes/AdvancedPane.tsx:593
 msgid "Preferences pushed to cloud"
 msgstr "Preferences pushed to cloud"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:254
+#: src/components/preferences/panes/AdvancedPane.tsx:275
 msgid "Preferences reset to defaults"
 msgstr "Preferences reset to defaults"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:109
+#: src/components/preferences/panes/AdvancedPane.tsx:607
 msgid "Preferences restored from cloud"
 msgstr "Preferences restored from cloud"
 
@@ -3568,6 +3581,10 @@ msgstr "Previous section"
 #: src/components/preferences/panes/AboutPane.tsx:253
 #~ msgid "Project"
 #~ msgstr "Project"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:668
+msgid "Protocol"
+msgstr "Protocol"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:633
 #: src/components/preferences/panes/TranslationPane.tsx:1774
@@ -3620,7 +3637,7 @@ msgstr "Pull from bottom"
 msgid "Pull from top"
 msgstr "Pull from top"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:248
+#: src/components/preferences/panes/AdvancedPane.tsx:908
 msgid "Pull Now"
 msgstr "Pull Now"
 
@@ -3636,15 +3653,15 @@ msgstr "Pulling category groups from server"
 msgid "Pulling feed subscriptions from server"
 msgstr "Pulling feed subscriptions from server"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:248
+#: src/components/preferences/panes/AdvancedPane.tsx:908
 msgid "Pulling..."
 msgstr "Pulling..."
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:240
+#: src/components/preferences/panes/AdvancedPane.tsx:894
 msgid "Push Now"
 msgstr "Push Now"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:240
+#: src/components/preferences/panes/AdvancedPane.tsx:894
 msgid "Pushing..."
 msgstr "Pushing..."
 
@@ -3692,7 +3709,7 @@ msgstr "Re-summarize"
 msgid "React 19"
 msgstr "React 19"
 
-#: src/components/preferences/PreferencesDialog.tsx:110
+#: src/components/preferences/PreferencesDialog.tsx:108
 msgid "Reader"
 msgstr "Reader"
 
@@ -3766,7 +3783,7 @@ msgstr "Reconnect to an existing account or add a new one"
 msgid "records"
 msgstr "records"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:81
+#: src/components/preferences/panes/AdvancedPane.tsx:83
 msgid "Recovery"
 msgstr "Recovery"
 
@@ -3810,7 +3827,7 @@ msgstr "Refreshing..."
 msgid "Regex only"
 msgstr "Regex only"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:158
+#: src/components/preferences/panes/AdvancedPane.tsx:710
 msgid "Region"
 msgstr "Region"
 
@@ -3851,11 +3868,12 @@ msgstr "Remove all episodes from the playback queue"
 msgid "Remove current account and all related data"
 msgstr "Remove current account and all related data"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:186
+#: src/components/preferences/panes/AdvancedPane.tsx:746
+#: src/components/preferences/panes/AdvancedPane.tsx:835
 msgid "Remove saved credentials"
 msgstr "Remove saved credentials"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:593
+#: src/components/preferences/panes/AdvancedPane.tsx:1000
 msgid "Removes synced entries, feeds, and categories for the current account. Other accounts and preferences are not affected."
 msgstr "Removes synced entries, feeds, and categories for the current account. Other accounts and preferences are not affected."
 
@@ -3886,8 +3904,8 @@ msgstr "Required fields"
 
 #: src/components/miniflux/ReaderSettings.tsx:217
 #: src/components/preferences/KeyCapture.tsx:118
-#: src/components/preferences/panes/AdvancedPane.tsx:642
-#: src/components/preferences/panes/AdvancedPane.tsx:658
+#: src/components/preferences/panes/AdvancedPane.tsx:1049
+#: src/components/preferences/panes/AdvancedPane.tsx:1065
 #: src/components/preferences/panes/TranslationPane.tsx:2057
 #: src/components/preferences/ShortcutPicker.tsx:231
 msgid "Reset"
@@ -3906,11 +3924,11 @@ msgstr "Reset Font Size"
 msgid "Reset Playback Speed"
 msgstr "Reset Playback Speed"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:632
+#: src/components/preferences/panes/AdvancedPane.tsx:1039
 msgid "Reset preferences"
 msgstr "Reset preferences"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:648
+#: src/components/preferences/panes/AdvancedPane.tsx:1055
 msgid "Reset preferences?"
 msgstr "Reset preferences?"
 
@@ -3926,8 +3944,8 @@ msgstr "Reset speed to 1.0x"
 msgid "Reset text to default size"
 msgstr "Reset text to default size"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:642
-#: src/components/preferences/panes/AdvancedPane.tsx:683
+#: src/components/preferences/panes/AdvancedPane.tsx:1049
+#: src/components/preferences/panes/AdvancedPane.tsx:1090
 msgid "Resetting..."
 msgstr "Resetting..."
 
@@ -3951,11 +3969,11 @@ msgstr "Restart to Update"
 msgid "Restore"
 msgstr "Restore"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:634
+#: src/components/preferences/panes/AdvancedPane.tsx:1041
 msgid "Restore all settings to their factory defaults. Your data and accounts are not affected."
 msgstr "Restore all settings to their factory defaults. Your data and accounts are not affected."
 
-#: src/components/preferences/panes/AdvancedPane.tsx:496
+#: src/components/preferences/panes/AdvancedPane.tsx:637
 msgid "Restore settings from a previously exported JSON file."
 msgstr "Restore settings from a previously exported JSON file."
 
@@ -4043,7 +4061,8 @@ msgstr "Save changes"
 msgid "Save Changes"
 msgstr "Save Changes"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:216
+#: src/components/preferences/panes/AdvancedPane.tsx:775
+#: src/components/preferences/panes/AdvancedPane.tsx:857
 msgid "Save Credentials"
 msgstr "Save Credentials"
 
@@ -4056,7 +4075,7 @@ msgstr "Save Rules"
 msgid "Save to services"
 msgstr "Save to services"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:482
+#: src/components/preferences/panes/AdvancedPane.tsx:623
 msgid "Save your current settings to a JSON file for backup or migration."
 msgstr "Save your current settings to a JSON file for backup or migration."
 
@@ -4182,7 +4201,7 @@ msgstr "Searching sources..."
 msgid "Searching..."
 msgstr "Searching..."
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:207
+#: src/components/preferences/panes/AdvancedPane.tsx:768
 msgid "Secret Access Key"
 msgstr "Secret Access Key"
 
@@ -4235,8 +4254,8 @@ msgid "Serif"
 msgstr "Serif"
 
 #: src/components/preferences/panes/ApiTokenPane.tsx:165
-#: src/components/preferences/PreferencesDialog.tsx:506
-#: src/components/preferences/PreferencesDialog.tsx:585
+#: src/components/preferences/PreferencesDialog.tsx:499
+#: src/components/preferences/PreferencesDialog.tsx:578
 msgid "Server"
 msgstr "Server"
 
@@ -4276,7 +4295,7 @@ msgid "Set a custom background image for the app window."
 msgstr "Set a custom background image for the app window."
 
 #: src/components/command-palette/CommandPalette.tsx:150
-#: src/components/preferences/panes/AdvancedPane.tsx:80
+#: src/components/preferences/panes/AdvancedPane.tsx:82
 #: src/components/titlebar/WindowTitleBar.tsx:86
 msgid "Settings"
 msgstr "Settings"
@@ -4293,7 +4312,7 @@ msgstr "Share"
 msgid "Share link copied!"
 msgstr "Share link copied!"
 
-#: src/components/preferences/PreferencesDialog.tsx:120
+#: src/components/preferences/PreferencesDialog.tsx:118
 #: src/pages/HomePage.tsx:38
 msgid "Shortcuts"
 msgstr "Shortcuts"
@@ -4433,7 +4452,7 @@ msgstr "Skip this feed"
 msgid "Slate"
 msgstr "Slate"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:351
+#: src/components/preferences/panes/AdvancedPane.tsx:372
 msgid "Some changes may require an app restart."
 msgstr "Some changes may require an app restart."
 
@@ -4554,7 +4573,7 @@ msgstr "Stop playback after the current episode finishes"
 msgid "Stop playback and close the player"
 msgstr "Stop playback and close the player"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:533
+#: src/components/preferences/panes/AdvancedPane.tsx:940
 msgid "Storage & Data"
 msgstr "Storage & Data"
 
@@ -4622,7 +4641,7 @@ msgid "Switch to light theme"
 msgstr "Switch to light theme"
 
 #: src/components/preferences/panes/SyncPane.tsx:158
-#: src/components/preferences/PreferencesDialog.tsx:173
+#: src/components/preferences/PreferencesDialog.tsx:166
 #: src/pages/TrayPopover.tsx:281
 msgid "Sync"
 msgstr "Sync"
@@ -4681,6 +4700,10 @@ msgstr "Sync is idle"
 msgid "Sync Now"
 msgstr "Sync Now"
 
+#: src/components/preferences/panes/AdvancedPane.tsx:655
+msgid "Sync preferences via S3 or WebDAV"
+msgstr "Sync preferences via S3 or WebDAV"
+
 #: src/hooks/use-sync-indicator.ts:31
 msgid "Sync Progress"
 msgstr "Sync Progress"
@@ -4693,7 +4716,7 @@ msgstr "Sync Status"
 msgid "Sync your category folders"
 msgstr "Sync your category folders"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:154
+#: src/components/preferences/panes/AdvancedPane.tsx:175
 msgid "Synced data for the current account has been removed."
 msgstr "Synced data for the current account has been removed."
 
@@ -4752,7 +4775,7 @@ msgstr "Target language"
 msgid "Tauri v2"
 msgstr "Tauri v2"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:232
+#: src/components/preferences/panes/AdvancedPane.tsx:879
 msgid "Test Connection"
 msgstr "Test Connection"
 
@@ -4764,7 +4787,7 @@ msgstr "Test Toast"
 msgid "Test Toast Notification"
 msgstr "Test Toast Notification"
 
-#: src/components/preferences/panes/CloudSyncPane.tsx:232
+#: src/components/preferences/panes/AdvancedPane.tsx:879
 msgid "Testing..."
 msgstr "Testing..."
 
@@ -4813,7 +4836,7 @@ msgstr "This user \"{0}\" will be permanently removed from Miniflux."
 #~ msgid "This user will be permanently removed from Miniflux."
 #~ msgstr "This user will be permanently removed from Miniflux."
 
-#: src/components/preferences/panes/AdvancedPane.tsx:692
+#: src/components/preferences/panes/AdvancedPane.tsx:1099
 msgid "This will permanently delete all accounts, synced data, preferences, downloads, and saved credentials. The app will return to its initial state."
 msgstr "This will permanently delete all accounts, synced data, preferences, downloads, and saved credentials. The app will return to its initial state."
 
@@ -4826,7 +4849,7 @@ msgstr "This will permanently remove the feed \"{0}\" from Miniflux."
 #~ msgid "This will permanently remove the feed from Miniflux."
 #~ msgstr "This will permanently remove the feed from Miniflux."
 
-#: src/components/preferences/panes/AdvancedPane.tsx:612
+#: src/components/preferences/panes/AdvancedPane.tsx:1019
 msgid "This will remove synced entries, feeds, categories, and sync history for this account. Other accounts and app preferences are not affected."
 msgstr "This will remove synced entries, feeds, categories, and sync history for this account. Other accounts and app preferences are not affected."
 
@@ -5013,7 +5036,7 @@ msgstr "Top bar"
 msgid "Total downloaded:"
 msgstr "Total downloaded:"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:59
+#: src/components/preferences/panes/AdvancedPane.tsx:61
 msgid "Trace"
 msgstr "Trace"
 
@@ -5132,7 +5155,7 @@ msgstr "Type a command or search..."
 msgid "Type or fetch to pick a model"
 msgstr "Type or fetch to pick a model"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:698
+#: src/components/preferences/panes/AdvancedPane.tsx:1105
 msgid "Type RESET to confirm"
 msgstr "Type RESET to confirm"
 
@@ -5293,6 +5316,7 @@ msgstr "User updated"
 
 #: src/components/miniflux/ConnectionDialog.tsx:281
 #: src/components/miniflux/settings/UserFormDialog.tsx:82
+#: src/components/preferences/panes/AdvancedPane.tsx:798
 msgid "Username"
 msgstr "Username"
 
@@ -5306,7 +5330,7 @@ msgid "Username/Password"
 msgstr "Username/Password"
 
 #: src/components/preferences/panes/UsersPane.tsx:32
-#: src/components/preferences/PreferencesDialog.tsx:158
+#: src/components/preferences/PreferencesDialog.tsx:151
 msgid "Users"
 msgstr "Users"
 
@@ -5392,9 +5416,13 @@ msgstr "Volume Up"
 msgid "Warm and friendly"
 msgstr "Warm and friendly"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:56
+#: src/components/preferences/panes/AdvancedPane.tsx:58
 msgid "Warn"
 msgstr "Warn"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:787
+msgid "WebDAV URL"
+msgstr "WebDAV URL"
 
 #: src/components/miniflux/MinifluxLayout.tsx:421
 msgid "Welcome to Miniflux"

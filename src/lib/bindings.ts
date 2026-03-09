@@ -1305,7 +1305,18 @@ async cloudSyncSaveCredentials(accessKey: string, secretKey: string) : Promise<R
 }
 },
 /**
- * Delete S3 credentials from keyring.
+ * Save WebDAV password to keyring.
+ */
+async cloudSyncSaveWebdavPassword(password: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_save_webdav_password", { password }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Delete all cloud sync credentials from keyring.
  */
 async cloudSyncDeleteCredentials() : Promise<Result<null, string>> {
     try {
@@ -1327,7 +1338,18 @@ async cloudSyncHasCredentials() : Promise<Result<boolean, string>> {
 }
 },
 /**
- * Test S3 connection with provided credentials (before saving to keyring).
+ * Check if WebDAV password exists in keyring.
+ */
+async cloudSyncHasWebdavCredentials() : Promise<Result<boolean, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_has_webdav_credentials") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Test S3 connection with provided credentials.
  */
 async cloudSyncTestConnection(endpoint: string, bucket: string, region: string, accessKey: string, secretKey: string) : Promise<Result<null, string>> {
     try {
@@ -1338,7 +1360,18 @@ async cloudSyncTestConnection(endpoint: string, bucket: string, region: string, 
 }
 },
 /**
- * Push current preferences + server URLs to S3.
+ * Test WebDAV connection with provided credentials.
+ */
+async cloudSyncTestWebdavConnection(url: string, username: string, password: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_test_webdav_connection", { url, username, password }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Push current preferences + server URLs to remote storage.
  */
 async cloudSyncPush() : Promise<Result<null, string>> {
     try {
@@ -1349,7 +1382,7 @@ async cloudSyncPush() : Promise<Result<null, string>> {
 }
 },
 /**
- * Pull preferences + server URLs from S3.
+ * Pull preferences + server URLs from remote storage.
  */
 async cloudSyncPull() : Promise<Result<CloudSyncPayload, string>> {
     try {
@@ -1637,6 +1670,10 @@ layout_entry_list_width?: number | null;
  */
 cloud_sync_enabled?: boolean; 
 /**
+ * Cloud sync protocol: "s3" or "webdav".
+ */
+cloud_sync_protocol?: string; 
+/**
  * S3-compatible endpoint URL (e.g., "https://s3.amazonaws.com").
  */
 cloud_sync_endpoint?: string | null; 
@@ -1651,7 +1688,19 @@ cloud_sync_region?: string;
 /**
  * S3 object key for the sync file.
  */
-cloud_sync_object_key?: string }
+cloud_sync_object_key?: string; 
+/**
+ * WebDAV server URL (e.g., "https://dav.example.com/remote.php/dav/files/user").
+ */
+cloud_sync_webdav_url?: string | null; 
+/**
+ * WebDAV username.
+ */
+cloud_sync_webdav_username?: string | null; 
+/**
+ * WebDAV file path for the sync file.
+ */
+cloud_sync_webdav_path?: string }
 export type ArticleSummaryRecord = { entry_id: string; summary: string; provider_used: string | null; model_used: string | null }
 /**
  * Authentication Config
@@ -1714,7 +1763,7 @@ export type CloseBehavior =
  */
 "minimize_to_tray"
 /**
- * Payload for the sync file stored in S3.
+ * Payload for the sync file stored remotely.
  */
 export type CloudSyncPayload = { preferences: AppPreferences; server_urls: string[]; synced_at: string }
 /**

@@ -274,6 +274,9 @@ pub struct AppPreferences {
     /// Whether cloud sync is enabled.
     #[serde(default)]
     pub cloud_sync_enabled: bool,
+    /// Cloud sync protocol: "s3" or "webdav".
+    #[serde(default = "default_cloud_sync_protocol")]
+    pub cloud_sync_protocol: String,
     /// S3-compatible endpoint URL (e.g., "https://s3.amazonaws.com").
     #[serde(default)]
     pub cloud_sync_endpoint: Option<String>,
@@ -286,6 +289,23 @@ pub struct AppPreferences {
     /// S3 object key for the sync file.
     #[serde(default = "default_cloud_sync_object_key")]
     pub cloud_sync_object_key: String,
+    /// WebDAV server URL (e.g., "https://dav.example.com/remote.php/dav/files/user").
+    #[serde(default)]
+    pub cloud_sync_webdav_url: Option<String>,
+    /// WebDAV username.
+    #[serde(default)]
+    pub cloud_sync_webdav_username: Option<String>,
+    /// WebDAV file path for the sync file.
+    #[serde(default = "default_cloud_sync_webdav_path")]
+    pub cloud_sync_webdav_path: String,
+}
+
+fn default_cloud_sync_protocol() -> String {
+    "s3".to_string()
+}
+
+fn default_cloud_sync_webdav_path() -> String {
+    "/minikyu/preferences-sync.json".to_string()
 }
 
 fn default_cloud_sync_region() -> String {
@@ -397,10 +417,14 @@ impl Default for AppPreferences {
             gesture_swipe_threshold: default_gesture_swipe_threshold(),
             layout_entry_list_width: None,
             cloud_sync_enabled: false,
+            cloud_sync_protocol: default_cloud_sync_protocol(),
             cloud_sync_endpoint: None,
             cloud_sync_bucket: None,
             cloud_sync_region: default_cloud_sync_region(),
             cloud_sync_object_key: default_cloud_sync_object_key(),
+            cloud_sync_webdav_url: None,
+            cloud_sync_webdav_username: None,
+            cloud_sync_webdav_path: default_cloud_sync_webdav_path(),
         }
     }
 }

@@ -1,4 +1,4 @@
-//! Keyring helpers for cloud sync S3 credentials.
+//! Keyring helpers for cloud sync credentials (S3 and WebDAV).
 
 use ::keyring::Entry;
 use log::{debug, error};
@@ -45,8 +45,28 @@ pub fn get_secret_key() -> Result<String, String> {
     })
 }
 
+pub fn save_webdav_password(password: &str) -> Result<(), String> {
+    debug!("Saving cloud sync WebDAV password to keyring");
+    create_entry("webdav-password")
+        .set_password(password)
+        .map_err(|e| {
+            error!("Failed to save WebDAV password: {e}");
+            format!("Failed to save WebDAV password: {e}")
+        })
+}
+
+pub fn get_webdav_password() -> Result<String, String> {
+    create_entry("webdav-password")
+        .get_password()
+        .map_err(|e| {
+            error!("Failed to get WebDAV password: {e}");
+            format!("Failed to get WebDAV password: {e}")
+        })
+}
+
 pub fn delete_credentials() -> Result<(), String> {
     let _ = create_entry("access-key").delete_credential();
     let _ = create_entry("secret-key").delete_credential();
+    let _ = create_entry("webdav-password").delete_credential();
     Ok(())
 }
