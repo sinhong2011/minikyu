@@ -109,15 +109,15 @@ msgstr "{0} timeout (ms)"
 msgid "{0} total"
 msgstr "{0} total"
 
-#: src/components/preferences/PreferencesDialog.tsx:276
+#: src/components/preferences/PreferencesDialog.tsx:283
 msgid "{diffDays}d ago"
 msgstr "{diffDays}d ago"
 
-#: src/components/preferences/PreferencesDialog.tsx:275
+#: src/components/preferences/PreferencesDialog.tsx:282
 msgid "{diffHours}h ago"
 msgstr "{diffHours}h ago"
 
-#: src/components/preferences/PreferencesDialog.tsx:274
+#: src/components/preferences/PreferencesDialog.tsx:281
 msgid "{diffMins}m ago"
 msgstr "{diffMins}m ago"
 
@@ -153,7 +153,7 @@ msgstr "A calm, focused space for your Miniflux reading. Catch up faster, stay o
 msgid "A modern, production-ready template for building cross-platform desktop applications with React, TypeScript, and Rust."
 msgstr "A modern, production-ready template for building cross-platform desktop applications with React, TypeScript, and Rust."
 
-#: src/components/preferences/PreferencesDialog.tsx:133
+#: src/components/preferences/PreferencesDialog.tsx:140
 msgid "About"
 msgstr "About"
 
@@ -164,6 +164,10 @@ msgstr "About {APP_NAME}"
 #: src/lib/commands/help-commands.ts:40
 msgid "About Minikyu"
 msgstr "About Minikyu"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:198
+msgid "Access Key ID"
+msgstr "Access Key ID"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:153
 msgid "Account data cleared"
@@ -177,7 +181,8 @@ msgstr "Account deleted successfully"
 msgid "Accounts"
 msgstr "Accounts"
 
-#: src/components/preferences/PreferencesDialog.tsx:348
+#: src/components/preferences/panes/CloudSyncPane.tsx:224
+#: src/components/preferences/PreferencesDialog.tsx:355
 msgid "Actions"
 msgstr "Actions"
 
@@ -287,7 +292,7 @@ msgstr "Admin"
 msgid "Administrator"
 msgstr "Administrator"
 
-#: src/components/preferences/PreferencesDialog.tsx:128
+#: src/components/preferences/PreferencesDialog.tsx:135
 msgid "Advanced"
 msgstr "Advanced"
 
@@ -298,7 +303,7 @@ msgid "Advanced settings"
 msgstr "Advanced settings"
 
 #: src/components/miniflux/EntryReading.tsx:1527
-#: src/components/preferences/PreferencesDialog.tsx:113
+#: src/components/preferences/PreferencesDialog.tsx:115
 msgid "AI"
 msgstr "AI"
 
@@ -382,7 +387,7 @@ msgstr "API key description"
 msgid "API keys"
 msgstr "API keys"
 
-#: src/components/preferences/PreferencesDialog.tsx:156
+#: src/components/preferences/PreferencesDialog.tsx:163
 msgid "API token"
 msgstr "API token"
 
@@ -399,12 +404,12 @@ msgstr "API Token is required"
 msgid "API token updated"
 msgstr "API token updated"
 
-#: src/components/preferences/PreferencesDialog.tsx:478
-#: src/components/preferences/PreferencesDialog.tsx:557
+#: src/components/preferences/PreferencesDialog.tsx:485
+#: src/components/preferences/PreferencesDialog.tsx:564
 msgid "App Settings"
 msgstr "App Settings"
 
-#: src/components/preferences/PreferencesDialog.tsx:103
+#: src/components/preferences/PreferencesDialog.tsx:105
 msgid "Appearance"
 msgstr "Appearance"
 
@@ -535,6 +540,10 @@ msgstr "Automatically mark entries as read when scrolled past 20%"
 msgid "Automatically sync feeds at the configured interval"
 msgstr "Automatically sync feeds at the configured interval"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:126
+msgid "Automatically sync preferences to S3-compatible storage"
+msgstr "Automatically sync preferences to S3-compatible storage"
+
 #: src/components/preferences/panes/IntegrationsPane.tsx:282
 msgid "Available Services"
 msgstr "Available Services"
@@ -592,6 +601,10 @@ msgstr "Browse categories"
 msgid "Browser content"
 msgstr "Browser content"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:150
+msgid "Bucket"
+msgstr "Bucket"
+
 #: src/components/preferences/panes/AboutPane.tsx:239
 msgid "Build date"
 msgstr "Build date"
@@ -635,7 +648,7 @@ msgstr "Cannot delete category"
 
 #: src/components/layout/AppSidebar.tsx:722
 #: src/components/preferences/panes/SyncPane.tsx:133
-#: src/components/preferences/PreferencesDialog.tsx:141
+#: src/components/preferences/PreferencesDialog.tsx:148
 #: src/components/sync/SyncProgressPopover.tsx:51
 msgid "Categories"
 msgstr "Categories"
@@ -648,7 +661,7 @@ msgstr "Categories are folders, Feeds are subscriptions, and Entries are article
 #: src/components/miniflux/EditFeedDialog.tsx:220
 #: src/components/miniflux/MinifluxLayout.tsx:503
 #: src/components/miniflux/settings/FeedFormDialog.tsx:419
-#: src/components/preferences/PreferencesDialog.tsx:324
+#: src/components/preferences/PreferencesDialog.tsx:331
 msgid "Category"
 msgstr "Category"
 
@@ -734,7 +747,7 @@ msgstr "Check whether a newer release is available."
 msgid "Check your connection and try again"
 msgstr "Check your connection and try again"
 
-#: src/components/preferences/PreferencesDialog.tsx:336
+#: src/components/preferences/PreferencesDialog.tsx:343
 msgid "Checked"
 msgstr "Checked"
 
@@ -912,6 +925,10 @@ msgstr "Close window"
 msgid "Close Window"
 msgstr "Close Window"
 
+#: src/components/preferences/PreferencesDialog.tsx:130
+msgid "Cloud Sync"
+msgstr "Cloud Sync"
+
 #: src/components/miniflux/ReaderSettings.tsx:177
 msgid "Code and precision"
 msgstr "Code and precision"
@@ -981,6 +998,14 @@ msgstr "Connect to your Miniflux server to get started"
 #: src/components/miniflux/ConnectionDialog.tsx:365
 msgid "Connecting..."
 msgstr "Connecting..."
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:137
+msgid "Connection"
+msgstr "Connection"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:81
+msgid "Connection successful"
+msgstr "Connection successful"
 
 #: src/components/preferences/panes/ApiTokenPane.tsx:161
 msgid "Connection token"
@@ -1164,6 +1189,22 @@ msgstr "Created"
 msgid "Creating..."
 msgstr "Creating..."
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:183
+msgid "Credentials"
+msgstr "Credentials"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:193
+msgid "Credentials are saved in your system keyring."
+msgstr "Credentials are saved in your system keyring."
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:61
+msgid "Credentials removed"
+msgstr "Credentials removed"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:51
+msgid "Credentials saved"
+msgstr "Credentials saved"
+
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:77
 msgid "Current category"
 msgstr "Current category"
@@ -1192,7 +1233,7 @@ msgstr "Custom Term Conversion"
 msgid "Customizable keyboard shortcuts"
 msgstr "Customizable keyboard shortcuts"
 
-#: src/components/preferences/PreferencesDialog.tsx:470
+#: src/components/preferences/PreferencesDialog.tsx:477
 msgid "Customize your application preferences here."
 msgstr "Customize your application preferences here."
 
@@ -1388,7 +1429,7 @@ msgstr "Disable feed"
 #: src/components/preferences/panes/ReaderPane.tsx:499
 #: src/components/preferences/panes/SyncPane.tsx:28
 #: src/components/preferences/panes/TranslationPane.tsx:1416
-#: src/components/preferences/PreferencesDialog.tsx:313
+#: src/components/preferences/PreferencesDialog.tsx:320
 msgid "Disabled"
 msgstr "Disabled"
 
@@ -1555,6 +1596,10 @@ msgstr "Emphasize the beginning of words to guide faster reading"
 msgid "Enable {0}"
 msgstr "Enable {0}"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:124
+msgid "Enable Cloud Sync"
+msgstr "Enable Cloud Sync"
+
 #: src/components/preferences/panes/IntegrationsPane.tsx:233
 msgid "enabled"
 msgstr "enabled"
@@ -1577,6 +1622,10 @@ msgstr "Enabled Services"
 msgid "Enclosure not found for this entry"
 msgstr "Enclosure not found for this entry"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:140
+msgid "Endpoint URL"
+msgstr "Endpoint URL"
+
 #: src/components/preferences/panes/TranslationPane.tsx:497
 msgid "Engine"
 msgstr "Engine"
@@ -1598,6 +1647,10 @@ msgstr "English only"
 #: src/components/preferences/panes/ApiTokenPane.tsx:191
 msgid "Enter a description for the new API key."
 msgstr "Enter a description for the new API key."
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:67
+msgid "Enter credentials to test connection"
+msgstr "Enter credentials to test connection"
 
 #: src/components/titlebar/MacOSWindowControls.tsx:152
 msgid "Enter fullscreen"
@@ -2052,7 +2105,7 @@ msgid "Failed to update video download path"
 msgstr "Failed to update video download path"
 
 #: src/components/miniflux/MinifluxLayout.tsx:508
-#: src/components/preferences/PreferencesDialog.tsx:290
+#: src/components/preferences/PreferencesDialog.tsx:297
 msgid "Feed"
 msgstr "Feed"
 
@@ -2115,7 +2168,7 @@ msgid "Feed URL must be a valid URL"
 msgstr "Feed URL must be a valid URL"
 
 #: src/components/preferences/panes/SyncPane.tsx:139
-#: src/components/preferences/PreferencesDialog.tsx:146
+#: src/components/preferences/PreferencesDialog.tsx:153
 #: src/components/sync/SyncProgressPopover.tsx:57
 msgid "Feeds"
 msgstr "Feeds"
@@ -2240,7 +2293,7 @@ msgstr "From"
 msgid "Gemini"
 msgstr "Gemini"
 
-#: src/components/preferences/PreferencesDialog.tsx:98
+#: src/components/preferences/PreferencesDialog.tsx:100
 #: src/lib/shortcut-registry.ts:25
 msgid "General"
 msgstr "General"
@@ -2264,7 +2317,7 @@ msgstr "Georgia"
 msgid "German"
 msgstr "German"
 
-#: src/components/preferences/PreferencesDialog.tsx:123
+#: src/components/preferences/PreferencesDialog.tsx:125
 msgid "Gestures"
 msgstr "Gestures"
 
@@ -2531,7 +2584,7 @@ msgstr "Installing update..."
 msgid "Integration Services"
 msgstr "Integration Services"
 
-#: src/components/preferences/PreferencesDialog.tsx:161
+#: src/components/preferences/PreferencesDialog.tsx:168
 msgid "Integrations"
 msgstr "Integrations"
 
@@ -2545,7 +2598,7 @@ msgstr "Interrupted — app was closed"
 msgid "Japanese"
 msgstr "Japanese"
 
-#: src/components/preferences/PreferencesDialog.tsx:273
+#: src/components/preferences/PreferencesDialog.tsx:280
 msgid "Just now"
 msgstr "Just now"
 
@@ -2753,7 +2806,7 @@ msgstr "Mark all as read"
 #: src/components/miniflux/EntryReadingHeader.tsx:799
 #: src/components/miniflux/EntryReadingHeader.tsx:818
 #: src/components/preferences/panes/CategoriesPane.tsx:84
-#: src/components/preferences/PreferencesDialog.tsx:369
+#: src/components/preferences/PreferencesDialog.tsx:376
 msgid "Mark as read"
 msgstr "Mark as read"
 
@@ -2895,7 +2948,7 @@ msgstr "Move feed"
 msgid "Move to"
 msgstr "Move to"
 
-#: src/components/preferences/PreferencesDialog.tsx:391
+#: src/components/preferences/PreferencesDialog.tsx:398
 msgid "Move to category"
 msgstr "Move to category"
 
@@ -3109,7 +3162,7 @@ msgstr "No sources found"
 msgid "No unread entries available"
 msgstr "No unread entries available"
 
-#: src/components/preferences/PreferencesDialog.tsx:329
+#: src/components/preferences/PreferencesDialog.tsx:336
 msgid "None"
 msgstr "None"
 
@@ -3121,13 +3174,17 @@ msgstr "None (disabled)"
 msgid "Not configured"
 msgstr "Not configured"
 
-#: src/components/preferences/PreferencesDialog.tsx:175
+#: src/components/preferences/PreferencesDialog.tsx:182
 msgid "Not connected to Miniflux server"
 msgstr "Not connected to Miniflux server"
 
 #: src/pages/TrayPopover.tsx:135
 msgid "Nothing playing"
 msgstr "Nothing playing"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:167
+msgid "Object Key"
+msgstr "Object Key"
 
 #: src/components/preferences/panes/IntegrationsPane.tsx:236
 msgid "of"
@@ -3316,7 +3373,7 @@ msgstr "Page {0} of {1}"
 msgid "Paper"
 msgstr "Paper"
 
-#: src/components/preferences/PreferencesDialog.tsx:308
+#: src/components/preferences/PreferencesDialog.tsx:315
 msgid "Parsing errors"
 msgstr "Parsing errors"
 
@@ -3423,6 +3480,10 @@ msgstr "Please enter a valid source URL"
 msgid "Please enter a valid URL"
 msgstr "Please enter a valid URL"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:43
+msgid "Please enter both access key and secret key"
+msgstr "Please enter both access key and secret key"
+
 #: src/components/command-palette/CommandPalette.tsx:144
 #: src/components/miniflux/EntryList.tsx:855
 #: src/components/miniflux/EntryReading.tsx:1746
@@ -3434,9 +3495,9 @@ msgstr "Podcast"
 msgid "Podcast Playback"
 msgstr "Podcast Playback"
 
-#: src/components/preferences/PreferencesDialog.tsx:468
-#: src/components/preferences/PreferencesDialog.tsx:532
-#: src/components/preferences/PreferencesDialog.tsx:610
+#: src/components/preferences/PreferencesDialog.tsx:475
+#: src/components/preferences/PreferencesDialog.tsx:539
+#: src/components/preferences/PreferencesDialog.tsx:617
 msgid "Preferences"
 msgstr "Preferences"
 
@@ -3452,9 +3513,17 @@ msgstr "Preferences exported successfully"
 msgid "Preferences imported"
 msgstr "Preferences imported"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:95
+msgid "Preferences pushed to cloud"
+msgstr "Preferences pushed to cloud"
+
 #: src/components/preferences/panes/AdvancedPane.tsx:254
 msgid "Preferences reset to defaults"
 msgstr "Preferences reset to defaults"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:109
+msgid "Preferences restored from cloud"
+msgstr "Preferences restored from cloud"
 
 #: src/lib/menu.ts:38
 msgid "Preferences..."
@@ -3551,6 +3620,10 @@ msgstr "Pull from bottom"
 msgid "Pull from top"
 msgstr "Pull from top"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:248
+msgid "Pull Now"
+msgstr "Pull Now"
+
 #: src/components/miniflux/EntryList.tsx:486
 #~ msgid "Pull to refresh"
 #~ msgstr "Pull to refresh"
@@ -3562,6 +3635,18 @@ msgstr "Pulling category groups from server"
 #: src/components/sync/SyncProgressPopover.tsx:127
 msgid "Pulling feed subscriptions from server"
 msgstr "Pulling feed subscriptions from server"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:248
+msgid "Pulling..."
+msgstr "Pulling..."
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:240
+msgid "Push Now"
+msgstr "Push Now"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:240
+msgid "Pushing..."
+msgstr "Pushing..."
 
 #: src/pages/HomePage.tsx:34
 msgid "Query, Router, and Table integration"
@@ -3607,7 +3692,7 @@ msgstr "Re-summarize"
 msgid "React 19"
 msgstr "React 19"
 
-#: src/components/preferences/PreferencesDialog.tsx:108
+#: src/components/preferences/PreferencesDialog.tsx:110
 msgid "Reader"
 msgstr "Reader"
 
@@ -3725,6 +3810,10 @@ msgstr "Refreshing..."
 msgid "Regex only"
 msgstr "Regex only"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:158
+msgid "Region"
+msgstr "Region"
+
 #: src/components/miniflux/EntryList.tsx:485
 #~ msgid "Release to refresh"
 #~ msgstr "Release to refresh"
@@ -3761,6 +3850,10 @@ msgstr "Remove all episodes from the playback queue"
 #: src/lib/commands/account-commands.ts:24
 msgid "Remove current account and all related data"
 msgstr "Remove current account and all related data"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:186
+msgid "Remove saved credentials"
+msgstr "Remove saved credentials"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:593
 msgid "Removes synced entries, feeds, and categories for the current account. Other accounts and preferences are not affected."
@@ -3950,6 +4043,10 @@ msgstr "Save changes"
 msgid "Save Changes"
 msgstr "Save Changes"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:216
+msgid "Save Credentials"
+msgstr "Save Credentials"
+
 #: src/components/preferences/panes/TranslationPane.tsx:2069
 msgid "Save Rules"
 msgstr "Save Rules"
@@ -4085,6 +4182,10 @@ msgstr "Searching sources..."
 msgid "Searching..."
 msgstr "Searching..."
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:207
+msgid "Secret Access Key"
+msgstr "Secret Access Key"
+
 #: src/components/miniflux/EditFeedDialog.tsx:225
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:83
 msgid "Select a category"
@@ -4134,8 +4235,8 @@ msgid "Serif"
 msgstr "Serif"
 
 #: src/components/preferences/panes/ApiTokenPane.tsx:165
-#: src/components/preferences/PreferencesDialog.tsx:499
-#: src/components/preferences/PreferencesDialog.tsx:578
+#: src/components/preferences/PreferencesDialog.tsx:506
+#: src/components/preferences/PreferencesDialog.tsx:585
 msgid "Server"
 msgstr "Server"
 
@@ -4192,7 +4293,7 @@ msgstr "Share"
 msgid "Share link copied!"
 msgstr "Share link copied!"
 
-#: src/components/preferences/PreferencesDialog.tsx:118
+#: src/components/preferences/PreferencesDialog.tsx:120
 #: src/pages/HomePage.tsx:38
 msgid "Shortcuts"
 msgstr "Shortcuts"
@@ -4521,7 +4622,7 @@ msgid "Switch to light theme"
 msgstr "Switch to light theme"
 
 #: src/components/preferences/panes/SyncPane.tsx:158
-#: src/components/preferences/PreferencesDialog.tsx:166
+#: src/components/preferences/PreferencesDialog.tsx:173
 #: src/pages/TrayPopover.tsx:281
 msgid "Sync"
 msgstr "Sync"
@@ -4651,6 +4752,10 @@ msgstr "Target language"
 msgid "Tauri v2"
 msgstr "Tauri v2"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:232
+msgid "Test Connection"
+msgstr "Test Connection"
+
 #: src/lib/commands/notification-commands.ts:15
 msgid "Test Toast"
 msgstr "Test Toast"
@@ -4658,6 +4763,10 @@ msgstr "Test Toast"
 #: src/lib/commands/notification-commands.ts:9
 msgid "Test Toast Notification"
 msgstr "Test Toast Notification"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:232
+msgid "Testing..."
+msgstr "Testing..."
 
 #: src/components/ErrorBoundary.tsx:204
 msgid "The application encountered an unexpected error."
@@ -5197,7 +5306,7 @@ msgid "Username/Password"
 msgstr "Username/Password"
 
 #: src/components/preferences/panes/UsersPane.tsx:32
-#: src/components/preferences/PreferencesDialog.tsx:151
+#: src/components/preferences/PreferencesDialog.tsx:158
 msgid "Users"
 msgstr "Users"
 

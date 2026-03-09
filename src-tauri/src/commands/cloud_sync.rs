@@ -119,8 +119,8 @@ pub async fn cloud_sync_pull(app: AppHandle) -> Result<CloudSyncPayload, String>
     )
     .await?;
 
-    let payload: CloudSyncPayload = serde_json::from_str(&json)
-        .map_err(|e| format!("Failed to parse sync data: {e}"))?;
+    let payload: CloudSyncPayload =
+        serde_json::from_str(&json).map_err(|e| format!("Failed to parse sync data: {e}"))?;
 
     // Apply preferences to disk
     let prefs_path = get_preferences_path(&app)?;

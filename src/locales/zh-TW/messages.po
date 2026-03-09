@@ -109,15 +109,15 @@ msgstr "{0} 逾時（毫秒）"
 msgid "{0} total"
 msgstr "共 {0} 筆"
 
-#: src/components/preferences/PreferencesDialog.tsx:276
+#: src/components/preferences/PreferencesDialog.tsx:283
 msgid "{diffDays}d ago"
 msgstr "{diffDays} 天前"
 
-#: src/components/preferences/PreferencesDialog.tsx:275
+#: src/components/preferences/PreferencesDialog.tsx:282
 msgid "{diffHours}h ago"
 msgstr "{diffHours} 小時前"
 
-#: src/components/preferences/PreferencesDialog.tsx:274
+#: src/components/preferences/PreferencesDialog.tsx:281
 msgid "{diffMins}m ago"
 msgstr "{diffMins} 分鐘前"
 
@@ -153,7 +153,7 @@ msgstr "為你的 Miniflux 閱讀打造的沉靜專注空間。更快跟上更�
 msgid "A modern, production-ready template for building cross-platform desktop applications with React, TypeScript, and Rust."
 msgstr "一個現代化的生產就緒模板，用於使用 React、TypeScript 和 Rust 構建跨平台桌面應用程式。"
 
-#: src/components/preferences/PreferencesDialog.tsx:133
+#: src/components/preferences/PreferencesDialog.tsx:140
 msgid "About"
 msgstr "關於"
 
@@ -164,6 +164,10 @@ msgstr "關於 {APP_NAME}"
 #: src/lib/commands/help-commands.ts:40
 msgid "About Minikyu"
 msgstr "關於 Minikyu"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:198
+msgid "Access Key ID"
+msgstr "存取金鑰 ID"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:153
 msgid "Account data cleared"
@@ -177,7 +181,8 @@ msgstr "帳號已成功刪除"
 msgid "Accounts"
 msgstr "帳號"
 
-#: src/components/preferences/PreferencesDialog.tsx:348
+#: src/components/preferences/panes/CloudSyncPane.tsx:224
+#: src/components/preferences/PreferencesDialog.tsx:355
 msgid "Actions"
 msgstr "操作"
 
@@ -287,7 +292,7 @@ msgstr "管理員"
 msgid "Administrator"
 msgstr "管理員"
 
-#: src/components/preferences/PreferencesDialog.tsx:128
+#: src/components/preferences/PreferencesDialog.tsx:135
 msgid "Advanced"
 msgstr "進階"
 
@@ -298,7 +303,7 @@ msgid "Advanced settings"
 msgstr "進階設定"
 
 #: src/components/miniflux/EntryReading.tsx:1527
-#: src/components/preferences/PreferencesDialog.tsx:113
+#: src/components/preferences/PreferencesDialog.tsx:115
 msgid "AI"
 msgstr "AI"
 
@@ -382,7 +387,7 @@ msgstr "API 金鑰描述"
 msgid "API keys"
 msgstr "API 金鑰"
 
-#: src/components/preferences/PreferencesDialog.tsx:156
+#: src/components/preferences/PreferencesDialog.tsx:163
 msgid "API token"
 msgstr "API 權杖"
 
@@ -399,12 +404,12 @@ msgstr "需要提供 API 令牌"
 msgid "API token updated"
 msgstr "API 權杖已更新"
 
-#: src/components/preferences/PreferencesDialog.tsx:478
-#: src/components/preferences/PreferencesDialog.tsx:557
+#: src/components/preferences/PreferencesDialog.tsx:485
+#: src/components/preferences/PreferencesDialog.tsx:564
 msgid "App Settings"
 msgstr "應用程式設定"
 
-#: src/components/preferences/PreferencesDialog.tsx:103
+#: src/components/preferences/PreferencesDialog.tsx:105
 msgid "Appearance"
 msgstr "外觀"
 
@@ -535,6 +540,10 @@ msgstr "捲動超過 20% 時自動標記為已讀"
 msgid "Automatically sync feeds at the configured interval"
 msgstr "依設定的間隔自動同步訂閱來源"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:126
+msgid "Automatically sync preferences to S3-compatible storage"
+msgstr "自動將設定同步到 S3 相容儲存空間"
+
 #: src/components/preferences/panes/IntegrationsPane.tsx:282
 msgid "Available Services"
 msgstr "可用服務"
@@ -592,6 +601,10 @@ msgstr "瀏覽分類"
 msgid "Browser content"
 msgstr "瀏覽器內容"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:150
+msgid "Bucket"
+msgstr "儲存桶"
+
 #: src/components/preferences/panes/AboutPane.tsx:239
 msgid "Build date"
 msgstr "建置日期"
@@ -635,7 +648,7 @@ msgstr "無法刪除分類"
 
 #: src/components/layout/AppSidebar.tsx:722
 #: src/components/preferences/panes/SyncPane.tsx:133
-#: src/components/preferences/PreferencesDialog.tsx:141
+#: src/components/preferences/PreferencesDialog.tsx:148
 #: src/components/sync/SyncProgressPopover.tsx:51
 msgid "Categories"
 msgstr "分類"
@@ -648,7 +661,7 @@ msgstr "分類即資料夾，訂閱源即訂閱，項目即文章。"
 #: src/components/miniflux/EditFeedDialog.tsx:220
 #: src/components/miniflux/MinifluxLayout.tsx:503
 #: src/components/miniflux/settings/FeedFormDialog.tsx:419
-#: src/components/preferences/PreferencesDialog.tsx:324
+#: src/components/preferences/PreferencesDialog.tsx:331
 msgid "Category"
 msgstr "分類"
 
@@ -734,7 +747,7 @@ msgstr "檢查是否有更新的版本可用。"
 msgid "Check your connection and try again"
 msgstr "請檢查您的連線狀態，然後重試"
 
-#: src/components/preferences/PreferencesDialog.tsx:336
+#: src/components/preferences/PreferencesDialog.tsx:343
 msgid "Checked"
 msgstr "已檢查"
 
@@ -912,6 +925,10 @@ msgstr "關閉視窗"
 msgid "Close Window"
 msgstr "關閉視窗"
 
+#: src/components/preferences/PreferencesDialog.tsx:130
+msgid "Cloud Sync"
+msgstr "雲端同步"
+
 #: src/components/miniflux/ReaderSettings.tsx:177
 msgid "Code and precision"
 msgstr "程式碼與精準"
@@ -981,6 +998,14 @@ msgstr "連線至您的 Miniflux 伺服器以開始使用"
 #: src/components/miniflux/ConnectionDialog.tsx:365
 msgid "Connecting..."
 msgstr "連線中..."
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:137
+msgid "Connection"
+msgstr "連線"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:81
+msgid "Connection successful"
+msgstr "連線成功"
 
 #: src/components/preferences/panes/ApiTokenPane.tsx:161
 msgid "Connection token"
@@ -1164,6 +1189,22 @@ msgstr "建立時間"
 msgid "Creating..."
 msgstr "建立中⋯"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:183
+msgid "Credentials"
+msgstr "憑證"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:193
+msgid "Credentials are saved in your system keyring."
+msgstr "憑證已儲存在系統鑰匙圈中。"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:61
+msgid "Credentials removed"
+msgstr "憑證已移除"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:51
+msgid "Credentials saved"
+msgstr "憑證已儲存"
+
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:77
 msgid "Current category"
 msgstr "目前分類"
@@ -1192,7 +1233,7 @@ msgstr "自訂詞彙轉換"
 msgid "Customizable keyboard shortcuts"
 msgstr "可自訂的鍵盤快捷鍵"
 
-#: src/components/preferences/PreferencesDialog.tsx:470
+#: src/components/preferences/PreferencesDialog.tsx:477
 msgid "Customize your application preferences here."
 msgstr "在此自訂您的應用程式偏好設定。"
 
@@ -1388,7 +1429,7 @@ msgstr "停用訂閱源"
 #: src/components/preferences/panes/ReaderPane.tsx:499
 #: src/components/preferences/panes/SyncPane.tsx:28
 #: src/components/preferences/panes/TranslationPane.tsx:1416
-#: src/components/preferences/PreferencesDialog.tsx:313
+#: src/components/preferences/PreferencesDialog.tsx:320
 msgid "Disabled"
 msgstr "已停用"
 
@@ -1555,6 +1596,10 @@ msgstr "加粗字詞開頭以引導快速閱讀"
 msgid "Enable {0}"
 msgstr "啟用 {0}"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:124
+msgid "Enable Cloud Sync"
+msgstr "啟用雲端同步"
+
 #: src/components/preferences/panes/IntegrationsPane.tsx:233
 msgid "enabled"
 msgstr "已啟用"
@@ -1577,6 +1622,10 @@ msgstr "已啟用的服務"
 msgid "Enclosure not found for this entry"
 msgstr "找不到此文章的附件"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:140
+msgid "Endpoint URL"
+msgstr "端點 URL"
+
 #: src/components/preferences/panes/TranslationPane.tsx:497
 msgid "Engine"
 msgstr "引擎"
@@ -1598,6 +1647,10 @@ msgstr "僅英文"
 #: src/components/preferences/panes/ApiTokenPane.tsx:191
 msgid "Enter a description for the new API key."
 msgstr "輸入新 API 金鑰的描述。"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:67
+msgid "Enter credentials to test connection"
+msgstr "請輸入憑證以測試連線"
 
 #: src/components/titlebar/MacOSWindowControls.tsx:152
 msgid "Enter fullscreen"
@@ -2052,7 +2105,7 @@ msgid "Failed to update video download path"
 msgstr "更新影片下載路徑失敗"
 
 #: src/components/miniflux/MinifluxLayout.tsx:508
-#: src/components/preferences/PreferencesDialog.tsx:290
+#: src/components/preferences/PreferencesDialog.tsx:297
 msgid "Feed"
 msgstr "訂閱源"
 
@@ -2115,7 +2168,7 @@ msgid "Feed URL must be a valid URL"
 msgstr "訂閱源網址必須是有效的網址"
 
 #: src/components/preferences/panes/SyncPane.tsx:139
-#: src/components/preferences/PreferencesDialog.tsx:146
+#: src/components/preferences/PreferencesDialog.tsx:153
 #: src/components/sync/SyncProgressPopover.tsx:57
 msgid "Feeds"
 msgstr "訂閱源"
@@ -2240,7 +2293,7 @@ msgstr "來源"
 msgid "Gemini"
 msgstr "Gemini"
 
-#: src/components/preferences/PreferencesDialog.tsx:98
+#: src/components/preferences/PreferencesDialog.tsx:100
 #: src/lib/shortcut-registry.ts:25
 msgid "General"
 msgstr "一般"
@@ -2264,7 +2317,7 @@ msgstr "Georgia"
 msgid "German"
 msgstr "德文"
 
-#: src/components/preferences/PreferencesDialog.tsx:123
+#: src/components/preferences/PreferencesDialog.tsx:125
 msgid "Gestures"
 msgstr "手勢"
 
@@ -2531,7 +2584,7 @@ msgstr "正在安裝更新..."
 msgid "Integration Services"
 msgstr "整合服務"
 
-#: src/components/preferences/PreferencesDialog.tsx:161
+#: src/components/preferences/PreferencesDialog.tsx:168
 msgid "Integrations"
 msgstr "整合"
 
@@ -2545,7 +2598,7 @@ msgstr "已中斷 — 應用程式已關閉"
 msgid "Japanese"
 msgstr "日文"
 
-#: src/components/preferences/PreferencesDialog.tsx:273
+#: src/components/preferences/PreferencesDialog.tsx:280
 msgid "Just now"
 msgstr "剛剛"
 
@@ -2753,7 +2806,7 @@ msgstr "全部標記為已讀"
 #: src/components/miniflux/EntryReadingHeader.tsx:799
 #: src/components/miniflux/EntryReadingHeader.tsx:818
 #: src/components/preferences/panes/CategoriesPane.tsx:84
-#: src/components/preferences/PreferencesDialog.tsx:369
+#: src/components/preferences/PreferencesDialog.tsx:376
 msgid "Mark as read"
 msgstr "標記為已讀"
 
@@ -2895,7 +2948,7 @@ msgstr "移動訂閱源"
 msgid "Move to"
 msgstr "移動到"
 
-#: src/components/preferences/PreferencesDialog.tsx:391
+#: src/components/preferences/PreferencesDialog.tsx:398
 msgid "Move to category"
 msgstr "移動到分類"
 
@@ -3109,7 +3162,7 @@ msgstr "找不到來源"
 msgid "No unread entries available"
 msgstr "沒有可用的未讀文章"
 
-#: src/components/preferences/PreferencesDialog.tsx:329
+#: src/components/preferences/PreferencesDialog.tsx:336
 msgid "None"
 msgstr "無"
 
@@ -3121,13 +3174,17 @@ msgstr "無（已停用）"
 msgid "Not configured"
 msgstr "未設定"
 
-#: src/components/preferences/PreferencesDialog.tsx:175
+#: src/components/preferences/PreferencesDialog.tsx:182
 msgid "Not connected to Miniflux server"
 msgstr "尚未連線至 Miniflux 伺服器"
 
 #: src/pages/TrayPopover.tsx:135
 msgid "Nothing playing"
 msgstr "目前沒有播放內容"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:167
+msgid "Object Key"
+msgstr "物件金鑰"
 
 #: src/components/preferences/panes/IntegrationsPane.tsx:236
 msgid "of"
@@ -3316,7 +3373,7 @@ msgstr "第 {0} 頁，共 {1} 頁"
 msgid "Paper"
 msgstr "紙張"
 
-#: src/components/preferences/PreferencesDialog.tsx:308
+#: src/components/preferences/PreferencesDialog.tsx:315
 msgid "Parsing errors"
 msgstr "解析錯誤"
 
@@ -3423,6 +3480,10 @@ msgstr "請輸入有效的來源網址"
 msgid "Please enter a valid URL"
 msgstr "請輸入有效的網址"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:43
+msgid "Please enter both access key and secret key"
+msgstr "請輸入存取金鑰和秘密金鑰"
+
 #: src/components/command-palette/CommandPalette.tsx:144
 #: src/components/miniflux/EntryList.tsx:855
 #: src/components/miniflux/EntryReading.tsx:1746
@@ -3434,9 +3495,9 @@ msgstr "Podcast"
 msgid "Podcast Playback"
 msgstr "Podcast 播放"
 
-#: src/components/preferences/PreferencesDialog.tsx:468
-#: src/components/preferences/PreferencesDialog.tsx:532
-#: src/components/preferences/PreferencesDialog.tsx:610
+#: src/components/preferences/PreferencesDialog.tsx:475
+#: src/components/preferences/PreferencesDialog.tsx:539
+#: src/components/preferences/PreferencesDialog.tsx:617
 msgid "Preferences"
 msgstr "偏好設定"
 
@@ -3452,9 +3513,17 @@ msgstr "偏好設定匯出成功"
 msgid "Preferences imported"
 msgstr "偏好設定已匯入"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:95
+msgid "Preferences pushed to cloud"
+msgstr "設定已推送至雲端"
+
 #: src/components/preferences/panes/AdvancedPane.tsx:254
 msgid "Preferences reset to defaults"
 msgstr "偏好設定已重置為預設值"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:109
+msgid "Preferences restored from cloud"
+msgstr "已從雲端還原設定"
 
 #: src/lib/menu.ts:38
 msgid "Preferences..."
@@ -3551,6 +3620,10 @@ msgstr "從底部上拉"
 msgid "Pull from top"
 msgstr "從頂部下拉"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:248
+msgid "Pull Now"
+msgstr "立即拉取"
+
 #: src/components/miniflux/EntryList.tsx:486
 #~ msgid "Pull to refresh"
 #~ msgstr "下拉重新整理"
@@ -3562,6 +3635,18 @@ msgstr "正在從伺服器擷取分類群組"
 #: src/components/sync/SyncProgressPopover.tsx:127
 msgid "Pulling feed subscriptions from server"
 msgstr "正在從伺服器擷取訂閱源"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:248
+msgid "Pulling..."
+msgstr "拉取中..."
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:240
+msgid "Push Now"
+msgstr "立即推送"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:240
+msgid "Pushing..."
+msgstr "推送中..."
 
 #: src/pages/HomePage.tsx:34
 msgid "Query, Router, and Table integration"
@@ -3607,7 +3692,7 @@ msgstr "重新摘要"
 msgid "React 19"
 msgstr "React 19"
 
-#: src/components/preferences/PreferencesDialog.tsx:108
+#: src/components/preferences/PreferencesDialog.tsx:110
 msgid "Reader"
 msgstr "閱讀器"
 
@@ -3725,6 +3810,10 @@ msgstr "重新整理中⋯"
 msgid "Regex only"
 msgstr "僅正規表達式"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:158
+msgid "Region"
+msgstr "區域"
+
 #: src/components/miniflux/EntryList.tsx:485
 #~ msgid "Release to refresh"
 #~ msgstr "放開以重新整理"
@@ -3761,6 +3850,10 @@ msgstr "從播放佇列中移除所有節目"
 #: src/lib/commands/account-commands.ts:24
 msgid "Remove current account and all related data"
 msgstr "移除目前帳號及所有相關資料"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:186
+msgid "Remove saved credentials"
+msgstr "移除已儲存的憑證"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:593
 msgid "Removes synced entries, feeds, and categories for the current account. Other accounts and preferences are not affected."
@@ -3950,6 +4043,10 @@ msgstr "儲存變更"
 msgid "Save Changes"
 msgstr "儲存變更"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:216
+msgid "Save Credentials"
+msgstr "儲存憑證"
+
 #: src/components/preferences/panes/TranslationPane.tsx:2069
 msgid "Save Rules"
 msgstr "儲存規則"
@@ -4085,6 +4182,10 @@ msgstr "搜尋來源中⋯"
 msgid "Searching..."
 msgstr "搜尋中⋯"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:207
+msgid "Secret Access Key"
+msgstr "秘密存取金鑰"
+
 #: src/components/miniflux/EditFeedDialog.tsx:225
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:83
 msgid "Select a category"
@@ -4134,8 +4235,8 @@ msgid "Serif"
 msgstr "襯線體"
 
 #: src/components/preferences/panes/ApiTokenPane.tsx:165
-#: src/components/preferences/PreferencesDialog.tsx:499
-#: src/components/preferences/PreferencesDialog.tsx:578
+#: src/components/preferences/PreferencesDialog.tsx:506
+#: src/components/preferences/PreferencesDialog.tsx:585
 msgid "Server"
 msgstr "伺服器"
 
@@ -4192,7 +4293,7 @@ msgstr "分享"
 msgid "Share link copied!"
 msgstr "分享連結已複製！"
 
-#: src/components/preferences/PreferencesDialog.tsx:118
+#: src/components/preferences/PreferencesDialog.tsx:120
 #: src/pages/HomePage.tsx:38
 msgid "Shortcuts"
 msgstr "快捷鍵"
@@ -4521,7 +4622,7 @@ msgid "Switch to light theme"
 msgstr "切換到淺色主題"
 
 #: src/components/preferences/panes/SyncPane.tsx:158
-#: src/components/preferences/PreferencesDialog.tsx:166
+#: src/components/preferences/PreferencesDialog.tsx:173
 #: src/pages/TrayPopover.tsx:281
 msgid "Sync"
 msgstr "同步"
@@ -4651,6 +4752,10 @@ msgstr "目標語言"
 msgid "Tauri v2"
 msgstr "Tauri v2"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:232
+msgid "Test Connection"
+msgstr "測試連線"
+
 #: src/lib/commands/notification-commands.ts:15
 msgid "Test Toast"
 msgstr "測試通知"
@@ -4658,6 +4763,10 @@ msgstr "測試通知"
 #: src/lib/commands/notification-commands.ts:9
 msgid "Test Toast Notification"
 msgstr "測試通知"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:232
+msgid "Testing..."
+msgstr "測試中..."
 
 #: src/components/ErrorBoundary.tsx:204
 msgid "The application encountered an unexpected error."
@@ -5197,7 +5306,7 @@ msgid "Username/Password"
 msgstr "使用者名稱/密碼"
 
 #: src/components/preferences/panes/UsersPane.tsx:32
-#: src/components/preferences/PreferencesDialog.tsx:151
+#: src/components/preferences/PreferencesDialog.tsx:158
 msgid "Users"
 msgstr "使用者"
 

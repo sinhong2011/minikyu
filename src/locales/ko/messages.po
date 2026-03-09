@@ -109,15 +109,15 @@ msgstr "{0} 타임아웃 (ms)"
 msgid "{0} total"
 msgstr "총 {0}개"
 
-#: src/components/preferences/PreferencesDialog.tsx:276
+#: src/components/preferences/PreferencesDialog.tsx:283
 msgid "{diffDays}d ago"
 msgstr "{diffDays}일 전"
 
-#: src/components/preferences/PreferencesDialog.tsx:275
+#: src/components/preferences/PreferencesDialog.tsx:282
 msgid "{diffHours}h ago"
 msgstr "{diffHours}시간 전"
 
-#: src/components/preferences/PreferencesDialog.tsx:274
+#: src/components/preferences/PreferencesDialog.tsx:281
 msgid "{diffMins}m ago"
 msgstr "{diffMins}분 전"
 
@@ -153,7 +153,7 @@ msgstr "Miniflux 읽기에 맞춘 차분하고 집중되는 공간입니다. 더
 msgid "A modern, production-ready template for building cross-platform desktop applications with React, TypeScript, and Rust."
 msgstr "React, TypeScript, Rust를 사용하여 크로스 플랫폼 데스크톱 애플리케이션을 구축하기 위한 현대적이고 프로덕션 준비가 된 템플릿입니다."
 
-#: src/components/preferences/PreferencesDialog.tsx:133
+#: src/components/preferences/PreferencesDialog.tsx:140
 msgid "About"
 msgstr "정보"
 
@@ -164,6 +164,10 @@ msgstr "{APP_NAME} 정보"
 #: src/lib/commands/help-commands.ts:40
 msgid "About Minikyu"
 msgstr "Minikyu 정보"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:198
+msgid "Access Key ID"
+msgstr "액세스 키 ID"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:153
 msgid "Account data cleared"
@@ -177,7 +181,8 @@ msgstr "계정이 삭제되었습니다"
 msgid "Accounts"
 msgstr "계정"
 
-#: src/components/preferences/PreferencesDialog.tsx:348
+#: src/components/preferences/panes/CloudSyncPane.tsx:224
+#: src/components/preferences/PreferencesDialog.tsx:355
 msgid "Actions"
 msgstr "작업"
 
@@ -287,7 +292,7 @@ msgstr "관리자"
 msgid "Administrator"
 msgstr "관리자"
 
-#: src/components/preferences/PreferencesDialog.tsx:128
+#: src/components/preferences/PreferencesDialog.tsx:135
 msgid "Advanced"
 msgstr "고급"
 
@@ -298,7 +303,7 @@ msgid "Advanced settings"
 msgstr "고급 설정"
 
 #: src/components/miniflux/EntryReading.tsx:1527
-#: src/components/preferences/PreferencesDialog.tsx:113
+#: src/components/preferences/PreferencesDialog.tsx:115
 msgid "AI"
 msgstr "AI"
 
@@ -382,7 +387,7 @@ msgstr "API 키 설명"
 msgid "API keys"
 msgstr "API 키"
 
-#: src/components/preferences/PreferencesDialog.tsx:156
+#: src/components/preferences/PreferencesDialog.tsx:163
 msgid "API token"
 msgstr "API 토큰"
 
@@ -399,12 +404,12 @@ msgstr "API 토큰이 필요합니다"
 msgid "API token updated"
 msgstr "API 토큰이 업데이트되었습니다"
 
-#: src/components/preferences/PreferencesDialog.tsx:478
-#: src/components/preferences/PreferencesDialog.tsx:557
+#: src/components/preferences/PreferencesDialog.tsx:485
+#: src/components/preferences/PreferencesDialog.tsx:564
 msgid "App Settings"
 msgstr "앱 설정"
 
-#: src/components/preferences/PreferencesDialog.tsx:103
+#: src/components/preferences/PreferencesDialog.tsx:105
 msgid "Appearance"
 msgstr "외관"
 
@@ -535,6 +540,10 @@ msgstr "20% 이상 스크롤하면 자동으로 읽음 표시"
 msgid "Automatically sync feeds at the configured interval"
 msgstr "설정된 간격으로 피드를 자동으로 동기화합니다"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:126
+msgid "Automatically sync preferences to S3-compatible storage"
+msgstr "S3 호환 스토리지에 설정을 자동 동기화"
+
 #: src/components/preferences/panes/IntegrationsPane.tsx:282
 msgid "Available Services"
 msgstr "사용 가능한 서비스"
@@ -592,6 +601,10 @@ msgstr "카테고리 찾아보기"
 msgid "Browser content"
 msgstr "브라우저 콘텐츠"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:150
+msgid "Bucket"
+msgstr "버킷"
+
 #: src/components/preferences/panes/AboutPane.tsx:239
 msgid "Build date"
 msgstr "빌드 날짜"
@@ -635,7 +648,7 @@ msgstr "카테고리를 삭제할 수 없습니다"
 
 #: src/components/layout/AppSidebar.tsx:722
 #: src/components/preferences/panes/SyncPane.tsx:133
-#: src/components/preferences/PreferencesDialog.tsx:141
+#: src/components/preferences/PreferencesDialog.tsx:148
 #: src/components/sync/SyncProgressPopover.tsx:51
 msgid "Categories"
 msgstr "카테고리"
@@ -648,7 +661,7 @@ msgstr "카테고리는 폴더, 피드는 구독, 항목은 기사입니다."
 #: src/components/miniflux/EditFeedDialog.tsx:220
 #: src/components/miniflux/MinifluxLayout.tsx:503
 #: src/components/miniflux/settings/FeedFormDialog.tsx:419
-#: src/components/preferences/PreferencesDialog.tsx:324
+#: src/components/preferences/PreferencesDialog.tsx:331
 msgid "Category"
 msgstr "카테고리"
 
@@ -734,7 +747,7 @@ msgstr "최신 릴리스가 있는지 확인합니다."
 msgid "Check your connection and try again"
 msgstr "연결 상태를 확인하고 다시 시도하세요"
 
-#: src/components/preferences/PreferencesDialog.tsx:336
+#: src/components/preferences/PreferencesDialog.tsx:343
 msgid "Checked"
 msgstr "확인됨"
 
@@ -912,6 +925,10 @@ msgstr "창 닫기"
 msgid "Close Window"
 msgstr "창 닫기"
 
+#: src/components/preferences/PreferencesDialog.tsx:130
+msgid "Cloud Sync"
+msgstr "클라우드 동기화"
+
 #: src/components/miniflux/ReaderSettings.tsx:177
 msgid "Code and precision"
 msgstr "코드와 정밀함"
@@ -981,6 +998,14 @@ msgstr "시작하려면 Miniflux 서버에 연결하세요"
 #: src/components/miniflux/ConnectionDialog.tsx:365
 msgid "Connecting..."
 msgstr "연결 중..."
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:137
+msgid "Connection"
+msgstr "연결"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:81
+msgid "Connection successful"
+msgstr "연결 성공"
 
 #: src/components/preferences/panes/ApiTokenPane.tsx:161
 msgid "Connection token"
@@ -1164,6 +1189,22 @@ msgstr "생성됨"
 msgid "Creating..."
 msgstr "생성 중..."
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:183
+msgid "Credentials"
+msgstr "자격 증명"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:193
+msgid "Credentials are saved in your system keyring."
+msgstr "자격 증명이 시스템 키링에 저장되어 있습니다."
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:61
+msgid "Credentials removed"
+msgstr "자격 증명이 제거되었습니다"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:51
+msgid "Credentials saved"
+msgstr "자격 증명이 저장되었습니다"
+
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:77
 msgid "Current category"
 msgstr "현재 카테고리"
@@ -1192,7 +1233,7 @@ msgstr "사용자 정의 용어 변환"
 msgid "Customizable keyboard shortcuts"
 msgstr "사용자 정의 가능한 키보드 단축키"
 
-#: src/components/preferences/PreferencesDialog.tsx:470
+#: src/components/preferences/PreferencesDialog.tsx:477
 msgid "Customize your application preferences here."
 msgstr "여기에서 애플리케이션 설정을 사용자 지정하세요."
 
@@ -1388,7 +1429,7 @@ msgstr "피드 비활성화"
 #: src/components/preferences/panes/ReaderPane.tsx:499
 #: src/components/preferences/panes/SyncPane.tsx:28
 #: src/components/preferences/panes/TranslationPane.tsx:1416
-#: src/components/preferences/PreferencesDialog.tsx:313
+#: src/components/preferences/PreferencesDialog.tsx:320
 msgid "Disabled"
 msgstr "비활성화됨"
 
@@ -1555,6 +1596,10 @@ msgstr "단어 앞부분을 강조하여 빠른 읽기를 돕습니다"
 msgid "Enable {0}"
 msgstr "{0} 활성화"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:124
+msgid "Enable Cloud Sync"
+msgstr "클라우드 동기화 활성화"
+
 #: src/components/preferences/panes/IntegrationsPane.tsx:233
 msgid "enabled"
 msgstr "활성화됨"
@@ -1577,6 +1622,10 @@ msgstr "활성화된 서비스"
 msgid "Enclosure not found for this entry"
 msgstr "이 항목의 첨부 파일을 찾을 수 없습니다"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:140
+msgid "Endpoint URL"
+msgstr "엔드포인트 URL"
+
 #: src/components/preferences/panes/TranslationPane.tsx:497
 msgid "Engine"
 msgstr "엔진"
@@ -1598,6 +1647,10 @@ msgstr "영어만"
 #: src/components/preferences/panes/ApiTokenPane.tsx:191
 msgid "Enter a description for the new API key."
 msgstr "새 API 키의 설명을 입력하세요."
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:67
+msgid "Enter credentials to test connection"
+msgstr "연결 테스트를 위해 자격 증명을 입력하세요"
 
 #: src/components/titlebar/MacOSWindowControls.tsx:152
 msgid "Enter fullscreen"
@@ -2052,7 +2105,7 @@ msgid "Failed to update video download path"
 msgstr "동영상 다운로드 경로 업데이트에 실패했습니다"
 
 #: src/components/miniflux/MinifluxLayout.tsx:508
-#: src/components/preferences/PreferencesDialog.tsx:290
+#: src/components/preferences/PreferencesDialog.tsx:297
 msgid "Feed"
 msgstr "피드"
 
@@ -2115,7 +2168,7 @@ msgid "Feed URL must be a valid URL"
 msgstr "피드 URL은 유효한 URL이어야 합니다"
 
 #: src/components/preferences/panes/SyncPane.tsx:139
-#: src/components/preferences/PreferencesDialog.tsx:146
+#: src/components/preferences/PreferencesDialog.tsx:153
 #: src/components/sync/SyncProgressPopover.tsx:57
 msgid "Feeds"
 msgstr "피드"
@@ -2240,7 +2293,7 @@ msgstr "변환 전"
 msgid "Gemini"
 msgstr "Gemini"
 
-#: src/components/preferences/PreferencesDialog.tsx:98
+#: src/components/preferences/PreferencesDialog.tsx:100
 #: src/lib/shortcut-registry.ts:25
 msgid "General"
 msgstr "일반"
@@ -2264,7 +2317,7 @@ msgstr "Georgia"
 msgid "German"
 msgstr "독일어"
 
-#: src/components/preferences/PreferencesDialog.tsx:123
+#: src/components/preferences/PreferencesDialog.tsx:125
 msgid "Gestures"
 msgstr "제스처"
 
@@ -2531,7 +2584,7 @@ msgstr "업데이트 설치 중..."
 msgid "Integration Services"
 msgstr "연동 서비스"
 
-#: src/components/preferences/PreferencesDialog.tsx:161
+#: src/components/preferences/PreferencesDialog.tsx:168
 msgid "Integrations"
 msgstr "연동"
 
@@ -2545,7 +2598,7 @@ msgstr "중단됨 — 앱이 닫혔습니다"
 msgid "Japanese"
 msgstr "일본어"
 
-#: src/components/preferences/PreferencesDialog.tsx:273
+#: src/components/preferences/PreferencesDialog.tsx:280
 msgid "Just now"
 msgstr "방금"
 
@@ -2753,7 +2806,7 @@ msgstr "모두 읽음으로 표시"
 #: src/components/miniflux/EntryReadingHeader.tsx:799
 #: src/components/miniflux/EntryReadingHeader.tsx:818
 #: src/components/preferences/panes/CategoriesPane.tsx:84
-#: src/components/preferences/PreferencesDialog.tsx:369
+#: src/components/preferences/PreferencesDialog.tsx:376
 msgid "Mark as read"
 msgstr "읽음으로 표시"
 
@@ -2895,7 +2948,7 @@ msgstr "피드 이동"
 msgid "Move to"
 msgstr "이동"
 
-#: src/components/preferences/PreferencesDialog.tsx:391
+#: src/components/preferences/PreferencesDialog.tsx:398
 msgid "Move to category"
 msgstr "카테고리로 이동"
 
@@ -3109,7 +3162,7 @@ msgstr "소스를 찾을 수 없습니다"
 msgid "No unread entries available"
 msgstr "읽지 않은 항목이 없습니다"
 
-#: src/components/preferences/PreferencesDialog.tsx:329
+#: src/components/preferences/PreferencesDialog.tsx:336
 msgid "None"
 msgstr "없음"
 
@@ -3121,13 +3174,17 @@ msgstr "없음 (비활성화)"
 msgid "Not configured"
 msgstr "구성되지 않음"
 
-#: src/components/preferences/PreferencesDialog.tsx:175
+#: src/components/preferences/PreferencesDialog.tsx:182
 msgid "Not connected to Miniflux server"
 msgstr "Miniflux 서버에 연결되지 않음"
 
 #: src/pages/TrayPopover.tsx:135
 msgid "Nothing playing"
 msgstr "재생 중인 항목 없음"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:167
+msgid "Object Key"
+msgstr "오브젝트 키"
 
 #: src/components/preferences/panes/IntegrationsPane.tsx:236
 msgid "of"
@@ -3316,7 +3373,7 @@ msgstr "{1}페이지 중 {0}페이지"
 msgid "Paper"
 msgstr "페이퍼"
 
-#: src/components/preferences/PreferencesDialog.tsx:308
+#: src/components/preferences/PreferencesDialog.tsx:315
 msgid "Parsing errors"
 msgstr "파싱 오류"
 
@@ -3423,6 +3480,10 @@ msgstr "유효한 소스 URL을 입력해 주세요"
 msgid "Please enter a valid URL"
 msgstr "유효한 URL을 입력해 주세요"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:43
+msgid "Please enter both access key and secret key"
+msgstr "액세스 키와 시크릿 키를 모두 입력해 주세요"
+
 #: src/components/command-palette/CommandPalette.tsx:144
 #: src/components/miniflux/EntryList.tsx:855
 #: src/components/miniflux/EntryReading.tsx:1746
@@ -3434,9 +3495,9 @@ msgstr "팟캐스트"
 msgid "Podcast Playback"
 msgstr "팟캐스트 재생"
 
-#: src/components/preferences/PreferencesDialog.tsx:468
-#: src/components/preferences/PreferencesDialog.tsx:532
-#: src/components/preferences/PreferencesDialog.tsx:610
+#: src/components/preferences/PreferencesDialog.tsx:475
+#: src/components/preferences/PreferencesDialog.tsx:539
+#: src/components/preferences/PreferencesDialog.tsx:617
 msgid "Preferences"
 msgstr "설정"
 
@@ -3452,9 +3513,17 @@ msgstr "설정이 내보내졌습니다"
 msgid "Preferences imported"
 msgstr "설정을 가져왔습니다"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:95
+msgid "Preferences pushed to cloud"
+msgstr "설정이 클라우드에 푸시되었습니다"
+
 #: src/components/preferences/panes/AdvancedPane.tsx:254
 msgid "Preferences reset to defaults"
 msgstr "설정이 기본값으로 재설정되었습니다"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:109
+msgid "Preferences restored from cloud"
+msgstr "클라우드에서 설정이 복원되었습니다"
 
 #: src/lib/menu.ts:38
 msgid "Preferences..."
@@ -3551,6 +3620,10 @@ msgstr "아래에서 당기기"
 msgid "Pull from top"
 msgstr "위에서 당기기"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:248
+msgid "Pull Now"
+msgstr "지금 풀"
+
 #: src/components/miniflux/EntryList.tsx:486
 #~ msgid "Pull to refresh"
 #~ msgstr "당겨서 새로고침"
@@ -3562,6 +3635,18 @@ msgstr "서버에서 카테고리 그룹을 가져오는 중"
 #: src/components/sync/SyncProgressPopover.tsx:127
 msgid "Pulling feed subscriptions from server"
 msgstr "서버에서 피드 구독을 가져오는 중"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:248
+msgid "Pulling..."
+msgstr "풀 중..."
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:240
+msgid "Push Now"
+msgstr "지금 푸시"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:240
+msgid "Pushing..."
+msgstr "푸시 중..."
 
 #: src/pages/HomePage.tsx:34
 msgid "Query, Router, and Table integration"
@@ -3607,7 +3692,7 @@ msgstr "다시 요약"
 msgid "React 19"
 msgstr "React 19"
 
-#: src/components/preferences/PreferencesDialog.tsx:108
+#: src/components/preferences/PreferencesDialog.tsx:110
 msgid "Reader"
 msgstr "리더"
 
@@ -3725,6 +3810,10 @@ msgstr "새로고침 중..."
 msgid "Regex only"
 msgstr "정규식만"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:158
+msgid "Region"
+msgstr "리전"
+
 #: src/components/miniflux/EntryList.tsx:485
 #~ msgid "Release to refresh"
 #~ msgstr "놓아서 새로고침"
@@ -3761,6 +3850,10 @@ msgstr "재생 대기열에서 모든 에피소드를 제거합니다"
 #: src/lib/commands/account-commands.ts:24
 msgid "Remove current account and all related data"
 msgstr "현재 계정과 관련된 모든 데이터를 제거합니다"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:186
+msgid "Remove saved credentials"
+msgstr "저장된 자격 증명 제거"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:593
 msgid "Removes synced entries, feeds, and categories for the current account. Other accounts and preferences are not affected."
@@ -3950,6 +4043,10 @@ msgstr "변경 사항 저장"
 msgid "Save Changes"
 msgstr "변경 사항 저장"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:216
+msgid "Save Credentials"
+msgstr "자격 증명 저장"
+
 #: src/components/preferences/panes/TranslationPane.tsx:2069
 msgid "Save Rules"
 msgstr "규칙 저장"
@@ -4085,6 +4182,10 @@ msgstr "소스 검색 중..."
 msgid "Searching..."
 msgstr "검색 중..."
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:207
+msgid "Secret Access Key"
+msgstr "시크릿 액세스 키"
+
 #: src/components/miniflux/EditFeedDialog.tsx:225
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:83
 msgid "Select a category"
@@ -4134,8 +4235,8 @@ msgid "Serif"
 msgstr "세리프"
 
 #: src/components/preferences/panes/ApiTokenPane.tsx:165
-#: src/components/preferences/PreferencesDialog.tsx:499
-#: src/components/preferences/PreferencesDialog.tsx:578
+#: src/components/preferences/PreferencesDialog.tsx:506
+#: src/components/preferences/PreferencesDialog.tsx:585
 msgid "Server"
 msgstr "서버"
 
@@ -4192,7 +4293,7 @@ msgstr "공유"
 msgid "Share link copied!"
 msgstr "공유 링크가 복사되었습니다!"
 
-#: src/components/preferences/PreferencesDialog.tsx:118
+#: src/components/preferences/PreferencesDialog.tsx:120
 #: src/pages/HomePage.tsx:38
 msgid "Shortcuts"
 msgstr "단축키"
@@ -4521,7 +4622,7 @@ msgid "Switch to light theme"
 msgstr "라이트 테마로 전환"
 
 #: src/components/preferences/panes/SyncPane.tsx:158
-#: src/components/preferences/PreferencesDialog.tsx:166
+#: src/components/preferences/PreferencesDialog.tsx:173
 #: src/pages/TrayPopover.tsx:281
 msgid "Sync"
 msgstr "동기화"
@@ -4651,6 +4752,10 @@ msgstr "대상 언어"
 msgid "Tauri v2"
 msgstr "Tauri v2"
 
+#: src/components/preferences/panes/CloudSyncPane.tsx:232
+msgid "Test Connection"
+msgstr "연결 테스트"
+
 #: src/lib/commands/notification-commands.ts:15
 msgid "Test Toast"
 msgstr "테스트 알림"
@@ -4658,6 +4763,10 @@ msgstr "테스트 알림"
 #: src/lib/commands/notification-commands.ts:9
 msgid "Test Toast Notification"
 msgstr "테스트 알림"
+
+#: src/components/preferences/panes/CloudSyncPane.tsx:232
+msgid "Testing..."
+msgstr "테스트 중..."
 
 #: src/components/ErrorBoundary.tsx:204
 msgid "The application encountered an unexpected error."
@@ -5197,7 +5306,7 @@ msgid "Username/Password"
 msgstr "사용자 이름/비밀번호"
 
 #: src/components/preferences/panes/UsersPane.tsx:32
-#: src/components/preferences/PreferencesDialog.tsx:151
+#: src/components/preferences/PreferencesDialog.tsx:158
 msgid "Users"
 msgstr "사용자"
 
