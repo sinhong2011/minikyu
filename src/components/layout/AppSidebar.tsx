@@ -722,7 +722,7 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
 
         {!isCollapsed && (
           <SidebarGroup className="min-h-0 flex-1 overflow-auto no-scrollbar">
-            <SidebarGroupLabel className="sticky top-0 z-10 gap-2 text-sm font-normal text-sidebar-foreground/80">
+            <SidebarGroupLabel className="sticky top-0 z-10 gap-2 bg-sidebar text-sm font-normal text-sidebar-foreground/80">
               <HugeiconsIcon icon={Folder01Icon} />
               <span className="leading-none">{_(msg`Categories`)}</span>
             </SidebarGroupLabel>
