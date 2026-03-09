@@ -77,7 +77,7 @@ msgid "{0} feeds synced"
 msgstr "{0} feeds synced"
 
 #. placeholder {0}: entry.reading_time
-#: src/components/miniflux/EntryList.tsx:873
+#: src/components/miniflux/EntryList.tsx:874
 msgid "{0} min read"
 msgstr "{0} min read"
 
@@ -248,7 +248,7 @@ msgstr "Add Rule"
 msgid "Add the current article's podcast to the playlist"
 msgstr "Add the current article's podcast to the playlist"
 
-#: src/components/miniflux/EntryList.tsx:850
+#: src/components/miniflux/EntryList.tsx:851
 #: src/components/miniflux/EntryReadingHeader.tsx:476
 #: src/components/miniflux/EntryReadingHeader.tsx:483
 #: src/lib/shortcut-registry.ts:109
@@ -265,7 +265,7 @@ msgstr "Add to Playlist"
 msgid "Add user"
 msgstr "Add user"
 
-#: src/components/miniflux/EntryList.tsx:856
+#: src/components/miniflux/EntryList.tsx:857
 #: src/components/miniflux/EntryReadingHeader.tsx:313
 msgid "Added to playlist"
 msgstr "Added to playlist"
@@ -1409,7 +1409,7 @@ msgid "Done"
 msgstr "Done"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:606
-#: src/components/miniflux/EntryList.tsx:824
+#: src/components/miniflux/EntryList.tsx:825
 #: src/components/podcast/PlayerWindowControls.tsx:313
 #: src/components/podcast/PodcastPlayer.tsx:261
 #: src/components/podcast/PodcastPlayer.tsx:267
@@ -3306,7 +3306,7 @@ msgid "Phrase"
 msgstr "Phrase"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:800
-#: src/components/miniflux/EntryList.tsx:837
+#: src/components/miniflux/EntryList.tsx:838
 #: src/components/miniflux/EntryReadingHeader.tsx:291
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PlayerWindowQueue.tsx:102
@@ -3363,7 +3363,7 @@ msgid "Please enter a valid URL"
 msgstr "Please enter a valid URL"
 
 #: src/components/command-palette/CommandPalette.tsx:144
-#: src/components/miniflux/EntryList.tsx:868
+#: src/components/miniflux/EntryList.tsx:869
 #: src/components/miniflux/EntryReading.tsx:1746
 #: src/lib/menu.ts:283
 msgid "Podcast"
