@@ -45,8 +45,8 @@ import {
 import { useClipboard } from '@/hooks/use-clipboard';
 import { convertChineseHtml, normalizeCustomConversionRules } from '@/lib/chinese-conversion';
 import {
-  codeLanguageOptions,
   detectCodeLanguageFromContent,
+  detectCodeLanguageWithLLM,
   formatCodeForLanguage,
   highlightCodeWithShiki,
   normalizeCodeLanguage,
@@ -55,8 +55,32 @@ import {
 } from '@/lib/shiki-highlight';
 import type { ChineseConversionMode, ChineseConversionRule } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
+import { usePreferences } from '@/services/preferences';
 
 const ImageViewer = lazy(() => import('./ImageViewer').then((m) => ({ default: m.ImageViewer })));
+
+const PICKER_OPTIONS: { value: SupportedCodeLanguage; label: string }[] = [
+  { value: 'text', label: 'text' },
+  { value: 'javascript', label: 'JavaScript / TypeScript' },
+  { value: 'json', label: 'json' },
+  { value: 'go', label: 'go' },
+  { value: 'c', label: 'c' },
+  { value: 'cpp', label: 'cpp' },
+  { value: 'html', label: 'html' },
+  { value: 'css', label: 'css' },
+  { value: 'bash', label: 'bash' },
+  { value: 'python', label: 'python' },
+  { value: 'rust', label: 'rust' },
+  { value: 'java', label: 'java' },
+  { value: 'kotlin', label: 'kotlin' },
+  { value: 'swift', label: 'swift' },
+  { value: 'sql', label: 'sql' },
+  { value: 'yaml', label: 'yaml' },
+  { value: 'toml', label: 'toml' },
+  { value: 'markdown', label: 'markdown' },
+];
+
+const JS_TS_FAMILY: SupportedCodeLanguage[] = ['javascript', 'typescript', 'jsx', 'tsx'];
 
 import { ParticleColumn } from './ParticleColumn';
 
@@ -158,9 +182,30 @@ function CodeBlock({
   const [highlightedHtml, setHighlightedHtml] = useState<string | null>(null);
   const [isHighlighting, setIsHighlighting] = useState(false);
 
+  const { data: preferences } = usePreferences();
+  const detectionMode = preferences?.reader_code_detection_mode ?? 'auto';
+
   useEffect(() => {
     setLanguage(defaultLanguage);
   }, [defaultLanguage]);
+
+  useEffect(() => {
+    if (detectionMode !== 'auto') return;
+    // If class-based detection found a language, trust it
+    if (defaultLanguage !== 'text') return;
+
+    let cancelled = false;
+
+    detectCodeLanguageWithLLM(text).then((detected) => {
+      if (!cancelled) {
+        setLanguage(detected);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [detectionMode, defaultLanguage, text]);
 
   const displayText = useMemo(() => formatCodeForLanguage(text, language), [text, language]);
   const plainLines = useMemo(() => {
@@ -213,14 +258,22 @@ function CodeBlock({
         </label>
         <select
           id={codeLanguageId}
-          value={language}
-          onChange={(event) => setLanguage(normalizeCodeLanguage(event.target.value))}
+          value={JS_TS_FAMILY.includes(language) ? 'javascript' : language}
+          onChange={(event) => {
+            const selected = normalizeCodeLanguage(event.target.value);
+            if (selected === 'javascript') {
+              const refined = detectCodeLanguageFromContent(text);
+              setLanguage(JS_TS_FAMILY.includes(refined) ? refined : 'javascript');
+            } else {
+              setLanguage(selected);
+            }
+          }}
           aria-label={languageLabel}
           className="h-8 rounded-md border border-border/60 bg-background/90 px-2 text-xs text-foreground backdrop-blur-sm"
         >
-          {codeLanguageOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
+          {PICKER_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
             </option>
           ))}
         </select>

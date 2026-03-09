@@ -87,6 +87,10 @@ vi.mock('@/lib/tauri-bindings', () => ({
         // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_code_theme: 'auto',
         // biome-ignore lint/style/useNamingConvention: preferences field name
+        reader_code_detection_mode: 'auto',
+        // biome-ignore lint/style/useNamingConvention: preferences field name
+        reader_code_detection_prompt: null,
+        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_chinese_conversion: 's2tw',
         // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_bionic_reading: false,

@@ -672,6 +672,93 @@ async fn call_ollama(
         .ok_or_else(|| "Ollama returned empty response".to_string())
 }
 
+// ── Code language detection ──
+
+const CODE_DETECTION_PROMPT: &str = "\
+You are a programming language identifier. \
+Given a code snippet, respond with ONLY the programming language name in lowercase. \
+For example: rust, python, javascript, typescript, c, cpp, go, java, etc. \
+If you cannot identify the language, respond with: text \
+Do not include any other text, explanation, or formatting.";
+
+#[tauri::command]
+#[specta::specta]
+pub async fn detect_code_language(app: AppHandle, code: String) -> Result<String, String> {
+    let code = code.trim();
+    if code.is_empty() {
+        return Ok("text".to_string());
+    }
+
+    // Truncate to save tokens
+    let truncated = if code.len() > 500 { &code[..500] } else { code };
+
+    let preferences = load_preferences_sync(&app).unwrap_or_default();
+    let provider_settings = &preferences.reader_translation_provider_settings;
+
+    let prompt = preferences
+        .reader_code_detection_prompt
+        .as_deref()
+        .map(str::trim)
+        .filter(|p| !p.is_empty())
+        .unwrap_or(CODE_DETECTION_PROMPT);
+
+    // Use same provider resolution as summarize: dedicated summary provider → llm fallbacks → all LLMs
+    let dedicated_provider = preferences
+        .ai_summary_provider
+        .as_deref()
+        .map(str::trim)
+        .filter(|p| !p.is_empty() && is_llm_provider(p));
+
+    if let Some(provider) = dedicated_provider {
+        let api_key = get_provider_key(provider).ok();
+        if api_key.is_some() || provider == OLLAMA_PROVIDER {
+            let settings = provider_settings.get(provider);
+            if let Ok(result) =
+                call_llm(provider, truncated, prompt, api_key.as_deref(), settings)
+                    .await
+            {
+                return Ok(result.trim().to_lowercase());
+            }
+        }
+    }
+
+    // Fallback through LLM chain
+    let mut providers: Vec<String> = preferences
+        .reader_translation_llm_fallbacks
+        .iter()
+        .filter(|p| is_llm_provider(p))
+        .cloned()
+        .collect();
+    if providers.is_empty() {
+        for &p in LLM_PROVIDERS {
+            providers.push(p.to_string());
+        }
+    }
+
+    for provider in &providers {
+        if !has_runtime_settings(provider, provider_settings) {
+            continue;
+        }
+        let api_key = if provider == OLLAMA_PROVIDER {
+            get_provider_key(provider).ok()
+        } else {
+            match get_provider_key(provider) {
+                Ok(key) => Some(key),
+                Err(_) => continue,
+            }
+        };
+        let settings = provider_settings.get(provider.as_str());
+        if let Ok(result) =
+            call_llm(provider, truncated, prompt, api_key.as_deref(), settings)
+                .await
+        {
+            return Ok(result.trim().to_lowercase());
+        }
+    }
+
+    Err("No LLM provider available for code detection".to_string())
+}
+
 // ── Streaming event payload ──
 
 #[derive(Debug, Clone, Serialize, Deserialize, Type)]

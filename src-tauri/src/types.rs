@@ -163,6 +163,12 @@ pub struct AppPreferences {
     pub reader_theme: String,
     /// Reader code block syntax highlight theme.
     pub reader_code_theme: String,
+    /// Code language detection mode: "auto" (LLM + regex fallback) or "regex" (regex only).
+    #[serde(default = "default_reader_code_detection_mode")]
+    pub reader_code_detection_mode: String,
+    /// Custom prompt for LLM code language detection. If None or empty, uses built-in default.
+    #[serde(default)]
+    pub reader_code_detection_prompt: Option<String>,
     /// Chinese conversion mode for reading content.
     pub reader_chinese_conversion: ChineseConversionMode,
     /// Enable bionic reading emphasis for English text.
@@ -267,6 +273,10 @@ pub struct AppPreferences {
     pub layout_entry_list_width: Option<u32>,
 }
 
+fn default_reader_code_detection_mode() -> String {
+    "auto".to_string()
+}
+
 fn default_auto_check_updates() -> bool {
     true
 }
@@ -323,6 +333,8 @@ impl Default for AppPreferences {
             reader_font_family: "sans-serif".to_string(),
             reader_theme: "default".to_string(),
             reader_code_theme: "auto".to_string(),
+            reader_code_detection_mode: default_reader_code_detection_mode(),
+            reader_code_detection_prompt: None,
             reader_chinese_conversion: ChineseConversionMode::S2tw,
             reader_bionic_reading: false,
             reader_status_bar: false,

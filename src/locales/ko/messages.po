@@ -478,7 +478,7 @@ msgstr "글 작업"
 msgid "Article table of contents"
 msgstr "글 목차"
 
-#: src/components/preferences/panes/ReaderPane.tsx:253
+#: src/components/preferences/panes/ReaderPane.tsx:254
 msgid "Article text size in pixels (14-24)"
 msgstr "글 텍스트 크기(픽셀, 14-24)"
 
@@ -491,11 +491,15 @@ msgstr "오름차순"
 #~ msgstr "작성자"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:194
-#: src/components/preferences/panes/ReaderPane.tsx:165
+#: src/components/preferences/panes/ReaderPane.tsx:166
 msgid "Auto"
 msgstr "자동"
 
-#: src/components/preferences/panes/ReaderPane.tsx:431
+#: src/components/preferences/panes/ReaderPane.tsx:417
+msgid "Auto (LLM + regex)"
+msgstr "자동 (LLM + 정규식)"
+
+#: src/components/preferences/panes/ReaderPane.tsx:486
 msgid "Auto mark as read"
 msgstr "자동으로 읽음 표시"
 
@@ -523,7 +527,7 @@ msgstr "자동 업데이트"
 msgid "Automatically generate an AI summary when opening an article"
 msgstr "글을 열 때 AI 요약을 자동으로 생성합니다"
 
-#: src/components/preferences/panes/ReaderPane.tsx:432
+#: src/components/preferences/panes/ReaderPane.tsx:487
 msgid "Automatically mark entries as read when scrolled past 20%"
 msgstr "20% 이상 스크롤하면 자동으로 읽음 표시"
 
@@ -552,7 +556,7 @@ msgid "Bilingual"
 msgstr "이중 언어"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:763
-#: src/components/preferences/panes/ReaderPane.tsx:397
+#: src/components/preferences/panes/ReaderPane.tsx:452
 msgid "Bionic Reading"
 msgstr "바이오닉 리딩"
 
@@ -567,7 +571,7 @@ msgid "Blur"
 msgstr "블러"
 
 #: src/components/miniflux/ReaderSettings.tsx:154
-#: src/components/preferences/panes/ReaderPane.tsx:81
+#: src/components/preferences/panes/ReaderPane.tsx:82
 msgid "Book Serif"
 msgstr "북 세리프"
 
@@ -780,11 +784,11 @@ msgstr "번역 요청이 엔진과 LLM에 전달되는 방식을 선택하세요
 msgid "Choose Image"
 msgstr "이미지 선택"
 
-#: src/components/preferences/panes/ReaderPane.tsx:199
+#: src/components/preferences/panes/ReaderPane.tsx:200
 msgid "Choose the background surface for the article reader"
 msgstr "글 리더의 배경 스타일을 선택하세요"
 
-#: src/components/preferences/panes/ReaderPane.tsx:231
+#: src/components/preferences/panes/ReaderPane.tsx:232
 msgid "Choose the typeface for article text"
 msgstr "글 텍스트에 사용할 서체를 선택하세요"
 
@@ -912,12 +916,12 @@ msgstr "창 닫기"
 msgid "Code and precision"
 msgstr "코드와 정밀함"
 
-#: src/components/preferences/panes/ReaderPane.tsx:370
+#: src/components/preferences/panes/ReaderPane.tsx:371
 msgid "Code Blocks"
 msgstr "코드 블록"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:718
-#: src/components/preferences/panes/ReaderPane.tsx:372
+#: src/components/preferences/panes/ReaderPane.tsx:373
 msgid "Code theme"
 msgstr "코드 테마"
 
@@ -1008,7 +1012,7 @@ msgid "Copied"
 msgstr "복사됨"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:733
-#: src/components/ui/sonner.tsx:55
+#: src/components/ui/sonner.tsx:56
 msgid "Copied!"
 msgstr "복사됨!"
 
@@ -1026,7 +1030,7 @@ msgstr "버그 보고를 위해 앱 버전, OS, 환경 정보를 복사합니다
 msgid "Copy article URL"
 msgstr "글 URL 복사"
 
-#: src/components/miniflux/SafeHtml.tsx:718
+#: src/components/miniflux/SafeHtml.tsx:771
 msgid "Copy code"
 msgstr "코드 복사"
 
@@ -1044,11 +1048,11 @@ msgstr "링크 복사"
 msgid "Copy Link"
 msgstr "링크 복사"
 
-#: src/components/ui/sonner.tsx:64
+#: src/components/ui/sonner.tsx:65
 msgid "Copy message"
 msgstr "메시지 복사"
 
-#: src/components/miniflux/SafeHtml.tsx:722
+#: src/components/miniflux/SafeHtml.tsx:775
 msgid "Copy phrase text"
 msgstr "구문 텍스트 복사"
 
@@ -1064,7 +1068,7 @@ msgstr "글 링크를 클립보드에 복사합니다"
 msgid "Copy this token now. It will not be shown again."
 msgstr "지금 이 토큰을 복사하세요. 다시 표시되지 않습니다."
 
-#: src/components/miniflux/SafeHtml.tsx:728
+#: src/components/miniflux/SafeHtml.tsx:781
 msgid "Copy translation"
 msgstr "번역 복사"
 
@@ -1176,6 +1180,10 @@ msgstr "현재 버전"
 msgid "Custom Prompt"
 msgstr "사용자 지정 프롬프트"
 
+#: src/components/preferences/panes/ReaderPane.tsx:424
+msgid "Custom prompt for LLM code language detection. Leave empty to use default."
+msgstr "LLM 코드 언어 감지용 사용자 정의 프롬프트. 비워두면 기본값을 사용합니다."
+
 #: src/components/preferences/panes/TranslationPane.tsx:2001
 msgid "Custom Term Conversion"
 msgstr "사용자 정의 용어 변환"
@@ -1260,7 +1268,7 @@ msgstr "DeepSeek"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:205
 #: src/components/miniflux/EntryReadingHeader.tsx:215
-#: src/components/preferences/panes/ReaderPane.tsx:65
+#: src/components/preferences/panes/ReaderPane.tsx:66
 #: src/lib/menu.ts:141
 msgid "Default"
 msgstr "기본"
@@ -1349,6 +1357,10 @@ msgstr "사용자를 삭제하시겠습니까?"
 msgid "Descending"
 msgstr "내림차순"
 
+#: src/components/preferences/panes/ReaderPane.tsx:423
+msgid "Detection prompt"
+msgstr "감지 프롬프트"
+
 #: src/components/ErrorBoundary.tsx:352
 #: src/components/preferences/panes/AdvancedPane.tsx:726
 msgid "Diagnostics"
@@ -1371,9 +1383,9 @@ msgstr "피드 비활성화"
 #: src/components/preferences/panes/GeneralPane.tsx:202
 #: src/components/preferences/panes/GeneralPane.tsx:219
 #: src/components/preferences/panes/IntegrationsPane.tsx:294
-#: src/components/preferences/panes/ReaderPane.tsx:408
-#: src/components/preferences/panes/ReaderPane.tsx:425
-#: src/components/preferences/panes/ReaderPane.tsx:442
+#: src/components/preferences/panes/ReaderPane.tsx:463
+#: src/components/preferences/panes/ReaderPane.tsx:480
+#: src/components/preferences/panes/ReaderPane.tsx:497
 #: src/components/preferences/panes/SyncPane.tsx:28
 #: src/components/preferences/panes/TranslationPane.tsx:1416
 #: src/components/preferences/PreferencesDialog.tsx:313
@@ -1534,7 +1546,7 @@ msgstr "사용자 편집"
 #~ msgid "EEEE, MMMM d, yyyy"
 #~ msgstr "yyyy년 M월 d일 EEEE"
 
-#: src/components/preferences/panes/ReaderPane.tsx:398
+#: src/components/preferences/panes/ReaderPane.tsx:453
 msgid "Emphasize the beginning of words to guide faster reading"
 msgstr "단어 앞부분을 강조하여 빠른 읽기를 돕습니다"
 
@@ -1550,9 +1562,9 @@ msgstr "활성화됨"
 #: src/components/preferences/panes/GeneralPane.tsx:202
 #: src/components/preferences/panes/GeneralPane.tsx:219
 #: src/components/preferences/panes/IntegrationsPane.tsx:260
-#: src/components/preferences/panes/ReaderPane.tsx:408
-#: src/components/preferences/panes/ReaderPane.tsx:425
-#: src/components/preferences/panes/ReaderPane.tsx:442
+#: src/components/preferences/panes/ReaderPane.tsx:463
+#: src/components/preferences/panes/ReaderPane.tsx:480
+#: src/components/preferences/panes/ReaderPane.tsx:497
 #: src/components/preferences/panes/TranslationPane.tsx:1416
 msgid "Enabled"
 msgstr "활성화됨"
@@ -1965,7 +1977,7 @@ msgstr "카테고리 업데이트에 실패했습니다"
 msgid "Failed to update close behavior"
 msgstr "닫기 동작 업데이트에 실패했습니다"
 
-#: src/components/preferences/panes/ReaderPane.tsx:160
+#: src/components/preferences/panes/ReaderPane.tsx:161
 msgid "Failed to update code theme"
 msgstr "코드 테마 업데이트에 실패했습니다"
 
@@ -1973,7 +1985,7 @@ msgstr "코드 테마 업데이트에 실패했습니다"
 msgid "Failed to update feed"
 msgstr "피드 업데이트에 실패했습니다"
 
-#: src/components/preferences/panes/ReaderPane.tsx:123
+#: src/components/preferences/panes/ReaderPane.tsx:124
 msgid "Failed to update font family"
 msgstr "글꼴 업데이트에 실패했습니다"
 
@@ -1998,15 +2010,16 @@ msgstr "제공자 순서 업데이트에 실패했습니다"
 msgid "Failed to update provider runtime setting"
 msgstr "제공자 런타임 설정 업데이트에 실패했습니다"
 
-#: src/components/preferences/panes/ReaderPane.tsx:142
+#: src/components/preferences/panes/ReaderPane.tsx:143
 msgid "Failed to update reader settings"
 msgstr "리더 설정 업데이트에 실패했습니다"
 
-#: src/components/preferences/panes/ReaderPane.tsx:106
+#: src/components/preferences/panes/ReaderPane.tsx:107
 msgid "Failed to update reader theme"
 msgstr "리더 테마 업데이트에 실패했습니다"
 
-#: src/components/preferences/panes/ReaderPane.tsx:187
+#: src/components/preferences/panes/ReaderPane.tsx:188
+#: src/components/preferences/panes/ReaderPane.tsx:408
 msgid "Failed to update setting"
 msgstr "설정 업데이트에 실패했습니다"
 
@@ -2182,13 +2195,13 @@ msgid "Follow system theme"
 msgstr "시스템 테마 따르기"
 
 #: src/components/miniflux/ReaderSettings.tsx:450
-#: src/components/preferences/panes/ReaderPane.tsx:230
+#: src/components/preferences/panes/ReaderPane.tsx:231
 msgid "Font Family"
 msgstr "글꼴"
 
 #: src/components/miniflux/ReaderSettings.tsx:246
 #: src/components/miniflux/ReaderSettings.tsx:257
-#: src/components/preferences/panes/ReaderPane.tsx:252
+#: src/components/preferences/panes/ReaderPane.tsx:253
 msgid "Font Size"
 msgstr "글꼴 크기"
 
@@ -2241,7 +2254,7 @@ msgid "Generating summary..."
 msgstr "요약 생성 중..."
 
 #: src/components/miniflux/ReaderSettings.tsx:152
-#: src/components/preferences/panes/ReaderPane.tsx:80
+#: src/components/preferences/panes/ReaderPane.tsx:81
 msgid "Georgia"
 msgstr "Georgia"
 
@@ -2354,6 +2367,10 @@ msgstr "히스토리 항목"
 msgid "History page is only available when connected to Miniflux server."
 msgstr "히스토리 페이지는 Miniflux 서버에 연결된 경우에만 사용할 수 있습니다."
 
+#: src/components/preferences/panes/ReaderPane.tsx:395
+msgid "How code block languages are detected for syntax highlighting"
+msgstr "구문 강조를 위한 코드 블록 언어 감지 방법"
+
 #: src/components/preferences/panes/SyncPane.tsx:72
 #~ msgid "How often to automatically sync with your Miniflux server."
 #~ msgstr "Miniflux 서버와 자동 동기화 빈도를 설정합니다."
@@ -2383,7 +2400,7 @@ msgid "https://example.com/rss.xml"
 msgstr "https://example.com/rss.xml"
 
 #: src/components/miniflux/ReaderSettings.tsx:148
-#: src/components/preferences/panes/ReaderPane.tsx:78
+#: src/components/preferences/panes/ReaderPane.tsx:79
 msgid "Humanist"
 msgstr "휴머니스트"
 
@@ -2405,7 +2422,7 @@ msgstr "대기 중"
 msgid "Ignore HTTP cache"
 msgstr "HTTP 캐시 무시"
 
-#: src/components/miniflux/SafeHtml.tsx:731
+#: src/components/miniflux/SafeHtml.tsx:784
 #: src/components/preferences/panes/AppearancePane.tsx:166
 msgid "Image"
 msgstr "이미지"
@@ -2548,12 +2565,16 @@ msgstr "Kimi"
 msgid "Korean"
 msgstr "한국어"
 
-#: src/components/miniflux/SafeHtml.tsx:730
+#: src/components/miniflux/SafeHtml.tsx:783
 #: src/components/miniflux/UserNav.tsx:285
 #: src/components/preferences/panes/AppearancePane.tsx:91
 #: src/components/preferences/panes/AppearancePane.tsx:93
 msgid "Language"
 msgstr "언어"
+
+#: src/components/preferences/panes/ReaderPane.tsx:394
+msgid "Language detection"
+msgstr "언어 감지"
 
 #: src/components/preferences/panes/TranslationPane.tsx:1720
 msgid "Language used for immersive translation output."
@@ -2634,13 +2655,13 @@ msgstr "라이트"
 
 #: src/components/miniflux/ReaderSettings.tsx:383
 #: src/components/miniflux/ReaderSettings.tsx:394
-#: src/components/preferences/panes/ReaderPane.tsx:332
+#: src/components/preferences/panes/ReaderPane.tsx:333
 msgid "Line Height"
 msgstr "줄 높이"
 
 #: src/components/miniflux/ReaderSettings.tsx:316
 #: src/components/miniflux/ReaderSettings.tsx:327
-#: src/components/preferences/panes/ReaderPane.tsx:292
+#: src/components/preferences/panes/ReaderPane.tsx:293
 msgid "Line Width"
 msgstr "줄 너비"
 
@@ -2764,7 +2785,7 @@ msgstr "창 최대화"
 msgid "Maximum number of characters sent to the LLM. Longer articles are truncated."
 msgstr "LLM에 전송되는 최대 문자 수입니다. 긴 글은 잘립니다."
 
-#: src/components/preferences/panes/ReaderPane.tsx:293
+#: src/components/preferences/panes/ReaderPane.tsx:294
 msgid "Maximum width of article text in characters (45-80)"
 msgstr "글 텍스트의 최대 너비(문자 수, 45-80)"
 
@@ -2849,7 +2870,7 @@ msgid "Modern Rust-powered desktop framework"
 msgstr "현대적인 Rust 기반 데스크톱 프레임워크"
 
 #: src/components/miniflux/ReaderSettings.tsx:156
-#: src/components/preferences/panes/ReaderPane.tsx:82
+#: src/components/preferences/panes/ReaderPane.tsx:83
 msgid "Monospace"
 msgstr "고정폭"
 
@@ -3130,7 +3151,7 @@ msgid "OK"
 msgstr "확인"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:213
-#: src/components/preferences/panes/ReaderPane.tsx:69
+#: src/components/preferences/panes/ReaderPane.tsx:70
 #: src/lib/menu.ts:161
 msgid "OLED"
 msgstr "OLED"
@@ -3263,7 +3284,7 @@ msgid "Optional. Leave empty for local Ollama. Required for the Ollama cloud API
 msgstr "선택 사항입니다. 로컬 Ollama는 비워 두세요. Ollama 클라우드 API(ollama.com)에는 필수입니다."
 
 #: src/components/miniflux/EntryReadingHeader.tsx:286
-#: src/services/miniflux/entries.ts:579
+#: src/services/miniflux/entries.ts:580
 msgid "Original content downloaded"
 msgstr "원본 콘텐츠가 다운로드되었습니다"
 
@@ -3290,7 +3311,7 @@ msgid "Page {0} of {1}"
 msgstr "{1}페이지 중 {0}페이지"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:207
-#: src/components/preferences/panes/ReaderPane.tsx:66
+#: src/components/preferences/panes/ReaderPane.tsx:67
 #: src/lib/menu.ts:146
 msgid "Paper"
 msgstr "페이퍼"
@@ -3341,7 +3362,7 @@ msgstr "일시 중지됨"
 msgid "Permanently deletes everything — all accounts, synced data, preferences, downloads, and credentials. This cannot be undone."
 msgstr "모든 항목을 영구 삭제합니다 — 계정, 동기화 데이터, 설정, 다운로드, 자격 증명 전부 포함. 되돌릴 수 없습니다."
 
-#: src/components/miniflux/SafeHtml.tsx:719
+#: src/components/miniflux/SafeHtml.tsx:772
 msgid "Phrase"
 msgstr "구문"
 
@@ -3594,7 +3615,7 @@ msgstr "리더"
 msgid "Reader companion illustration"
 msgstr "읽기 도우미 일러스트"
 
-#: src/components/preferences/panes/ReaderPane.tsx:196
+#: src/components/preferences/panes/ReaderPane.tsx:197
 #: src/lib/menu.ts:137
 msgid "Reader Theme"
 msgstr "리더 테마"
@@ -3632,7 +3653,7 @@ msgstr "읽기"
 msgid "Reading display"
 msgstr "읽기 화면"
 
-#: src/components/preferences/panes/ReaderPane.tsx:395
+#: src/components/preferences/panes/ReaderPane.tsx:450
 msgid "Reading Features"
 msgstr "읽기 기능"
 
@@ -3699,6 +3720,10 @@ msgstr "새로고침 실패: {message}"
 #: src/components/preferences/panes/FeedsPane.tsx:67
 msgid "Refreshing..."
 msgstr "새로고침 중..."
+
+#: src/components/preferences/panes/ReaderPane.tsx:418
+msgid "Regex only"
+msgstr "정규식만"
 
 #: src/components/miniflux/EntryList.tsx:485
 #~ msgid "Release to refresh"
@@ -3861,7 +3886,7 @@ msgstr "재시도"
 msgid "Retry failed"
 msgstr "재시도 실패"
 
-#: src/components/miniflux/SafeHtml.tsx:726
+#: src/components/miniflux/SafeHtml.tsx:779
 msgid "Retry translation"
 msgstr "번역 재시도"
 
@@ -3910,7 +3935,7 @@ msgstr "런타임"
 msgid "Sans"
 msgstr "산세리프"
 
-#: src/components/preferences/panes/ReaderPane.tsx:76
+#: src/components/preferences/panes/ReaderPane.tsx:77
 msgid "Sans Serif"
 msgstr "산세리프"
 
@@ -4081,7 +4106,7 @@ msgstr "이미지 다운로드 폴더 선택"
 msgid "Select or enter server URL"
 msgstr "서버 URL 선택 또는 입력"
 
-#: src/components/miniflux/SafeHtml.tsx:721
+#: src/components/miniflux/SafeHtml.tsx:774
 msgid "Select phrase text"
 msgstr "구문 텍스트 선택"
 
@@ -4098,13 +4123,13 @@ msgid "Sensitivity"
 msgstr "감도"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:209
-#: src/components/preferences/panes/ReaderPane.tsx:67
+#: src/components/preferences/panes/ReaderPane.tsx:68
 #: src/lib/menu.ts:151
 msgid "Sepia"
 msgstr "세피아"
 
 #: src/components/miniflux/ReaderSettings.tsx:150
-#: src/components/preferences/panes/ReaderPane.tsx:79
+#: src/components/preferences/panes/ReaderPane.tsx:80
 msgid "Serif"
 msgstr "세리프"
 
@@ -4172,7 +4197,7 @@ msgstr "공유 링크가 복사되었습니다!"
 msgid "Shortcuts"
 msgstr "단축키"
 
-#: src/components/preferences/panes/ReaderPane.tsx:415
+#: src/components/preferences/panes/ReaderPane.tsx:470
 msgid "Show a compact reading progress bar at the bottom of the reader"
 msgstr "리더 하단에 간결한 읽기 진행률 표시줄을 표시합니다"
 
@@ -4302,7 +4327,7 @@ msgid "Skip this feed"
 msgstr "이 피드 건너뛰기"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:211
-#: src/components/preferences/panes/ReaderPane.tsx:68
+#: src/components/preferences/panes/ReaderPane.tsx:69
 #: src/lib/menu.ts:156
 msgid "Slate"
 msgstr "슬레이트"
@@ -4330,7 +4355,7 @@ msgstr "정렬 기준"
 msgid "Source URL is required"
 msgstr "소스 URL은 필수입니다"
 
-#: src/components/preferences/panes/ReaderPane.tsx:333
+#: src/components/preferences/panes/ReaderPane.tsx:334
 msgid "Spacing between lines of text (1.4-2.2)"
 msgstr "텍스트 줄 간격 (1.4-2.2)"
 
@@ -4392,7 +4417,7 @@ msgid "Status"
 msgstr "상태"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:775
-#: src/components/preferences/panes/ReaderPane.tsx:414
+#: src/components/preferences/panes/ReaderPane.tsx:469
 msgid "Status Bar"
 msgstr "상태 표시줄"
 
@@ -4463,7 +4488,7 @@ msgstr "AI로 요약"
 msgid "Summarizing..."
 msgstr "요약 중..."
 
-#: src/components/preferences/panes/ReaderPane.tsx:198
+#: src/components/preferences/panes/ReaderPane.tsx:199
 msgid "Surface Theme"
 msgstr "배경 테마"
 
@@ -4587,7 +4612,7 @@ msgstr "Miniflux 데이터 동기화 중"
 msgid "Syncing..."
 msgstr "동기화 중..."
 
-#: src/components/preferences/panes/ReaderPane.tsx:373
+#: src/components/preferences/panes/ReaderPane.tsx:374
 msgid "Syntax highlighting theme for code blocks"
 msgstr "코드 블록의 구문 강조 테마"
 
@@ -4609,7 +4634,7 @@ msgid "System Tray"
 msgstr "시스템 트레이"
 
 #: src/components/miniflux/ReaderSettings.tsx:146
-#: src/components/preferences/panes/ReaderPane.tsx:77
+#: src/components/preferences/panes/ReaderPane.tsx:78
 msgid "System UI"
 msgstr "시스템 UI"
 
@@ -4871,7 +4896,7 @@ msgstr "젠 모드 전환"
 msgid "Token copied to clipboard"
 msgstr "토큰이 클립보드에 복사되었습니다"
 
-#: src/components/miniflux/SafeHtml.tsx:725
+#: src/components/miniflux/SafeHtml.tsx:778
 msgid "Top bar"
 msgstr "상단 바"
 
@@ -4898,11 +4923,11 @@ msgstr "지금 번역"
 msgid "Translate selection"
 msgstr "선택 항목 번역"
 
-#: src/components/miniflux/SafeHtml.tsx:724
+#: src/components/miniflux/SafeHtml.tsx:777
 msgid "Translate this paragraph"
 msgstr "이 문단 번역"
 
-#: src/components/miniflux/SafeHtml.tsx:727
+#: src/components/miniflux/SafeHtml.tsx:780
 msgid "Translate with..."
 msgstr "다음으로 번역..."
 
@@ -4913,12 +4938,12 @@ msgstr "번역만 표시"
 #: src/components/miniflux/EntryReading.tsx:1547
 #: src/components/miniflux/EntryReadingHeader.tsx:556
 #: src/components/miniflux/EntryReadingHeader.tsx:564
-#: src/components/miniflux/SafeHtml.tsx:720
+#: src/components/miniflux/SafeHtml.tsx:773
 #: src/components/preferences/panes/TranslationPane.tsx:1694
 msgid "Translation"
 msgstr "번역"
 
-#: src/components/miniflux/SafeHtml.tsx:723
+#: src/components/miniflux/SafeHtml.tsx:776
 msgid "Translation controls in top bar"
 msgstr "상단 바의 번역 컨트롤"
 
@@ -4932,7 +4957,7 @@ msgstr "번역 엔진"
 
 #: src/components/miniflux/ImmersiveTranslationLayer.tsx:811
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:270
-#: src/components/miniflux/SafeHtml.tsx:729
+#: src/components/miniflux/SafeHtml.tsx:782
 msgid "Translation failed"
 msgstr "번역 실패"
 
@@ -5003,7 +5028,7 @@ msgid "Type RESET to confirm"
 msgstr "확인하려면 RESET을 입력하세요"
 
 #: src/components/miniflux/ReaderSettings.tsx:207
-#: src/components/preferences/panes/ReaderPane.tsx:228
+#: src/components/preferences/panes/ReaderPane.tsx:229
 msgid "Typography"
 msgstr "타이포그래피"
 

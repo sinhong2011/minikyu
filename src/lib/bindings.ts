@@ -1046,6 +1046,14 @@ async summarizeArticleStream(request: SummarizeArticleRequest, streamId: string)
     else return { status: "error", error: e  as any };
 }
 },
+async detectCodeLanguage(code: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("detect_code_language", { code }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async getArticleSummary(entryId: string) : Promise<Result<ArticleSummaryRecord | null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_article_summary", { entryId }) };
@@ -1398,6 +1406,14 @@ reader_theme: string;
  * Reader code block syntax highlight theme.
  */
 reader_code_theme: string; 
+/**
+ * Code language detection mode: "auto" (LLM + regex fallback) or "regex" (regex only).
+ */
+reader_code_detection_mode?: string; 
+/**
+ * Custom prompt for LLM code language detection. If None or empty, uses built-in default.
+ */
+reader_code_detection_prompt?: string | null; 
 /**
  * Chinese conversion mode for reading content.
  */
