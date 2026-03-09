@@ -10,6 +10,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { openUrl } from '@tauri-apps/plugin-opener';
 import { AnimatePresence, motion } from 'motion/react';
 import { Switch } from '@/components/animate-ui/components/base/switch';
 import { AppLogo } from '@/components/brand/AppLogo';
@@ -98,9 +99,7 @@ export function AboutPane() {
             variant="outline"
             size="sm"
             className="shrink-0 gap-1.5"
-            onClick={() =>
-              window.open('https://github.com/sinhong2011/minikyu', '_blank', 'noopener,noreferrer')
-            }
+            onClick={() => openUrl('https://github.com/sinhong2011/minikyu').catch(() => {})}
           >
             <HugeiconsIcon icon={StarIcon} className="size-3.5" />
             GitHub
