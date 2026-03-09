@@ -504,7 +504,8 @@ export function MinifluxLayout() {
     }
 
     if (feedId) {
-      return _(msg`Feed`);
+      const feedEntry = entriesData?.entries?.find((e) => e.feed_id === feedId);
+      return feedEntry?.feed?.title || _(msg`Feed`);
     }
 
     switch (filter) {
