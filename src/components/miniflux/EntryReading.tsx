@@ -1222,6 +1222,7 @@ export function EntryReading({
     setLineWidth,
     setReaderTheme,
     handleTranslationEnabledChange,
+    setFocusMode,
   ]);
 
   useEffect(() => {
@@ -1309,6 +1310,7 @@ export function EntryReading({
     fontSize,
     setFontSize,
     setReaderTheme,
+    setFocusMode,
   ]);
 
   if (isLoading) {
