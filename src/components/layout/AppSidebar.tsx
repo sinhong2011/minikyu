@@ -588,8 +588,8 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="flex min-h-0 flex-col gap-0">
-        <SidebarGroup>
+      <SidebarContent className="flex min-h-0 flex-col gap-0 overflow-hidden">
+        <SidebarGroup className="shrink-0">
           <SidebarGroupLabel>{_(msg`Views`)}</SidebarGroupLabel>
           <SidebarGroupContent>
             <SidebarMenu className="gap-1">
@@ -721,12 +721,12 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
         )}
 
         {!isCollapsed && (
-          <SidebarGroup>
-            <SidebarGroupLabel className="gap-2 text-sm font-normal text-sidebar-foreground/80">
+          <SidebarGroup className="min-h-0 flex-1 overflow-hidden">
+            <SidebarGroupLabel className="shrink-0 gap-2 text-sm font-normal text-sidebar-foreground/80">
               <HugeiconsIcon icon={Folder01Icon} />
               <span className="leading-none">{_(msg`Categories`)}</span>
             </SidebarGroupLabel>
-            <SidebarGroupContent>
+            <SidebarGroupContent className="min-h-0 flex-1 overflow-auto no-scrollbar">
               <SidebarMenu className="space-y-1">
                 {categoriesLoading ? (
                   categorySkeletonKeys.map((key) => (
