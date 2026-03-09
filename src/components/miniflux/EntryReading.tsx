@@ -322,6 +322,8 @@ export function EntryReading({
   const [translationEnabled, setTranslationEnabled] = useState(false);
   const translationEnabledRef = useRef(translationEnabled);
   translationEnabledRef.current = translationEnabled;
+  const focusModeRef = useRef(focusMode);
+  focusModeRef.current = focusMode;
   const [translateRequestToken, setTranslateRequestToken] = useState(0);
   const [activeTranslationProvider, setActiveTranslationProvider] = useState<string | null>(null);
   const [translationProgress, setTranslationProgress] = useState({ completed: 0, total: 0 });
@@ -1165,6 +1167,9 @@ export function EntryReading({
       } else if (match('toggle-translation', e)) {
         e.preventDefault();
         handleTranslationEnabledChange(!translationEnabledRef.current);
+      } else if (match('toggle-focus-mode', e)) {
+        e.preventDefault();
+        setFocusMode(!focusModeRef.current);
       } else if (match('fetch-content', e)) {
         e.preventDefault();
         handleFetchOriginalContent();
@@ -1277,6 +1282,7 @@ export function EntryReading({
       'command:font-size-increase': () => setFontSize(Math.min(MAX_FONT_SIZE, fontSize + 1)),
       'command:font-size-decrease': () => setFontSize(Math.max(MIN_FONT_SIZE, fontSize - 1)),
       'command:font-size-reset': () => setFontSize(18),
+      'command:toggle-focus-mode': () => setFocusMode(!focusModeRef.current),
     };
     const handleSetTheme = (e: Event) => {
       const theme = (e as CustomEvent).detail;
@@ -1667,10 +1673,13 @@ export function EntryReading({
                   {_(msg`Focus Mode`)}
                   <span
                     className={cn(
-                      'ml-auto size-2 rounded-full shrink-0 transition-colors',
+                      'size-2 rounded-full shrink-0 transition-colors',
                       focusMode ? 'bg-primary' : 'border border-muted-foreground/40'
                     )}
                   />
+                  <ContextMenuShortcut>
+                    {formatShortcutDisplay(shortcuts['toggle-focus-mode'])}
+                  </ContextMenuShortcut>
                 </ContextMenuItem>
               </ContextMenuGroup>
 

@@ -85,6 +85,12 @@ export const SHORTCUT_ACTIONS: ShortcutAction[] = [
   { id: 'toggle-translation', defaultKey: 't', group: 'article', label: msg`Toggle translation` },
   { id: 'summarize', defaultKey: 's', group: 'article', label: msg`Summarize article` },
   {
+    id: 'toggle-focus-mode',
+    defaultKey: 'v',
+    group: 'article',
+    label: msg`Toggle focus mode`,
+  },
+  {
     id: 'fetch-content',
     defaultKey: 'f',
     group: 'article',

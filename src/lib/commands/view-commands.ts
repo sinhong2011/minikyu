@@ -81,6 +81,17 @@ export const viewCommands: AppCommand[] = [
     },
   },
   {
+    id: 'toggle-focus-mode',
+    label: msg`Toggle Focus Mode`,
+    description: msg`Dim paragraphs except the one you're reading`,
+    group: 'view',
+    shortcut: 'V',
+    keywords: ['focus', 'mode', 'dim', 'reading', 'concentration'],
+    execute: () => {
+      document.dispatchEvent(new CustomEvent('command:toggle-focus-mode'));
+    },
+  },
+  {
     id: 'open-appearance-settings',
     label: msg`Appearance Settings`,
     description: msg`Open appearance preferences`,
