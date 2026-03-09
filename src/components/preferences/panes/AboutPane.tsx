@@ -3,10 +3,9 @@ import {
   CheckmarkCircle01Icon,
   Download04Icon,
   InformationCircleIcon,
-  Link01Icon,
   Loading03Icon,
   RefreshIcon,
-  UserIcon,
+  StarIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
@@ -91,10 +90,21 @@ export function AboutPane() {
       <div className="p-0">
         <div className="flex items-center gap-3">
           <AppLogo showWordmark={false} markClassName="size-12" />
-          <div>
+          <div className="min-w-0 flex-1">
             <h3 className="text-lg font-semibold">{_(msg`Minikyu`)}</h3>
             <p className="text-sm text-muted-foreground">{_(msg`RSS Reader`)}</p>
           </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="shrink-0 gap-1.5"
+            onClick={() =>
+              window.open('https://github.com/sinhong2011/minikyu', '_blank', 'noopener,noreferrer')
+            }
+          >
+            <HugeiconsIcon icon={StarIcon} className="size-3.5" />
+            GitHub
+          </Button>
         </div>
         <p className="mt-3 text-sm text-muted-foreground">
           {_(
@@ -248,47 +258,6 @@ export function AboutPane() {
             )}
           </>
         )}
-      </SettingsSection>
-
-      <SettingsSection title={_(msg`Project`)}>
-        <SettingsField
-          label={_(msg`Source code`)}
-          description={_(msg`View the source code, report issues, or contribute.`)}
-        >
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              window.open('https://github.com/sinhong2011/minikyu', '_blank', 'noopener,noreferrer')
-            }
-          >
-            <HugeiconsIcon icon={Link01Icon} className="size-4" />
-            GitHub
-          </Button>
-        </SettingsField>
-
-        <SettingsField
-          label={_(msg`Author`)}
-          description={_(msg`Created and maintained by sinhong.`)}
-        >
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() =>
-              window.open('https://github.com/sinhong2011', '_blank', 'noopener,noreferrer')
-            }
-          >
-            <HugeiconsIcon icon={UserIcon} className="size-4" />
-            @sinhong2011
-          </Button>
-        </SettingsField>
-
-        <SettingsField
-          label={_(msg`License`)}
-          description={_(msg`Minikyu is open source software.`)}
-        >
-          <p className="text-sm font-medium">MIT</p>
-        </SettingsField>
       </SettingsSection>
     </div>
   );
