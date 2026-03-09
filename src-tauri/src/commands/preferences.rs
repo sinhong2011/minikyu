@@ -13,7 +13,7 @@ use crate::types::{
 };
 
 /// Gets the path to the preferences file.
-fn get_preferences_path(app: &AppHandle) -> Result<PathBuf, String> {
+pub(crate) fn get_preferences_path(app: &AppHandle) -> Result<PathBuf, String> {
     let app_data_dir = app
         .path()
         .app_data_dir()
@@ -169,5 +169,19 @@ pub async fn save_preferences(app: AppHandle, preferences: AppPreferences) -> Re
     }
 
     log::info!("Successfully saved preferences to {prefs_path:?}");
+
+    // Auto-push to cloud sync if enabled
+    if preferences.cloud_sync_enabled
+        && preferences.cloud_sync_endpoint.is_some()
+        && preferences.cloud_sync_bucket.is_some()
+    {
+        let app_clone = app.clone();
+        tokio::spawn(async move {
+            if let Err(e) = crate::commands::cloud_sync::cloud_sync_push(app_clone).await {
+                log::warn!("Cloud sync auto-push failed: {e}");
+            }
+        });
+    }
+
     Ok(())
 }

@@ -1292,6 +1292,72 @@ async seedE2eTestData(entryIds: string[]) : Promise<Result<null, string>> {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+/**
+ * Save S3 credentials to keyring.
+ */
+async cloudSyncSaveCredentials(accessKey: string, secretKey: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_save_credentials", { accessKey, secretKey }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Delete S3 credentials from keyring.
+ */
+async cloudSyncDeleteCredentials() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_delete_credentials") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Check if S3 credentials exist in keyring.
+ */
+async cloudSyncHasCredentials() : Promise<Result<boolean, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_has_credentials") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Test S3 connection with provided credentials (before saving to keyring).
+ */
+async cloudSyncTestConnection(endpoint: string, bucket: string, region: string, accessKey: string, secretKey: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_test_connection", { endpoint, bucket, region, accessKey, secretKey }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Push current preferences + server URLs to S3.
+ */
+async cloudSyncPush() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_push") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Pull preferences + server URLs from S3.
+ */
+async cloudSyncPull() : Promise<Result<CloudSyncPayload, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_pull") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -1647,6 +1713,10 @@ export type CloseBehavior =
  * Minimize to tray (hide window, keep running)
  */
 "minimize_to_tray"
+/**
+ * Payload for the sync file stored in S3.
+ */
+export type CloudSyncPayload = { preferences: AppPreferences; server_urls: string[]; synced_at: string }
 /**
  * Counters
  */

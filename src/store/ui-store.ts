@@ -9,6 +9,7 @@ export type PreferencesPane =
   | 'translation'
   | 'shortcuts'
   | 'gesture'
+  | 'cloud-sync'
   | 'advanced'
   | 'about'
   | 'categories'
