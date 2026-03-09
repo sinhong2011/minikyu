@@ -78,6 +78,7 @@ pub enum ReaderTranslationTriggerMode {
 pub enum ReaderTranslationRouteMode {
     #[default]
     EngineFirst,
+    LlmFirst,
     HybridAuto,
 }
 
@@ -121,6 +122,21 @@ fn default_time_format() -> String {
 #[serde(default)]
 pub struct AppPreferences {
     pub theme: String,
+    /// Background image file path. None means no background image.
+    #[serde(default)]
+    pub background_image_path: Option<String>,
+    /// Background image opacity (0.0 to 1.0). Defaults to 0.15.
+    #[serde(default = "default_background_image_opacity")]
+    pub background_image_opacity: f64,
+    /// Background image blur amount in pixels. Defaults to 0.
+    #[serde(default)]
+    pub background_image_blur: u32,
+    /// Background image size mode: "cover", "contain", "fill", "tile". Defaults to "cover".
+    #[serde(default = "default_background_image_size")]
+    pub background_image_size: String,
+    /// UI background transparency (0.0 to 1.0). 0 = fully opaque, 1 = fully transparent. Defaults to 0.
+    #[serde(default)]
+    pub background_transparency: f64,
     /// Global shortcut for quick pane (e.g., "CommandOrControl+Shift+.")
     /// If None, uses to default shortcut
     pub quick_pane_shortcut: Option<String>,
@@ -147,6 +163,12 @@ pub struct AppPreferences {
     pub reader_theme: String,
     /// Reader code block syntax highlight theme.
     pub reader_code_theme: String,
+    /// Code language detection mode: "auto" (LLM + regex fallback) or "regex" (regex only).
+    #[serde(default = "default_reader_code_detection_mode")]
+    pub reader_code_detection_mode: String,
+    /// Custom prompt for LLM code language detection. If None or empty, uses built-in default.
+    #[serde(default)]
+    pub reader_code_detection_prompt: Option<String>,
     /// Chinese conversion mode for reading content.
     pub reader_chinese_conversion: ChineseConversionMode,
     /// Enable bionic reading emphasis for English text.
@@ -156,6 +178,9 @@ pub struct AppPreferences {
     /// Whether to enable focus mode (paragraph dimming) in the reader.
     #[serde(default)]
     pub reader_focus_mode: bool,
+    /// Whether to automatically mark entries as read when scrolled past 20%.
+    #[serde(default)]
+    pub reader_auto_mark_read: bool,
     /// User-defined term conversion rules applied after Chinese conversion.
     #[serde(default)]
     pub reader_custom_conversions: Vec<ChineseConversionRule>,
@@ -189,6 +214,9 @@ pub struct AppPreferences {
     /// Category IDs excluded from immersive translation.
     #[serde(default)]
     pub reader_translation_excluded_category_ids: Vec<String>,
+    /// Source language codes that skip auto-translation (e.g. ["zh", "zh-CN", "zh-TW"]).
+    #[serde(default)]
+    pub reader_translation_skip_source_languages: Vec<String>,
     /// Default download path for images (null = ask every time)
     pub image_download_path: Option<String>,
     /// Default download path for videos (null = ask every time)
@@ -240,6 +268,13 @@ pub struct AppPreferences {
     /// Swipe distance threshold in pixels (100-400).
     #[serde(default = "default_gesture_swipe_threshold")]
     pub gesture_swipe_threshold: u32,
+    /// Entry list panel width in pixels. None means use default (435).
+    #[serde(default)]
+    pub layout_entry_list_width: Option<u32>,
+}
+
+fn default_reader_code_detection_mode() -> String {
+    "auto".to_string()
 }
 
 fn default_auto_check_updates() -> bool {
@@ -251,7 +286,7 @@ fn default_gesture_swipe_left_action() -> String {
 }
 
 fn default_gesture_swipe_right_action() -> String {
-    "close_browser".to_string()
+    "toggle_read".to_string()
 }
 
 fn default_gesture_pull_top_action() -> String {
@@ -266,6 +301,14 @@ const fn default_gesture_swipe_threshold() -> u32 {
     250
 }
 
+fn default_background_image_opacity() -> f64 {
+    0.15
+}
+
+fn default_background_image_size() -> String {
+    "cover".to_string()
+}
+
 fn default_log_level() -> String {
     "info".to_string()
 }
@@ -274,6 +317,11 @@ impl Default for AppPreferences {
     fn default() -> Self {
         Self {
             theme: "system".to_string(),
+            background_image_path: None,
+            background_image_opacity: default_background_image_opacity(),
+            background_image_blur: 0,
+            background_image_size: default_background_image_size(),
+            background_transparency: 0.0,
             quick_pane_shortcut: None, // None means use default
             language: None,            // None means use system locale
             close_behavior: CloseBehavior::default(),
@@ -285,10 +333,13 @@ impl Default for AppPreferences {
             reader_font_family: "sans-serif".to_string(),
             reader_theme: "default".to_string(),
             reader_code_theme: "auto".to_string(),
+            reader_code_detection_mode: default_reader_code_detection_mode(),
+            reader_code_detection_prompt: None,
             reader_chinese_conversion: ChineseConversionMode::S2tw,
             reader_bionic_reading: false,
             reader_status_bar: false,
             reader_focus_mode: false,
+            reader_auto_mark_read: false,
             reader_custom_conversions: vec![],
             reader_translation_display_mode: ReaderTranslationDisplayMode::Bilingual,
             reader_translation_trigger_mode: ReaderTranslationTriggerMode::Manual,
@@ -302,6 +353,7 @@ impl Default for AppPreferences {
             reader_translation_auto_enabled: false,
             reader_translation_excluded_feed_ids: vec![],
             reader_translation_excluded_category_ids: vec![],
+            reader_translation_skip_source_languages: vec![],
             ai_summary_auto_enabled: false,
             ai_summary_custom_prompt: None,
             ai_summary_provider: None,
@@ -320,6 +372,7 @@ impl Default for AppPreferences {
             gesture_pull_top_action: default_gesture_pull_top_action(),
             gesture_pull_bottom_action: default_gesture_pull_bottom_action(),
             gesture_swipe_threshold: default_gesture_swipe_threshold(),
+            layout_entry_list_width: None,
         }
     }
 }

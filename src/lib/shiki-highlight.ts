@@ -1,4 +1,5 @@
 import type { HighlighterCore } from 'shiki/core';
+import { commands } from '@/lib/tauri-bindings';
 
 const SHIKI_THEME_IDS = [
   'catppuccin-latte',
@@ -37,6 +38,7 @@ const READER_CODE_THEME_SET = new Set<ReaderCodeTheme>(readerCodeThemeOptions);
 
 const SHIKI_LANGUAGES = [
   'bash',
+  'c',
   'css',
   'cpp',
   'go',
@@ -66,6 +68,7 @@ const SHIKI_LANGUAGE_SET = new Set<string>(SHIKI_LANGUAGES);
 const LANGUAGE_ALIASES: Record<string, SupportedCodeLanguage> = {
   cjs: 'javascript',
   'c++': 'cpp',
+  'c-lang': 'c',
   go: 'go',
   js: 'javascript',
   jsonc: 'json',
@@ -96,6 +99,7 @@ export const codeLanguageOptions = [
   'jsx',
   'json',
   'go',
+  'c',
   'cpp',
   'html',
   'css',
@@ -221,11 +225,23 @@ export function detectCodeLanguageFromContent(code: string): SupportedCodeLangua
     return 'go';
   }
 
-  if (
-    /^\s*#include\s*[<"]/m.test(trimmed) ||
+  const hasInclude = /^\s*#include\s*[<"]/m.test(trimmed);
+  const hasCppFeatures =
     /\bstd::\w+/m.test(trimmed) ||
-    /\bint\s+main\s*\(/m.test(trimmed)
-  ) {
+    /\b(class|template|namespace|cout|cin|nullptr|new\s+\w+|virtual|override)\b/m.test(trimmed) ||
+    /\busing\s+namespace\b/m.test(trimmed);
+
+  if (hasInclude || /\bint\s+main\s*\(/m.test(trimmed)) {
+    if (hasCppFeatures) {
+      return 'cpp';
+    }
+    if (
+      hasInclude &&
+      (/\b(printf|scanf|malloc|free|sizeof|typedef|struct\s+\w+)\b/m.test(trimmed) ||
+        /\b(void|char|int|float|double)\s*\*?\s+\w+\s*[=(;]/m.test(trimmed))
+    ) {
+      return 'c';
+    }
     return 'cpp';
   }
 
@@ -283,6 +299,7 @@ async function initHighlighter(): Promise<HighlighterCore> {
   const [langs, themes] = await Promise.all([
     Promise.all([
       import('shiki/langs/bash.mjs'),
+      import('shiki/langs/c.mjs'),
       import('shiki/langs/cpp.mjs'),
       import('shiki/langs/css.mjs'),
       import('shiki/langs/go.mjs'),
@@ -408,6 +425,18 @@ export async function highlightCodeWithShiki({
     lang: language,
     theme: resolveShikiTheme(theme, isDarkMode),
   });
+}
+
+export async function detectCodeLanguageWithLLM(code: string): Promise<SupportedCodeLanguage> {
+  try {
+    const result = await commands.detectCodeLanguage(code.slice(0, 500));
+    if (result.status === 'error') {
+      return detectCodeLanguageFromContent(code);
+    }
+    return normalizeCodeLanguage(result.data);
+  } catch {
+    return detectCodeLanguageFromContent(code);
+  }
 }
 
 export function formatCodeForLanguage(code: string, language: SupportedCodeLanguage): string {

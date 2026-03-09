@@ -104,6 +104,7 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         in_app_browser::sync_browser_theme,
         summarize::summarize_article,
         summarize::summarize_article_stream,
+        summarize::detect_code_language,
         summarize::get_article_summary,
         summarize::save_article_summary,
         translation::save_translation_provider_key,

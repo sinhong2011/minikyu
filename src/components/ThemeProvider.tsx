@@ -1,7 +1,7 @@
 import { emit } from '@tauri-apps/api/event';
-import { useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { type Theme, ThemeProviderContext } from '@/lib/theme-context';
-import { usePreferences } from '@/services/preferences';
+import { usePreferences, useSavePreferences } from '@/services/preferences';
 
 interface ThemeProviderProps {
   children: React.ReactNode;
@@ -21,6 +21,7 @@ export function ThemeProvider({
 
   // Load theme from persistent preferences
   const { data: preferences } = usePreferences();
+  const savePreferences = useSavePreferences();
   const hasSyncedPreferences = useRef(false);
 
   // Sync theme with preferences when they load
@@ -53,6 +54,31 @@ export function ThemeProvider({
 
     applyTheme(theme === 'dark');
   }, [theme]);
+
+  const applyAndSaveTheme = useCallback(
+    (newTheme: Theme) => {
+      localStorage.setItem(storageKey, newTheme);
+      setTheme(newTheme);
+      emit('theme-changed', { theme: newTheme });
+      const prefs = preferences;
+      if (prefs) {
+        savePreferences.mutate({ ...prefs, theme: newTheme });
+      }
+    },
+    [storageKey, preferences, savePreferences]
+  );
+
+  // Listen for theme switch commands from command palette
+  useEffect(() => {
+    const handler = (e: Event) => {
+      const detail = (e as CustomEvent<string>).detail;
+      if (detail === 'light' || detail === 'dark' || detail === 'system') {
+        applyAndSaveTheme(detail);
+      }
+    };
+    document.addEventListener('command:set-app-theme', handler);
+    return () => document.removeEventListener('command:set-app-theme', handler);
+  }, [applyAndSaveTheme]);
 
   const value = {
     theme,

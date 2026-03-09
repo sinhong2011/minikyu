@@ -23,33 +23,21 @@ describe('account-store', () => {
       {
         id: '1',
         username: 'user1',
-        // biome-ignore lint/style/useNamingConvention: API response format
         server_url: 'https://test.com',
-        // biome-ignore lint/style/useNamingConvention: API response format
         auth_method: 'token',
-        // biome-ignore lint/style/useNamingConvention: API response format
         is_active: true,
-        // biome-ignore lint/style/useNamingConvention: API response format
         is_admin: false,
-        // biome-ignore lint/style/useNamingConvention: API response format
         created_at: '2025-01-01',
-        // biome-ignore lint/style/useNamingConvention: API response format
         updated_at: '2025-01-01',
       },
       {
         id: '2',
         username: 'user2',
-        // biome-ignore lint/style/useNamingConvention: API response format
         server_url: 'https://test.com',
-        // biome-ignore lint/style/useNamingConvention: API response format
         auth_method: 'password',
-        // biome-ignore lint/style/useNamingConvention: API response format
         is_active: false,
-        // biome-ignore lint/style/useNamingConvention: API response format
         is_admin: false,
-        // biome-ignore lint/style/useNamingConvention: API response format
         created_at: '2025-01-02',
-        // biome-ignore lint/style/useNamingConvention: API response format
         updated_at: '2025-01-02',
       },
     ];
@@ -72,17 +60,11 @@ describe('account-store', () => {
     const testAccount: MinifluxConnection = {
       id: '3',
       username: 'user3',
-      // biome-ignore lint/style/useNamingConvention: API response format
       server_url: 'https://test.com',
-      // biome-ignore lint/style/useNamingConvention: API response format
       auth_method: 'token',
-      // biome-ignore lint/style/useNamingConvention: API response format
       is_active: false,
-      // biome-ignore lint/style/useNamingConvention: API response format
       is_admin: false,
-      // biome-ignore lint/style/useNamingConvention: API response format
       created_at: '2025-01-03',
-      // biome-ignore lint/style/useNamingConvention: API response format
       updated_at: '2025-01-03',
     };
 
@@ -98,33 +80,21 @@ describe('account-store', () => {
       {
         id: '1',
         username: 'user1',
-        // biome-ignore lint/style/useNamingConvention: API response format
         server_url: 'https://test.com',
-        // biome-ignore lint/style/useNamingConvention: API response format
         auth_method: 'token',
-        // biome-ignore lint/style/useNamingConvention: API response format
         is_active: true,
-        // biome-ignore lint/style/useNamingConvention: API response format
         is_admin: false,
-        // biome-ignore lint/style/useNamingConvention: API response format
         created_at: '2025-01-01',
-        // biome-ignore lint/style/useNamingConvention: API response format
         updated_at: '2025-01-01',
       },
       {
         id: '2',
         username: 'user2',
-        // biome-ignore lint/style/useNamingConvention: API response format
         server_url: 'https://test.com',
-        // biome-ignore lint/style/useNamingConvention: API response format
         auth_method: 'password',
-        // biome-ignore lint/style/useNamingConvention: API response format
         is_active: false,
-        // biome-ignore lint/style/useNamingConvention: API response format
         is_admin: false,
-        // biome-ignore lint/style/useNamingConvention: API response format
         created_at: '2025-01-02',
-        // biome-ignore lint/style/useNamingConvention: API response format
         updated_at: '2025-01-02',
       },
     ];
@@ -147,17 +117,11 @@ describe('account-store', () => {
       {
         id: '1',
         username: 'user1',
-        // biome-ignore lint/style/useNamingConvention: API response format
         server_url: 'https://test.com',
-        // biome-ignore lint/style/useNamingConvention: API response format
         auth_method: 'token',
-        // biome-ignore lint/style/useNamingConvention: API response format
         is_active: true,
-        // biome-ignore lint/style/useNamingConvention: API response format
         is_admin: false,
-        // biome-ignore lint/style/useNamingConvention: API response format
         created_at: '2025-01-01',
-        // biome-ignore lint/style/useNamingConvention: API response format
         updated_at: '2025-01-01',
       },
     ]);

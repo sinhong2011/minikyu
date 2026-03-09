@@ -108,7 +108,7 @@ export function usePreferences() {
           // biome-ignore lint/style/useNamingConvention: preferences field name
           gesture_swipe_left_action: 'open_in_app_browser',
           // biome-ignore lint/style/useNamingConvention: preferences field name
-          gesture_swipe_right_action: 'close_browser',
+          gesture_swipe_right_action: 'toggle_read',
           // biome-ignore lint/style/useNamingConvention: preferences field name
           gesture_pull_top_action: 'prev_article',
           // biome-ignore lint/style/useNamingConvention: preferences field name

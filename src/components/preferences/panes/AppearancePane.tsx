@@ -1,6 +1,11 @@
+import { Cancel01Icon, Image01Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { convertFileSrc } from '@tauri-apps/api/core';
+import { open as openDialog } from '@tauri-apps/plugin-dialog';
 import { locale } from '@tauri-apps/plugin-os';
+import { Button } from '@/components/ui/button';
 import {
   Select,
   SelectContent,
@@ -8,6 +13,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
+import { Slider } from '@/components/ui/slider';
 import { showToast } from '@/components/ui/sonner';
 import { useTheme } from '@/hooks/use-theme';
 import { availableLanguages } from '@/i18n';
@@ -154,6 +160,193 @@ export function AppearancePane() {
           </Select>
         </SettingsField>
       </SettingsSection>
+
+      <SettingsSection title={_(msg`Background Image`)}>
+        <SettingsField
+          label={_(msg`Image`)}
+          description={_(msg`Set a custom background image for the app window.`)}
+        >
+          <BackgroundImagePicker />
+        </SettingsField>
+
+        {preferences?.background_image_path && (
+          <>
+            <SettingsField
+              label={_(msg`Size`)}
+              description={_(msg`How the image fills the window.`)}
+            >
+              <Select
+                value={preferences.background_image_size ?? 'cover'}
+                onValueChange={(value: string) => {
+                  if (preferences) {
+                    savePreferences.mutate({
+                      ...preferences,
+                      // biome-ignore lint/style/useNamingConvention: preferences field name
+                      background_image_size: value,
+                    });
+                  }
+                }}
+                disabled={savePreferences.isPending}
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="cover">{_(msg`Cover`)}</SelectItem>
+                  <SelectItem value="contain">{_(msg`Contain`)}</SelectItem>
+                  <SelectItem value="fill">{_(msg`Fill`)}</SelectItem>
+                  <SelectItem value="tile">{_(msg`Tile`)}</SelectItem>
+                </SelectContent>
+              </Select>
+            </SettingsField>
+
+            <SettingsField
+              label={_(msg`Opacity`)}
+              description={_(msg`Adjust the background image transparency.`)}
+            >
+              <div className="flex items-center gap-3">
+                <Slider
+                  value={[(preferences.background_image_opacity ?? 0.15) * 100]}
+                  onValueChange={(values) => {
+                    const value = Array.isArray(values) ? values[0] : values;
+                    if (preferences) {
+                      savePreferences.mutate({
+                        ...preferences,
+                        // biome-ignore lint/style/useNamingConvention: preferences field name
+                        background_image_opacity: value / 100,
+                      });
+                    }
+                  }}
+                  min={0}
+                  max={100}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="w-10 text-right text-sm text-muted-foreground">
+                  {Math.round((preferences.background_image_opacity ?? 0.15) * 100)}%
+                </span>
+              </div>
+            </SettingsField>
+
+            <SettingsField
+              label={_(msg`Blur`)}
+              description={_(msg`Apply blur to the background image.`)}
+            >
+              <div className="flex items-center gap-3">
+                <Slider
+                  value={[preferences.background_image_blur ?? 0]}
+                  onValueChange={(values) => {
+                    const value = Array.isArray(values) ? values[0] : values;
+                    if (preferences) {
+                      savePreferences.mutate({
+                        ...preferences,
+                        // biome-ignore lint/style/useNamingConvention: preferences field name
+                        background_image_blur: value,
+                      });
+                    }
+                  }}
+                  min={0}
+                  max={40}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="w-10 text-right text-sm text-muted-foreground">
+                  {preferences.background_image_blur}px
+                </span>
+              </div>
+            </SettingsField>
+
+            <SettingsField
+              label={_(msg`UI Transparency`)}
+              description={_(msg`Make UI panels transparent to reveal the background image.`)}
+            >
+              <div className="flex items-center gap-3">
+                <Slider
+                  value={[(preferences.background_transparency ?? 0) * 100]}
+                  onValueChange={(values) => {
+                    const value = Array.isArray(values) ? values[0] : values;
+                    if (preferences) {
+                      savePreferences.mutate({
+                        ...preferences,
+                        // biome-ignore lint/style/useNamingConvention: preferences field name
+                        background_transparency: value / 100,
+                      });
+                    }
+                  }}
+                  min={0}
+                  max={100}
+                  step={1}
+                  className="flex-1"
+                />
+                <span className="w-10 text-right text-sm text-muted-foreground">
+                  {Math.round((preferences.background_transparency ?? 0) * 100)}%
+                </span>
+              </div>
+            </SettingsField>
+          </>
+        )}
+      </SettingsSection>
+    </div>
+  );
+}
+
+function BackgroundImagePicker() {
+  const { _ } = useLingui();
+  const { data: preferences } = usePreferences();
+  const savePreferences = useSavePreferences();
+  const imagePath = preferences?.background_image_path;
+
+  const handleSelectImage = async () => {
+    const filePath = await openDialog({
+      title: _(msg`Select Background Image`),
+      multiple: false,
+      filters: [
+        { name: 'Images', extensions: ['png', 'jpg', 'jpeg', 'webp', 'gif', 'bmp', 'avif'] },
+      ],
+    });
+    if (!filePath || !preferences) return;
+    savePreferences.mutate({
+      ...preferences,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      background_image_path: filePath,
+    });
+  };
+
+  const handleRemoveImage = () => {
+    if (!preferences) return;
+    savePreferences.mutate({
+      ...preferences,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      background_image_path: null,
+    });
+  };
+
+  return (
+    <div className="space-y-2">
+      {imagePath ? (
+        <div className="flex items-center gap-2">
+          <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-md border border-border/50">
+            <img src={convertFileSrc(imagePath)} alt="" className="size-full object-cover" />
+          </div>
+          <div className="flex min-w-0 flex-1 flex-col gap-1">
+            <p className="truncate text-sm text-muted-foreground">{imagePath.split('/').pop()}</p>
+            <div className="flex gap-1.5">
+              <Button variant="outline" size="sm" onClick={handleSelectImage}>
+                {_(msg`Change`)}
+              </Button>
+              <Button variant="ghost" size="sm" onClick={handleRemoveImage}>
+                <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
+                {_(msg`Remove`)}
+              </Button>
+            </div>
+          </div>
+        </div>
+      ) : (
+        <Button variant="outline" onClick={handleSelectImage} className="gap-2">
+          <HugeiconsIcon icon={Image01Icon} className="size-4" />
+          {_(msg`Choose Image`)}
+        </Button>
+      )}
     </div>
   );
 }

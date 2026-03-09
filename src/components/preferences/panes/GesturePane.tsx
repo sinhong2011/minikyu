@@ -25,10 +25,10 @@ function GestureActionSelect({
 }) {
   const { _ } = useLingui();
   return (
-    <div className="grid grid-cols-[1fr_minmax(0,220px)] items-center gap-4">
-      <Label className="text-sm font-medium text-foreground">{label}</Label>
+    <div className="flex items-center justify-between gap-4">
+      <Label className="shrink-0 text-sm font-medium text-foreground">{label}</Label>
       <Select value={value} onValueChange={onValueChange}>
-        <SelectTrigger>
+        <SelectTrigger className="w-56">
           <SelectValue />
         </SelectTrigger>
         <SelectContent>
@@ -92,9 +92,12 @@ export function GesturePane() {
 
       <SettingsSection title={_(msg`Sensitivity`)}>
         <div className="space-y-2">
-          <div className="grid grid-cols-[1fr_minmax(0,220px)] items-center gap-4">
-            <Label className="text-sm font-medium text-foreground">{_(msg`Swipe distance`)}</Label>
+          <div className="flex items-center justify-between gap-4">
+            <Label className="shrink-0 text-sm font-medium text-foreground">
+              {_(msg`Swipe distance`)}
+            </Label>
             <Slider
+              className="w-56"
               value={[swipeThreshold]}
               min={100}
               max={400}

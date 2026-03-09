@@ -8,38 +8,27 @@ import { EntryReadingHeader } from './EntryReadingHeader';
 
 const sampleEntry: Entry = {
   id: 'entry-1',
-  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
   user_id: '1',
-  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
   feed_id: '1',
   title: 'Entry title',
   url: 'https://example.com/articles/1',
-  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
   comments_url: null,
   author: 'Author',
   content: '<p>hello</p>',
   hash: 'hash',
-  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
   published_at: '2026-02-19T00:00:00Z',
-  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
   created_at: null,
-  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
   changed_at: null,
   status: 'unread',
-  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
   share_code: null,
   starred: false,
-  // biome-ignore lint/style/useNamingConvention: Miniflux API field name
   reading_time: 3,
   enclosures: [],
   feed: {
     id: '1',
-    // biome-ignore lint/style/useNamingConvention: Miniflux API field name
     user_id: '1',
     title: 'Feed title',
-    // biome-ignore lint/style/useNamingConvention: Miniflux API field name
     site_url: 'https://example.com',
-    // biome-ignore lint/style/useNamingConvention: Miniflux API field name
     feed_url: 'https://example.com/feed.xml',
     category: null,
     icon: null,
@@ -126,10 +115,8 @@ describe('EntryReadingHeader translation options', () => {
       enclosures: [
         {
           id: 'enc-1',
-          // biome-ignore lint/style/useNamingConvention: Miniflux API field name
           entry_id: 'entry-1',
           url: 'https://example.com/audio.mp3',
-          // biome-ignore lint/style/useNamingConvention: Miniflux API field name
           mime_type: 'audio/mpeg',
           length: '1800',
           position: 0,

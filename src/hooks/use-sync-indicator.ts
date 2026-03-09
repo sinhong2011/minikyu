@@ -1,9 +1,4 @@
-import {
-  Alert01Icon,
-  CheckmarkCircle01Icon,
-  DatabaseSync01Icon,
-  Loading03Icon,
-} from '@hugeicons/core-free-icons';
+import { Alert01Icon, Loading03Icon, Refresh04Icon } from '@hugeicons/core-free-icons';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useSyncStore } from '@/store/sync-store';
@@ -11,9 +6,9 @@ import { useSyncStore } from '@/store/sync-store';
 type SyncStatus = 'idle' | 'syncing' | 'completed' | 'failed';
 
 const iconMap = {
-  idle: DatabaseSync01Icon,
+  idle: Refresh04Icon,
   syncing: Loading03Icon,
-  completed: CheckmarkCircle01Icon,
+  completed: Refresh04Icon,
   failed: Alert01Icon,
 } as const;
 

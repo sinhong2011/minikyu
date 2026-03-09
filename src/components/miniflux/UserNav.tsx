@@ -124,7 +124,7 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
       <MenuTrigger className={cn('w-full outline-none', compact && 'flex justify-center')}>
         {compact ? (
           <div
-            className="flex items-center justify-center rounded-lg p-1.5 text-left transition-colors hover:bg-accent"
+            className="flex items-center justify-center rounded-lg p-1.5 text-left transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10"
             title={currentAccount.username}
           >
             <svg
@@ -185,7 +185,7 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
             </svg>
           </div>
         ) : (
-          <div className="flex items-center gap-3 rounded-lg p-2 text-left transition-colors hover:bg-accent">
+          <div className="flex items-center gap-3 rounded-lg p-2 text-left transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10">
             <svg
               viewBox="0 0 32 32"
               fill="none"

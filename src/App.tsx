@@ -4,6 +4,7 @@ import { MainWindow } from './components/layout/MainWindow';
 import { ThemeProvider } from './components/ThemeProvider';
 import { useAccountInitialization } from './hooks/use-account-initialization';
 import { useAutoUpdater } from './hooks/use-auto-updater';
+import { availableLanguages } from './i18n';
 import { initializeLanguage } from './i18n/language-init';
 import { initializeCommandSystem } from './lib/commands';
 import { logger } from './lib/logger';
@@ -51,6 +52,29 @@ function App() {
       isDev: import.meta.env.DEV,
       mode: import.meta.env.MODE,
     });
+
+    // Listen for language switch commands from command palette
+    const handleLanguageCommand = async (e: Event) => {
+      const lang = (e as CustomEvent<string>).detail;
+      if (!availableLanguages.includes(lang)) return;
+      try {
+        const { loadAndActivate } = await import('./i18n/config');
+        await loadAndActivate(lang);
+        await buildAppMenu();
+        // Persist language preference
+        const result = await commands.loadPreferences();
+        if (result.status === 'ok') {
+          await commands.savePreferences({ ...result.data, language: lang });
+        }
+      } catch (error) {
+        logger.warn('Failed to switch language', { error });
+      }
+    };
+    document.addEventListener('command:set-language', handleLanguageCommand);
+
+    return () => {
+      document.removeEventListener('command:set-language', handleLanguageCommand);
+    };
   }, []);
 
   return (

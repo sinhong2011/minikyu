@@ -3,6 +3,33 @@ import { normalizeReaderCodeTheme, type ReaderCodeTheme } from '@/lib/shiki-high
 import type { AppPreferences } from '@/lib/tauri-bindings';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
 
+// CJK Unified Ideographs ranges for Chinese detection
+const CJK_REGEX =
+  /[\u4E00-\u9FFF\u3400-\u4DBF\uF900-\uFAFF\u{20000}-\u{2A6DF}\u{2A700}-\u{2B73F}]/u;
+
+/**
+ * Detect the likely source language of text by checking character composition.
+ * Returns "zh" if Chinese characters dominate, otherwise null.
+ */
+export function detectSourceLanguage(text: string): string | null {
+  if (!text) return null;
+  const sample = text.slice(0, 500);
+  let cjkCount = 0;
+  let totalAlphaNum = 0;
+  for (const char of sample) {
+    if (CJK_REGEX.test(char)) {
+      cjkCount++;
+      totalAlphaNum++;
+    } else if (/\p{L}|\p{N}/u.test(char)) {
+      totalAlphaNum++;
+    }
+  }
+  if (totalAlphaNum === 0) return null;
+  // If more than 30% of alpha-numeric characters are CJK, treat as Chinese
+  if (cjkCount / totalAlphaNum > 0.3) return 'zh';
+  return null;
+}
+
 const READER_CODE_THEME_STORAGE_KEY = 'reader-code-theme';
 const DEFAULT_READER_FONT_SIZE = 16;
 const DEFAULT_READER_LINE_WIDTH = 65;
@@ -74,6 +101,7 @@ export function useReaderSettings() {
     bionicReading: preferences?.reader_bionic_reading ?? false,
     statusBarVisible: preferences?.reader_status_bar ?? false,
     focusMode: preferences?.reader_focus_mode ?? false,
+    autoMarkRead: preferences?.reader_auto_mark_read ?? false,
     translationDisplayMode: preferences?.reader_translation_display_mode ?? 'bilingual',
     translationTriggerMode: preferences?.reader_translation_trigger_mode ?? 'manual',
     translationRouteMode: preferences?.reader_translation_route_mode ?? 'engine_first',
@@ -86,6 +114,7 @@ export function useReaderSettings() {
     translationAutoEnabled: preferences?.reader_translation_auto_enabled ?? false,
     translationExcludedFeedIds: preferences?.reader_translation_excluded_feed_ids ?? [],
     translationExcludedCategoryIds: preferences?.reader_translation_excluded_category_ids ?? [],
+    translationSkipSourceLanguages: preferences?.reader_translation_skip_source_languages ?? [],
     translationProviderSettings: preferences?.reader_translation_provider_settings ?? {},
     aiSummaryAutoEnabled: preferences?.ai_summary_auto_enabled ?? false,
     codeTheme,
@@ -117,6 +146,7 @@ export function useReaderSettings() {
     setBionicReading: (enabled: boolean) => updateSetting('reader_bionic_reading', enabled),
     setStatusBarVisible: (enabled: boolean) => updateSetting('reader_status_bar', enabled),
     setFocusMode: (enabled: boolean) => updateSetting('reader_focus_mode', enabled),
+    setAutoMarkRead: (enabled: boolean) => updateSetting('reader_auto_mark_read', enabled),
     setTranslationDisplayMode: (mode: AppPreferences['reader_translation_display_mode']) =>
       updateSetting('reader_translation_display_mode', mode),
     setTranslationTriggerMode: (mode: AppPreferences['reader_translation_trigger_mode']) =>
@@ -134,6 +164,8 @@ export function useReaderSettings() {
       updateSetting('reader_translation_excluded_feed_ids', ids),
     setTranslationExcludedCategoryIds: (ids: string[]) =>
       updateSetting('reader_translation_excluded_category_ids', ids),
+    setTranslationSkipSourceLanguages: (langs: string[]) =>
+      updateSetting('reader_translation_skip_source_languages', langs),
     setAiSummaryAutoEnabled: (enabled: boolean) =>
       updateSetting('ai_summary_auto_enabled', enabled),
     setCodeTheme: (theme: ReaderCodeTheme) => {

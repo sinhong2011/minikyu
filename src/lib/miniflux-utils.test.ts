@@ -9,7 +9,6 @@ import {
 function createTestEntry(id: string, publishedAt: string) {
   return {
     id,
-    // biome-ignore lint/style/useNamingConvention: matches Miniflux API shape
     published_at: publishedAt,
   };
 }

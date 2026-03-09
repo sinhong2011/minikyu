@@ -45,8 +45,8 @@ import {
 import { useClipboard } from '@/hooks/use-clipboard';
 import { convertChineseHtml, normalizeCustomConversionRules } from '@/lib/chinese-conversion';
 import {
-  codeLanguageOptions,
   detectCodeLanguageFromContent,
+  detectCodeLanguageWithLLM,
   formatCodeForLanguage,
   highlightCodeWithShiki,
   normalizeCodeLanguage,
@@ -55,8 +55,32 @@ import {
 } from '@/lib/shiki-highlight';
 import type { ChineseConversionMode, ChineseConversionRule } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
+import { usePreferences } from '@/services/preferences';
 
 const ImageViewer = lazy(() => import('./ImageViewer').then((m) => ({ default: m.ImageViewer })));
+
+const PICKER_OPTIONS: { value: SupportedCodeLanguage; label: string }[] = [
+  { value: 'text', label: 'text' },
+  { value: 'javascript', label: 'JavaScript / TypeScript' },
+  { value: 'json', label: 'json' },
+  { value: 'go', label: 'go' },
+  { value: 'c', label: 'c' },
+  { value: 'cpp', label: 'cpp' },
+  { value: 'html', label: 'html' },
+  { value: 'css', label: 'css' },
+  { value: 'bash', label: 'bash' },
+  { value: 'python', label: 'python' },
+  { value: 'rust', label: 'rust' },
+  { value: 'java', label: 'java' },
+  { value: 'kotlin', label: 'kotlin' },
+  { value: 'swift', label: 'swift' },
+  { value: 'sql', label: 'sql' },
+  { value: 'yaml', label: 'yaml' },
+  { value: 'toml', label: 'toml' },
+  { value: 'markdown', label: 'markdown' },
+];
+
+const JS_TS_FAMILY: SupportedCodeLanguage[] = ['javascript', 'typescript', 'jsx', 'tsx'];
 
 import { ParticleColumn } from './ParticleColumn';
 
@@ -158,9 +182,30 @@ function CodeBlock({
   const [highlightedHtml, setHighlightedHtml] = useState<string | null>(null);
   const [isHighlighting, setIsHighlighting] = useState(false);
 
+  const { data: preferences } = usePreferences();
+  const detectionMode = preferences?.reader_code_detection_mode ?? 'auto';
+
   useEffect(() => {
     setLanguage(defaultLanguage);
   }, [defaultLanguage]);
+
+  useEffect(() => {
+    if (detectionMode !== 'auto') return;
+    // If class-based detection found a language, trust it
+    if (defaultLanguage !== 'text') return;
+
+    let cancelled = false;
+
+    detectCodeLanguageWithLLM(text).then((detected) => {
+      if (!cancelled) {
+        setLanguage(detected);
+      }
+    });
+
+    return () => {
+      cancelled = true;
+    };
+  }, [detectionMode, defaultLanguage, text]);
 
   const displayText = useMemo(() => formatCodeForLanguage(text, language), [text, language]);
   const plainLines = useMemo(() => {
@@ -213,14 +258,22 @@ function CodeBlock({
         </label>
         <select
           id={codeLanguageId}
-          value={language}
-          onChange={(event) => setLanguage(normalizeCodeLanguage(event.target.value))}
+          value={JS_TS_FAMILY.includes(language) ? 'javascript' : language}
+          onChange={(event) => {
+            const selected = normalizeCodeLanguage(event.target.value);
+            if (selected === 'javascript') {
+              const refined = detectCodeLanguageFromContent(text);
+              setLanguage(JS_TS_FAMILY.includes(refined) ? refined : 'javascript');
+            } else {
+              setLanguage(selected);
+            }
+          }}
           aria-label={languageLabel}
           className="h-8 rounded-md border border-border/60 bg-background/90 px-2 text-xs text-foreground backdrop-blur-sm"
         >
-          {codeLanguageOptions.map((option) => (
-            <option key={option} value={option}>
-              {option}
+          {PICKER_OPTIONS.map((option) => (
+            <option key={option.value} value={option.value}>
+              {option.label}
             </option>
           ))}
         </select>
@@ -1225,10 +1278,10 @@ export function SafeHtml({
             'reader-node-block relative rounded-xl bg-transparent px-2.5 pt-1 pb-0 shadow-none',
             interactive &&
               !isTranslatedBlock &&
-              'group/reader-node transition-[background-color,box-shadow,transform] duration-180 hover:-translate-y-px hover:bg-muted/65 hover:shadow-[0_16px_32px_-22px_hsl(var(--foreground)/0.56),0_8px_16px_-12px_hsl(var(--foreground)/0.34)] focus-within:-translate-y-px focus-within:bg-muted/65 focus-within:shadow-[0_16px_32px_-22px_hsl(var(--foreground)/0.56),0_8px_16px_-12px_hsl(var(--foreground)/0.34)]',
+              'group/reader-node transition-[background-color,box-shadow,transform] duration-180 hover:-translate-y-px hover:bg-black/[0.05] dark:hover:bg-white/[0.08] hover:shadow-[0_16px_32px_-22px_hsl(var(--foreground)/0.56),0_8px_16px_-12px_hsl(var(--foreground)/0.34)] focus-within:-translate-y-px focus-within:bg-black/[0.05] dark:focus-within:bg-white/[0.08] focus-within:shadow-[0_16px_32px_-22px_hsl(var(--foreground)/0.56),0_8px_16px_-12px_hsl(var(--foreground)/0.34)]',
             interactive &&
               isTranslatedBlock &&
-              'group/reader-node transition-[background-color] duration-180 hover:bg-accent/40 focus-within:bg-accent/40',
+              'group/reader-node transition-[background-color] duration-180 hover:bg-black/[0.04] dark:hover:bg-white/[0.07] focus-within:bg-black/[0.04] dark:focus-within:bg-white/[0.07]',
             shouldUseLayoutCenter && 'flex justify-center'
           )}
         >
@@ -1246,7 +1299,7 @@ export function SafeHtml({
                   side="bottom"
                   align="end"
                   sideOffset={8}
-                  className="w-64 rounded-2xl border-border/60 bg-popover/95 p-1.5 shadow-[0_24px_48px_-28px_hsl(var(--foreground)/0.7),0_14px_32px_-24px_hsl(var(--foreground)/0.55)] backdrop-blur-xl"
+                  className="w-64 rounded-2xl border border-border/60 bg-popover/90 p-1.5 shadow-[0_24px_48px_-28px_hsl(var(--foreground)/0.7),0_14px_32px_-24px_hsl(var(--foreground)/0.55)] backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75"
                 >
                   <MenuGroup>
                     <MenuGroupLabel className="px-2.5 pb-1 pt-1 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground/90">
@@ -1334,7 +1387,7 @@ export function SafeHtml({
                               <MenuSubmenuTrigger className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium">
                                 {translateWithLabel}
                               </MenuSubmenuTrigger>
-                              <MenuSubmenuPanel className="w-56 rounded-2xl border-border/60 bg-popover/95 p-1.5 shadow-[0_24px_48px_-28px_hsl(var(--foreground)/0.7),0_14px_32px_-24px_hsl(var(--foreground)/0.55)] backdrop-blur-xl">
+                              <MenuSubmenuPanel className="w-56 rounded-2xl border border-border/60 bg-popover/90 p-1.5 shadow-[0_24px_48px_-28px_hsl(var(--foreground)/0.7),0_14px_32px_-24px_hsl(var(--foreground)/0.55)] backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75">
                                 {availableProviders.map((provider) => (
                                   <MenuItem
                                     key={provider.id}

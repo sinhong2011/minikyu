@@ -12,6 +12,7 @@ import {
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { showToast } from '@/components/ui/sonner';
+import { Textarea } from '@/components/ui/textarea';
 import { logger } from '@/lib/logger';
 import {
   normalizeReaderCodeTheme,
@@ -170,7 +171,7 @@ export function ReaderPane() {
   };
 
   const handleToggle = async (
-    field: 'reader_bionic_reading' | 'reader_status_bar',
+    field: 'reader_bionic_reading' | 'reader_status_bar' | 'reader_auto_mark_read',
     checked: boolean
   ) => {
     if (!preferences) return;
@@ -389,6 +390,62 @@ export function ReaderPane() {
             </SelectContent>
           </Select>
         </SettingsField>
+        <SettingsField
+          label={_(msg`Language detection`)}
+          description={_(msg`How code block languages are detected for syntax highlighting`)}
+        >
+          <Select
+            value={preferences?.reader_code_detection_mode ?? 'auto'}
+            onValueChange={async (value) => {
+              if (!preferences) return;
+              try {
+                await savePreferences.mutateAsync({
+                  ...preferences,
+                  // biome-ignore lint/style/useNamingConvention: preferences field name
+                  reader_code_detection_mode: value,
+                });
+              } catch {
+                showToast.error(_(msg`Failed to update setting`));
+              }
+            }}
+            disabled={!preferences || savePreferences.isPending}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="auto">{_(msg`Auto (LLM + regex)`)}</SelectItem>
+              <SelectItem value="regex">{_(msg`Regex only`)}</SelectItem>
+            </SelectContent>
+          </Select>
+        </SettingsField>
+        <SettingsField
+          label={_(msg`Detection prompt`)}
+          description={_(
+            msg`Custom prompt for LLM code language detection. Leave empty to use default.`
+          )}
+        >
+          <Textarea
+            value={preferences?.reader_code_detection_prompt ?? ''}
+            onChange={(e) => {
+              if (preferences) {
+                savePreferences.mutate({
+                  ...preferences,
+                  // biome-ignore lint/style/useNamingConvention: preferences field name
+                  reader_code_detection_prompt: e.target.value || null,
+                });
+              }
+            }}
+            placeholder="You are a programming language identifier. Given a code snippet, respond with ONLY the programming language name in lowercase. For example: rust, python, javascript, typescript, c, cpp, go, java, etc. If you cannot identify the language, respond with: text Do not include any other text, explanation, or formatting."
+            rows={3}
+            className="text-xs"
+            disabled={
+              !preferences ||
+              savePreferences.isPending ||
+              (preferences?.reader_code_detection_mode ?? 'auto') !== 'auto'
+            }
+          />
+        </SettingsField>
       </SettingsSection>
 
       {/* Reading Features */}
@@ -423,6 +480,23 @@ export function ReaderPane() {
             />
             <Label htmlFor="status-bar" className="text-sm">
               {(preferences?.reader_status_bar ?? false) ? _(msg`Enabled`) : _(msg`Disabled`)}
+            </Label>
+          </div>
+        </SettingsField>
+
+        <SettingsField
+          label={_(msg`Auto mark as read`)}
+          description={_(msg`Automatically mark entries as read when scrolled past 20%`)}
+        >
+          <div className="flex items-center space-x-2">
+            <Switch
+              id="auto-mark-read"
+              checked={preferences?.reader_auto_mark_read ?? false}
+              onCheckedChange={(checked) => handleToggle('reader_auto_mark_read', checked)}
+              disabled={!preferences || savePreferences.isPending}
+            />
+            <Label htmlFor="auto-mark-read" className="text-sm">
+              {(preferences?.reader_auto_mark_read ?? false) ? _(msg`Enabled`) : _(msg`Disabled`)}
             </Label>
           </div>
         </SettingsField>

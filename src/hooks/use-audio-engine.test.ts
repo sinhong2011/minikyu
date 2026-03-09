@@ -10,7 +10,6 @@ vi.mock('@/lib/tauri-bindings', () => ({
     getDownloadedFilePath: vi.fn(async () => ({ status: 'ok', data: null })),
     loadPreferences: vi.fn(async () => ({
       status: 'ok',
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       data: { player_display_mode: 'FloatingWindow' },
     })),
     getFeedIconData: vi.fn(async () => ({ status: 'ok', data: null })),
@@ -57,24 +56,18 @@ class MockAudio extends EventTarget {
 function createEntry(): Entry {
   return {
     id: '1001',
-    // biome-ignore lint/style/useNamingConvention: Tauri binding fields are snake_case.
     user_id: '1',
-    // biome-ignore lint/style/useNamingConvention: Tauri binding fields are snake_case.
     feed_id: '10',
     title: 'Episode 43',
     url: 'https://example.com/episodes/43',
     hash: 'hash-1001',
-    // biome-ignore lint/style/useNamingConvention: Tauri binding fields are snake_case.
     published_at: '2026-02-25T00:00:00Z',
     status: 'unread',
     feed: {
       id: '10',
-      // biome-ignore lint/style/useNamingConvention: Tauri binding fields are snake_case.
       user_id: '1',
       title: 'Podcast Feed',
-      // biome-ignore lint/style/useNamingConvention: Tauri binding fields are snake_case.
       site_url: 'https://example.com',
-      // biome-ignore lint/style/useNamingConvention: Tauri binding fields are snake_case.
       feed_url: 'https://example.com/feed.xml',
       category: null,
       icon: null,
@@ -85,10 +78,8 @@ function createEntry(): Entry {
 function createEnclosure(): Enclosure {
   return {
     id: '2001',
-    // biome-ignore lint/style/useNamingConvention: Tauri binding fields are snake_case.
     entry_id: '1001',
     url: 'https://cdn.example.com/audio/episode-43.mp3',
-    // biome-ignore lint/style/useNamingConvention: Tauri binding fields are snake_case.
     mime_type: 'audio/mpeg',
     length: '3600',
     position: 0,

@@ -20,6 +20,8 @@ import { useSyncIndicator } from '@/hooks/use-sync-indicator';
 import { executeCommand } from '@/lib/commands';
 import { cn } from '@/lib/utils';
 import { useIsConnected } from '@/services/miniflux/auth';
+import { useSyncMiniflux } from '@/services/miniflux/feeds';
+import { useSyncStore } from '@/store/sync-store';
 import { useUIStore } from '@/store/ui-store';
 
 interface WindowTitleBarProps {
@@ -37,6 +39,8 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
   const toggleZenMode = useUIStore((state) => state.toggleZenMode);
   const { data: isConnected } = useIsConnected();
   const { status: syncStatus, icon: syncIcon, title: syncTitle } = useSyncIndicator();
+  const syncMiniflux = useSyncMiniflux();
+  const syncing = useSyncStore((state) => state.syncing);
   const commandContext = useCommandContext();
 
   const handleOpenSettings = async () => {
@@ -51,7 +55,11 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
   return (
     <div
       data-tauri-drag-region
-      className={cn('flex h-10 w-full shrink-0 items-center gap-2 bg-background px-2', className)}
+      data-frosted
+      className={cn(
+        'relative z-20 flex h-10 w-full shrink-0 items-center gap-2 rounded-t-xl bg-background px-2',
+        className
+      )}
     >
       {/* Left section */}
       <div data-tauri-drag-region className="flex items-center gap-2">
@@ -111,6 +119,9 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
                 syncStatus === 'failed' ? 'text-destructive' : 'text-foreground/70'
               )}
               title={syncTitle}
+              onClick={() => {
+                if (!syncing) syncMiniflux.mutate();
+              }}
             >
               <HugeiconsIcon
                 icon={syncIcon}

@@ -1046,6 +1046,14 @@ async summarizeArticleStream(request: SummarizeArticleRequest, streamId: string)
     else return { status: "error", error: e  as any };
 }
 },
+async detectCodeLanguage(code: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("detect_code_language", { code }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
 async getArticleSummary(entryId: string) : Promise<Result<ArticleSummaryRecord | null, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("get_article_summary", { entryId }) };
@@ -1331,6 +1339,26 @@ export type ApiKeyCreate = { description: string }
  */
 export type AppPreferences = { theme: string; 
 /**
+ * Background image file path. None means no background image.
+ */
+background_image_path?: string | null; 
+/**
+ * Background image opacity (0.0 to 1.0). Defaults to 0.15.
+ */
+background_image_opacity?: number; 
+/**
+ * Background image blur amount in pixels. Defaults to 0.
+ */
+background_image_blur?: number; 
+/**
+ * Background image size mode: "cover", "contain", "fill", "tile". Defaults to "cover".
+ */
+background_image_size?: string; 
+/**
+ * UI background transparency (0.0 to 1.0). 0 = fully opaque, 1 = fully transparent. Defaults to 0.
+ */
+background_transparency?: number; 
+/**
  * Global shortcut for quick pane (e.g., "CommandOrControl+Shift+.")
  * If None, uses to default shortcut
  */
@@ -1379,6 +1407,14 @@ reader_theme: string;
  */
 reader_code_theme: string; 
 /**
+ * Code language detection mode: "auto" (LLM + regex fallback) or "regex" (regex only).
+ */
+reader_code_detection_mode?: string; 
+/**
+ * Custom prompt for LLM code language detection. If None or empty, uses built-in default.
+ */
+reader_code_detection_prompt?: string | null; 
+/**
  * Chinese conversion mode for reading content.
  */
 reader_chinese_conversion: ChineseConversionMode; 
@@ -1394,6 +1430,10 @@ reader_status_bar: boolean;
  * Whether to enable focus mode (paragraph dimming) in the reader.
  */
 reader_focus_mode?: boolean; 
+/**
+ * Whether to automatically mark entries as read when scrolled past 20%.
+ */
+reader_auto_mark_read?: boolean; 
 /**
  * User-defined term conversion rules applied after Chinese conversion.
  */
@@ -1446,6 +1486,10 @@ reader_translation_excluded_feed_ids?: string[];
  * Category IDs excluded from immersive translation.
  */
 reader_translation_excluded_category_ids?: string[]; 
+/**
+ * Source language codes that skip auto-translation (e.g. ["zh", "zh-CN", "zh-TW"]).
+ */
+reader_translation_skip_source_languages?: string[]; 
 /**
  * Default download path for images (null = ask every time)
  */
@@ -1517,7 +1561,11 @@ gesture_pull_bottom_action?: string;
 /**
  * Swipe distance threshold in pixels (100-400).
  */
-gesture_swipe_threshold?: number }
+gesture_swipe_threshold?: number; 
+/**
+ * Entry list panel width in pixels. None means use default (435).
+ */
+layout_entry_list_width?: number | null }
 export type ArticleSummaryRecord = { entry_id: string; summary: string; provider_used: string | null; model_used: string | null }
 /**
  * Authentication Config
@@ -1734,7 +1782,7 @@ system_prompt: string | null }
 /**
  * Reader translation routing strategy mode.
  */
-export type ReaderTranslationRouteMode = "engine_first" | "hybrid_auto"
+export type ReaderTranslationRouteMode = "engine_first" | "llm_first" | "hybrid_auto"
 /**
  * Reader translation trigger mode.
  */

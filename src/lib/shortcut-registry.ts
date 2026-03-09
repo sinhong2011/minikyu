@@ -54,6 +54,7 @@ export const SHORTCUT_ACTIONS: ShortcutAction[] = [
   { id: 'next-article', defaultKey: 'j', group: 'navigation', label: msg`Next article` },
   { id: 'prev-article', defaultKey: 'k', group: 'navigation', label: msg`Previous article` },
   { id: 'go-to-top', defaultKey: 'g', group: 'navigation', label: msg`Go to top` },
+  { id: 'toggle-zen-mode', defaultKey: 'z', group: 'navigation', label: msg`Toggle Zen Mode` },
 
   // Reading
   { id: 'scroll-down', defaultKey: 'Space', group: 'reading', label: msg`Scroll page` },
@@ -84,10 +85,28 @@ export const SHORTCUT_ACTIONS: ShortcutAction[] = [
   { id: 'toggle-translation', defaultKey: 't', group: 'article', label: msg`Toggle translation` },
   { id: 'summarize', defaultKey: 's', group: 'article', label: msg`Summarize article` },
   {
+    id: 'toggle-focus-mode',
+    defaultKey: 'v',
+    group: 'article',
+    label: msg`Toggle focus mode`,
+  },
+  {
     id: 'fetch-content',
     defaultKey: 'f',
     group: 'article',
     label: msg`Fetch original content`,
+  },
+  {
+    id: 'podcast-play',
+    defaultKey: 'p',
+    group: 'article',
+    label: msg`Play / Pause podcast`,
+  },
+  {
+    id: 'podcast-queue',
+    defaultKey: 'q',
+    group: 'article',
+    label: msg`Add to playlist`,
   },
 
   // Links

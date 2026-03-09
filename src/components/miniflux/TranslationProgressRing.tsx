@@ -44,7 +44,7 @@ export function TranslationProgressRing({ completed, total }: TranslationProgres
           aria-valuenow={completed}
           aria-valuemax={total}
         >
-          <div className="pointer-events-auto flex items-center gap-1.5 rounded-full border border-border/50 bg-background/90 px-2 py-1 shadow-[0_4px_12px_-4px_hsl(var(--foreground)/0.15)] backdrop-blur-sm">
+          <div className="pointer-events-auto flex items-center gap-1.5 rounded-full bg-popover/75 px-2 py-1 ring-1 ring-foreground/10 shadow-lg backdrop-blur-2xl backdrop-saturate-150">
             <svg
               width={RING_SIZE}
               height={RING_SIZE}

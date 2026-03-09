@@ -9,6 +9,8 @@ import {
   Link01Icon,
   Mail01Icon,
   MailOpen01Icon,
+  PlayIcon,
+  Playlist03Icon,
   SentIcon,
   SparklesIcon,
   StarIcon,
@@ -18,7 +20,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { AnimatePresence, motion, useMotionValue, useTransform } from 'motion/react';
+import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArticleSummaryCard, useArticleSummary } from '@/components/miniflux/ArticleSummary';
 import { Button } from '@/components/ui/button';
@@ -36,10 +38,11 @@ import { ScrollArea } from '@/components/ui/scroll-area';
 import { Skeleton } from '@/components/ui/skeleton';
 import { showToast } from '@/components/ui/sonner';
 import { useGestureSettings } from '@/hooks/use-gesture-settings';
-import { useReaderSettings } from '@/hooks/use-reader-settings';
+import { detectSourceLanguage, useReaderSettings } from '@/hooks/use-reader-settings';
 import { useShortcutConfig } from '@/hooks/use-shortcut-config';
 import { getGestureAction } from '@/lib/gesture-actions';
 import { logger } from '@/lib/logger';
+import { getPodcastEnclosure } from '@/lib/podcast-utils';
 import { getReaderFontStack } from '@/lib/reader-fonts';
 import {
   getReaderThemePalette,
@@ -124,8 +127,10 @@ export function EntryReading({
     translationAutoEnabled,
     translationExcludedFeedIds,
     translationExcludedCategoryIds,
+    translationSkipSourceLanguages,
     translationProviderSettings,
     focusMode,
+    autoMarkRead,
     aiSummaryAutoEnabled,
     setFocusMode,
     setTranslationAutoEnabled,
@@ -168,6 +173,8 @@ export function EntryReading({
   onNavigatePrevRef.current = onNavigatePrev;
   const swipeThresholdRef = useRef(swipeThreshold);
   swipeThresholdRef.current = swipeThreshold;
+  const autoMarkReadRef = useRef(autoMarkRead);
+  autoMarkReadRef.current = autoMarkRead;
   const translationAutoEnabledRef = useRef(translationAutoEnabled);
   translationAutoEnabledRef.current = translationAutoEnabled;
   const articleSummary = useArticleSummary(
@@ -183,8 +190,23 @@ export function EntryReading({
       (entry.feed.category !== null &&
         translationExcludedCategoryIds.includes(entry.feed.category.id))
     : false;
-  const isExcludedFeedRef = useRef(isExcludedFeed);
-  isExcludedFeedRef.current = isExcludedFeed;
+  const isExcludedByLanguage =
+    translationSkipSourceLanguages.length > 0 && entry
+      ? (() => {
+          const detected = detectSourceLanguage(entry.title);
+          return (
+            detected !== null &&
+            translationSkipSourceLanguages.some(
+              (lang) =>
+                detected === lang ||
+                detected.startsWith(`${lang}-`) ||
+                lang.startsWith(`${detected}-`)
+            )
+          );
+        })()
+      : false;
+  const isExcludedFeedRef = useRef(isExcludedFeed || isExcludedByLanguage);
+  isExcludedFeedRef.current = isExcludedFeed || isExcludedByLanguage;
   const onScrollRef = useRef(onScroll);
   onScrollRef.current = onScroll;
   const entryRef = useRef(entry);
@@ -251,37 +273,37 @@ export function EntryReading({
   );
   // Pull from top/bottom progress and animation
   const pullTopProgress = useMotionValue(0);
-  const pullTopHintY = useTransform(pullTopProgress, [0, 1], [-48, 0]);
-  const pullTopHintOpacity = useTransform(pullTopProgress, [0, 0.15, 1], [0, 0.8, 1]);
-  const pullTopHintScale = useTransform(pullTopProgress, [0, 0.3, 0.8, 1], [0.4, 0.85, 1, 1.05]);
-  const pullTopIconScale = useTransform(pullTopProgress, [0, 0.5, 0.85, 1], [0.3, 0.8, 1, 1.25]);
-  const pullTopIconRotate = useTransform(pullTopProgress, [0, 0.6, 1], [90, 15, 0]);
-  const pullTopLabelOpacity = useTransform(pullTopProgress, [0, 0.4, 0.7, 1], [0, 0, 0.6, 1]);
-  const pullTopLabelY = useTransform(pullTopProgress, [0, 0.5, 1], [8, 4, 0]);
+  const pullTopHintY = useTransform(pullTopProgress, [0, 1], [-96, 0]);
+  const pullTopHintOpacity = useTransform(pullTopProgress, [0, 0.2, 1], [0, 0.7, 1]);
+  const pullTopHintScale = useTransform(pullTopProgress, [0, 0.3, 0.8, 1], [0.3, 0.8, 1, 1.08]);
+  const pullTopIconScale = useTransform(pullTopProgress, [0, 0.5, 0.85, 1], [0.2, 0.7, 1, 1.3]);
+  const pullTopIconRotate = useTransform(pullTopProgress, [0, 0.6, 1], [120, 20, 0]);
+  const pullTopLabelOpacity = useTransform(pullTopProgress, [0, 0.5, 0.8, 1], [0, 0, 0.5, 1]);
+  const pullTopLabelY = useTransform(pullTopProgress, [0, 0.5, 1], [12, 6, 0]);
   const [pullTopHintVisible, setPullTopHintVisible] = useState(false);
   const pullBottomProgress = useMotionValue(0);
-  const pullBottomHintY = useTransform(pullBottomProgress, [0, 1], [48, 0]);
-  const pullBottomHintOpacity = useTransform(pullBottomProgress, [0, 0.15, 1], [0, 0.8, 1]);
+  const pullBottomHintY = useTransform(pullBottomProgress, [0, 1], [96, 0]);
+  const pullBottomHintOpacity = useTransform(pullBottomProgress, [0, 0.2, 1], [0, 0.7, 1]);
   const pullBottomHintScale = useTransform(
     pullBottomProgress,
     [0, 0.3, 0.8, 1],
-    [0.4, 0.85, 1, 1.05]
+    [0.3, 0.8, 1, 1.08]
   );
   const pullBottomIconScale = useTransform(
     pullBottomProgress,
     [0, 0.5, 0.85, 1],
-    [0.3, 0.8, 1, 1.25]
+    [0.2, 0.7, 1, 1.3]
   );
-  const pullBottomIconRotate = useTransform(pullBottomProgress, [0, 0.6, 1], [-90, -15, 0]);
-  const pullBottomLabelOpacity = useTransform(pullBottomProgress, [0, 0.4, 0.7, 1], [0, 0, 0.6, 1]);
-  const pullBottomLabelY = useTransform(pullBottomProgress, [0, 0.5, 1], [-8, -4, 0]);
+  const pullBottomIconRotate = useTransform(pullBottomProgress, [0, 0.6, 1], [-120, -20, 0]);
+  const pullBottomLabelOpacity = useTransform(pullBottomProgress, [0, 0.5, 0.8, 1], [0, 0, 0.5, 1]);
+  const pullBottomLabelY = useTransform(pullBottomProgress, [0, 0.5, 1], [-12, -6, 0]);
   const [pullBottomHintVisible, setPullBottomHintVisible] = useState(false);
   // Content shifts vertically with pull gestures — rubber-band drag feel
   const pullContentY = useTransform([pullTopProgress, pullBottomProgress], (values: number[]) => {
     const top = values[0] ?? 0;
     const bottom = values[1] ?? 0;
-    if (top > 0) return top ** 0.7 * 80;
-    if (bottom > 0) return -(bottom ** 0.7) * 80;
+    if (top > 0) return top ** 0.55 * 150;
+    if (bottom > 0) return -(bottom ** 0.55) * 150;
     return 0;
   });
   // Combined scale from swipe + pull gestures (skip for browser-open actions)
@@ -294,12 +316,14 @@ export function EntryReading({
       if ((values[1] ?? 0) > 0 && !browserActions.has(swipeRightActionRef.current))
         swipeMax = Math.max(swipeMax, values[1] ?? 0);
       const pullProgress = Math.max(values[2] ?? 0, values[3] ?? 0);
-      return (1 - swipeMax * 0.02) * (1 - pullProgress * 0.015);
+      return (1 - swipeMax * 0.02) * (1 - pullProgress * 0.025);
     }
   );
   const [translationEnabled, setTranslationEnabled] = useState(false);
   const translationEnabledRef = useRef(translationEnabled);
   translationEnabledRef.current = translationEnabled;
+  const focusModeRef = useRef(focusMode);
+  focusModeRef.current = focusMode;
   const [translateRequestToken, setTranslateRequestToken] = useState(0);
   const [activeTranslationProvider, setActiveTranslationProvider] = useState<string | null>(null);
   const [translationProgress, setTranslationProgress] = useState({ completed: 0, total: 0 });
@@ -395,7 +419,7 @@ export function EntryReading({
   const showReadingStatusLabel = _(msg`Show reading status`);
   const scrollToTopLabel = _(msg`Scroll to top`);
   const floatingToolbarButtonClass =
-    'h-9 w-9 rounded-xl border border-transparent text-muted-foreground hover:bg-accent/70 hover:text-muted-foreground focus-visible:text-muted-foreground active:text-muted-foreground aria-expanded:text-muted-foreground';
+    'h-9 w-9 rounded-xl border border-transparent text-muted-foreground hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-muted-foreground focus-visible:text-muted-foreground active:text-muted-foreground aria-expanded:text-muted-foreground';
   const readerSurfaceStyle = useMemo(
     () => ({
       willChange: 'transform, opacity, filter',
@@ -673,6 +697,27 @@ export function EntryReading({
       viewport.focus({ preventScroll: true });
     });
 
+    // Run an initial scroll check after content renders, so short articles
+    // or the first entry after startup still get auto-marked as read.
+    const initialCheckTimer = setTimeout(() => {
+      const maxScrollable = viewport.scrollHeight - viewport.clientHeight;
+      const progress =
+        maxScrollable <= 0 ? 100 : Math.round((viewport.scrollTop / maxScrollable) * 100);
+      const normalizedProgress = Math.max(0, Math.min(100, progress));
+      if (autoMarkReadRef.current) {
+        const currentEntry = entryRef.current;
+        if (
+          currentEntry &&
+          currentEntry.status !== 'read' &&
+          !hasAutoMarkedAsRead.current &&
+          normalizedProgress >= 20
+        ) {
+          hasAutoMarkedAsRead.current = true;
+          toggleEntryReadRef.current.mutate(currentEntry.id);
+        }
+      }
+    }, 500);
+
     const handleScroll = () => {
       scrollY.set(viewport.scrollTop);
       const maxScrollable = viewport.scrollHeight - viewport.clientHeight;
@@ -694,15 +739,17 @@ export function EntryReading({
         });
       }
 
-      const currentEntry = entryRef.current;
-      if (
-        currentEntry &&
-        currentEntry.status !== 'read' &&
-        !hasAutoMarkedAsRead.current &&
-        normalizedProgress >= 20
-      ) {
-        hasAutoMarkedAsRead.current = true;
-        toggleEntryReadRef.current.mutate(currentEntry.id);
+      if (autoMarkReadRef.current) {
+        const currentEntry = entryRef.current;
+        if (
+          currentEntry &&
+          currentEntry.status !== 'read' &&
+          !hasAutoMarkedAsRead.current &&
+          normalizedProgress >= 20
+        ) {
+          hasAutoMarkedAsRead.current = true;
+          toggleEntryReadRef.current.mutate(currentEntry.id);
+        }
       }
 
       if (!showToc) {
@@ -832,10 +879,9 @@ export function EntryReading({
           swipeRightCumulativeX = 0;
           swipeLeftTriggered = false;
           swipeRightTriggered = false;
-          swipeLeftProgress.set(0);
-          swipeRightProgress.set(0);
-          setSwipeLeftHintVisible(false);
-          setSwipeRightHintVisible(false);
+          const springConfig = { type: 'spring' as const, stiffness: 300, damping: 25 };
+          animate(swipeLeftProgress, 0, springConfig).then(() => setSwipeLeftHintVisible(false));
+          animate(swipeRightProgress, 0, springConfig).then(() => setSwipeRightHintVisible(false));
         }, 300);
       }
 
@@ -850,13 +896,14 @@ export function EntryReading({
         if (!atTop) {
           pullTopCumulativeY = 0;
           pullTopTriggered = false;
-          pullTopProgress.set(0);
-          setPullTopHintVisible(false);
+          animate(pullTopProgress, 0, { type: 'spring', stiffness: 300, damping: 25 }).then(() =>
+            setPullTopHintVisible(false)
+          );
           return;
         }
 
         pullTopCumulativeY += Math.abs(e.deltaY);
-        const threshold = Math.round(swipeThresholdRef.current * 2.25);
+        const threshold = Math.round(swipeThresholdRef.current * 2.5);
         const progress = Math.min(1, pullTopCumulativeY / threshold);
         pullTopProgress.set(progress);
         if (progress > 0) setPullTopHintVisible(true);
@@ -870,8 +917,9 @@ export function EntryReading({
         pullTopResetTimer = setTimeout(() => {
           pullTopCumulativeY = 0;
           pullTopTriggered = false;
-          pullTopProgress.set(0);
-          setPullTopHintVisible(false);
+          animate(pullTopProgress, 0, { type: 'spring', stiffness: 300, damping: 25 }).then(() =>
+            setPullTopHintVisible(false)
+          );
         }, 400);
       }
 
@@ -886,13 +934,14 @@ export function EntryReading({
         if (!atBottom) {
           pullBottomCumulativeY = 0;
           pullBottomTriggered = false;
-          pullBottomProgress.set(0);
-          setPullBottomHintVisible(false);
+          animate(pullBottomProgress, 0, { type: 'spring', stiffness: 300, damping: 25 }).then(() =>
+            setPullBottomHintVisible(false)
+          );
           return;
         }
 
         pullBottomCumulativeY += e.deltaY;
-        const threshold = Math.round(swipeThresholdRef.current * 2.25);
+        const threshold = Math.round(swipeThresholdRef.current * 2.5);
         const progress = Math.min(1, pullBottomCumulativeY / threshold);
         pullBottomProgress.set(progress);
         if (progress > 0) setPullBottomHintVisible(true);
@@ -906,8 +955,9 @@ export function EntryReading({
         pullBottomResetTimer = setTimeout(() => {
           pullBottomCumulativeY = 0;
           pullBottomTriggered = false;
-          pullBottomProgress.set(0);
-          setPullBottomHintVisible(false);
+          animate(pullBottomProgress, 0, { type: 'spring', stiffness: 300, damping: 25 }).then(() =>
+            setPullBottomHintVisible(false)
+          );
         }, 400);
       }
     };
@@ -915,6 +965,7 @@ export function EntryReading({
     viewport.addEventListener('wheel', onWheel, { passive: true });
 
     return () => {
+      clearTimeout(initialCheckTimer);
       viewport.removeEventListener('scroll', handleScroll);
       viewport.removeEventListener('wheel', onWheel);
       if (swipeResetTimer) clearTimeout(swipeResetTimer);
@@ -1116,6 +1167,9 @@ export function EntryReading({
       } else if (match('toggle-translation', e)) {
         e.preventDefault();
         handleTranslationEnabledChange(!translationEnabledRef.current);
+      } else if (match('toggle-focus-mode', e)) {
+        e.preventDefault();
+        setFocusMode(!focusModeRef.current);
       } else if (match('fetch-content', e)) {
         e.preventDefault();
         handleFetchOriginalContent();
@@ -1140,6 +1194,14 @@ export function EntryReading({
           navigator.clipboard.writeText(currentEntry.url);
         }
       }
+      // Podcast
+      else if (match('podcast-play', e)) {
+        e.preventDefault();
+        document.dispatchEvent(new CustomEvent('command:podcast-play-pause'));
+      } else if (match('podcast-queue', e)) {
+        e.preventDefault();
+        document.dispatchEvent(new CustomEvent('command:podcast-add-to-playlist'));
+      }
     };
 
     window.addEventListener('keydown', handleKeyDown, true);
@@ -1160,6 +1222,7 @@ export function EntryReading({
     setLineWidth,
     setReaderTheme,
     handleTranslationEnabledChange,
+    setFocusMode,
   ]);
 
   useEffect(() => {
@@ -1220,6 +1283,7 @@ export function EntryReading({
       'command:font-size-increase': () => setFontSize(Math.min(MAX_FONT_SIZE, fontSize + 1)),
       'command:font-size-decrease': () => setFontSize(Math.max(MIN_FONT_SIZE, fontSize - 1)),
       'command:font-size-reset': () => setFontSize(18),
+      'command:toggle-focus-mode': () => setFocusMode(!focusModeRef.current),
     };
     const handleSetTheme = (e: Event) => {
       const theme = (e as CustomEvent).detail;
@@ -1246,6 +1310,7 @@ export function EntryReading({
     fontSize,
     setFontSize,
     setReaderTheme,
+    setFocusMode,
   ]);
 
   if (isLoading) {
@@ -1274,7 +1339,7 @@ export function EntryReading({
   }
 
   return (
-    <div className="flex h-full flex-col overflow-hidden">
+    <div className="flex h-full min-w-0 flex-col overflow-hidden">
       <EntryReadingHeader
         entry={entry}
         onNavigatePrev={onNavigatePrev}
@@ -1414,7 +1479,7 @@ export function EntryReading({
                   type="button"
                   disabled={!hasPrev || !onNavigatePrev}
                   onClick={onNavigatePrev}
-                  className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+                  className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
                   title={_(msg`Previous Article`)}
                 >
                   <HugeiconsIcon icon={ArrowUp01Icon} strokeWidth={2} className="size-4" />
@@ -1423,7 +1488,7 @@ export function EntryReading({
                   type="button"
                   disabled={!hasNext || !onNavigateNext}
                   onClick={onNavigateNext}
-                  className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
+                  className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-accent-foreground disabled:pointer-events-none disabled:opacity-30"
                   title={_(msg`Next Article`)}
                 >
                   <HugeiconsIcon icon={ArrowDown01Icon} strokeWidth={2} className="size-4" />
@@ -1433,7 +1498,7 @@ export function EntryReading({
                     type="button"
                     onClick={() => toggleStar.mutate(entry.id)}
                     className={cn(
-                      'flex size-7 items-center justify-center rounded-md hover:bg-accent hover:text-accent-foreground',
+                      'flex size-7 items-center justify-center rounded-md hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-accent-foreground',
                       entry.starred ? 'text-yellow-500' : 'text-muted-foreground'
                     )}
                     title={entry.starred ? _(msg`Unstar`) : _(msg`Star`)}
@@ -1448,7 +1513,7 @@ export function EntryReading({
                       );
                       if (viewport) animateViewportScrollTo(viewport, 0);
                     }}
-                    className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-accent hover:text-accent-foreground"
+                    className="flex size-7 items-center justify-center rounded-md text-muted-foreground hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-accent-foreground"
                     title={_(msg`Go to Top`)}
                   >
                     <HugeiconsIcon icon={ArrowTurnUpIcon} strokeWidth={2} className="size-4" />
@@ -1610,10 +1675,13 @@ export function EntryReading({
                   {_(msg`Focus Mode`)}
                   <span
                     className={cn(
-                      'ml-auto size-2 rounded-full shrink-0 transition-colors',
+                      'size-2 rounded-full shrink-0 transition-colors',
                       focusMode ? 'bg-primary' : 'border border-muted-foreground/40'
                     )}
                   />
+                  <ContextMenuShortcut>
+                    {formatShortcutDisplay(shortcuts['toggle-focus-mode'])}
+                  </ContextMenuShortcut>
                 </ContextMenuItem>
               </ContextMenuGroup>
 
@@ -1670,6 +1738,45 @@ export function EntryReading({
                   </ContextMenuGroup>
                 </>
               )}
+
+              {getPodcastEnclosure(entry) && (
+                <>
+                  <ContextMenuSeparator />
+                  <ContextMenuGroup>
+                    <ContextMenuLabel>{_(msg`Podcast`)}</ContextMenuLabel>
+                    <ContextMenuItem
+                      onClick={() =>
+                        document.dispatchEvent(new CustomEvent('command:podcast-play-pause'))
+                      }
+                    >
+                      <HugeiconsIcon
+                        icon={PlayIcon}
+                        strokeWidth={2}
+                        className="size-4 text-muted-foreground"
+                      />
+                      {_(msg`Play / Pause`)}
+                      <ContextMenuShortcut>
+                        {formatShortcutDisplay(shortcuts['podcast-play'])}
+                      </ContextMenuShortcut>
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                      onClick={() =>
+                        document.dispatchEvent(new CustomEvent('command:podcast-add-to-playlist'))
+                      }
+                    >
+                      <HugeiconsIcon
+                        icon={Playlist03Icon}
+                        strokeWidth={2}
+                        className="size-4 text-muted-foreground"
+                      />
+                      {_(msg`Add to Playlist`)}
+                      <ContextMenuShortcut>
+                        {formatShortcutDisplay(shortcuts['podcast-queue'])}
+                      </ContextMenuShortcut>
+                    </ContextMenuItem>
+                  </ContextMenuGroup>
+                </>
+              )}
             </ContextMenuContent>
           </ContextMenu>
         </motion.div>
@@ -1695,6 +1802,7 @@ export function EntryReading({
                       animate={{ opacity: 1, x: 0, scale: 1, filter: 'blur(0px)' }}
                       exit={{ opacity: 0, x: 14, scale: 0.96, filter: 'blur(4px)' }}
                       transition={{ type: 'spring', stiffness: 320, damping: 30, mass: 0.7 }}
+                      data-glass
                       className="pointer-events-none w-80 rounded-4xl border border-border/50 bg-background/85 px-5 py-4 shadow-lg backdrop-blur-xl"
                     >
                       <p className="line-clamp-1 text-lg text-muted-foreground">
@@ -1801,42 +1909,45 @@ export function EntryReading({
         </AnimatePresence>
 
         <AnimatePresence>
-          {readingProgress > 8 && !(isAtBottom && hasNext && nextEntryTitle) && (
-            <motion.div
-              initial={{ opacity: 0, y: 12 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 12 }}
-              transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="absolute right-4 bottom-4 z-20"
-            >
-              <Button
-                type="button"
-                variant="ghost"
-                size="icon"
-                className={floatingToolbarButtonClass}
-                aria-label={scrollToTopLabel}
-                onClick={handleScrollToTop}
+          {readingProgress > 8 &&
+            !(isAtBottom && hasNext && nextEntryTitle) &&
+            !pullBottomHintVisible && (
+              <motion.div
+                initial={{ opacity: 0, y: 12 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 12 }}
+                transition={{ duration: 0.2, ease: 'easeOut' }}
+                className="absolute right-4 bottom-4 z-20"
               >
-                <HugeiconsIcon icon={ArrowUp01Icon} className="h-4 w-4" strokeWidth={2} />
-              </Button>
-            </motion.div>
-          )}
+                <Button
+                  type="button"
+                  variant="ghost"
+                  size="icon"
+                  className={floatingToolbarButtonClass}
+                  aria-label={scrollToTopLabel}
+                  onClick={handleScrollToTop}
+                >
+                  <HugeiconsIcon icon={ArrowUp01Icon} className="h-4 w-4" strokeWidth={2} />
+                </Button>
+              </motion.div>
+            )}
         </AnimatePresence>
 
         <AnimatePresence>
-          {isAtBottom && hasNext && nextEntryTitle && (
+          {isAtBottom && hasNext && nextEntryTitle && !pullBottomHintVisible && (
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 5 }}
-              transition={{ duration: 0.2 }}
+              exit={{ opacity: 0, y: 8, scale: 0.95 }}
+              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
               className="absolute right-4 bottom-4 left-4 z-20 flex justify-center"
             >
               <Button
                 type="button"
                 variant="ghost"
                 size="sm"
-                className="gap-1.5 rounded-xl border border-white/10 bg-background/80 px-4 text-sm backdrop-blur-sm hover:bg-accent/70"
+                data-glass
+                className="gap-1.5 rounded-xl border border-white/10 bg-background/80 px-4 text-sm backdrop-blur-sm hover:bg-black/[0.08] dark:hover:bg-white/[0.12]"
                 onClick={() => {
                   if (onNavigateNext) {
                     onNavigateNext();
@@ -1863,7 +1974,7 @@ export function EntryReading({
                   className="pointer-events-none absolute inset-y-0 right-0 z-30 flex items-center"
                 >
                   <motion.div
-                    className="flex items-center gap-2 rounded-l-2xl bg-background/80 px-4 py-2.5 backdrop-blur-md"
+                    className="flex items-center gap-2 rounded-l-2xl px-4 py-2.5"
                     style={{
                       x: swipeLeftHintX,
                       opacity: swipeLeftHintOpacity,
@@ -1907,7 +2018,7 @@ export function EntryReading({
                   className="pointer-events-none absolute inset-y-0 left-0 z-30 flex items-center"
                 >
                   <motion.div
-                    className="flex items-center gap-2 rounded-r-2xl bg-background/80 px-4 py-2.5 backdrop-blur-md"
+                    className="flex items-center gap-2 rounded-r-2xl px-4 py-2.5"
                     style={{
                       x: swipeRightHintX,
                       opacity: swipeRightHintOpacity,
@@ -1950,7 +2061,7 @@ export function EntryReading({
                   className="pointer-events-none absolute inset-x-0 top-0 z-30 flex justify-center"
                 >
                   <motion.div
-                    className="flex w-full items-center justify-center gap-2 rounded-b-2xl bg-background/80 px-4 py-2 backdrop-blur-md"
+                    className="flex w-full items-center justify-center gap-2 rounded-b-2xl px-4 py-3"
                     style={{
                       y: pullTopHintY,
                       opacity: pullTopHintOpacity,
@@ -1991,7 +2102,7 @@ export function EntryReading({
                   className="pointer-events-none absolute inset-x-0 bottom-0 z-30 flex justify-center"
                 >
                   <motion.div
-                    className="flex w-full items-center justify-center gap-2 rounded-t-2xl bg-background/80 px-4 py-2 backdrop-blur-md"
+                    className="flex w-full items-center justify-center gap-2 rounded-t-2xl px-4 py-3"
                     style={{
                       y: pullBottomHintY,
                       opacity: pullBottomHintOpacity,
@@ -2040,7 +2151,7 @@ export function EntryReading({
               transition={{ duration: 0.2, ease: 'easeOut' }}
               className="pointer-events-none absolute bottom-2 left-2 z-20"
             >
-              <div className="pointer-events-auto flex items-center gap-1.5 rounded-md border border-border/60 bg-background/92 px-2 py-1 text-[10px] leading-none text-muted-foreground shadow-sm">
+              <div className="pointer-events-auto flex items-center gap-1.5 rounded-full bg-popover/75 px-2 py-1 text-[10px] leading-none text-muted-foreground ring-1 ring-foreground/10 shadow-lg backdrop-blur-2xl backdrop-saturate-150">
                 <span className="font-medium tracking-wide">{progressLabel}</span>
                 <span aria-hidden className="opacity-50">
                   •
@@ -2050,7 +2161,7 @@ export function EntryReading({
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="h-5 w-5 rounded-sm border border-transparent text-muted-foreground hover:bg-accent/70 hover:text-muted-foreground focus-visible:text-muted-foreground active:text-muted-foreground aria-expanded:text-muted-foreground"
+                  className="h-5 w-5 rounded-sm border border-transparent text-muted-foreground hover:bg-black/[0.08] dark:hover:bg-white/[0.12] hover:text-muted-foreground focus-visible:text-muted-foreground active:text-muted-foreground aria-expanded:text-muted-foreground"
                   aria-label={hideReadingStatusLabel}
                   onClick={() => setStatusBarVisible(false)}
                 >

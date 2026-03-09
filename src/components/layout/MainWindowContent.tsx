@@ -1,10 +1,12 @@
 import { AnimatePresence, motion } from 'motion/react';
+import { useCallback, useRef } from 'react';
 import { EntryEmptyState } from '@/components/miniflux/EntryEmptyState';
 import { EntryReading } from '@/components/miniflux/EntryReading';
 import { InAppBrowserPane } from '@/components/miniflux/InAppBrowserPane';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { useInAppBrowser } from '@/hooks/use-in-app-browser';
 import { cn } from '@/lib/utils';
+import { usePreferences, useSavePreferences } from '@/services/preferences';
 import { useUIStore } from '@/store/ui-store';
 
 interface MainWindowContentProps {
@@ -33,37 +35,66 @@ export function MainWindowContent({
   const lastQuickPaneEntry = useUIStore((state) => state.lastQuickPaneEntry);
   const selectedEntryId = useUIStore((state) => state.selectedEntryId);
   const { openBrowser, closeBrowser, browserContentRef, inAppBrowserUrl } = useInAppBrowser();
+  const { data: preferences } = usePreferences();
+  const savePreferences = useSavePreferences();
+  const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const savedWidth = preferences?.layout_entry_list_width ?? undefined;
+
+  const handlePanelResize = useCallback(
+    (panelSize: { inPixels: number; asPercentage: number }) => {
+      if (!preferences) return;
+      const width = Math.round(panelSize.inPixels);
+      if (width === (preferences.layout_entry_list_width ?? 435)) return;
+      if (saveTimerRef.current) clearTimeout(saveTimerRef.current);
+      saveTimerRef.current = setTimeout(() => {
+        savePreferences.mutate({
+          ...preferences,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          layout_entry_list_width: width,
+        });
+      }, 500);
+    },
+    [preferences, savePreferences]
+  );
 
   return (
-    <div className={cn('flex h-full flex-col bg-background', className)}>
+    <div data-frosted className={cn('flex h-full min-w-0 flex-col bg-background', className)}>
       {children ? (
         <ResizablePanelGroup orientation="horizontal" className="h-full">
-          <ResizablePanel defaultSize={'30%'} minSize={'25%'} maxSize={'35%'}>
+          <ResizablePanel
+            id="entry-list"
+            defaultSize={savedWidth ?? 435}
+            minSize={380}
+            maxSize={480}
+            onResize={handlePanelResize}
+          >
             <div className="h-full overflow-hidden">{children}</div>
           </ResizablePanel>
-          <ResizableHandle withHandle />
-          <ResizablePanel>
-            <div className="flex h-full flex-col overflow-hidden">
+          <ResizableHandle />
+          <ResizablePanel id="entry-reading">
+            <div className="flex h-full min-w-0 flex-col overflow-hidden">
               <AnimatePresence mode="sync">
                 {inAppBrowserUrl ? (
                   <motion.div
                     key="browser"
-                    className="flex h-full flex-col"
+                    className="flex h-full flex-col p-2"
                     initial={{ opacity: 0, x: 22, scale: 0.997 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
                     exit={{ opacity: 0, x: 22, scale: 0.997 }}
                     transition={{ duration: 0.22, ease: [0.22, 1, 0.36, 1] }}
                   >
-                    <InAppBrowserPane
-                      url={inAppBrowserUrl}
-                      onClose={closeBrowser}
-                      browserContentRef={browserContentRef}
-                    />
+                    <div className="flex h-full flex-col overflow-hidden rounded-xl border border-border/30">
+                      <InAppBrowserPane
+                        url={inAppBrowserUrl}
+                        onClose={closeBrowser}
+                        browserContentRef={browserContentRef}
+                      />
+                    </div>
                   </motion.div>
                 ) : selectedEntryId ? (
                   <motion.div
                     key="reading"
-                    className="flex h-full flex-col"
+                    className="flex h-full min-w-0 flex-col"
                     initial={{ opacity: 0, x: 18, scale: 0.996 }}
                     animate={{ opacity: 1, x: 0, scale: 1 }}
                     exit={{ opacity: 0, x: -14, scale: 0.996 }}

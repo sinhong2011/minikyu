@@ -62,7 +62,6 @@ vi.mock('@/store/sync-store', () => ({
 }));
 
 vi.mock('@/components/layout/MainWindowContent', () => ({
-  // biome-ignore lint/style/useNamingConvention: mock module export name
   MainWindowContent: ({
     children,
     onClose,
@@ -80,17 +79,14 @@ vi.mock('@/components/layout/MainWindowContent', () => ({
 }));
 
 vi.mock('./EntryList', () => ({
-  // biome-ignore lint/style/useNamingConvention: mock module export name
   EntryList: () => <div data-testid="entry-list" />,
 }));
 
 vi.mock('./EntryFilters', () => ({
-  // biome-ignore lint/style/useNamingConvention: mock module export name
   EntryFiltersUI: () => <div data-testid="entry-filters" />,
 }));
 
 vi.mock('./ConnectionDialog', () => ({
-  // biome-ignore lint/style/useNamingConvention: mock module export name
   ConnectionDialog: () => null,
 }));
 
@@ -103,13 +99,9 @@ vi.mock('@/hooks/use-auto-sync', () => ({
 }));
 
 i18n.load('en', {
-  // biome-ignore lint/style/useNamingConvention: i18n key
   All: 'All',
-  // biome-ignore lint/style/useNamingConvention: i18n key
   Starred: 'Starred',
-  // biome-ignore lint/style/useNamingConvention: i18n key
   History: 'History',
-  // biome-ignore lint/style/useNamingConvention: i18n key
   Loading: 'Loading',
   'unread items': 'unread items',
   'starred items': 'starred items',
@@ -158,9 +150,7 @@ describe('MinifluxLayout', () => {
       data: {
         total: 1,
         today: 1,
-        // biome-ignore lint/style/useNamingConvention: API response format
         by_category: [],
-        // biome-ignore lint/style/useNamingConvention: API response format
         by_feed: [],
       },
     });
@@ -190,7 +180,6 @@ describe('MinifluxLayout', () => {
     );
     (useLastReadingEntry as any).mockReturnValue({
       data: {
-        // biome-ignore lint/style/useNamingConvention: API response format
         entry_id: '1536612',
         timestamp: '1770881306750',
       },
@@ -222,9 +211,7 @@ describe('MinifluxLayout', () => {
       data: {
         total: 23,
         today: 3,
-        // biome-ignore lint/style/useNamingConvention: API response format
         by_category: [],
-        // biome-ignore lint/style/useNamingConvention: API response format
         by_feed: [],
       },
     });
@@ -270,9 +257,7 @@ describe('MinifluxLayout', () => {
       data: {
         total: 12345,
         today: 3,
-        // biome-ignore lint/style/useNamingConvention: API response format
         by_category: [],
-        // biome-ignore lint/style/useNamingConvention: API response format
         by_feed: [],
       },
     });
@@ -316,9 +301,7 @@ describe('MinifluxLayout', () => {
       data: {
         total: 0,
         today: 0,
-        // biome-ignore lint/style/useNamingConvention: API response format
         by_category: [],
-        // biome-ignore lint/style/useNamingConvention: API response format
         by_feed: [],
       },
     });
@@ -348,9 +331,7 @@ describe('MinifluxLayout', () => {
       data: {
         total: 0,
         today: 0,
-        // biome-ignore lint/style/useNamingConvention: API response format
         by_category: [],
-        // biome-ignore lint/style/useNamingConvention: API response format
         by_feed: [],
       },
     });

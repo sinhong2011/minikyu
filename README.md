@@ -1,24 +1,34 @@
 # Minikyu
 
+**English** | [简体中文](README.zh-CN.md) | [繁體中文](README.zh-TW.md) | [日本語](README.ja.md) | [한국어](README.ko.md)
+
 [![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE.md)
 [![CI](https://github.com/sinhong2011/minikyu/actions/workflows/ci.yml/badge.svg)](https://github.com/sinhong2011/minikyu/actions/workflows/ci.yml)
 [![GitHub Stars](https://img.shields.io/github/stars/sinhong2011/minikyu.svg)](https://github.com/sinhong2011/minikyu/stargazers)
 
-A modern RSS reader desktop application built with **Tauri v2**, **React 19**, and **TypeScript**. Fast, native, and cross-platform.
+A modern, beautiful desktop client for [Miniflux](https://miniflux.app) — the minimalist and opinionated RSS reader. Built with **Tauri v2**, **React 19**, and **TypeScript**. Fast, native, and cross-platform.
 
-## Features
-
-- 📰 **RSS Feed Management** - Subscribe to your favorite feeds and stay updated
-- ⌨️ **Keyboard Shortcuts** - Command Palette (`Cmd+K`), Preferences (`Cmd+,`), and more
-- 🪟 **Quick Pane** - Global shortcut floating window for quick access from anywhere
-- 🎨 **Theme Support** - Light, Dark, or System theme with automatic detection
-- 🌐 **Multi-language** - English, Chinese (Simplified/Traditional), Japanese, Korean
-- 🔄 **Auto-updates** - Automatic update checking from GitHub releases
-- 🖥️ **Cross-platform** - macOS, Windows, and Linux support
+> **Note:** Minikyu requires a running [Miniflux](https://miniflux.app) instance (self-hosted or cloud) as its backend. Miniflux handles feed fetching, parsing, and storage — Minikyu provides the rich desktop experience on top of it.
 
 ## Screenshots
 
-> 📸 Screenshots coming soon
+![Minikyu Main View](docs/screenshots/main.png)
+
+## Features
+
+- 📰 **RSS Feed Management** - Subscribe, organize by categories, OPML import/export
+- 🎧 **Podcast Player** - Built-in audio player with playback controls, accessible from toolbar and command palette
+- 🔍 **Command Palette** - Quick access to all actions with `Cmd+K`, including theme/language switching
+- ⌨️ **Keyboard Shortcuts** - Extensive shortcuts for navigation, reading, and actions
+- 🧘 **Zen Mode** - Distraction-free reading experience (toggle with `Z`)
+- 📖 **Focus Mode** - Immersive article reading with a single shortcut
+- 🎨 **Theming & Appearance** - Light/Dark/System themes, custom background images, transparency, and frosted glass effects
+- 🌐 **Multi-language** - English, Chinese (Simplified/Traditional), Japanese, Korean
+- 🌏 **AI Translation** - LLM-powered article translation with configurable providers
+- 👆 **Gesture Controls** - Configurable swipe gestures for navigation and actions, pull-to-refresh
+- 🪟 **Quick Pane** - Global shortcut floating window for quick access from anywhere
+- 🔄 **Sync & Auto-updates** - Real-time Miniflux sync with progress tracking, automatic app updates
+- 🖥️ **Cross-platform** - macOS, Windows, and Linux support
 
 ## Installation
 
@@ -53,15 +63,15 @@ bun run tauri build
 
 ## Tech Stack
 
-| Layer    | Technologies                                      |
-| -------- | ------------------------------------------------- |
-| Frontend | React 19, TypeScript, Vite 7, Bun                 |
-| UI       | shadcn/ui v4, Tailwind CSS v4                     |
-| Routing  | TanStack Router v1 (file-based)                   |
-| State    | Zustand v5, TanStack Query v5                     |
-| Backend  | Tauri v2, Rust                                    |
-| Testing  | Vitest v4, Testing Library                        |
-| Quality  | Biome, ast-grep, clippy, Lefthook, Commitlint     |
+| Layer    | Technologies                                  |
+| -------- | --------------------------------------------- |
+| Frontend | React 19, TypeScript, Vite 7, Bun             |
+| UI       | shadcn/ui v4, Tailwind CSS v4                 |
+| Routing  | TanStack Router v1 (file-based)               |
+| State    | Zustand v5, TanStack Query v5                 |
+| Backend  | Tauri v2, Rust                                |
+| Testing  | Vitest v4, Testing Library                    |
+| Quality  | Biome, ast-grep, clippy, Lefthook, Commitlint |
 
 ## Documentation
 

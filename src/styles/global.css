@@ -12,7 +12,9 @@
   }
   *:focus,
   *:focus-visible {
+    /* biome-ignore lint/complexity/noImportantStyles: Required to override framework default focus styles */
     outline: none !important;
+    /* biome-ignore lint/complexity/noImportantStyles: Required to override framework default ring styles */
     --tw-ring-shadow: 0 0 #0000 !important;
   }
   :where(*):not(.no-scrollbar) {
@@ -59,6 +61,11 @@
 }
 
 @layer components {
+  .yarl__portal {
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+  }
+
   .yarl__slide_image {
     border-radius: var(--radius-2xl);
   }
@@ -85,4 +92,49 @@
     background-color: transparent;
     filter: none;
   }
+}
+
+/* Background transparency: when data-bg-transparent is set, make ALL bg-background/bg-sidebar
+   fully transparent by default. Only [data-frosted] elements get visible frosted backgrounds.
+   Override --popover to semi-transparent so portaled elements (menus, dropdowns, popovers)
+   match the glass system — component opacity classes (/65, /75) stack on top. */
+[data-bg-transparent] {
+  --background: transparent;
+  --sidebar: transparent;
+  --popover: color-mix(in oklch, var(--background-base) 65%, transparent);
+}
+
+/* Main panels: the only elements with visible frosted glass backgrounds */
+[data-bg-transparent] [data-frosted] {
+  --background: color-mix(
+    in oklch,
+    var(--background-base) calc(var(--bg-panel-opacity) * 100%),
+    transparent
+  );
+  --sidebar: color-mix(
+    in oklch,
+    var(--sidebar-base) calc(var(--bg-panel-opacity) * 100%),
+    transparent
+  );
+}
+
+/* Frosted backdrop blur: applied to shared containers so sidebar + content blur uniformly */
+[data-bg-transparent] [data-frosted-backdrop] {
+  backdrop-filter: blur(20px) saturate(1.2);
+  -webkit-backdrop-filter: blur(20px) saturate(1.2);
+}
+
+/* Frosted glass elements (gesture hints, overlays): restore base colors so
+   bg-background/XX utilities remain visible; their own backdrop-blur handles the glass effect */
+[data-bg-transparent] [data-glass] {
+  --background: var(--background-base);
+  --sidebar: var(--sidebar-base);
+}
+
+/* Toast: glass style when transparent, solid otherwise */
+[data-bg-transparent] [data-sonner-toaster] [data-sonner-toast] {
+  /* biome-ignore lint/complexity/noImportantStyles: Required to override Sonner's inline background style */
+  background: color-mix(in oklch, var(--background-base) 30%, transparent) !important;
+  backdrop-filter: blur(60px) saturate(1.8);
+  -webkit-backdrop-filter: blur(60px) saturate(1.8);
 }

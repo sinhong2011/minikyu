@@ -38,7 +38,7 @@ import { useAccounts, useActiveAccount } from '@/services/miniflux/accounts';
 import { useIsConnected } from '@/services/miniflux/auth';
 import { useCategories, useMarkCategoryAsRead } from '@/services/miniflux/categories';
 import { useUnreadCounts } from '@/services/miniflux/counters';
-import { useEntries, usePrefetchEntry } from '@/services/miniflux/entries';
+import { useEntries, usePrefetchEntry, useToggleEntryRead } from '@/services/miniflux/entries';
 import { useMarkFeedAsRead, useSyncMiniflux } from '@/services/miniflux/feeds';
 import { useLastReadingEntry, useSaveLastReading } from '@/services/reading-state';
 import { useSyncStore } from '@/store/sync-store';
@@ -114,6 +114,7 @@ export function MinifluxLayout() {
   const prefetchEntry = usePrefetchEntry();
   const { data: lastReadingEntry } = useLastReadingEntry();
   const saveLastReading = useSaveLastReading();
+  const toggleEntryRead = useToggleEntryRead();
   const countFormatter = new Intl.NumberFormat(i18n.locale, {
     notation: 'compact',
     maximumFractionDigits: 1,
@@ -152,26 +153,45 @@ export function MinifluxLayout() {
   const hasCachedContent =
     hasCachedEntries || hasCachedCategories || hasCachedUnreadCounts || hasActiveAccount;
 
-  // Calculate prev/next navigation
-  const currentIndex = entriesData?.entries?.findIndex((e) => e.id === selectedEntryId) ?? -1;
+  // Snapshot entry order when user selects an entry, so prev/next navigation
+  // stays stable even if the list refreshes (e.g. marking read removes from unread list).
+  const navigationSnapshotRef = useRef<string[]>([]);
+
+  // Update snapshot when entries data changes AND the selected entry is still in the list.
+  // This keeps the snapshot fresh for new selections while preserving it during reads.
+  useEffect(() => {
+    if (!entriesData?.entries?.length) return;
+    const ids = entriesData.entries.map((e) => e.id);
+    // Only update snapshot if no entry is selected or the selected entry exists in the new list
+    if (!selectedEntryId || ids.includes(selectedEntryId)) {
+      navigationSnapshotRef.current = ids;
+    }
+  }, [entriesData?.entries, selectedEntryId]);
+
+  // Calculate prev/next from the snapshot, not live data
+  const snapshotIds = navigationSnapshotRef.current;
+  const currentIndex = selectedEntryId ? snapshotIds.indexOf(selectedEntryId) : -1;
   const hasPrev = currentIndex > 0;
-  const hasNext = currentIndex >= 0 && currentIndex < (entriesData?.entries?.length ?? 0) - 1;
-  const nextEntryTitle = hasNext ? entriesData?.entries?.[currentIndex + 1]?.title : undefined;
+  const hasNext = currentIndex >= 0 && currentIndex < snapshotIds.length - 1;
+  const nextEntryId = hasNext ? snapshotIds[currentIndex + 1] : undefined;
+  const nextEntryTitle = nextEntryId
+    ? entriesData?.entries?.find((e) => e.id === nextEntryId)?.title
+    : undefined;
 
   const handleNavigatePrev = () => {
-    if (hasPrev && entriesData?.entries) {
-      const prevEntry = entriesData.entries[currentIndex - 1];
-      if (prevEntry) {
-        handleEntrySelect(prevEntry.id);
+    if (hasPrev) {
+      const prevId = snapshotIds[currentIndex - 1];
+      if (prevId) {
+        handleEntrySelect(prevId);
       }
     }
   };
 
   const handleNavigateNext = () => {
-    if (hasNext && entriesData?.entries) {
-      const nextEntry = entriesData.entries[currentIndex + 1];
-      if (nextEntry) {
-        handleEntrySelect(nextEntry.id);
+    if (hasNext) {
+      const nextId = snapshotIds[currentIndex + 1];
+      if (nextId) {
+        handleEntrySelect(nextId);
       }
     }
   };
@@ -185,9 +205,10 @@ export function MinifluxLayout() {
   const handleEntrySelect = (entryId: string) => {
     suppressAutoSelectRef.current = false;
 
-    if (entriesData?.entries && selectedEntryId && selectedEntryId !== entryId) {
-      const previousIndex = entriesData.entries.findIndex((entry) => entry.id === selectedEntryId);
-      const nextIndex = entriesData.entries.findIndex((entry) => entry.id === entryId);
+    // Use snapshot for transition direction
+    if (selectedEntryId && selectedEntryId !== entryId) {
+      const previousIndex = snapshotIds.indexOf(selectedEntryId);
+      const nextIndex = snapshotIds.indexOf(entryId);
 
       if (previousIndex !== -1 && nextIndex !== -1) {
         setEntryTransitionDirection(nextIndex > previousIndex ? 'forward' : 'backward');
@@ -207,6 +228,11 @@ export function MinifluxLayout() {
         publishedAt: entry.published_at,
       });
 
+      // Mark unread entries as read on selection
+      if (entry.status === 'unread') {
+        toggleEntryRead.mutate(entry.id);
+      }
+
       // Save last reading entry.
       saveLastReading.mutate({
         // biome-ignore lint/style/useNamingConvention: API field name
@@ -219,20 +245,24 @@ export function MinifluxLayout() {
 
     setSelectedEntryId(entryId);
 
-    // Note: We don't immediately mark as read here because EntryReading component
-    // handles auto-marking as read when the user scrolls through the content
-
+    // Update snapshot to include the new entry's position from live data
     if (entriesData?.entries) {
-      const idx = entriesData.entries.findIndex((e) => e.id === entryId);
-      if (idx !== -1) {
-        if (idx > 0) {
-          const prev = entriesData.entries[idx - 1];
-          if (prev) prefetchEntry(prev.id);
-        }
-        if (idx < entriesData.entries.length - 1) {
-          const next = entriesData.entries[idx + 1];
-          if (next) prefetchEntry(next.id);
-        }
+      const liveIds = entriesData.entries.map((e) => e.id);
+      if (liveIds.includes(entryId)) {
+        navigationSnapshotRef.current = liveIds;
+      }
+    }
+
+    // Prefetch adjacent entries from snapshot
+    const idx = navigationSnapshotRef.current.indexOf(entryId);
+    if (idx !== -1) {
+      if (idx > 0) {
+        const prevId = navigationSnapshotRef.current[idx - 1];
+        if (prevId) prefetchEntry(prevId);
+      }
+      if (idx < navigationSnapshotRef.current.length - 1) {
+        const nextId = navigationSnapshotRef.current[idx + 1];
+        if (nextId) prefetchEntry(nextId);
       }
     }
   };
@@ -400,7 +430,7 @@ export function MinifluxLayout() {
                 <button
                   key={account.id}
                   type="button"
-                  className="flex items-center gap-3 rounded-lg border border-border/50 px-3 py-2.5 text-left transition-colors hover:bg-accent/50 hover:border-border"
+                  className="flex items-center gap-3 rounded-lg border border-border/50 px-3 py-2.5 text-left transition-colors hover:bg-black/[0.04] dark:hover:bg-white/[0.07] hover:border-border"
                   onClick={() => handleReconnectAccount(account.id)}
                 >
                   <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/10 text-primary text-xs font-semibold shrink-0">
@@ -474,7 +504,8 @@ export function MinifluxLayout() {
     }
 
     if (feedId) {
-      return _(msg`Feed`);
+      const feedEntry = entriesData?.entries?.find((e) => e.feed_id === feedId);
+      return feedEntry?.feed?.title || _(msg`Feed`);
     }
 
     switch (filter) {
@@ -604,7 +635,7 @@ export function MinifluxLayout() {
             )}
             <Menu>
               <MenuTrigger
-                className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-accent"
+                className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10"
                 title={_(msg`Sort by`)}
               >
                 <HugeiconsIcon icon={Sorting01Icon} className="h-4 w-4" />

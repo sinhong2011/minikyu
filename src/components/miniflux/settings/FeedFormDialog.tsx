@@ -350,7 +350,7 @@ export function FeedFormDialog({
                     <button
                       type="button"
                       key={`${subscription.url}-${subscription.type}`}
-                      className="w-full rounded-md border px-2 py-1.5 text-left text-sm hover:bg-accent"
+                      className="w-full rounded-md border px-2 py-1.5 text-left text-sm hover:bg-black/[0.06] dark:hover:bg-white/10"
                       onClick={() => {
                         form.setFieldValue('feedUrl', subscription.url);
                       }}

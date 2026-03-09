@@ -5,10 +5,12 @@ import {
   InformationCircleIcon,
   Loading03Icon,
   RefreshIcon,
+  StarIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { openUrl } from '@tauri-apps/plugin-opener';
 import { AnimatePresence, motion } from 'motion/react';
 import { Switch } from '@/components/animate-ui/components/base/switch';
 import { AppLogo } from '@/components/brand/AppLogo';
@@ -89,10 +91,19 @@ export function AboutPane() {
       <div className="p-0">
         <div className="flex items-center gap-3">
           <AppLogo showWordmark={false} markClassName="size-12" />
-          <div>
+          <div className="min-w-0 flex-1">
             <h3 className="text-lg font-semibold">{_(msg`Minikyu`)}</h3>
             <p className="text-sm text-muted-foreground">{_(msg`RSS Reader`)}</p>
           </div>
+          <Button
+            variant="outline"
+            size="sm"
+            className="shrink-0 gap-1.5"
+            onClick={() => openUrl('https://github.com/sinhong2011/minikyu').catch(() => {})}
+          >
+            <HugeiconsIcon icon={StarIcon} className="size-3.5" />
+            GitHub
+          </Button>
         </div>
         <p className="mt-3 text-sm text-muted-foreground">
           {_(
