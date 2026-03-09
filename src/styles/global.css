@@ -88,10 +88,13 @@
 }
 
 /* Background transparency: when data-bg-transparent is set, make ALL bg-background/bg-sidebar
-   fully transparent by default. Only [data-frosted] elements get visible frosted backgrounds. */
+   fully transparent by default. Only [data-frosted] elements get visible frosted backgrounds.
+   Override --popover to semi-transparent so portaled elements (menus, dropdowns, popovers)
+   match the glass system — component opacity classes (/65, /75) stack on top. */
 [data-bg-transparent] {
   --background: transparent;
   --sidebar: transparent;
+  --popover: color-mix(in oklch, var(--background-base) 65%, transparent);
 }
 
 /* Main panels: the only elements with visible frosted glass backgrounds */
@@ -106,6 +109,10 @@
     var(--sidebar-base) calc(var(--bg-panel-opacity) * 100%),
     transparent
   );
+}
+
+/* Frosted backdrop blur: applied to shared containers so sidebar + content blur uniformly */
+[data-bg-transparent] [data-frosted-backdrop] {
   backdrop-filter: blur(20px) saturate(1.2);
   -webkit-backdrop-filter: blur(20px) saturate(1.2);
 }

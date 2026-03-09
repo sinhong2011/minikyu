@@ -218,19 +218,25 @@ export function CommandPalette() {
       </CommandList>
 
       {/* Action footer */}
-      <div className="flex items-center justify-between border-t px-3 py-2 text-xs text-muted-foreground">
+      <div className="flex items-center justify-between border-t border-border/50 px-3 py-2 text-xs text-muted-foreground">
         <div className="flex items-center gap-3">
           <span className="flex items-center gap-1">
-            <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">↵</kbd>
+            <kbd className="rounded border border-border/50 bg-black/[0.04] dark:bg-white/[0.06] px-1.5 py-0.5 font-mono text-[10px]">
+              ↵
+            </kbd>
             {_(msg`Run`)}
           </span>
           <span className="flex items-center gap-1">
-            <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">esc</kbd>
+            <kbd className="rounded border border-border/50 bg-black/[0.04] dark:bg-white/[0.06] px-1.5 py-0.5 font-mono text-[10px]">
+              esc
+            </kbd>
             {_(msg`Close`)}
           </span>
         </div>
         <span className="flex items-center gap-1">
-          <kbd className="rounded bg-muted px-1.5 py-0.5 font-mono text-[10px]">↑↓</kbd>
+          <kbd className="rounded border border-border/50 bg-black/[0.04] dark:bg-white/[0.06] px-1.5 py-0.5 font-mono text-[10px]">
+            ↑↓
+          </kbd>
           {_(msg`Navigate`)}
         </span>
       </div>

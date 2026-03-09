@@ -82,7 +82,7 @@ function MenuPanel({
             className
           )}
         >
-          <MenuHighlightPrimitive className="absolute inset-0 bg-white/10 z-0 rounded-sm">
+          <MenuHighlightPrimitive className="absolute inset-0 bg-black/[0.06] dark:bg-white/10 z-0 rounded-sm">
             {children}
           </MenuHighlightPrimitive>
         </MenuPopupPrimitive>

@@ -497,7 +497,8 @@ export function EntryReadingHeader({
                     className={cn(
                       toolbarButtonClass,
                       'relative',
-                      hasSummary && 'border-border/60 bg-accent/70 text-foreground'
+                      hasSummary &&
+                        'border-border/60 bg-black/[0.08] dark:bg-white/[0.12] text-foreground'
                     )}
                     onClick={onSummarize}
                     disabled={isSummarizing}
@@ -536,7 +537,7 @@ export function EntryReadingHeader({
                             toolbarButtonClass,
                             'relative',
                             translationControlActive &&
-                              'border-border/60 bg-accent/70 text-foreground'
+                              'border-border/60 bg-black/[0.08] dark:bg-white/[0.12] text-foreground'
                           )}
                           aria-label={_(msg`Translation options`)}
                         >
@@ -675,7 +676,8 @@ export function EntryReadingHeader({
                     size="icon"
                     className={cn(
                       toolbarButtonClass,
-                      focusMode && 'border-border/60 bg-accent/70 text-foreground'
+                      focusMode &&
+                        'border-border/60 bg-black/[0.08] dark:bg-white/[0.12] text-foreground'
                     )}
                     onClick={() => onFocusModeChange(!focusMode)}
                     aria-label={_(msg`Focus mode`)}
