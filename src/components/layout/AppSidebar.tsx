@@ -10,7 +10,6 @@ import {
   FolderTransferIcon,
   MoreVerticalIcon,
   PencilEdit02Icon,
-  RefreshIcon,
   RssIcon,
   Search01Icon,
   StarIcon,
@@ -19,7 +18,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { Link } from '@tanstack/react-router';
+import { Link, useSearch } from '@tanstack/react-router';
 import { confirm, open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { AnimatePresence, motion } from 'motion/react';
@@ -80,11 +79,9 @@ import {
   useIsConnected,
   useMarkCategoryAsRead,
   useMarkFeedAsRead,
-  useSyncMiniflux,
   useUnreadCounts,
   useUpdateFeed,
 } from '@/services/miniflux';
-import { useSyncStore } from '@/store/sync-store';
 
 interface AppSidebarProps {
   children?: React.ReactNode;
@@ -286,11 +283,11 @@ function CategoryFeeds({ categoryId }: CategoryFeedsProps) {
 
 interface CategoryItemProps {
   category: Category;
-  index: number;
 }
 
-function CategoryItem({ category, index }: CategoryItemProps) {
+function CategoryItem({ category }: CategoryItemProps) {
   const { _ } = useLingui();
+  const search = useSearch({ from: '/' });
   const unreadCount = useCategoryUnreadCount(Number(category.id));
   const { data: feeds } = useCategoryFeeds(category.id);
   const { mutateAsync: deleteCategory } = useDeleteCategory();
@@ -300,6 +297,18 @@ function CategoryItem({ category, index }: CategoryItemProps) {
   );
 
   const feedCount = feeds?.filter((f) => f.title.trim().toLowerCase() !== 'all').length ?? 0;
+  const isCategoryActive = search.categoryId === category.id.toString();
+  const hasFeedActive = Boolean(
+    search.feedId && feeds?.some((f) => f.id.toString() === search.feedId)
+  );
+  const [isOpen, setIsOpen] = React.useState(false);
+
+  // Auto-expand when a feed in this category is selected
+  React.useEffect(() => {
+    if (hasFeedActive || isCategoryActive) {
+      setIsOpen(true);
+    }
+  }, [hasFeedActive, isCategoryActive]);
 
   const handleDelete = async (event: React.MouseEvent) => {
     event.preventDefault();
@@ -332,27 +341,35 @@ function CategoryItem({ category, index }: CategoryItemProps) {
       exit={{ opacity: 0, height: 0, marginTop: 0, marginBottom: 0 }}
       transition={{ duration: 0.25, ease: 'easeOut' }}
     >
-      <Collapsible key={category.id} defaultOpen={index === 0} className="group/collapsible">
+      <Collapsible
+        key={category.id}
+        open={isOpen}
+        onOpenChange={setIsOpen}
+        className="group/collapsible"
+      >
         <SidebarMenuItem className="group/category-item relative">
           <Link to="/" search={{ categoryId: category.id.toString() }} className="min-w-0 flex-1">
-            {({ isActive }) => (
-              <SidebarMenuButton
-                tooltip={category.title}
-                isActive={isActive}
-                className="pl-8 pr-10"
-              >
-                <span
-                  className={cn(
-                    'truncate transition-colors duration-200',
-                    isActive
-                      ? 'font-semibold text-sidebar-foreground'
-                      : 'text-sidebar-foreground/80'
-                  )}
+            {({ isActive }) => {
+              const highlighted = isActive || hasFeedActive;
+              return (
+                <SidebarMenuButton
+                  tooltip={category.title}
+                  isActive={highlighted}
+                  className="pl-8 pr-10"
                 >
-                  {category.title}
-                </span>
-              </SidebarMenuButton>
-            )}
+                  <span
+                    className={cn(
+                      'truncate transition-colors duration-200',
+                      highlighted
+                        ? 'font-semibold text-sidebar-foreground'
+                        : 'text-sidebar-foreground/80'
+                    )}
+                  >
+                    {category.title}
+                  </span>
+                </SidebarMenuButton>
+              );
+            }}
           </Link>
           <div className="pointer-events-none absolute right-2 top-1.5 flex size-6 items-center justify-center">
             <div className="flex items-center justify-center transition-all duration-200 group-hover/category-item:scale-50 group-hover/category-item:opacity-0">
@@ -413,8 +430,6 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
   const { data: isConnected, isLoading: connectionLoading } = useIsConnected();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
   const { data: unreadCounts } = useUnreadCounts();
-  const syncMiniflux = useSyncMiniflux();
-  const syncing = useSyncStore((state) => state.syncing);
   const setCategoryDialogState = useMinifluxSettingsDialogStore(
     (state) => state.setCategoryDialogState
   );
@@ -443,12 +458,6 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
     };
   }, [openAddFeedDialog, setCategoryDialogState]);
 
-  const handleSync = React.useCallback(() => {
-    if (!isConnected || syncing) {
-      return;
-    }
-    syncMiniflux.mutate();
-  }, [isConnected, syncing, syncMiniflux]);
   const handleShowCategories = React.useCallback(() => {
     setOpen(true);
   }, [setOpen]);
@@ -513,7 +522,6 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
   }, [_]);
 
   const headerActionButtonClass = 'h-8 w-8';
-  const headerRefreshIconClass = 'h-4 w-4';
   const headerAddIconClass = 'h-[18px] w-[18px]';
   const isCollapsed = sidebarState === 'collapsed';
 
@@ -532,19 +540,6 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
             wordmarkClassName="group-data-[collapsible=icon]:hidden"
           />
           <div className="flex items-center gap-1 group-data-[collapsible=icon]:hidden">
-            <Button
-              variant="ghost"
-              size="icon"
-              className={headerActionButtonClass}
-              onClick={handleSync}
-              title={syncing ? _(msg`Syncing...`) : _(msg`Sync`)}
-              disabled={!isConnected || syncing}
-            >
-              <HugeiconsIcon
-                icon={RefreshIcon}
-                className={cn(headerRefreshIconClass, syncing && 'animate-spin')}
-              />
-            </Button>
             <Menu>
               <MenuTrigger
                 render={
@@ -738,8 +733,8 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
                   ))
                 ) : categories && categories.length > 0 ? (
                   <AnimatePresence initial={false}>
-                    {categories.map((category, index) => (
-                      <CategoryItem key={category.id} category={category} index={index} />
+                    {categories.map((category) => (
+                      <CategoryItem key={category.id} category={category} />
                     ))}
                   </AnimatePresence>
                 ) : !isConnected ? (

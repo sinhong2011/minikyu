@@ -478,12 +478,6 @@ export function EntryList({
       : PULL_TO_REFRESH_SOFT_LIMIT +
         (pullOffset - PULL_TO_REFRESH_SOFT_LIMIT) * PULL_TO_REFRESH_OVERFLOW_DAMPING;
   const pullProgress = Math.min(1, pullVisualOffset / PULL_TO_REFRESH_TRIGGER_DISTANCE);
-  const pullLabel =
-    isRefreshing || pullRefreshPending
-      ? _(msg`Refreshing...`)
-      : pullReady
-        ? _(msg`Release to refresh`)
-        : _(msg`Pull to refresh`);
   const isPullToRefreshActive = isPulling || pullRefreshPending || isRefreshing;
   const activeStickySection = useMemo(() => {
     return (
@@ -686,25 +680,19 @@ export function EntryList({
           {onPullToRefresh && (
             <>
               <div
-                className="pointer-events-none sticky top-0 z-20"
+                className="pointer-events-none sticky top-0 z-20 flex items-center justify-center"
                 style={{
                   height: showPullIndicator ? `${pullVisualOffset}px` : '0px',
                   transition: isPulling
                     ? 'height 72ms linear'
                     : 'height 280ms cubic-bezier(0.175, 0.885, 0.32, 1.08)',
                 }}
-              />
-              <div className="pointer-events-none sticky top-0 z-30 flex h-0 justify-center overflow-visible">
+              >
                 <div
-                  className={cn(
-                    'inline-flex items-center gap-2 rounded-full bg-background/90 px-3 py-1.5 text-xs text-muted-foreground shadow-sm backdrop-blur-sm',
-                    pullReady && !isRefreshing && !pullRefreshPending && 'text-foreground'
-                  )}
+                  className="flex size-7 items-center justify-center rounded-full bg-popover/65 ring-1 ring-foreground/10 shadow-lg backdrop-blur-2xl backdrop-saturate-150"
                   style={{
-                    transform: `translateY(${Math.max(0, pullVisualOffset - 24)}px) scale(${
-                      showPullIndicator ? 1 : 0.95
-                    })`,
-                    opacity: showPullIndicator ? 1 : 0,
+                    transform: `scale(${showPullIndicator ? 1 : 0.5})`,
+                    opacity: showPullIndicator ? pullProgress : 0,
                     transition: isPulling
                       ? 'transform 72ms linear, opacity 90ms linear'
                       : 'transform 280ms cubic-bezier(0.175, 0.885, 0.32, 1.08), opacity 220ms ease',
@@ -713,8 +701,9 @@ export function EntryList({
                   <HugeiconsIcon
                     icon={Refresh04Icon}
                     className={cn(
-                      'h-3.5 w-3.5 transition-transform duration-200',
-                      (isRefreshing || pullRefreshPending) && 'animate-spin'
+                      'h-3.5 w-3.5 text-muted-foreground transition-[color] duration-200',
+                      (isRefreshing || pullRefreshPending) && 'animate-spin',
+                      pullReady && !isRefreshing && !pullRefreshPending && 'text-foreground'
                     )}
                     style={
                       isRefreshing || pullRefreshPending
@@ -724,7 +713,6 @@ export function EntryList({
                           }
                     }
                   />
-                  <span>{pullLabel}</span>
                 </div>
               </div>
             </>

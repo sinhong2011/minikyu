@@ -20,6 +20,8 @@ import { useSyncIndicator } from '@/hooks/use-sync-indicator';
 import { executeCommand } from '@/lib/commands';
 import { cn } from '@/lib/utils';
 import { useIsConnected } from '@/services/miniflux/auth';
+import { useSyncMiniflux } from '@/services/miniflux/feeds';
+import { useSyncStore } from '@/store/sync-store';
 import { useUIStore } from '@/store/ui-store';
 
 interface WindowTitleBarProps {
@@ -37,6 +39,8 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
   const toggleZenMode = useUIStore((state) => state.toggleZenMode);
   const { data: isConnected } = useIsConnected();
   const { status: syncStatus, icon: syncIcon, title: syncTitle } = useSyncIndicator();
+  const syncMiniflux = useSyncMiniflux();
+  const syncing = useSyncStore((state) => state.syncing);
   const commandContext = useCommandContext();
 
   const handleOpenSettings = async () => {
@@ -115,6 +119,9 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
                 syncStatus === 'failed' ? 'text-destructive' : 'text-foreground/70'
               )}
               title={syncTitle}
+              onClick={() => {
+                if (!syncing) syncMiniflux.mutate();
+              }}
             >
               <HugeiconsIcon
                 icon={syncIcon}
