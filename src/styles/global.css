@@ -48,6 +48,7 @@
   }
   body {
     @apply font-sans bg-background text-foreground;
+    clip-path: inset(0 round var(--radius-xl));
   }
   html {
     @apply font-sans;

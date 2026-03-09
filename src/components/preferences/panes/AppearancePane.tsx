@@ -329,7 +329,9 @@ function BackgroundImagePicker() {
             <img src={convertFileSrc(imagePath)} alt="" className="size-full object-cover" />
           </div>
           <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <p className="truncate text-sm text-muted-foreground">{imagePath.split('/').pop()}</p>
+            <p className="truncate text-sm text-muted-foreground">
+              {imagePath.split(/[/\\]/).pop()}
+            </p>
             <div className="flex gap-1.5">
               <Button variant="outline" size="sm" onClick={handleSelectImage}>
                 {_(msg`Change`)}
