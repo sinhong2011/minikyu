@@ -18,7 +18,7 @@ A modern RSS reader desktop application built with **Tauri v2**, **React 19**, a
 
 ## Screenshots
 
-> 📸 Screenshots coming soon
+![Minikyu Main View](public/screenshots/main.png)
 
 ## Installation
 
