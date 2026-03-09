@@ -133,6 +133,7 @@
 
 /* Toast: glass style when transparent, solid otherwise */
 [data-bg-transparent] [data-sonner-toaster] [data-sonner-toast] {
+  /* biome-ignore lint/complexity/noImportantStyles: Required to override Sonner's inline background style */
   background: color-mix(in oklch, var(--background-base) 30%, transparent) !important;
   backdrop-filter: blur(60px) saturate(1.8);
   -webkit-backdrop-filter: blur(60px) saturate(1.8);

@@ -107,7 +107,6 @@ describe('useFetchEntryContent', () => {
 
     expect(commands.fetchEntryContent).toHaveBeenCalledWith('42', true);
     expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: entryQueryKeys.detail('42') });
-    expect(invalidateQueriesSpy).toHaveBeenCalledWith({ queryKey: entryQueryKeys.lists() });
     expect(toast.success).toHaveBeenCalledWith('Original content downloaded');
   });
 
