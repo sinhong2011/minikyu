@@ -70,7 +70,7 @@ export function MainWindowContent({
           >
             <div className="h-full overflow-hidden">{children}</div>
           </ResizablePanel>
-          <ResizableHandle withHandle />
+          <ResizableHandle />
           <ResizablePanel id="entry-reading">
             <div className="flex h-full min-w-0 flex-col overflow-hidden">
               <AnimatePresence mode="sync">

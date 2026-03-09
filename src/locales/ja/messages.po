@@ -77,7 +77,7 @@ msgid "{0} feeds synced"
 msgstr "{0} 件のフィードを同期しました"
 
 #. placeholder {0}: entry.reading_time
-#: src/components/miniflux/EntryList.tsx:862
+#: src/components/miniflux/EntryList.tsx:860
 msgid "{0} min read"
 msgstr "{0}分で読了"
 
@@ -145,7 +145,7 @@ msgstr "12時間制"
 msgid "24-hour"
 msgstr "24時間制"
 
-#: src/components/preferences/panes/AboutPane.tsx:101
+#: src/components/preferences/panes/AboutPane.tsx:110
 msgid "A calm, focused space for your Miniflux reading. Catch up faster, stay organized, and enjoy every feed."
 msgstr "Minifluxを落ち着いて読める、集中しやすい空間。すばやく追いつき、整理しながら、すべてのフィードを心地よく楽しめます。"
 
@@ -248,7 +248,7 @@ msgstr "ルールを追加"
 msgid "Add the current article's podcast to the playlist"
 msgstr "この記事のポッドキャストをプレイリストに追加"
 
-#: src/components/miniflux/EntryList.tsx:839
+#: src/components/miniflux/EntryList.tsx:837
 #: src/components/miniflux/EntryReadingHeader.tsx:476
 #: src/components/miniflux/EntryReadingHeader.tsx:483
 #: src/lib/shortcut-registry.ts:109
@@ -265,7 +265,7 @@ msgstr "プレイリストに追加"
 msgid "Add user"
 msgstr "ユーザーを追加"
 
-#: src/components/miniflux/EntryList.tsx:845
+#: src/components/miniflux/EntryList.tsx:843
 #: src/components/miniflux/EntryReadingHeader.tsx:313
 msgid "Added to playlist"
 msgstr "プレイリストに追加しました"
@@ -486,9 +486,9 @@ msgstr "記事のテキストサイズ（ピクセル、14-24）"
 msgid "Ascending"
 msgstr "昇順"
 
-#: src/components/preferences/panes/AboutPane.tsx:269
-msgid "Author"
-msgstr "作者"
+#: src/components/preferences/panes/AboutPane.tsx:271
+#~ msgid "Author"
+#~ msgstr "作者"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:194
 #: src/components/preferences/panes/ReaderPane.tsx:165
@@ -515,7 +515,7 @@ msgstr "自動同期間隔"
 msgid "Auto-translation will be skipped when the entry content is detected as one of these languages."
 msgstr "エントリーの内容がこれらの言語として検出された場合、自動翻訳はスキップされます。"
 
-#: src/components/preferences/panes/AboutPane.tsx:171
+#: src/components/preferences/panes/AboutPane.tsx:180
 msgid "Automatic updates"
 msgstr "自動アップデート"
 
@@ -588,7 +588,7 @@ msgstr "カテゴリーを閲覧"
 msgid "Browser content"
 msgstr "ブラウザコンテンツ"
 
-#: src/components/preferences/panes/AboutPane.tsx:230
+#: src/components/preferences/panes/AboutPane.tsx:239
 msgid "Build date"
 msgstr "ビルド日"
 
@@ -706,7 +706,7 @@ msgstr "変更"
 msgid "Check for Updates"
 msgstr "更新を確認"
 
-#: src/components/preferences/panes/AboutPane.tsx:172
+#: src/components/preferences/panes/AboutPane.tsx:181
 msgid "Check for updates automatically on app launch."
 msgstr "アプリ起動時に自動でアップデートを確認します。"
 
@@ -718,7 +718,7 @@ msgstr "更新を確認..."
 msgid "Check if a newer version is available"
 msgstr "新しいバージョンが利用可能か確認する"
 
-#: src/components/preferences/panes/AboutPane.tsx:148
+#: src/components/preferences/panes/AboutPane.tsx:157
 msgid "Check latest version"
 msgstr "最新バージョンを確認"
 
@@ -738,7 +738,7 @@ msgstr "確認済み"
 msgid "Checking for updates..."
 msgstr "更新を確認中..."
 
-#: src/components/preferences/panes/AboutPane.tsx:148
+#: src/components/preferences/panes/AboutPane.tsx:157
 msgid "Checking..."
 msgstr "確認中..."
 
@@ -930,7 +930,7 @@ msgstr "カラーテーマ"
 msgid "Command Palette"
 msgstr "コマンドパレット"
 
-#: src/components/preferences/panes/AboutPane.tsx:221
+#: src/components/preferences/panes/AboutPane.tsx:230
 msgid "Commit"
 msgstr "コミット"
 
@@ -962,7 +962,7 @@ msgstr "Minifluxサーバーに接続"
 msgid "Connect to Miniflux"
 msgstr "Miniflux に接続"
 
-#: src/components/preferences/panes/AboutPane.tsx:210
+#: src/components/preferences/panes/AboutPane.tsx:219
 msgid "Connect to Miniflux to see server version."
 msgstr "サーバーバージョンを確認するにはMinifluxに接続してください。"
 
@@ -1093,7 +1093,7 @@ msgstr "ポッドキャストエントリーが見つかりませんでした"
 msgid "Could not load podcast entry"
 msgstr "ポッドキャストエントリーを読み込めませんでした"
 
-#: src/components/preferences/panes/AboutPane.tsx:203
+#: src/components/preferences/panes/AboutPane.tsx:212
 msgid "Could not load server version information."
 msgstr "サーバーバージョン情報を読み込めませんでした。"
 
@@ -1152,9 +1152,9 @@ msgstr "ユーザーを作成"
 msgid "Created"
 msgstr "作成日"
 
-#: src/components/preferences/panes/AboutPane.tsx:270
-msgid "Created and maintained by sinhong."
-msgstr "sinhong が作成・メンテナンスしています。"
+#: src/components/preferences/panes/AboutPane.tsx:272
+#~ msgid "Created and maintained by sinhong."
+#~ msgstr "sinhong が作成・メンテナンスしています。"
 
 #: src/components/miniflux/AddCategoryDialog.tsx:100
 msgid "Creating..."
@@ -1168,7 +1168,7 @@ msgstr "現在のカテゴリ"
 msgid "Current state"
 msgstr "現在の状態"
 
-#: src/components/preferences/panes/AboutPane.tsx:108
+#: src/components/preferences/panes/AboutPane.tsx:117
 msgid "Current version"
 msgstr "現在のバージョン"
 
@@ -1417,7 +1417,7 @@ msgid "Done"
 msgstr "完了"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:606
-#: src/components/miniflux/EntryList.tsx:813
+#: src/components/miniflux/EntryList.tsx:811
 #: src/components/podcast/PlayerWindowControls.tsx:313
 #: src/components/podcast/PodcastPlayer.tsx:261
 #: src/components/podcast/PodcastPlayer.tsx:267
@@ -1457,7 +1457,7 @@ msgstr "ダウンロード設定"
 msgid "Download the full article from the original source"
 msgstr "元のソースから記事全文をダウンロード"
 
-#: src/components/preferences/panes/AboutPane.tsx:125
+#: src/components/preferences/panes/AboutPane.tsx:134
 msgid "Download Update"
 msgstr "更新をダウンロード"
 
@@ -2255,7 +2255,7 @@ msgstr "ドイツ語"
 msgid "Gestures"
 msgstr "ジェスチャー"
 
-#: src/components/preferences/panes/AboutPane.tsx:221
+#: src/components/preferences/panes/AboutPane.tsx:230
 msgid "Git commit hash."
 msgstr "Gitコミットハッシュ。"
 
@@ -2501,7 +2501,7 @@ msgstr "情報"
 msgid "Install & Restart"
 msgstr "インストールして再起動"
 
-#: src/components/preferences/panes/AboutPane.tsx:109
+#: src/components/preferences/panes/AboutPane.tsx:118
 msgid "Installed version of Minikyu."
 msgstr "インストール済みのMinikyu バージョン。"
 
@@ -2616,7 +2616,7 @@ msgstr "後で"
 msgid "Latest React with concurrent features"
 msgstr "最新の React 並列機能"
 
-#: src/components/preferences/panes/AboutPane.tsx:114
+#: src/components/preferences/panes/AboutPane.tsx:123
 msgid "Latest version"
 msgstr "最新バージョン"
 
@@ -2624,9 +2624,9 @@ msgstr "最新バージョン"
 #~ msgid "Leave empty to use default prompt"
 #~ msgstr "デフォルトプロンプトを使用するには空のままにしてください"
 
-#: src/components/preferences/panes/AboutPane.tsx:283
-msgid "License"
-msgstr "ライセンス"
+#: src/components/preferences/panes/AboutPane.tsx:287
+#~ msgid "License"
+#~ msgstr "ライセンス"
 
 #: src/components/preferences/panes/AppearancePane.tsx:130
 msgid "Light"
@@ -2669,7 +2669,7 @@ msgstr "LLMプロバイダー"
 msgid "Loading"
 msgstr "読み込み中"
 
-#: src/components/preferences/panes/AboutPane.tsx:193
+#: src/components/preferences/panes/AboutPane.tsx:202
 msgid "Loading version information..."
 msgstr "バージョン情報を読み込み中..."
 
@@ -2780,11 +2780,11 @@ msgstr "分で読了"
 msgid "Mini player"
 msgstr "ミニプレーヤー"
 
-#: src/components/preferences/panes/AboutPane.tsx:189
+#: src/components/preferences/panes/AboutPane.tsx:198
 msgid "Miniflux Server"
 msgstr "Minifluxサーバー"
 
-#: src/components/preferences/panes/AboutPane.tsx:216
+#: src/components/preferences/panes/AboutPane.tsx:225
 msgid "Miniflux server version."
 msgstr "Minifluxサーバーバージョン。"
 
@@ -2794,9 +2794,9 @@ msgstr "Minifluxサーバーバージョン。"
 msgid "Minikyu"
 msgstr "Minikyu"
 
-#: src/components/preferences/panes/AboutPane.tsx:284
-msgid "Minikyu is open source software."
-msgstr "Minikyu はオープンソースソフトウェアです。"
+#: src/components/preferences/panes/AboutPane.tsx:288
+#~ msgid "Minikyu is open source software."
+#~ msgstr "Minikyu はオープンソースソフトウェアです。"
 
 #: src/components/preferences/panes/TranslationPane.tsx:739
 msgid "MiniMax"
@@ -3346,7 +3346,7 @@ msgid "Phrase"
 msgstr "フレーズ"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:800
-#: src/components/miniflux/EntryList.tsx:826
+#: src/components/miniflux/EntryList.tsx:824
 #: src/components/miniflux/EntryReadingHeader.tsx:291
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PlayerWindowQueue.tsx:102
@@ -3403,7 +3403,7 @@ msgid "Please enter a valid URL"
 msgstr "有効なURLを入力してください"
 
 #: src/components/command-palette/CommandPalette.tsx:144
-#: src/components/miniflux/EntryList.tsx:857
+#: src/components/miniflux/EntryList.tsx:855
 #: src/components/miniflux/EntryReading.tsx:1746
 #: src/lib/menu.ts:283
 msgid "Podcast"
@@ -3476,8 +3476,8 @@ msgid "Previous section"
 msgstr "前のセクション"
 
 #: src/components/preferences/panes/AboutPane.tsx:253
-msgid "Project"
-msgstr "プロジェクト"
+#~ msgid "Project"
+#~ msgstr "プロジェクト"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:633
 #: src/components/preferences/panes/TranslationPane.tsx:1774
@@ -3825,7 +3825,7 @@ msgstr "今すぐ再起動"
 msgid "Restart to apply the update."
 msgstr "更新を適用するために再起動してください。"
 
-#: src/components/preferences/panes/AboutPane.tsx:120
+#: src/components/preferences/panes/AboutPane.tsx:129
 msgid "Restart to Update"
 msgstr "再起動して更新"
 
@@ -3901,7 +3901,7 @@ msgstr "同期を実行してカテゴリー、フィード、エントリーを
 msgid "Running"
 msgstr "実行中"
 
-#: src/components/preferences/panes/AboutPane.tsx:239
+#: src/components/preferences/panes/AboutPane.tsx:248
 msgid "Runtime"
 msgstr "ランタイム"
 
@@ -4114,11 +4114,11 @@ msgstr "セリフ"
 msgid "Server"
 msgstr "サーバー"
 
-#: src/components/preferences/panes/AboutPane.tsx:231
+#: src/components/preferences/panes/AboutPane.tsx:240
 msgid "Server build timestamp."
 msgstr "サーバーのビルドタイムスタンプ。"
 
-#: src/components/preferences/panes/AboutPane.tsx:240
+#: src/components/preferences/panes/AboutPane.tsx:249
 msgid "Server runtime environment."
 msgstr "サーバーのランタイム環境。"
 
@@ -4135,9 +4135,9 @@ msgstr "サーバー URL"
 msgid "Server URL is required"
 msgstr "サーバー URL が必要です"
 
-#: src/components/preferences/panes/AboutPane.tsx:192
-#: src/components/preferences/panes/AboutPane.tsx:202
-#: src/components/preferences/panes/AboutPane.tsx:209
+#: src/components/preferences/panes/AboutPane.tsx:201
+#: src/components/preferences/panes/AboutPane.tsx:211
+#: src/components/preferences/panes/AboutPane.tsx:218
 msgid "Server version"
 msgstr "サーバーバージョン"
 
@@ -4322,8 +4322,8 @@ msgid "Sort by"
 msgstr "並べ替え"
 
 #: src/components/preferences/panes/AboutPane.tsx:255
-msgid "Source code"
-msgstr "ソースコード"
+#~ msgid "Source code"
+#~ msgstr "ソースコード"
 
 #: src/components/miniflux/AddFeedDialog.tsx:294
 #: src/components/miniflux/SearchSourceDialog.tsx:66
@@ -5184,8 +5184,8 @@ msgstr "検証"
 msgid "Verifying..."
 msgstr "検証中..."
 
-#: src/components/preferences/panes/AboutPane.tsx:106
-#: src/components/preferences/panes/AboutPane.tsx:216
+#: src/components/preferences/panes/AboutPane.tsx:115
+#: src/components/preferences/panes/AboutPane.tsx:225
 msgid "Version"
 msgstr "バージョン"
 
@@ -5233,8 +5233,8 @@ msgid "View app version and information"
 msgstr "アプリのバージョンと情報を表示"
 
 #: src/components/preferences/panes/AboutPane.tsx:256
-msgid "View the source code, report issues, or contribute."
-msgstr "ソースコードの閲覧、Issue の報告、コントリビュートができます。"
+#~ msgid "View the source code, report issues, or contribute."
+#~ msgstr "ソースコードの閲覧、Issue の報告、コントリビュートができます。"
 
 #: src/components/layout/AppSidebar.tsx:588
 msgid "Views"

@@ -1,5 +1,5 @@
 'use client';
-import { DragDropVerticalIcon } from '@hugeicons/core-free-icons';
+import { HorizontalResizeIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import type * as React from 'react';
 import * as ResizablePrimitive from 'react-resizable-panels';
@@ -26,26 +26,22 @@ function ResizablePanel({ ...props }: React.ComponentProps<typeof ResizablePrimi
 }
 
 function ResizableHandle({
-  withHandle,
   className,
   ...props
-}: React.ComponentProps<typeof ResizablePrimitive.Separator> & {
-  withHandle?: boolean;
-}) {
+}: React.ComponentProps<typeof ResizablePrimitive.Separator>) {
   return (
     <ResizablePrimitive.Separator
       data-slot="resizable-handle"
       className={cn(
-        'relative flex w-px items-center justify-center cursor-col-resize transition-colors duration-200 hover:bg-primary/20 active:bg-primary/30 after:absolute after:inset-y-0 after:left-1/2 after:w-1 after:-translate-x-1/2 focus-visible:outline-hidden data-[panel-group-direction=vertical]:h-px data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:cursor-row-resize data-[panel-group-direction=vertical]:after:left-0 data-[panel-group-direction=vertical]:after:h-1 data-[panel-group-direction=vertical]:after:w-full data-[panel-group-direction=vertical]:after:translate-x-0 data-[panel-group-direction=vertical]:after:-translate-y-1/2 [&[data-panel-group-direction=vertical]>div]:rotate-90',
+        'group/handle relative flex w-4 mx-0.5 items-center justify-center cursor-col-resize transition-colors duration-200 focus-visible:outline-hidden data-[panel-group-direction=vertical]:h-4 data-[panel-group-direction=vertical]:my-0.5 data-[panel-group-direction=vertical]:w-full data-[panel-group-direction=vertical]:cursor-row-resize [&[data-panel-group-direction=vertical]>div]:rotate-90',
         className
       )}
       {...props}
     >
-      {withHandle && (
-        <div className="bg-muted/50 hover:bg-primary/10 z-10 flex h-4 w-3 items-center justify-center rounded-xs transition-colors duration-200">
-          <HugeiconsIcon icon={DragDropVerticalIcon} className="size-2.5" />
-        </div>
-      )}
+      <div className="absolute inset-y-0 left-1/2 w-px -translate-x-1/2 bg-foreground/0 transition-colors duration-200 group-hover/handle:bg-foreground/10 group-active/handle:bg-foreground/15" />
+      <div className="absolute top-1/2 left-1/2 z-10 -translate-x-1/2 -translate-y-1/2 text-foreground/40 opacity-0 transition-opacity duration-200 group-hover/handle:opacity-100 group-active/handle:opacity-100">
+        <HugeiconsIcon icon={HorizontalResizeIcon} className="size-5" />
+      </div>
     </ResizablePrimitive.Separator>
   );
 }
