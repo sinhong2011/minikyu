@@ -1,7 +1,16 @@
-//! Integration tests for S3 cloud sync operations against LocalStack.
+//! Integration tests for S3 cloud sync operations.
 //!
-//! These tests require a running LocalStack instance on localhost:4566.
+//! These tests require an S3-compatible endpoint (LocalStack, MinIO, AWS S3).
+//! Configure via env vars or use defaults (LocalStack on localhost:4566).
+//!
 //! Run with: cargo test --lib cloud_sync::s3::tests -- --ignored
+//!
+//! Environment variables:
+//!   CLOUD_SYNC_S3_ENDPOINT   (default: http://localhost:4566)
+//!   CLOUD_SYNC_S3_BUCKET     (default: minikyu-test)
+//!   CLOUD_SYNC_S3_REGION     (default: us-east-1)
+//!   CLOUD_SYNC_S3_ACCESS_KEY (default: test)
+//!   CLOUD_SYNC_S3_SECRET_KEY (default: test)
 
 #[cfg(test)]
 mod tests {
@@ -9,20 +18,24 @@ mod tests {
     use s3::creds::Credentials;
     use s3::Region;
 
-    const ENDPOINT: &str = "http://localhost:4566";
-    const BUCKET: &str = "minikyu-test";
-    const REGION: &str = "us-east-1";
-    const ACCESS_KEY: &str = "test";
-    const SECRET_KEY: &str = "test";
+    fn env_or(key: &str, default: &str) -> String {
+        std::env::var(key).unwrap_or_else(|_| default.to_string())
+    }
 
     fn test_bucket() -> Box<Bucket> {
+        let endpoint = env_or("CLOUD_SYNC_S3_ENDPOINT", "http://localhost:4566");
+        let bucket_name = env_or("CLOUD_SYNC_S3_BUCKET", "minikyu-test");
+        let region_str = env_or("CLOUD_SYNC_S3_REGION", "us-east-1");
+        let access_key = env_or("CLOUD_SYNC_S3_ACCESS_KEY", "test");
+        let secret_key = env_or("CLOUD_SYNC_S3_SECRET_KEY", "test");
+
         let region = Region::Custom {
-            region: REGION.to_string(),
-            endpoint: ENDPOINT.to_string(),
+            region: region_str,
+            endpoint,
         };
         let credentials =
-            Credentials::new(Some(ACCESS_KEY), Some(SECRET_KEY), None, None, None).unwrap();
-        Bucket::new(BUCKET, region, credentials)
+            Credentials::new(Some(&access_key), Some(&secret_key), None, None, None).unwrap();
+        Bucket::new(&bucket_name, region, credentials)
             .unwrap()
             .with_path_style()
     }
