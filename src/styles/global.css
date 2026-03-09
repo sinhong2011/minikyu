@@ -61,6 +61,11 @@
 }
 
 @layer components {
+  .yarl__portal {
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+  }
+
   .yarl__slide_image {
     border-radius: var(--radius-2xl);
   }
@@ -124,4 +129,11 @@
 [data-bg-transparent] [data-glass] {
   --background: var(--background-base);
   --sidebar: var(--sidebar-base);
+}
+
+/* Toast: glass style when transparent, solid otherwise */
+[data-bg-transparent] [data-sonner-toaster] [data-sonner-toast] {
+  background: color-mix(in oklch, var(--background-base) 30%, transparent) !important;
+  backdrop-filter: blur(60px) saturate(1.8);
+  -webkit-backdrop-filter: blur(60px) saturate(1.8);
 }
