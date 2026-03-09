@@ -170,17 +170,14 @@ pub async fn save_preferences(app: AppHandle, preferences: AppPreferences) -> Re
 
     log::info!("Successfully saved preferences to {prefs_path:?}");
 
-    // Auto-push to cloud sync if enabled
-    if preferences.cloud_sync_enabled
-        && preferences.cloud_sync_endpoint.is_some()
-        && preferences.cloud_sync_bucket.is_some()
-    {
-        let app_clone = app.clone();
-        tokio::spawn(async move {
-            if let Err(e) = crate::commands::cloud_sync::cloud_sync_push(app_clone).await {
-                log::warn!("Cloud sync auto-push failed: {e}");
-            }
-        });
+    // Notify the debounce worker to push after 5s of inactivity
+    let cloud_sync_configured = match preferences.cloud_sync_protocol.as_str() {
+        "webdav" => preferences.cloud_sync_webdav_url.is_some(),
+        _ => preferences.cloud_sync_endpoint.is_some() && preferences.cloud_sync_bucket.is_some(),
+    };
+    if preferences.cloud_sync_enabled && cloud_sync_configured {
+        let state: tauri::State<'_, crate::AppState> = app.state();
+        state.cloud_sync_notify.notify_one();
     }
 
     Ok(())

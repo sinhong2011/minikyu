@@ -165,11 +165,11 @@ msgstr "關於 {APP_NAME}"
 msgid "About Minikyu"
 msgstr "關於 Minikyu"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:761
+#: src/components/preferences/panes/CloudSyncSection.tsx:315
 msgid "Access Key ID"
 msgstr "存取金鑰 ID"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:174
+#: src/components/preferences/panes/AdvancedPane.tsx:154
 msgid "Account data cleared"
 msgstr "帳號資料已清除"
 
@@ -325,7 +325,7 @@ msgstr "全部"
 msgid "All categories, feeds, and entries are synced"
 msgstr "所有分類、訂閱源和文章已同步完成"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:310
+#: src/components/preferences/panes/AdvancedPane.tsx:290
 msgid "All data has been deleted. The app has been reset to its initial state."
 msgstr "所有資料已被刪除。應用程式已重置為初始狀態。"
 
@@ -351,7 +351,7 @@ msgstr "全部已讀"
 msgid "All read entries have been deleted"
 msgstr "所有已讀文章已被刪除"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1058
+#: src/components/preferences/panes/AdvancedPane.tsx:655
 msgid "All settings will be restored to their defaults. Your data and accounts will not be affected."
 msgstr "所有設定將還原為預設值。您的資料和帳號不會受到影響。"
 
@@ -507,6 +507,10 @@ msgstr "自動（LLM + 正規表達式）"
 msgid "Auto mark as read"
 msgstr "自動標記為已讀"
 
+#: src/components/preferences/panes/CloudSyncSection.tsx:441
+msgid "Auto-pull on startup"
+msgstr "啟動時自動拉取"
+
 #: src/components/preferences/panes/TranslationPane.tsx:1886
 msgid "Auto-summarize"
 msgstr "自動摘要"
@@ -600,7 +604,7 @@ msgstr "瀏覽分類"
 msgid "Browser content"
 msgstr "瀏覽器內容"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:699
+#: src/components/preferences/panes/CloudSyncSection.tsx:238
 msgid "Bucket"
 msgstr "儲存桶"
 
@@ -623,9 +627,9 @@ msgstr "找不到分類？建立一個新的。"
 #: src/components/miniflux/settings/FeedFormDialog.tsx:681
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:96
 #: src/components/miniflux/settings/UserFormDialog.tsx:155
-#: src/components/preferences/panes/AdvancedPane.tsx:1024
-#: src/components/preferences/panes/AdvancedPane.tsx:1063
-#: src/components/preferences/panes/AdvancedPane.tsx:1117
+#: src/components/preferences/panes/AdvancedPane.tsx:621
+#: src/components/preferences/panes/AdvancedPane.tsx:660
+#: src/components/preferences/panes/AdvancedPane.tsx:714
 #: src/components/preferences/panes/ApiTokenPane.tsx:204
 #: src/components/preferences/panes/ApiTokenPane.tsx:273
 msgid "Cancel"
@@ -849,16 +853,16 @@ msgstr "正在清理過期的本機記錄"
 msgid "Clear"
 msgstr "清除"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:996
+#: src/components/preferences/panes/AdvancedPane.tsx:593
 msgid "Clear account data"
 msgstr "清除帳號資料"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1008
-#: src/components/preferences/panes/AdvancedPane.tsx:1030
+#: src/components/preferences/panes/AdvancedPane.tsx:605
+#: src/components/preferences/panes/AdvancedPane.tsx:627
 msgid "Clear data"
 msgstr "清除資料"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:989
+#: src/components/preferences/panes/AdvancedPane.tsx:586
 msgid "Clear data for"
 msgstr "清除資料："
 
@@ -867,7 +871,7 @@ msgstr "清除資料："
 #~ msgstr "清除 {0} 的資料"
 
 #. placeholder {0}: activeAccount?.username ?? ''
-#: src/components/preferences/panes/AdvancedPane.tsx:1015
+#: src/components/preferences/panes/AdvancedPane.tsx:612
 msgid "Clear data for {0}?"
 msgstr "清除 {0} 的資料？"
 
@@ -879,7 +883,7 @@ msgstr "清除播放清單"
 msgid "Clear Queue"
 msgstr "清除佇列"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1008
+#: src/components/preferences/panes/AdvancedPane.tsx:605
 msgid "Clearing..."
 msgstr "清除中⋯"
 
@@ -924,7 +928,7 @@ msgstr "關閉視窗"
 msgid "Close Window"
 msgstr "關閉視窗"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:653
+#: src/components/preferences/panes/CloudSyncSection.tsx:173
 msgid "Cloud Sync"
 msgstr "雲端同步"
 
@@ -1002,8 +1006,8 @@ msgstr "連線中..."
 #~ msgid "Connection"
 #~ msgstr "連線"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:561
-#: src/components/preferences/panes/AdvancedPane.tsx:578
+#: src/components/preferences/panes/CloudSyncSection.tsx:110
+#: src/components/preferences/panes/CloudSyncSection.tsx:127
 msgid "Connection successful"
 msgstr "連線成功"
 
@@ -1019,7 +1023,7 @@ msgstr "適應"
 msgid "Continue to Add Feed"
 msgstr "繼續新增訂閱源"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1147
+#: src/components/preferences/panes/AdvancedPane.tsx:744
 msgid "Control the verbosity of frontend log output. More verbose levels include all levels above them."
 msgstr "控制前端記錄輸出的詳細程度。更詳細的等級包含所有上層等級。"
 
@@ -1036,18 +1040,18 @@ msgstr "在簡體和繁體中文之間轉換。"
 msgid "Copied"
 msgstr "已複製"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1140
+#: src/components/preferences/panes/AdvancedPane.tsx:737
 #: src/components/ui/sonner.tsx:56
 msgid "Copied!"
 msgstr "已複製！"
 
 #: src/components/ErrorBoundary.tsx:372
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:164
-#: src/components/preferences/panes/AdvancedPane.tsx:1140
+#: src/components/preferences/panes/AdvancedPane.tsx:737
 msgid "Copy"
 msgstr "複製"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1136
+#: src/components/preferences/panes/AdvancedPane.tsx:733
 msgid "Copy app version, OS, and environment details for bug reports."
 msgstr "複製應用程式版本、作業系統和環境詳情以用於錯誤回報。"
 
@@ -1059,7 +1063,7 @@ msgstr "複製文章 URL"
 msgid "Copy code"
 msgstr "複製程式碼"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1135
+#: src/components/preferences/panes/AdvancedPane.tsx:732
 msgid "Copy debug info"
 msgstr "複製除錯資訊"
 
@@ -1189,21 +1193,21 @@ msgstr "建立時間"
 msgid "Creating..."
 msgstr "建立中⋯"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:737
+#: src/components/preferences/panes/CloudSyncSection.tsx:278
 msgid "Credentials"
 msgstr "憑證"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:752
-#: src/components/preferences/panes/AdvancedPane.tsx:841
+#: src/components/preferences/panes/CloudSyncSection.tsx:300
+#: src/components/preferences/panes/CloudSyncSection.tsx:405
 msgid "Credentials are saved in your system keyring."
 msgstr "憑證已儲存在系統鑰匙圈中。"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:527
+#: src/components/preferences/panes/CloudSyncSection.tsx:76
 msgid "Credentials removed"
 msgstr "憑證已移除"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:517
-#: src/components/preferences/panes/AdvancedPane.tsx:540
+#: src/components/preferences/panes/CloudSyncSection.tsx:65
+#: src/components/preferences/panes/CloudSyncSection.tsx:89
 msgid "Credentials saved"
 msgstr "憑證已儲存"
 
@@ -1247,7 +1251,7 @@ msgstr "切換閱讀器主題"
 msgid "Dark"
 msgstr "深色"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:80
+#: src/components/preferences/panes/AdvancedPane.tsx:79
 msgid "Database"
 msgstr "資料庫"
 
@@ -1260,11 +1264,11 @@ msgid "Date Range"
 msgstr "日期範圍"
 
 #: src/components/command-palette/CommandPalette.tsx:148
-#: src/components/preferences/panes/AdvancedPane.tsx:60
+#: src/components/preferences/panes/AdvancedPane.tsx:59
 msgid "Debug"
 msgstr "除錯"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:470
+#: src/components/preferences/panes/AdvancedPane.tsx:450
 msgid "Debug info copied to clipboard"
 msgstr "除錯資訊已複製到剪貼簿"
 
@@ -1376,7 +1380,7 @@ msgstr "刪除分類"
 msgid "Delete category?"
 msgstr "刪除分類？"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1123
+#: src/components/preferences/panes/AdvancedPane.tsx:720
 msgid "Delete everything"
 msgstr "刪除所有內容"
 
@@ -1405,7 +1409,7 @@ msgid "Detection prompt"
 msgstr "偵測提示詞"
 
 #: src/components/ErrorBoundary.tsx:352
-#: src/components/preferences/panes/AdvancedPane.tsx:1133
+#: src/components/preferences/panes/AdvancedPane.tsx:730
 msgid "Diagnostics"
 msgstr "診斷"
 
@@ -1536,7 +1540,7 @@ msgid "Downloading update v{0}... {1}%"
 msgstr "正在下載更新 v{0}... {1}%"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:914
-#: src/components/preferences/panes/AdvancedPane.tsx:81
+#: src/components/preferences/panes/AdvancedPane.tsx:80
 #: src/components/titlebar/WindowTitleBar.tsx:143
 msgid "Downloads"
 msgstr "下載"
@@ -1624,7 +1628,7 @@ msgstr "已啟用的服務"
 msgid "Enclosure not found for this entry"
 msgstr "找不到此文章的附件"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:687
+#: src/components/preferences/panes/CloudSyncSection.tsx:225
 msgid "Endpoint URL"
 msgstr "端點 URL"
 
@@ -1650,8 +1654,8 @@ msgstr "僅英文"
 msgid "Enter a description for the new API key."
 msgstr "輸入新 API 金鑰的描述。"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:552
-#: src/components/preferences/panes/AdvancedPane.tsx:567
+#: src/components/preferences/panes/CloudSyncSection.tsx:101
+#: src/components/preferences/panes/CloudSyncSection.tsx:116
 msgid "Enter credentials to test connection"
 msgstr "請輸入憑證以測試連線"
 
@@ -1705,7 +1709,7 @@ msgstr "找不到文章"
 msgid "Entry sent to services"
 msgstr "文章已傳送至服務"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:57
+#: src/components/preferences/panes/AdvancedPane.tsx:56
 msgid "Error"
 msgstr "錯誤"
 
@@ -1762,8 +1766,8 @@ msgstr "退出禪模式"
 msgid "Explore Features"
 msgstr "探索功能"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:631
-#: src/components/preferences/panes/AdvancedPane.tsx:924
+#: src/components/preferences/panes/AdvancedPane.tsx:491
+#: src/components/preferences/panes/AdvancedPane.tsx:521
 msgid "Export"
 msgstr "匯出"
 
@@ -1773,8 +1777,8 @@ msgstr "將訂閱源匯出為 OPML 檔案"
 
 #: src/components/layout/AppSidebar.tsx:468
 #: src/components/layout/AppSidebar.tsx:574
-#: src/components/preferences/panes/AdvancedPane.tsx:389
-#: src/components/preferences/panes/AdvancedPane.tsx:919
+#: src/components/preferences/panes/AdvancedPane.tsx:369
+#: src/components/preferences/panes/AdvancedPane.tsx:516
 msgid "Export OPML"
 msgstr "匯出 OPML"
 
@@ -1783,32 +1787,32 @@ msgstr "匯出 OPML"
 msgid "Export OPML..."
 msgstr "匯出 OPML..."
 
-#: src/components/preferences/panes/AdvancedPane.tsx:622
+#: src/components/preferences/panes/AdvancedPane.tsx:482
 msgid "Export preferences"
 msgstr "匯出偏好設定"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:331
+#: src/components/preferences/panes/AdvancedPane.tsx:311
 msgid "Export Preferences"
 msgstr "匯出偏好設定"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:920
+#: src/components/preferences/panes/AdvancedPane.tsx:517
 msgid "Export your feeds as an OPML file for backup or migration."
 msgstr "將訂閱源匯出為 OPML 檔案，用於備份或遷移。"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1074
-#: src/components/preferences/panes/AdvancedPane.tsx:1090
+#: src/components/preferences/panes/AdvancedPane.tsx:671
+#: src/components/preferences/panes/AdvancedPane.tsx:687
 msgid "Factory reset"
 msgstr "恢復原廠設定"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:309
+#: src/components/preferences/panes/AdvancedPane.tsx:289
 msgid "Factory reset complete"
 msgstr "已恢復原廠設定"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:315
+#: src/components/preferences/panes/AdvancedPane.tsx:295
 msgid "Factory reset failed"
 msgstr "恢復原廠設定失敗"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1096
+#: src/components/preferences/panes/AdvancedPane.tsx:693
 msgid "Factory reset?"
 msgstr "恢復原廠設定？"
 
@@ -1823,7 +1827,7 @@ msgstr "失敗"
 msgid "Failed to cancel download"
 msgstr "取消下載失敗"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:180
+#: src/components/preferences/panes/AdvancedPane.tsx:160
 msgid "Failed to clear local data"
 msgstr "清除本機資料失敗"
 
@@ -1836,7 +1840,7 @@ msgstr "關閉視窗失敗：{0}"
 msgid "Failed to close window: {message}"
 msgstr "關閉視窗失敗：{message}"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:474
+#: src/components/preferences/panes/AdvancedPane.tsx:454
 msgid "Failed to copy debug info"
 msgstr "複製除錯資訊失敗"
 
@@ -1891,12 +1895,12 @@ msgstr "退出全螢幕失敗：{message}"
 
 #: src/components/layout/AppSidebar.tsx:479
 #: src/components/layout/AppSidebar.tsx:488
-#: src/components/preferences/panes/AdvancedPane.tsx:400
-#: src/components/preferences/panes/AdvancedPane.tsx:410
+#: src/components/preferences/panes/AdvancedPane.tsx:380
+#: src/components/preferences/panes/AdvancedPane.tsx:390
 msgid "Failed to export OPML"
 msgstr "匯出 OPML 失敗"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:343
+#: src/components/preferences/panes/AdvancedPane.tsx:323
 msgid "Failed to export preferences"
 msgstr "匯出偏好設定失敗"
 
@@ -1916,12 +1920,12 @@ msgstr "清除歷史記錄失敗"
 
 #: src/components/layout/AppSidebar.tsx:510
 #: src/components/layout/AppSidebar.tsx:518
-#: src/components/preferences/panes/AdvancedPane.tsx:432
-#: src/components/preferences/panes/AdvancedPane.tsx:441
+#: src/components/preferences/panes/AdvancedPane.tsx:412
+#: src/components/preferences/panes/AdvancedPane.tsx:421
 msgid "Failed to import OPML"
 msgstr "匯入 OPML 失敗"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:377
+#: src/components/preferences/panes/AdvancedPane.tsx:357
 msgid "Failed to import preferences"
 msgstr "匯入偏好設定失敗"
 
@@ -1976,7 +1980,7 @@ msgstr "重新整理訂閱源失敗"
 msgid "Failed to refresh feeds"
 msgstr "重新整理訂閱源失敗"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:279
+#: src/components/preferences/panes/AdvancedPane.tsx:259
 msgid "Failed to reset preferences"
 msgstr "重置偏好設定失敗"
 
@@ -2049,7 +2053,7 @@ msgstr "更新字體失敗"
 msgid "Failed to update image download path"
 msgstr "更新圖片下載路徑失敗"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:493
+#: src/components/preferences/panes/AdvancedPane.tsx:473
 msgid "Failed to update log level"
 msgstr "更新記錄等級失敗"
 
@@ -2217,7 +2221,7 @@ msgstr "取得中..."
 msgid "File"
 msgstr "檔案"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:808
+#: src/components/preferences/panes/CloudSyncSection.tsx:367
 msgid "File Path"
 msgstr "檔案路徑"
 
@@ -2495,8 +2499,8 @@ msgstr "圖片下載路徑"
 msgid "Image download path updated"
 msgstr "圖片下載路徑已更新"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:645
-#: src/components/preferences/panes/AdvancedPane.tsx:934
+#: src/components/preferences/panes/AdvancedPane.tsx:505
+#: src/components/preferences/panes/AdvancedPane.tsx:531
 msgid "Import"
 msgstr "匯入"
 
@@ -2504,14 +2508,14 @@ msgstr "匯入"
 msgid "Import feeds from an OPML file"
 msgstr "從 OPML 檔案匯入訂閱源"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:930
+#: src/components/preferences/panes/AdvancedPane.tsx:527
 msgid "Import feeds from an OPML file."
 msgstr "從 OPML 檔案匯入訂閱源。"
 
 #: src/components/layout/AppSidebar.tsx:497
 #: src/components/layout/AppSidebar.tsx:578
-#: src/components/preferences/panes/AdvancedPane.tsx:419
-#: src/components/preferences/panes/AdvancedPane.tsx:929
+#: src/components/preferences/panes/AdvancedPane.tsx:399
+#: src/components/preferences/panes/AdvancedPane.tsx:526
 msgid "Import OPML"
 msgstr "匯入 OPML"
 
@@ -2520,11 +2524,11 @@ msgstr "匯入 OPML"
 msgid "Import OPML..."
 msgstr "匯入 OPML..."
 
-#: src/components/preferences/panes/AdvancedPane.tsx:636
+#: src/components/preferences/panes/AdvancedPane.tsx:496
 msgid "Import preferences"
 msgstr "匯入偏好設定"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:354
+#: src/components/preferences/panes/AdvancedPane.tsx:334
 msgid "Import Preferences"
 msgstr "匯入偏好設定"
 
@@ -2569,7 +2573,7 @@ msgstr "加快速度 0.25 倍"
 msgid "Increase volume by 10%"
 msgstr "增加音量 10%"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:59
+#: src/components/preferences/panes/AdvancedPane.tsx:58
 msgid "Info"
 msgstr "資訊"
 
@@ -2767,15 +2771,15 @@ msgstr "載入中..."
 msgid "Local Ollama: leave empty (uses http://localhost:11434). Ollama Cloud: use https://ollama.com — requires an API key and model names with the -cloud suffix (e.g. gpt-oss:120b-cloud)."
 msgstr "本機 Ollama：留空（使用 http://localhost:11434）。Ollama Cloud：使用 https://ollama.com — 需要 API 金鑰和帶有 -cloud 後綴的模型名稱（例如 gpt-oss:120b-cloud）。"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:944
+#: src/components/preferences/panes/AdvancedPane.tsx:541
 msgid "Local storage used"
 msgstr "已使用的本機儲存空間"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1145
+#: src/components/preferences/panes/AdvancedPane.tsx:742
 msgid "Log level"
 msgstr "記錄等級"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:490
+#: src/components/preferences/panes/AdvancedPane.tsx:470
 msgid "Log level updated"
 msgstr "記錄等級已更新"
 
@@ -3189,7 +3193,7 @@ msgstr "尚未連線至 Miniflux 伺服器"
 msgid "Nothing playing"
 msgstr "目前沒有播放內容"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:721
+#: src/components/preferences/panes/CloudSyncSection.tsx:260
 msgid "Object Key"
 msgstr "物件金鑰"
 
@@ -3317,17 +3321,17 @@ msgstr "OpenAI"
 msgid "OpenRouter"
 msgstr "OpenRouter"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:917
+#: src/components/preferences/panes/AdvancedPane.tsx:514
 msgid "OPML"
 msgstr "OPML"
 
 #: src/components/layout/AppSidebar.tsx:485
-#: src/components/preferences/panes/AdvancedPane.tsx:406
+#: src/components/preferences/panes/AdvancedPane.tsx:386
 msgid "OPML exported successfully"
 msgstr "OPML 匯出成功"
 
 #: src/components/layout/AppSidebar.tsx:515
-#: src/components/preferences/panes/AdvancedPane.tsx:437
+#: src/components/preferences/panes/AdvancedPane.tsx:417
 msgid "OPML imported successfully"
 msgstr "OPML 匯入成功"
 
@@ -3386,8 +3390,8 @@ msgstr "解析錯誤"
 
 #: src/components/miniflux/ConnectionDialog.tsx:309
 #: src/components/miniflux/settings/UserFormDialog.tsx:106
-#: src/components/preferences/panes/AdvancedPane.tsx:826
-#: src/components/preferences/panes/AdvancedPane.tsx:850
+#: src/components/preferences/panes/CloudSyncSection.tsx:384
+#: src/components/preferences/panes/CloudSyncSection.tsx:420
 msgid "Password"
 msgstr "密碼"
 
@@ -3424,7 +3428,7 @@ msgstr "已暫停"
 #~ msgid "Performs a complete sync from scratch, re-downloading all categories, feeds, and entries. Use this if your data seems out of sync."
 #~ msgstr "從頭開始執行完全同步，重新下載所有分類、訂閱源和條目。如果你的資料似乎不同步，請使用此功能。"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1076
+#: src/components/preferences/panes/AdvancedPane.tsx:673
 msgid "Permanently deletes everything — all accounts, synced data, preferences, downloads, and credentials. This cannot be undone."
 msgstr "永久刪除所有內容 — 包括所有帳號、同步資料、偏好設定、下載項目和憑證。此操作無法復原。"
 
@@ -3479,7 +3483,7 @@ msgstr "播放清單"
 msgid "Please connect to your server to use this feature."
 msgstr "請連線至您的伺服器以使用此功能。"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:533
+#: src/components/preferences/panes/CloudSyncSection.tsx:82
 msgid "Please enter a password"
 msgstr "請輸入密碼"
 
@@ -3493,7 +3497,7 @@ msgstr "請輸入有效的來源網址"
 msgid "Please enter a valid URL"
 msgstr "請輸入有效的網址"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:509
+#: src/components/preferences/panes/CloudSyncSection.tsx:57
 msgid "Please enter both access key and secret key"
 msgstr "請輸入存取金鑰和秘密金鑰"
 
@@ -3514,27 +3518,27 @@ msgstr "Podcast 播放"
 msgid "Preferences"
 msgstr "偏好設定"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:620
+#: src/components/preferences/panes/AdvancedPane.tsx:480
 msgid "Preferences Backup"
 msgstr "偏好設定備份"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:339
+#: src/components/preferences/panes/AdvancedPane.tsx:319
 msgid "Preferences exported successfully"
 msgstr "偏好設定匯出成功"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:371
+#: src/components/preferences/panes/AdvancedPane.tsx:351
 msgid "Preferences imported"
 msgstr "偏好設定已匯入"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:593
+#: src/components/preferences/panes/CloudSyncSection.tsx:142
 msgid "Preferences pushed to cloud"
 msgstr "設定已推送至雲端"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:275
+#: src/components/preferences/panes/AdvancedPane.tsx:255
 msgid "Preferences reset to defaults"
 msgstr "偏好設定已重置為預設值"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:607
+#: src/components/preferences/panes/CloudSyncSection.tsx:156
 msgid "Preferences restored from cloud"
 msgstr "已從雲端還原設定"
 
@@ -3582,7 +3586,7 @@ msgstr "上一區段"
 #~ msgid "Project"
 #~ msgstr "專案"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:668
+#: src/components/preferences/panes/CloudSyncSection.tsx:197
 msgid "Protocol"
 msgstr "通訊協定"
 
@@ -3637,7 +3641,7 @@ msgstr "從底部上拉"
 msgid "Pull from top"
 msgstr "從頂部下拉"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:908
+#: src/components/preferences/panes/CloudSyncSection.tsx:488
 msgid "Pull Now"
 msgstr "立即拉取"
 
@@ -3653,15 +3657,15 @@ msgstr "正在從伺服器擷取分類群組"
 msgid "Pulling feed subscriptions from server"
 msgstr "正在從伺服器擷取訂閱源"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:908
+#: src/components/preferences/panes/CloudSyncSection.tsx:488
 msgid "Pulling..."
 msgstr "拉取中..."
 
-#: src/components/preferences/panes/AdvancedPane.tsx:894
+#: src/components/preferences/panes/CloudSyncSection.tsx:477
 msgid "Push Now"
 msgstr "立即推送"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:894
+#: src/components/preferences/panes/CloudSyncSection.tsx:477
 msgid "Pushing..."
 msgstr "推送中..."
 
@@ -3783,7 +3787,7 @@ msgstr "重新連線到現有帳戶或新增帳戶"
 msgid "records"
 msgstr "筆"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:83
+#: src/components/preferences/panes/AdvancedPane.tsx:82
 msgid "Recovery"
 msgstr "復原"
 
@@ -3827,7 +3831,7 @@ msgstr "重新整理中⋯"
 msgid "Regex only"
 msgstr "僅正規表達式"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:710
+#: src/components/preferences/panes/CloudSyncSection.tsx:249
 msgid "Region"
 msgstr "區域"
 
@@ -3868,12 +3872,12 @@ msgstr "從播放佇列中移除所有節目"
 msgid "Remove current account and all related data"
 msgstr "移除目前帳號及所有相關資料"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:746
-#: src/components/preferences/panes/AdvancedPane.tsx:835
+#: src/components/preferences/panes/CloudSyncSection.tsx:287
+#: src/components/preferences/panes/CloudSyncSection.tsx:392
 msgid "Remove saved credentials"
 msgstr "移除已儲存的憑證"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1000
+#: src/components/preferences/panes/AdvancedPane.tsx:597
 msgid "Removes synced entries, feeds, and categories for the current account. Other accounts and preferences are not affected."
 msgstr "移除目前帳號的同步文章、訂閱源和分類。其他帳號和偏好設定不受影響。"
 
@@ -3904,8 +3908,8 @@ msgstr "必填欄位"
 
 #: src/components/miniflux/ReaderSettings.tsx:217
 #: src/components/preferences/KeyCapture.tsx:118
-#: src/components/preferences/panes/AdvancedPane.tsx:1049
-#: src/components/preferences/panes/AdvancedPane.tsx:1065
+#: src/components/preferences/panes/AdvancedPane.tsx:646
+#: src/components/preferences/panes/AdvancedPane.tsx:662
 #: src/components/preferences/panes/TranslationPane.tsx:2057
 #: src/components/preferences/ShortcutPicker.tsx:231
 msgid "Reset"
@@ -3924,11 +3928,11 @@ msgstr "重置字體大小"
 msgid "Reset Playback Speed"
 msgstr "重置播放速度"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1039
+#: src/components/preferences/panes/AdvancedPane.tsx:636
 msgid "Reset preferences"
 msgstr "重置偏好設定"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1055
+#: src/components/preferences/panes/AdvancedPane.tsx:652
 msgid "Reset preferences?"
 msgstr "重置偏好設定？"
 
@@ -3944,8 +3948,8 @@ msgstr "重置速度為 1.0 倍"
 msgid "Reset text to default size"
 msgstr "重置文字為預設大小"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1049
-#: src/components/preferences/panes/AdvancedPane.tsx:1090
+#: src/components/preferences/panes/AdvancedPane.tsx:646
+#: src/components/preferences/panes/AdvancedPane.tsx:687
 msgid "Resetting..."
 msgstr "重置中..."
 
@@ -3969,13 +3973,17 @@ msgstr "重新啟動以更新"
 msgid "Restore"
 msgstr "還原"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1041
+#: src/components/preferences/panes/AdvancedPane.tsx:638
 msgid "Restore all settings to their factory defaults. Your data and accounts are not affected."
 msgstr "將所有設定還原為原廠預設值。您的資料和帳號不受影響。"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:637
+#: src/components/preferences/panes/AdvancedPane.tsx:497
 msgid "Restore settings from a previously exported JSON file."
 msgstr "從先前匯出的 JSON 檔案還原設定。"
+
+#: src/components/preferences/panes/CloudSyncSection.tsx:444
+msgid "Restore settings from cloud when the app opens"
+msgstr "應用程式啟動時從雲端還原設定"
 
 #: src/components/titlebar/WindowsWindowControls.tsx:108
 msgid "Restore window"
@@ -4061,8 +4069,8 @@ msgstr "儲存變更"
 msgid "Save Changes"
 msgstr "儲存變更"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:775
-#: src/components/preferences/panes/AdvancedPane.tsx:857
+#: src/components/preferences/panes/CloudSyncSection.tsx:329
+#: src/components/preferences/panes/CloudSyncSection.tsx:427
 msgid "Save Credentials"
 msgstr "儲存憑證"
 
@@ -4075,7 +4083,7 @@ msgstr "儲存規則"
 msgid "Save to services"
 msgstr "儲存至服務"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:623
+#: src/components/preferences/panes/AdvancedPane.tsx:483
 msgid "Save your current settings to a JSON file for backup or migration."
 msgstr "將目前設定儲存為 JSON 檔案以備份或遷移。"
 
@@ -4201,7 +4209,7 @@ msgstr "搜尋來源中⋯"
 msgid "Searching..."
 msgstr "搜尋中⋯"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:768
+#: src/components/preferences/panes/CloudSyncSection.tsx:322
 msgid "Secret Access Key"
 msgstr "秘密存取金鑰"
 
@@ -4295,7 +4303,7 @@ msgid "Set a custom background image for the app window."
 msgstr "為應用程式視窗設定自訂背景圖片。"
 
 #: src/components/command-palette/CommandPalette.tsx:150
-#: src/components/preferences/panes/AdvancedPane.tsx:82
+#: src/components/preferences/panes/AdvancedPane.tsx:81
 #: src/components/titlebar/WindowTitleBar.tsx:86
 msgid "Settings"
 msgstr "設定"
@@ -4452,7 +4460,7 @@ msgstr "略過此訂閱源"
 msgid "Slate"
 msgstr "石板"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:372
+#: src/components/preferences/panes/AdvancedPane.tsx:352
 msgid "Some changes may require an app restart."
 msgstr "部分變更可能需要重新啟動應用程式。"
 
@@ -4573,7 +4581,7 @@ msgstr "目前節目結束後停止播放"
 msgid "Stop playback and close the player"
 msgstr "停止播放並關閉播放器"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:940
+#: src/components/preferences/panes/AdvancedPane.tsx:537
 msgid "Storage & Data"
 msgstr "儲存與資料"
 
@@ -4700,7 +4708,7 @@ msgstr "同步閒置中"
 msgid "Sync Now"
 msgstr "立即同步"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:655
+#: src/components/preferences/panes/CloudSyncSection.tsx:175
 msgid "Sync preferences via S3 or WebDAV"
 msgstr "透過 S3 或 WebDAV 同步偏好設定"
 
@@ -4716,7 +4724,7 @@ msgstr "同步狀態"
 msgid "Sync your category folders"
 msgstr "同步您的分類資料夾"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:175
+#: src/components/preferences/panes/AdvancedPane.tsx:155
 msgid "Synced data for the current account has been removed."
 msgstr "目前帳號的同步資料已被移除。"
 
@@ -4775,7 +4783,7 @@ msgstr "目標語言"
 msgid "Tauri v2"
 msgstr "Tauri v2"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:879
+#: src/components/preferences/panes/CloudSyncSection.tsx:464
 msgid "Test Connection"
 msgstr "測試連線"
 
@@ -4787,7 +4795,7 @@ msgstr "測試通知"
 msgid "Test Toast Notification"
 msgstr "測試通知"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:879
+#: src/components/preferences/panes/CloudSyncSection.tsx:464
 msgid "Testing..."
 msgstr "測試中..."
 
@@ -4836,7 +4844,7 @@ msgstr "此使用者「{0}」將從 Miniflux 中永久刪除。"
 #~ msgid "This user will be permanently removed from Miniflux."
 #~ msgstr "此使用者將從 Miniflux 中永久移除。"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1099
+#: src/components/preferences/panes/AdvancedPane.tsx:696
 msgid "This will permanently delete all accounts, synced data, preferences, downloads, and saved credentials. The app will return to its initial state."
 msgstr "這將永久刪除所有帳號、同步資料、偏好設定、下載項目和已儲存的憑證。應用程式將恢復為初始狀態。"
 
@@ -4849,7 +4857,7 @@ msgstr "訂閱源「{0}」將從 Miniflux 中永久刪除。"
 #~ msgid "This will permanently remove the feed from Miniflux."
 #~ msgstr "此訂閱源將從 Miniflux 中永久移除。"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1019
+#: src/components/preferences/panes/AdvancedPane.tsx:616
 msgid "This will remove synced entries, feeds, categories, and sync history for this account. Other accounts and app preferences are not affected."
 msgstr "這將移除此帳號的同步文章、訂閱源、分類和同步歷史記錄。其他帳號和應用程式偏好設定不受影響。"
 
@@ -5036,7 +5044,7 @@ msgstr "頂部列"
 msgid "Total downloaded:"
 msgstr "總下載量："
 
-#: src/components/preferences/panes/AdvancedPane.tsx:61
+#: src/components/preferences/panes/AdvancedPane.tsx:60
 msgid "Trace"
 msgstr "追蹤"
 
@@ -5155,7 +5163,7 @@ msgstr "輸入命令或搜尋..."
 msgid "Type or fetch to pick a model"
 msgstr "輸入或取得以選擇模型"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:1105
+#: src/components/preferences/panes/AdvancedPane.tsx:702
 msgid "Type RESET to confirm"
 msgstr "輸入 RESET 以確認"
 
@@ -5316,7 +5324,7 @@ msgstr "使用者已更新"
 
 #: src/components/miniflux/ConnectionDialog.tsx:281
 #: src/components/miniflux/settings/UserFormDialog.tsx:82
-#: src/components/preferences/panes/AdvancedPane.tsx:798
+#: src/components/preferences/panes/CloudSyncSection.tsx:357
 msgid "Username"
 msgstr "使用者名稱"
 
@@ -5416,11 +5424,11 @@ msgstr "增加音量"
 msgid "Warm and friendly"
 msgstr "溫暖而親切"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:58
+#: src/components/preferences/panes/AdvancedPane.tsx:57
 msgid "Warn"
 msgstr "警告"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:787
+#: src/components/preferences/panes/CloudSyncSection.tsx:346
 msgid "WebDAV URL"
 msgstr "WebDAV URL"
 

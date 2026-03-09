@@ -298,6 +298,9 @@ pub struct AppPreferences {
     /// WebDAV file path for the sync file.
     #[serde(default = "default_cloud_sync_webdav_path")]
     pub cloud_sync_webdav_path: String,
+    /// Whether to auto-pull from cloud on app startup.
+    #[serde(default)]
+    pub cloud_sync_auto_pull: bool,
 }
 
 fn default_cloud_sync_protocol() -> String {
@@ -425,6 +428,7 @@ impl Default for AppPreferences {
             cloud_sync_webdav_url: None,
             cloud_sync_webdav_username: None,
             cloud_sync_webdav_path: default_cloud_sync_webdav_path(),
+            cloud_sync_auto_pull: false,
         }
     }
 }

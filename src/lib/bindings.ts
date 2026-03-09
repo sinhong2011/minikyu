@@ -1700,7 +1700,11 @@ cloud_sync_webdav_username?: string | null;
 /**
  * WebDAV file path for the sync file.
  */
-cloud_sync_webdav_path?: string }
+cloud_sync_webdav_path?: string; 
+/**
+ * Whether to auto-pull from cloud on app startup.
+ */
+cloud_sync_auto_pull?: boolean }
 export type ArticleSummaryRecord = { entry_id: string; summary: string; provider_used: string | null; model_used: string | null }
 /**
  * Authentication Config

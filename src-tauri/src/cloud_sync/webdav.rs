@@ -21,6 +21,13 @@ pub async fn push(
         .build()
         .map_err(|e| format!("Failed to create WebDAV client: {e}"))?;
 
+    // Ensure parent directory exists (MKCOL is idempotent — 405 if already exists)
+    if let Some(parent) = file_path.rsplit_once('/').map(|(p, _)| p) {
+        if !parent.is_empty() {
+            let _ = client.mkcol(parent).await;
+        }
+    }
+
     client
         .put(file_path, json_data.as_bytes().to_vec())
         .await

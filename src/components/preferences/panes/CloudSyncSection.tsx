@@ -434,6 +434,22 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
                 )}
               </AnimatePresence>
 
+              {/* Auto-pull on startup */}
+              <div className="flex items-center justify-between">
+                <div>
+                  <Label className="text-xs text-muted-foreground">
+                    {_(msg`Auto-pull on startup`)}
+                  </Label>
+                  <p className="text-[11px] text-muted-foreground/70">
+                    {_(msg`Restore settings from cloud when the app opens`)}
+                  </p>
+                </div>
+                <Switch
+                  checked={preferences?.cloud_sync_auto_pull}
+                  onCheckedChange={(checked) => updatePreference('cloud_sync_auto_pull', checked)}
+                />
+              </div>
+
               {/* Actions */}
               <div className="flex gap-2">
                 <Button
