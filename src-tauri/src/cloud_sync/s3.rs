@@ -118,3 +118,7 @@ pub async fn test_connection(
     info!("Cloud sync connection test successful");
     Ok(())
 }
+
+#[path = "s3.test.rs"]
+#[cfg(test)]
+mod tests;
