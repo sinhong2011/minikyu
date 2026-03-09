@@ -16,7 +16,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { arch, version as osVersion, platform } from '@tauri-apps/plugin-os';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -31,6 +31,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -39,6 +40,7 @@ import {
   SelectValue,
 } from '@/components/ui/select';
 import { showToast } from '@/components/ui/sonner';
+import { Switch } from '@/components/ui/switch';
 import { useClipboard } from '@/hooks/use-clipboard';
 import { logger } from '@/lib/logger';
 import type { AppPreferences, LocalDataSize } from '@/lib/tauri-bindings';
@@ -118,6 +120,20 @@ export function AdvancedPane() {
   const [factoryResetDialogOpen, setFactoryResetDialogOpen] = useState(false);
   const [factoryResetting, setFactoryResetting] = useState(false);
   const [factoryResetConfirmText, setFactoryResetConfirmText] = useState('');
+
+  // ── Cloud sync state ─────────────────────────────────────────────────
+  const [csAccessKey, setCsAccessKey] = useState('');
+  const [csSecretKey, setCsSecretKey] = useState('');
+  const [csHasCredentials, setCsHasCredentials] = useState(false);
+  const [csTesting, setCsTesting] = useState(false);
+  const [csPushing, setCsPushing] = useState(false);
+  const [csPulling, setCsPulling] = useState(false);
+
+  useEffect(() => {
+    commands.cloudSyncHasCredentials().then((result) => {
+      if (result.status === 'ok') setCsHasCredentials(result.data);
+    });
+  }, []);
 
   const { data: dataSize } = useQuery({
     queryKey: ['local-data-size'],
@@ -473,6 +489,93 @@ export function AdvancedPane() {
     }
   };
 
+  // ── Cloud sync handlers ──────────────────────────────────────────────
+
+  const updatePreference = <K extends keyof NonNullable<typeof preferences>>(
+    key: K,
+    value: NonNullable<typeof preferences>[K]
+  ) => {
+    if (!preferences) return;
+    savePreferences.mutate({ ...preferences, [key]: value });
+  };
+
+  const handleCsSaveCredentials = async () => {
+    if (!csAccessKey.trim() || !csSecretKey.trim()) {
+      showToast.error(_(msg`Please enter both access key and secret key`));
+      return;
+    }
+    const result = await commands.cloudSyncSaveCredentials(csAccessKey, csSecretKey);
+    if (result.status === 'ok') {
+      setCsHasCredentials(true);
+      setCsAccessKey('');
+      setCsSecretKey('');
+      showToast.success(_(msg`Credentials saved`));
+    } else {
+      showToast.error(result.error);
+    }
+  };
+
+  const handleCsDeleteCredentials = async () => {
+    const result = await commands.cloudSyncDeleteCredentials();
+    if (result.status === 'ok') {
+      setCsHasCredentials(false);
+      showToast.success(_(msg`Credentials removed`));
+    }
+  };
+
+  const handleCsTestConnection = async () => {
+    if (!csAccessKey.trim() || !csSecretKey.trim()) {
+      showToast.error(_(msg`Enter credentials to test connection`));
+      return;
+    }
+    setCsTesting(true);
+    try {
+      const result = await commands.cloudSyncTestConnection(
+        preferences?.cloud_sync_endpoint ?? '',
+        preferences?.cloud_sync_bucket ?? '',
+        preferences?.cloud_sync_region ?? 'auto',
+        csAccessKey,
+        csSecretKey
+      );
+      if (result.status === 'ok') {
+        showToast.success(_(msg`Connection successful`));
+      } else {
+        showToast.error(result.error);
+      }
+    } finally {
+      setCsTesting(false);
+    }
+  };
+
+  const handleCsPush = async () => {
+    setCsPushing(true);
+    try {
+      const result = await commands.cloudSyncPush();
+      if (result.status === 'ok') {
+        showToast.success(_(msg`Preferences pushed to cloud`));
+      } else {
+        showToast.error(result.error);
+      }
+    } finally {
+      setCsPushing(false);
+    }
+  };
+
+  const handleCsPull = async () => {
+    setCsPulling(true);
+    try {
+      const result = await commands.cloudSyncPull();
+      if (result.status === 'ok') {
+        showToast.success(_(msg`Preferences restored from cloud`));
+        window.location.reload();
+      } else {
+        showToast.error(result.error);
+      }
+    } finally {
+      setCsPulling(false);
+    }
+  };
+
   return (
     <div className="space-y-6">
       {/* ── Export / Import ─────────────────────────────────────────── */}
@@ -504,6 +607,142 @@ export function AdvancedPane() {
             {_(msg`Import`)}
           </Button>
         </SettingsField>
+
+        {/* Cloud Sync */}
+        <div className="space-y-3 rounded-lg border p-4">
+          <div className="flex items-center justify-between">
+            <div>
+              <Label className="text-sm font-medium">{_(msg`Cloud Sync`)}</Label>
+              <p className="text-sm text-muted-foreground">
+                {_(msg`Automatically sync preferences to S3-compatible storage`)}
+              </p>
+            </div>
+            <Switch
+              checked={preferences?.cloud_sync_enabled}
+              onCheckedChange={(checked) => updatePreference('cloud_sync_enabled', checked)}
+            />
+          </div>
+
+          <div className="space-y-3">
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">{_(msg`Endpoint URL`)}</Label>
+              <Input
+                className="h-8 text-sm"
+                placeholder="https://s3.amazonaws.com"
+                value={preferences?.cloud_sync_endpoint ?? ''}
+                onChange={(e) => updatePreference('cloud_sync_endpoint', e.target.value || null)}
+              />
+            </div>
+
+            <div className="grid grid-cols-2 gap-3">
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">{_(msg`Bucket`)}</Label>
+                <Input
+                  className="h-8 text-sm"
+                  placeholder="my-bucket"
+                  value={preferences?.cloud_sync_bucket ?? ''}
+                  onChange={(e) => updatePreference('cloud_sync_bucket', e.target.value || null)}
+                />
+              </div>
+              <div className="space-y-1.5">
+                <Label className="text-xs text-muted-foreground">{_(msg`Region`)}</Label>
+                <Input
+                  className="h-8 text-sm"
+                  value={preferences?.cloud_sync_region ?? 'auto'}
+                  onChange={(e) => updatePreference('cloud_sync_region', e.target.value || 'auto')}
+                />
+              </div>
+            </div>
+
+            <div className="space-y-1.5">
+              <Label className="text-xs text-muted-foreground">{_(msg`Object Key`)}</Label>
+              <Input
+                className="h-8 text-sm"
+                value={preferences?.cloud_sync_object_key ?? 'minikyu/preferences-sync.json'}
+                onChange={(e) =>
+                  updatePreference(
+                    'cloud_sync_object_key',
+                    e.target.value || 'minikyu/preferences-sync.json'
+                  )
+                }
+              />
+            </div>
+
+            {/* Credentials */}
+            <div className="space-y-2">
+              <div className="flex items-center justify-between">
+                <Label className="text-xs text-muted-foreground">{_(msg`Credentials`)}</Label>
+                {csHasCredentials && (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-6 text-xs"
+                    onClick={handleCsDeleteCredentials}
+                  >
+                    {_(msg`Remove saved credentials`)}
+                  </Button>
+                )}
+              </div>
+
+              {csHasCredentials ? (
+                <p className="text-xs text-muted-foreground">
+                  {_(msg`Credentials are saved in your system keyring.`)}
+                </p>
+              ) : (
+                <div className="space-y-2">
+                  <Input
+                    className="h-8 text-sm"
+                    type="password"
+                    value={csAccessKey}
+                    onChange={(e) => setCsAccessKey(e.target.value)}
+                    placeholder={_(msg`Access Key ID`)}
+                  />
+                  <Input
+                    className="h-8 text-sm"
+                    type="password"
+                    value={csSecretKey}
+                    onChange={(e) => setCsSecretKey(e.target.value)}
+                    placeholder={_(msg`Secret Access Key`)}
+                  />
+                  <Button size="sm" className="h-7 text-xs" onClick={handleCsSaveCredentials}>
+                    {_(msg`Save Credentials`)}
+                  </Button>
+                </div>
+              )}
+            </div>
+
+            {/* Actions */}
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs"
+                onClick={handleCsTestConnection}
+                disabled={csTesting || !csAccessKey}
+              >
+                {csTesting ? _(msg`Testing...`) : _(msg`Test Connection`)}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs"
+                onClick={handleCsPush}
+                disabled={csPushing || !csHasCredentials || !preferences?.cloud_sync_enabled}
+              >
+                {csPushing ? _(msg`Pushing...`) : _(msg`Push Now`)}
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                className="h-7 text-xs"
+                onClick={handleCsPull}
+                disabled={csPulling || !csHasCredentials}
+              >
+                {csPulling ? _(msg`Pulling...`) : _(msg`Pull Now`)}
+              </Button>
+            </div>
+          </div>
+        </div>
       </SettingsSection>
 
       {/* ── OPML ───────────────────────────────────────────────────── */}

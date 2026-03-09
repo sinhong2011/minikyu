@@ -2,7 +2,6 @@ import {
   AlertCircleIcon,
   Book01Icon,
   CheckmarkCircle02Icon,
-  CloudServerIcon,
   ColorsIcon,
   Delete02Icon,
   Edit02Icon,
@@ -83,7 +82,6 @@ import { AdvancedPane } from './panes/AdvancedPane';
 import { ApiTokenPane } from './panes/ApiTokenPane';
 import { AppearancePane } from './panes/AppearancePane';
 import { CategoriesPane } from './panes/CategoriesPane';
-import { CloudSyncPane } from './panes/CloudSyncPane';
 import { FeedsPane } from './panes/FeedsPane';
 import { GeneralPane } from './panes/GeneralPane';
 import { GesturePane } from './panes/GesturePane';
@@ -124,11 +122,6 @@ const appSettingsItems = [
     id: 'gesture' as const,
     label: msg`Gestures`,
     icon: Touch01Icon,
-  },
-  {
-    id: 'cloud-sync' as const,
-    label: msg`Cloud Sync`,
-    icon: CloudServerIcon,
   },
   {
     id: 'advanced' as const,
@@ -648,7 +641,6 @@ export function PreferencesDialog() {
               {activePane === 'translation' && <TranslationPane />}
               {activePane === 'shortcuts' && <ShortcutsPane />}
               {activePane === 'gesture' && <GesturePane />}
-              {activePane === 'cloud-sync' && <CloudSyncPane />}
               {activePane === 'advanced' && <AdvancedPane />}
               {activePane === 'about' && <AboutPane />}
 
