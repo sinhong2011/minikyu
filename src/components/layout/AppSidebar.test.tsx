@@ -18,12 +18,10 @@ import {
   useMarkCategoryAsRead,
   useMarkFeedAsRead,
   useSearchSources,
-  useSyncMiniflux,
   useUnreadCounts,
   useUpdateCategory,
   useUpdateFeed,
 } from '@/services/miniflux';
-import { useSyncStore } from '@/store/sync-store';
 import { AppSidebar } from './AppSidebar';
 
 i18n.load('en', {
@@ -42,7 +40,6 @@ i18n.load('en', {
   'Search Source': 'Search Source',
   'Search for websites or blog URLs to discover available feeds.':
     'Search for websites or blog URLs to discover available feeds.',
-  Sync: 'Sync',
   All: 'All',
   Today: 'Today',
   Starred: 'Starred',
@@ -71,15 +68,10 @@ vi.mock('@/services/miniflux', () => ({
   useMarkCategoryAsRead: vi.fn(),
   useMarkFeedAsRead: vi.fn(),
   useSearchSources: vi.fn(),
-  useSyncMiniflux: vi.fn(),
   useUnreadCounts: vi.fn(),
   useUpdateCategory: vi.fn(),
   useUpdateFeed: vi.fn(),
 }));
-vi.mock('@/store/sync-store', () => ({
-  useSyncStore: vi.fn(),
-}));
-
 vi.mock('@tanstack/react-router', () => ({
   Link: ({ children, to, search, activeOptions }: any) => {
     return (
@@ -92,6 +84,7 @@ vi.mock('@tanstack/react-router', () => ({
       </a>
     );
   },
+  useSearch: () => ({}),
 }));
 
 vi.mock('@/components/miniflux', () => ({
@@ -109,8 +102,10 @@ vi.mock('@/components/animate-ui/primitives/base/collapsible', () => {
   });
 
   return {
-    Collapsible: ({ children, defaultOpen = false }: any) => {
-      const [isOpen, setIsOpen] = React.useState(defaultOpen);
+    Collapsible: ({ children, defaultOpen = false, open, onOpenChange }: any) => {
+      const [internalOpen, setInternalOpen] = React.useState(defaultOpen);
+      const isOpen = open !== undefined ? open : internalOpen;
+      const setIsOpen = onOpenChange ?? setInternalOpen;
       return (
         <CollapsibleContext.Provider value={{ isOpen, setIsOpen }}>
           <div data-testid="collapsible" data-state={isOpen ? 'open' : 'closed'}>
@@ -190,14 +185,6 @@ describe('AppSidebar', () => {
         today: 0,
       },
     });
-    (useSyncMiniflux as any).mockReturnValue({
-      mutate: vi.fn(),
-    });
-    (useSyncStore as any).mockImplementation((selector: any) =>
-      selector({
-        syncing: false,
-      })
-    );
     (useCategoryUnreadCount as any).mockReturnValue(0);
     (useFeedUnreadCount as any).mockReturnValue(0);
     (useCategories as any).mockReturnValue({
@@ -278,19 +265,22 @@ describe('AppSidebar', () => {
   it('toggles feeds visibility when chevron is clicked', async () => {
     renderComponent();
 
-    expect(screen.getByText('TechCrunch')).toBeInTheDocument();
+    // Categories start collapsed by default
+    expect(screen.queryByText('TechCrunch')).not.toBeInTheDocument();
 
+    // Expand the first category
     const triggers = screen.getAllByTestId('collapsible-trigger');
     if (triggers[0]) {
       fireEvent.click(triggers[0]);
     }
 
-    expect(screen.queryByText('TechCrunch')).not.toBeInTheDocument();
+    expect(screen.getByText('TechCrunch')).toBeInTheDocument();
 
+    // Collapse again
     if (triggers[0]) {
       fireEvent.click(triggers[0]);
     }
-    expect(screen.getByText('TechCrunch')).toBeInTheDocument();
+    expect(screen.queryByText('TechCrunch')).not.toBeInTheDocument();
   });
 
   it('shows loading state for feeds', () => {
@@ -300,6 +290,12 @@ describe('AppSidebar', () => {
       error: null,
     });
     renderComponent();
+
+    // Expand a category to see loading skeletons
+    const triggers = screen.getAllByTestId('collapsible-trigger');
+    if (triggers[0]) {
+      fireEvent.click(triggers[0]);
+    }
 
     const skeletons = document.querySelectorAll('.animate-pulse');
     expect(skeletons.length).toBeGreaterThan(0);
@@ -312,6 +308,13 @@ describe('AppSidebar', () => {
       error: 'Error',
     });
     renderComponent();
+
+    // Expand a category to see error state
+    const triggers = screen.getAllByTestId('collapsible-trigger');
+    if (triggers[0]) {
+      fireEvent.click(triggers[0]);
+    }
+
     expect(screen.getAllByText('Failed to load feeds')[0]).toBeInTheDocument();
   });
 
@@ -328,6 +331,13 @@ describe('AppSidebar', () => {
 
   it('feed items link to correct URL', () => {
     renderComponent();
+
+    // Expand the first category to see feed items
+    const triggers = screen.getAllByTestId('collapsible-trigger');
+    if (triggers[0]) {
+      fireEvent.click(triggers[0]);
+    }
+
     const feedLink = screen.getByText('TechCrunch').closest('[data-testid="mock-link"]');
     expect(feedLink).not.toBeNull();
     if (feedLink) {
@@ -358,16 +368,6 @@ describe('AppSidebar', () => {
     fireEvent.click(screen.getByText('Search Source'));
 
     expect(screen.getAllByText('Search Source').length).toBeGreaterThan(1);
-  });
-
-  it('triggers sync from sidebar header refresh button', () => {
-    const mutate = vi.fn();
-    (useSyncMiniflux as any).mockReturnValue({ mutate });
-
-    renderComponent();
-
-    fireEvent.click(screen.getByTitle('Sync'));
-    expect(mutate).toHaveBeenCalledTimes(1);
   });
 
   it('shows icon-only minimized sidebar without categories', () => {
