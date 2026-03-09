@@ -8,7 +8,7 @@ A modern RSS reader desktop application built with **Tauri v2**, **React 19**, a
 
 ## Screenshots
 
-![Minikyu Main View](docs/screenshots/main.jpeg)
+![Minikyu Main View](docs/screenshots/main.png)
 
 ## Features
 
@@ -59,15 +59,15 @@ bun run tauri build
 
 ## Tech Stack
 
-| Layer    | Technologies                                      |
-| -------- | ------------------------------------------------- |
-| Frontend | React 19, TypeScript, Vite 7, Bun                 |
-| UI       | shadcn/ui v4, Tailwind CSS v4                     |
-| Routing  | TanStack Router v1 (file-based)                   |
-| State    | Zustand v5, TanStack Query v5                     |
-| Backend  | Tauri v2, Rust                                    |
-| Testing  | Vitest v4, Testing Library                        |
-| Quality  | Biome, ast-grep, clippy, Lefthook, Commitlint     |
+| Layer    | Technologies                                  |
+| -------- | --------------------------------------------- |
+| Frontend | React 19, TypeScript, Vite 7, Bun             |
+| UI       | shadcn/ui v4, Tailwind CSS v4                 |
+| Routing  | TanStack Router v1 (file-based)               |
+| State    | Zustand v5, TanStack Query v5                 |
+| Backend  | Tauri v2, Rust                                |
+| Testing  | Vitest v4, Testing Library                    |
+| Quality  | Biome, ast-grep, clippy, Lefthook, Commitlint |
 
 ## Documentation
 

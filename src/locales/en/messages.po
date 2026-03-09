@@ -77,7 +77,7 @@ msgid "{0} feeds synced"
 msgstr "{0} feeds synced"
 
 #. placeholder {0}: entry.reading_time
-#: src/components/miniflux/EntryList.tsx:874
+#: src/components/miniflux/EntryList.tsx:862
 msgid "{0} min read"
 msgstr "{0} min read"
 
@@ -203,7 +203,7 @@ msgstr "Add Account..."
 msgid "Add category"
 msgstr "Add category"
 
-#: src/components/layout/AppSidebar.tsx:574
+#: src/components/layout/AppSidebar.tsx:569
 msgid "Add Category"
 msgstr "Add Category"
 
@@ -212,9 +212,9 @@ msgstr "Add Category"
 msgid "Add feed"
 msgstr "Add feed"
 
-#: src/components/layout/AppSidebar.tsx:566
-#: src/components/layout/AppSidebar.tsx:713
-#: src/components/layout/AppSidebar.tsx:715
+#: src/components/layout/AppSidebar.tsx:561
+#: src/components/layout/AppSidebar.tsx:708
+#: src/components/layout/AppSidebar.tsx:710
 #: src/components/miniflux/AddFeedDialog.tsx:380
 #: src/components/miniflux/AddFeedDialog.tsx:855
 msgid "Add Feed"
@@ -248,7 +248,7 @@ msgstr "Add Rule"
 msgid "Add the current article's podcast to the playlist"
 msgstr "Add the current article's podcast to the playlist"
 
-#: src/components/miniflux/EntryList.tsx:851
+#: src/components/miniflux/EntryList.tsx:839
 #: src/components/miniflux/EntryReadingHeader.tsx:476
 #: src/components/miniflux/EntryReadingHeader.tsx:483
 #: src/lib/shortcut-registry.ts:109
@@ -265,7 +265,7 @@ msgstr "Add to Playlist"
 msgid "Add user"
 msgstr "Add user"
 
-#: src/components/miniflux/EntryList.tsx:857
+#: src/components/miniflux/EntryList.tsx:845
 #: src/components/miniflux/EntryReadingHeader.tsx:313
 msgid "Added to playlist"
 msgstr "Added to playlist"
@@ -308,12 +308,12 @@ msgid "AI Summary"
 msgstr "AI Summary"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:592
-#: src/components/layout/AppSidebar.tsx:610
-#: src/components/layout/AppSidebar.tsx:621
+#: src/components/layout/AppSidebar.tsx:605
+#: src/components/layout/AppSidebar.tsx:616
 #: src/components/miniflux/EntryFilters.tsx:102
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:33
-#: src/components/miniflux/MinifluxLayout.tsx:512
-#: src/components/miniflux/MinifluxLayout.tsx:520
+#: src/components/miniflux/MinifluxLayout.tsx:513
+#: src/components/miniflux/MinifluxLayout.tsx:521
 msgid "All"
 msgstr "All"
 
@@ -408,7 +408,7 @@ msgstr "App Settings"
 msgid "Appearance"
 msgstr "Appearance"
 
-#: src/lib/commands/view-commands.ts:96
+#: src/lib/commands/view-commands.ts:171
 msgid "Appearance Settings"
 msgstr "Appearance Settings"
 
@@ -429,7 +429,7 @@ msgstr "Apply blur to the background image."
 #~ msgstr "Are you sure you want to delete \"{0}\" and all its feeds?"
 
 #. placeholder {0}: category.title
-#: src/components/layout/AppSidebar.tsx:316
+#: src/components/layout/AppSidebar.tsx:325
 msgid "Are you sure you want to delete \"{0}\"?"
 msgstr "Are you sure you want to delete \"{0}\"?"
 
@@ -456,7 +456,7 @@ msgid "Are you sure you want to flush history? This will delete all read entries
 msgstr "Are you sure you want to flush history? This will delete all read entries from the Miniflux server."
 
 #. placeholder {0}: feed.title
-#: src/components/layout/AppSidebar.tsx:129
+#: src/components/layout/AppSidebar.tsx:126
 msgid "Are you sure you want to unsubscribe from \"{0}\"?"
 msgstr "Are you sure you want to unsubscribe from \"{0}\"?"
 
@@ -482,7 +482,7 @@ msgstr "Article table of contents"
 msgid "Article text size in pixels (14-24)"
 msgstr "Article text size in pixels (14-24)"
 
-#: src/components/miniflux/MinifluxLayout.tsx:665
+#: src/components/miniflux/MinifluxLayout.tsx:666
 msgid "Ascending"
 msgstr "Ascending"
 
@@ -575,8 +575,8 @@ msgstr "Book-like rhythm"
 msgid "breadcrumb"
 msgstr "breadcrumb"
 
-#: src/components/layout/AppSidebar.tsx:705
-#: src/components/layout/AppSidebar.tsx:709
+#: src/components/layout/AppSidebar.tsx:700
+#: src/components/layout/AppSidebar.tsx:704
 msgid "Browse categories"
 msgstr "Browse categories"
 
@@ -617,7 +617,7 @@ msgstr "Cancelled"
 
 #. placeholder {0}: category.title
 #. placeholder {1}: String(feedCount)
-#: src/components/layout/AppSidebar.tsx:310
+#: src/components/layout/AppSidebar.tsx:319
 msgid "Cannot delete \"{0}\" because it still has {1} feed(s). Move or remove all feeds first."
 msgstr "Cannot delete \"{0}\" because it still has {1} feed(s). Move or remove all feeds first."
 
@@ -625,7 +625,7 @@ msgstr "Cannot delete \"{0}\" because it still has {1} feed(s). Move or remove a
 msgid "Cannot delete category"
 msgstr "Cannot delete category"
 
-#: src/components/layout/AppSidebar.tsx:727
+#: src/components/layout/AppSidebar.tsx:722
 #: src/components/preferences/panes/SyncPane.tsx:133
 #: src/components/preferences/PreferencesDialog.tsx:141
 #: src/components/sync/SyncProgressPopover.tsx:51
@@ -644,8 +644,8 @@ msgstr "Categories are folders, Feeds are subscriptions, and Entries are article
 msgid "Category"
 msgstr "Category"
 
-#: src/components/layout/AppSidebar.tsx:556
-#: src/components/layout/AppSidebar.tsx:557
+#: src/components/layout/AppSidebar.tsx:551
+#: src/components/layout/AppSidebar.tsx:552
 msgid "Category actions"
 msgstr "Category actions"
 
@@ -677,7 +677,7 @@ msgstr "Category name"
 msgid "Category name is required"
 msgstr "Category name is required"
 
-#: src/components/layout/AppSidebar.tsx:312
+#: src/components/layout/AppSidebar.tsx:321
 msgid "Category Not Empty"
 msgstr "Category Not Empty"
 
@@ -722,7 +722,7 @@ msgstr "Check latest version"
 msgid "Check whether a newer release is available."
 msgstr "Check whether a newer release is available."
 
-#: src/components/miniflux/EntryList.tsx:597
+#: src/components/miniflux/EntryList.tsx:591
 msgid "Check your connection and try again"
 msgstr "Check your connection and try again"
 
@@ -1265,7 +1265,7 @@ msgstr "Default folder for saving images. Leave empty to ask every time."
 msgid "Default folder for saving videos. Leave empty to ask every time."
 msgstr "Default folder for saving videos. Leave empty to ask every time."
 
-#: src/components/layout/AppSidebar.tsx:387
+#: src/components/layout/AppSidebar.tsx:404
 #: src/components/preferences/panes/ApiTokenPane.tsx:280
 msgid "Delete"
 msgstr "Delete"
@@ -1309,7 +1309,7 @@ msgstr "Delete API key"
 msgid "Delete category"
 msgstr "Delete category"
 
-#: src/components/layout/AppSidebar.tsx:317
+#: src/components/layout/AppSidebar.tsx:326
 msgid "Delete Category"
 msgstr "Delete Category"
 
@@ -1337,7 +1337,7 @@ msgstr "Delete user"
 msgid "Delete user?"
 msgstr "Delete user?"
 
-#: src/components/miniflux/MinifluxLayout.tsx:671
+#: src/components/miniflux/MinifluxLayout.tsx:672
 msgid "Descending"
 msgstr "Descending"
 
@@ -1350,7 +1350,7 @@ msgstr "Diagnostics"
 msgid "Dim paragraphs except the one you're reading"
 msgstr "Dim paragraphs except the one you're reading"
 
-#: src/components/miniflux/MinifluxLayout.tsx:660
+#: src/components/miniflux/MinifluxLayout.tsx:661
 msgid "Direction"
 msgstr "Direction"
 
@@ -1409,7 +1409,7 @@ msgid "Done"
 msgstr "Done"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:606
-#: src/components/miniflux/EntryList.tsx:825
+#: src/components/miniflux/EntryList.tsx:813
 #: src/components/podcast/PlayerWindowControls.tsx:313
 #: src/components/podcast/PodcastPlayer.tsx:261
 #: src/components/podcast/PodcastPlayer.tsx:267
@@ -1474,7 +1474,7 @@ msgstr "Downloading update v{0}... {1}%"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:914
 #: src/components/preferences/panes/AdvancedPane.tsx:79
-#: src/components/titlebar/WindowTitleBar.tsx:136
+#: src/components/titlebar/WindowTitleBar.tsx:143
 msgid "Downloads"
 msgstr "Downloads"
 
@@ -1496,8 +1496,8 @@ msgstr "e.g. Technology, News"
 msgid "Each rule must include a non-empty \"From\" value"
 msgstr "Each rule must include a non-empty \"From\" value"
 
-#: src/components/layout/AppSidebar.tsx:187
-#: src/components/layout/AppSidebar.tsx:383
+#: src/components/layout/AppSidebar.tsx:184
+#: src/components/layout/AppSidebar.tsx:400
 #: src/lib/menu.ts:123
 msgid "Edit"
 msgstr "Edit"
@@ -1611,7 +1611,7 @@ msgstr "Enter your password"
 msgid "Enter your username"
 msgstr "Enter your username"
 
-#: src/components/titlebar/WindowTitleBar.tsx:96
+#: src/components/titlebar/WindowTitleBar.tsx:100
 msgid "Enter Zen Mode"
 msgstr "Enter Zen Mode"
 
@@ -1677,7 +1677,7 @@ msgstr "Exit Fullscreen"
 msgid "Exit fullscreen mode"
 msgstr "Exit fullscreen mode"
 
-#: src/components/titlebar/WindowTitleBar.tsx:96
+#: src/components/titlebar/WindowTitleBar.tsx:100
 #: src/components/zen-mode/ZenModeView.tsx:203
 msgid "Exit Zen Mode"
 msgstr "Exit Zen Mode"
@@ -1695,8 +1695,8 @@ msgstr "Export"
 msgid "Export feeds to an OPML file"
 msgstr "Export feeds to an OPML file"
 
-#: src/components/layout/AppSidebar.tsx:459
-#: src/components/layout/AppSidebar.tsx:579
+#: src/components/layout/AppSidebar.tsx:468
+#: src/components/layout/AppSidebar.tsx:574
 #: src/components/preferences/panes/AdvancedPane.tsx:368
 #: src/components/preferences/panes/AdvancedPane.tsx:512
 msgid "Export OPML"
@@ -1813,8 +1813,8 @@ msgstr "Failed to enter fullscreen: {message}"
 msgid "Failed to exit fullscreen: {message}"
 msgstr "Failed to exit fullscreen: {message}"
 
-#: src/components/layout/AppSidebar.tsx:470
 #: src/components/layout/AppSidebar.tsx:479
+#: src/components/layout/AppSidebar.tsx:488
 #: src/components/preferences/panes/AdvancedPane.tsx:379
 #: src/components/preferences/panes/AdvancedPane.tsx:389
 msgid "Failed to export OPML"
@@ -1838,8 +1838,8 @@ msgstr "Failed to fetch content"
 msgid "Failed to flush history"
 msgstr "Failed to flush history"
 
-#: src/components/layout/AppSidebar.tsx:501
-#: src/components/layout/AppSidebar.tsx:509
+#: src/components/layout/AppSidebar.tsx:510
+#: src/components/layout/AppSidebar.tsx:518
 #: src/components/preferences/panes/AdvancedPane.tsx:411
 #: src/components/preferences/panes/AdvancedPane.tsx:420
 msgid "Failed to import OPML"
@@ -1857,11 +1857,11 @@ msgstr "Failed to load API keys"
 msgid "Failed to load categories"
 msgstr "Failed to load categories"
 
-#: src/components/miniflux/EntryList.tsx:595
+#: src/components/miniflux/EntryList.tsx:589
 msgid "Failed to load entries"
 msgstr "Failed to load entries"
 
-#: src/components/layout/AppSidebar.tsx:262
+#: src/components/layout/AppSidebar.tsx:259
 #: src/services/miniflux/feeds.ts:63
 #: src/services/miniflux/feeds.ts:93
 msgid "Failed to load feeds"
@@ -2030,7 +2030,7 @@ msgstr "Failed to update user"
 msgid "Failed to update video download path"
 msgstr "Failed to update video download path"
 
-#: src/components/miniflux/MinifluxLayout.tsx:507
+#: src/components/miniflux/MinifluxLayout.tsx:508
 #: src/components/preferences/PreferencesDialog.tsx:290
 msgid "Feed"
 msgstr "Feed"
@@ -2152,7 +2152,7 @@ msgstr "Fill from .env"
 msgid "Floating player window"
 msgstr "Floating player window"
 
-#: src/components/miniflux/MinifluxLayout.tsx:630
+#: src/components/miniflux/MinifluxLayout.tsx:631
 msgid "Flush history"
 msgstr "Flush history"
 
@@ -2168,6 +2168,10 @@ msgstr "Focus mode"
 #: src/components/miniflux/EntryReading.tsx:1675
 msgid "Focus Mode"
 msgstr "Focus Mode"
+
+#: src/lib/commands/view-commands.ts:117
+msgid "Follow system theme"
+msgstr "Follow system theme"
 
 #: src/components/miniflux/ReaderSettings.tsx:450
 #: src/components/preferences/panes/ReaderPane.tsx:230
@@ -2303,7 +2307,7 @@ msgid "Hide {APP_NAME}"
 msgstr "Hide {APP_NAME}"
 
 #: src/components/titlebar/LinuxTitleBar.tsx:32
-#: src/components/titlebar/WindowTitleBar.tsx:68
+#: src/components/titlebar/WindowTitleBar.tsx:72
 #: src/lib/commands/navigation-commands.ts:19
 msgid "Hide Left Sidebar"
 msgstr "Hide Left Sidebar"
@@ -2324,9 +2328,9 @@ msgstr "Hide reading status"
 msgid "Hide the left sidebar"
 msgstr "Hide the left sidebar"
 
-#: src/components/layout/AppSidebar.tsx:678
-#: src/components/layout/AppSidebar.tsx:687
-#: src/components/miniflux/MinifluxLayout.tsx:518
+#: src/components/layout/AppSidebar.tsx:673
+#: src/components/layout/AppSidebar.tsx:682
+#: src/components/miniflux/MinifluxLayout.tsx:519
 msgid "History"
 msgstr "History"
 
@@ -2334,7 +2338,7 @@ msgstr "History"
 msgid "History flushed"
 msgstr "History flushed"
 
-#: src/components/miniflux/MinifluxLayout.tsx:542
+#: src/components/miniflux/MinifluxLayout.tsx:543
 msgid "history items"
 msgstr "history items"
 
@@ -2419,8 +2423,8 @@ msgstr "Import feeds from an OPML file"
 msgid "Import feeds from an OPML file."
 msgstr "Import feeds from an OPML file."
 
-#: src/components/layout/AppSidebar.tsx:488
-#: src/components/layout/AppSidebar.tsx:583
+#: src/components/layout/AppSidebar.tsx:497
+#: src/components/layout/AppSidebar.tsx:578
 #: src/components/preferences/panes/AdvancedPane.tsx:398
 #: src/components/preferences/panes/AdvancedPane.tsx:522
 msgid "Import OPML"
@@ -2547,6 +2551,26 @@ msgstr "Language"
 msgid "Language used for immersive translation output."
 msgstr "Language used for immersive translation output."
 
+#: src/lib/commands/view-commands.ts:126
+msgid "Language: English"
+msgstr "Language: English"
+
+#: src/lib/commands/view-commands.ts:162
+msgid "Language: 한국어"
+msgstr "Language: 한국어"
+
+#: src/lib/commands/view-commands.ts:153
+msgid "Language: 日本語"
+msgstr "Language: 日本語"
+
+#: src/lib/commands/view-commands.ts:135
+msgid "Language: 简体中文"
+msgstr "Language: 简体中文"
+
+#: src/lib/commands/view-commands.ts:144
+msgid "Language: 繁體中文"
+msgstr "Language: 繁體中文"
+
 #: src/components/miniflux/EntryFilters.tsx:87
 msgid "Last 24 hours"
 msgstr "Last 24 hours"
@@ -2559,7 +2583,7 @@ msgstr "Last login"
 msgid "Last Modified"
 msgstr "Last Modified"
 
-#: src/components/miniflux/MinifluxLayout.tsx:655
+#: src/components/miniflux/MinifluxLayout.tsx:656
 msgid "Last read date"
 msgstr "Last read date"
 
@@ -2637,7 +2661,7 @@ msgstr "Loading"
 msgid "Loading version information..."
 msgstr "Loading version information..."
 
-#: src/components/layout/AppSidebar.tsx:600
+#: src/components/layout/AppSidebar.tsx:595
 #: src/components/miniflux/EntryReadingHeader.tsx:288
 #: src/components/miniflux/MinifluxLayout.tsx:363
 #: src/components/podcast/PlayerWindowControls.tsx:270
@@ -2686,12 +2710,12 @@ msgstr "Manage third-party service integrations."
 msgid "Manage third-party service integrations. Configure services in Miniflux settings."
 msgstr "Manage third-party service integrations. Configure services in Miniflux settings."
 
-#: src/components/miniflux/MinifluxLayout.tsx:619
+#: src/components/miniflux/MinifluxLayout.tsx:620
 msgid "Mark all as read"
 msgstr "Mark all as read"
 
-#: src/components/layout/AppSidebar.tsx:183
-#: src/components/layout/AppSidebar.tsx:379
+#: src/components/layout/AppSidebar.tsx:180
+#: src/components/layout/AppSidebar.tsx:396
 #: src/components/miniflux/EntryReading.tsx:1653
 #: src/components/miniflux/EntryReadingHeader.tsx:799
 #: src/components/miniflux/EntryReadingHeader.tsx:818
@@ -2830,7 +2854,7 @@ msgstr "Move \"{0}\" to a different category."
 msgid "Move feed"
 msgstr "Move feed"
 
-#: src/components/layout/AppSidebar.tsx:193
+#: src/components/layout/AppSidebar.tsx:190
 msgid "Move to"
 msgstr "Move to"
 
@@ -2972,7 +2996,7 @@ msgstr "No downloads match your search"
 msgid "No downloads yet"
 msgstr "No downloads yet"
 
-#: src/components/miniflux/EntryList.tsx:620
+#: src/components/miniflux/EntryList.tsx:614
 msgid "No entries found"
 msgstr "No entries found"
 
@@ -3076,7 +3100,7 @@ msgstr "of"
 msgid "Off"
 msgstr "Off"
 
-#: src/components/layout/AppSidebar.tsx:748
+#: src/components/layout/AppSidebar.tsx:743
 #: src/components/miniflux/UserNav.tsx:260
 msgid "Offline cached data"
 msgstr "Offline cached data"
@@ -3110,7 +3134,7 @@ msgstr "Opacity"
 msgid "Open"
 msgstr "Open"
 
-#: src/lib/commands/view-commands.ts:97
+#: src/lib/commands/view-commands.ts:172
 msgid "Open appearance preferences"
 msgstr "Open appearance preferences"
 
@@ -3180,7 +3204,7 @@ msgstr "Open the article in the built-in browser"
 msgid "Open the issue tracker to report a bug"
 msgstr "Open the issue tracker to report a bug"
 
-#: src/lib/commands/view-commands.ts:107
+#: src/lib/commands/view-commands.ts:182
 msgid "Open translation preferences"
 msgstr "Open translation preferences"
 
@@ -3196,12 +3220,12 @@ msgstr "OpenRouter"
 msgid "OPML"
 msgstr "OPML"
 
-#: src/components/layout/AppSidebar.tsx:476
+#: src/components/layout/AppSidebar.tsx:485
 #: src/components/preferences/panes/AdvancedPane.tsx:385
 msgid "OPML exported successfully"
 msgstr "OPML exported successfully"
 
-#: src/components/layout/AppSidebar.tsx:506
+#: src/components/layout/AppSidebar.tsx:515
 #: src/components/preferences/panes/AdvancedPane.tsx:416
 msgid "OPML imported successfully"
 msgstr "OPML imported successfully"
@@ -3306,7 +3330,7 @@ msgid "Phrase"
 msgstr "Phrase"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:800
-#: src/components/miniflux/EntryList.tsx:838
+#: src/components/miniflux/EntryList.tsx:826
 #: src/components/miniflux/EntryReadingHeader.tsx:291
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PlayerWindowQueue.tsx:102
@@ -3363,7 +3387,7 @@ msgid "Please enter a valid URL"
 msgstr "Please enter a valid URL"
 
 #: src/components/command-palette/CommandPalette.tsx:144
-#: src/components/miniflux/EntryList.tsx:869
+#: src/components/miniflux/EntryList.tsx:857
 #: src/components/miniflux/EntryReading.tsx:1746
 #: src/lib/menu.ts:283
 msgid "Podcast"
@@ -3474,7 +3498,7 @@ msgstr "Providers"
 msgid "Providers resorted"
 msgstr "Providers resorted"
 
-#: src/components/miniflux/MinifluxLayout.tsx:649
+#: src/components/miniflux/MinifluxLayout.tsx:650
 msgid "Published date"
 msgstr "Published date"
 
@@ -3487,8 +3511,8 @@ msgid "Pull from top"
 msgstr "Pull from top"
 
 #: src/components/miniflux/EntryList.tsx:486
-msgid "Pull to refresh"
-msgstr "Pull to refresh"
+#~ msgid "Pull to refresh"
+#~ msgstr "Pull to refresh"
 
 #: src/components/sync/SyncProgressPopover.tsx:126
 msgid "Pulling category groups from server"
@@ -3652,14 +3676,13 @@ msgstr "Refresh failed: {0}"
 msgid "Refresh failed: {message}"
 msgstr "Refresh failed: {message}"
 
-#: src/components/miniflux/EntryList.tsx:483
 #: src/components/preferences/panes/FeedsPane.tsx:67
 msgid "Refreshing..."
 msgstr "Refreshing..."
 
 #: src/components/miniflux/EntryList.tsx:485
-msgid "Release to refresh"
-msgstr "Release to refresh"
+#~ msgid "Release to refresh"
+#~ msgstr "Release to refresh"
 
 #: src/components/ErrorBoundary.tsx:275
 msgid "Reload App"
@@ -3932,7 +3955,7 @@ msgid "Scroll up"
 msgstr "Scroll up"
 
 #: src/components/miniflux/AddFeedDialog.tsx:422
-#: src/components/miniflux/MinifluxLayout.tsx:681
+#: src/components/miniflux/MinifluxLayout.tsx:682
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:165
 #: src/components/miniflux/SearchSourceDialog.tsx:163
 #: src/components/miniflux/settings/FeedFormDialog.tsx:337
@@ -3992,7 +4015,7 @@ msgstr "Search languages to skip..."
 msgid "Search or type a command..."
 msgstr "Search or type a command..."
 
-#: src/components/layout/AppSidebar.tsx:570
+#: src/components/layout/AppSidebar.tsx:565
 #: src/components/miniflux/AddFeedDialog.tsx:374
 #: src/components/miniflux/SearchSourceDialog.tsx:115
 msgid "Search Source"
@@ -4108,7 +4131,7 @@ msgstr "Set a custom background image for the app window."
 
 #: src/components/command-palette/CommandPalette.tsx:150
 #: src/components/preferences/panes/AdvancedPane.tsx:80
-#: src/components/titlebar/WindowTitleBar.tsx:82
+#: src/components/titlebar/WindowTitleBar.tsx:86
 msgid "Settings"
 msgstr "Settings"
 
@@ -4150,7 +4173,7 @@ msgid "Show in folder"
 msgstr "Show in folder"
 
 #: src/components/titlebar/LinuxTitleBar.tsx:32
-#: src/components/titlebar/WindowTitleBar.tsx:68
+#: src/components/titlebar/WindowTitleBar.tsx:72
 #: src/lib/commands/navigation-commands.ts:8
 msgid "Show Left Sidebar"
 msgstr "Show Left Sidebar"
@@ -4273,8 +4296,8 @@ msgstr "Some changes may require an app restart."
 msgid "Something went wrong"
 msgstr "Something went wrong"
 
-#: src/components/miniflux/MinifluxLayout.tsx:638
-#: src/components/miniflux/MinifluxLayout.tsx:644
+#: src/components/miniflux/MinifluxLayout.tsx:639
+#: src/components/miniflux/MinifluxLayout.tsx:645
 msgid "Sort by"
 msgstr "Sort by"
 
@@ -4307,15 +4330,15 @@ msgstr "Star"
 msgid "Star or unstar the current article"
 msgstr "Star or unstar the current article"
 
-#: src/components/layout/AppSidebar.tsx:660
-#: src/components/layout/AppSidebar.tsx:669
+#: src/components/layout/AppSidebar.tsx:655
+#: src/components/layout/AppSidebar.tsx:664
 #: src/components/miniflux/EntryFilters.tsx:118
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:44
-#: src/components/miniflux/MinifluxLayout.tsx:514
+#: src/components/miniflux/MinifluxLayout.tsx:515
 msgid "Starred"
 msgstr "Starred"
 
-#: src/components/miniflux/MinifluxLayout.tsx:538
+#: src/components/miniflux/MinifluxLayout.tsx:539
 msgid "starred items"
 msgstr "starred items"
 
@@ -4440,7 +4463,14 @@ msgstr "Swipe right action"
 #~ msgid "Swipe right to close browser"
 #~ msgstr "Swipe right to close browser"
 
-#: src/components/layout/AppSidebar.tsx:540
+#: src/lib/commands/view-commands.ts:107
+msgid "Switch to dark theme"
+msgstr "Switch to dark theme"
+
+#: src/lib/commands/view-commands.ts:97
+msgid "Switch to light theme"
+msgstr "Switch to light theme"
+
 #: src/components/preferences/panes/SyncPane.tsx:158
 #: src/components/preferences/PreferencesDialog.tsx:166
 #: src/pages/TrayPopover.tsx:281
@@ -4451,7 +4481,7 @@ msgstr "Sync"
 msgid "Sync article content and metadata"
 msgstr "Sync article content and metadata"
 
-#: src/hooks/use-sync-indicator.ts:35
+#: src/hooks/use-sync-indicator.ts:30
 #: src/lib/commands/feed-commands.ts:42
 msgid "Sync completed"
 msgstr "Sync completed"
@@ -4461,7 +4491,7 @@ msgid "Sync Completed"
 msgstr "Sync Completed"
 
 #: src/components/sync/SyncProgressPopover.tsx:170
-#: src/hooks/use-sync-indicator.ts:34
+#: src/hooks/use-sync-indicator.ts:29
 #: src/services/miniflux/feeds.ts:393
 msgid "Sync failed"
 msgstr "Sync failed"
@@ -4501,7 +4531,7 @@ msgstr "Sync is idle"
 msgid "Sync Now"
 msgstr "Sync Now"
 
-#: src/hooks/use-sync-indicator.ts:36
+#: src/hooks/use-sync-indicator.ts:31
 msgid "Sync Progress"
 msgstr "Sync Progress"
 
@@ -4529,8 +4559,7 @@ msgstr "Syncing {currentStage}"
 msgid "Syncing your Miniflux data"
 msgstr "Syncing your Miniflux data"
 
-#: src/components/layout/AppSidebar.tsx:540
-#: src/hooks/use-sync-indicator.ts:33
+#: src/hooks/use-sync-indicator.ts:28
 msgid "Syncing..."
 msgstr "Syncing..."
 
@@ -4592,6 +4621,18 @@ msgstr "The URL of your Miniflux server (e.g., miniflux.example.com)"
 #: src/components/preferences/panes/AppearancePane.tsx:116
 msgid "Theme"
 msgstr "Theme"
+
+#: src/lib/commands/view-commands.ts:106
+msgid "Theme: Dark"
+msgstr "Theme: Dark"
+
+#: src/lib/commands/view-commands.ts:96
+msgid "Theme: Light"
+msgstr "Theme: Light"
+
+#: src/lib/commands/view-commands.ts:116
+msgid "Theme: System"
+msgstr "Theme: System"
 
 #: src/components/preferences/panes/TranslationPane.tsx:2003
 msgid "These replacements are applied after built-in Chinese conversion in the reading panel."
@@ -4690,10 +4731,10 @@ msgstr "To"
 msgid "to open the command palette and explore available commands."
 msgstr "to open the command palette and explore available commands."
 
-#: src/components/layout/AppSidebar.tsx:636
-#: src/components/layout/AppSidebar.tsx:645
+#: src/components/layout/AppSidebar.tsx:631
+#: src/components/layout/AppSidebar.tsx:640
 #: src/components/miniflux/EntryList.tsx:165
-#: src/components/miniflux/MinifluxLayout.tsx:516
+#: src/components/miniflux/MinifluxLayout.tsx:517
 msgid "Today"
 msgstr "Today"
 
@@ -4701,7 +4742,7 @@ msgstr "Today"
 msgid "Toggle audio mute"
 msgstr "Toggle audio mute"
 
-#: src/components/layout/AppSidebar.tsx:396
+#: src/components/layout/AppSidebar.tsx:413
 msgid "Toggle category feeds"
 msgstr "Toggle category feeds"
 
@@ -4883,7 +4924,7 @@ msgstr "Translation route mode"
 msgid "Translation route mode updated"
 msgstr "Translation route mode updated"
 
-#: src/lib/commands/view-commands.ts:106
+#: src/lib/commands/view-commands.ts:181
 msgid "Translation Settings"
 msgstr "Translation Settings"
 
@@ -4915,7 +4956,7 @@ msgstr "Tray icon enabled"
 msgid "Try Again"
 msgstr "Try Again"
 
-#: src/components/miniflux/EntryList.tsx:622
+#: src/components/miniflux/EntryList.tsx:616
 msgid "Try changing the filter or syncing new content"
 msgstr "Try changing the filter or syncing new content"
 
@@ -4961,7 +5002,7 @@ msgstr "unread"
 msgid "Unread"
 msgstr "Unread"
 
-#: src/components/miniflux/MinifluxLayout.tsx:534
+#: src/components/miniflux/MinifluxLayout.tsx:535
 msgid "unread items"
 msgstr "unread items"
 
@@ -4971,11 +5012,11 @@ msgstr "unread items"
 msgid "Unstar"
 msgstr "Unstar"
 
-#: src/components/layout/AppSidebar.tsx:216
+#: src/components/layout/AppSidebar.tsx:213
 msgid "Unsubscribe"
 msgstr "Unsubscribe"
 
-#: src/components/layout/AppSidebar.tsx:130
+#: src/components/layout/AppSidebar.tsx:127
 msgid "Unsubscribe Feed"
 msgstr "Unsubscribe Feed"
 
@@ -5167,7 +5208,7 @@ msgstr "View and manage your downloads"
 msgid "View app version and information"
 msgstr "View app version and information"
 
-#: src/components/layout/AppSidebar.tsx:593
+#: src/components/layout/AppSidebar.tsx:588
 msgid "Views"
 msgstr "Views"
 
