@@ -499,7 +499,7 @@ msgstr "자동"
 msgid "Auto (LLM + regex)"
 msgstr "자동 (LLM + 정규식)"
 
-#: src/components/preferences/panes/ReaderPane.tsx:486
+#: src/components/preferences/panes/ReaderPane.tsx:488
 msgid "Auto mark as read"
 msgstr "자동으로 읽음 표시"
 
@@ -527,7 +527,7 @@ msgstr "자동 업데이트"
 msgid "Automatically generate an AI summary when opening an article"
 msgstr "글을 열 때 AI 요약을 자동으로 생성합니다"
 
-#: src/components/preferences/panes/ReaderPane.tsx:487
+#: src/components/preferences/panes/ReaderPane.tsx:489
 msgid "Automatically mark entries as read when scrolled past 20%"
 msgstr "20% 이상 스크롤하면 자동으로 읽음 표시"
 
@@ -556,7 +556,7 @@ msgid "Bilingual"
 msgstr "이중 언어"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:763
-#: src/components/preferences/panes/ReaderPane.tsx:452
+#: src/components/preferences/panes/ReaderPane.tsx:454
 msgid "Bionic Reading"
 msgstr "바이오닉 리딩"
 
@@ -1180,7 +1180,7 @@ msgstr "현재 버전"
 msgid "Custom Prompt"
 msgstr "사용자 지정 프롬프트"
 
-#: src/components/preferences/panes/ReaderPane.tsx:424
+#: src/components/preferences/panes/ReaderPane.tsx:425
 msgid "Custom prompt for LLM code language detection. Leave empty to use default."
 msgstr "LLM 코드 언어 감지용 사용자 정의 프롬프트. 비워두면 기본값을 사용합니다."
 
@@ -1383,9 +1383,9 @@ msgstr "피드 비활성화"
 #: src/components/preferences/panes/GeneralPane.tsx:202
 #: src/components/preferences/panes/GeneralPane.tsx:219
 #: src/components/preferences/panes/IntegrationsPane.tsx:294
-#: src/components/preferences/panes/ReaderPane.tsx:463
-#: src/components/preferences/panes/ReaderPane.tsx:480
-#: src/components/preferences/panes/ReaderPane.tsx:497
+#: src/components/preferences/panes/ReaderPane.tsx:465
+#: src/components/preferences/panes/ReaderPane.tsx:482
+#: src/components/preferences/panes/ReaderPane.tsx:499
 #: src/components/preferences/panes/SyncPane.tsx:28
 #: src/components/preferences/panes/TranslationPane.tsx:1416
 #: src/components/preferences/PreferencesDialog.tsx:313
@@ -1546,7 +1546,7 @@ msgstr "사용자 편집"
 #~ msgid "EEEE, MMMM d, yyyy"
 #~ msgstr "yyyy년 M월 d일 EEEE"
 
-#: src/components/preferences/panes/ReaderPane.tsx:453
+#: src/components/preferences/panes/ReaderPane.tsx:455
 msgid "Emphasize the beginning of words to guide faster reading"
 msgstr "단어 앞부분을 강조하여 빠른 읽기를 돕습니다"
 
@@ -1562,9 +1562,9 @@ msgstr "활성화됨"
 #: src/components/preferences/panes/GeneralPane.tsx:202
 #: src/components/preferences/panes/GeneralPane.tsx:219
 #: src/components/preferences/panes/IntegrationsPane.tsx:260
-#: src/components/preferences/panes/ReaderPane.tsx:463
-#: src/components/preferences/panes/ReaderPane.tsx:480
-#: src/components/preferences/panes/ReaderPane.tsx:497
+#: src/components/preferences/panes/ReaderPane.tsx:465
+#: src/components/preferences/panes/ReaderPane.tsx:482
+#: src/components/preferences/panes/ReaderPane.tsx:499
 #: src/components/preferences/panes/TranslationPane.tsx:1416
 msgid "Enabled"
 msgstr "활성화됨"
@@ -3653,7 +3653,7 @@ msgstr "읽기"
 msgid "Reading display"
 msgstr "읽기 화면"
 
-#: src/components/preferences/panes/ReaderPane.tsx:450
+#: src/components/preferences/panes/ReaderPane.tsx:452
 msgid "Reading Features"
 msgstr "읽기 기능"
 
@@ -4197,7 +4197,7 @@ msgstr "공유 링크가 복사되었습니다!"
 msgid "Shortcuts"
 msgstr "단축키"
 
-#: src/components/preferences/panes/ReaderPane.tsx:470
+#: src/components/preferences/panes/ReaderPane.tsx:472
 msgid "Show a compact reading progress bar at the bottom of the reader"
 msgstr "리더 하단에 간결한 읽기 진행률 표시줄을 표시합니다"
 
@@ -4417,7 +4417,7 @@ msgid "Status"
 msgstr "상태"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:775
-#: src/components/preferences/panes/ReaderPane.tsx:469
+#: src/components/preferences/panes/ReaderPane.tsx:471
 msgid "Status Bar"
 msgstr "상태 표시줄"
 

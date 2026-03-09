@@ -499,7 +499,7 @@ msgstr "Auto"
 msgid "Auto (LLM + regex)"
 msgstr "Auto (LLM + regex)"
 
-#: src/components/preferences/panes/ReaderPane.tsx:486
+#: src/components/preferences/panes/ReaderPane.tsx:488
 msgid "Auto mark as read"
 msgstr "Auto mark as read"
 
@@ -527,7 +527,7 @@ msgstr "Automatic updates"
 msgid "Automatically generate an AI summary when opening an article"
 msgstr "Automatically generate an AI summary when opening an article"
 
-#: src/components/preferences/panes/ReaderPane.tsx:487
+#: src/components/preferences/panes/ReaderPane.tsx:489
 msgid "Automatically mark entries as read when scrolled past 20%"
 msgstr "Automatically mark entries as read when scrolled past 20%"
 
@@ -556,7 +556,7 @@ msgid "Bilingual"
 msgstr "Bilingual"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:763
-#: src/components/preferences/panes/ReaderPane.tsx:452
+#: src/components/preferences/panes/ReaderPane.tsx:454
 msgid "Bionic Reading"
 msgstr "Bionic Reading"
 
@@ -1180,7 +1180,7 @@ msgstr "Current version"
 msgid "Custom Prompt"
 msgstr "Custom Prompt"
 
-#: src/components/preferences/panes/ReaderPane.tsx:424
+#: src/components/preferences/panes/ReaderPane.tsx:425
 msgid "Custom prompt for LLM code language detection. Leave empty to use default."
 msgstr "Custom prompt for LLM code language detection. Leave empty to use default."
 
@@ -1383,9 +1383,9 @@ msgstr "Disable feed"
 #: src/components/preferences/panes/GeneralPane.tsx:202
 #: src/components/preferences/panes/GeneralPane.tsx:219
 #: src/components/preferences/panes/IntegrationsPane.tsx:294
-#: src/components/preferences/panes/ReaderPane.tsx:463
-#: src/components/preferences/panes/ReaderPane.tsx:480
-#: src/components/preferences/panes/ReaderPane.tsx:497
+#: src/components/preferences/panes/ReaderPane.tsx:465
+#: src/components/preferences/panes/ReaderPane.tsx:482
+#: src/components/preferences/panes/ReaderPane.tsx:499
 #: src/components/preferences/panes/SyncPane.tsx:28
 #: src/components/preferences/panes/TranslationPane.tsx:1416
 #: src/components/preferences/PreferencesDialog.tsx:313
@@ -1546,7 +1546,7 @@ msgstr "Edit user"
 #~ msgid "EEEE, MMMM d, yyyy"
 #~ msgstr "EEEE, MMMM d, yyyy"
 
-#: src/components/preferences/panes/ReaderPane.tsx:453
+#: src/components/preferences/panes/ReaderPane.tsx:455
 msgid "Emphasize the beginning of words to guide faster reading"
 msgstr "Emphasize the beginning of words to guide faster reading"
 
@@ -1562,9 +1562,9 @@ msgstr "enabled"
 #: src/components/preferences/panes/GeneralPane.tsx:202
 #: src/components/preferences/panes/GeneralPane.tsx:219
 #: src/components/preferences/panes/IntegrationsPane.tsx:260
-#: src/components/preferences/panes/ReaderPane.tsx:463
-#: src/components/preferences/panes/ReaderPane.tsx:480
-#: src/components/preferences/panes/ReaderPane.tsx:497
+#: src/components/preferences/panes/ReaderPane.tsx:465
+#: src/components/preferences/panes/ReaderPane.tsx:482
+#: src/components/preferences/panes/ReaderPane.tsx:499
 #: src/components/preferences/panes/TranslationPane.tsx:1416
 msgid "Enabled"
 msgstr "Enabled"
@@ -3653,7 +3653,7 @@ msgstr "Reading"
 msgid "Reading display"
 msgstr "Reading display"
 
-#: src/components/preferences/panes/ReaderPane.tsx:450
+#: src/components/preferences/panes/ReaderPane.tsx:452
 msgid "Reading Features"
 msgstr "Reading Features"
 
@@ -4197,7 +4197,7 @@ msgstr "Share link copied!"
 msgid "Shortcuts"
 msgstr "Shortcuts"
 
-#: src/components/preferences/panes/ReaderPane.tsx:470
+#: src/components/preferences/panes/ReaderPane.tsx:472
 msgid "Show a compact reading progress bar at the bottom of the reader"
 msgstr "Show a compact reading progress bar at the bottom of the reader"
 
@@ -4417,7 +4417,7 @@ msgid "Status"
 msgstr "Status"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:775
-#: src/components/preferences/panes/ReaderPane.tsx:469
+#: src/components/preferences/panes/ReaderPane.tsx:471
 msgid "Status Bar"
 msgstr "Status Bar"
 

@@ -499,7 +499,7 @@ msgstr "自動"
 msgid "Auto (LLM + regex)"
 msgstr "自動 (LLM + 正規表現)"
 
-#: src/components/preferences/panes/ReaderPane.tsx:486
+#: src/components/preferences/panes/ReaderPane.tsx:488
 msgid "Auto mark as read"
 msgstr "自動的に既読にする"
 
@@ -527,7 +527,7 @@ msgstr "自動アップデート"
 msgid "Automatically generate an AI summary when opening an article"
 msgstr "記事を開いたときにAI要約を自動生成する"
 
-#: src/components/preferences/panes/ReaderPane.tsx:487
+#: src/components/preferences/panes/ReaderPane.tsx:489
 msgid "Automatically mark entries as read when scrolled past 20%"
 msgstr "20%以上スクロールしたら自動的に既読にする"
 
@@ -556,7 +556,7 @@ msgid "Bilingual"
 msgstr "バイリンガル"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:763
-#: src/components/preferences/panes/ReaderPane.tsx:452
+#: src/components/preferences/panes/ReaderPane.tsx:454
 msgid "Bionic Reading"
 msgstr "バイオニック・リーディング"
 
@@ -1180,7 +1180,7 @@ msgstr "現在のバージョン"
 msgid "Custom Prompt"
 msgstr "カスタムプロンプト"
 
-#: src/components/preferences/panes/ReaderPane.tsx:424
+#: src/components/preferences/panes/ReaderPane.tsx:425
 msgid "Custom prompt for LLM code language detection. Leave empty to use default."
 msgstr "LLMコード言語検出用のカスタムプロンプト。空欄の場合はデフォルトを使用します。"
 
@@ -1383,9 +1383,9 @@ msgstr "フィードを無効にする"
 #: src/components/preferences/panes/GeneralPane.tsx:202
 #: src/components/preferences/panes/GeneralPane.tsx:219
 #: src/components/preferences/panes/IntegrationsPane.tsx:294
-#: src/components/preferences/panes/ReaderPane.tsx:463
-#: src/components/preferences/panes/ReaderPane.tsx:480
-#: src/components/preferences/panes/ReaderPane.tsx:497
+#: src/components/preferences/panes/ReaderPane.tsx:465
+#: src/components/preferences/panes/ReaderPane.tsx:482
+#: src/components/preferences/panes/ReaderPane.tsx:499
 #: src/components/preferences/panes/SyncPane.tsx:28
 #: src/components/preferences/panes/TranslationPane.tsx:1416
 #: src/components/preferences/PreferencesDialog.tsx:313
@@ -1546,7 +1546,7 @@ msgstr "ユーザーを編集"
 #~ msgid "EEEE, MMMM d, yyyy"
 #~ msgstr "yyyy年M月d日 EEEE"
 
-#: src/components/preferences/panes/ReaderPane.tsx:453
+#: src/components/preferences/panes/ReaderPane.tsx:455
 msgid "Emphasize the beginning of words to guide faster reading"
 msgstr "単語の先頭を強調して速読をサポート"
 
@@ -1562,9 +1562,9 @@ msgstr "有効"
 #: src/components/preferences/panes/GeneralPane.tsx:202
 #: src/components/preferences/panes/GeneralPane.tsx:219
 #: src/components/preferences/panes/IntegrationsPane.tsx:260
-#: src/components/preferences/panes/ReaderPane.tsx:463
-#: src/components/preferences/panes/ReaderPane.tsx:480
-#: src/components/preferences/panes/ReaderPane.tsx:497
+#: src/components/preferences/panes/ReaderPane.tsx:465
+#: src/components/preferences/panes/ReaderPane.tsx:482
+#: src/components/preferences/panes/ReaderPane.tsx:499
 #: src/components/preferences/panes/TranslationPane.tsx:1416
 msgid "Enabled"
 msgstr "有効"
@@ -3653,7 +3653,7 @@ msgstr "閲覧"
 msgid "Reading display"
 msgstr "読書表示"
 
-#: src/components/preferences/panes/ReaderPane.tsx:450
+#: src/components/preferences/panes/ReaderPane.tsx:452
 msgid "Reading Features"
 msgstr "閲覧機能"
 
@@ -4197,7 +4197,7 @@ msgstr "共有リンクをコピーしました！"
 msgid "Shortcuts"
 msgstr "ショートカット"
 
-#: src/components/preferences/panes/ReaderPane.tsx:470
+#: src/components/preferences/panes/ReaderPane.tsx:472
 msgid "Show a compact reading progress bar at the bottom of the reader"
 msgstr "リーダー下部にコンパクトな読書進捗バーを表示"
 
@@ -4417,7 +4417,7 @@ msgid "Status"
 msgstr "ステータス"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:775
-#: src/components/preferences/panes/ReaderPane.tsx:469
+#: src/components/preferences/panes/ReaderPane.tsx:471
 msgid "Status Bar"
 msgstr "ステータスバー"
 
