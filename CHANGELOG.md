@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.0](https://github.com/sinhong2011/minikyu/compare/v1.7.0...v1.8.0) (2026-03-09)
+
+
+### Features
+
+* UI polish, AI code detection, and reading improvements ([#59](https://github.com/sinhong2011/minikyu/issues/59)) ([f540296](https://github.com/sinhong2011/minikyu/commit/f540296f87050d36a137602c341bb279dce51d4c))
+
 ## [1.7.0](https://github.com/sinhong2011/minikyu/compare/v1.6.0...v1.7.0) (2026-03-06)
 
 
