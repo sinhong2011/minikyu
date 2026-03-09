@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1](https://github.com/sinhong2011/minikyu/compare/v1.8.0...v1.8.1) (2026-03-09)
+
+
+### Bug Fixes
+
+* Windows background image and dialog rounded corners ([#61](https://github.com/sinhong2011/minikyu/issues/61)) ([f49de29](https://github.com/sinhong2011/minikyu/commit/f49de29c253e34be070ada695852976f591be670))
+
 ## [1.8.0](https://github.com/sinhong2011/minikyu/compare/v1.7.0...v1.8.0) (2026-03-09)
 
 
