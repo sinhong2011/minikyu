@@ -6,19 +6,25 @@
 
 A modern RSS reader desktop application built with **Tauri v2**, **React 19**, and **TypeScript**. Fast, native, and cross-platform.
 
-## Features
-
-- 📰 **RSS Feed Management** - Subscribe to your favorite feeds and stay updated
-- ⌨️ **Keyboard Shortcuts** - Command Palette (`Cmd+K`), Preferences (`Cmd+,`), and more
-- 🪟 **Quick Pane** - Global shortcut floating window for quick access from anywhere
-- 🎨 **Theme Support** - Light, Dark, or System theme with automatic detection
-- 🌐 **Multi-language** - English, Chinese (Simplified/Traditional), Japanese, Korean
-- 🔄 **Auto-updates** - Automatic update checking from GitHub releases
-- 🖥️ **Cross-platform** - macOS, Windows, and Linux support
-
 ## Screenshots
 
-![Minikyu Main View](public/screenshots/main.png)
+![Minikyu Main View](docs/screenshots/main.jpeg)
+
+## Features
+
+- 📰 **RSS Feed Management** - Subscribe, organize by categories, OPML import/export
+- 🎧 **Podcast Player** - Built-in audio player with playback controls, accessible from toolbar and command palette
+- 🔍 **Command Palette** - Quick access to all actions with `Cmd+K`, including theme/language switching
+- ⌨️ **Keyboard Shortcuts** - Extensive shortcuts for navigation, reading, and actions
+- 🧘 **Zen Mode** - Distraction-free reading experience (toggle with `Z`)
+- 📖 **Focus Mode** - Immersive article reading with a single shortcut
+- 🎨 **Theming & Appearance** - Light/Dark/System themes, custom background images, transparency, and frosted glass effects
+- 🌐 **Multi-language** - English, Chinese (Simplified/Traditional), Japanese, Korean
+- 🌏 **AI Translation** - LLM-powered article translation with configurable providers
+- 👆 **Gesture Controls** - Configurable swipe gestures for navigation and actions, pull-to-refresh
+- 🪟 **Quick Pane** - Global shortcut floating window for quick access from anywhere
+- 🔄 **Sync & Auto-updates** - Real-time Miniflux sync with progress tracking, automatic app updates
+- 🖥️ **Cross-platform** - macOS, Windows, and Linux support
 
 ## Installation
 
