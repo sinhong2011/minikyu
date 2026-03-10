@@ -126,5 +126,5 @@
 
 /* Only apply window corner rounding on macOS (native windows have rounded corners) */
 :root[data-platform="macos"] {
-  border-radius: 50px;
+  border-radius: var(--radius-4xl);
 }

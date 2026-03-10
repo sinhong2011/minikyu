@@ -9,6 +9,7 @@ import { TitleBar } from '@/components/titlebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { showToast, Toaster } from '@/components/ui/sonner';
 import { ZenModeView } from '@/components/zen-mode';
+import { usePlatform } from '@/hooks/use-platform';
 import { useTheme } from '@/hooks/use-theme';
 import { useMainWindowEventListeners } from '@/hooks/useMainWindowEventListeners';
 import { commands } from '@/lib/tauri-bindings';
@@ -22,6 +23,7 @@ interface MainWindowProps {
 
 export function MainWindow({ children }: MainWindowProps = {}) {
   const { theme } = useTheme();
+  const platform = usePlatform();
   const leftSidebarVisible = useUIStore((state) => state.leftSidebarVisible);
   const setLeftSidebarVisible = useUIStore((state) => state.setLeftSidebarVisible);
   const zenModeEnabled = useUIStore((state) => state.zenModeEnabled);
@@ -104,7 +106,12 @@ export function MainWindow({ children }: MainWindowProps = {}) {
 
   return (
     <>
-      <div className="relative flex h-screen w-full flex-col overflow-hidden rounded-xl bg-background [clip-path:inset(0_round_var(--radius-xl))]">
+      <div
+        className={`
+          relative flex h-screen w-full flex-col overflow-hidden bg-background
+          ${platform === 'macos' ? 'rounded-xl [clip-path:inset(0_round_var(--radius-xl))]' : ''}
+        `}
+      >
         {bgImagePath && bgImageSize !== 'tile' && (
           <img
             src={convertFileSrc(bgImagePath)}
