@@ -55,7 +55,7 @@ import {
 } from '@/lib/shiki-highlight';
 import type { ChineseConversionMode, ChineseConversionRule } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
-import { isAllowedVideoIframeSrc } from '@/lib/video-embed-utils';
+import { isAllowedVideoIframeSrc, rewriteBilibiliSrc } from '@/lib/video-embed-utils';
 import { usePreferences } from '@/services/preferences';
 
 const ImageViewer = lazy(() => import('./ImageViewer').then((m) => ({ default: m.ImageViewer })));
@@ -1556,6 +1556,26 @@ export function SafeHtml({
                 }}
               />
             </button>
+          );
+        }
+
+        if (domNode.name === 'iframe') {
+          const src = domNode.attribs.src || '';
+
+          // Rewrite Bilibili iframes to standard player URL
+          const rewrittenSrc = rewriteBilibiliSrc(src);
+          const finalSrc = rewrittenSrc ?? src;
+
+          return (
+            <div data-video-embed className="my-4 aspect-video w-full overflow-hidden rounded-lg">
+              <iframe
+                src={finalSrc}
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+                className="h-full w-full border-none"
+                title="Embedded video"
+              />
+            </div>
           );
         }
 
