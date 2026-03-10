@@ -6,7 +6,7 @@
 use std::time::Duration;
 
 use log::{debug, warn};
-use tauri::{AppHandle, Manager};
+use tauri::{AppHandle, Emitter, Manager};
 use tokio::time::sleep;
 
 use crate::AppState;
@@ -38,8 +38,13 @@ pub async fn run_debounce_worker(app: AppHandle) {
 
         // Debounce window elapsed — push
         debug!("Cloud sync debounce: pushing");
-        if let Err(e) = crate::commands::cloud_sync::cloud_sync_push(app.clone()).await {
-            warn!("Cloud sync debounced push failed: {e}");
+        match crate::commands::cloud_sync::cloud_sync_push(app.clone()).await {
+            Ok(()) => {
+                let _ = app.emit("cloud-sync-pushed", ());
+            }
+            Err(e) => {
+                warn!("Cloud sync debounced push failed: {e}");
+            }
         }
     }
 }

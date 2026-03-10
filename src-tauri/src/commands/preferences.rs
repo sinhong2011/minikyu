@@ -4,6 +4,7 @@
 
 use std::path::PathBuf;
 use tauri::{AppHandle, Manager};
+use tokio::io::AsyncWriteExt;
 
 use crate::types::{
     validate_chinese_conversion_mode, validate_custom_chinese_conversions, validate_download_path,
@@ -181,4 +182,108 @@ pub async fn save_preferences(app: AppHandle, preferences: AppPreferences) -> Re
     }
 
     Ok(())
+}
+
+/// Downloads an image from a URL and caches it locally in the app data directory.
+/// Returns the local file path of the cached image.
+#[tauri::command]
+#[specta::specta]
+pub async fn download_background_image(app: AppHandle, url: String) -> Result<String, String> {
+    // Validate URL
+    let parsed_url = reqwest::Url::parse(&url).map_err(|e| format!("Invalid URL: {e}"))?;
+
+    // Only allow http/https
+    match parsed_url.scheme() {
+        "http" | "https" => {}
+        scheme => return Err(format!("Unsupported URL scheme: {scheme}")),
+    }
+
+    log::info!("Downloading background image from: {url}");
+
+    // Create cache directory
+    let app_data_dir = app
+        .path()
+        .app_data_dir()
+        .map_err(|e| format!("Failed to get app data directory: {e}"))?;
+    let cache_dir = app_data_dir.join("background_images");
+    std::fs::create_dir_all(&cache_dir)
+        .map_err(|e| format!("Failed to create cache directory: {e}"))?;
+
+    // Download the image
+    let response = reqwest::get(&url)
+        .await
+        .map_err(|e| format!("Failed to download image: {e}"))?;
+
+    if !response.status().is_success() {
+        return Err(format!("Download failed with status: {}", response.status()));
+    }
+
+    // Check content type
+    let content_type = response
+        .headers()
+        .get(reqwest::header::CONTENT_TYPE)
+        .and_then(|v| v.to_str().ok())
+        .unwrap_or("application/octet-stream");
+
+    let extension = match content_type {
+        ct if ct.contains("png") => "png",
+        ct if ct.contains("gif") => "gif",
+        ct if ct.contains("webp") => "webp",
+        ct if ct.contains("avif") => "avif",
+        ct if ct.contains("bmp") => "bmp",
+        ct if ct.contains("svg") => return Err("SVG images are not supported".to_string()),
+        // Default to jpg for jpeg and unknown image types
+        _ => "jpg",
+    };
+
+    // Generate a filename from URL hash to avoid duplicates
+    use std::hash::{DefaultHasher, Hash, Hasher};
+    let mut hasher = DefaultHasher::new();
+    url.hash(&mut hasher);
+    let hash = format!("{:016x}", hasher.finish());
+    let filename = format!("{hash}.{extension}");
+    let file_path = cache_dir.join(&filename);
+
+    // If already cached, return existing path
+    if file_path.exists() {
+        log::info!("Background image already cached: {}", file_path.display());
+        return Ok(file_path.to_string_lossy().to_string());
+    }
+
+    // Check file size (limit to 50MB)
+    let content_length = response.content_length().unwrap_or(0);
+    if content_length > 50 * 1024 * 1024 {
+        return Err("Image too large (max 50MB)".to_string());
+    }
+
+    // Stream to temp file then rename
+    let temp_path = file_path.with_extension("tmp");
+    let bytes = response
+        .bytes()
+        .await
+        .map_err(|e| format!("Failed to read image data: {e}"))?;
+
+    // Verify it's actually image data (check magic bytes)
+    if bytes.len() < 4 {
+        return Err("Downloaded file is too small to be an image".to_string());
+    }
+
+    let mut file = tokio::fs::File::create(&temp_path)
+        .await
+        .map_err(|e| format!("Failed to create cache file: {e}"))?;
+    file.write_all(&bytes)
+        .await
+        .map_err(|e| format!("Failed to write cache file: {e}"))?;
+    file.flush()
+        .await
+        .map_err(|e| format!("Failed to flush cache file: {e}"))?;
+
+    // Atomic rename
+    tokio::fs::rename(&temp_path, &file_path)
+        .await
+        .map_err(|e| format!("Failed to finalize cache file: {e}"))?;
+
+    let path_str = file_path.to_string_lossy().to_string();
+    log::info!("Background image cached to: {path_str}");
+    Ok(path_str)
 }

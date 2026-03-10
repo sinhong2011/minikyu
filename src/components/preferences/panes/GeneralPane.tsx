@@ -6,7 +6,6 @@ import { open } from '@tauri-apps/plugin-dialog';
 import { Switch } from '@/components/animate-ui/components/base/switch';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
 import {
   Select,
   SelectContent,
@@ -175,7 +174,7 @@ export function GeneralPane() {
             onValueChange={(value: string) => handleCloseBehaviorChange(value as CloseBehavior)}
             disabled={!preferences || savePreferences.isPending}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-48">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -191,34 +190,22 @@ export function GeneralPane() {
             msg`Display the application icon in the system tray. Requires restart to take effect when disabled.`
           )}
         >
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="show-tray-icon"
-              checked={preferences?.show_tray_icon ?? true}
-              onCheckedChange={handleShowTrayIconChange}
-              disabled={!preferences || savePreferences.isPending}
-            />
-            <Label htmlFor="show-tray-icon" className="text-sm">
-              {(preferences?.show_tray_icon ?? true) ? _(msg`Enabled`) : _(msg`Disabled`)}
-            </Label>
-          </div>
+          <Switch
+            checked={preferences?.show_tray_icon ?? true}
+            onCheckedChange={handleShowTrayIconChange}
+            disabled={!preferences || savePreferences.isPending}
+          />
         </SettingsField>
 
         <SettingsField
           label={_(msg`Start Minimized`)}
           description={_(msg`Start the application minimized to the system tray`)}
         >
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="start-minimized"
-              checked={preferences?.start_minimized ?? false}
-              onCheckedChange={handleStartMinimizedChange}
-              disabled={!preferences || savePreferences.isPending}
-            />
-            <Label htmlFor="start-minimized" className="text-sm">
-              {(preferences?.start_minimized ?? false) ? _(msg`Enabled`) : _(msg`Disabled`)}
-            </Label>
-          </div>
+          <Switch
+            checked={preferences?.start_minimized ?? false}
+            onCheckedChange={handleStartMinimizedChange}
+            disabled={!preferences || savePreferences.isPending}
+          />
         </SettingsField>
 
         <SettingsField
@@ -232,7 +219,7 @@ export function GeneralPane() {
             }
             disabled={!preferences || savePreferences.isPending}
           >
-            <SelectTrigger className="w-full">
+            <SelectTrigger className="w-52">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -248,17 +235,17 @@ export function GeneralPane() {
           label={_(msg`Image Download Path`)}
           description={_(msg`Default folder for saving images. Leave empty to ask every time.`)}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-64">
             <Input
               value={preferences?.image_download_path ?? ''}
               onChange={(e) => handleImagePathChange(e.target.value)}
-              placeholder={_(msg`System default (ask every time)`)}
+              placeholder={_(msg`Ask every time`)}
               disabled={!preferences || savePreferences.isPending}
-              className="flex-1"
+              className="flex-1 text-sm"
             />
             <Button
               variant="outline"
-              size="sm"
+              size="icon-sm"
               onClick={() => handleBrowseFolder('image')}
               disabled={!preferences || savePreferences.isPending}
             >
@@ -271,17 +258,17 @@ export function GeneralPane() {
           label={_(msg`Video Download Path`)}
           description={_(msg`Default folder for saving videos. Leave empty to ask every time.`)}
         >
-          <div className="flex items-center gap-2">
+          <div className="flex items-center gap-2 w-64">
             <Input
               value={preferences?.video_download_path ?? ''}
               onChange={(e) => handleVideoPathChange(e.target.value)}
-              placeholder={_(msg`System default (ask every time)`)}
+              placeholder={_(msg`Ask every time`)}
               disabled={!preferences || savePreferences.isPending}
-              className="flex-1"
+              className="flex-1 text-sm"
             />
             <Button
               variant="outline"
-              size="sm"
+              size="icon-sm"
               onClick={() => handleBrowseFolder('video')}
               disabled={!preferences || savePreferences.isPending}
             >

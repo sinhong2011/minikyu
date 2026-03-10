@@ -224,9 +224,7 @@ export function AdvancedPane() {
         // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_auto_enabled: false,
         // biome-ignore lint/style/useNamingConvention: preferences field name
-        reader_translation_excluded_feed_ids: [],
-        // biome-ignore lint/style/useNamingConvention: preferences field name
-        reader_translation_excluded_category_ids: [],
+        reader_translation_exclusions: {},
         // biome-ignore lint/style/useNamingConvention: preferences field name
         image_download_path: null,
         // biome-ignore lint/style/useNamingConvention: preferences field name

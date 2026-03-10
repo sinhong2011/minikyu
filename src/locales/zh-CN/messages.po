@@ -26,14 +26,14 @@ msgid "{0} / {1} entries"
 msgstr "{0} / {1} 篇文章"
 
 #. placeholder {0}: selectedProviderDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1654
-#: src/components/preferences/panes/TranslationPane.tsx:1666
+#: src/components/preferences/panes/TranslationPane.tsx:1659
+#: src/components/preferences/panes/TranslationPane.tsx:1671
 msgid "{0} API key"
 msgstr "{0} API 密钥"
 
 #. placeholder {0}: selectedProviderDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1454
-#: src/components/preferences/panes/TranslationPane.tsx:1466
+#: src/components/preferences/panes/TranslationPane.tsx:1459
+#: src/components/preferences/panes/TranslationPane.tsx:1471
 msgid "{0} base URL"
 msgstr "{0} 基础 URL"
 
@@ -82,7 +82,7 @@ msgid "{0} min read"
 msgstr "{0} 分钟阅读"
 
 #. placeholder {0}: selectedProviderDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1489
+#: src/components/preferences/panes/TranslationPane.tsx:1494
 msgid "{0} model"
 msgstr "{0} 模型"
 
@@ -93,14 +93,14 @@ msgid "{0} of {1} entries downloaded"
 msgstr "已下载 {0} / {1} 篇文章"
 
 #. placeholder {0}: selectedProviderDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1597
-#: src/components/preferences/panes/TranslationPane.tsx:1605
+#: src/components/preferences/panes/TranslationPane.tsx:1602
+#: src/components/preferences/panes/TranslationPane.tsx:1610
 msgid "{0} system prompt"
 msgstr "{0} 系统提示词"
 
 #. placeholder {0}: selectedProviderDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1627
 #: src/components/preferences/panes/TranslationPane.tsx:1632
+#: src/components/preferences/panes/TranslationPane.tsx:1637
 msgid "{0} timeout (ms)"
 msgstr "{0} 超时时间 (ms)"
 
@@ -137,11 +137,11 @@ msgstr "0 秒"
 msgid "1 episode"
 msgstr "1 集"
 
-#: src/components/preferences/panes/AppearancePane.tsx:157
+#: src/components/preferences/panes/AppearancePane.tsx:168
 msgid "12-hour"
 msgstr "12 小时制"
 
-#: src/components/preferences/panes/AppearancePane.tsx:158
+#: src/components/preferences/panes/AppearancePane.tsx:169
 msgid "24-hour"
 msgstr "24 小时制"
 
@@ -165,7 +165,7 @@ msgstr "关于 {APP_NAME}"
 msgid "About Minikyu"
 msgstr "关于 Minikyu"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:315
+#: src/components/preferences/panes/CloudSyncSection.tsx:339
 msgid "Access Key ID"
 msgstr "访问密钥 ID"
 
@@ -244,7 +244,8 @@ msgstr "新建订阅源"
 msgid "Add New Feed..."
 msgstr "添加新订阅..."
 
-#: src/components/preferences/panes/TranslationPane.tsx:2049
+#: src/components/preferences/panes/TranslationPane.tsx:2028
+#: src/components/preferences/panes/TranslationPane.tsx:2083
 msgid "Add Rule"
 msgstr "添加规则"
 
@@ -278,7 +279,7 @@ msgstr "已添加到播放列表"
 msgid "Adding..."
 msgstr "添加中..."
 
-#: src/components/preferences/panes/AppearancePane.tsx:205
+#: src/components/preferences/panes/AppearancePane.tsx:228
 msgid "Adjust the background image transparency."
 msgstr "调整背景图片的透明度。"
 
@@ -307,7 +308,7 @@ msgid "AI"
 msgstr "AI"
 
 #: src/components/miniflux/ArticleSummary.tsx:307
-#: src/components/preferences/panes/TranslationPane.tsx:1772
+#: src/components/preferences/panes/TranslationPane.tsx:1783
 msgid "AI Summary"
 msgstr "AI 摘要"
 
@@ -325,11 +326,11 @@ msgstr "全部"
 msgid "All categories, feeds, and entries are synced"
 msgstr "所有分类、订阅源和文章均已同步"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:290
+#: src/components/preferences/panes/AdvancedPane.tsx:288
 msgid "All data has been deleted. The app has been reset to its initial state."
 msgstr "所有数据已删除。应用已恢复到初始状态。"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1756
+#: src/components/preferences/panes/TranslationPane.tsx:1767
 msgid "All feeds in these categories will skip auto-translation. Chinese conversion still applies."
 msgstr "这些分类中的所有订阅源将跳过自动翻译。中文转换仍然适用。"
 
@@ -351,11 +352,11 @@ msgstr "全部已读"
 msgid "All read entries have been deleted"
 msgstr "所有已读条目已删除"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:655
+#: src/components/preferences/panes/AdvancedPane.tsx:653
 msgid "All settings will be restored to their defaults. Your data and accounts will not be affected."
 msgstr "所有设置将恢复为默认值。您的数据和账户不受影响。"
 
-#: src/components/preferences/panes/TranslationPane.tsx:729
+#: src/components/preferences/panes/TranslationPane.tsx:734
 msgid "Anthropic"
 msgstr "Anthropic"
 
@@ -363,10 +364,10 @@ msgstr "Anthropic"
 msgid "Any time"
 msgstr "任意时间"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1209
-#: src/components/preferences/panes/TranslationPane.tsx:1272
-#: src/components/preferences/panes/TranslationPane.tsx:1274
-#: src/components/preferences/panes/TranslationPane.tsx:1278
+#: src/components/preferences/panes/TranslationPane.tsx:1214
+#: src/components/preferences/panes/TranslationPane.tsx:1277
+#: src/components/preferences/panes/TranslationPane.tsx:1279
+#: src/components/preferences/panes/TranslationPane.tsx:1283
 msgid "API key"
 msgstr "API 密钥"
 
@@ -424,7 +425,7 @@ msgstr "Apple 内置"
 msgid "Applies to all articles when enabled"
 msgstr "启用后适用于所有文章"
 
-#: src/components/preferences/panes/AppearancePane.tsx:233
+#: src/components/preferences/panes/AppearancePane.tsx:256
 msgid "Apply blur to the background image."
 msgstr "对背景图片应用模糊效果。"
 
@@ -468,7 +469,7 @@ msgstr "确定要取消订阅「{0}」吗？"
 #~ msgid "Are you sure you want to unsubscribe from this feed?"
 #~ msgstr "确定要取消订阅此订阅源吗？"
 
-#: src/components/command-palette/CommandPalette.tsx:142
+#: src/components/command-palette/CommandPalette.tsx:197
 #: src/components/miniflux/EntryReading.tsx:1646
 #: src/lib/menu.ts:215
 msgid "Article"
@@ -482,7 +483,7 @@ msgstr "文章操作"
 msgid "Article table of contents"
 msgstr "文章目录"
 
-#: src/components/preferences/panes/ReaderPane.tsx:254
+#: src/components/preferences/panes/ReaderPane.tsx:253
 msgid "Article text size in pixels (14-24)"
 msgstr "文章字号，单位像素 (14-24)"
 
@@ -490,16 +491,21 @@ msgstr "文章字号，单位像素 (14-24)"
 msgid "Ascending"
 msgstr "升序"
 
+#: src/components/preferences/panes/GeneralPane.tsx:242
+#: src/components/preferences/panes/GeneralPane.tsx:265
+msgid "Ask every time"
+msgstr "每次询问"
+
 #: src/components/preferences/panes/AboutPane.tsx:271
 #~ msgid "Author"
 #~ msgstr "作者"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:194
-#: src/components/preferences/panes/ReaderPane.tsx:166
+#: src/components/preferences/panes/ReaderPane.tsx:165
 msgid "Auto"
 msgstr "自动"
 
-#: src/components/preferences/panes/ReaderPane.tsx:417
+#: src/components/preferences/panes/ReaderPane.tsx:395
 msgid "Auto (LLM + regex)"
 msgstr "自动（LLM + 正则）"
 
@@ -507,15 +513,15 @@ msgstr "自动（LLM + 正则）"
 msgid "Auto download"
 msgstr "自动下载"
 
-#: src/components/preferences/panes/ReaderPane.tsx:488
+#: src/components/preferences/panes/ReaderPane.tsx:455
 msgid "Auto mark as read"
 msgstr "自动标记为已读"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:441
+#: src/components/preferences/panes/CloudSyncSection.tsx:455
 msgid "Auto-pull on startup"
 msgstr "启动时自动拉取"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1886
+#: src/components/preferences/panes/TranslationPane.tsx:1897
 msgid "Auto-summarize"
 msgstr "自动摘要"
 
@@ -527,7 +533,7 @@ msgstr "自动同步已禁用"
 msgid "Auto-sync interval"
 msgstr "自动同步间隔"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1765
+#: src/components/preferences/panes/TranslationPane.tsx:1776
 msgid "Auto-translation will be skipped when the entry content is detected as one of these languages."
 msgstr "当检测到文章内容为以下语言之一时，将跳过自动翻译。"
 
@@ -539,11 +545,11 @@ msgstr "自动检查更新"
 #~ msgid "Automatic updates"
 #~ msgstr "自动更新"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1887
+#: src/components/preferences/panes/TranslationPane.tsx:1898
 msgid "Automatically generate an AI summary when opening an article"
 msgstr "打开文章时自动生成 AI 摘要"
 
-#: src/components/preferences/panes/ReaderPane.tsx:489
+#: src/components/preferences/panes/ReaderPane.tsx:456
 msgid "Automatically mark entries as read when scrolled past 20%"
 msgstr "滚动超过 20% 时自动标记为已读"
 
@@ -559,11 +565,16 @@ msgstr "按配置的间隔自动同步订阅源"
 msgid "Available Services"
 msgstr "可用服务"
 
-#: src/components/preferences/panes/AppearancePane.tsx:164
+#: src/components/command-palette/CommandPalette.tsx:317
+msgid "Back"
+msgstr "返回"
+
+#: src/components/command-palette/CommandPalette.tsx:289
+#: src/components/preferences/panes/AppearancePane.tsx:175
 msgid "Background Image"
 msgstr "背景图片"
 
-#: src/components/preferences/panes/TranslationPane.tsx:723
+#: src/components/preferences/panes/TranslationPane.tsx:728
 msgid "Baidu Translate"
 msgstr "百度翻译"
 
@@ -576,7 +587,7 @@ msgid "Bilingual"
 msgstr "双语"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:763
-#: src/components/preferences/panes/ReaderPane.tsx:454
+#: src/components/preferences/panes/ReaderPane.tsx:433
 msgid "Bionic Reading"
 msgstr "仿生阅读"
 
@@ -586,16 +597,16 @@ msgstr "仿生阅读"
 msgid "Blocklist rules"
 msgstr "屏蔽规则"
 
-#: src/components/preferences/panes/AppearancePane.tsx:232
+#: src/components/preferences/panes/AppearancePane.tsx:255
 msgid "Blur"
 msgstr "模糊"
 
-#: src/components/miniflux/ReaderSettings.tsx:154
-#: src/components/preferences/panes/ReaderPane.tsx:82
+#: src/components/miniflux/ReaderSettings.tsx:144
+#: src/components/preferences/panes/ReaderPane.tsx:81
 msgid "Book Serif"
 msgstr "书本衬线"
 
-#: src/components/miniflux/ReaderSettings.tsx:175
+#: src/components/miniflux/ReaderSettings.tsx:165
 msgid "Book-like rhythm"
 msgstr "书籍般的节奏"
 
@@ -612,7 +623,7 @@ msgstr "浏览分类"
 msgid "Browser content"
 msgstr "浏览器内容"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:238
+#: src/components/preferences/panes/CloudSyncSection.tsx:259
 msgid "Bucket"
 msgstr "存储桶"
 
@@ -635,9 +646,9 @@ msgstr "找不到分类？创建一个新的。"
 #: src/components/miniflux/settings/FeedFormDialog.tsx:681
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:96
 #: src/components/miniflux/settings/UserFormDialog.tsx:155
-#: src/components/preferences/panes/AdvancedPane.tsx:621
-#: src/components/preferences/panes/AdvancedPane.tsx:660
-#: src/components/preferences/panes/AdvancedPane.tsx:714
+#: src/components/preferences/panes/AdvancedPane.tsx:619
+#: src/components/preferences/panes/AdvancedPane.tsx:658
+#: src/components/preferences/panes/AdvancedPane.tsx:712
 #: src/components/preferences/panes/ApiTokenPane.tsx:204
 #: src/components/preferences/panes/ApiTokenPane.tsx:273
 msgid "Cancel"
@@ -726,9 +737,13 @@ msgstr "该分类已重新启用翻译"
 msgid "Category updated"
 msgstr "分类已更新"
 
-#: src/components/preferences/panes/AppearancePane.tsx:337
+#: src/components/preferences/panes/AppearancePane.tsx:404
 msgid "Change"
 msgstr "更换"
+
+#: src/lib/commands/view-commands.ts:191
+msgid "Change Background Image"
+msgstr "更换背景图片"
 
 #: src/lib/commands/help-commands.ts:11
 msgid "Check for Updates"
@@ -770,21 +785,21 @@ msgstr "正在检查更新..."
 msgid "Checking..."
 msgstr "检查中..."
 
-#: src/components/preferences/panes/TranslationPane.tsx:2262
+#: src/components/preferences/panes/TranslationPane.tsx:2287
 msgid "Chinese"
 msgstr "中文"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:183
-#: src/components/preferences/panes/TranslationPane.tsx:1732
+#: src/components/preferences/panes/TranslationPane.tsx:1743
 msgid "Chinese (Simplified)"
 msgstr "中文（简体）"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:184
-#: src/components/preferences/panes/TranslationPane.tsx:1733
+#: src/components/preferences/panes/TranslationPane.tsx:1744
 msgid "Chinese (Traditional)"
 msgstr "中文（繁体）"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1952
+#: src/components/preferences/panes/TranslationPane.tsx:1962
 msgid "Chinese Conversion"
 msgstr "中文转换"
 
@@ -792,48 +807,53 @@ msgstr "中文转换"
 msgid "Choose a story from the list and your reading companion will guide the focus."
 msgstr "从列表中选择一篇文章，阅读助手将引导你聚焦阅读。"
 
-#: src/components/preferences/panes/GeneralPane.tsx:226
+#: src/components/preferences/panes/AppearancePane.tsx:411
+#: src/components/preferences/panes/AppearancePane.tsx:472
+msgid "Choose File"
+msgstr "选择文件"
+
+#: src/components/preferences/panes/GeneralPane.tsx:213
 msgid "Choose how the player appears when clicking the tray icon"
 msgstr "选择点击托盘图标时播放器的显示方式"
 
-#: src/components/preferences/panes/AppearancePane.tsx:141
+#: src/components/preferences/panes/AppearancePane.tsx:152
 msgid "Choose how times are displayed throughout the app"
 msgstr "选择应用中时间的显示格式"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1699
+#: src/components/preferences/panes/TranslationPane.tsx:1704
 msgid "Choose how translation requests are routed across engines and LLMs."
 msgstr "选择翻译请求在引擎和大语言模型之间的路由方式。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:349
-msgid "Choose Image"
-msgstr "选择图片"
+#: src/components/preferences/panes/AppearancePane.tsx:347
+#~ msgid "Choose Image"
+#~ msgstr "选择图片"
 
-#: src/components/preferences/panes/ReaderPane.tsx:200
+#: src/components/preferences/panes/ReaderPane.tsx:199
 msgid "Choose the background surface for the article reader"
 msgstr "选择文章阅读器的背景样式"
 
-#: src/components/preferences/panes/ReaderPane.tsx:232
+#: src/components/preferences/panes/ReaderPane.tsx:231
 msgid "Choose the typeface for article text"
 msgstr "选择文章正文的字体"
 
-#: src/components/preferences/panes/GeneralPane.tsx:171
+#: src/components/preferences/panes/GeneralPane.tsx:170
 msgid "Choose what happens when you click the window close button"
 msgstr "选择点击窗口关闭按钮时的行为"
 
-#: src/components/preferences/panes/AppearancePane.tsx:119
+#: src/components/preferences/panes/AppearancePane.tsx:130
 msgid "Choose your preferred color theme"
 msgstr "选择您喜欢的颜色主题"
 
-#: src/components/preferences/panes/AppearancePane.tsx:94
+#: src/components/preferences/panes/AppearancePane.tsx:105
 msgid "Choose your preferred display language"
 msgstr "选择您喜欢的显示语言"
 
-#: src/components/miniflux/ReaderSettings.tsx:171
+#: src/components/miniflux/ReaderSettings.tsx:161
 msgid "Classic reading"
 msgstr "经典阅读"
 
-#: src/components/miniflux/ReaderSettings.tsx:165
-#: src/components/miniflux/ReaderSettings.tsx:179
+#: src/components/miniflux/ReaderSettings.tsx:155
+#: src/components/miniflux/ReaderSettings.tsx:169
 msgid "Clean and balanced"
 msgstr "简洁均衡"
 
@@ -861,16 +881,16 @@ msgstr "正在清理过期的本地记录"
 msgid "Clear"
 msgstr "清除"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:593
+#: src/components/preferences/panes/AdvancedPane.tsx:591
 msgid "Clear account data"
 msgstr "清除账户数据"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:605
-#: src/components/preferences/panes/AdvancedPane.tsx:627
+#: src/components/preferences/panes/AdvancedPane.tsx:603
+#: src/components/preferences/panes/AdvancedPane.tsx:625
 msgid "Clear data"
 msgstr "清除数据"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:586
+#: src/components/preferences/panes/AdvancedPane.tsx:584
 msgid "Clear data for"
 msgstr "清除数据："
 
@@ -879,7 +899,7 @@ msgstr "清除数据："
 #~ msgstr "清除 {0} 的数据"
 
 #. placeholder {0}: activeAccount?.username ?? ''
-#: src/components/preferences/panes/AdvancedPane.tsx:612
+#: src/components/preferences/panes/AdvancedPane.tsx:610
 msgid "Clear data for {0}?"
 msgstr "清除 {0} 的数据？"
 
@@ -891,17 +911,17 @@ msgstr "清空播放列表"
 msgid "Clear Queue"
 msgstr "清空队列"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:605
+#: src/components/preferences/panes/AdvancedPane.tsx:603
 msgid "Clearing..."
 msgstr "正在清除..."
 
-#: src/components/command-palette/CommandPalette.tsx:233
+#: src/components/command-palette/CommandPalette.tsx:330
 #: src/components/downloads/DownloadManagerDialog.tsx:907
 #: src/components/miniflux/EntryReadingHeader.tsx:350
 #: src/components/miniflux/EntryReadingHeader.tsx:356
 #: src/components/miniflux/ImageViewer.tsx:236
 #: src/components/miniflux/InAppBrowserPane.tsx:274
-#: src/components/miniflux/ReaderSettings.tsx:226
+#: src/components/miniflux/ReaderSettings.tsx:216
 #: src/components/titlebar/WindowsWindowControls.tsx:118
 #: src/components/ui/dialog.tsx:65
 #: src/components/ui/dialog.tsx:96
@@ -910,7 +930,7 @@ msgstr "正在清除..."
 msgid "Close"
 msgstr "关闭"
 
-#: src/components/preferences/panes/GeneralPane.tsx:40
+#: src/components/preferences/panes/GeneralPane.tsx:39
 msgid "Close behavior updated"
 msgstr "关闭行为已更新"
 
@@ -919,7 +939,7 @@ msgstr "关闭行为已更新"
 msgid "Close browser"
 msgstr "关闭浏览器"
 
-#: src/components/preferences/panes/GeneralPane.tsx:170
+#: src/components/preferences/panes/GeneralPane.tsx:169
 msgid "Close Button Behavior"
 msgstr "关闭按钮行为"
 
@@ -936,28 +956,28 @@ msgstr "关闭窗口"
 msgid "Close Window"
 msgstr "关闭窗口"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:173
+#: src/components/preferences/panes/CloudSyncSection.tsx:194
 msgid "Cloud Sync"
 msgstr "云同步"
 
-#: src/components/miniflux/ReaderSettings.tsx:177
+#: src/components/miniflux/ReaderSettings.tsx:167
 msgid "Code and precision"
 msgstr "代码与精确"
 
-#: src/components/preferences/panes/ReaderPane.tsx:371
+#: src/components/preferences/panes/ReaderPane.tsx:349
 msgid "Code Blocks"
 msgstr "代码块"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:718
-#: src/components/preferences/panes/ReaderPane.tsx:373
+#: src/components/preferences/panes/ReaderPane.tsx:351
 msgid "Code theme"
 msgstr "代码主题"
 
-#: src/components/preferences/panes/AppearancePane.tsx:118
+#: src/components/preferences/panes/AppearancePane.tsx:129
 msgid "Color Theme"
 msgstr "颜色主题"
 
-#: src/components/command-palette/CommandPalette.tsx:189
+#: src/components/command-palette/CommandPalette.tsx:251
 #: src/pages/HomePage.tsx:43
 msgid "Command Palette"
 msgstr "命令面板"
@@ -966,7 +986,7 @@ msgstr "命令面板"
 msgid "Commit"
 msgstr "提交"
 
-#: src/components/preferences/panes/GeneralPane.tsx:240
+#: src/components/preferences/panes/GeneralPane.tsx:227
 msgid "Compact tray popover"
 msgstr "紧凑型托盘弹窗"
 
@@ -978,7 +998,7 @@ msgstr "组件堆栈"
 msgid "Configure services in Miniflux server settings."
 msgstr "在 Miniflux 服务器设置中配置服务。"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1426
+#: src/components/preferences/panes/TranslationPane.tsx:1431
 msgid "Configured"
 msgstr "已配置"
 
@@ -1014,16 +1034,21 @@ msgstr "连接中..."
 #~ msgid "Connection"
 #~ msgstr "连接"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:110
-#: src/components/preferences/panes/CloudSyncSection.tsx:127
+#: src/components/preferences/panes/CloudSyncSection.tsx:120
+#: src/components/preferences/panes/CloudSyncSection.tsx:143
 msgid "Connection successful"
 msgstr "连接成功"
+
+#: src/components/preferences/panes/CloudSyncSection.tsx:119
+#: src/components/preferences/panes/CloudSyncSection.tsx:142
+msgid "Connection successful, credentials saved"
+msgstr "连接成功，凭据已保存"
 
 #: src/components/preferences/panes/ApiTokenPane.tsx:161
 msgid "Connection token"
 msgstr "连接令牌"
 
-#: src/components/preferences/panes/AppearancePane.tsx:196
+#: src/components/preferences/panes/AppearancePane.tsx:219
 msgid "Contain"
 msgstr "适应"
 
@@ -1031,15 +1056,15 @@ msgstr "适应"
 msgid "Continue to Add Feed"
 msgstr "继续添加订阅源"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:744
+#: src/components/preferences/panes/AdvancedPane.tsx:742
 msgid "Control the verbosity of frontend log output. More verbose levels include all levels above them."
 msgstr "控制前端日志输出的详细程度。更高的详细级别包含其上方所有级别。"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1971
+#: src/components/preferences/panes/TranslationPane.tsx:1981
 msgid "Conversion Mode"
 msgstr "转换模式"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1973
+#: src/components/preferences/panes/TranslationPane.tsx:1983
 msgid "Convert Chinese characters between Simplified and Traditional variants."
 msgstr "在简体中文和繁体中文之间转换。"
 
@@ -1048,18 +1073,18 @@ msgstr "在简体中文和繁体中文之间转换。"
 msgid "Copied"
 msgstr "已复制"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:737
+#: src/components/preferences/panes/AdvancedPane.tsx:735
 #: src/components/ui/sonner.tsx:56
 msgid "Copied!"
 msgstr "已复制！"
 
 #: src/components/ErrorBoundary.tsx:372
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:164
-#: src/components/preferences/panes/AdvancedPane.tsx:737
+#: src/components/preferences/panes/AdvancedPane.tsx:735
 msgid "Copy"
 msgstr "复制"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:733
+#: src/components/preferences/panes/AdvancedPane.tsx:731
 msgid "Copy app version, OS, and environment details for bug reports."
 msgstr "复制应用版本、操作系统和环境详情，用于提交错误报告。"
 
@@ -1071,7 +1096,7 @@ msgstr "复制文章 URL"
 msgid "Copy code"
 msgstr "复制代码"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:732
+#: src/components/preferences/panes/AdvancedPane.tsx:730
 msgid "Copy debug info"
 msgstr "复制调试信息"
 
@@ -1146,7 +1171,7 @@ msgstr "无法打开文件"
 msgid "Could not reveal in folder"
 msgstr "无法在文件夹中显示"
 
-#: src/components/preferences/panes/AppearancePane.tsx:195
+#: src/components/preferences/panes/AppearancePane.tsx:218
 msgid "Cover"
 msgstr "覆盖"
 
@@ -1201,23 +1226,23 @@ msgstr "创建时间"
 msgid "Creating..."
 msgstr "正在创建..."
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:278
+#: src/components/preferences/panes/CloudSyncSection.tsx:303
 msgid "Credentials"
 msgstr "凭据"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:300
-#: src/components/preferences/panes/CloudSyncSection.tsx:405
+#: src/components/preferences/panes/CloudSyncSection.tsx:325
+#: src/components/preferences/panes/CloudSyncSection.tsx:427
 msgid "Credentials are saved in your system keyring."
 msgstr "凭据已保存在系统密钥环中。"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:76
+#: src/components/preferences/panes/CloudSyncSection.tsx:97
 msgid "Credentials removed"
 msgstr "凭据已删除"
 
 #: src/components/preferences/panes/CloudSyncSection.tsx:65
 #: src/components/preferences/panes/CloudSyncSection.tsx:89
-msgid "Credentials saved"
-msgstr "凭据已保存"
+#~ msgid "Credentials saved"
+#~ msgstr "凭据已保存"
 
 #: src/components/miniflux/settings/MoveFeedDialog.tsx:77
 msgid "Current category"
@@ -1231,15 +1256,15 @@ msgstr "当前状态"
 msgid "Current version"
 msgstr "当前版本"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1903
+#: src/components/preferences/panes/TranslationPane.tsx:1914
 msgid "Custom Prompt"
 msgstr "自定义提示词"
 
-#: src/components/preferences/panes/ReaderPane.tsx:425
+#: src/components/preferences/panes/ReaderPane.tsx:403
 msgid "Custom prompt for LLM code language detection. Leave empty to use default."
 msgstr "LLM 代码语言检测的自定义提示词。留空则使用默认值。"
 
-#: src/components/preferences/panes/TranslationPane.tsx:2001
+#: src/components/preferences/panes/TranslationPane.tsx:2012
 msgid "Custom Term Conversion"
 msgstr "自定义术语转换"
 
@@ -1255,7 +1280,7 @@ msgstr "在此自定义您的应用偏好设置。"
 msgid "Cycle reader theme"
 msgstr "切换阅读主题"
 
-#: src/components/preferences/panes/AppearancePane.tsx:131
+#: src/components/preferences/panes/AppearancePane.tsx:142
 msgid "Dark"
 msgstr "深色"
 
@@ -1263,7 +1288,7 @@ msgstr "深色"
 msgid "Database"
 msgstr "数据库"
 
-#: src/components/preferences/panes/AppearancePane.tsx:138
+#: src/components/preferences/panes/AppearancePane.tsx:149
 msgid "Date & Time"
 msgstr "日期与时间"
 
@@ -1271,12 +1296,12 @@ msgstr "日期与时间"
 msgid "Date Range"
 msgstr "日期范围"
 
-#: src/components/command-palette/CommandPalette.tsx:148
+#: src/components/command-palette/CommandPalette.tsx:203
 #: src/components/preferences/panes/AdvancedPane.tsx:59
 msgid "Debug"
 msgstr "调试"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:450
+#: src/components/preferences/panes/AdvancedPane.tsx:448
 msgid "Debug info copied to clipboard"
 msgstr "调试信息已复制到剪贴板"
 
@@ -1313,26 +1338,26 @@ msgstr "降低 0.25 倍速度"
 msgid "Decrease volume by 10%"
 msgstr "降低 10% 音量"
 
-#: src/components/preferences/panes/TranslationPane.tsx:713
+#: src/components/preferences/panes/TranslationPane.tsx:718
 msgid "DeepL"
 msgstr "DeepL"
 
-#: src/components/preferences/panes/TranslationPane.tsx:743
+#: src/components/preferences/panes/TranslationPane.tsx:748
 msgid "DeepSeek"
 msgstr "DeepSeek"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:205
 #: src/components/miniflux/EntryReadingHeader.tsx:215
-#: src/components/preferences/panes/ReaderPane.tsx:66
+#: src/components/preferences/panes/ReaderPane.tsx:65
 #: src/lib/menu.ts:141
 msgid "Default"
 msgstr "默认"
 
-#: src/components/preferences/panes/GeneralPane.tsx:249
+#: src/components/preferences/panes/GeneralPane.tsx:236
 msgid "Default folder for saving images. Leave empty to ask every time."
 msgstr "图片保存的默认文件夹。留空则每次询问。"
 
-#: src/components/preferences/panes/GeneralPane.tsx:272
+#: src/components/preferences/panes/GeneralPane.tsx:259
 msgid "Default folder for saving videos. Leave empty to ask every time."
 msgstr "视频保存的默认文件夹。留空则每次询问。"
 
@@ -1388,7 +1413,7 @@ msgstr "删除分类"
 msgid "Delete category?"
 msgstr "删除分类？"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:720
+#: src/components/preferences/panes/AdvancedPane.tsx:718
 msgid "Delete everything"
 msgstr "删除所有数据"
 
@@ -1412,12 +1437,12 @@ msgstr "删除用户？"
 msgid "Descending"
 msgstr "降序"
 
-#: src/components/preferences/panes/ReaderPane.tsx:423
+#: src/components/preferences/panes/ReaderPane.tsx:401
 msgid "Detection prompt"
 msgstr "检测提示词"
 
 #: src/components/ErrorBoundary.tsx:352
-#: src/components/preferences/panes/AdvancedPane.tsx:730
+#: src/components/preferences/panes/AdvancedPane.tsx:728
 msgid "Diagnostics"
 msgstr "诊断"
 
@@ -1435,14 +1460,9 @@ msgstr "排序方向"
 msgid "Disable feed"
 msgstr "禁用订阅源"
 
-#: src/components/preferences/panes/GeneralPane.tsx:202
-#: src/components/preferences/panes/GeneralPane.tsx:219
 #: src/components/preferences/panes/IntegrationsPane.tsx:294
-#: src/components/preferences/panes/ReaderPane.tsx:465
-#: src/components/preferences/panes/ReaderPane.tsx:482
-#: src/components/preferences/panes/ReaderPane.tsx:499
 #: src/components/preferences/panes/SyncPane.tsx:28
-#: src/components/preferences/panes/TranslationPane.tsx:1416
+#: src/components/preferences/panes/TranslationPane.tsx:1421
 #: src/components/preferences/PreferencesDialog.tsx:313
 msgid "Disabled"
 msgstr "已禁用"
@@ -1460,7 +1480,7 @@ msgstr "关闭播放器"
 msgid "Display mode"
 msgstr "显示模式"
 
-#: src/components/preferences/panes/GeneralPane.tsx:191
+#: src/components/preferences/panes/GeneralPane.tsx:190
 msgid "Display the application icon in the system tray. Requires restart to take effect when disabled."
 msgstr "在系统托盘中显示应用程序图标。禁用时需要重新启动才能生效。"
 
@@ -1488,6 +1508,8 @@ msgstr "完成"
 #: src/components/podcast/PlayerWindowControls.tsx:313
 #: src/components/podcast/PodcastPlayer.tsx:261
 #: src/components/podcast/PodcastPlayer.tsx:267
+#: src/components/preferences/panes/AppearancePane.tsx:456
+#: src/components/preferences/panes/AppearancePane.tsx:526
 msgid "Download"
 msgstr "下载"
 
@@ -1506,6 +1528,10 @@ msgstr "下载完成"
 msgid "Download Failed"
 msgstr "下载失败"
 
+#: src/components/command-palette/CommandPalette.tsx:298
+msgid "Download from URL"
+msgstr "从网址下载"
+
 #: src/components/miniflux/EntryReadingHeader.tsx:284
 msgid "Download original content"
 msgstr "下载原始内容"
@@ -1516,7 +1542,7 @@ msgstr "下载原始内容"
 msgid "Download original content (crawler)"
 msgstr "下载原始内容（爬虫）"
 
-#: src/components/preferences/panes/GeneralPane.tsx:246
+#: src/components/preferences/panes/GeneralPane.tsx:233
 msgid "Download Settings"
 msgstr "下载设置"
 
@@ -1551,6 +1577,11 @@ msgstr "正在从服务器下载最近的文章"
 msgid "Downloading update v{0}... {1}%"
 msgstr "正在下载更新 v{0}... {1}%"
 
+#: src/components/preferences/panes/AppearancePane.tsx:456
+#: src/components/preferences/panes/AppearancePane.tsx:526
+msgid "Downloading..."
+msgstr "下载中..."
+
 #: src/components/downloads/DownloadManagerDialog.tsx:914
 #: src/components/preferences/panes/AdvancedPane.tsx:80
 #: src/components/titlebar/WindowTitleBar.tsx:143
@@ -1571,7 +1602,7 @@ msgstr "例如 科技"
 msgid "e.g. Technology, News"
 msgstr "例如 科技、新闻"
 
-#: src/components/preferences/panes/TranslationPane.tsx:2038
+#: src/components/preferences/panes/TranslationPane.tsx:2071
 msgid "Each rule must include a non-empty \"From\" value"
 msgstr "每条规则必须包含非空的“来源”值"
 
@@ -1605,12 +1636,12 @@ msgstr "编辑用户"
 #~ msgid "EEEE, MMMM d, yyyy"
 #~ msgstr "yyyy年M月d日 EEEE"
 
-#: src/components/preferences/panes/ReaderPane.tsx:455
+#: src/components/preferences/panes/ReaderPane.tsx:434
 msgid "Emphasize the beginning of words to guide faster reading"
 msgstr "加粗词首字母以引导更快阅读"
 
 #. placeholder {0}: providerDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1358
+#: src/components/preferences/panes/TranslationPane.tsx:1363
 msgid "Enable {0}"
 msgstr "启用 {0}"
 
@@ -1622,13 +1653,8 @@ msgstr "启用 {0}"
 msgid "enabled"
 msgstr "已启用"
 
-#: src/components/preferences/panes/GeneralPane.tsx:202
-#: src/components/preferences/panes/GeneralPane.tsx:219
 #: src/components/preferences/panes/IntegrationsPane.tsx:260
-#: src/components/preferences/panes/ReaderPane.tsx:465
-#: src/components/preferences/panes/ReaderPane.tsx:482
-#: src/components/preferences/panes/ReaderPane.tsx:499
-#: src/components/preferences/panes/TranslationPane.tsx:1416
+#: src/components/preferences/panes/TranslationPane.tsx:1421
 msgid "Enabled"
 msgstr "已启用"
 
@@ -1640,21 +1666,21 @@ msgstr "已启用的服务"
 msgid "Enclosure not found for this entry"
 msgstr "未找到此条目的附件"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:225
+#: src/components/preferences/panes/CloudSyncSection.tsx:246
 msgid "Endpoint URL"
 msgstr "端点 URL"
 
-#: src/components/preferences/panes/TranslationPane.tsx:497
+#: src/components/preferences/panes/TranslationPane.tsx:502
 msgid "Engine"
 msgstr "引擎"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1711
+#: src/components/preferences/panes/TranslationPane.tsx:1719
 msgid "Engine first"
 msgstr "引擎优先"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:182
-#: src/components/preferences/panes/TranslationPane.tsx:1731
-#: src/components/preferences/panes/TranslationPane.tsx:2265
+#: src/components/preferences/panes/TranslationPane.tsx:1742
+#: src/components/preferences/panes/TranslationPane.tsx:2290
 msgid "English"
 msgstr "英语"
 
@@ -1666,10 +1692,10 @@ msgstr "仅英文"
 msgid "Enter a description for the new API key."
 msgstr "为新 API 密钥输入描述。"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:101
-#: src/components/preferences/panes/CloudSyncSection.tsx:116
-msgid "Enter credentials to test connection"
-msgstr "请输入凭据以测试连接"
+#: src/components/preferences/panes/CloudSyncSection.tsx:70
+#: src/components/preferences/panes/CloudSyncSection.tsx:89
+#~ msgid "Enter credentials to test connection"
+#~ msgstr "请输入凭据以测试连接"
 
 #: src/components/titlebar/MacOSWindowControls.tsx:152
 msgid "Enter fullscreen"
@@ -1753,11 +1779,11 @@ msgstr "每小时"
 msgid "Everything is up to date"
 msgstr "一切都是最新的"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1754
+#: src/components/preferences/panes/TranslationPane.tsx:1765
 msgid "Excluded Categories"
 msgstr "排除的分类"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1745
+#: src/components/preferences/panes/TranslationPane.tsx:1756
 msgid "Excluded Feeds"
 msgstr "排除的订阅源"
 
@@ -1778,8 +1804,8 @@ msgstr "退出专注模式"
 msgid "Explore Features"
 msgstr "探索功能"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:491
-#: src/components/preferences/panes/AdvancedPane.tsx:521
+#: src/components/preferences/panes/AdvancedPane.tsx:489
+#: src/components/preferences/panes/AdvancedPane.tsx:519
 msgid "Export"
 msgstr "导出"
 
@@ -1789,8 +1815,8 @@ msgstr "将订阅源导出为 OPML 文件"
 
 #: src/components/layout/AppSidebar.tsx:468
 #: src/components/layout/AppSidebar.tsx:574
-#: src/components/preferences/panes/AdvancedPane.tsx:369
-#: src/components/preferences/panes/AdvancedPane.tsx:516
+#: src/components/preferences/panes/AdvancedPane.tsx:367
+#: src/components/preferences/panes/AdvancedPane.tsx:514
 msgid "Export OPML"
 msgstr "导出 OPML"
 
@@ -1799,32 +1825,32 @@ msgstr "导出 OPML"
 msgid "Export OPML..."
 msgstr "导出 OPML..."
 
-#: src/components/preferences/panes/AdvancedPane.tsx:482
+#: src/components/preferences/panes/AdvancedPane.tsx:480
 msgid "Export preferences"
 msgstr "导出偏好设置"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:311
+#: src/components/preferences/panes/AdvancedPane.tsx:309
 msgid "Export Preferences"
 msgstr "导出偏好设置"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:517
+#: src/components/preferences/panes/AdvancedPane.tsx:515
 msgid "Export your feeds as an OPML file for backup or migration."
 msgstr "将订阅源导出为 OPML 文件，用于备份或迁移。"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:671
-#: src/components/preferences/panes/AdvancedPane.tsx:687
+#: src/components/preferences/panes/AdvancedPane.tsx:669
+#: src/components/preferences/panes/AdvancedPane.tsx:685
 msgid "Factory reset"
 msgstr "恢复出厂设置"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:289
+#: src/components/preferences/panes/AdvancedPane.tsx:287
 msgid "Factory reset complete"
 msgstr "出厂设置已恢复"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:295
+#: src/components/preferences/panes/AdvancedPane.tsx:293
 msgid "Factory reset failed"
 msgstr "恢复出厂设置失败"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:693
+#: src/components/preferences/panes/AdvancedPane.tsx:691
 msgid "Factory reset?"
 msgstr "恢复出厂设置？"
 
@@ -1852,7 +1878,7 @@ msgstr "关闭窗口失败：{0}"
 msgid "Failed to close window: {message}"
 msgstr "关闭窗口失败：{message}"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:454
+#: src/components/preferences/panes/AdvancedPane.tsx:452
 msgid "Failed to copy debug info"
 msgstr "复制调试信息失败"
 
@@ -1893,6 +1919,10 @@ msgstr "删除订阅源失败"
 msgid "Failed to delete user"
 msgstr "删除用户失败"
 
+#: src/components/preferences/panes/AppearancePane.tsx:365
+msgid "Failed to download image"
+msgstr "下载图片失败"
+
 #: src/services/miniflux/entries.ts:566
 msgid "Failed to download original content"
 msgstr "下载原始内容失败"
@@ -1907,17 +1937,17 @@ msgstr "退出全屏失败：{message}"
 
 #: src/components/layout/AppSidebar.tsx:479
 #: src/components/layout/AppSidebar.tsx:488
-#: src/components/preferences/panes/AdvancedPane.tsx:380
-#: src/components/preferences/panes/AdvancedPane.tsx:390
+#: src/components/preferences/panes/AdvancedPane.tsx:378
+#: src/components/preferences/panes/AdvancedPane.tsx:388
 msgid "Failed to export OPML"
 msgstr "导出 OPML 失败"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:323
+#: src/components/preferences/panes/AdvancedPane.tsx:321
 msgid "Failed to export preferences"
 msgstr "导出偏好设置失败"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1133
-#: src/components/preferences/panes/TranslationPane.tsx:1156
+#: src/components/preferences/panes/TranslationPane.tsx:1138
+#: src/components/preferences/panes/TranslationPane.tsx:1161
 msgid "Failed to fetch available models"
 msgstr "获取可用模型失败"
 
@@ -1932,12 +1962,12 @@ msgstr "清除历史记录失败"
 
 #: src/components/layout/AppSidebar.tsx:510
 #: src/components/layout/AppSidebar.tsx:518
-#: src/components/preferences/panes/AdvancedPane.tsx:412
-#: src/components/preferences/panes/AdvancedPane.tsx:421
+#: src/components/preferences/panes/AdvancedPane.tsx:410
+#: src/components/preferences/panes/AdvancedPane.tsx:419
 msgid "Failed to import OPML"
 msgstr "导入 OPML 失败"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:357
+#: src/components/preferences/panes/AdvancedPane.tsx:355
 msgid "Failed to import preferences"
 msgstr "导入偏好设置失败"
 
@@ -1992,11 +2022,11 @@ msgstr "刷新订阅源失败"
 msgid "Failed to refresh feeds"
 msgstr "刷新订阅源失败"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:259
+#: src/components/preferences/panes/AdvancedPane.tsx:257
 msgid "Failed to reset preferences"
 msgstr "重置偏好设置失败"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1042
+#: src/components/preferences/panes/TranslationPane.tsx:1047
 msgid "Failed to resort providers"
 msgstr "重排提供商失败"
 
@@ -2011,7 +2041,7 @@ msgstr "恢复下载失败"
 msgid "Failed to save entry"
 msgstr "保存条目失败"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1059
+#: src/components/preferences/panes/TranslationPane.tsx:1064
 msgid "Failed to save provider key"
 msgstr "保存提供商密钥失败"
 
@@ -2019,7 +2049,7 @@ msgstr "保存提供商密钥失败"
 msgid "Failed to search sources"
 msgstr "搜索来源失败"
 
-#: src/components/preferences/panes/GeneralPane.tsx:126
+#: src/components/preferences/panes/GeneralPane.tsx:125
 msgid "Failed to select folder"
 msgstr "选择文件夹失败"
 
@@ -2045,11 +2075,11 @@ msgstr "更新 API 令牌失败"
 msgid "Failed to update category"
 msgstr "更新分类失败"
 
-#: src/components/preferences/panes/GeneralPane.tsx:43
+#: src/components/preferences/panes/GeneralPane.tsx:42
 msgid "Failed to update close behavior"
 msgstr "更新关闭行为失败"
 
-#: src/components/preferences/panes/ReaderPane.tsx:161
+#: src/components/preferences/panes/ReaderPane.tsx:160
 msgid "Failed to update code theme"
 msgstr "更新代码主题失败"
 
@@ -2057,45 +2087,45 @@ msgstr "更新代码主题失败"
 msgid "Failed to update feed"
 msgstr "更新订阅源失败"
 
-#: src/components/preferences/panes/ReaderPane.tsx:124
+#: src/components/preferences/panes/ReaderPane.tsx:123
 msgid "Failed to update font family"
 msgstr "更新字体失败"
 
-#: src/components/preferences/panes/GeneralPane.tsx:144
+#: src/components/preferences/panes/GeneralPane.tsx:143
 msgid "Failed to update image download path"
 msgstr "更新图片下载路径失败"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:473
+#: src/components/preferences/panes/AdvancedPane.tsx:471
 msgid "Failed to update log level"
 msgstr "更新日志级别失败"
 
-#: src/components/preferences/panes/GeneralPane.tsx:101
+#: src/components/preferences/panes/GeneralPane.tsx:100
 msgid "Failed to update player display mode"
 msgstr "更新播放器显示模式失败"
 
-#: src/components/preferences/panes/TranslationPane.tsx:974
+#: src/components/preferences/panes/TranslationPane.tsx:979
 msgid "Failed to update provider order"
 msgstr "更新提供商顺序失败"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1078
-#: src/components/preferences/panes/TranslationPane.tsx:1114
+#: src/components/preferences/panes/TranslationPane.tsx:1083
+#: src/components/preferences/panes/TranslationPane.tsx:1119
 msgid "Failed to update provider runtime setting"
 msgstr "更新提供商运行时设置失败"
 
-#: src/components/preferences/panes/ReaderPane.tsx:143
+#: src/components/preferences/panes/ReaderPane.tsx:142
 msgid "Failed to update reader settings"
 msgstr "更新阅读器设置失败"
 
-#: src/components/preferences/panes/ReaderPane.tsx:107
+#: src/components/preferences/panes/ReaderPane.tsx:106
 msgid "Failed to update reader theme"
 msgstr "更新阅读主题失败"
 
-#: src/components/preferences/panes/ReaderPane.tsx:188
-#: src/components/preferences/panes/ReaderPane.tsx:408
+#: src/components/preferences/panes/ReaderPane.tsx:187
+#: src/components/preferences/panes/ReaderPane.tsx:386
 msgid "Failed to update setting"
 msgstr "更新设置失败"
 
-#: src/components/preferences/panes/GeneralPane.tsx:83
+#: src/components/preferences/panes/GeneralPane.tsx:82
 msgid "Failed to update start minimized setting"
 msgstr "更新启动时最小化设置失败"
 
@@ -2103,15 +2133,15 @@ msgstr "更新启动时最小化设置失败"
 msgid "Failed to update sync interval"
 msgstr "更新同步间隔失败"
 
-#: src/components/preferences/panes/TranslationPane.tsx:929
+#: src/components/preferences/panes/TranslationPane.tsx:934
 msgid "Failed to update translation route mode"
 msgstr "更新翻译路由模式失败"
 
-#: src/components/preferences/panes/TranslationPane.tsx:943
+#: src/components/preferences/panes/TranslationPane.tsx:948
 msgid "Failed to update translation target language"
 msgstr "更新翻译目标语言失败"
 
-#: src/components/preferences/panes/GeneralPane.tsx:65
+#: src/components/preferences/panes/GeneralPane.tsx:64
 msgid "Failed to update tray icon setting"
 msgstr "更新托盘图标设置失败"
 
@@ -2119,7 +2149,7 @@ msgstr "更新托盘图标设置失败"
 msgid "Failed to update user"
 msgstr "更新用户失败"
 
-#: src/components/preferences/panes/GeneralPane.tsx:162
+#: src/components/preferences/panes/GeneralPane.tsx:161
 msgid "Failed to update video download path"
 msgstr "更新视频下载路径失败"
 
@@ -2144,7 +2174,7 @@ msgstr "订阅源已删除"
 msgid "Feed excluded from translation"
 msgstr "该订阅源已排除翻译"
 
-#: src/components/command-palette/CommandPalette.tsx:140
+#: src/components/command-palette/CommandPalette.tsx:195
 msgid "Feed Management"
 msgstr "订阅管理"
 
@@ -2192,12 +2222,12 @@ msgstr "订阅源 URL 必须是有效的链接"
 msgid "Feeds"
 msgstr "订阅源"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1747
+#: src/components/preferences/panes/TranslationPane.tsx:1758
 msgid "Feeds in this list will not be automatically translated. Chinese conversion still applies."
 msgstr "此列表中的订阅源将不会自动翻译。中文转换仍然适用。"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1581
-#: src/components/preferences/panes/TranslationPane.tsx:1872
+#: src/components/preferences/panes/TranslationPane.tsx:1586
+#: src/components/preferences/panes/TranslationPane.tsx:1883
 msgid "Fetch available models"
 msgstr "获取可用模型"
 
@@ -2225,7 +2255,7 @@ msgstr "通过代理获取"
 msgid "Fetching original content..."
 msgstr "正在获取原始内容..."
 
-#: src/components/preferences/panes/TranslationPane.tsx:1497
+#: src/components/preferences/panes/TranslationPane.tsx:1502
 msgid "Fetching..."
 msgstr "获取中..."
 
@@ -2233,11 +2263,11 @@ msgstr "获取中..."
 msgid "File"
 msgstr "文件"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:367
+#: src/components/preferences/panes/CloudSyncSection.tsx:388
 msgid "File Path"
 msgstr "文件路径"
 
-#: src/components/preferences/panes/AppearancePane.tsx:197
+#: src/components/preferences/panes/AppearancePane.tsx:220
 msgid "Fill"
 msgstr "填充"
 
@@ -2245,7 +2275,7 @@ msgstr "填充"
 msgid "Fill from .env"
 msgstr "从 .env 填充"
 
-#: src/components/preferences/panes/GeneralPane.tsx:239
+#: src/components/preferences/panes/GeneralPane.tsx:226
 msgid "Floating player window"
 msgstr "悬浮播放器窗口"
 
@@ -2270,14 +2300,13 @@ msgstr "专注模式"
 msgid "Follow system theme"
 msgstr "跟随系统主题"
 
-#: src/components/miniflux/ReaderSettings.tsx:450
-#: src/components/preferences/panes/ReaderPane.tsx:231
+#: src/components/miniflux/ReaderSettings.tsx:377
+#: src/components/preferences/panes/ReaderPane.tsx:230
 msgid "Font Family"
 msgstr "字体"
 
-#: src/components/miniflux/ReaderSettings.tsx:246
-#: src/components/miniflux/ReaderSettings.tsx:257
-#: src/components/preferences/panes/ReaderPane.tsx:253
+#: src/components/miniflux/ReaderSettings.tsx:236
+#: src/components/preferences/panes/ReaderPane.tsx:252
 msgid "Font Size"
 msgstr "字号"
 
@@ -2289,14 +2318,19 @@ msgid "Found sources"
 msgstr "发现的来源"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:188
-#: src/components/preferences/panes/TranslationPane.tsx:1737
-#: src/components/preferences/panes/TranslationPane.tsx:2267
+#: src/components/preferences/panes/TranslationPane.tsx:1748
+#: src/components/preferences/panes/TranslationPane.tsx:2292
 msgid "French"
 msgstr "法语"
 
-#: src/components/preferences/panes/TranslationPane.tsx:2015
+#: src/components/preferences/panes/TranslationPane.tsx:2041
 msgid "From"
 msgstr "来源"
+
+#: src/components/preferences/panes/AppearancePane.tsx:415
+#: src/components/preferences/panes/AppearancePane.tsx:487
+msgid "From URL"
+msgstr "从 URL"
 
 #: src/components/preferences/panes/SyncPane.tsx:89
 #: src/components/preferences/panes/SyncPane.tsx:98
@@ -2312,7 +2346,7 @@ msgstr "来源"
 #~ msgid "Full sync failed"
 #~ msgstr "完全同步失败"
 
-#: src/components/preferences/panes/TranslationPane.tsx:731
+#: src/components/preferences/panes/TranslationPane.tsx:736
 msgid "Gemini"
 msgstr "Gemini"
 
@@ -2329,14 +2363,14 @@ msgstr "为当前文章生成 AI 摘要"
 msgid "Generating summary..."
 msgstr "正在生成摘要..."
 
-#: src/components/miniflux/ReaderSettings.tsx:152
-#: src/components/preferences/panes/ReaderPane.tsx:81
+#: src/components/miniflux/ReaderSettings.tsx:142
+#: src/components/preferences/panes/ReaderPane.tsx:80
 msgid "Georgia"
 msgstr "Georgia"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:189
-#: src/components/preferences/panes/TranslationPane.tsx:1738
-#: src/components/preferences/panes/TranslationPane.tsx:2268
+#: src/components/preferences/panes/TranslationPane.tsx:1749
+#: src/components/preferences/panes/TranslationPane.tsx:2293
 msgid "German"
 msgstr "德语"
 
@@ -2348,7 +2382,7 @@ msgstr "手势"
 msgid "Git commit hash."
 msgstr "Git 提交哈希值。"
 
-#: src/components/preferences/panes/TranslationPane.tsx:735
+#: src/components/preferences/panes/TranslationPane.tsx:740
 msgid "GLM"
 msgstr "GLM"
 
@@ -2390,11 +2424,11 @@ msgstr "回到顶部"
 msgid "Go to Top"
 msgstr "回到顶部"
 
-#: src/components/preferences/panes/TranslationPane.tsx:715
+#: src/components/preferences/panes/TranslationPane.tsx:720
 msgid "Google Translate"
 msgstr "谷歌翻译"
 
-#: src/components/command-palette/CommandPalette.tsx:154
+#: src/components/command-palette/CommandPalette.tsx:209
 #: src/lib/menu.ts:370
 msgid "Help"
 msgstr "帮助"
@@ -2443,7 +2477,7 @@ msgstr "历史条目"
 msgid "History page is only available when connected to Miniflux server."
 msgstr "历史记录页面仅在连接到 Miniflux 服务器时可用。"
 
-#: src/components/preferences/panes/ReaderPane.tsx:395
+#: src/components/preferences/panes/ReaderPane.tsx:373
 msgid "How code block languages are detected for syntax highlighting"
 msgstr "代码块语言的检测方式，用于语法高亮"
 
@@ -2451,7 +2485,7 @@ msgstr "代码块语言的检测方式，用于语法高亮"
 #~ msgid "How often to automatically sync with your Miniflux server."
 #~ msgstr "设置与 Miniflux 服务器自动同步的频率。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:176
+#: src/components/preferences/panes/AppearancePane.tsx:199
 msgid "How the image fills the window."
 msgstr "图片填充窗口的方式。"
 
@@ -2475,16 +2509,16 @@ msgstr "https://example.com/feed.xml"
 msgid "https://example.com/rss.xml"
 msgstr "https://example.com/rss.xml"
 
-#: src/components/miniflux/ReaderSettings.tsx:148
-#: src/components/preferences/panes/ReaderPane.tsx:79
+#: src/components/miniflux/ReaderSettings.tsx:138
+#: src/components/preferences/panes/ReaderPane.tsx:78
 msgid "Humanist"
 msgstr "人文体"
 
-#: src/components/preferences/panes/TranslationPane.tsx:721
+#: src/components/preferences/panes/TranslationPane.tsx:726
 msgid "Hunyuan-MT"
 msgstr "混元翻译"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1713
+#: src/components/preferences/panes/TranslationPane.tsx:1721
 msgid "Hybrid auto"
 msgstr "混合自动"
 
@@ -2499,20 +2533,19 @@ msgid "Ignore HTTP cache"
 msgstr "忽略 HTTP 缓存"
 
 #: src/components/miniflux/SafeHtml.tsx:784
-#: src/components/preferences/panes/AppearancePane.tsx:166
 msgid "Image"
 msgstr "图片"
 
-#: src/components/preferences/panes/GeneralPane.tsx:248
+#: src/components/preferences/panes/GeneralPane.tsx:235
 msgid "Image Download Path"
 msgstr "图片下载路径"
 
-#: src/components/preferences/panes/GeneralPane.tsx:141
+#: src/components/preferences/panes/GeneralPane.tsx:140
 msgid "Image download path updated"
 msgstr "图片下载路径已更新"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:505
-#: src/components/preferences/panes/AdvancedPane.tsx:531
+#: src/components/preferences/panes/AdvancedPane.tsx:503
+#: src/components/preferences/panes/AdvancedPane.tsx:529
 msgid "Import"
 msgstr "导入"
 
@@ -2520,14 +2553,14 @@ msgstr "导入"
 msgid "Import feeds from an OPML file"
 msgstr "从 OPML 文件导入订阅源"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:527
+#: src/components/preferences/panes/AdvancedPane.tsx:525
 msgid "Import feeds from an OPML file."
 msgstr "从 OPML 文件导入订阅源。"
 
 #: src/components/layout/AppSidebar.tsx:497
 #: src/components/layout/AppSidebar.tsx:578
-#: src/components/preferences/panes/AdvancedPane.tsx:399
-#: src/components/preferences/panes/AdvancedPane.tsx:526
+#: src/components/preferences/panes/AdvancedPane.tsx:397
+#: src/components/preferences/panes/AdvancedPane.tsx:524
 msgid "Import OPML"
 msgstr "导入 OPML"
 
@@ -2536,11 +2569,11 @@ msgstr "导入 OPML"
 msgid "Import OPML..."
 msgstr "导入 OPML..."
 
-#: src/components/preferences/panes/AdvancedPane.tsx:496
+#: src/components/preferences/panes/AdvancedPane.tsx:494
 msgid "Import preferences"
 msgstr "导入偏好设置"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:334
+#: src/components/preferences/panes/AdvancedPane.tsx:332
 msgid "Import Preferences"
 msgstr "导入偏好设置"
 
@@ -2548,7 +2581,7 @@ msgstr "导入偏好设置"
 #~ msgid "In-App Browser"
 #~ msgstr "应用内浏览器"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1442
+#: src/components/preferences/panes/TranslationPane.tsx:1447
 msgid "Inactive"
 msgstr "未激活"
 
@@ -2616,8 +2649,8 @@ msgid "Interrupted — app was closed"
 msgstr "已中断 — 应用已关闭"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:185
-#: src/components/preferences/panes/TranslationPane.tsx:1734
-#: src/components/preferences/panes/TranslationPane.tsx:2263
+#: src/components/preferences/panes/TranslationPane.tsx:1745
+#: src/components/preferences/panes/TranslationPane.tsx:2288
 msgid "Japanese"
 msgstr "日语"
 
@@ -2631,28 +2664,28 @@ msgstr "刚刚"
 msgid "Keeplist rules"
 msgstr "保留规则"
 
-#: src/components/preferences/panes/TranslationPane.tsx:737
+#: src/components/preferences/panes/TranslationPane.tsx:742
 msgid "Kimi"
 msgstr "Kimi"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:186
-#: src/components/preferences/panes/TranslationPane.tsx:1735
-#: src/components/preferences/panes/TranslationPane.tsx:2264
+#: src/components/preferences/panes/TranslationPane.tsx:1746
+#: src/components/preferences/panes/TranslationPane.tsx:2289
 msgid "Korean"
 msgstr "韩语"
 
 #: src/components/miniflux/SafeHtml.tsx:783
 #: src/components/miniflux/UserNav.tsx:285
-#: src/components/preferences/panes/AppearancePane.tsx:91
-#: src/components/preferences/panes/AppearancePane.tsx:93
+#: src/components/preferences/panes/AppearancePane.tsx:102
+#: src/components/preferences/panes/AppearancePane.tsx:104
 msgid "Language"
 msgstr "语言"
 
-#: src/components/preferences/panes/ReaderPane.tsx:394
+#: src/components/preferences/panes/ReaderPane.tsx:372
 msgid "Language detection"
 msgstr "语言检测"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1720
+#: src/components/preferences/panes/TranslationPane.tsx:1728
 msgid "Language used for immersive translation output."
 msgstr "沉浸式翻译输出使用的语言。"
 
@@ -2692,6 +2725,10 @@ msgstr "最后修改"
 msgid "Last read date"
 msgstr "最近阅读日期"
 
+#: src/components/preferences/panes/CloudSyncSection.tsx:469
+msgid "Last sync:"
+msgstr "上次同步:"
+
 #: src/components/preferences/panes/SyncPane.tsx:119
 msgid "Last synced"
 msgstr "上次同步"
@@ -2725,19 +2762,17 @@ msgstr "最新版本"
 #~ msgid "License"
 #~ msgstr "许可证"
 
-#: src/components/preferences/panes/AppearancePane.tsx:130
+#: src/components/preferences/panes/AppearancePane.tsx:141
 msgid "Light"
 msgstr "浅色"
 
-#: src/components/miniflux/ReaderSettings.tsx:383
-#: src/components/miniflux/ReaderSettings.tsx:394
-#: src/components/preferences/panes/ReaderPane.tsx:333
+#: src/components/miniflux/ReaderSettings.tsx:331
+#: src/components/preferences/panes/ReaderPane.tsx:316
 msgid "Line Height"
 msgstr "行高"
 
-#: src/components/miniflux/ReaderSettings.tsx:316
-#: src/components/miniflux/ReaderSettings.tsx:327
-#: src/components/preferences/panes/ReaderPane.tsx:293
+#: src/components/miniflux/ReaderSettings.tsx:285
+#: src/components/preferences/panes/ReaderPane.tsx:284
 msgid "Line Width"
 msgstr "行宽"
 
@@ -2746,19 +2781,19 @@ msgstr "行宽"
 msgid "Links"
 msgstr "链接"
 
-#: src/components/preferences/panes/TranslationPane.tsx:497
+#: src/components/preferences/panes/TranslationPane.tsx:502
 msgid "LLM"
 msgstr "大语言模型"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1712
+#: src/components/preferences/panes/TranslationPane.tsx:1720
 msgid "LLM first"
 msgstr "LLM 优先"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1776
+#: src/components/preferences/panes/TranslationPane.tsx:1787
 msgid "LLM provider for AI summaries. If not set, uses the translation LLM fallback chain."
 msgstr "用于 AI 摘要的大语言模型提供商。未设置时使用翻译的大语言模型回退链。"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1335
+#: src/components/preferences/panes/TranslationPane.tsx:1340
 msgid "LLM providers"
 msgstr "大语言模型提供商"
 
@@ -2779,19 +2814,19 @@ msgstr "正在加载版本信息..."
 msgid "Loading..."
 msgstr "加载中..."
 
-#: src/components/preferences/panes/TranslationPane.tsx:1459
+#: src/components/preferences/panes/TranslationPane.tsx:1464
 msgid "Local Ollama: leave empty (uses http://localhost:11434). Ollama Cloud: use https://ollama.com — requires an API key and model names with the -cloud suffix (e.g. gpt-oss:120b-cloud)."
 msgstr "本地 Ollama：留空（使用 http://localhost:11434）。Ollama Cloud：使用 https://ollama.com —— 需要 API 密钥和带 -cloud 后缀的模型名称（例如 gpt-oss:120b-cloud）。"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:541
+#: src/components/preferences/panes/AdvancedPane.tsx:539
 msgid "Local storage used"
 msgstr "本地存储使用量"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:742
+#: src/components/preferences/panes/AdvancedPane.tsx:740
 msgid "Log level"
 msgstr "日志级别"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:470
+#: src/components/preferences/panes/AdvancedPane.tsx:468
 msgid "Log level updated"
 msgstr "日志级别已更新"
 
@@ -2803,7 +2838,7 @@ msgstr "放大文字"
 msgid "Make text smaller"
 msgstr "缩小文字"
 
-#: src/components/preferences/panes/AppearancePane.tsx:261
+#: src/components/preferences/panes/AppearancePane.tsx:284
 msgid "Make UI panels transparent to reveal the background image."
 msgstr "使 UI 面板透明以显示背景图片。"
 
@@ -2844,7 +2879,7 @@ msgstr "标记为已读/未读"
 msgid "Mark as unread"
 msgstr "标记为未读"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1925
+#: src/components/preferences/panes/TranslationPane.tsx:1937
 msgid "Max text length"
 msgstr "最大文本长度"
 
@@ -2857,15 +2892,15 @@ msgstr "最大化"
 msgid "Maximize window"
 msgstr "最大化窗口"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1927
+#: src/components/preferences/panes/TranslationPane.tsx:1939
 msgid "Maximum number of characters sent to the LLM. Longer articles are truncated."
 msgstr "发送至大语言模型的最大字符数。较长的文章将被截断。"
 
-#: src/components/preferences/panes/ReaderPane.tsx:294
+#: src/components/preferences/panes/ReaderPane.tsx:285
 msgid "Maximum width of article text in characters (45-80)"
 msgstr "文章正文最大宽度，单位字符 (45-80)"
 
-#: src/components/preferences/panes/TranslationPane.tsx:717
+#: src/components/preferences/panes/TranslationPane.tsx:722
 msgid "Microsoft Translator"
 msgstr "微软翻译"
 
@@ -2895,7 +2930,7 @@ msgstr "Minikyu"
 #~ msgid "Minikyu is open source software."
 #~ msgstr "Minikyu 是开源软件。"
 
-#: src/components/preferences/panes/TranslationPane.tsx:739
+#: src/components/preferences/panes/TranslationPane.tsx:744
 msgid "MiniMax"
 msgstr "MiniMax"
 
@@ -2907,7 +2942,7 @@ msgstr "最小化"
 msgid "Minimize the current window"
 msgstr "最小化当前窗口"
 
-#: src/components/preferences/panes/GeneralPane.tsx:182
+#: src/components/preferences/panes/GeneralPane.tsx:181
 msgid "Minimize to tray"
 msgstr "最小化到托盘"
 
@@ -2920,8 +2955,8 @@ msgstr "最小化窗口"
 msgid "Minimize Window"
 msgstr "最小化窗口"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1216
-#: src/components/preferences/panes/TranslationPane.tsx:1441
+#: src/components/preferences/panes/TranslationPane.tsx:1221
+#: src/components/preferences/panes/TranslationPane.tsx:1446
 msgid "Missing required fields"
 msgstr "缺少必填字段"
 
@@ -2929,15 +2964,15 @@ msgstr "缺少必填字段"
 #~ msgid "MMM d, yyyy"
 #~ msgstr "yyyy年M月d日"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1212
-#: src/components/preferences/panes/TranslationPane.tsx:1272
-#: src/components/preferences/panes/TranslationPane.tsx:1273
-#: src/components/preferences/panes/TranslationPane.tsx:1281
-#: src/components/preferences/panes/TranslationPane.tsx:1805
+#: src/components/preferences/panes/TranslationPane.tsx:1217
+#: src/components/preferences/panes/TranslationPane.tsx:1277
+#: src/components/preferences/panes/TranslationPane.tsx:1278
+#: src/components/preferences/panes/TranslationPane.tsx:1286
+#: src/components/preferences/panes/TranslationPane.tsx:1816
 msgid "Model"
 msgstr "模型"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1807
+#: src/components/preferences/panes/TranslationPane.tsx:1818
 msgid "Model name for AI summaries. If not set, uses the model configured for this provider in translation settings."
 msgstr "AI 摘要使用的模型名称。未设置时使用翻译设置中该提供商配置的模型。"
 
@@ -2945,8 +2980,8 @@ msgstr "AI 摘要使用的模型名称。未设置时使用翻译设置中该提
 msgid "Modern Rust-powered desktop framework"
 msgstr "现代 Rust 驱动的桌面框架"
 
-#: src/components/miniflux/ReaderSettings.tsx:156
-#: src/components/preferences/panes/ReaderPane.tsx:83
+#: src/components/miniflux/ReaderSettings.tsx:146
+#: src/components/preferences/panes/ReaderPane.tsx:82
 msgid "Monospace"
 msgstr "等宽"
 
@@ -2998,24 +3033,25 @@ msgstr "名称"
 msgid "Narrow content"
 msgstr "缩窄内容"
 
-#: src/components/miniflux/ReaderSettings.tsx:167
+#: src/components/miniflux/ReaderSettings.tsx:157
 msgid "Native platform feel"
 msgstr "原生平台风格"
 
-#: src/components/command-palette/CommandPalette.tsx:240
+#: src/components/command-palette/CommandPalette.tsx:337
 msgid "Navigate"
 msgstr "导航"
 
-#: src/components/command-palette/CommandPalette.tsx:138
+#: src/components/command-palette/CommandPalette.tsx:193
 #: src/lib/shortcut-registry.ts:26
 msgid "Navigation"
 msgstr "导航"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1351
+#: src/components/preferences/panes/TranslationPane.tsx:1356
 msgid "Needs setup"
 msgstr "需要配置"
 
 #: src/components/preferences/panes/ApiTokenPane.tsx:101
+#: src/components/preferences/panes/CloudSyncSection.tsx:472
 msgid "Never"
 msgstr "从不"
 
@@ -3069,13 +3105,13 @@ msgid "No API keys created yet."
 msgstr "尚未创建 API 密钥。"
 
 #: src/components/preferences/panes/TranslationPane.tsx:2214
-msgid "No categories excluded. All categories will be translated when translation is enabled."
-msgstr "没有排除任何分类。启用翻译后，所有分类都将被翻译。"
+#~ msgid "No categories excluded. All categories will be translated when translation is enabled."
+#~ msgstr "没有排除任何分类。启用翻译后，所有分类都将被翻译。"
 
 #: src/components/miniflux/AddFeedDialog.tsx:575
 #: src/components/miniflux/settings/FeedFormDialog.tsx:442
 #: src/components/preferences/panes/CategoriesPane.tsx:67
-#: src/components/preferences/panes/TranslationPane.tsx:2236
+#: src/components/preferences/panes/TranslationPane.tsx:2263
 msgid "No categories found"
 msgstr "未找到分类"
 
@@ -3097,7 +3133,7 @@ msgstr "没有已完成的下载"
 msgid "No content available"
 msgstr "暂无内容"
 
-#: src/components/preferences/panes/TranslationPane.tsx:2008
+#: src/components/preferences/panes/TranslationPane.tsx:2020
 msgid "No custom rules yet"
 msgstr "暂无自定义规则"
 
@@ -3122,11 +3158,11 @@ msgid "No failed downloads"
 msgstr "没有失败的下载"
 
 #: src/components/preferences/panes/TranslationPane.tsx:2132
-msgid "No feeds excluded. All feeds will be translated when translation is enabled."
-msgstr "没有排除任何订阅源。启用翻译后，所有订阅源都将被翻译。"
+#~ msgid "No feeds excluded. All feeds will be translated when translation is enabled."
+#~ msgstr "没有排除任何订阅源。启用翻译后，所有订阅源都将被翻译。"
 
 #: src/components/preferences/panes/FeedsPane.tsx:85
-#: src/components/preferences/panes/TranslationPane.tsx:2153
+#: src/components/preferences/panes/TranslationPane.tsx:2188
 msgid "No feeds found"
 msgstr "未找到订阅源"
 
@@ -3143,10 +3179,10 @@ msgid "No integration services enabled"
 msgstr "未启用任何集成服务"
 
 #: src/components/preferences/panes/TranslationPane.tsx:2317
-msgid "No languages excluded. All entries will be translated when auto-translation is enabled."
-msgstr "没有排除的语言。启用自动翻译时，所有文章都将被翻译。"
+#~ msgid "No languages excluded. All entries will be translated when auto-translation is enabled."
+#~ msgstr "没有排除的语言。启用自动翻译时，所有文章都将被翻译。"
 
-#: src/components/preferences/panes/TranslationPane.tsx:2339
+#: src/components/preferences/panes/TranslationPane.tsx:2328
 msgid "No languages found"
 msgstr "未找到语言"
 
@@ -3155,8 +3191,8 @@ msgstr "未找到语言"
 #~ msgid "No models found"
 #~ msgstr "未找到模型"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1142
-#: src/components/preferences/panes/TranslationPane.tsx:1161
+#: src/components/preferences/panes/TranslationPane.tsx:1147
+#: src/components/preferences/panes/TranslationPane.tsx:1166
 msgid "No models found for this provider"
 msgstr "未找到此提供商的模型"
 
@@ -3164,7 +3200,7 @@ msgstr "未找到此提供商的模型"
 msgid "No new articles"
 msgstr "没有新文章"
 
-#: src/components/command-palette/CommandPalette.tsx:199
+#: src/components/command-palette/CommandPalette.tsx:266
 msgid "No results found."
 msgstr "未找到结果。"
 
@@ -3193,7 +3229,7 @@ msgstr "无"
 msgid "None (disabled)"
 msgstr "无（已禁用）"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1427
+#: src/components/preferences/panes/TranslationPane.tsx:1432
 msgid "Not configured"
 msgstr "未配置"
 
@@ -3205,7 +3241,7 @@ msgstr "未连接到 Miniflux 服务器"
 msgid "Nothing playing"
 msgstr "当前无播放"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:260
+#: src/components/preferences/panes/CloudSyncSection.tsx:284
 msgid "Object Key"
 msgstr "对象键"
 
@@ -3231,16 +3267,16 @@ msgid "OK"
 msgstr "确定"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:213
-#: src/components/preferences/panes/ReaderPane.tsx:70
+#: src/components/preferences/panes/ReaderPane.tsx:69
 #: src/lib/menu.ts:161
 msgid "OLED"
 msgstr "OLED"
 
-#: src/components/preferences/panes/TranslationPane.tsx:727
+#: src/components/preferences/panes/TranslationPane.tsx:732
 msgid "Ollama"
 msgstr "Ollama"
 
-#: src/components/preferences/panes/AppearancePane.tsx:204
+#: src/components/preferences/panes/AppearancePane.tsx:227
 msgid "Opacity"
 msgstr "不透明度"
 
@@ -3325,41 +3361,41 @@ msgstr "打开问题追踪器报告错误"
 msgid "Open translation preferences"
 msgstr "打开翻译偏好设置"
 
-#: src/components/preferences/panes/TranslationPane.tsx:725
+#: src/components/preferences/panes/TranslationPane.tsx:730
 msgid "OpenAI"
 msgstr "OpenAI"
 
-#: src/components/preferences/panes/TranslationPane.tsx:733
+#: src/components/preferences/panes/TranslationPane.tsx:738
 msgid "OpenRouter"
 msgstr "OpenRouter"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:514
+#: src/components/preferences/panes/AdvancedPane.tsx:512
 msgid "OPML"
 msgstr "OPML"
 
 #: src/components/layout/AppSidebar.tsx:485
-#: src/components/preferences/panes/AdvancedPane.tsx:386
+#: src/components/preferences/panes/AdvancedPane.tsx:384
 msgid "OPML exported successfully"
 msgstr "OPML 导出成功"
 
 #: src/components/layout/AppSidebar.tsx:515
-#: src/components/preferences/panes/AdvancedPane.tsx:417
+#: src/components/preferences/panes/AdvancedPane.tsx:415
 msgid "OPML imported successfully"
 msgstr "OPML 导入成功"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1682
+#: src/components/preferences/panes/TranslationPane.tsx:1687
 msgid "Optional – for cloud API"
 msgstr "可选 - 用于云端 API"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1483
+#: src/components/preferences/panes/TranslationPane.tsx:1488
 msgid "Optional endpoint override"
 msgstr "可选的端点覆盖"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1647
+#: src/components/preferences/panes/TranslationPane.tsx:1652
 msgid "Optional timeout"
 msgstr "可选超时时间"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1659
+#: src/components/preferences/panes/TranslationPane.tsx:1664
 msgid "Optional. Leave empty for local Ollama. Required for the Ollama cloud API (ollama.com)."
 msgstr "可选。本地 Ollama 留空。Ollama 云端 API (ollama.com) 必填。"
 
@@ -3372,15 +3408,15 @@ msgstr "原始内容已下载"
 msgid "Original content fetched"
 msgstr "原始内容已获取"
 
-#: src/components/command-palette/CommandPalette.tsx:156
+#: src/components/command-palette/CommandPalette.tsx:211
 msgid "Others"
 msgstr "其他"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1905
+#: src/components/preferences/panes/TranslationPane.tsx:1916
 msgid "Override the default system prompt for AI summaries. Leave empty to use the default."
 msgstr "覆盖 AI 摘要的默认系统提示词。留空则使用默认值。"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1600
+#: src/components/preferences/panes/TranslationPane.tsx:1605
 msgid "Override the default translation instruction. Supports {source_lang} and {target_lang} placeholders."
 msgstr "覆盖默认翻译指令。支持 {source_lang} 和 {target_lang} 占位符。"
 
@@ -3391,7 +3427,7 @@ msgid "Page {0} of {1}"
 msgstr "第 {0} 页，共 {1} 页"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:207
-#: src/components/preferences/panes/ReaderPane.tsx:67
+#: src/components/preferences/panes/ReaderPane.tsx:66
 #: src/lib/menu.ts:146
 msgid "Paper"
 msgstr "纸张"
@@ -3402,8 +3438,8 @@ msgstr "解析错误"
 
 #: src/components/miniflux/ConnectionDialog.tsx:309
 #: src/components/miniflux/settings/UserFormDialog.tsx:106
-#: src/components/preferences/panes/CloudSyncSection.tsx:384
-#: src/components/preferences/panes/CloudSyncSection.tsx:420
+#: src/components/preferences/panes/CloudSyncSection.tsx:406
+#: src/components/preferences/panes/CloudSyncSection.tsx:441
 msgid "Password"
 msgstr "密码"
 
@@ -3416,7 +3452,15 @@ msgstr "需要提供密码"
 msgid "Paste a website URL to discover available RSS/Atom feeds."
 msgstr "粘贴网站 URL 以发现可用的 RSS/Atom 订阅源。"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1683
+#: src/components/preferences/panes/AppearancePane.tsx:488
+msgid "Paste an image link"
+msgstr "粘贴图片链接"
+
+#: src/components/command-palette/CommandPalette.tsx:242
+msgid "Paste an image URL..."
+msgstr "粘贴图片网址..."
+
+#: src/components/preferences/panes/TranslationPane.tsx:1688
 msgid "Paste key"
 msgstr "粘贴密钥"
 
@@ -3440,7 +3484,7 @@ msgstr "已暂停"
 #~ msgid "Performs a complete sync from scratch, re-downloading all categories, feeds, and entries. Use this if your data seems out of sync."
 #~ msgstr "从头开始执行完全同步，重新下载所有分类、订阅源和条目。如果你的数据似乎不同步，请使用此功能。"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:673
+#: src/components/preferences/panes/AdvancedPane.tsx:671
 msgid "Permanently deletes everything — all accounts, synced data, preferences, downloads, and credentials. This cannot be undone."
 msgstr "永久删除所有内容——包括所有账户、同步数据、偏好设置、下载和凭证。此操作无法撤销。"
 
@@ -3479,11 +3523,11 @@ msgstr "播放 / 暂停播客"
 msgid "Playback speed"
 msgstr "播放速度"
 
-#: src/components/preferences/panes/GeneralPane.tsx:225
+#: src/components/preferences/panes/GeneralPane.tsx:212
 msgid "Player Display Mode"
 msgstr "播放器显示模式"
 
-#: src/components/preferences/panes/GeneralPane.tsx:98
+#: src/components/preferences/panes/GeneralPane.tsx:97
 msgid "Player display mode updated"
 msgstr "播放器显示模式已更新"
 
@@ -3496,8 +3540,8 @@ msgid "Please connect to your server to use this feature."
 msgstr "请连接到服务器以使用此功能。"
 
 #: src/components/preferences/panes/CloudSyncSection.tsx:82
-msgid "Please enter a password"
-msgstr "请输入密码"
+#~ msgid "Please enter a password"
+#~ msgstr "请输入密码"
 
 #: src/components/miniflux/AddFeedDialog.tsx:295
 #: src/components/miniflux/SearchSourceDialog.tsx:67
@@ -3510,10 +3554,14 @@ msgid "Please enter a valid URL"
 msgstr "请输入有效的 URL"
 
 #: src/components/preferences/panes/CloudSyncSection.tsx:57
-msgid "Please enter both access key and secret key"
-msgstr "请输入访问密钥和秘密密钥"
+#~ msgid "Please enter both access key and secret key"
+#~ msgstr "请输入访问密钥和秘密密钥"
 
-#: src/components/command-palette/CommandPalette.tsx:144
+#: src/components/preferences/panes/AppearancePane.tsx:474
+msgid "PNG, JPG, WebP, GIF, or AVIF"
+msgstr "PNG、JPG、WebP、GIF 或 AVIF"
+
+#: src/components/command-palette/CommandPalette.tsx:199
 #: src/components/miniflux/EntryList.tsx:855
 #: src/components/miniflux/EntryReading.tsx:1746
 #: src/lib/menu.ts:283
@@ -3530,27 +3578,27 @@ msgstr "播客播放"
 msgid "Preferences"
 msgstr "偏好设置"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:480
+#: src/components/preferences/panes/AdvancedPane.tsx:478
 msgid "Preferences Backup"
 msgstr "偏好设置备份"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:319
+#: src/components/preferences/panes/AdvancedPane.tsx:317
 msgid "Preferences exported successfully"
 msgstr "偏好设置导出成功"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:351
+#: src/components/preferences/panes/AdvancedPane.tsx:349
 msgid "Preferences imported"
 msgstr "偏好设置已导入"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:142
+#: src/components/preferences/panes/CloudSyncSection.tsx:159
 msgid "Preferences pushed to cloud"
 msgstr "设置已推送到云端"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:255
+#: src/components/preferences/panes/AdvancedPane.tsx:253
 msgid "Preferences reset to defaults"
 msgstr "偏好设置已重置为默认值"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:156
+#: src/components/preferences/panes/CloudSyncSection.tsx:177
 msgid "Preferences restored from cloud"
 msgstr "已从云端恢复设置"
 
@@ -3598,46 +3646,46 @@ msgstr "上一部分"
 #~ msgid "Project"
 #~ msgstr "项目"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:197
+#: src/components/preferences/panes/CloudSyncSection.tsx:218
 msgid "Protocol"
 msgstr "协议"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:633
-#: src/components/preferences/panes/TranslationPane.tsx:1774
+#: src/components/preferences/panes/TranslationPane.tsx:1785
 msgid "Provider"
 msgstr "提供商"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1065
+#: src/components/preferences/panes/TranslationPane.tsx:1070
 msgid "Provider key saved"
 msgstr "提供商密钥已保存"
 
-#: src/components/preferences/panes/TranslationPane.tsx:972
+#: src/components/preferences/panes/TranslationPane.tsx:977
 msgid "Provider order updated"
 msgstr "提供商顺序已更新"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1075
+#: src/components/preferences/panes/TranslationPane.tsx:1080
 msgid "Provider runtime setting updated"
 msgstr "提供商运行时设置已更新"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1378
+#: src/components/preferences/panes/TranslationPane.tsx:1383
 msgid "Provider settings"
 msgstr "提供商设置"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1190
-#: src/components/preferences/panes/TranslationPane.tsx:1247
+#: src/components/preferences/panes/TranslationPane.tsx:1195
+#: src/components/preferences/panes/TranslationPane.tsx:1252
 msgid "Provider verification failed"
 msgstr "提供商验证失败"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1251
+#: src/components/preferences/panes/TranslationPane.tsx:1256
 msgid "Provider verification succeeded"
 msgstr "提供商验证成功"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1302
-#: src/components/preferences/panes/TranslationPane.tsx:1306
+#: src/components/preferences/panes/TranslationPane.tsx:1307
+#: src/components/preferences/panes/TranslationPane.tsx:1311
 msgid "Providers"
 msgstr "提供商"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1040
+#: src/components/preferences/panes/TranslationPane.tsx:1045
 msgid "Providers resorted"
 msgstr "提供商已重排"
 
@@ -3653,7 +3701,7 @@ msgstr "从底部上拉"
 msgid "Pull from top"
 msgstr "从顶部下拉"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:486
+#: src/components/preferences/panes/CloudSyncSection.tsx:496
 msgid "Pull Now"
 msgstr "立即拉取"
 
@@ -3669,15 +3717,15 @@ msgstr "正在从服务器拉取分类"
 msgid "Pulling feed subscriptions from server"
 msgstr "正在从服务器拉取订阅源"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:486
+#: src/components/preferences/panes/CloudSyncSection.tsx:497
 msgid "Pulling..."
 msgstr "拉取中..."
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:475
+#: src/components/preferences/panes/CloudSyncSection.tsx:489
 msgid "Push Now"
 msgstr "立即推送"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:475
+#: src/components/preferences/panes/CloudSyncSection.tsx:490
 msgid "Pushing..."
 msgstr "推送中..."
 
@@ -3697,15 +3745,15 @@ msgstr "快速访问所有功能"
 msgid "Quit {APP_NAME}"
 msgstr "退出 {APP_NAME}"
 
-#: src/components/preferences/panes/GeneralPane.tsx:183
+#: src/components/preferences/panes/GeneralPane.tsx:182
 msgid "Quit application"
 msgstr "退出应用程序"
 
-#: src/components/preferences/panes/TranslationPane.tsx:741
+#: src/components/preferences/panes/TranslationPane.tsx:746
 msgid "Qwen"
 msgstr "通义千问"
 
-#: src/components/preferences/panes/TranslationPane.tsx:719
+#: src/components/preferences/panes/TranslationPane.tsx:724
 msgid "Qwen-MT"
 msgstr "通义千问翻译"
 
@@ -3733,7 +3781,7 @@ msgstr "阅读器"
 msgid "Reader companion illustration"
 msgstr "阅读助手插图"
 
-#: src/components/preferences/panes/ReaderPane.tsx:197
+#: src/components/preferences/panes/ReaderPane.tsx:196
 #: src/lib/menu.ts:137
 msgid "Reader Theme"
 msgstr "阅读主题"
@@ -3758,7 +3806,7 @@ msgstr "阅读主题：泛黄"
 msgid "Reader Theme: Slate"
 msgstr "阅读主题：石板"
 
-#: src/components/miniflux/ReaderSettings.tsx:196
+#: src/components/miniflux/ReaderSettings.tsx:186
 msgid "Reader typography settings"
 msgstr "阅读器排版设置"
 
@@ -3771,7 +3819,7 @@ msgstr "阅读"
 msgid "Reading display"
 msgstr "阅读显示"
 
-#: src/components/preferences/panes/ReaderPane.tsx:452
+#: src/components/preferences/panes/ReaderPane.tsx:431
 msgid "Reading Features"
 msgstr "阅读功能"
 
@@ -3783,11 +3831,11 @@ msgstr "阅读主题"
 msgid "Reading View"
 msgstr "阅读视图"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1439
+#: src/components/preferences/panes/TranslationPane.tsx:1444
 msgid "Ready"
 msgstr "就绪"
 
-#: src/components/command-palette/CommandPalette.tsx:136
+#: src/components/command-palette/CommandPalette.tsx:191
 msgid "Recent"
 msgstr "最近"
 
@@ -3839,11 +3887,11 @@ msgstr "刷新失败：{message}"
 msgid "Refreshing..."
 msgstr "正在刷新..."
 
-#: src/components/preferences/panes/ReaderPane.tsx:418
+#: src/components/preferences/panes/ReaderPane.tsx:396
 msgid "Regex only"
 msgstr "仅正则"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:249
+#: src/components/preferences/panes/CloudSyncSection.tsx:272
 msgid "Region"
 msgstr "区域"
 
@@ -3857,19 +3905,15 @@ msgstr "重新加载应用"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:871
 #: src/components/podcast/PlayerWindowQueue.tsx:110
-#: src/components/preferences/panes/AppearancePane.tsx:341
-#: src/components/preferences/panes/TranslationPane.tsx:2031
+#: src/components/preferences/panes/TranslationPane.tsx:2063
 msgid "Remove"
 msgstr "移除"
 
-#. placeholder {0}: cat.title
-#. placeholder {0}: feed.title
-#. placeholder {0}: languageLabels[lang] ?? lang
 #: src/components/preferences/panes/TranslationPane.tsx:2120
 #: src/components/preferences/panes/TranslationPane.tsx:2201
 #: src/components/preferences/panes/TranslationPane.tsx:2304
-msgid "Remove {0}"
-msgstr "移除 {0}"
+#~ msgid "Remove {0}"
+#~ msgstr "移除 {0}"
 
 #. placeholder {0}: tag.text
 #: src/components/ui/tag-input.tsx:127
@@ -3884,12 +3928,12 @@ msgstr "从播放队列中移除所有节目"
 msgid "Remove current account and all related data"
 msgstr "移除当前账户及所有相关数据"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:287
-#: src/components/preferences/panes/CloudSyncSection.tsx:392
+#: src/components/preferences/panes/CloudSyncSection.tsx:312
+#: src/components/preferences/panes/CloudSyncSection.tsx:414
 msgid "Remove saved credentials"
 msgstr "删除已保存的凭据"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:597
+#: src/components/preferences/panes/AdvancedPane.tsx:595
 msgid "Removes synced entries, feeds, and categories for the current account. Other accounts and preferences are not affected."
 msgstr "移除当前账户的同步条目、订阅源和分类。其他账户和偏好设置不受影响。"
 
@@ -3898,11 +3942,11 @@ msgstr "移除当前账户的同步条目、订阅源和分类。其他账户和
 #~ msgstr "正在移除过期的本地记录"
 
 #. placeholder {0}: providerDisplay.providerName
-#: src/components/preferences/panes/TranslationPane.tsx:1357
+#: src/components/preferences/panes/TranslationPane.tsx:1362
 msgid "Reorder {0}"
 msgstr "重新排序 {0}"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1680
+#: src/components/preferences/panes/TranslationPane.tsx:1685
 msgid "Replace key"
 msgstr "替换密钥"
 
@@ -3914,15 +3958,15 @@ msgstr "报告问题"
 msgid "Report an Issue..."
 msgstr "报告问题..."
 
-#: src/components/preferences/panes/TranslationPane.tsx:1449
+#: src/components/preferences/panes/TranslationPane.tsx:1454
 msgid "Required fields"
 msgstr "必填字段"
 
-#: src/components/miniflux/ReaderSettings.tsx:217
+#: src/components/miniflux/ReaderSettings.tsx:207
 #: src/components/preferences/KeyCapture.tsx:118
-#: src/components/preferences/panes/AdvancedPane.tsx:646
-#: src/components/preferences/panes/AdvancedPane.tsx:662
-#: src/components/preferences/panes/TranslationPane.tsx:2057
+#: src/components/preferences/panes/AdvancedPane.tsx:644
+#: src/components/preferences/panes/AdvancedPane.tsx:660
+#: src/components/preferences/panes/TranslationPane.tsx:2093
 #: src/components/preferences/ShortcutPicker.tsx:231
 msgid "Reset"
 msgstr "重置"
@@ -3940,11 +3984,11 @@ msgstr "重置字号"
 msgid "Reset Playback Speed"
 msgstr "重置播放速度"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:636
+#: src/components/preferences/panes/AdvancedPane.tsx:634
 msgid "Reset preferences"
 msgstr "重置偏好设置"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:652
+#: src/components/preferences/panes/AdvancedPane.tsx:650
 msgid "Reset preferences?"
 msgstr "重置偏好设置？"
 
@@ -3960,12 +4004,12 @@ msgstr "将速度重置为 1.0 倍"
 msgid "Reset text to default size"
 msgstr "将文字重置为默认大小"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:646
-#: src/components/preferences/panes/AdvancedPane.tsx:687
+#: src/components/preferences/panes/AdvancedPane.tsx:644
+#: src/components/preferences/panes/AdvancedPane.tsx:685
 msgid "Resetting..."
 msgstr "正在重置..."
 
-#: src/components/preferences/panes/TranslationPane.tsx:1312
+#: src/components/preferences/panes/TranslationPane.tsx:1317
 msgid "Resort providers"
 msgstr "重排提供商"
 
@@ -3985,15 +4029,15 @@ msgstr "重启以更新"
 msgid "Restore"
 msgstr "恢复"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:638
+#: src/components/preferences/panes/AdvancedPane.tsx:636
 msgid "Restore all settings to their factory defaults. Your data and accounts are not affected."
 msgstr "将所有设置恢复为出厂默认值。您的数据和账户不受影响。"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:497
+#: src/components/preferences/panes/AdvancedPane.tsx:495
 msgid "Restore settings from a previously exported JSON file."
 msgstr "从之前导出的 JSON 文件恢复设置。"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:444
+#: src/components/preferences/panes/CloudSyncSection.tsx:458
 msgid "Restore settings from cloud when the app opens"
 msgstr "应用启动时从云端恢复设置"
 
@@ -4032,7 +4076,7 @@ msgstr "重写规则"
 msgid "Role"
 msgstr "角色"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1697
+#: src/components/preferences/panes/TranslationPane.tsx:1702
 msgid "Route strategy"
 msgstr "路由策略"
 
@@ -4045,7 +4089,7 @@ msgstr "每页行数"
 msgid "RSS Reader"
 msgstr "RSS 阅读器"
 
-#: src/components/command-palette/CommandPalette.tsx:227
+#: src/components/command-palette/CommandPalette.tsx:324
 msgid "Run"
 msgstr "运行"
 
@@ -4061,12 +4105,12 @@ msgstr "运行中"
 msgid "Runtime"
 msgstr "运行时"
 
-#: src/components/miniflux/ReaderSettings.tsx:144
-#: src/components/miniflux/ReaderSettings.tsx:158
+#: src/components/miniflux/ReaderSettings.tsx:134
+#: src/components/miniflux/ReaderSettings.tsx:148
 msgid "Sans"
 msgstr "无衬线"
 
-#: src/components/preferences/panes/ReaderPane.tsx:77
+#: src/components/preferences/panes/ReaderPane.tsx:76
 msgid "Sans Serif"
 msgstr "无衬线"
 
@@ -4083,10 +4127,10 @@ msgstr "保存更改"
 
 #: src/components/preferences/panes/CloudSyncSection.tsx:329
 #: src/components/preferences/panes/CloudSyncSection.tsx:427
-msgid "Save Credentials"
-msgstr "保存凭据"
+#~ msgid "Save Credentials"
+#~ msgstr "保存凭据"
 
-#: src/components/preferences/panes/TranslationPane.tsx:2069
+#: src/components/preferences/panes/TranslationPane.tsx:2106
 msgid "Save Rules"
 msgstr "保存规则"
 
@@ -4095,7 +4139,7 @@ msgstr "保存规则"
 msgid "Save to services"
 msgstr "保存到服务"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:483
+#: src/components/preferences/panes/AdvancedPane.tsx:481
 msgid "Save your current settings to a JSON file for backup or migration."
 msgstr "将当前设置保存为 JSON 文件，用于备份或迁移。"
 
@@ -4105,7 +4149,7 @@ msgstr "已保存！"
 
 #: src/components/miniflux/EditCategoryDialog.tsx:106
 #: src/components/miniflux/EditFeedDialog.tsx:456
-#: src/components/preferences/panes/TranslationPane.tsx:2069
+#: src/components/preferences/panes/TranslationPane.tsx:2106
 msgid "Saving..."
 msgstr "正在保存..."
 
@@ -4156,7 +4200,7 @@ msgstr "先搜索网站，然后选择一个来源继续。"
 msgid "Search categories"
 msgstr "搜索分类"
 
-#: src/components/preferences/panes/TranslationPane.tsx:2228
+#: src/components/preferences/panes/TranslationPane.tsx:2253
 msgid "Search categories to exclude..."
 msgstr "搜索要排除的分类..."
 
@@ -4168,7 +4212,7 @@ msgstr "搜索分类..."
 msgid "Search entries..."
 msgstr "搜索文章..."
 
-#: src/components/preferences/panes/TranslationPane.tsx:2145
+#: src/components/preferences/panes/TranslationPane.tsx:2178
 msgid "Search feeds to exclude..."
 msgstr "搜索要排除的订阅源..."
 
@@ -4176,7 +4220,7 @@ msgstr "搜索要排除的订阅源..."
 msgid "Search feeds..."
 msgstr "搜索订阅源..."
 
-#: src/components/miniflux/ReaderSettings.tsx:464
+#: src/components/miniflux/ReaderSettings.tsx:391
 msgid "Search fonts..."
 msgstr "搜索字体..."
 
@@ -4188,7 +4232,7 @@ msgstr "搜索网站或博客 URL 以发现可用的订阅源。"
 msgid "Search in downloads"
 msgstr "在下载中搜索"
 
-#: src/components/preferences/panes/TranslationPane.tsx:2331
+#: src/components/preferences/panes/TranslationPane.tsx:2318
 msgid "Search languages to skip..."
 msgstr "搜索要跳过的语言..."
 
@@ -4221,7 +4265,7 @@ msgstr "正在搜索来源..."
 msgid "Searching..."
 msgstr "正在搜索..."
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:322
+#: src/components/preferences/panes/CloudSyncSection.tsx:345
 msgid "Secret Access Key"
 msgstr "秘密访问密钥"
 
@@ -4234,11 +4278,15 @@ msgstr "选择分类"
 msgid "Select an entry to read"
 msgstr "选择一篇文章阅读"
 
-#: src/components/preferences/panes/AppearancePane.tsx:301
+#: src/components/preferences/panes/AppearancePane.tsx:328
 msgid "Select Background Image"
 msgstr "选择背景图片"
 
-#: src/components/preferences/panes/GeneralPane.tsx:112
+#: src/components/command-palette/CommandPalette.tsx:292
+msgid "Select from file..."
+msgstr "从文件选取..."
+
+#: src/components/preferences/panes/GeneralPane.tsx:111
 msgid "Select Image Download Folder"
 msgstr "选择图片下载文件夹"
 
@@ -4250,11 +4298,11 @@ msgstr "选择或输入服务器 URL"
 msgid "Select phrase text"
 msgstr "选择短语文本"
 
-#: src/components/preferences/panes/AppearancePane.tsx:127
+#: src/components/preferences/panes/AppearancePane.tsx:138
 msgid "Select theme"
 msgstr "选择主题"
 
-#: src/components/preferences/panes/GeneralPane.tsx:113
+#: src/components/preferences/panes/GeneralPane.tsx:112
 msgid "Select Video Download Folder"
 msgstr "选择视频下载文件夹"
 
@@ -4263,13 +4311,13 @@ msgid "Sensitivity"
 msgstr "灵敏度"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:209
-#: src/components/preferences/panes/ReaderPane.tsx:68
+#: src/components/preferences/panes/ReaderPane.tsx:67
 #: src/lib/menu.ts:151
 msgid "Sepia"
 msgstr "泛黄"
 
-#: src/components/miniflux/ReaderSettings.tsx:150
-#: src/components/preferences/panes/ReaderPane.tsx:80
+#: src/components/miniflux/ReaderSettings.tsx:140
+#: src/components/preferences/panes/ReaderPane.tsx:79
 msgid "Serif"
 msgstr "衬线"
 
@@ -4311,10 +4359,14 @@ msgid "services"
 msgstr "项服务"
 
 #: src/components/preferences/panes/AppearancePane.tsx:167
-msgid "Set a custom background image for the app window."
-msgstr "为应用窗口设置自定义背景图片。"
+#~ msgid "Set a custom background image for the app window."
+#~ msgstr "为应用窗口设置自定义背景图片。"
 
-#: src/components/command-palette/CommandPalette.tsx:150
+#: src/lib/commands/view-commands.ts:192
+msgid "Set background from file or URL"
+msgstr "从文件或网址设置背景"
+
+#: src/components/command-palette/CommandPalette.tsx:205
 #: src/components/preferences/panes/AdvancedPane.tsx:81
 #: src/components/titlebar/WindowTitleBar.tsx:86
 msgid "Settings"
@@ -4337,7 +4389,7 @@ msgstr "分享链接已复制！"
 msgid "Shortcuts"
 msgstr "快捷键"
 
-#: src/components/preferences/panes/ReaderPane.tsx:472
+#: src/components/preferences/panes/ReaderPane.tsx:445
 msgid "Show a compact reading progress bar at the bottom of the reader"
 msgstr "在阅读器底部显示紧凑的阅读进度条"
 
@@ -4403,7 +4455,7 @@ msgstr "显示左侧边栏"
 msgid "Show the podcast player window"
 msgstr "显示播客播放器窗口"
 
-#: src/components/preferences/panes/GeneralPane.tsx:189
+#: src/components/preferences/panes/GeneralPane.tsx:188
 msgid "Show Tray Icon"
 msgstr "显示托盘图标"
 
@@ -4420,7 +4472,7 @@ msgid "Sidebar"
 msgstr "侧边栏"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:635
-#: src/components/preferences/panes/AppearancePane.tsx:175
+#: src/components/preferences/panes/AppearancePane.tsx:198
 msgid "Size"
 msgstr "大小"
 
@@ -4454,7 +4506,7 @@ msgstr "快进 30 秒"
 msgid "Skip Forward 30s"
 msgstr "快进 30 秒"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1763
+#: src/components/preferences/panes/TranslationPane.tsx:1774
 msgid "Skip source languages"
 msgstr "跳过源语言"
 
@@ -4467,17 +4519,17 @@ msgid "Skip this feed"
 msgstr "跳过此订阅源"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:211
-#: src/components/preferences/panes/ReaderPane.tsx:69
+#: src/components/preferences/panes/ReaderPane.tsx:68
 #: src/lib/menu.ts:156
 msgid "Slate"
 msgstr "石板"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:352
+#: src/components/preferences/panes/AdvancedPane.tsx:350
 msgid "Some changes may require an app restart."
 msgstr "部分更改可能需要重启应用。"
 
 #: src/components/ErrorBoundary.tsx:194
-#: src/components/preferences/panes/AppearancePane.tsx:78
+#: src/components/preferences/panes/AppearancePane.tsx:89
 msgid "Something went wrong"
 msgstr "出错了"
 
@@ -4495,13 +4547,13 @@ msgstr "排序方式"
 msgid "Source URL is required"
 msgstr "来源 URL 为必填项"
 
-#: src/components/preferences/panes/ReaderPane.tsx:334
+#: src/components/preferences/panes/ReaderPane.tsx:317
 msgid "Spacing between lines of text (1.4-2.2)"
 msgstr "文本行间距 (1.4-2.2)"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:187
-#: src/components/preferences/panes/TranslationPane.tsx:1736
-#: src/components/preferences/panes/TranslationPane.tsx:2266
+#: src/components/preferences/panes/TranslationPane.tsx:1747
+#: src/components/preferences/panes/TranslationPane.tsx:2291
 msgid "Spanish"
 msgstr "西班牙语"
 
@@ -4535,15 +4587,15 @@ msgstr "星标条目"
 msgid "Starred items page is only available when connected to Miniflux server."
 msgstr "星标条目页面仅在连接到 Miniflux 服务器时可用。"
 
-#: src/components/preferences/panes/GeneralPane.tsx:208
+#: src/components/preferences/panes/GeneralPane.tsx:201
 msgid "Start Minimized"
 msgstr "启动时最小化"
 
-#: src/components/preferences/panes/GeneralPane.tsx:80
+#: src/components/preferences/panes/GeneralPane.tsx:79
 msgid "Start minimized setting updated"
 msgstr "启动时最小化设置已更新"
 
-#: src/components/preferences/panes/GeneralPane.tsx:209
+#: src/components/preferences/panes/GeneralPane.tsx:202
 msgid "Start the application minimized to the system tray"
 msgstr "启动应用程序时最小化到系统托盘"
 
@@ -4557,7 +4609,7 @@ msgid "Status"
 msgstr "状态"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:775
-#: src/components/preferences/panes/ReaderPane.tsx:471
+#: src/components/preferences/panes/ReaderPane.tsx:444
 msgid "Status Bar"
 msgstr "状态栏"
 
@@ -4593,7 +4645,7 @@ msgstr "当前节目播放完毕后停止"
 msgid "Stop playback and close the player"
 msgstr "停止播放并关闭播放器"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:537
+#: src/components/preferences/panes/AdvancedPane.tsx:535
 msgid "Storage & Data"
 msgstr "存储与数据"
 
@@ -4601,7 +4653,7 @@ msgstr "存储与数据"
 msgid "streaming..."
 msgstr "正在加载..."
 
-#: src/components/miniflux/ReaderSettings.tsx:173
+#: src/components/miniflux/ReaderSettings.tsx:163
 msgid "Strong newspaper tone"
 msgstr "浓郁报刊风格"
 
@@ -4628,7 +4680,7 @@ msgstr "AI 摘要"
 msgid "Summarizing..."
 msgstr "正在生成摘要..."
 
-#: src/components/preferences/panes/ReaderPane.tsx:199
+#: src/components/preferences/panes/ReaderPane.tsx:198
 msgid "Surface Theme"
 msgstr "表面主题"
 
@@ -4720,7 +4772,7 @@ msgstr "同步空闲中"
 msgid "Sync Now"
 msgstr "立即同步"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:175
+#: src/components/preferences/panes/CloudSyncSection.tsx:196
 msgid "Sync preferences via S3 or WebDAV"
 msgstr "通过 S3 或 WebDAV 同步偏好设置"
 
@@ -4756,29 +4808,29 @@ msgstr "正在同步你的 Miniflux 数据"
 msgid "Syncing..."
 msgstr "正在同步..."
 
-#: src/components/preferences/panes/ReaderPane.tsx:374
+#: src/components/preferences/panes/ReaderPane.tsx:352
 msgid "Syntax highlighting theme for code blocks"
 msgstr "代码块的语法高亮主题"
 
-#: src/components/preferences/panes/AppearancePane.tsx:132
+#: src/components/preferences/panes/AppearancePane.tsx:143
 msgid "System"
 msgstr "系统"
 
-#: src/components/preferences/panes/AppearancePane.tsx:105
+#: src/components/preferences/panes/AppearancePane.tsx:116
 msgid "System Default"
 msgstr "系统默认"
 
 #: src/components/preferences/panes/GeneralPane.tsx:255
 #: src/components/preferences/panes/GeneralPane.tsx:278
-msgid "System default (ask every time)"
-msgstr "系统默认（每次询问）"
+#~ msgid "System default (ask every time)"
+#~ msgstr "系统默认（每次询问）"
 
-#: src/components/preferences/panes/GeneralPane.tsx:168
+#: src/components/preferences/panes/GeneralPane.tsx:167
 msgid "System Tray"
 msgstr "系统托盘"
 
-#: src/components/miniflux/ReaderSettings.tsx:146
-#: src/components/preferences/panes/ReaderPane.tsx:78
+#: src/components/miniflux/ReaderSettings.tsx:136
+#: src/components/preferences/panes/ReaderPane.tsx:77
 msgid "System UI"
 msgstr "系统 UI"
 
@@ -4787,7 +4839,7 @@ msgid "TanStack"
 msgstr "TanStack"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:590
-#: src/components/preferences/panes/TranslationPane.tsx:1719
+#: src/components/preferences/panes/TranslationPane.tsx:1727
 msgid "Target language"
 msgstr "目标语言"
 
@@ -4795,7 +4847,7 @@ msgstr "目标语言"
 msgid "Tauri v2"
 msgstr "Tauri v2"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:462
+#: src/components/preferences/panes/CloudSyncSection.tsx:480
 msgid "Test Connection"
 msgstr "测试连接"
 
@@ -4807,7 +4859,7 @@ msgstr "测试通知"
 msgid "Test Toast Notification"
 msgstr "测试通知"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:462
+#: src/components/preferences/panes/CloudSyncSection.tsx:481
 msgid "Testing..."
 msgstr "测试中..."
 
@@ -4819,7 +4871,7 @@ msgstr "应用遇到了意外错误。"
 msgid "The URL of your Miniflux server (e.g., miniflux.example.com)"
 msgstr "您的 Miniflux 服务器 URL（例如：miniflux.example.com）"
 
-#: src/components/preferences/panes/AppearancePane.tsx:116
+#: src/components/preferences/panes/AppearancePane.tsx:127
 msgid "Theme"
 msgstr "主题"
 
@@ -4835,7 +4887,7 @@ msgstr "主题: 浅色"
 msgid "Theme: System"
 msgstr "主题: 跟随系统"
 
-#: src/components/preferences/panes/TranslationPane.tsx:2003
+#: src/components/preferences/panes/TranslationPane.tsx:2014
 msgid "These replacements are applied after built-in Chinese conversion in the reading panel."
 msgstr "这些替换会在阅读面板中内置中文转换之后应用。"
 
@@ -4856,7 +4908,7 @@ msgstr "此用户「{0}」将从 Miniflux 中永久删除。"
 #~ msgid "This user will be permanently removed from Miniflux."
 #~ msgstr "此用户将从 Miniflux 中永久删除。"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:696
+#: src/components/preferences/panes/AdvancedPane.tsx:694
 msgid "This will permanently delete all accounts, synced data, preferences, downloads, and saved credentials. The app will return to its initial state."
 msgstr "这将永久删除所有账户、同步数据、偏好设置、下载和已保存的凭证。应用将恢复到初始状态。"
 
@@ -4869,7 +4921,7 @@ msgstr "订阅源「{0}」将从 Miniflux 中永久删除。"
 #~ msgid "This will permanently remove the feed from Miniflux."
 #~ msgstr "此操作将从 Miniflux 中永久删除该订阅源。"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:616
+#: src/components/preferences/panes/AdvancedPane.tsx:614
 msgid "This will remove synced entries, feeds, categories, and sync history for this account. Other accounts and app preferences are not affected."
 msgstr "这将移除此账户的同步条目、订阅源、分类和同步历史。其他账户和应用偏好设置不受影响。"
 
@@ -4882,11 +4934,11 @@ msgstr "分类「{0}」将从 Miniflux 中删除。"
 #~ msgid "This will remove the category from Miniflux."
 #~ msgstr "此操作将从 Miniflux 中删除该分类。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:198
+#: src/components/preferences/panes/AppearancePane.tsx:221
 msgid "Tile"
 msgstr "平铺"
 
-#: src/components/preferences/panes/AppearancePane.tsx:140
+#: src/components/preferences/panes/AppearancePane.tsx:151
 msgid "Time Format"
 msgstr "时间格式"
 
@@ -4894,7 +4946,7 @@ msgstr "时间格式"
 msgid "Time Left"
 msgstr "剩余时间"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1098
+#: src/components/preferences/panes/TranslationPane.tsx:1103
 msgid "Timeout must be a positive number"
 msgstr "超时时间必须为正数"
 
@@ -4914,7 +4966,7 @@ msgstr "提示："
 msgid "Tip: Use h / j to jump between entries quickly."
 msgstr "提示：使用 h / j 快速切换文章。"
 
-#: src/components/miniflux/ReaderSettings.tsx:238
+#: src/components/miniflux/ReaderSettings.tsx:228
 msgid "Tips: +/- font size, [ ] line width, Alt+↑/↓ line height"
 msgstr "提示：+/- 调整字号，[ ] 调整行宽，Alt+↑/↓ 调整行高"
 
@@ -4924,7 +4976,7 @@ msgstr "提示：+/- 调整字号，[ ] 调整行宽，Alt+↑/↓ 调整行高"
 msgid "Title is required"
 msgstr "标题为必填项"
 
-#: src/components/preferences/panes/TranslationPane.tsx:2021
+#: src/components/preferences/panes/TranslationPane.tsx:2049
 msgid "To"
 msgstr "目标"
 
@@ -4981,8 +5033,8 @@ msgstr "切换最大化"
 msgid "Toggle Mini Player"
 msgstr "切换迷你播放器"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1521
-#: src/components/preferences/panes/TranslationPane.tsx:1836
+#: src/components/preferences/panes/TranslationPane.tsx:1526
+#: src/components/preferences/panes/TranslationPane.tsx:1847
 msgid "Toggle model list"
 msgstr "切换模型列表"
 
@@ -5091,7 +5143,7 @@ msgstr "仅显示译文"
 #: src/components/miniflux/EntryReadingHeader.tsx:556
 #: src/components/miniflux/EntryReadingHeader.tsx:564
 #: src/components/miniflux/SafeHtml.tsx:773
-#: src/components/preferences/panes/TranslationPane.tsx:1694
+#: src/components/preferences/panes/TranslationPane.tsx:1699
 msgid "Translation"
 msgstr "翻译"
 
@@ -5103,7 +5155,7 @@ msgstr "顶部栏中的翻译控件"
 msgid "Translation disabled for this feed"
 msgstr "此订阅源已禁用翻译"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1335
+#: src/components/preferences/panes/TranslationPane.tsx:1340
 msgid "Translation engines"
 msgstr "翻译引擎"
 
@@ -5117,11 +5169,11 @@ msgstr "翻译失败"
 msgid "Translation options"
 msgstr "翻译选项"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1707
+#: src/components/preferences/panes/TranslationPane.tsx:1713
 msgid "Translation route mode"
 msgstr "翻译路由模式"
 
-#: src/components/preferences/panes/TranslationPane.tsx:927
+#: src/components/preferences/panes/TranslationPane.tsx:932
 msgid "Translation route mode updated"
 msgstr "翻译路由模式已更新"
 
@@ -5129,11 +5181,11 @@ msgstr "翻译路由模式已更新"
 msgid "Translation Settings"
 msgstr "翻译设置"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1727
+#: src/components/preferences/panes/TranslationPane.tsx:1736
 msgid "Translation target language"
 msgstr "翻译目标语言"
 
-#: src/components/preferences/panes/TranslationPane.tsx:941
+#: src/components/preferences/panes/TranslationPane.tsx:946
 msgid "Translation target language updated"
 msgstr "翻译目标语言已更新"
 
@@ -5145,11 +5197,11 @@ msgstr "翻译：双语模式"
 msgid "Translation: Translated Only"
 msgstr "翻译：仅显示译文"
 
-#: src/components/preferences/panes/GeneralPane.tsx:61
+#: src/components/preferences/panes/GeneralPane.tsx:60
 msgid "Tray icon disabled. Changes will take effect on restart."
 msgstr "托盘图标已禁用。变更将在重新启动后生效。"
 
-#: src/components/preferences/panes/GeneralPane.tsx:60
+#: src/components/preferences/panes/GeneralPane.tsx:59
 msgid "Tray icon enabled"
 msgstr "托盘图标已启用"
 
@@ -5161,30 +5213,30 @@ msgstr "重试"
 msgid "Try changing the filter or syncing new content"
 msgstr "尝试更改筛选条件或同步新内容"
 
-#: src/components/miniflux/ReaderSettings.tsx:235
+#: src/components/miniflux/ReaderSettings.tsx:225
 msgid "Tune the reading layout for long-form comfort."
 msgstr "调整阅读排版，让长文阅读更舒适。"
 
-#: src/components/command-palette/CommandPalette.tsx:190
-#: src/components/command-palette/CommandPalette.tsx:194
+#: src/components/command-palette/CommandPalette.tsx:244
+#: src/components/command-palette/CommandPalette.tsx:252
 msgid "Type a command or search..."
 msgstr "输入命令或搜索..."
 
-#: src/components/preferences/panes/TranslationPane.tsx:1498
-#: src/components/preferences/panes/TranslationPane.tsx:1815
+#: src/components/preferences/panes/TranslationPane.tsx:1503
+#: src/components/preferences/panes/TranslationPane.tsx:1826
 msgid "Type or fetch to pick a model"
 msgstr "输入或获取以选择模型"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:702
+#: src/components/preferences/panes/AdvancedPane.tsx:700
 msgid "Type RESET to confirm"
 msgstr "输入 RESET 以确认"
 
-#: src/components/miniflux/ReaderSettings.tsx:207
-#: src/components/preferences/panes/ReaderPane.tsx:229
+#: src/components/miniflux/ReaderSettings.tsx:197
+#: src/components/preferences/panes/ReaderPane.tsx:228
 msgid "Typography"
 msgstr "排版"
 
-#: src/components/preferences/panes/AppearancePane.tsx:260
+#: src/components/preferences/panes/AppearancePane.tsx:283
 msgid "UI Transparency"
 msgstr "UI 透明度"
 
@@ -5289,7 +5341,7 @@ msgstr "在添加订阅源中使用"
 msgid "Use source title"
 msgstr "使用来源标题"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1792
+#: src/components/preferences/panes/TranslationPane.tsx:1803
 msgid "Use translation LLM providers"
 msgstr "使用翻译的大语言模型提供商"
 
@@ -5336,7 +5388,7 @@ msgstr "用户已更新"
 
 #: src/components/miniflux/ConnectionDialog.tsx:281
 #: src/components/miniflux/settings/UserFormDialog.tsx:82
-#: src/components/preferences/panes/CloudSyncSection.tsx:357
+#: src/components/preferences/panes/CloudSyncSection.tsx:376
 msgid "Username"
 msgstr "用户名"
 
@@ -5354,11 +5406,11 @@ msgstr "用户名/密码"
 msgid "Users"
 msgstr "用户管理"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1401
+#: src/components/preferences/panes/TranslationPane.tsx:1406
 msgid "Verify"
 msgstr "验证"
 
-#: src/components/preferences/panes/TranslationPane.tsx:1400
+#: src/components/preferences/panes/TranslationPane.tsx:1405
 msgid "Verifying..."
 msgstr "验证中..."
 
@@ -5388,15 +5440,15 @@ msgstr "版本 {0} 已准备好安装。"
 msgid "via {0}"
 msgstr "通过 {0}"
 
-#: src/components/preferences/panes/GeneralPane.tsx:271
+#: src/components/preferences/panes/GeneralPane.tsx:258
 msgid "Video Download Path"
 msgstr "视频下载路径"
 
-#: src/components/preferences/panes/GeneralPane.tsx:159
+#: src/components/preferences/panes/GeneralPane.tsx:158
 msgid "Video download path updated"
 msgstr "视频下载路径已更新"
 
-#: src/components/command-palette/CommandPalette.tsx:146
+#: src/components/command-palette/CommandPalette.tsx:201
 #: src/lib/menu.ts:168
 msgid "View"
 msgstr "视图"
@@ -5432,7 +5484,7 @@ msgstr "降低音量"
 msgid "Volume Up"
 msgstr "增加音量"
 
-#: src/components/miniflux/ReaderSettings.tsx:169
+#: src/components/miniflux/ReaderSettings.tsx:159
 msgid "Warm and friendly"
 msgstr "温暖友好"
 
@@ -5440,7 +5492,7 @@ msgstr "温暖友好"
 msgid "Warn"
 msgstr "警告"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:346
+#: src/components/preferences/panes/CloudSyncSection.tsx:363
 msgid "WebDAV URL"
 msgstr "WebDAV URL"
 
@@ -5456,7 +5508,7 @@ msgstr "欢迎使用 Tauri 模板"
 msgid "Widen content"
 msgstr "加宽内容"
 
-#: src/components/command-palette/CommandPalette.tsx:152
+#: src/components/command-palette/CommandPalette.tsx:207
 #: src/lib/menu.ts:357
 msgid "Window"
 msgstr "窗口"
@@ -5491,16 +5543,16 @@ msgid "中文顯示"
 msgstr "中文显示"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:179
-#: src/components/preferences/panes/TranslationPane.tsx:1995
+#: src/components/preferences/panes/TranslationPane.tsx:2005
 msgid "簡體中文"
 msgstr "简体中文"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:178
-#: src/components/preferences/panes/TranslationPane.tsx:1994
+#: src/components/preferences/panes/TranslationPane.tsx:2004
 msgid "繁體中文（台灣）"
 msgstr "繁体中文（台湾）"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:177
-#: src/components/preferences/panes/TranslationPane.tsx:1993
+#: src/components/preferences/panes/TranslationPane.tsx:2003
 msgid "繁體中文（香港）"
 msgstr "繁体中文（香港）"

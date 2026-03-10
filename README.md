@@ -13,6 +13,7 @@ A modern, beautiful desktop client for [Miniflux](https://miniflux.app) — the 
 ## Screenshots
 
 ![Minikyu Main View](docs/screenshots/main.png)
+![Minikyu Reading View](docs/screenshots/capture-2.png)
 
 ## Features
 
@@ -22,11 +23,12 @@ A modern, beautiful desktop client for [Miniflux](https://miniflux.app) — the 
 - ⌨️ **Keyboard Shortcuts** - Extensive shortcuts for navigation, reading, and actions
 - 🧘 **Zen Mode** - Distraction-free reading experience (toggle with `Z`)
 - 📖 **Focus Mode** - Immersive article reading with a single shortcut
-- 🎨 **Theming & Appearance** - Light/Dark/System themes, custom background images, transparency, and frosted glass effects
+- 🎨 **Theming & Appearance** - Light/Dark/System themes, custom background images (local file or URL), opacity/blur/tiling controls, transparency, and frosted glass effects
 - 🌐 **Multi-language** - English, Chinese (Simplified/Traditional), Japanese, Korean
 - 🌏 **AI Translation** - LLM-powered article translation with configurable providers
 - 👆 **Gesture Controls** - Configurable swipe gestures for navigation and actions, pull-to-refresh
 - 🪟 **Quick Pane** - Global shortcut floating window for quick access from anywhere
+- ☁️ **Cloud Sync** - Back up and sync preferences across devices via S3-compatible storage or WebDAV, with debounced auto-push and optional pull on startup
 - 🔄 **Sync & Auto-updates** - Real-time Miniflux sync with progress tracking, automatic app updates
 - 🖥️ **Cross-platform** - macOS, Windows, and Linux support
 

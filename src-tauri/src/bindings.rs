@@ -24,6 +24,7 @@ pub fn generate_bindings() -> Builder<tauri::Wry> {
         preferences::greet,
         preferences::load_preferences,
         preferences::save_preferences,
+        preferences::download_background_image,
         reading_state::load_last_reading,
         reading_state::save_last_reading,
         notifications::send_native_notification,

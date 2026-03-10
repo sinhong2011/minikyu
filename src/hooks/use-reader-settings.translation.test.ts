@@ -9,6 +9,19 @@ vi.mock('@/services/preferences', () => ({
   useSavePreferences: vi.fn(),
 }));
 
+vi.mock('@/services/miniflux/accounts', () => ({
+  useActiveAccount: vi.fn().mockReturnValue({
+    data: {
+      id: '1',
+      server_url: 'https://miniflux.example.com',
+      username: 'testuser',
+      is_active: true,
+    },
+    accounts: [],
+  }),
+  useAccounts: vi.fn().mockReturnValue({ data: [] }),
+}));
+
 function createPreferences(overrides: Partial<AppPreferences> = {}): AppPreferences {
   return {
     theme: 'system',

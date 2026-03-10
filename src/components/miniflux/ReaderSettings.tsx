@@ -25,7 +25,7 @@ import {
   DialogHeader,
   DialogTitle,
 } from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
+import { NumberInput } from '@/components/ui/number-input';
 import { Slider } from '@/components/ui/slider';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import {
@@ -89,30 +89,22 @@ export function ReaderSettings() {
   const [lineWidthValue, setLineWidthValue] = useState(lineWidth);
   const [lineHeightValue, setLineHeightValue] = useState(lineHeight);
   const [open, setOpen] = useState(false);
-  const [fontSizeInput, setFontSizeInput] = useState(String(fontSize));
-  const [lineWidthInput, setLineWidthInput] = useState(String(lineWidth));
-  const [lineHeightInput, setLineHeightInput] = useState(lineHeight.toFixed(2));
 
   useEffect(() => {
     setFontSizeValue(fontSize);
-    setFontSizeInput(String(fontSize));
   }, [fontSize]);
 
   useEffect(() => {
     setLineWidthValue(lineWidth);
-    setLineWidthInput(String(lineWidth));
   }, [lineWidth]);
 
   useEffect(() => {
-    const normalizedLineHeight = normalizeLineHeightValue(lineHeight);
-    setLineHeightValue(normalizedLineHeight);
-    setLineHeightInput(normalizedLineHeight.toFixed(2));
+    setLineHeightValue(normalizeLineHeightValue(lineHeight));
   }, [lineHeight]);
 
   const commitFontSize = (nextValue: number) => {
     const normalizedValue = clamp(Math.round(nextValue), MIN_FONT_SIZE, MAX_FONT_SIZE);
     setFontSizeValue(normalizedValue);
-    setFontSizeInput(String(normalizedValue));
     if (normalizedValue !== fontSize) {
       setFontSize(normalizedValue);
     }
@@ -121,7 +113,6 @@ export function ReaderSettings() {
   const commitLineWidth = (nextValue: number) => {
     const normalizedValue = clamp(Math.round(nextValue), MIN_LINE_WIDTH, MAX_LINE_WIDTH);
     setLineWidthValue(normalizedValue);
-    setLineWidthInput(String(normalizedValue));
     if (normalizedValue !== lineWidth) {
       setLineWidth(normalizedValue);
     }
@@ -132,7 +123,6 @@ export function ReaderSettings() {
       clamp(nextValue, MIN_LINE_HEIGHT, MAX_LINE_HEIGHT)
     );
     setLineHeightValue(normalizedValue);
-    setLineHeightInput(normalizedValue.toFixed(2));
     if (normalizedValue !== lineHeight) {
       setLineHeight(normalizedValue);
     }
@@ -246,37 +236,17 @@ export function ReaderSettings() {
                 {_(msg`Font Size`)}
               </p>
               <div className="space-y-2">
-                <div className="flex items-center justify-end gap-2">
-                  <Input
-                    type="number"
+                <div className="flex items-center justify-end">
+                  <NumberInput
+                    value={fontSizeValue}
+                    onChange={commitFontSize}
                     min={MIN_FONT_SIZE}
                     max={MAX_FONT_SIZE}
                     step={1}
-                    inputMode="numeric"
-                    className="h-7 w-[4.5rem] bg-background/80 px-2 text-right text-xs tabular-nums"
-                    aria-label={_(msg`Font Size`)}
-                    value={fontSizeInput}
-                    onChange={(event) => setFontSizeInput(event.target.value)}
-                    onBlur={() => {
-                      const parsedValue = Number(fontSizeInput);
-                      if (Number.isNaN(parsedValue)) {
-                        setFontSizeInput(String(fontSizeValue));
-                        return;
-                      }
-                      commitFontSize(parsedValue);
-                    }}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter') {
-                        event.currentTarget.blur();
-                      }
-                      if (event.key === 'Escape') {
-                        setFontSizeInput(String(fontSizeValue));
-                        event.currentTarget.blur();
-                      }
-                    }}
+                    unit="px"
                     disabled={isLoading}
+                    className="h-8"
                   />
-                  <span className="w-5 text-xs text-muted-foreground">px</span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <HugeiconsIcon
@@ -297,7 +267,6 @@ export function ReaderSettings() {
                         MAX_FONT_SIZE
                       );
                       setFontSizeValue(nextValue);
-                      setFontSizeInput(String(nextValue));
                     }}
                     onValueCommitted={(val) => {
                       commitFontSize(normalizeSliderValue(val));
@@ -316,37 +285,17 @@ export function ReaderSettings() {
                 {_(msg`Line Width`)}
               </p>
               <div className="space-y-2">
-                <div className="flex items-center justify-end gap-2">
-                  <Input
-                    type="number"
+                <div className="flex items-center justify-end">
+                  <NumberInput
+                    value={lineWidthValue}
+                    onChange={commitLineWidth}
                     min={MIN_LINE_WIDTH}
                     max={MAX_LINE_WIDTH}
                     step={1}
-                    inputMode="numeric"
-                    className="h-7 w-[4.5rem] bg-background/80 px-2 text-right text-xs tabular-nums"
-                    aria-label={_(msg`Line Width`)}
-                    value={lineWidthInput}
-                    onChange={(event) => setLineWidthInput(event.target.value)}
-                    onBlur={() => {
-                      const parsedValue = Number(lineWidthInput);
-                      if (Number.isNaN(parsedValue)) {
-                        setLineWidthInput(String(lineWidthValue));
-                        return;
-                      }
-                      commitLineWidth(parsedValue);
-                    }}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter') {
-                        event.currentTarget.blur();
-                      }
-                      if (event.key === 'Escape') {
-                        setLineWidthInput(String(lineWidthValue));
-                        event.currentTarget.blur();
-                      }
-                    }}
+                    unit="ch"
                     disabled={isLoading}
+                    className="h-8"
                   />
-                  <span className="w-5 text-xs text-muted-foreground">ch</span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <HugeiconsIcon icon={TextIcon} className="h-4 w-4" strokeWidth={2} />
@@ -364,7 +313,6 @@ export function ReaderSettings() {
                         MAX_LINE_WIDTH
                       );
                       setLineWidthValue(nextValue);
-                      setLineWidthInput(String(nextValue));
                     }}
                     onValueCommitted={(val) => {
                       commitLineWidth(normalizeSliderValue(val));
@@ -383,37 +331,17 @@ export function ReaderSettings() {
                 {_(msg`Line Height`)}
               </p>
               <div className="space-y-2">
-                <div className="flex items-center justify-end gap-2">
-                  <Input
-                    type="number"
+                <div className="flex items-center justify-end">
+                  <NumberInput
+                    value={lineHeightValue}
+                    onChange={commitLineHeight}
                     min={MIN_LINE_HEIGHT}
                     max={MAX_LINE_HEIGHT}
                     step={LINE_HEIGHT_STEP}
-                    inputMode="decimal"
-                    className="h-7 w-[4.5rem] bg-background/80 px-2 text-right text-xs tabular-nums"
-                    aria-label={_(msg`Line Height`)}
-                    value={lineHeightInput}
-                    onChange={(event) => setLineHeightInput(event.target.value)}
-                    onBlur={() => {
-                      const parsedValue = Number.parseFloat(lineHeightInput);
-                      if (Number.isNaN(parsedValue)) {
-                        setLineHeightInput(lineHeightValue.toFixed(2));
-                        return;
-                      }
-                      commitLineHeight(parsedValue);
-                    }}
-                    onKeyDown={(event) => {
-                      if (event.key === 'Enter') {
-                        event.currentTarget.blur();
-                      }
-                      if (event.key === 'Escape') {
-                        setLineHeightInput(lineHeightValue.toFixed(2));
-                        event.currentTarget.blur();
-                      }
-                    }}
+                    unit="x"
                     disabled={isLoading}
+                    className="h-8"
                   />
-                  <span className="w-5 text-xs text-muted-foreground">x</span>
                 </div>
                 <div className="flex items-center gap-2.5">
                   <HugeiconsIcon
@@ -432,7 +360,6 @@ export function ReaderSettings() {
                         clamp(normalizeSliderValue(val), MIN_LINE_HEIGHT, MAX_LINE_HEIGHT)
                       );
                       setLineHeightValue(nextValue);
-                      setLineHeightInput(nextValue.toFixed(2));
                     }}
                     onValueCommitted={(val) => {
                       commitLineHeight(normalizeSliderValue(val));

@@ -1,8 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { Switch } from '@/components/animate-ui/components/base/switch';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
+import { NumberInput } from '@/components/ui/number-input';
 import {
   Select,
   SelectContent,
@@ -236,7 +235,7 @@ export function ReaderPane() {
             onValueChange={handleFontFamilyChange}
             disabled={!preferences || savePreferences.isPending}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-48">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -253,7 +252,7 @@ export function ReaderPane() {
           label={_(msg`Font Size`)}
           description={_(msg`Article text size in pixels (14-24)`)}
         >
-          <div className="flex items-center gap-4">
+          <div className="flex w-52 items-center justify-end gap-4">
             <Slider
               className="flex-1"
               min={14}
@@ -268,24 +267,16 @@ export function ReaderPane() {
               }
               disabled={!preferences || savePreferences.isPending}
             />
-            <div className="flex items-center gap-1">
-              <Input
-                type="number"
-                min={14}
-                max={24}
-                step={1}
-                value={preferences?.reader_font_size ?? 16}
-                onChange={(e) => {
-                  const val = Number.parseInt(e.target.value, 10);
-                  if (val >= 14 && val <= 24) {
-                    handleSliderCommit('reader_font_size', val);
-                  }
-                }}
-                className="w-16 text-center"
-                disabled={!preferences || savePreferences.isPending}
-              />
-              <Label className="text-sm text-muted-foreground">px</Label>
-            </div>
+            <NumberInput
+              value={preferences?.reader_font_size ?? 16}
+              onChange={(val) => handleSliderCommit('reader_font_size', val)}
+              min={14}
+              max={24}
+              step={1}
+              unit="px"
+              disabled={!preferences || savePreferences.isPending}
+              className="w-24"
+            />
           </div>
         </SettingsField>
 
@@ -293,7 +284,7 @@ export function ReaderPane() {
           label={_(msg`Line Width`)}
           description={_(msg`Maximum width of article text in characters (45-80)`)}
         >
-          <div className="flex items-center gap-4">
+          <div className="flex w-52 items-center justify-end gap-4">
             <Slider
               className="flex-1"
               min={45}
@@ -308,24 +299,16 @@ export function ReaderPane() {
               }
               disabled={!preferences || savePreferences.isPending}
             />
-            <div className="flex items-center gap-1">
-              <Input
-                type="number"
-                min={45}
-                max={80}
-                step={1}
-                value={preferences?.reader_line_width ?? 65}
-                onChange={(e) => {
-                  const val = Number.parseInt(e.target.value, 10);
-                  if (val >= 45 && val <= 80) {
-                    handleSliderCommit('reader_line_width', val);
-                  }
-                }}
-                className="w-16 text-center"
-                disabled={!preferences || savePreferences.isPending}
-              />
-              <Label className="text-sm text-muted-foreground">ch</Label>
-            </div>
+            <NumberInput
+              value={preferences?.reader_line_width ?? 65}
+              onChange={(val) => handleSliderCommit('reader_line_width', val)}
+              min={45}
+              max={80}
+              step={1}
+              unit="ch"
+              disabled={!preferences || savePreferences.isPending}
+              className="w-24"
+            />
           </div>
         </SettingsField>
 
@@ -333,7 +316,7 @@ export function ReaderPane() {
           label={_(msg`Line Height`)}
           description={_(msg`Spacing between lines of text (1.4-2.2)`)}
         >
-          <div className="flex items-center gap-4">
+          <div className="flex w-52 items-center justify-end gap-4">
             <Slider
               className="flex-1"
               min={1.4}
@@ -348,20 +331,15 @@ export function ReaderPane() {
               }
               disabled={!preferences || savePreferences.isPending}
             />
-            <Input
-              type="number"
+            <NumberInput
+              value={preferences?.reader_line_height ?? 1.75}
+              onChange={(val) => handleSliderCommit('reader_line_height', val)}
               min={1.4}
               max={2.2}
               step={0.05}
-              value={preferences?.reader_line_height ?? 1.75}
-              onChange={(e) => {
-                const val = Number.parseFloat(e.target.value);
-                if (val >= 1.4 && val <= 2.2) {
-                  handleSliderCommit('reader_line_height', val);
-                }
-              }}
-              className="w-16 text-center"
+              unit="×"
               disabled={!preferences || savePreferences.isPending}
+              className="w-24"
             />
           </div>
         </SettingsField>
@@ -378,7 +356,7 @@ export function ReaderPane() {
             onValueChange={handleCodeThemeChange}
             disabled={!preferences || savePreferences.isPending}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-48">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -410,7 +388,7 @@ export function ReaderPane() {
             }}
             disabled={!preferences || savePreferences.isPending}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-52">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -424,8 +402,10 @@ export function ReaderPane() {
           description={_(
             msg`Custom prompt for LLM code language detection. Leave empty to use default.`
           )}
+          vertical
         >
           <Textarea
+            className="text-xs"
             value={preferences?.reader_code_detection_prompt ?? ''}
             onChange={(e) => {
               if (preferences) {
@@ -438,7 +418,6 @@ export function ReaderPane() {
             }}
             placeholder="You are a programming language identifier. Given a code snippet, respond with ONLY the programming language name in lowercase. For example: rust, python, javascript, typescript, c, cpp, go, java, etc. If you cannot identify the language, respond with: text Do not include any other text, explanation, or formatting."
             rows={3}
-            className="text-xs"
             disabled={
               !preferences ||
               savePreferences.isPending ||
@@ -454,51 +433,33 @@ export function ReaderPane() {
           label={_(msg`Bionic Reading`)}
           description={_(msg`Emphasize the beginning of words to guide faster reading`)}
         >
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="bionic-reading"
-              checked={preferences?.reader_bionic_reading ?? false}
-              onCheckedChange={(checked) => handleToggle('reader_bionic_reading', checked)}
-              disabled={!preferences || savePreferences.isPending}
-            />
-            <Label htmlFor="bionic-reading" className="text-sm">
-              {(preferences?.reader_bionic_reading ?? false) ? _(msg`Enabled`) : _(msg`Disabled`)}
-            </Label>
-          </div>
+          <Switch
+            checked={preferences?.reader_bionic_reading ?? false}
+            onCheckedChange={(checked) => handleToggle('reader_bionic_reading', checked)}
+            disabled={!preferences || savePreferences.isPending}
+          />
         </SettingsField>
 
         <SettingsField
           label={_(msg`Status Bar`)}
           description={_(msg`Show a compact reading progress bar at the bottom of the reader`)}
         >
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="status-bar"
-              checked={preferences?.reader_status_bar ?? false}
-              onCheckedChange={(checked) => handleToggle('reader_status_bar', checked)}
-              disabled={!preferences || savePreferences.isPending}
-            />
-            <Label htmlFor="status-bar" className="text-sm">
-              {(preferences?.reader_status_bar ?? false) ? _(msg`Enabled`) : _(msg`Disabled`)}
-            </Label>
-          </div>
+          <Switch
+            checked={preferences?.reader_status_bar ?? false}
+            onCheckedChange={(checked) => handleToggle('reader_status_bar', checked)}
+            disabled={!preferences || savePreferences.isPending}
+          />
         </SettingsField>
 
         <SettingsField
           label={_(msg`Auto mark as read`)}
           description={_(msg`Automatically mark entries as read when scrolled past 20%`)}
         >
-          <div className="flex items-center space-x-2">
-            <Switch
-              id="auto-mark-read"
-              checked={preferences?.reader_auto_mark_read ?? false}
-              onCheckedChange={(checked) => handleToggle('reader_auto_mark_read', checked)}
-              disabled={!preferences || savePreferences.isPending}
-            />
-            <Label htmlFor="auto-mark-read" className="text-sm">
-              {(preferences?.reader_auto_mark_read ?? false) ? _(msg`Enabled`) : _(msg`Disabled`)}
-            </Label>
-          </div>
+          <Switch
+            checked={preferences?.reader_auto_mark_read ?? false}
+            onCheckedChange={(checked) => handleToggle('reader_auto_mark_read', checked)}
+            disabled={!preferences || savePreferences.isPending}
+          />
         </SettingsField>
       </SettingsSection>
     </div>
