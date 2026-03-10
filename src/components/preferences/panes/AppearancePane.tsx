@@ -443,6 +443,7 @@ function BackgroundImagePicker() {
                 }}
               />
               <Button
+                size="lg"
                 onClick={handleUrlSubmit}
                 disabled={isDownloading || !urlValue.trim()}
                 className="shrink-0 gap-1.5"
@@ -512,6 +513,7 @@ function BackgroundImagePicker() {
                 }}
               />
               <Button
+                size="lg"
                 onClick={handleUrlSubmit}
                 disabled={isDownloading || !urlValue.trim()}
                 className="shrink-0 gap-1.5"
