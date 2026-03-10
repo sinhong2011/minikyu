@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.0](https://github.com/sinhong2011/minikyu/compare/v1.8.1...v1.9.0) (2026-03-10)
+
+
+### Features
+
+* CI enhancements, auto-updater, cloud sync, and UI fixes ([#63](https://github.com/sinhong2011/minikyu/issues/63)) ([b6c6b7c](https://github.com/sinhong2011/minikyu/commit/b6c6b7c410276403687d6482b3e49893136b2b0c))
+
 ## [1.8.1](https://github.com/sinhong2011/minikyu/compare/v1.8.0...v1.8.1) (2026-03-09)
 
 
