@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.2](https://github.com/sinhong2011/minikyu/compare/v1.9.1...v1.9.2) (2026-03-10)
+
+
+### Bug Fixes
+
+* **windows:** Bypass asset protocol for background images on Windows ([#67](https://github.com/sinhong2011/minikyu/issues/67)) ([10e820c](https://github.com/sinhong2011/minikyu/commit/10e820ca82ba4b16421ece770b9cf716691cea2d))
+
 ## [1.9.1](https://github.com/sinhong2011/minikyu/compare/v1.9.0...v1.9.1) (2026-03-10)
 
 
