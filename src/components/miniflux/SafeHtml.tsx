@@ -751,6 +751,8 @@ export function sanitizeReaderHtml(html: string): string {
         // iframe attributes
         'allow',
         'allowfullscreen',
+        'frameborder',
+        'loading',
         'referrerpolicy',
         'sandbox',
       ],

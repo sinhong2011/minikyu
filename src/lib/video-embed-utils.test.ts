@@ -1,5 +1,10 @@
 import { describe, expect, it } from 'vitest';
-import { isAllowedVideoIframeSrc, rewriteBilibiliSrc } from './video-embed-utils';
+import {
+  extractYouTubeVideoId,
+  getVideoEmbedHtml,
+  isAllowedVideoIframeSrc,
+  rewriteBilibiliSrc,
+} from './video-embed-utils';
 
 describe('isAllowedVideoIframeSrc', () => {
   it('allows youtube.com embed URLs', () => {
@@ -40,6 +45,48 @@ describe('isAllowedVideoIframeSrc', () => {
 
   it('rejects malformed URLs', () => {
     expect(isAllowedVideoIframeSrc('not-a-url')).toBe(false);
+  });
+});
+
+describe('extractYouTubeVideoId', () => {
+  it('extracts video ID from youtube.com/watch?v=', () => {
+    expect(extractYouTubeVideoId('https://www.youtube.com/watch?v=dQw4w9WgXcQ')).toBe(
+      'dQw4w9WgXcQ'
+    );
+  });
+
+  it('extracts video ID from youtube.com/shorts/', () => {
+    expect(extractYouTubeVideoId('https://www.youtube.com/shorts/abc123def45')).toBe('abc123def45');
+  });
+
+  it('extracts video ID from youtu.be/', () => {
+    expect(extractYouTubeVideoId('https://youtu.be/dQw4w9WgXcQ')).toBe('dQw4w9WgXcQ');
+  });
+
+  it('returns null for non-YouTube URLs', () => {
+    expect(extractYouTubeVideoId('https://vimeo.com/123456')).toBeNull();
+  });
+
+  it('returns null for YouTube channel pages', () => {
+    expect(extractYouTubeVideoId('https://www.youtube.com/channel/UCxyz')).toBeNull();
+  });
+});
+
+describe('getVideoEmbedHtml', () => {
+  it('generates YouTube embed iframe from watch URL', () => {
+    const result = getVideoEmbedHtml('https://www.youtube.com/watch?v=dQw4w9WgXcQ');
+    expect(result).toContain('youtube-nocookie.com/embed/dQw4w9WgXcQ');
+    expect(result).toContain('<iframe');
+  });
+
+  it('generates Bilibili embed iframe from video URL', () => {
+    const result = getVideoEmbedHtml('https://www.bilibili.com/video/BV1xx411c7mD');
+    expect(result).toContain('player.bilibili.com');
+    expect(result).toContain('bvid=BV1xx411c7mD');
+  });
+
+  it('returns null for non-video URLs', () => {
+    expect(getVideoEmbedHtml('https://example.com/article')).toBeNull();
   });
 });
 
