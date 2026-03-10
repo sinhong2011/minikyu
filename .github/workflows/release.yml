@@ -223,13 +223,13 @@ jobs:
         uses: actions/download-artifact@v4
         with:
           name: macos-app-aarch64-apple-darwin
-          path: arm64-app
+          path: arm64-app/Minikyu.app
 
       - name: Download x64 app bundle
         uses: actions/download-artifact@v4
         with:
           name: macos-app-x86_64-apple-darwin
-          path: x64-app
+          path: x64-app/Minikyu.app
 
       - name: Verify downloaded app bundles
         run: |

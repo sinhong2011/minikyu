@@ -73,6 +73,7 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
     const unlisten = listen('cloud-sync-pushed', () => {
       queryClient.setQueryData(preferencesQueryKeys.preferences(), (old: AppPreferences) => ({
         ...old,
+        // biome-ignore lint/style/useNamingConvention: matches Rust struct field name
         cloud_sync_last_synced: new Date().toISOString(),
       }));
     });
@@ -159,6 +160,7 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
         showToast.success(_(msg`Preferences pushed to cloud`));
         queryClient.setQueryData(preferencesQueryKeys.preferences(), (old: AppPreferences) => ({
           ...old,
+          // biome-ignore lint/style/useNamingConvention: matches Rust struct field name
           cloud_sync_last_synced: new Date().toISOString(),
         }));
       } else {
