@@ -443,10 +443,9 @@ function BackgroundImagePicker() {
                 }}
               />
               <Button
-                size="sm"
                 onClick={handleUrlSubmit}
                 disabled={isDownloading || !urlValue.trim()}
-                className="gap-1.5"
+                className="shrink-0 gap-1.5"
               >
                 {isDownloading ? (
                   <HugeiconsIcon icon={Loading03Icon} className="size-3.5 animate-spin" />
@@ -513,10 +512,9 @@ function BackgroundImagePicker() {
                 }}
               />
               <Button
-                size="sm"
                 onClick={handleUrlSubmit}
                 disabled={isDownloading || !urlValue.trim()}
-                className="gap-1.5"
+                className="shrink-0 gap-1.5"
               >
                 {isDownloading ? (
                   <HugeiconsIcon icon={Loading03Icon} className="size-3.5 animate-spin" />
