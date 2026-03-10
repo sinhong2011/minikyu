@@ -48,6 +48,15 @@
   }
   body {
     @apply font-sans bg-background text-foreground;
+  }
+  /* Only clip body corners on macOS where native window has rounded corners */
+  :root[data-platform="macos"] html {
+    @apply bg-background;
+    border-radius: var(--radius-xl);
+    overflow: hidden;
+  }
+
+  :root[data-platform="macos"] body {
     clip-path: inset(0 round var(--radius-xl));
   }
   html {
@@ -62,7 +71,7 @@
 }
 
 @layer components {
-  .yarl__portal {
+  :root[data-platform="macos"] .yarl__portal {
     border-radius: var(--radius-xl);
     overflow: hidden;
   }

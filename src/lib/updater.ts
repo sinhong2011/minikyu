@@ -44,13 +44,13 @@ export async function downloadUpdate(): Promise<void> {
     return;
   }
 
-  const version = 'version' in store ? (store as { version: string }).version : '';
+  const version = store.status === 'available' ? store.version : '';
 
   try {
     let totalBytes = 0;
     let downloadedBytes = 0;
 
-    await update.downloadAndInstall((event) => {
+    await update.download((event) => {
       switch (event.event) {
         case 'Started':
           totalBytes = event.data.contentLength ?? 0;
@@ -82,12 +82,21 @@ export async function downloadUpdate(): Promise<void> {
  * Install the downloaded update and relaunch the app.
  */
 export async function installAndRelaunch(): Promise<void> {
-  useUpdaterStore.getState().setInstalling();
+  const store = useUpdaterStore.getState();
+  const update = store._update;
+
+  if (!update) {
+    store.setError('No update available to install');
+    return;
+  }
+
+  store.setInstalling();
   try {
-    logger.info('Relaunching app to apply update');
+    logger.info('Installing update and relaunching');
+    await update.install();
     await relaunch();
   } catch (error) {
-    logger.error('Relaunch failed', { error });
+    logger.error('Install/relaunch failed', { error });
     useUpdaterStore.getState().setError(error instanceof Error ? error.message : String(error));
   }
 }

@@ -139,7 +139,7 @@ export function AboutPane() {
                   onClick={() => {
                     if (!isBusy) checkForUpdate();
                   }}
-                  className={cn(isBusy && 'pointer-events-none')}
+                  disabled={isBusy}
                 >
                   <AnimatePresence mode="wait" initial={false}>
                     <motion.span
@@ -177,7 +177,7 @@ export function AboutPane() {
         </SettingsField>
 
         <SettingsField
-          label={_(msg`Automatic updates`)}
+          label={_(msg`Automatic update check`)}
           description={_(msg`Check for updates automatically on app launch.`)}
         >
           <Switch
@@ -191,6 +191,28 @@ export function AboutPane() {
               });
             }}
             disabled={!preferences || savePreferences.isPending}
+          />
+        </SettingsField>
+
+        <SettingsField
+          label={_(msg`Auto download`)}
+          description={_(msg`Download updates automatically when available.`)}
+        >
+          <Switch
+            checked={preferences?.auto_download_updates ?? true}
+            onCheckedChange={async (checked) => {
+              if (!preferences) return;
+              await savePreferences.mutateAsync({
+                ...preferences,
+                // biome-ignore lint/style/useNamingConvention: preferences field name
+                auto_download_updates: checked,
+              });
+            }}
+            disabled={
+              !preferences ||
+              savePreferences.isPending ||
+              !(preferences?.auto_check_updates ?? true)
+            }
           />
         </SettingsField>
       </SettingsSection>

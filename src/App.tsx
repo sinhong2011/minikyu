@@ -4,6 +4,7 @@ import { MainWindow } from './components/layout/MainWindow';
 import { ThemeProvider } from './components/ThemeProvider';
 import { useAccountInitialization } from './hooks/use-account-initialization';
 import { useAutoUpdater } from './hooks/use-auto-updater';
+import { useCloudSyncAutoPull } from './hooks/use-cloud-sync-auto-pull';
 import { availableLanguages } from './i18n';
 import { initializeLanguage } from './i18n/language-init';
 import { initializeCommandSystem } from './lib/commands';
@@ -15,6 +16,7 @@ import { commands } from './lib/tauri-bindings';
 function App() {
   useAccountInitialization();
   useAutoUpdater();
+  useCloudSyncAutoPull();
 
   // Initialize command system and cleanup on app startup
   useEffect(() => {

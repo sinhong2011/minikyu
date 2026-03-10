@@ -65,7 +65,7 @@ const basePreferences = {
   reader_translation_apple_fallback_enabled: true,
   reader_translation_provider_settings: {},
   reader_translation_auto_enabled: false,
-  reader_translation_excluded_feed_ids: [],
+  reader_translation_exclusions: {},
   image_download_path: null,
   video_download_path: null,
   player_display_mode: 'FloatingWindow',

@@ -1,7 +1,14 @@
 import { useEffect, useState } from 'react';
+import type { AccountTranslationExclusions } from '@/lib/bindings';
 import { normalizeReaderCodeTheme, type ReaderCodeTheme } from '@/lib/shiki-highlight';
 import type { AppPreferences } from '@/lib/tauri-bindings';
+import { useActiveAccount } from '@/services/miniflux/accounts';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
+
+/** Build the account key used to index per-account translation exclusions. */
+export function buildAccountExclusionKey(serverUrl: string, username: string): string {
+  return `${serverUrl}|${username}`;
+}
 
 // CJK Unified Ideographs ranges for Chinese detection
 const CJK_REGEX =
@@ -42,6 +49,7 @@ const DEFAULT_READER_FONT_FAMILY = 'sans-serif';
 export function useReaderSettings() {
   const { data: preferences, isLoading } = usePreferences();
   const { mutate: savePreferences } = useSavePreferences();
+  const { data: activeAccount } = useActiveAccount();
   const [codeThemeOverride, setCodeThemeOverride] = useState<ReaderCodeTheme | null>(null);
   const persistedCodeTheme = normalizeReaderCodeTheme(preferences?.reader_code_theme);
   const codeTheme = codeThemeOverride ?? persistedCodeTheme;
@@ -53,6 +61,32 @@ export function useReaderSettings() {
         [key]: value,
       });
     }
+  };
+
+  const accountKey = activeAccount
+    ? buildAccountExclusionKey(activeAccount.server_url, activeAccount.username)
+    : null;
+
+  const defaultExclusions: AccountTranslationExclusions = {
+    // biome-ignore lint/style/useNamingConvention: Rust struct field name
+    feed_ids: [],
+    // biome-ignore lint/style/useNamingConvention: Rust struct field name
+    category_ids: [],
+  };
+  const currentExclusions: AccountTranslationExclusions =
+    (accountKey ? preferences?.reader_translation_exclusions?.[accountKey] : undefined) ??
+    defaultExclusions;
+
+  const updateExclusions = (updated: AccountTranslationExclusions) => {
+    if (!preferences || !accountKey) return;
+    savePreferences({
+      ...preferences,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      reader_translation_exclusions: {
+        ...preferences.reader_translation_exclusions,
+        [accountKey]: updated,
+      },
+    });
   };
 
   useEffect(() => {
@@ -112,8 +146,8 @@ export function useReaderSettings() {
     appleTranslationFallbackEnabled:
       preferences?.reader_translation_apple_fallback_enabled ?? false,
     translationAutoEnabled: preferences?.reader_translation_auto_enabled ?? false,
-    translationExcludedFeedIds: preferences?.reader_translation_excluded_feed_ids ?? [],
-    translationExcludedCategoryIds: preferences?.reader_translation_excluded_category_ids ?? [],
+    translationExcludedFeedIds: currentExclusions.feed_ids ?? [],
+    translationExcludedCategoryIds: currentExclusions.category_ids ?? [],
     translationSkipSourceLanguages: preferences?.reader_translation_skip_source_languages ?? [],
     translationProviderSettings: preferences?.reader_translation_provider_settings ?? {},
     aiSummaryAutoEnabled: preferences?.ai_summary_auto_enabled ?? false,
@@ -161,9 +195,11 @@ export function useReaderSettings() {
     setTranslationAutoEnabled: (enabled: boolean) =>
       updateSetting('reader_translation_auto_enabled', enabled),
     setTranslationExcludedFeedIds: (ids: string[]) =>
-      updateSetting('reader_translation_excluded_feed_ids', ids),
+      // biome-ignore lint/style/useNamingConvention: Rust struct field name
+      updateExclusions({ ...currentExclusions, feed_ids: ids }),
     setTranslationExcludedCategoryIds: (ids: string[]) =>
-      updateSetting('reader_translation_excluded_category_ids', ids),
+      // biome-ignore lint/style/useNamingConvention: Rust struct field name
+      updateExclusions({ ...currentExclusions, category_ids: ids }),
     setTranslationSkipSourceLanguages: (langs: string[]) =>
       updateSetting('reader_translation_skip_source_languages', langs),
     setAiSummaryAutoEnabled: (enabled: boolean) =>

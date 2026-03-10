@@ -98,6 +98,18 @@ pub struct ReaderTranslationProviderSettings {
     pub system_prompt: Option<String>,
 }
 
+/// Per-account translation exclusion settings.
+/// Keyed by `server_url|username` to isolate exclusions per Miniflux account.
+#[derive(Debug, Clone, Serialize, Deserialize, Type, Default, PartialEq, Eq)]
+pub struct AccountTranslationExclusions {
+    /// Feed IDs excluded from immersive translation for this account.
+    #[serde(default)]
+    pub feed_ids: Vec<String>,
+    /// Category IDs excluded from immersive translation for this account.
+    #[serde(default)]
+    pub category_ids: Vec<String>,
+}
+
 /// Player display mode when clicking the tray icon.
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, Type, Default, PartialEq, Eq, Hash)]
 pub enum PlayerDisplayMode {
@@ -125,6 +137,10 @@ pub struct AppPreferences {
     /// Background image file path. None means no background image.
     #[serde(default)]
     pub background_image_path: Option<String>,
+    /// Original URL of the background image (for cloud sync).
+    /// When synced to another device, this URL is used to re-download the image.
+    #[serde(default)]
+    pub background_image_url: Option<String>,
     /// Background image opacity (0.0 to 1.0). Defaults to 0.15.
     #[serde(default = "default_background_image_opacity")]
     pub background_image_opacity: f64,
@@ -208,12 +224,9 @@ pub struct AppPreferences {
     /// Whether translation is automatically enabled for all entries.
     #[serde(default)]
     pub reader_translation_auto_enabled: bool,
-    /// Feed IDs excluded from immersive translation.
+    /// Per-account translation exclusions keyed by "server_url|username".
     #[serde(default)]
-    pub reader_translation_excluded_feed_ids: Vec<String>,
-    /// Category IDs excluded from immersive translation.
-    #[serde(default)]
-    pub reader_translation_excluded_category_ids: Vec<String>,
+    pub reader_translation_exclusions: HashMap<String, AccountTranslationExclusions>,
     /// Source language codes that skip auto-translation (e.g. ["zh", "zh-CN", "zh-TW"]).
     #[serde(default)]
     pub reader_translation_skip_source_languages: Vec<String>,
@@ -253,6 +266,9 @@ pub struct AppPreferences {
     /// Whether to automatically check for app updates.
     #[serde(default = "default_auto_check_updates")]
     pub auto_check_updates: bool,
+    /// Whether to automatically download updates when available.
+    #[serde(default = "default_auto_download_updates")]
+    pub auto_download_updates: bool,
     /// Action for swipe-left gesture in reader (e.g. "open_in_app_browser", "toggle_read", "none").
     #[serde(default = "default_gesture_swipe_left_action")]
     pub gesture_swipe_left_action: String,
@@ -271,6 +287,93 @@ pub struct AppPreferences {
     /// Entry list panel width in pixels. None means use default (435).
     #[serde(default)]
     pub layout_entry_list_width: Option<u32>,
+    /// Whether cloud sync is enabled.
+    #[serde(default)]
+    pub cloud_sync_enabled: bool,
+    /// Cloud sync protocol: "s3" or "webdav".
+    #[serde(default = "default_cloud_sync_protocol")]
+    pub cloud_sync_protocol: String,
+    /// S3-compatible endpoint URL (e.g., "https://s3.amazonaws.com").
+    #[serde(default)]
+    pub cloud_sync_endpoint: Option<String>,
+    /// S3 bucket name.
+    #[serde(default)]
+    pub cloud_sync_bucket: Option<String>,
+    /// S3 region (default: "auto").
+    #[serde(default = "default_cloud_sync_region")]
+    pub cloud_sync_region: String,
+    /// S3 object key for the sync file.
+    #[serde(default = "default_cloud_sync_object_key")]
+    pub cloud_sync_object_key: String,
+    /// WebDAV server URL (e.g., "https://dav.example.com/remote.php/dav/files/user").
+    #[serde(default)]
+    pub cloud_sync_webdav_url: Option<String>,
+    /// WebDAV username.
+    #[serde(default)]
+    pub cloud_sync_webdav_username: Option<String>,
+    /// WebDAV file path for the sync file.
+    #[serde(default = "default_cloud_sync_webdav_path")]
+    pub cloud_sync_webdav_path: String,
+    /// Whether to auto-pull from cloud on app startup.
+    #[serde(default)]
+    pub cloud_sync_auto_pull: bool,
+    /// ISO 8601 timestamp of the last successful cloud sync operation.
+    #[serde(default)]
+    pub cloud_sync_last_synced: Option<String>,
+}
+
+/// Fields that are local-only and should not be synced to cloud.
+/// These are OS-specific file paths or device-local metadata.
+const LOCAL_ONLY_FIELDS: &[&str] = &[
+    "background_image_path",
+    "image_download_path",
+    "video_download_path",
+    "cloud_sync_last_synced",
+];
+
+impl AppPreferences {
+    /// Serialize preferences for cloud sync, excluding local-only fields entirely.
+    pub fn to_sync_json(&self) -> Result<serde_json::Value, String> {
+        let mut value = serde_json::to_value(self)
+            .map_err(|e| format!("Failed to serialize preferences: {e}"))?;
+        if let Some(obj) = value.as_object_mut() {
+            for field in LOCAL_ONLY_FIELDS {
+                obj.remove(*field);
+            }
+        }
+        Ok(value)
+    }
+
+    /// Merge pulled cloud preferences into self, preserving local-only fields.
+    pub fn merge_from_cloud(&mut self, cloud: &AppPreferences) {
+        let local_bg = self.background_image_path.take();
+        let local_img_dl = self.image_download_path.take();
+        let local_vid_dl = self.video_download_path.take();
+        let local_last_synced = self.cloud_sync_last_synced.take();
+
+        *self = cloud.clone();
+
+        self.background_image_path = local_bg;
+        self.image_download_path = local_img_dl;
+        self.video_download_path = local_vid_dl;
+        self.cloud_sync_last_synced = local_last_synced;
+    }
+}
+
+fn default_cloud_sync_protocol() -> String {
+    "s3".to_string()
+}
+
+fn default_cloud_sync_webdav_path() -> String {
+    "/minikyu/preferences-sync.json".to_string()
+}
+
+fn default_cloud_sync_region() -> String {
+    "auto".to_string()
+}
+
+fn default_cloud_sync_object_key() -> String {
+    "minikyu/preferences-sync.json".to_string()
 }
 
 fn default_reader_code_detection_mode() -> String {
@@ -278,6 +381,10 @@ fn default_reader_code_detection_mode() -> String {
 }
 
 fn default_auto_check_updates() -> bool {
+    true
+}
+
+fn default_auto_download_updates() -> bool {
     true
 }
 
@@ -318,6 +425,7 @@ impl Default for AppPreferences {
         Self {
             theme: "system".to_string(),
             background_image_path: None,
+            background_image_url: None,
             background_image_opacity: default_background_image_opacity(),
             background_image_blur: 0,
             background_image_size: default_background_image_size(),
@@ -351,8 +459,7 @@ impl Default for AppPreferences {
             reader_translation_apple_fallback_enabled: false,
             reader_translation_provider_settings: HashMap::new(),
             reader_translation_auto_enabled: false,
-            reader_translation_excluded_feed_ids: vec![],
-            reader_translation_excluded_category_ids: vec![],
+            reader_translation_exclusions: HashMap::new(),
             reader_translation_skip_source_languages: vec![],
             ai_summary_auto_enabled: false,
             ai_summary_custom_prompt: None,
@@ -367,12 +474,24 @@ impl Default for AppPreferences {
             time_format: default_time_format(),
             sync_interval: Some(15),
             auto_check_updates: true,
+            auto_download_updates: true,
             gesture_swipe_left_action: default_gesture_swipe_left_action(),
             gesture_swipe_right_action: default_gesture_swipe_right_action(),
             gesture_pull_top_action: default_gesture_pull_top_action(),
             gesture_pull_bottom_action: default_gesture_pull_bottom_action(),
             gesture_swipe_threshold: default_gesture_swipe_threshold(),
             layout_entry_list_width: None,
+            cloud_sync_enabled: false,
+            cloud_sync_protocol: default_cloud_sync_protocol(),
+            cloud_sync_endpoint: None,
+            cloud_sync_bucket: None,
+            cloud_sync_region: default_cloud_sync_region(),
+            cloud_sync_object_key: default_cloud_sync_object_key(),
+            cloud_sync_webdav_url: None,
+            cloud_sync_webdav_username: None,
+            cloud_sync_webdav_path: default_cloud_sync_webdav_path(),
+            cloud_sync_auto_pull: false,
+            cloud_sync_last_synced: None,
         }
     }
 }

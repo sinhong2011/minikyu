@@ -200,3 +200,163 @@ jobs:
           prerelease: false
           includeUpdaterJson: ${{ env.IS_PRODUCTION == 'true' }}
           args: ${{ matrix.args }} ${{ env.EXTRA_ARGS }}
+
+      - name: Upload macOS app bundle for universal build
+        if: matrix.platform == 'macos-latest'
+        uses: actions/upload-artifact@v4
+        with:
+          name: macos-app-${{ matrix.target }}
+          path: src-tauri/target/${{ matrix.target }}/release/bundle/macos/Minikyu.app
+          retention-days: 1
+
+  publish-macos-universal:
+    needs: [publish-tauri]
+    if: startsWith(github.ref_name, 'v')
+    runs-on: macos-latest
+    environment: production
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Download arm64 app bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-app-aarch64-apple-darwin
+          path: arm64-app
+
+      - name: Download x64 app bundle
+        uses: actions/download-artifact@v4
+        with:
+          name: macos-app-x86_64-apple-darwin
+          path: x64-app
+
+      - name: Verify downloaded app bundles
+        run: |
+          echo "=== arm64 app ==="
+          file arm64-app/Minikyu.app/Contents/MacOS/Minikyu
+          echo "=== x64 app ==="
+          file x64-app/Minikyu.app/Contents/MacOS/Minikyu
+          echo "=== Check for nested binaries/frameworks ==="
+          find arm64-app/Minikyu.app -name "*.dylib" -o -name "*.framework" | head -20 || echo "No nested binaries found"
+
+      - name: Import Apple Certificate
+        env:
+          APPLE_CERTIFICATE: ${{ secrets.APPLE_CERTIFICATE }}
+          APPLE_CERTIFICATE_PASSWORD: ${{ secrets.APPLE_CERTIFICATE_PASSWORD }}
+          KEYCHAIN_PASSWORD: ${{ secrets.KEYCHAIN_PASSWORD }}
+        run: |
+          echo "$APPLE_CERTIFICATE" | base64 --decode > certificate.p12
+          security create-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security default-keychain -s build.keychain
+          security unlock-keychain -p "$KEYCHAIN_PASSWORD" build.keychain
+          security set-keychain-settings -t 3600 -u build.keychain
+          security import certificate.p12 -k build.keychain -P "$APPLE_CERTIFICATE_PASSWORD" -T /usr/bin/codesign
+          security set-key-partition-list -S apple-tool:,apple:,codesign: -s -k "$KEYCHAIN_PASSWORD" build.keychain
+          rm -f certificate.p12
+
+      - name: Create universal binary with lipo
+        run: |
+          # Copy the arm64 app as the base (preserves all resources, frameworks, Info.plist)
+          mkdir -p universal-app
+          cp -R arm64-app/Minikyu.app universal-app/Minikyu.app
+
+          # Merge the main executable
+          lipo -create \
+            arm64-app/Minikyu.app/Contents/MacOS/Minikyu \
+            x64-app/Minikyu.app/Contents/MacOS/Minikyu \
+            -output universal-app/Minikyu.app/Contents/MacOS/Minikyu
+
+          # Verify the universal binary
+          file universal-app/Minikyu.app/Contents/MacOS/Minikyu
+          lipo -info universal-app/Minikyu.app/Contents/MacOS/Minikyu
+
+      - name: Extract entitlements from arm64 app
+        run: |
+          codesign -d --entitlements :- arm64-app/Minikyu.app > entitlements.plist || true
+          if [ -s entitlements.plist ]; then
+            echo "Extracted entitlements:"
+            cat entitlements.plist
+          else
+            echo "No entitlements found in arm64 app"
+            rm -f entitlements.plist
+          fi
+
+      # APPLE_SIGNING_IDENTITY must be the full identity string,
+      # e.g. "Developer ID Application: Name (TEAMID)"
+      - name: Re-sign the universal app
+        env:
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+        run: |
+          # Remove existing signatures
+          codesign --remove-signature universal-app/Minikyu.app || true
+
+          # Re-sign with hardened runtime (required for notarization)
+          if [ -f entitlements.plist ]; then
+            codesign --force --sign "$APPLE_SIGNING_IDENTITY" \
+              --options runtime \
+              --entitlements entitlements.plist \
+              universal-app/Minikyu.app
+          else
+            codesign --force --sign "$APPLE_SIGNING_IDENTITY" \
+              --options runtime \
+              universal-app/Minikyu.app
+          fi
+
+          # Verify
+          codesign --verify --strict universal-app/Minikyu.app
+
+      - name: Determine version
+        id: version
+        run: |
+          VERSION="${{ github.ref_name }}"
+          # Fall back to inputs.version for workflow_dispatch
+          if [[ ! "$VERSION" =~ ^v ]]; then
+            VERSION="${{ inputs.version }}"
+          fi
+          # Strip 'v' prefix
+          CLEAN_VERSION="${VERSION#v}"
+          echo "version=$CLEAN_VERSION" >> $GITHUB_OUTPUT
+          echo "tag=$VERSION" >> $GITHUB_OUTPUT
+
+      - name: Create DMG
+        run: |
+          DMG_NAME="Minikyu_${{ steps.version.outputs.version }}_universal.dmg"
+          hdiutil create -volname "Minikyu" \
+            -srcfolder universal-app/Minikyu.app \
+            -ov -format UDZO \
+            "$DMG_NAME"
+          echo "DMG_PATH=$DMG_NAME" >> $GITHUB_ENV
+
+      - name: Sign DMG
+        env:
+          APPLE_SIGNING_IDENTITY: ${{ secrets.APPLE_SIGNING_IDENTITY }}
+        run: |
+          codesign --force --sign "$APPLE_SIGNING_IDENTITY" "$DMG_PATH"
+
+      - name: Notarize DMG
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_PASSWORD: ${{ secrets.APPLE_PASSWORD }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+        run: |
+          xcrun notarytool submit "$DMG_PATH" \
+            --apple-id "$APPLE_ID" \
+            --password "$APPLE_PASSWORD" \
+            --team-id "$APPLE_TEAM_ID" \
+            --wait
+
+          # Staple the notarization ticket
+          xcrun stapler staple "$DMG_PATH"
+
+      - name: Upload universal DMG to release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "${{ steps.version.outputs.tag }}" "$DMG_PATH" \
+            --clobber
+
+      - name: Cleanup keychain
+        if: always()
+        run: |
+          security delete-keychain build.keychain || true

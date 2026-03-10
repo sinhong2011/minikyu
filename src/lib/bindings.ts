@@ -188,6 +188,18 @@ async savePreferences(preferences: AppPreferences) : Promise<Result<null, string
 }
 },
 /**
+ * Downloads an image from a URL and caches it locally in the app data directory.
+ * Returns the local file path of the cached image.
+ */
+async downloadBackgroundImage(url: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("download_background_image", { url }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Loads the last reading entry from disk.
  * Returns None (as null in TypeScript) if the file doesn't exist.
  */
@@ -1292,6 +1304,105 @@ async seedE2eTestData(entryIds: string[]) : Promise<Result<null, string>> {
     if(e instanceof Error) throw e;
     else return { status: "error", error: e  as any };
 }
+},
+/**
+ * Save S3 credentials to keyring.
+ */
+async cloudSyncSaveCredentials(accessKey: string, secretKey: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_save_credentials", { accessKey, secretKey }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Save WebDAV password to keyring.
+ */
+async cloudSyncSaveWebdavPassword(password: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_save_webdav_password", { password }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Delete all cloud sync credentials from keyring.
+ */
+async cloudSyncDeleteCredentials() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_delete_credentials") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Check if S3 credentials exist in keyring.
+ */
+async cloudSyncHasCredentials() : Promise<Result<boolean, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_has_credentials") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Check if WebDAV password exists in keyring.
+ */
+async cloudSyncHasWebdavCredentials() : Promise<Result<boolean, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_has_webdav_credentials") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Test S3 connection. Uses provided credentials, or falls back to keyring if empty.
+ */
+async cloudSyncTestConnection(endpoint: string, bucket: string, region: string, accessKey: string, secretKey: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_test_connection", { endpoint, bucket, region, accessKey, secretKey }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Test WebDAV connection. Uses provided password, or falls back to keyring if empty.
+ */
+async cloudSyncTestWebdavConnection(url: string, username: string, password: string) : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_test_webdav_connection", { url, username, password }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Push current preferences + server URLs to remote storage.
+ */
+async cloudSyncPush() : Promise<Result<null, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_push") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
+ * Pull preferences + server URLs from remote storage.
+ */
+async cloudSyncPull() : Promise<Result<CloudSyncPayload, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("cloud_sync_pull") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
 }
 }
 
@@ -1326,6 +1437,19 @@ export type AccountError =
  */
 { type: "DatabaseError"; data: string }
 /**
+ * Per-account translation exclusion settings.
+ * Keyed by `server_url|username` to isolate exclusions per Miniflux account.
+ */
+export type AccountTranslationExclusions = { 
+/**
+ * Feed IDs excluded from immersive translation for this account.
+ */
+feed_ids?: string[]; 
+/**
+ * Category IDs excluded from immersive translation for this account.
+ */
+category_ids?: string[] }
+/**
  * API Key
  */
 export type ApiKey = { id: string; user_id: string; description: string; token?: string | null; created_at?: string | null; last_used_at?: string | null }
@@ -1342,6 +1466,11 @@ export type AppPreferences = { theme: string;
  * Background image file path. None means no background image.
  */
 background_image_path?: string | null; 
+/**
+ * Original URL of the background image (for cloud sync).
+ * When synced to another device, this URL is used to re-download the image.
+ */
+background_image_url?: string | null; 
 /**
  * Background image opacity (0.0 to 1.0). Defaults to 0.15.
  */
@@ -1479,13 +1608,9 @@ reader_translation_provider_settings?: Partial<{ [key in string]: ReaderTranslat
  */
 reader_translation_auto_enabled?: boolean; 
 /**
- * Feed IDs excluded from immersive translation.
+ * Per-account translation exclusions keyed by "server_url|username".
  */
-reader_translation_excluded_feed_ids?: string[]; 
-/**
- * Category IDs excluded from immersive translation.
- */
-reader_translation_excluded_category_ids?: string[]; 
+reader_translation_exclusions?: Partial<{ [key in string]: AccountTranslationExclusions }>; 
 /**
  * Source language codes that skip auto-translation (e.g. ["zh", "zh-CN", "zh-TW"]).
  */
@@ -1543,6 +1668,10 @@ sync_interval?: number | null;
  */
 auto_check_updates?: boolean; 
 /**
+ * Whether to automatically download updates when available.
+ */
+auto_download_updates?: boolean; 
+/**
  * Action for swipe-left gesture in reader (e.g. "open_in_app_browser", "toggle_read", "none").
  */
 gesture_swipe_left_action?: string; 
@@ -1565,7 +1694,51 @@ gesture_swipe_threshold?: number;
 /**
  * Entry list panel width in pixels. None means use default (435).
  */
-layout_entry_list_width?: number | null }
+layout_entry_list_width?: number | null; 
+/**
+ * Whether cloud sync is enabled.
+ */
+cloud_sync_enabled?: boolean; 
+/**
+ * Cloud sync protocol: "s3" or "webdav".
+ */
+cloud_sync_protocol?: string; 
+/**
+ * S3-compatible endpoint URL (e.g., "https://s3.amazonaws.com").
+ */
+cloud_sync_endpoint?: string | null; 
+/**
+ * S3 bucket name.
+ */
+cloud_sync_bucket?: string | null; 
+/**
+ * S3 region (default: "auto").
+ */
+cloud_sync_region?: string; 
+/**
+ * S3 object key for the sync file.
+ */
+cloud_sync_object_key?: string; 
+/**
+ * WebDAV server URL (e.g., "https://dav.example.com/remote.php/dav/files/user").
+ */
+cloud_sync_webdav_url?: string | null; 
+/**
+ * WebDAV username.
+ */
+cloud_sync_webdav_username?: string | null; 
+/**
+ * WebDAV file path for the sync file.
+ */
+cloud_sync_webdav_path?: string; 
+/**
+ * Whether to auto-pull from cloud on app startup.
+ */
+cloud_sync_auto_pull?: boolean; 
+/**
+ * ISO 8601 timestamp of the last successful cloud sync operation.
+ */
+cloud_sync_last_synced?: string | null }
 export type ArticleSummaryRecord = { entry_id: string; summary: string; provider_used: string | null; model_used: string | null }
 /**
  * Authentication Config
@@ -1627,6 +1800,10 @@ export type CloseBehavior =
  * Minimize to tray (hide window, keep running)
  */
 "minimize_to_tray"
+/**
+ * Payload for the sync file stored remotely.
+ */
+export type CloudSyncPayload = { preferences: AppPreferences; server_urls: string[]; synced_at: string }
 /**
  * Counters
  */

@@ -4,6 +4,7 @@
 //! Import specific commands via their submodule (e.g., `commands::preferences::greet`).
 
 pub mod accounts;
+pub mod cloud_sync;
 pub mod counters;
 pub mod data;
 pub mod downloads;

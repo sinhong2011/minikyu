@@ -186,4 +186,16 @@ export const viewCommands: AppCommand[] = [
       context.openPreferencesPane('translation');
     },
   },
+  {
+    id: 'change-background-image',
+    label: msg`Change Background Image`,
+    description: msg`Set background from file or URL`,
+    group: 'view',
+    keywords: ['background', 'wallpaper', 'image', 'url', 'picture'],
+    execute: () => {
+      document.dispatchEvent(
+        new CustomEvent('command:navigate-page', { detail: 'background-image' })
+      );
+    },
+  },
 ];

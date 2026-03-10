@@ -17,7 +17,6 @@ import { CSS } from '@dnd-kit/utilities';
 import {
   ArrowDown01Icon,
   ArrowUp01Icon,
-  Cancel01Icon,
   Globe02Icon,
   InformationCircleIcon,
   Key01Icon,
@@ -35,15 +34,18 @@ import { useLingui } from '@lingui/react';
 import { AnimatePresence, motion } from 'motion/react';
 import { type ReactNode, useEffect, useMemo, useRef, useState } from 'react';
 import { Switch } from '@/components/animate-ui/components/base/switch';
-import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import {
   Combobox,
+  ComboboxChip,
+  ComboboxChips,
+  ComboboxChipsInput,
   ComboboxContent,
   ComboboxEmpty,
-  ComboboxInput,
   ComboboxItem,
   ComboboxList,
+  ComboboxTrigger,
+  useComboboxAnchor,
 } from '@/components/ui/combobox';
 import { Input } from '@/components/ui/input';
 import {
@@ -53,6 +55,7 @@ import {
   InputGroupInput,
 } from '@/components/ui/input-group';
 import { Label } from '@/components/ui/label';
+import { NumberInput } from '@/components/ui/number-input';
 import {
   Select,
   SelectContent,
@@ -63,6 +66,7 @@ import {
 import { showToast } from '@/components/ui/sonner';
 import { Textarea } from '@/components/ui/textarea';
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
+import { buildAccountExclusionKey } from '@/hooks/use-reader-settings';
 import {
   type ChineseConversionRule,
   commands,
@@ -71,6 +75,7 @@ import {
   type TranslationSegmentRequest,
 } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
+import { useActiveAccount } from '@/services/miniflux/accounts';
 import { useCategories } from '@/services/miniflux/categories';
 import { useFeeds } from '@/services/miniflux/feeds';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
@@ -398,7 +403,7 @@ function SettingsRow({ children, description, htmlFor, label }: SettingsRowProps
           </Tooltip>
         ) : null}
       </div>
-      <div className="min-w-0">{children}</div>
+      <div className="flex min-w-0 justify-end">{children}</div>
     </div>
   );
 }
@@ -1704,7 +1709,10 @@ export function TranslationPane() {
               onValueChange={handleRouteModeChange}
               disabled={!preferences || savePreferences.isPending}
             >
-              <SelectTrigger aria-label={_(msg`Translation route mode`)} className="w-full">
+              <SelectTrigger
+                aria-label={_(msg`Translation route mode`)}
+                className="w-full max-w-48"
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -1724,7 +1732,10 @@ export function TranslationPane() {
               onValueChange={handleTargetLanguageChange}
               disabled={!preferences || savePreferences.isPending}
             >
-              <SelectTrigger aria-label={_(msg`Translation target language`)} className="w-full">
+              <SelectTrigger
+                aria-label={_(msg`Translation target language`)}
+                className="w-full max-w-48"
+              >
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -1904,6 +1915,7 @@ export function TranslationPane() {
           description={_(
             msg`Override the default system prompt for AI summaries. Leave empty to use the default.`
           )}
+          vertical
         >
           <Textarea
             value={preferences?.ai_summary_custom_prompt ?? ''}
@@ -1927,15 +1939,10 @@ export function TranslationPane() {
             msg`Maximum number of characters sent to the LLM. Longer articles are truncated.`
           )}
         >
-          <Input
-            type="number"
-            min={1000}
-            max={500000}
-            step={10000}
+          <NumberInput
             value={preferences?.ai_summary_max_text_length ?? 100000}
-            onChange={(e) => {
-              const value = Number.parseInt(e.target.value, 10);
-              if (preferences && Number.isFinite(value) && value >= 1000) {
+            onChange={(value) => {
+              if (preferences) {
                 savePreferences.mutate({
                   ...preferences,
                   // biome-ignore lint/style/useNamingConvention: preferences field name
@@ -1943,6 +1950,9 @@ export function TranslationPane() {
                 });
               }
             }}
+            min={1000}
+            max={500000}
+            step={10000}
             className="w-32"
           />
         </SettingsField>
@@ -1998,77 +2008,106 @@ export function TranslationPane() {
             </SettingsField>
 
             <SettingsField
+              vertical
               label={_(msg`Custom Term Conversion`)}
               description={_(
                 msg`These replacements are applied after built-in Chinese conversion in the reading panel.`
               )}
             >
-              <div className="space-y-2">
-                {customRulesDraft.length === 0 && (
-                  <p className="text-sm text-muted-foreground">{_(msg`No custom rules yet`)}</p>
-                )}
-
-                {customRulesDraft.map((rule) => (
-                  <div key={rule.id} className="grid grid-cols-[1fr_1fr_auto] gap-2">
-                    <Input
-                      value={rule.from}
-                      placeholder={_(msg`From`)}
-                      onChange={(event) => updateCustomRule(rule.id, { from: event.target.value })}
-                      disabled={savePreferences.isPending}
-                    />
-                    <Input
-                      value={rule.to}
-                      placeholder={_(msg`To`)}
-                      onChange={(event) => updateCustomRule(rule.id, { to: event.target.value })}
-                      disabled={savePreferences.isPending}
-                    />
+              <div className="space-y-3">
+                {customRulesDraft.length === 0 ? (
+                  <div className="flex flex-col items-center gap-2 rounded-lg border border-dashed border-border/50 py-6 text-muted-foreground">
+                    <span className="text-sm">{_(msg`No custom rules yet`)}</span>
                     <Button
                       type="button"
                       variant="outline"
-                      onClick={() => removeCustomRule(rule.id)}
+                      size="sm"
+                      onClick={addCustomRule}
                       disabled={savePreferences.isPending}
                     >
-                      {_(msg`Remove`)}
+                      {_(msg`Add Rule`)}
                     </Button>
                   </div>
-                ))}
+                ) : (
+                  <>
+                    <div className="space-y-2">
+                      {customRulesDraft.map((rule) => (
+                        <div
+                          key={rule.id}
+                          className="grid grid-cols-[1fr_1fr_auto] items-center gap-2"
+                        >
+                          <Input
+                            value={rule.from}
+                            placeholder={_(msg`From`)}
+                            onChange={(event) =>
+                              updateCustomRule(rule.id, { from: event.target.value })
+                            }
+                            disabled={savePreferences.isPending}
+                          />
+                          <Input
+                            value={rule.to}
+                            placeholder={_(msg`To`)}
+                            onChange={(event) =>
+                              updateCustomRule(rule.id, { to: event.target.value })
+                            }
+                            disabled={savePreferences.isPending}
+                          />
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="sm"
+                            onClick={() => removeCustomRule(rule.id)}
+                            disabled={savePreferences.isPending}
+                            className="text-muted-foreground hover:text-destructive"
+                          >
+                            {_(msg`Remove`)}
+                          </Button>
+                        </div>
+                      ))}
+                    </div>
 
-                {hasInvalidCustomRules && (
-                  <p className="text-sm text-destructive">
-                    {_(msg`Each rule must include a non-empty "From" value`)}
-                  </p>
+                    {hasInvalidCustomRules && (
+                      <p className="text-sm text-destructive">
+                        {_(msg`Each rule must include a non-empty "From" value`)}
+                      </p>
+                    )}
+
+                    <div className="flex items-center gap-2">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={addCustomRule}
+                        disabled={savePreferences.isPending}
+                      >
+                        {_(msg`Add Rule`)}
+                      </Button>
+                      <div className="flex-1" />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={resetCustomRules}
+                        disabled={savePreferences.isPending || !hasRuleChanges}
+                      >
+                        {_(msg`Reset`)}
+                      </Button>
+                      <Button
+                        type="button"
+                        size="sm"
+                        onClick={() => void saveCustomRules()}
+                        disabled={
+                          savePreferences.isPending ||
+                          hasInvalidCustomRules ||
+                          !hasRuleChanges ||
+                          !preferences
+                        }
+                      >
+                        {savePreferences.isPending ? _(msg`Saving...`) : _(msg`Save Rules`)}
+                      </Button>
+                    </div>
+                  </>
                 )}
-
-                <div className="flex flex-wrap gap-2">
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={addCustomRule}
-                    disabled={savePreferences.isPending}
-                  >
-                    {_(msg`Add Rule`)}
-                  </Button>
-                  <Button
-                    type="button"
-                    variant="outline"
-                    onClick={resetCustomRules}
-                    disabled={savePreferences.isPending || !hasRuleChanges}
-                  >
-                    {_(msg`Reset`)}
-                  </Button>
-                  <Button
-                    type="button"
-                    onClick={() => void saveCustomRules()}
-                    disabled={
-                      savePreferences.isPending ||
-                      hasInvalidCustomRules ||
-                      !hasRuleChanges ||
-                      !preferences
-                    }
-                  >
-                    {savePreferences.isPending ? _(msg`Saving...`) : _(msg`Save Rules`)}
-                  </Button>
-                </div>
               </div>
             </SettingsField>
           </>
@@ -2083,79 +2122,73 @@ function FeedExclusionList() {
   const { data: preferences } = usePreferences();
   const { mutate: savePreferencesAction, isPending } = useSavePreferences();
   const { data: feeds } = useFeeds();
-  const excludedIds = preferences?.reader_translation_excluded_feed_ids ?? [];
+  const { data: activeAccount } = useActiveAccount();
 
-  const excludedFeeds = (feeds ?? []).filter((feed) => excludedIds.includes(feed.id));
-  const availableFeeds = (feeds ?? []).filter((feed) => !excludedIds.includes(feed.id));
+  const accountKey = activeAccount
+    ? buildAccountExclusionKey(activeAccount.server_url, activeAccount.username)
+    : null;
+  const exclusions = accountKey
+    ? preferences?.reader_translation_exclusions?.[accountKey]
+    : undefined;
+  const excludedIds = exclusions?.feed_ids ?? [];
 
-  const addFeed = (feedId: string) => {
-    if (!preferences || excludedIds.includes(feedId)) return;
+  const feedMap = new Map((feeds ?? []).map((f) => [f.id, f]));
+  const excludedFeeds = excludedIds.flatMap((id) => {
+    const feed = feedMap.get(id);
+    return feed ? [feed] : [];
+  });
+
+  const updateFeedExclusions = (feedIds: string[]) => {
+    if (!preferences || !accountKey) return;
     savePreferencesAction({
       ...preferences,
       // biome-ignore lint/style/useNamingConvention: preferences field name
-      reader_translation_excluded_feed_ids: [...excludedIds, feedId],
+      reader_translation_exclusions: {
+        ...preferences.reader_translation_exclusions,
+        [accountKey]: {
+          // biome-ignore lint/style/useNamingConvention: Rust struct field names
+          ...(exclusions ?? { feed_ids: [], category_ids: [] }),
+          // biome-ignore lint/style/useNamingConvention: field name
+          feed_ids: feedIds,
+        },
+      },
     });
   };
 
-  const removeFeed = (feedId: string) => {
-    if (!preferences) return;
-    savePreferencesAction({
-      ...preferences,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
-      reader_translation_excluded_feed_ids: excludedIds.filter((id) => id !== feedId),
-    });
-  };
+  const chipsRef = useComboboxAnchor();
+  const allFeeds = feeds ?? [];
 
   return (
-    <div className="space-y-2">
-      {excludedFeeds.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {excludedFeeds.map((feed) => (
-            <Badge key={feed.id} variant="secondary" className="gap-1 pr-1 h-auto py-0.5">
-              <span className="max-w-[200px] truncate">{feed.title}</span>
-              <button
-                type="button"
-                onClick={() => removeFeed(feed.id)}
-                disabled={isPending}
-                aria-label={_(msg`Remove ${feed.title}`)}
-                className="ml-0.5 rounded-sm opacity-60 hover:opacity-100 disabled:pointer-events-none transition-opacity"
-              >
-                <HugeiconsIcon icon={Cancel01Icon} className="size-3" />
-              </button>
-            </Badge>
+    <Combobox
+      multiple
+      disabled={isPending}
+      value={excludedIds}
+      onValueChange={(values) => {
+        if (Array.isArray(values)) {
+          updateFeedExclusions(values as string[]);
+        }
+      }}
+    >
+      <ComboboxChips ref={chipsRef} className="w-100">
+        {excludedFeeds.map((feed) => (
+          <ComboboxChip key={feed.id}>
+            <span className="max-w-[200px] truncate">{feed.title}</span>
+          </ComboboxChip>
+        ))}
+        <ComboboxChipsInput placeholder={_(msg`Search feeds to exclude...`)} />
+        <ComboboxTrigger />
+      </ComboboxChips>
+      <ComboboxContent anchor={chipsRef}>
+        <ComboboxList>
+          {allFeeds.map((feed) => (
+            <ComboboxItem key={feed.id} value={feed.id}>
+              {feed.title}
+            </ComboboxItem>
           ))}
-        </div>
-      )}
-
-      {excludedFeeds.length === 0 && (
-        <p className="text-sm text-muted-foreground">
-          {_(msg`No feeds excluded. All feeds will be translated when translation is enabled.`)}
-        </p>
-      )}
-
-      {availableFeeds.length > 0 && (
-        <Combobox
-          value=""
-          onValueChange={(value) => {
-            if (value && typeof value === 'string') {
-              addFeed(value);
-            }
-          }}
-        >
-          <ComboboxInput placeholder={_(msg`Search feeds to exclude...`)} />
-          <ComboboxContent>
-            <ComboboxList>
-              {availableFeeds.map((feed) => (
-                <ComboboxItem key={feed.id} value={feed.id}>
-                  {feed.title}
-                </ComboboxItem>
-              ))}
-              <ComboboxEmpty>{_(msg`No feeds found`)}</ComboboxEmpty>
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
-      )}
-    </div>
+          <ComboboxEmpty>{_(msg`No feeds found`)}</ComboboxEmpty>
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
   );
 }
 
@@ -2164,81 +2197,73 @@ function CategoryExclusionList() {
   const { data: preferences } = usePreferences();
   const { mutate: savePreferencesAction, isPending } = useSavePreferences();
   const { data: categories } = useCategories();
-  const excludedIds = preferences?.reader_translation_excluded_category_ids ?? [];
+  const { data: activeAccount } = useActiveAccount();
 
-  const excludedCategories = (categories ?? []).filter((cat) => excludedIds.includes(cat.id));
-  const availableCategories = (categories ?? []).filter((cat) => !excludedIds.includes(cat.id));
+  const accountKey = activeAccount
+    ? buildAccountExclusionKey(activeAccount.server_url, activeAccount.username)
+    : null;
+  const exclusions = accountKey
+    ? preferences?.reader_translation_exclusions?.[accountKey]
+    : undefined;
+  const excludedIds = exclusions?.category_ids ?? [];
 
-  const addCategory = (categoryId: string) => {
-    if (!preferences || excludedIds.includes(categoryId)) return;
+  const catMap = new Map((categories ?? []).map((c) => [c.id, c]));
+  const excludedCategories = excludedIds.flatMap((id) => {
+    const cat = catMap.get(id);
+    return cat ? [cat] : [];
+  });
+
+  const updateCategoryExclusions = (categoryIds: string[]) => {
+    if (!preferences || !accountKey) return;
     savePreferencesAction({
       ...preferences,
       // biome-ignore lint/style/useNamingConvention: preferences field name
-      reader_translation_excluded_category_ids: [...excludedIds, categoryId],
+      reader_translation_exclusions: {
+        ...preferences.reader_translation_exclusions,
+        [accountKey]: {
+          // biome-ignore lint/style/useNamingConvention: Rust struct field names
+          ...(exclusions ?? { feed_ids: [], category_ids: [] }),
+          // biome-ignore lint/style/useNamingConvention: field name
+          category_ids: categoryIds,
+        },
+      },
     });
   };
 
-  const removeCategory = (categoryId: string) => {
-    if (!preferences) return;
-    savePreferencesAction({
-      ...preferences,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
-      reader_translation_excluded_category_ids: excludedIds.filter((id) => id !== categoryId),
-    });
-  };
+  const chipsRef = useComboboxAnchor();
+  const allCategories = categories ?? [];
 
   return (
-    <div className="space-y-2">
-      {excludedCategories.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {excludedCategories.map((cat) => (
-            <Badge key={cat.id} variant="secondary" className="gap-1 pr-1 h-auto py-0.5">
-              <span className="max-w-[200px] truncate">{cat.title}</span>
-              <button
-                type="button"
-                onClick={() => removeCategory(cat.id)}
-                disabled={isPending}
-                aria-label={_(msg`Remove ${cat.title}`)}
-                className="ml-0.5 rounded-sm opacity-60 hover:opacity-100 disabled:pointer-events-none transition-opacity"
-              >
-                <HugeiconsIcon icon={Cancel01Icon} className="size-3" />
-              </button>
-            </Badge>
+    <Combobox
+      multiple
+      disabled={isPending}
+      value={excludedIds}
+      onValueChange={(values) => {
+        if (Array.isArray(values)) {
+          updateCategoryExclusions(values as string[]);
+        }
+      }}
+    >
+      <ComboboxChips ref={chipsRef} className="w-100">
+        {excludedCategories.map((cat) => (
+          <ComboboxChip key={cat.id}>
+            <span className="max-w-[200px] truncate">{cat.title}</span>
+          </ComboboxChip>
+        ))}
+        <ComboboxChipsInput placeholder={_(msg`Search categories to exclude...`)} />
+        <ComboboxTrigger />
+      </ComboboxChips>
+      <ComboboxContent anchor={chipsRef}>
+        <ComboboxList>
+          {allCategories.map((cat) => (
+            <ComboboxItem key={cat.id} value={cat.id}>
+              {cat.title}
+            </ComboboxItem>
           ))}
-        </div>
-      )}
-
-      {excludedCategories.length === 0 && (
-        <p className="text-sm text-muted-foreground">
-          {_(
-            msg`No categories excluded. All categories will be translated when translation is enabled.`
-          )}
-        </p>
-      )}
-
-      {availableCategories.length > 0 && (
-        <Combobox
-          value=""
-          onValueChange={(value) => {
-            if (value && typeof value === 'string') {
-              addCategory(value);
-            }
-          }}
-        >
-          <ComboboxInput placeholder={_(msg`Search categories to exclude...`)} />
-          <ComboboxContent>
-            <ComboboxList>
-              {availableCategories.map((cat) => (
-                <ComboboxItem key={cat.id} value={cat.id}>
-                  {cat.title}
-                </ComboboxItem>
-              ))}
-              <ComboboxEmpty>{_(msg`No categories found`)}</ComboboxEmpty>
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
-      )}
-    </div>
+          <ComboboxEmpty>{_(msg`No categories found`)}</ComboboxEmpty>
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
   );
 }
 
@@ -2268,79 +2293,41 @@ function SkipSourceLanguagesList() {
     de: _(msg`German`),
   };
 
-  const addLanguage = (lang: string) => {
-    if (!preferences || skipLangs.includes(lang)) return;
-    savePreferencesAction({
-      ...preferences,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
-      reader_translation_skip_source_languages: [...skipLangs, lang],
-    });
-  };
-
-  const removeLanguage = (lang: string) => {
-    if (!preferences) return;
-    savePreferencesAction({
-      ...preferences,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
-      reader_translation_skip_source_languages: skipLangs.filter((l) => l !== lang),
-    });
-  };
-
-  const availableLanguages = AVAILABLE_SOURCE_LANGUAGES.filter(
-    (lang) => !skipLangs.includes(lang.value)
-  );
+  const chipsRef = useComboboxAnchor();
 
   return (
-    <div className="space-y-2">
-      {skipLangs.length > 0 && (
-        <div className="flex flex-wrap gap-1.5">
-          {skipLangs.map((lang) => (
-            <Badge key={lang} variant="secondary" className="gap-1 pr-1 h-auto py-0.5">
-              <span>{languageLabels[lang] ?? lang}</span>
-              <button
-                type="button"
-                onClick={() => removeLanguage(lang)}
-                disabled={isPending}
-                aria-label={_(msg`Remove ${languageLabels[lang] ?? lang}`)}
-                className="ml-0.5 rounded-sm opacity-60 hover:opacity-100 disabled:pointer-events-none transition-opacity"
-              >
-                <HugeiconsIcon icon={Cancel01Icon} className="size-3" />
-              </button>
-            </Badge>
+    <Combobox
+      multiple
+      disabled={isPending}
+      value={skipLangs}
+      onValueChange={(values) => {
+        if (!preferences || !Array.isArray(values)) return;
+        savePreferencesAction({
+          ...preferences,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          reader_translation_skip_source_languages: values as string[],
+        });
+      }}
+    >
+      <ComboboxChips ref={chipsRef} className="w-100">
+        {skipLangs.map((lang) => (
+          <ComboboxChip key={lang}>
+            <span>{languageLabels[lang] ?? lang}</span>
+          </ComboboxChip>
+        ))}
+        <ComboboxChipsInput placeholder={_(msg`Search languages to skip...`)} />
+        <ComboboxTrigger />
+      </ComboboxChips>
+      <ComboboxContent anchor={chipsRef}>
+        <ComboboxList>
+          {AVAILABLE_SOURCE_LANGUAGES.map((lang) => (
+            <ComboboxItem key={lang.value} value={lang.value}>
+              {languageLabels[lang.value] ?? lang.value}
+            </ComboboxItem>
           ))}
-        </div>
-      )}
-
-      {skipLangs.length === 0 && (
-        <p className="text-sm text-muted-foreground">
-          {_(
-            msg`No languages excluded. All entries will be translated when auto-translation is enabled.`
-          )}
-        </p>
-      )}
-
-      {availableLanguages.length > 0 && (
-        <Combobox
-          value=""
-          onValueChange={(value) => {
-            if (value && typeof value === 'string') {
-              addLanguage(value);
-            }
-          }}
-        >
-          <ComboboxInput placeholder={_(msg`Search languages to skip...`)} />
-          <ComboboxContent>
-            <ComboboxList>
-              {availableLanguages.map((lang) => (
-                <ComboboxItem key={lang.value} value={lang.value}>
-                  {languageLabels[lang.value] ?? lang.value}
-                </ComboboxItem>
-              ))}
-              <ComboboxEmpty>{_(msg`No languages found`)}</ComboboxEmpty>
-            </ComboboxList>
-          </ComboboxContent>
-        </Combobox>
-      )}
-    </div>
+          <ComboboxEmpty>{_(msg`No languages found`)}</ComboboxEmpty>
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
   );
 }

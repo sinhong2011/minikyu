@@ -6,6 +6,7 @@
 
 mod accounts;
 mod bindings;
+mod cloud_sync;
 mod commands;
 mod database;
 mod miniflux;
@@ -28,6 +29,7 @@ use commands::miniflux::MinifluxState;
 pub struct AppState {
     pub db_pool: Arc<Mutex<Option<sqlx::SqlitePool>>>,
     pub miniflux: MinifluxState,
+    pub cloud_sync_notify: Arc<tokio::sync::Notify>,
 }
 
 /// Application entry point. Sets up all plugins and initializes the app.
@@ -175,6 +177,7 @@ pub fn run() {
                 client: std::sync::Arc::new(tokio::sync::Mutex::new(None)),
                 user_id: std::sync::Arc::new(tokio::sync::Mutex::new(None)),
             },
+            cloud_sync_notify: Arc::new(tokio::sync::Notify::new()),
         })
         .setup(|app| {
             log::info!("Application starting up");
@@ -297,6 +300,14 @@ pub fn run() {
 
             // NOTE: Application menu is built from JavaScript for i18n support
             // See src/lib/menu.ts for the menu implementation
+
+            // Start cloud sync debounce worker (5s after last change)
+            {
+                let app_handle = app.handle().clone();
+                tauri::async_runtime::spawn(
+                    cloud_sync::debounce::run_debounce_worker(app_handle),
+                );
+            }
 
             Ok(())
         })

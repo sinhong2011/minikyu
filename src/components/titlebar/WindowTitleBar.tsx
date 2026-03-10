@@ -57,7 +57,8 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
       data-tauri-drag-region
       data-frosted
       className={cn(
-        'relative z-20 flex h-10 w-full shrink-0 items-center gap-2 rounded-t-xl bg-background px-2',
+        'relative z-20 flex h-10 w-full shrink-0 items-center gap-2 bg-background px-2',
+        isMacOS && 'rounded-t-xl',
         className
       )}
     >

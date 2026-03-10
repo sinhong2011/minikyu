@@ -1936,27 +1936,24 @@ export function EntryReading({
         <AnimatePresence>
           {isAtBottom && hasNext && nextEntryTitle && !pullBottomHintVisible && (
             <motion.div
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 8, scale: 0.95 }}
-              transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
+              initial={{ opacity: 0, y: 12, scale: 0.96 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 8, scale: 0.96 }}
+              transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
               className="absolute right-4 bottom-4 left-4 z-20 flex justify-center"
             >
-              <Button
+              <button
                 type="button"
-                variant="ghost"
-                size="sm"
-                data-glass
-                className="gap-1.5 rounded-xl border border-white/10 bg-background/80 px-4 text-sm backdrop-blur-sm hover:bg-black/[0.08] dark:hover:bg-white/[0.12]"
-                onClick={() => {
-                  if (onNavigateNext) {
-                    onNavigateNext();
-                  }
-                }}
+                onClick={() => onNavigateNext?.()}
+                className="group/next flex max-w-xs items-center gap-2.5 rounded-2xl border border-white/10 bg-white/10 px-4 py-2 shadow-lg backdrop-blur-xl transition-all duration-200 hover:border-white/20 hover:bg-white/15 hover:shadow-xl active:scale-[0.98]"
               >
-                <span className="max-w-48 truncate">{nextEntryTitle}</span>
-                <HugeiconsIcon icon={ArrowRightIcon} className="h-3 w-3" />
-              </Button>
+                <span className="truncate text-sm font-medium text-foreground/90">
+                  {nextEntryTitle}
+                </span>
+                <span className="flex size-5 shrink-0 items-center justify-center rounded-full bg-white/10 transition-transform duration-200 group-hover/next:translate-x-0.5">
+                  <HugeiconsIcon icon={ArrowRightIcon} className="size-3 text-foreground/70" />
+                </span>
+              </button>
             </motion.div>
           )}
         </AnimatePresence>

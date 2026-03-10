@@ -1,11 +1,21 @@
-import { Cancel01Icon, Image01Icon } from '@hugeicons/core-free-icons';
+import {
+  Cancel01Icon,
+  FolderOpenIcon,
+  Image01Icon,
+  Link01Icon,
+  Loading03Icon,
+} from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { open as openDialog } from '@tauri-apps/plugin-dialog';
 import { locale } from '@tauri-apps/plugin-os';
+import { AnimatePresence, motion } from 'motion/react';
+import { useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Menu, MenuItem, MenuPanel, MenuTrigger } from '@/components/ui/menu';
 import {
   Select,
   SelectContent,
@@ -18,6 +28,7 @@ import { showToast } from '@/components/ui/sonner';
 import { useTheme } from '@/hooks/use-theme';
 import { availableLanguages } from '@/i18n';
 import { logger } from '@/lib/logger';
+import { commands } from '@/lib/tauri-bindings';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
 import { SettingsField, SettingsSection } from '../shared/SettingsComponents';
 
@@ -98,7 +109,7 @@ export function AppearancePane() {
             onValueChange={handleLanguageChange}
             disabled={savePreferences.isPending}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-48">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -123,7 +134,7 @@ export function AppearancePane() {
             onValueChange={handleThemeChange}
             disabled={savePreferences.isPending}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-48">
               <SelectValue placeholder={_(msg`Select theme`)} />
             </SelectTrigger>
             <SelectContent>
@@ -150,7 +161,7 @@ export function AppearancePane() {
             }}
             disabled={savePreferences.isPending}
           >
-            <SelectTrigger>
+            <SelectTrigger className="w-48">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -162,129 +173,142 @@ export function AppearancePane() {
       </SettingsSection>
 
       <SettingsSection title={_(msg`Background Image`)}>
-        <SettingsField
-          label={_(msg`Image`)}
-          description={_(msg`Set a custom background image for the app window.`)}
-        >
-          <BackgroundImagePicker />
-        </SettingsField>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={preferences?.background_image_path ? 'has-image' : 'no-image'}
+            initial={{ opacity: 0, y: 8 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -8 }}
+            transition={{ duration: 0.25, ease: 'easeOut' }}
+          >
+            <BackgroundImagePicker />
+          </motion.div>
+        </AnimatePresence>
 
-        {preferences?.background_image_path && (
-          <>
-            <SettingsField
-              label={_(msg`Size`)}
-              description={_(msg`How the image fills the window.`)}
+        <AnimatePresence>
+          {preferences?.background_image_path && (
+            <motion.div
+              className="space-y-4"
+              initial={{ opacity: 0, height: 0 }}
+              animate={{ opacity: 1, height: 'auto' }}
+              exit={{ opacity: 0, height: 0 }}
+              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
             >
-              <Select
-                value={preferences.background_image_size ?? 'cover'}
-                onValueChange={(value: string) => {
-                  if (preferences) {
-                    savePreferences.mutate({
-                      ...preferences,
-                      // biome-ignore lint/style/useNamingConvention: preferences field name
-                      background_image_size: value,
-                    });
-                  }
-                }}
-                disabled={savePreferences.isPending}
+              <SettingsField
+                label={_(msg`Size`)}
+                description={_(msg`How the image fills the window.`)}
               >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="cover">{_(msg`Cover`)}</SelectItem>
-                  <SelectItem value="contain">{_(msg`Contain`)}</SelectItem>
-                  <SelectItem value="fill">{_(msg`Fill`)}</SelectItem>
-                  <SelectItem value="tile">{_(msg`Tile`)}</SelectItem>
-                </SelectContent>
-              </Select>
-            </SettingsField>
-
-            <SettingsField
-              label={_(msg`Opacity`)}
-              description={_(msg`Adjust the background image transparency.`)}
-            >
-              <div className="flex items-center gap-3">
-                <Slider
-                  value={[(preferences.background_image_opacity ?? 0.15) * 100]}
-                  onValueChange={(values) => {
-                    const value = Array.isArray(values) ? values[0] : values;
+                <Select
+                  value={preferences.background_image_size ?? 'cover'}
+                  onValueChange={(value: string) => {
                     if (preferences) {
                       savePreferences.mutate({
                         ...preferences,
                         // biome-ignore lint/style/useNamingConvention: preferences field name
-                        background_image_opacity: value / 100,
+                        background_image_size: value,
                       });
                     }
                   }}
-                  min={0}
-                  max={100}
-                  step={1}
-                  className="flex-1"
-                />
-                <span className="w-10 text-right text-sm text-muted-foreground">
-                  {Math.round((preferences.background_image_opacity ?? 0.15) * 100)}%
-                </span>
-              </div>
-            </SettingsField>
+                  disabled={savePreferences.isPending}
+                >
+                  <SelectTrigger className="w-32">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="cover">{_(msg`Cover`)}</SelectItem>
+                    <SelectItem value="contain">{_(msg`Contain`)}</SelectItem>
+                    <SelectItem value="fill">{_(msg`Fill`)}</SelectItem>
+                    <SelectItem value="tile">{_(msg`Tile`)}</SelectItem>
+                  </SelectContent>
+                </Select>
+              </SettingsField>
 
-            <SettingsField
-              label={_(msg`Blur`)}
-              description={_(msg`Apply blur to the background image.`)}
-            >
-              <div className="flex items-center gap-3">
-                <Slider
-                  value={[preferences.background_image_blur ?? 0]}
-                  onValueChange={(values) => {
-                    const value = Array.isArray(values) ? values[0] : values;
-                    if (preferences) {
-                      savePreferences.mutate({
-                        ...preferences,
-                        // biome-ignore lint/style/useNamingConvention: preferences field name
-                        background_image_blur: value,
-                      });
-                    }
-                  }}
-                  min={0}
-                  max={40}
-                  step={1}
-                  className="flex-1"
-                />
-                <span className="w-10 text-right text-sm text-muted-foreground">
-                  {preferences.background_image_blur}px
-                </span>
-              </div>
-            </SettingsField>
+              <SettingsField
+                label={_(msg`Opacity`)}
+                description={_(msg`Adjust the background image transparency.`)}
+              >
+                <div className="flex w-48 items-center gap-3">
+                  <Slider
+                    value={[(preferences.background_image_opacity ?? 0.15) * 100]}
+                    onValueChange={(values) => {
+                      const value = Array.isArray(values) ? values[0] : values;
+                      if (preferences) {
+                        savePreferences.mutate({
+                          ...preferences,
+                          // biome-ignore lint/style/useNamingConvention: preferences field name
+                          background_image_opacity: value / 100,
+                        });
+                      }
+                    }}
+                    min={0}
+                    max={100}
+                    step={1}
+                    className="flex-1"
+                  />
+                  <span className="w-10 text-right text-sm tabular-nums text-muted-foreground">
+                    {Math.round((preferences.background_image_opacity ?? 0.15) * 100)}%
+                  </span>
+                </div>
+              </SettingsField>
 
-            <SettingsField
-              label={_(msg`UI Transparency`)}
-              description={_(msg`Make UI panels transparent to reveal the background image.`)}
-            >
-              <div className="flex items-center gap-3">
-                <Slider
-                  value={[(preferences.background_transparency ?? 0) * 100]}
-                  onValueChange={(values) => {
-                    const value = Array.isArray(values) ? values[0] : values;
-                    if (preferences) {
-                      savePreferences.mutate({
-                        ...preferences,
-                        // biome-ignore lint/style/useNamingConvention: preferences field name
-                        background_transparency: value / 100,
-                      });
-                    }
-                  }}
-                  min={0}
-                  max={100}
-                  step={1}
-                  className="flex-1"
-                />
-                <span className="w-10 text-right text-sm text-muted-foreground">
-                  {Math.round((preferences.background_transparency ?? 0) * 100)}%
-                </span>
-              </div>
-            </SettingsField>
-          </>
-        )}
+              <SettingsField
+                label={_(msg`Blur`)}
+                description={_(msg`Apply blur to the background image.`)}
+              >
+                <div className="flex w-48 items-center gap-3">
+                  <Slider
+                    value={[preferences.background_image_blur ?? 0]}
+                    onValueChange={(values) => {
+                      const value = Array.isArray(values) ? values[0] : values;
+                      if (preferences) {
+                        savePreferences.mutate({
+                          ...preferences,
+                          // biome-ignore lint/style/useNamingConvention: preferences field name
+                          background_image_blur: value,
+                        });
+                      }
+                    }}
+                    min={0}
+                    max={40}
+                    step={1}
+                    className="flex-1"
+                  />
+                  <span className="w-10 text-right text-sm tabular-nums text-muted-foreground">
+                    {preferences.background_image_blur}px
+                  </span>
+                </div>
+              </SettingsField>
+
+              <SettingsField
+                label={_(msg`UI Transparency`)}
+                description={_(msg`Make UI panels transparent to reveal the background image.`)}
+              >
+                <div className="flex w-48 items-center gap-3">
+                  <Slider
+                    value={[(preferences.background_transparency ?? 0) * 100]}
+                    onValueChange={(values) => {
+                      const value = Array.isArray(values) ? values[0] : values;
+                      if (preferences) {
+                        savePreferences.mutate({
+                          ...preferences,
+                          // biome-ignore lint/style/useNamingConvention: preferences field name
+                          background_transparency: value / 100,
+                        });
+                      }
+                    }}
+                    min={0}
+                    max={100}
+                    step={1}
+                    className="flex-1"
+                  />
+                  <span className="w-10 text-right text-sm tabular-nums text-muted-foreground">
+                    {Math.round((preferences.background_transparency ?? 0) * 100)}%
+                  </span>
+                </div>
+              </SettingsField>
+            </motion.div>
+          )}
+        </AnimatePresence>
       </SettingsSection>
     </div>
   );
@@ -295,6 +319,9 @@ function BackgroundImagePicker() {
   const { data: preferences } = usePreferences();
   const savePreferences = useSavePreferences();
   const imagePath = preferences?.background_image_path;
+  const [showUrlInput, setShowUrlInput] = useState(false);
+  const [urlValue, setUrlValue] = useState('');
+  const [isDownloading, setIsDownloading] = useState(false);
 
   const handleSelectImage = async () => {
     const filePath = await openDialog({
@@ -309,7 +336,36 @@ function BackgroundImagePicker() {
       ...preferences,
       // biome-ignore lint/style/useNamingConvention: preferences field name
       background_image_path: filePath,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      background_image_url: null,
     });
+  };
+
+  const handleUrlSubmit = async () => {
+    const trimmed = urlValue.trim();
+    if (!trimmed || !preferences) return;
+
+    setIsDownloading(true);
+    try {
+      const result = await commands.downloadBackgroundImage(trimmed);
+      if (result.status === 'ok') {
+        savePreferences.mutate({
+          ...preferences,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          background_image_path: result.data,
+          // biome-ignore lint/style/useNamingConvention: preferences field name
+          background_image_url: trimmed,
+        });
+        setUrlValue('');
+        setShowUrlInput(false);
+      } else {
+        showToast.error(result.error);
+      }
+    } catch {
+      showToast.error(_(msg`Failed to download image`));
+    } finally {
+      setIsDownloading(false);
+    }
   };
 
   const handleRemoveImage = () => {
@@ -318,37 +374,161 @@ function BackgroundImagePicker() {
       ...preferences,
       // biome-ignore lint/style/useNamingConvention: preferences field name
       background_image_path: null,
+      // biome-ignore lint/style/useNamingConvention: preferences field name
+      background_image_url: null,
     });
   };
 
-  return (
-    <div className="space-y-2">
-      {imagePath ? (
-        <div className="flex items-center gap-2">
-          <div className="relative h-20 w-32 shrink-0 overflow-hidden rounded-md border border-border/50">
-            <img src={convertFileSrc(imagePath)} alt="" className="size-full object-cover" />
-          </div>
-          <div className="flex min-w-0 flex-1 flex-col gap-1">
-            <p className="truncate text-sm text-muted-foreground">
-              {imagePath.split(/[/\\]/).pop()}
-            </p>
-            <div className="flex gap-1.5">
-              <Button variant="outline" size="sm" onClick={handleSelectImage}>
-                {_(msg`Change`)}
-              </Button>
-              <Button variant="ghost" size="sm" onClick={handleRemoveImage}>
-                <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
-                {_(msg`Remove`)}
+  return imagePath ? (
+    <div className="space-y-3">
+      <div className="group/preview relative aspect-[21/9] w-full overflow-hidden rounded-lg border border-border/50">
+        <img src={convertFileSrc(imagePath)} alt="" className="size-full object-cover" />
+        <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
+        <Button
+          variant="secondary"
+          size="icon-xs"
+          onClick={handleRemoveImage}
+          className="absolute top-2 right-2"
+        >
+          <HugeiconsIcon icon={Cancel01Icon} className="size-3.5" />
+        </Button>
+        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between p-3">
+          <p className="truncate text-xs text-white/40 opacity-0 transition-opacity group-hover/preview:opacity-100">
+            {imagePath.split(/[/\\]/).pop()}
+          </p>
+          <Menu>
+            <MenuTrigger
+              render={
+                <Button variant="secondary" size="sm" className="gap-1.5 text-xs">
+                  <HugeiconsIcon icon={Image01Icon} className="size-3.5" />
+                  {_(msg`Change`)}
+                </Button>
+              }
+            />
+            <MenuPanel>
+              <MenuItem onClick={handleSelectImage}>
+                <HugeiconsIcon icon={FolderOpenIcon} className="size-4" />
+                {_(msg`Choose File`)}
+              </MenuItem>
+              <MenuItem onClick={() => setShowUrlInput(true)}>
+                <HugeiconsIcon icon={Link01Icon} className="size-4" />
+                {_(msg`From URL`)}
+              </MenuItem>
+            </MenuPanel>
+          </Menu>
+        </div>
+      </div>
+      <AnimatePresence>
+        {showUrlInput && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="overflow-hidden"
+          >
+            <div className="flex gap-2">
+              <Input
+                type="url"
+                value={urlValue}
+                onChange={(e) => setUrlValue(e.target.value)}
+                placeholder="https://example.com/image.jpg"
+                disabled={isDownloading}
+                className="flex-1"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleUrlSubmit();
+                  }
+                }}
+              />
+              <Button
+                size="lg"
+                onClick={handleUrlSubmit}
+                disabled={isDownloading || !urlValue.trim()}
+                className="shrink-0 gap-1.5"
+              >
+                {isDownloading ? (
+                  <HugeiconsIcon icon={Loading03Icon} className="size-3.5 animate-spin" />
+                ) : (
+                  <HugeiconsIcon icon={Image01Icon} className="size-3.5" />
+                )}
+                {isDownloading ? _(msg`Downloading...`) : _(msg`Download`)}
               </Button>
             </div>
-          </div>
-        </div>
-      ) : (
-        <Button variant="outline" onClick={handleSelectImage} className="gap-2">
-          <HugeiconsIcon icon={Image01Icon} className="size-4" />
-          {_(msg`Choose Image`)}
-        </Button>
-      )}
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </div>
+  ) : (
+    <div className="space-y-3">
+      <div className="flex gap-2">
+        <button
+          type="button"
+          onClick={handleSelectImage}
+          className="flex flex-1 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed border-border/50 py-8 text-muted-foreground transition-colors hover:border-border hover:text-foreground"
+        >
+          <HugeiconsIcon icon={Image01Icon} className="size-8 opacity-50" />
+          <span className="text-sm font-medium">{_(msg`Choose File`)}</span>
+          <span className="text-xs text-muted-foreground/70">
+            {_(msg`PNG, JPG, WebP, GIF, or AVIF`)}
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setShowUrlInput(!showUrlInput)}
+          className={`flex flex-1 cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border-2 border-dashed py-8 transition-colors ${
+            showUrlInput
+              ? 'border-primary/50 text-foreground'
+              : 'border-border/50 text-muted-foreground hover:border-border hover:text-foreground'
+          }`}
+        >
+          <HugeiconsIcon icon={Link01Icon} className="size-8 opacity-50" />
+          <span className="text-sm font-medium">{_(msg`From URL`)}</span>
+          <span className="text-xs text-muted-foreground/70">{_(msg`Paste an image link`)}</span>
+        </button>
+      </div>
+      <AnimatePresence>
+        {showUrlInput && (
+          <motion.div
+            initial={{ opacity: 0, height: 0 }}
+            animate={{ opacity: 1, height: 'auto' }}
+            exit={{ opacity: 0, height: 0 }}
+            transition={{ duration: 0.2, ease: 'easeOut' }}
+            className="overflow-hidden"
+          >
+            <div className="flex gap-2">
+              <Input
+                type="url"
+                value={urlValue}
+                onChange={(e) => setUrlValue(e.target.value)}
+                placeholder="https://example.com/image.jpg"
+                disabled={isDownloading}
+                className="flex-1"
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    e.preventDefault();
+                    handleUrlSubmit();
+                  }
+                }}
+              />
+              <Button
+                size="lg"
+                onClick={handleUrlSubmit}
+                disabled={isDownloading || !urlValue.trim()}
+                className="shrink-0 gap-1.5"
+              >
+                {isDownloading ? (
+                  <HugeiconsIcon icon={Loading03Icon} className="size-3.5 animate-spin" />
+                ) : (
+                  <HugeiconsIcon icon={Image01Icon} className="size-3.5" />
+                )}
+                {isDownloading ? _(msg`Downloading...`) : _(msg`Download`)}
+              </Button>
+            </div>
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
