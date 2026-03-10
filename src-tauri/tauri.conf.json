@@ -41,7 +41,9 @@
             "$PICTURE/**",
             "$DESKTOP/**",
             "$HOME/**",
-            "/Volumes/**"
+            "/Volumes/**",
+            "?:/**",
+            "?:\\**"
           ]
         }
       }
