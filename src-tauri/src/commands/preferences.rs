@@ -50,6 +50,35 @@ pub fn load_preferences_sync(app: &AppHandle) -> Option<AppPreferences> {
     Some(prefs)
 }
 
+/// Grant asset protocol scope for user-configured file paths in preferences.
+/// Called on both load and save to ensure paths from any location are accessible.
+fn grant_asset_scope_for_preferences(app: &AppHandle, preferences: &AppPreferences) {
+    let scope = app.asset_protocol_scope();
+
+    // Background image file
+    if let Some(ref path) = preferences.background_image_path {
+        let p = std::path::PathBuf::from(path);
+        if p.exists() {
+            if let Err(e) = scope.allow_file(&p) {
+                log::warn!("Failed to grant asset scope for background image: {e}");
+            }
+        }
+    }
+
+    // Download directories (for audio/video playback of downloaded files)
+    for dir_path in [&preferences.image_download_path, &preferences.video_download_path]
+        .into_iter()
+        .flatten()
+    {
+        let p = std::path::PathBuf::from(dir_path);
+        if p.is_dir() {
+            if let Err(e) = scope.allow_directory(&p, true) {
+                log::warn!("Failed to grant asset scope for download directory: {e}");
+            }
+        }
+    }
+}
+
 /// Simple greeting command for demonstration purposes.
 #[tauri::command]
 #[specta::specta]
@@ -86,6 +115,9 @@ pub async fn load_preferences(app: AppHandle) -> Result<AppPreferences, String> 
         log::error!("Failed to parse preferences JSON: {e}");
         format!("Failed to parse preferences: {e}")
     })?;
+
+    // Grant asset protocol access for user-configured paths
+    grant_asset_scope_for_preferences(&app, &preferences);
 
     log::info!("Successfully loaded preferences");
     Ok(preferences)
@@ -170,6 +202,9 @@ pub async fn save_preferences(app: AppHandle, preferences: AppPreferences) -> Re
     }
 
     log::info!("Successfully saved preferences to {prefs_path:?}");
+
+    // Grant asset protocol access for user-configured paths
+    grant_asset_scope_for_preferences(&app, &preferences);
 
     // Notify the debounce worker to push after 5s of inactivity
     let cloud_sync_configured = match preferences.cloud_sync_protocol.as_str() {
