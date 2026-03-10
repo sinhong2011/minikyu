@@ -8,10 +8,14 @@ import { RouterProvider } from '@tanstack/react-router';
 import { TanStackRouterDevtoolsPanel } from '@tanstack/react-router-devtools';
 import ReactDOM from 'react-dom/client';
 import { AppProviders } from '@/AppProviders';
+import { getPlatform } from '@/hooks/use-platform';
 import { defaultLocale, loadAndActivate } from '@/i18n/config';
 import { queryClient } from '@/lib/query-client';
 import { router } from '@/router';
 import '@/styles/global.css';
+
+// Set platform data attribute on <html> for platform-specific CSS
+document.documentElement.dataset.platform = getPlatform();
 
 // Expose stores for e2e WebDriver testing in development
 if (import.meta.env.DEV) {
