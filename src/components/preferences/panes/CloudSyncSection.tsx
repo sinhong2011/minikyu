@@ -1,10 +1,15 @@
+import { Loading02Icon } from '@hugeicons/core-free-icons';
+import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { useQueryClient } from '@tanstack/react-query';
+import { listen } from '@tauri-apps/api/event';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { PasswordInput } from '@/components/ui/password-input';
 import {
   Select,
   SelectContent,
@@ -16,7 +21,25 @@ import { showToast } from '@/components/ui/sonner';
 import { Switch } from '@/components/ui/switch';
 import type { AppPreferences } from '@/lib/tauri-bindings';
 import { commands } from '@/lib/tauri-bindings';
-import { useSavePreferences } from '@/services/preferences';
+import { preferencesQueryKeys, useSavePreferences } from '@/services/preferences';
+
+function formatLastSynced(isoString: string): string {
+  const date = new Date(isoString);
+  const now = new Date();
+  const diffMs = now.getTime() - date.getTime();
+  const diffMin = Math.floor(diffMs / 60_000);
+  const diffHrs = Math.floor(diffMs / 3_600_000);
+
+  if (diffMin < 1) return 'just now';
+  if (diffMin < 60) return `${diffMin}m ago`;
+  if (diffHrs < 24) return `${diffHrs}h ago`;
+  return date.toLocaleDateString(undefined, {
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
+  });
+}
 
 interface CloudSyncSectionProps {
   preferences: AppPreferences | undefined;
@@ -24,6 +47,7 @@ interface CloudSyncSectionProps {
 
 export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
   const { _ } = useLingui();
+  const queryClient = useQueryClient();
   const savePreferences = useSavePreferences();
 
   const [csAccessKey, setCsAccessKey] = useState('');
@@ -44,28 +68,25 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
     });
   }, []);
 
+  // Update last sync time when debounced push completes in the background
+  useEffect(() => {
+    const unlisten = listen('cloud-sync-pushed', () => {
+      queryClient.setQueryData(preferencesQueryKeys.preferences(), (old: AppPreferences) => ({
+        ...old,
+        cloud_sync_last_synced: new Date().toISOString(),
+      }));
+    });
+    return () => {
+      unlisten.then((fn) => fn());
+    };
+  }, [queryClient]);
+
   const updatePreference = <K extends keyof NonNullable<typeof preferences>>(
     key: K,
     value: NonNullable<typeof preferences>[K]
   ) => {
     if (!preferences) return;
     savePreferences.mutate({ ...preferences, [key]: value });
-  };
-
-  const handleCsSaveCredentials = async () => {
-    if (!csAccessKey.trim() || !csSecretKey.trim()) {
-      showToast.error(_(msg`Please enter both access key and secret key`));
-      return;
-    }
-    const result = await commands.cloudSyncSaveCredentials(csAccessKey, csSecretKey);
-    if (result.status === 'ok') {
-      setCsHasCredentials(true);
-      setCsAccessKey('');
-      setCsSecretKey('');
-      showToast.success(_(msg`Credentials saved`));
-    } else {
-      showToast.error(result.error);
-    }
   };
 
   const handleCsDeleteCredentials = async () => {
@@ -77,45 +98,31 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
     }
   };
 
-  const handleCsSaveWebdavPassword = async () => {
-    if (!csWebdavPassword.trim()) {
-      showToast.error(_(msg`Please enter a password`));
-      return;
-    }
-    const result = await commands.cloudSyncSaveWebdavPassword(csWebdavPassword);
-    if (result.status === 'ok') {
-      setCsHasWebdavCredentials(true);
-      setCsWebdavPassword('');
-      showToast.success(_(msg`Credentials saved`));
-    } else {
-      showToast.error(result.error);
-    }
-  };
-
   const handleCsTestConnection = async () => {
     const protocol = preferences?.cloud_sync_protocol ?? 's3';
     setCsTesting(true);
     try {
       if (protocol === 'webdav') {
-        if (!csWebdavPassword.trim()) {
-          showToast.error(_(msg`Enter credentials to test connection`));
-          return;
-        }
         const result = await commands.cloudSyncTestWebdavConnection(
           preferences?.cloud_sync_webdav_url ?? '',
           preferences?.cloud_sync_webdav_username ?? '',
           csWebdavPassword
         );
         if (result.status === 'ok') {
-          showToast.success(_(msg`Connection successful`));
+          if (csWebdavPassword.trim()) {
+            await commands.cloudSyncSaveWebdavPassword(csWebdavPassword);
+            setCsHasWebdavCredentials(true);
+            setCsWebdavPassword('');
+          }
+          showToast.success(
+            csWebdavPassword.trim()
+              ? _(msg`Connection successful, credentials saved`)
+              : _(msg`Connection successful`)
+          );
         } else {
           showToast.error(result.error);
         }
       } else {
-        if (!csAccessKey.trim() || !csSecretKey.trim()) {
-          showToast.error(_(msg`Enter credentials to test connection`));
-          return;
-        }
         const result = await commands.cloudSyncTestConnection(
           preferences?.cloud_sync_endpoint ?? '',
           preferences?.cloud_sync_bucket ?? '',
@@ -124,7 +131,17 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
           csSecretKey
         );
         if (result.status === 'ok') {
-          showToast.success(_(msg`Connection successful`));
+          if (csAccessKey.trim() && csSecretKey.trim()) {
+            await commands.cloudSyncSaveCredentials(csAccessKey, csSecretKey);
+            setCsHasCredentials(true);
+            setCsAccessKey('');
+            setCsSecretKey('');
+          }
+          showToast.success(
+            csAccessKey.trim()
+              ? _(msg`Connection successful, credentials saved`)
+              : _(msg`Connection successful`)
+          );
         } else {
           showToast.error(result.error);
         }
@@ -140,6 +157,10 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
       const result = await commands.cloudSyncPush();
       if (result.status === 'ok') {
         showToast.success(_(msg`Preferences pushed to cloud`));
+        queryClient.setQueryData(preferencesQueryKeys.preferences(), (old: AppPreferences) => ({
+          ...old,
+          cloud_sync_last_synced: new Date().toISOString(),
+        }));
       } else {
         showToast.error(result.error);
       }
@@ -193,13 +214,13 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
           >
             <div className="space-y-3 pt-1">
               {/* Protocol selector */}
-              <div className="space-y-1.5">
+              <div className="flex items-center justify-between">
                 <Label className="text-xs text-muted-foreground">{_(msg`Protocol`)}</Label>
                 <Select
                   value={protocol}
                   onValueChange={(value) => updatePreference('cloud_sync_protocol', value)}
                 >
-                  <SelectTrigger className="h-8 text-sm">
+                  <SelectTrigger className="h-8 text-sm w-32">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -220,12 +241,12 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
                     transition={{ duration: 0.15 }}
                     className="space-y-3"
                   >
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-muted-foreground">
+                    <div className="flex items-center justify-between gap-3">
+                      <Label className="text-xs text-muted-foreground shrink-0">
                         {_(msg`Endpoint URL`)}
                       </Label>
                       <Input
-                        className="h-8 text-sm"
+                        className="h-8 text-sm max-w-[60%]"
                         placeholder="https://s3.amazonaws.com"
                         value={preferences?.cloud_sync_endpoint ?? ''}
                         onChange={(e) =>
@@ -233,33 +254,37 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
                         }
                       />
                     </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="space-y-1.5">
-                        <Label className="text-xs text-muted-foreground">{_(msg`Bucket`)}</Label>
-                        <Input
-                          className="h-8 text-sm"
-                          placeholder="my-bucket"
-                          value={preferences?.cloud_sync_bucket ?? ''}
-                          onChange={(e) =>
-                            updatePreference('cloud_sync_bucket', e.target.value || null)
-                          }
-                        />
-                      </div>
-                      <div className="space-y-1.5">
-                        <Label className="text-xs text-muted-foreground">{_(msg`Region`)}</Label>
-                        <Input
-                          className="h-8 text-sm"
-                          value={preferences?.cloud_sync_region ?? 'auto'}
-                          onChange={(e) =>
-                            updatePreference('cloud_sync_region', e.target.value || 'auto')
-                          }
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-muted-foreground">{_(msg`Object Key`)}</Label>
+                    <div className="flex items-center justify-between gap-3">
+                      <Label className="text-xs text-muted-foreground shrink-0">
+                        {_(msg`Bucket`)}
+                      </Label>
                       <Input
-                        className="h-8 text-sm"
+                        className="h-8 text-sm max-w-[60%]"
+                        placeholder="my-bucket"
+                        value={preferences?.cloud_sync_bucket ?? ''}
+                        onChange={(e) =>
+                          updatePreference('cloud_sync_bucket', e.target.value || null)
+                        }
+                      />
+                    </div>
+                    <div className="flex items-center justify-between gap-3">
+                      <Label className="text-xs text-muted-foreground shrink-0">
+                        {_(msg`Region`)}
+                      </Label>
+                      <Input
+                        className="h-8 text-sm max-w-[60%]"
+                        value={preferences?.cloud_sync_region ?? 'auto'}
+                        onChange={(e) =>
+                          updatePreference('cloud_sync_region', e.target.value || 'auto')
+                        }
+                      />
+                    </div>
+                    <div className="flex items-center justify-between gap-3">
+                      <Label className="text-xs text-muted-foreground shrink-0">
+                        {_(msg`Object Key`)}
+                      </Label>
+                      <Input
+                        className="h-8 text-sm max-w-[60%]"
                         value={
                           preferences?.cloud_sync_object_key ?? 'minikyu/preferences-sync.json'
                         }
@@ -307,27 +332,18 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
                             exit={{ opacity: 0 }}
                             className="space-y-2"
                           >
-                            <Input
+                            <PasswordInput
                               className="h-8 text-sm"
-                              type="password"
                               value={csAccessKey}
                               onChange={(e) => setCsAccessKey(e.target.value)}
                               placeholder={_(msg`Access Key ID`)}
                             />
-                            <Input
+                            <PasswordInput
                               className="h-8 text-sm"
-                              type="password"
                               value={csSecretKey}
                               onChange={(e) => setCsSecretKey(e.target.value)}
                               placeholder={_(msg`Secret Access Key`)}
                             />
-                            <Button
-                              size="sm"
-                              className="h-7 text-xs"
-                              onClick={handleCsSaveCredentials}
-                            >
-                              {_(msg`Save Credentials`)}
-                            </Button>
                           </motion.div>
                         )}
                       </AnimatePresence>
@@ -342,10 +358,12 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
                     transition={{ duration: 0.15 }}
                     className="space-y-3"
                   >
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-muted-foreground">{_(msg`WebDAV URL`)}</Label>
+                    <div className="flex items-center justify-between gap-3">
+                      <Label className="text-xs text-muted-foreground shrink-0">
+                        {_(msg`WebDAV URL`)}
+                      </Label>
                       <Input
-                        className="h-8 text-sm"
+                        className="h-8 text-sm max-w-[60%]"
                         placeholder="https://dav.example.com/remote.php/dav/files/user"
                         value={preferences?.cloud_sync_webdav_url ?? ''}
                         onChange={(e) =>
@@ -353,20 +371,24 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
                         }
                       />
                     </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-muted-foreground">{_(msg`Username`)}</Label>
+                    <div className="flex items-center justify-between gap-3">
+                      <Label className="text-xs text-muted-foreground shrink-0">
+                        {_(msg`Username`)}
+                      </Label>
                       <Input
-                        className="h-8 text-sm"
+                        className="h-8 text-sm max-w-[60%]"
                         value={preferences?.cloud_sync_webdav_username ?? ''}
                         onChange={(e) =>
                           updatePreference('cloud_sync_webdav_username', e.target.value || null)
                         }
                       />
                     </div>
-                    <div className="space-y-1.5">
-                      <Label className="text-xs text-muted-foreground">{_(msg`File Path`)}</Label>
+                    <div className="flex items-center justify-between gap-3">
+                      <Label className="text-xs text-muted-foreground shrink-0">
+                        {_(msg`File Path`)}
+                      </Label>
                       <Input
-                        className="h-8 text-sm"
+                        className="h-8 text-sm max-w-[60%]"
                         value={
                           preferences?.cloud_sync_webdav_path ?? '/minikyu/preferences-sync.json'
                         }
@@ -412,20 +434,12 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
                             exit={{ opacity: 0 }}
                             className="space-y-2"
                           >
-                            <Input
+                            <PasswordInput
                               className="h-8 text-sm"
-                              type="password"
                               value={csWebdavPassword}
                               onChange={(e) => setCsWebdavPassword(e.target.value)}
                               placeholder={_(msg`Password`)}
                             />
-                            <Button
-                              size="sm"
-                              className="h-7 text-xs"
-                              onClick={handleCsSaveWebdavPassword}
-                            >
-                              {_(msg`Save Credentials`)}
-                            </Button>
                           </motion.div>
                         )}
                       </AnimatePresence>
@@ -450,46 +464,93 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
                 />
               </div>
 
+              {/* Last sync time */}
+              <p className="text-[11px] text-muted-foreground/70">
+                {_(msg`Last sync:`)}{' '}
+                {preferences?.cloud_sync_last_synced
+                  ? formatLastSynced(preferences.cloud_sync_last_synced)
+                  : _(msg`Never`)}
+              </p>
+
               {/* Actions */}
-              <div className="flex gap-2">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-7 text-xs"
+              <div className="flex items-center gap-2">
+                <ActionButton
+                  loading={csTesting}
                   onClick={handleCsTestConnection}
-                  disabled={csTesting || (protocol === 's3' ? !csAccessKey : !csWebdavPassword)}
-                >
-                  {csTesting ? _(msg`Testing...`) : _(msg`Test Connection`)}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-7 text-xs"
+                  label={_(msg`Test Connection`)}
+                  loadingLabel={_(msg`Testing...`)}
+                />
+                <ActionButton
+                  loading={csPushing}
                   onClick={handleCsPush}
                   disabled={
-                    csPushing ||
-                    !isEnabled ||
-                    (protocol === 's3' ? !csHasCredentials : !csHasWebdavCredentials)
+                    !isEnabled || (protocol === 's3' ? !csHasCredentials : !csHasWebdavCredentials)
                   }
-                >
-                  {csPushing ? _(msg`Pushing...`) : _(msg`Push Now`)}
-                </Button>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="h-7 text-xs"
+                  label={_(msg`Push Now`)}
+                  loadingLabel={_(msg`Pushing...`)}
+                />
+                <ActionButton
+                  loading={csPulling}
                   onClick={handleCsPull}
-                  disabled={
-                    csPulling || (protocol === 's3' ? !csHasCredentials : !csHasWebdavCredentials)
-                  }
-                >
-                  {csPulling ? _(msg`Pulling...`) : _(msg`Pull Now`)}
-                </Button>
+                  disabled={protocol === 's3' ? !csHasCredentials : !csHasWebdavCredentials}
+                  label={_(msg`Pull Now`)}
+                  loadingLabel={_(msg`Pulling...`)}
+                />
               </div>
             </div>
           </motion.div>
         )}
       </AnimatePresence>
     </div>
+  );
+}
+
+function ActionButton({
+  loading,
+  onClick,
+  disabled,
+  label,
+  loadingLabel,
+}: {
+  loading: boolean;
+  onClick: () => void;
+  disabled?: boolean;
+  label: string;
+  loadingLabel: string;
+}) {
+  return (
+    <Button
+      variant="outline"
+      size="sm"
+      className="h-7 text-xs"
+      onClick={onClick}
+      disabled={loading || disabled}
+    >
+      <AnimatePresence mode="wait" initial={false}>
+        {loading ? (
+          <motion.span
+            key="loading"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.15 }}
+            className="flex items-center gap-1"
+          >
+            <HugeiconsIcon icon={Loading02Icon} className="size-3 animate-spin" />
+            {loadingLabel}
+          </motion.span>
+        ) : (
+          <motion.span
+            key="idle"
+            initial={{ opacity: 0, scale: 0.8 }}
+            animate={{ opacity: 1, scale: 1 }}
+            exit={{ opacity: 0, scale: 0.8 }}
+            transition={{ duration: 0.15 }}
+          >
+            {label}
+          </motion.span>
+        )}
+      </AnimatePresence>
+    </Button>
   );
 }

@@ -57,7 +57,7 @@ pub async fn cloud_sync_has_webdav_credentials() -> Result<bool, String> {
     Ok(keyring::get_webdav_password().is_ok())
 }
 
-/// Test S3 connection with provided credentials.
+/// Test S3 connection. Uses provided credentials, or falls back to keyring if empty.
 #[tauri::command]
 #[specta::specta]
 pub async fn cloud_sync_test_connection(
@@ -67,10 +67,20 @@ pub async fn cloud_sync_test_connection(
     access_key: String,
     secret_key: String,
 ) -> Result<(), String> {
-    s3::test_connection(&endpoint, &bucket, &region, &access_key, &secret_key).await
+    let ak = if access_key.is_empty() {
+        keyring::get_access_key()?
+    } else {
+        access_key
+    };
+    let sk = if secret_key.is_empty() {
+        keyring::get_secret_key()?
+    } else {
+        secret_key
+    };
+    s3::test_connection(&endpoint, &bucket, &region, &ak, &sk).await
 }
 
-/// Test WebDAV connection with provided credentials.
+/// Test WebDAV connection. Uses provided password, or falls back to keyring if empty.
 #[tauri::command]
 #[specta::specta]
 pub async fn cloud_sync_test_webdav_connection(
@@ -78,7 +88,12 @@ pub async fn cloud_sync_test_webdav_connection(
     username: String,
     password: String,
 ) -> Result<(), String> {
-    webdav::test_connection(&url, &username, &password).await
+    let pw = if password.is_empty() {
+        keyring::get_webdav_password()?
+    } else {
+        password
+    };
+    webdav::test_connection(&url, &username, &pw).await
 }
 
 /// Push current preferences + server URLs to remote storage.
@@ -93,11 +108,18 @@ pub async fn cloud_sync_push(app: AppHandle) -> Result<(), String> {
 
     let server_urls = get_server_urls(&app).await;
 
-    let payload = CloudSyncPayload {
-        preferences: prefs.clone(),
-        server_urls,
-        synced_at: chrono::Utc::now().to_rfc3339(),
-    };
+    let sync_prefs = prefs.to_sync_json()?;
+    let mut payload = serde_json::Map::new();
+    payload.insert("preferences".to_string(), sync_prefs);
+    payload.insert(
+        "server_urls".to_string(),
+        serde_json::to_value(&server_urls)
+            .map_err(|e| format!("Failed to serialize server URLs: {e}"))?,
+    );
+    payload.insert(
+        "synced_at".to_string(),
+        serde_json::Value::String(chrono::Utc::now().to_rfc3339()),
+    );
 
     let json = serde_json::to_string_pretty(&payload)
         .map_err(|e| format!("Failed to serialize sync data: {e}"))?;
@@ -112,7 +134,7 @@ pub async fn cloud_sync_push(app: AppHandle) -> Result<(), String> {
                 .cloud_sync_webdav_username
                 .as_deref()
                 .ok_or("WebDAV username not configured")?;
-            webdav::push(url, username, &prefs.cloud_sync_webdav_path, &json).await
+            webdav::push(url, username, &prefs.cloud_sync_webdav_path, &json).await?;
         }
         _ => {
             let endpoint = prefs
@@ -130,9 +152,13 @@ pub async fn cloud_sync_push(app: AppHandle) -> Result<(), String> {
                 &prefs.cloud_sync_object_key,
                 &json,
             )
-            .await
+            .await?;
         }
     }
+
+    // Save last synced timestamp
+    save_last_synced(&app)?;
+    Ok(())
 }
 
 /// Pull preferences + server URLs from remote storage.
@@ -175,9 +201,35 @@ pub async fn cloud_sync_pull(app: AppHandle) -> Result<CloudSyncPayload, String>
     let payload: CloudSyncPayload =
         serde_json::from_str(&json).map_err(|e| format!("Failed to parse sync data: {e}"))?;
 
-    // Apply preferences to disk
+    // Merge pulled preferences, preserving local-only fields (paths, last_synced)
+    let mut merged = prefs;
+    merged.merge_from_cloud(&payload.preferences);
+    merged.cloud_sync_last_synced = Some(chrono::Utc::now().to_rfc3339());
+
+    // Auto-download background image from synced URL if no local file exists
+    if let Some(ref url) = merged.background_image_url {
+        let needs_download = match &merged.background_image_path {
+            None => true,
+            Some(path) => !std::path::Path::new(path).exists(),
+        };
+        if needs_download {
+            match crate::commands::preferences::download_background_image(app.clone(), url.clone())
+                .await
+            {
+                Ok(cached_path) => {
+                    log::info!("Auto-downloaded background image from synced URL");
+                    merged.background_image_path = Some(cached_path);
+                }
+                Err(e) => {
+                    log::warn!("Failed to auto-download background image: {e}");
+                }
+            }
+        }
+    }
+
+    // Apply merged preferences to disk
     let prefs_path = get_preferences_path(&app)?;
-    let prefs_json = serde_json::to_string_pretty(&payload.preferences)
+    let prefs_json = serde_json::to_string_pretty(&merged)
         .map_err(|e| format!("Failed to serialize preferences: {e}"))?;
 
     let temp_path = prefs_path.with_extension("tmp");
@@ -188,6 +240,24 @@ pub async fn cloud_sync_pull(app: AppHandle) -> Result<CloudSyncPayload, String>
 
     log::info!("Cloud sync pull applied successfully");
     Ok(payload)
+}
+
+/// Save the current timestamp as the last synced time in preferences.
+fn save_last_synced(app: &AppHandle) -> Result<(), String> {
+    let prefs_path = get_preferences_path(app)?;
+    let json =
+        std::fs::read_to_string(&prefs_path).map_err(|e| format!("Failed to read prefs: {e}"))?;
+    let mut prefs: AppPreferences =
+        serde_json::from_str(&json).map_err(|e| format!("Failed to parse prefs: {e}"))?;
+    prefs.cloud_sync_last_synced = Some(chrono::Utc::now().to_rfc3339());
+    let updated = serde_json::to_string_pretty(&prefs)
+        .map_err(|e| format!("Failed to serialize prefs: {e}"))?;
+    let temp_path = prefs_path.with_extension("sync-tmp");
+    std::fs::write(&temp_path, &updated)
+        .map_err(|e| format!("Failed to write prefs: {e}"))?;
+    std::fs::rename(&temp_path, &prefs_path)
+        .map_err(|e| format!("Failed to finalize prefs: {e}"))?;
+    Ok(())
 }
 
 /// Get server URLs from the accounts database.

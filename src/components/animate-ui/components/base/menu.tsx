@@ -72,7 +72,7 @@ function MenuPanel({
 }: MenuPanelProps) {
   return (
     <MenuPortal>
-      <MenuPositionerPrimitive className="z-50" sideOffset={sideOffset} {...props}>
+      <MenuPositionerPrimitive className="z-[70]" sideOffset={sideOffset} {...props}>
         <MenuPopupPrimitive
           finalFocus={finalFocus}
           transition={transition}
@@ -278,7 +278,7 @@ function MenuSubmenuPanel({
 }: MenuSubmenuPanelProps) {
   return (
     <MenuPortal>
-      <MenuPositionerPrimitive className="z-50" sideOffset={sideOffset} {...props}>
+      <MenuPositionerPrimitive className="z-[70]" sideOffset={sideOffset} {...props}>
         <MenuPopupPrimitive
           finalFocus={finalFocus}
           transition={transition}

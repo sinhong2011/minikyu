@@ -1,7 +1,8 @@
+import { ArrowLeft02Icon, FolderOpenIcon, Link01Icon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import {
   CommandDialog,
   CommandEmpty,
@@ -18,6 +19,8 @@ import { getRecentCommandIds, trackCommandUsage } from '@/lib/commands/recent-co
 import type { AppCommand } from '@/lib/commands/types';
 import { usePlayerStore } from '@/store/player-store';
 import { useUIStore } from '@/store/ui-store';
+
+type Page = 'root' | 'background-image';
 
 const BASE_GROUP_ORDER = [
   'navigation',
@@ -66,6 +69,8 @@ export function CommandPalette() {
   const toggleCommandPalette = useUIStore((state) => state.toggleCommandPalette);
   const commandContext = useCommandContext();
   const [search, setSearch] = useState('');
+  const [page, setPage] = useState<Page>('root');
+  const inputRef = useRef<HTMLInputElement>(null);
   const groupOrder = useContextAwareGroupOrder();
 
   const commands = getAllCommands(commandContext, search, _);
@@ -99,10 +104,28 @@ export function CommandPalette() {
       });
   }, [search, commandContext]);
 
+  const navigateToPage = useCallback((newPage: Page) => {
+    setPage(newPage);
+    setSearch('');
+  }, []);
+
+  const navigateBack = useCallback(() => {
+    setPage('root');
+    setSearch('');
+  }, []);
+
   const handleCommandSelect = async (commandId: string) => {
+    trackCommandUsage(commandId);
+
+    // Commands that navigate to sub-pages stay open
+    if (commandId === 'change-background-image') {
+      navigateToPage('background-image');
+      return;
+    }
+
     setCommandPaletteOpen(false);
     setSearch('');
-    trackCommandUsage(commandId);
+    setPage('root');
 
     const result = await executeCommand(commandId, commandContext);
 
@@ -115,19 +138,51 @@ export function CommandPalette() {
     setCommandPaletteOpen(open);
     if (!open) {
       setSearch('');
+      setPage('root');
     }
   };
 
+  const handleSelectFile = () => {
+    setCommandPaletteOpen(false);
+    setSearch('');
+    setPage('root');
+    document.dispatchEvent(new CustomEvent('command:select-background-file'));
+  };
+
+  const handleSubmitUrl = useCallback(() => {
+    const url = search.trim();
+    if (!url) return;
+    setCommandPaletteOpen(false);
+    setSearch('');
+    setPage('root');
+    document.dispatchEvent(new CustomEvent('command:set-background-url', { detail: url }));
+  }, [search, setCommandPaletteOpen]);
+
+  // Handle backspace on empty input to go back, and Enter to submit URL
+  const handleKeyDown = useCallback(
+    (e: React.KeyboardEvent) => {
+      if (page !== 'root' && e.key === 'Backspace' && !search) {
+        e.preventDefault();
+        navigateBack();
+      }
+      if (page === 'background-image' && e.key === 'Enter' && search.trim()) {
+        e.preventDefault();
+        handleSubmitUrl();
+      }
+    },
+    [page, search, navigateBack, handleSubmitUrl]
+  );
+
   useEffect(() => {
-    const handleKeyDown = (e: KeyboardEvent) => {
+    const handler = (e: KeyboardEvent) => {
       if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
         e.preventDefault();
         toggleCommandPalette();
       }
     };
 
-    document.addEventListener('keydown', handleKeyDown);
-    return () => document.removeEventListener('keydown', handleKeyDown);
+    document.addEventListener('keydown', handler);
+    return () => document.removeEventListener('keydown', handler);
   }, [toggleCommandPalette]);
 
   const getGroupLabel = (groupName: string): string => {
@@ -182,6 +237,13 @@ export function CommandPalette() {
     </CommandItem>
   );
 
+  const getPlaceholder = () => {
+    if (page === 'background-image') {
+      return _(msg`Paste an image URL...`);
+    }
+    return _(msg`Type a command or search...`);
+  };
+
   return (
     <CommandDialog
       open={commandPaletteOpen}
@@ -189,37 +251,72 @@ export function CommandPalette() {
       title={_(msg`Command Palette`)}
       description={_(msg`Type a command or search...`)}
       showCloseButton={false}
+      shouldFilter={page === 'root'}
     >
       <CommandInput
-        placeholder={_(msg`Type a command or search...`)}
+        ref={inputRef}
+        placeholder={getPlaceholder()}
         value={search}
         onValueChange={setSearch}
+        onKeyDown={handleKeyDown}
       />
       <CommandList>
-        <CommandEmpty>{_(msg`No results found.`)}</CommandEmpty>
-
-        {recentCommands.length > 0 && (
+        {page === 'root' && (
           <>
-            <CommandGroup heading={getGroupLabel('recent')}>
-              {recentCommands.map((cmd) => renderCommandItem(cmd, 'recent-'))}
-            </CommandGroup>
-            <CommandSeparator />
+            <CommandEmpty>{_(msg`No results found.`)}</CommandEmpty>
+
+            {recentCommands.length > 0 && (
+              <>
+                <CommandGroup heading={getGroupLabel('recent')}>
+                  {recentCommands.map((cmd) => renderCommandItem(cmd, 'recent-'))}
+                </CommandGroup>
+                <CommandSeparator />
+              </>
+            )}
+
+            {sortedGroupEntries.map(([groupName, groupCommands], index) => (
+              <div key={groupName}>
+                {index > 0 && <CommandSeparator />}
+                <CommandGroup heading={getGroupLabel(groupName)}>
+                  {groupCommands.map((command) => renderCommandItem(command))}
+                </CommandGroup>
+              </div>
+            ))}
           </>
         )}
 
-        {sortedGroupEntries.map(([groupName, groupCommands], index) => (
-          <div key={groupName}>
-            {index > 0 && <CommandSeparator />}
-            <CommandGroup heading={getGroupLabel(groupName)}>
-              {groupCommands.map((command) => renderCommandItem(command))}
-            </CommandGroup>
-          </div>
-        ))}
+        {page === 'background-image' && (
+          <CommandGroup heading={_(msg`Background Image`)}>
+            <CommandItem value="background-select-file" onSelect={handleSelectFile}>
+              <HugeiconsIcon icon={FolderOpenIcon} className="mr-2 h-4 w-4 shrink-0" />
+              <span>{_(msg`Select from file...`)}</span>
+            </CommandItem>
+            {search.trim() && (
+              <CommandItem value={`background-url ${search}`} onSelect={handleSubmitUrl}>
+                <HugeiconsIcon icon={Link01Icon} className="mr-2 h-4 w-4 shrink-0" />
+                <div className="flex flex-col gap-0.5 overflow-hidden">
+                  <span className="truncate">{_(msg`Download from URL`)}</span>
+                  <span className="truncate text-xs text-muted-foreground">{search.trim()}</span>
+                </div>
+              </CommandItem>
+            )}
+          </CommandGroup>
+        )}
       </CommandList>
 
       {/* Action footer */}
       <div className="flex items-center justify-between border-t border-border/50 px-3 py-2 text-xs text-muted-foreground">
         <div className="flex items-center gap-3">
+          {page !== 'root' && (
+            <button
+              type="button"
+              onClick={navigateBack}
+              className="flex items-center gap-1 text-muted-foreground hover:text-foreground transition-colors"
+            >
+              <HugeiconsIcon icon={ArrowLeft02Icon} className="size-3.5" />
+              <span>{_(msg`Back`)}</span>
+            </button>
+          )}
           <span className="flex items-center gap-1">
             <kbd className="rounded border border-border/50 bg-black/[0.04] dark:bg-white/[0.06] px-1.5 py-0.5 font-mono text-[10px]">
               ↵
