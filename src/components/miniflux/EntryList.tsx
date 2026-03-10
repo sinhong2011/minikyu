@@ -156,7 +156,8 @@ export function EntryList({
       | { type: 'section'; key: string; title: string }
       | { type: 'entry'; key: string; entry: Entry; showSeparator: boolean }
     > = [];
-    const entrySections = groupEntriesByCalendarDate(entriesData?.entries ?? []);
+    const dateField = filters.order === 'changed_at' ? 'changed_at' : 'published_at';
+    const entrySections = groupEntriesByCalendarDate(entriesData?.entries ?? [], dateField);
 
     entrySections.forEach((section) => {
       const sectionType = getEntryDateSectionType(section.date);
@@ -184,7 +185,7 @@ export function EntryList({
     });
 
     return rows;
-  }, [_, entriesData?.entries, i18n.locale]);
+  }, [_, entriesData?.entries, filters.order, i18n.locale]);
 
   // Track new entries for animation
   const filtersKey = JSON.stringify(filters ?? {});

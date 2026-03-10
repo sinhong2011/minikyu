@@ -121,11 +121,11 @@ msgstr "{diffHours} 小時前"
 msgid "{diffMins}m ago"
 msgstr "{diffMins} 分鐘前"
 
-#: src/components/miniflux/EntryReading.tsx:417
+#: src/components/miniflux/EntryReading.tsx:423
 msgid "{minutesLeft} min left"
 msgstr "還剩 {minutesLeft} 分鐘"
 
-#: src/components/miniflux/EntryReading.tsx:416
+#: src/components/miniflux/EntryReading.tsx:422
 msgid "{progressPercent}% read"
 msgstr "已讀 {progressPercent}%"
 
@@ -165,7 +165,7 @@ msgstr "關於 {APP_NAME}"
 msgid "About Minikyu"
 msgstr "關於 Minikyu"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:339
+#: src/components/preferences/panes/CloudSyncSection.tsx:341
 msgid "Access Key ID"
 msgstr "存取金鑰 ID"
 
@@ -260,7 +260,7 @@ msgstr "將目前文章的 Podcast 新增至播放清單"
 msgid "Add to playlist"
 msgstr "加入播放清單"
 
-#: src/components/miniflux/EntryReading.tsx:1772
+#: src/components/miniflux/EntryReading.tsx:1778
 #: src/lib/commands/article-commands.ts:135
 msgid "Add to Playlist"
 msgstr "新增至播放清單"
@@ -302,7 +302,7 @@ msgstr "進階"
 msgid "Advanced settings"
 msgstr "進階設定"
 
-#: src/components/miniflux/EntryReading.tsx:1527
+#: src/components/miniflux/EntryReading.tsx:1533
 #: src/components/preferences/PreferencesDialog.tsx:113
 msgid "AI"
 msgstr "AI"
@@ -470,7 +470,7 @@ msgstr "確定要取消訂閱「{0}」嗎？"
 #~ msgstr "確定要取消訂閱此訂閱源嗎？"
 
 #: src/components/command-palette/CommandPalette.tsx:197
-#: src/components/miniflux/EntryReading.tsx:1646
+#: src/components/miniflux/EntryReading.tsx:1652
 #: src/lib/menu.ts:215
 msgid "Article"
 msgstr "文章"
@@ -479,7 +479,7 @@ msgstr "文章"
 msgid "Article Actions"
 msgstr "文章操作"
 
-#: src/components/miniflux/EntryReading.tsx:366
+#: src/components/miniflux/EntryReading.tsx:372
 msgid "Article table of contents"
 msgstr "文章目錄"
 
@@ -517,7 +517,7 @@ msgstr "自動下載"
 msgid "Auto mark as read"
 msgstr "自動標記為已讀"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:455
+#: src/components/preferences/panes/CloudSyncSection.tsx:457
 msgid "Auto-pull on startup"
 msgstr "啟動時自動拉取"
 
@@ -623,7 +623,7 @@ msgstr "瀏覽分類"
 msgid "Browser content"
 msgstr "瀏覽器內容"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:259
+#: src/components/preferences/panes/CloudSyncSection.tsx:261
 msgid "Bucket"
 msgstr "儲存桶"
 
@@ -700,7 +700,7 @@ msgstr "分類已建立"
 msgid "Category deleted"
 msgstr "分類已刪除"
 
-#: src/components/miniflux/EntryReading.tsx:1620
+#: src/components/miniflux/EntryReading.tsx:1626
 msgid "Category excluded from translation"
 msgstr "已將此分類排除翻譯"
 
@@ -729,7 +729,7 @@ msgstr "分類不為空"
 msgid "Category Title"
 msgstr "分類標題"
 
-#: src/components/miniflux/EntryReading.tsx:1615
+#: src/components/miniflux/EntryReading.tsx:1621
 msgid "Category translation re-enabled"
 msgstr "已重新啟用分類翻譯"
 
@@ -737,7 +737,7 @@ msgstr "已重新啟用分類翻譯"
 msgid "Category updated"
 msgstr "分類已更新"
 
-#: src/components/preferences/panes/AppearancePane.tsx:404
+#: src/components/preferences/panes/AppearancePane.tsx:405
 msgid "Change"
 msgstr "更換"
 
@@ -807,8 +807,8 @@ msgstr "中文轉換"
 msgid "Choose a story from the list and your reading companion will guide the focus."
 msgstr "從列表中選擇一篇文章，閱讀助手將引導您聚焦閱讀。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:411
-#: src/components/preferences/panes/AppearancePane.tsx:472
+#: src/components/preferences/panes/AppearancePane.tsx:412
+#: src/components/preferences/panes/AppearancePane.tsx:473
 msgid "Choose File"
 msgstr "選擇檔案"
 
@@ -956,7 +956,7 @@ msgstr "關閉視窗"
 msgid "Close Window"
 msgstr "關閉視窗"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:194
+#: src/components/preferences/panes/CloudSyncSection.tsx:196
 msgid "Cloud Sync"
 msgstr "雲端同步"
 
@@ -1034,13 +1034,13 @@ msgstr "連線中..."
 #~ msgid "Connection"
 #~ msgstr "連線"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:120
-#: src/components/preferences/panes/CloudSyncSection.tsx:143
+#: src/components/preferences/panes/CloudSyncSection.tsx:121
+#: src/components/preferences/panes/CloudSyncSection.tsx:144
 msgid "Connection successful"
 msgstr "連線成功"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:119
-#: src/components/preferences/panes/CloudSyncSection.tsx:142
+#: src/components/preferences/panes/CloudSyncSection.tsx:120
+#: src/components/preferences/panes/CloudSyncSection.tsx:143
 msgid "Connection successful, credentials saved"
 msgstr "連線成功，憑證已儲存"
 
@@ -1092,7 +1092,7 @@ msgstr "複製應用程式版本、作業系統和環境詳情以用於錯誤回
 msgid "Copy article URL"
 msgstr "複製文章 URL"
 
-#: src/components/miniflux/SafeHtml.tsx:771
+#: src/components/miniflux/SafeHtml.tsx:795
 msgid "Copy code"
 msgstr "複製程式碼"
 
@@ -1104,7 +1104,7 @@ msgstr "複製除錯資訊"
 msgid "Copy link"
 msgstr "複製連結"
 
-#: src/components/miniflux/EntryReading.tsx:1725
+#: src/components/miniflux/EntryReading.tsx:1731
 #: src/lib/commands/article-commands.ts:100
 #: src/lib/menu.ts:261
 msgid "Copy Link"
@@ -1114,7 +1114,7 @@ msgstr "複製連結"
 msgid "Copy message"
 msgstr "複製訊息"
 
-#: src/components/miniflux/SafeHtml.tsx:775
+#: src/components/miniflux/SafeHtml.tsx:799
 msgid "Copy phrase text"
 msgstr "複製詞句文字"
 
@@ -1130,7 +1130,7 @@ msgstr "將文章連結複製到剪貼簿"
 msgid "Copy this token now. It will not be shown again."
 msgstr "請立即複製此令牌，之後將不再顯示。"
 
-#: src/components/miniflux/SafeHtml.tsx:781
+#: src/components/miniflux/SafeHtml.tsx:805
 msgid "Copy translation"
 msgstr "複製翻譯"
 
@@ -1226,16 +1226,16 @@ msgstr "建立時間"
 msgid "Creating..."
 msgstr "建立中⋯"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:303
+#: src/components/preferences/panes/CloudSyncSection.tsx:305
 msgid "Credentials"
 msgstr "憑證"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:325
-#: src/components/preferences/panes/CloudSyncSection.tsx:427
+#: src/components/preferences/panes/CloudSyncSection.tsx:327
+#: src/components/preferences/panes/CloudSyncSection.tsx:429
 msgid "Credentials are saved in your system keyring."
 msgstr "憑證已儲存在系統鑰匙圈中。"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:97
+#: src/components/preferences/panes/CloudSyncSection.tsx:98
 msgid "Credentials removed"
 msgstr "憑證已移除"
 
@@ -1508,8 +1508,8 @@ msgstr "完成"
 #: src/components/podcast/PlayerWindowControls.tsx:313
 #: src/components/podcast/PodcastPlayer.tsx:261
 #: src/components/podcast/PodcastPlayer.tsx:267
-#: src/components/preferences/panes/AppearancePane.tsx:456
-#: src/components/preferences/panes/AppearancePane.tsx:526
+#: src/components/preferences/panes/AppearancePane.tsx:457
+#: src/components/preferences/panes/AppearancePane.tsx:527
 msgid "Download"
 msgstr "下載"
 
@@ -1577,14 +1577,14 @@ msgstr "正在從伺服器下載最近的文章"
 msgid "Downloading update v{0}... {1}%"
 msgstr "正在下載更新 v{0}... {1}%"
 
-#: src/components/preferences/panes/AppearancePane.tsx:456
-#: src/components/preferences/panes/AppearancePane.tsx:526
+#: src/components/preferences/panes/AppearancePane.tsx:457
+#: src/components/preferences/panes/AppearancePane.tsx:527
 msgid "Downloading..."
 msgstr "下載中..."
 
 #: src/components/downloads/DownloadManagerDialog.tsx:914
 #: src/components/preferences/panes/AdvancedPane.tsx:80
-#: src/components/titlebar/WindowTitleBar.tsx:143
+#: src/components/titlebar/WindowTitleBar.tsx:144
 msgid "Downloads"
 msgstr "下載"
 
@@ -1666,7 +1666,7 @@ msgstr "已啟用的服務"
 msgid "Enclosure not found for this entry"
 msgstr "找不到此文章的附件"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:246
+#: src/components/preferences/panes/CloudSyncSection.tsx:248
 msgid "Endpoint URL"
 msgstr "端點 URL"
 
@@ -1729,7 +1729,7 @@ msgstr "輸入您的密碼"
 msgid "Enter your username"
 msgstr "輸入您的使用者名稱"
 
-#: src/components/titlebar/WindowTitleBar.tsx:100
+#: src/components/titlebar/WindowTitleBar.tsx:101
 msgid "Enter Zen Mode"
 msgstr "進入禪模式"
 
@@ -1738,11 +1738,11 @@ msgstr "進入禪模式"
 msgid "Entries"
 msgstr "文章"
 
-#: src/components/miniflux/EntryReading.tsx:1336
+#: src/components/miniflux/EntryReading.tsx:1342
 msgid "Entry not found"
 msgstr "找不到文章"
 
-#: src/components/miniflux/EntryReading.tsx:643
+#: src/components/miniflux/EntryReading.tsx:649
 #: src/components/miniflux/EntryReadingHeader.tsx:274
 msgid "Entry sent to services"
 msgstr "文章已傳送至服務"
@@ -1795,8 +1795,8 @@ msgstr "退出全螢幕"
 msgid "Exit fullscreen mode"
 msgstr "退出全螢幕模式"
 
-#: src/components/titlebar/WindowTitleBar.tsx:100
-#: src/components/zen-mode/ZenModeView.tsx:203
+#: src/components/titlebar/WindowTitleBar.tsx:101
+#: src/components/zen-mode/ZenModeView.tsx:204
 msgid "Exit Zen Mode"
 msgstr "退出禪模式"
 
@@ -1919,7 +1919,7 @@ msgstr "刪除訂閱源失敗"
 msgid "Failed to delete user"
 msgstr "刪除使用者失敗"
 
-#: src/components/preferences/panes/AppearancePane.tsx:365
+#: src/components/preferences/panes/AppearancePane.tsx:366
 msgid "Failed to download image"
 msgstr "下載圖片失敗"
 
@@ -2034,8 +2034,8 @@ msgstr "重新排列提供者失敗"
 msgid "Failed to resume download"
 msgstr "繼續下載失敗"
 
-#: src/components/miniflux/EntryReading.tsx:640
 #: src/components/miniflux/EntryReading.tsx:646
+#: src/components/miniflux/EntryReading.tsx:652
 #: src/components/miniflux/EntryReadingHeader.tsx:270
 #: src/components/miniflux/EntryReadingHeader.tsx:277
 msgid "Failed to save entry"
@@ -2170,7 +2170,7 @@ msgstr "訂閱源已建立（部分設定）"
 msgid "Feed deleted"
 msgstr "訂閱源已刪除"
 
-#: src/components/miniflux/EntryReading.tsx:1578
+#: src/components/miniflux/EntryReading.tsx:1584
 msgid "Feed excluded from translation"
 msgstr "已將此訂閱源排除翻譯"
 
@@ -2194,7 +2194,7 @@ msgstr "訂閱源標題"
 msgid "Feed Title"
 msgstr "訂閱源標題"
 
-#: src/components/miniflux/EntryReading.tsx:1573
+#: src/components/miniflux/EntryReading.tsx:1579
 msgid "Feed translation re-enabled"
 msgstr "已重新啟用訂閱源翻譯"
 
@@ -2239,7 +2239,7 @@ msgstr "從所有訂閱源取得新文章"
 msgid "Fetch original content"
 msgstr "取得原始內容"
 
-#: src/components/miniflux/EntryReading.tsx:1664
+#: src/components/miniflux/EntryReading.tsx:1670
 #: src/lib/commands/article-commands.ts:53
 #: src/lib/menu.ts:232
 msgid "Fetch Original Content"
@@ -2263,7 +2263,7 @@ msgstr "取得中..."
 msgid "File"
 msgstr "檔案"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:388
+#: src/components/preferences/panes/CloudSyncSection.tsx:390
 msgid "File Path"
 msgstr "檔案路徑"
 
@@ -2292,7 +2292,7 @@ msgstr "清除歷史記錄"
 msgid "Focus mode"
 msgstr "專注模式"
 
-#: src/components/miniflux/EntryReading.tsx:1675
+#: src/components/miniflux/EntryReading.tsx:1681
 msgid "Focus Mode"
 msgstr "專注模式"
 
@@ -2327,8 +2327,8 @@ msgstr "法文"
 msgid "From"
 msgstr "來源"
 
-#: src/components/preferences/panes/AppearancePane.tsx:415
-#: src/components/preferences/panes/AppearancePane.tsx:487
+#: src/components/preferences/panes/AppearancePane.tsx:416
+#: src/components/preferences/panes/AppearancePane.tsx:488
 msgid "From URL"
 msgstr "從 URL"
 
@@ -2420,7 +2420,7 @@ msgstr "前往上一頁"
 msgid "Go to top"
 msgstr "回到頂部"
 
-#: src/components/miniflux/EntryReading.tsx:1517
+#: src/components/miniflux/EntryReading.tsx:1523
 msgid "Go to Top"
 msgstr "回到頂部"
 
@@ -2438,7 +2438,7 @@ msgid "Hide {APP_NAME}"
 msgstr "隱藏 {APP_NAME}"
 
 #: src/components/titlebar/LinuxTitleBar.tsx:32
-#: src/components/titlebar/WindowTitleBar.tsx:72
+#: src/components/titlebar/WindowTitleBar.tsx:73
 #: src/lib/commands/navigation-commands.ts:19
 msgid "Hide Left Sidebar"
 msgstr "隱藏左側邊欄"
@@ -2451,7 +2451,7 @@ msgstr "隱藏其他"
 msgid "Hide playlist"
 msgstr "隱藏播放清單"
 
-#: src/components/miniflux/EntryReading.tsx:418
+#: src/components/miniflux/EntryReading.tsx:424
 msgid "Hide reading status"
 msgstr "隱藏閱讀狀態"
 
@@ -2532,7 +2532,7 @@ msgstr "閒置"
 msgid "Ignore HTTP cache"
 msgstr "忽略 HTTP 快取"
 
-#: src/components/miniflux/SafeHtml.tsx:784
+#: src/components/miniflux/SafeHtml.tsx:808
 msgid "Image"
 msgstr "圖片"
 
@@ -2674,7 +2674,7 @@ msgstr "Kimi"
 msgid "Korean"
 msgstr "韓文"
 
-#: src/components/miniflux/SafeHtml.tsx:783
+#: src/components/miniflux/SafeHtml.tsx:807
 #: src/components/miniflux/UserNav.tsx:285
 #: src/components/preferences/panes/AppearancePane.tsx:102
 #: src/components/preferences/panes/AppearancePane.tsx:104
@@ -2725,7 +2725,7 @@ msgstr "最後修改"
 msgid "Last read date"
 msgstr "最後閱讀日期"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:469
+#: src/components/preferences/panes/CloudSyncSection.tsx:471
 msgid "Last sync:"
 msgstr "上次同步:"
 
@@ -2776,7 +2776,7 @@ msgstr "行高"
 msgid "Line Width"
 msgstr "行寬"
 
-#: src/components/miniflux/EntryReading.tsx:1692
+#: src/components/miniflux/EntryReading.tsx:1698
 #: src/lib/shortcut-registry.ts:29
 msgid "Links"
 msgstr "連結"
@@ -2860,7 +2860,7 @@ msgstr "全部標記為已讀"
 
 #: src/components/layout/AppSidebar.tsx:180
 #: src/components/layout/AppSidebar.tsx:396
-#: src/components/miniflux/EntryReading.tsx:1653
+#: src/components/miniflux/EntryReading.tsx:1659
 #: src/components/miniflux/EntryReadingHeader.tsx:799
 #: src/components/miniflux/EntryReadingHeader.tsx:818
 #: src/components/preferences/panes/CategoriesPane.tsx:84
@@ -2873,7 +2873,7 @@ msgstr "標記為已讀"
 msgid "Mark as Read/Unread"
 msgstr "標記為已讀/未讀"
 
-#: src/components/miniflux/EntryReading.tsx:1653
+#: src/components/miniflux/EntryReading.tsx:1659
 #: src/components/miniflux/EntryReadingHeader.tsx:799
 #: src/components/miniflux/EntryReadingHeader.tsx:818
 msgid "Mark as unread"
@@ -3051,7 +3051,7 @@ msgid "Needs setup"
 msgstr "需要設定"
 
 #: src/components/preferences/panes/ApiTokenPane.tsx:101
-#: src/components/preferences/panes/CloudSyncSection.tsx:472
+#: src/components/preferences/panes/CloudSyncSection.tsx:474
 msgid "Never"
 msgstr "從未"
 
@@ -3068,7 +3068,7 @@ msgid "New password (optional)"
 msgstr "新密碼（選填）"
 
 #: src/components/podcast/PlayerWindowControls.tsx:291
-#: src/components/zen-mode/ZenModeView.tsx:237
+#: src/components/zen-mode/ZenModeView.tsx:238
 #: src/pages/TrayPopover.tsx:233
 msgid "Next"
 msgstr "下一個"
@@ -3078,7 +3078,7 @@ msgstr "下一個"
 msgid "Next article"
 msgstr "下一篇文章"
 
-#: src/components/miniflux/EntryReading.tsx:1492
+#: src/components/miniflux/EntryReading.tsx:1498
 #: src/lib/menu.ts:274
 msgid "Next Article"
 msgstr "下一篇文章"
@@ -3088,7 +3088,7 @@ msgstr "下一篇文章"
 msgid "Next entry (j or →)"
 msgstr "下一篇文章（j 或 →）"
 
-#: src/components/miniflux/EntryReading.tsx:365
+#: src/components/miniflux/EntryReading.tsx:371
 msgid "Next section"
 msgstr "下一區段"
 
@@ -3129,7 +3129,7 @@ msgstr "無分類"
 msgid "No completed downloads"
 msgstr "沒有已完成的下載"
 
-#: src/components/miniflux/EntryReading.tsx:1468
+#: src/components/miniflux/EntryReading.tsx:1474
 msgid "No content available"
 msgstr "沒有可用的內容"
 
@@ -3217,7 +3217,7 @@ msgstr "找不到伺服器 URL。"
 msgid "No sources found"
 msgstr "找不到來源"
 
-#: src/components/zen-mode/ZenModeView.tsx:195
+#: src/components/zen-mode/ZenModeView.tsx:196
 msgid "No unread entries available"
 msgstr "沒有可用的未讀文章"
 
@@ -3241,7 +3241,7 @@ msgstr "尚未連線至 Miniflux 伺服器"
 msgid "Nothing playing"
 msgstr "目前沒有播放內容"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:284
+#: src/components/preferences/panes/CloudSyncSection.tsx:286
 msgid "Object Key"
 msgstr "物件金鑰"
 
@@ -3295,7 +3295,7 @@ msgstr "開啟外觀偏好設定"
 msgid "Open in app browser"
 msgstr "在應用程式瀏覽器中開啟"
 
-#: src/components/miniflux/EntryReading.tsx:1713
+#: src/components/miniflux/EntryReading.tsx:1719
 #: src/lib/commands/article-commands.ts:89
 #: src/lib/menu.ts:256
 msgid "Open in App Browser"
@@ -3309,7 +3309,7 @@ msgstr "在應用程式瀏覽器中開啟"
 msgid "Open in browser"
 msgstr "在瀏覽器中開啟"
 
-#: src/components/miniflux/EntryReading.tsx:1701
+#: src/components/miniflux/EntryReading.tsx:1707
 #: src/lib/commands/article-commands.ts:77
 #: src/lib/menu.ts:250
 msgid "Open in Browser"
@@ -3438,8 +3438,8 @@ msgstr "解析錯誤"
 
 #: src/components/miniflux/ConnectionDialog.tsx:309
 #: src/components/miniflux/settings/UserFormDialog.tsx:106
-#: src/components/preferences/panes/CloudSyncSection.tsx:406
-#: src/components/preferences/panes/CloudSyncSection.tsx:441
+#: src/components/preferences/panes/CloudSyncSection.tsx:408
+#: src/components/preferences/panes/CloudSyncSection.tsx:443
 msgid "Password"
 msgstr "密碼"
 
@@ -3452,7 +3452,7 @@ msgstr "需要提供密碼"
 msgid "Paste a website URL to discover available RSS/Atom feeds."
 msgstr "貼上網站網址以探索可用的 RSS/Atom 訂閱源。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:488
+#: src/components/preferences/panes/AppearancePane.tsx:489
 msgid "Paste an image link"
 msgstr "貼上圖片連結"
 
@@ -3488,7 +3488,7 @@ msgstr "已暫停"
 msgid "Permanently deletes everything — all accounts, synced data, preferences, downloads, and credentials. This cannot be undone."
 msgstr "永久刪除所有內容 — 包括所有帳號、同步資料、偏好設定、下載項目和憑證。此操作無法復原。"
 
-#: src/components/miniflux/SafeHtml.tsx:772
+#: src/components/miniflux/SafeHtml.tsx:796
 msgid "Phrase"
 msgstr "詞句"
 
@@ -3502,7 +3502,7 @@ msgstr "詞句"
 msgid "Play"
 msgstr "播放"
 
-#: src/components/miniflux/EntryReading.tsx:1757
+#: src/components/miniflux/EntryReading.tsx:1763
 #: src/lib/commands/podcast-commands.ts:9
 #: src/lib/menu.ts:287
 #: src/lib/shortcut-registry.ts:118
@@ -3557,13 +3557,13 @@ msgstr "請輸入有效的網址"
 #~ msgid "Please enter both access key and secret key"
 #~ msgstr "請輸入存取金鑰和秘密金鑰"
 
-#: src/components/preferences/panes/AppearancePane.tsx:474
+#: src/components/preferences/panes/AppearancePane.tsx:475
 msgid "PNG, JPG, WebP, GIF, or AVIF"
 msgstr "PNG、JPG、WebP、GIF 或 AVIF"
 
 #: src/components/command-palette/CommandPalette.tsx:199
 #: src/components/miniflux/EntryList.tsx:855
-#: src/components/miniflux/EntryReading.tsx:1746
+#: src/components/miniflux/EntryReading.tsx:1752
 #: src/lib/menu.ts:283
 msgid "Podcast"
 msgstr "Podcast"
@@ -3590,7 +3590,7 @@ msgstr "偏好設定匯出成功"
 msgid "Preferences imported"
 msgstr "偏好設定已匯入"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:159
+#: src/components/preferences/panes/CloudSyncSection.tsx:160
 msgid "Preferences pushed to cloud"
 msgstr "設定已推送至雲端"
 
@@ -3598,7 +3598,7 @@ msgstr "設定已推送至雲端"
 msgid "Preferences reset to defaults"
 msgstr "偏好設定已重置為預設值"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:177
+#: src/components/preferences/panes/CloudSyncSection.tsx:179
 msgid "Preferences restored from cloud"
 msgstr "已從雲端還原設定"
 
@@ -3628,7 +3628,7 @@ msgstr "上一個"
 msgid "Previous article"
 msgstr "上一篇文章"
 
-#: src/components/miniflux/EntryReading.tsx:1483
+#: src/components/miniflux/EntryReading.tsx:1489
 #: src/lib/menu.ts:268
 msgid "Previous Article"
 msgstr "上一篇文章"
@@ -3638,7 +3638,7 @@ msgstr "上一篇文章"
 msgid "Previous entry (h or ←)"
 msgstr "上一篇文章（h 或 ←）"
 
-#: src/components/miniflux/EntryReading.tsx:364
+#: src/components/miniflux/EntryReading.tsx:370
 msgid "Previous section"
 msgstr "上一區段"
 
@@ -3646,7 +3646,7 @@ msgstr "上一區段"
 #~ msgid "Project"
 #~ msgstr "專案"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:218
+#: src/components/preferences/panes/CloudSyncSection.tsx:220
 msgid "Protocol"
 msgstr "通訊協定"
 
@@ -3701,7 +3701,7 @@ msgstr "從底部上拉"
 msgid "Pull from top"
 msgstr "從頂部下拉"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:496
+#: src/components/preferences/panes/CloudSyncSection.tsx:498
 msgid "Pull Now"
 msgstr "立即拉取"
 
@@ -3717,15 +3717,15 @@ msgstr "正在從伺服器擷取分類群組"
 msgid "Pulling feed subscriptions from server"
 msgstr "正在從伺服器擷取訂閱源"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:497
+#: src/components/preferences/panes/CloudSyncSection.tsx:499
 msgid "Pulling..."
 msgstr "拉取中..."
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:489
+#: src/components/preferences/panes/CloudSyncSection.tsx:491
 msgid "Push Now"
 msgstr "立即推送"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:490
+#: src/components/preferences/panes/CloudSyncSection.tsx:492
 msgid "Pushing..."
 msgstr "推送中..."
 
@@ -3761,7 +3761,7 @@ msgstr "Qwen-MT"
 msgid "Randomize the playback queue order"
 msgstr "隨機排列播放佇列順序"
 
-#: src/components/miniflux/EntryReading.tsx:1537
+#: src/components/miniflux/EntryReading.tsx:1543
 msgid "Re-summarize"
 msgstr "重新摘要"
 
@@ -3891,7 +3891,7 @@ msgstr "重新整理中⋯"
 msgid "Regex only"
 msgstr "僅正規表達式"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:272
+#: src/components/preferences/panes/CloudSyncSection.tsx:274
 msgid "Region"
 msgstr "區域"
 
@@ -3928,8 +3928,8 @@ msgstr "從播放佇列中移除所有節目"
 msgid "Remove current account and all related data"
 msgstr "移除目前帳號及所有相關資料"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:312
-#: src/components/preferences/panes/CloudSyncSection.tsx:414
+#: src/components/preferences/panes/CloudSyncSection.tsx:314
+#: src/components/preferences/panes/CloudSyncSection.tsx:416
 msgid "Remove saved credentials"
 msgstr "移除已儲存的憑證"
 
@@ -4037,7 +4037,7 @@ msgstr "將所有設定還原為原廠預設值。您的資料和帳號不受影
 msgid "Restore settings from a previously exported JSON file."
 msgstr "從先前匯出的 JSON 檔案還原設定。"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:458
+#: src/components/preferences/panes/CloudSyncSection.tsx:460
 msgid "Restore settings from cloud when the app opens"
 msgstr "應用程式啟動時從雲端還原設定"
 
@@ -4061,7 +4061,7 @@ msgstr "重試"
 msgid "Retry failed"
 msgstr "重試失敗"
 
-#: src/components/miniflux/SafeHtml.tsx:779
+#: src/components/miniflux/SafeHtml.tsx:803
 msgid "Retry translation"
 msgstr "重試翻譯"
 
@@ -4134,7 +4134,7 @@ msgstr "儲存變更"
 msgid "Save Rules"
 msgstr "儲存規則"
 
-#: src/components/miniflux/EntryReading.tsx:1736
+#: src/components/miniflux/EntryReading.tsx:1742
 #: src/components/miniflux/EntryReadingHeader.tsx:946
 msgid "Save to services"
 msgstr "儲存至服務"
@@ -4171,7 +4171,7 @@ msgstr "捲動頁面"
 msgid "Scroll page up"
 msgstr "向上捲動頁面"
 
-#: src/components/miniflux/EntryReading.tsx:420
+#: src/components/miniflux/EntryReading.tsx:426
 msgid "Scroll to top"
 msgstr "捲動至頂部"
 
@@ -4265,7 +4265,7 @@ msgstr "搜尋來源中⋯"
 msgid "Searching..."
 msgstr "搜尋中⋯"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:345
+#: src/components/preferences/panes/CloudSyncSection.tsx:347
 msgid "Secret Access Key"
 msgstr "秘密存取金鑰"
 
@@ -4278,7 +4278,7 @@ msgstr "選擇分類"
 msgid "Select an entry to read"
 msgstr "選擇一篇文章閱讀"
 
-#: src/components/preferences/panes/AppearancePane.tsx:328
+#: src/components/preferences/panes/AppearancePane.tsx:329
 msgid "Select Background Image"
 msgstr "選擇背景圖片"
 
@@ -4294,7 +4294,7 @@ msgstr "選擇圖片下載資料夾"
 msgid "Select or enter server URL"
 msgstr "選擇或輸入伺服器 URL"
 
-#: src/components/miniflux/SafeHtml.tsx:774
+#: src/components/miniflux/SafeHtml.tsx:798
 msgid "Select phrase text"
 msgstr "選取詞句文字"
 
@@ -4368,7 +4368,7 @@ msgstr "從檔案或網址設定背景"
 
 #: src/components/command-palette/CommandPalette.tsx:205
 #: src/components/preferences/panes/AdvancedPane.tsx:81
-#: src/components/titlebar/WindowTitleBar.tsx:86
+#: src/components/titlebar/WindowTitleBar.tsx:87
 msgid "Settings"
 msgstr "設定"
 
@@ -4410,7 +4410,7 @@ msgid "Show in folder"
 msgstr "在資料夾中顯示"
 
 #: src/components/titlebar/LinuxTitleBar.tsx:32
-#: src/components/titlebar/WindowTitleBar.tsx:72
+#: src/components/titlebar/WindowTitleBar.tsx:73
 #: src/lib/commands/navigation-commands.ts:8
 msgid "Show Left Sidebar"
 msgstr "顯示左側邊欄"
@@ -4443,7 +4443,7 @@ msgstr "顯示播放清單"
 msgid "Show reading progress at bottom-left"
 msgstr "在左下角顯示閱讀進度"
 
-#: src/components/miniflux/EntryReading.tsx:419
+#: src/components/miniflux/EntryReading.tsx:425
 msgid "Show reading status"
 msgstr "顯示閱讀狀態"
 
@@ -4510,11 +4510,11 @@ msgstr "快進 30 秒"
 msgid "Skip source languages"
 msgstr "跳過來源語言"
 
-#: src/components/miniflux/EntryReading.tsx:1631
+#: src/components/miniflux/EntryReading.tsx:1637
 msgid "Skip this category"
 msgstr "略過此分類"
 
-#: src/components/miniflux/EntryReading.tsx:1589
+#: src/components/miniflux/EntryReading.tsx:1595
 msgid "Skip this feed"
 msgstr "略過此訂閱源"
 
@@ -4561,7 +4561,7 @@ msgstr "西班牙文"
 msgid "Stack Trace"
 msgstr "堆疊追蹤"
 
-#: src/components/miniflux/EntryReading.tsx:1504
+#: src/components/miniflux/EntryReading.tsx:1510
 #: src/components/miniflux/EntryReadingHeader.tsx:830
 #: src/components/miniflux/EntryReadingHeader.tsx:836
 msgid "Star"
@@ -4665,7 +4665,7 @@ msgstr "訂閱新的 RSS 訂閱源"
 msgid "Summarize article"
 msgstr "摘要文章"
 
-#: src/components/miniflux/EntryReading.tsx:1537
+#: src/components/miniflux/EntryReading.tsx:1543
 msgid "Summarize Article"
 msgstr "摘要文章"
 
@@ -4772,7 +4772,7 @@ msgstr "同步閒置中"
 msgid "Sync Now"
 msgstr "立即同步"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:196
+#: src/components/preferences/panes/CloudSyncSection.tsx:198
 msgid "Sync preferences via S3 or WebDAV"
 msgstr "透過 S3 或 WebDAV 同步偏好設定"
 
@@ -4847,7 +4847,7 @@ msgstr "目標語言"
 msgid "Tauri v2"
 msgstr "Tauri v2"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:480
+#: src/components/preferences/panes/CloudSyncSection.tsx:482
 msgid "Test Connection"
 msgstr "測試連線"
 
@@ -4859,7 +4859,7 @@ msgstr "測試通知"
 msgid "Test Toast Notification"
 msgstr "測試通知"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:481
+#: src/components/preferences/panes/CloudSyncSection.tsx:483
 msgid "Testing..."
 msgstr "測試中..."
 
@@ -5100,7 +5100,7 @@ msgstr "切換禪模式"
 msgid "Token copied to clipboard"
 msgstr "令牌已複製到剪貼簿"
 
-#: src/components/miniflux/SafeHtml.tsx:778
+#: src/components/miniflux/SafeHtml.tsx:802
 msgid "Top bar"
 msgstr "頂部列"
 
@@ -5112,7 +5112,7 @@ msgstr "總下載量："
 msgid "Trace"
 msgstr "追蹤"
 
-#: src/components/miniflux/EntryReading.tsx:1556
+#: src/components/miniflux/EntryReading.tsx:1562
 #: src/lib/commands/translation-commands.ts:7
 #: src/lib/menu.ts:238
 msgid "Translate Article"
@@ -5127,11 +5127,11 @@ msgstr "立即翻譯"
 msgid "Translate selection"
 msgstr "翻譯選取文字"
 
-#: src/components/miniflux/SafeHtml.tsx:777
+#: src/components/miniflux/SafeHtml.tsx:801
 msgid "Translate this paragraph"
 msgstr "翻譯此段落"
 
-#: src/components/miniflux/SafeHtml.tsx:780
+#: src/components/miniflux/SafeHtml.tsx:804
 msgid "Translate with..."
 msgstr "使用...翻譯"
 
@@ -5139,15 +5139,15 @@ msgstr "使用...翻譯"
 msgid "Translated only"
 msgstr "僅翻譯"
 
-#: src/components/miniflux/EntryReading.tsx:1547
+#: src/components/miniflux/EntryReading.tsx:1553
 #: src/components/miniflux/EntryReadingHeader.tsx:556
 #: src/components/miniflux/EntryReadingHeader.tsx:564
-#: src/components/miniflux/SafeHtml.tsx:773
+#: src/components/miniflux/SafeHtml.tsx:797
 #: src/components/preferences/panes/TranslationPane.tsx:1699
 msgid "Translation"
 msgstr "翻譯"
 
-#: src/components/miniflux/SafeHtml.tsx:776
+#: src/components/miniflux/SafeHtml.tsx:800
 msgid "Translation controls in top bar"
 msgstr "頂部列中的翻譯控制"
 
@@ -5161,7 +5161,7 @@ msgstr "翻譯引擎"
 
 #: src/components/miniflux/ImmersiveTranslationLayer.tsx:811
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:270
-#: src/components/miniflux/SafeHtml.tsx:782
+#: src/components/miniflux/SafeHtml.tsx:806
 msgid "Translation failed"
 msgstr "翻譯失敗"
 
@@ -5259,7 +5259,7 @@ msgstr "未讀"
 msgid "unread items"
 msgstr "未讀項目"
 
-#: src/components/miniflux/EntryReading.tsx:1504
+#: src/components/miniflux/EntryReading.tsx:1510
 #: src/components/miniflux/EntryReadingHeader.tsx:830
 #: src/components/miniflux/EntryReadingHeader.tsx:836
 msgid "Unstar"
@@ -5388,7 +5388,7 @@ msgstr "使用者已更新"
 
 #: src/components/miniflux/ConnectionDialog.tsx:281
 #: src/components/miniflux/settings/UserFormDialog.tsx:82
-#: src/components/preferences/panes/CloudSyncSection.tsx:376
+#: src/components/preferences/panes/CloudSyncSection.tsx:378
 msgid "Username"
 msgstr "使用者名稱"
 
@@ -5492,7 +5492,7 @@ msgstr "溫暖而親切"
 msgid "Warn"
 msgstr "警告"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:363
+#: src/components/preferences/panes/CloudSyncSection.tsx:365
 msgid "WebDAV URL"
 msgstr "WebDAV URL"
 

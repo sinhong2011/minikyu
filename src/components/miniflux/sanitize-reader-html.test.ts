@@ -42,6 +42,14 @@ describe('sanitizeReaderHtml iframe handling', () => {
     expect(result).not.toContain('iframe');
   });
 
+  it('preserves YouTube iframe with all Miniflux attributes', () => {
+    const html =
+      '<iframe width="650" height="350" frameborder="0" src="https://www.youtube-nocookie.com/embed/yRV8fSw6HaE" allowfullscreen="" sandbox="allow-scripts allow-same-origin allow-popups allow-popups-to-escape-sandbox" loading="lazy" referrerpolicy="strict-origin-when-cross-origin"></iframe><br/>test';
+    const result = sanitizeReaderHtml(html);
+    expect(result).toContain('iframe');
+    expect(result).toContain('youtube-nocookie.com/embed/yRV8fSw6HaE');
+  });
+
   it('still sanitizes other HTML as before', () => {
     const html = '<script>alert(1)</script><p>Hello</p>';
     const result = sanitizeReaderHtml(html);
