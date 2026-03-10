@@ -1,4 +1,3 @@
-import { convertFileSrc } from '@tauri-apps/api/core';
 import { open as openDialog } from '@tauri-apps/plugin-dialog';
 import { useEffect } from 'react';
 import { CommandPalette } from '@/components/command-palette/CommandPalette';
@@ -9,6 +8,7 @@ import { TitleBar } from '@/components/titlebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { showToast, Toaster } from '@/components/ui/sonner';
 import { ZenModeView } from '@/components/zen-mode';
+import { useLocalImageUrl } from '@/hooks/use-local-image-url';
 import { usePlatform } from '@/hooks/use-platform';
 import { useTheme } from '@/hooks/use-theme';
 import { useMainWindowEventListeners } from '@/hooks/useMainWindowEventListeners';
@@ -83,6 +83,7 @@ export function MainWindow({ children }: MainWindowProps = {}) {
   }, [preferences, savePreferences]);
 
   const bgImagePath = preferences?.background_image_path;
+  const bgImageUrl = useLocalImageUrl(bgImagePath);
   const bgImageOpacity = preferences?.background_image_opacity ?? 0.15;
   const bgImageBlur = preferences?.background_image_blur ?? 0;
   const bgImageSize = preferences?.background_image_size ?? 'cover';
@@ -112,9 +113,9 @@ export function MainWindow({ children }: MainWindowProps = {}) {
           ${platform === 'macos' ? 'rounded-xl [clip-path:inset(0_round_var(--radius-xl))]' : ''}
         `}
       >
-        {bgImagePath && bgImageSize !== 'tile' && (
+        {bgImageUrl && bgImageSize !== 'tile' && (
           <img
-            src={convertFileSrc(bgImagePath)}
+            src={bgImageUrl}
             alt=""
             className="pointer-events-none absolute inset-0 -z-10 size-full select-none"
             style={{
@@ -125,11 +126,11 @@ export function MainWindow({ children }: MainWindowProps = {}) {
             }}
           />
         )}
-        {bgImagePath && bgImageSize === 'tile' && (
+        {bgImageUrl && bgImageSize === 'tile' && (
           <div
             className="pointer-events-none absolute inset-0 -z-10 size-full select-none"
             style={{
-              backgroundImage: `url(${convertFileSrc(bgImagePath)})`,
+              backgroundImage: `url(${bgImageUrl})`,
               backgroundRepeat: 'repeat',
               backgroundSize: 'auto',
               opacity: bgImageOpacity,

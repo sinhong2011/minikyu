@@ -200,6 +200,18 @@ async downloadBackgroundImage(url: string) : Promise<Result<string, string>> {
 }
 },
 /**
+ * Reads a local image file and returns it as a base64 data URL.
+ * This bypasses the asset protocol which has issues on Windows production builds.
+ */
+async readImageAsDataUrl(path: string) : Promise<Result<string, string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("read_image_as_data_url", { path }) };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Loads the last reading entry from disk.
  * Returns None (as null in TypeScript) if the file doesn't exist.
  */

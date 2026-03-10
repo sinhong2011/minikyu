@@ -8,7 +8,6 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { convertFileSrc } from '@tauri-apps/api/core';
 import { open as openDialog } from '@tauri-apps/plugin-dialog';
 import { locale } from '@tauri-apps/plugin-os';
 import { AnimatePresence, motion } from 'motion/react';
@@ -25,6 +24,7 @@ import {
 } from '@/components/ui/select';
 import { Slider } from '@/components/ui/slider';
 import { showToast } from '@/components/ui/sonner';
+import { useLocalImageUrl } from '@/hooks/use-local-image-url';
 import { useTheme } from '@/hooks/use-theme';
 import { availableLanguages } from '@/i18n';
 import { logger } from '@/lib/logger';
@@ -319,6 +319,7 @@ function BackgroundImagePicker() {
   const { data: preferences } = usePreferences();
   const savePreferences = useSavePreferences();
   const imagePath = preferences?.background_image_path;
+  const imageUrl = useLocalImageUrl(imagePath);
   const [showUrlInput, setShowUrlInput] = useState(false);
   const [urlValue, setUrlValue] = useState('');
   const [isDownloading, setIsDownloading] = useState(false);
@@ -382,7 +383,7 @@ function BackgroundImagePicker() {
   return imagePath ? (
     <div className="space-y-3">
       <div className="group/preview relative aspect-[21/9] w-full overflow-hidden rounded-lg border border-border/50">
-        <img src={convertFileSrc(imagePath)} alt="" className="size-full object-cover" />
+        {imageUrl && <img src={imageUrl} alt="" className="size-full object-cover" />}
         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent" />
         <Button
           variant="secondary"
