@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.1](https://github.com/sinhong2011/minikyu/compare/v1.9.0...v1.9.1) (2026-03-10)
+
+
+### Bug Fixes
+
+* **ci:** Download artifacts into .app wrapper directory ([#65](https://github.com/sinhong2011/minikyu/issues/65)) ([9d06c7d](https://github.com/sinhong2011/minikyu/commit/9d06c7d2ef90c9162328e402af7121c5a4a21b9b))
+
 ## [1.9.0](https://github.com/sinhong2011/minikyu/compare/v1.8.1...v1.9.0) (2026-03-10)
 
 
