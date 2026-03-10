@@ -253,6 +253,9 @@ pub struct AppPreferences {
     /// Whether to automatically check for app updates.
     #[serde(default = "default_auto_check_updates")]
     pub auto_check_updates: bool,
+    /// Whether to automatically download updates when available.
+    #[serde(default = "default_auto_download_updates")]
+    pub auto_download_updates: bool,
     /// Action for swipe-left gesture in reader (e.g. "open_in_app_browser", "toggle_read", "none").
     #[serde(default = "default_gesture_swipe_left_action")]
     pub gesture_swipe_left_action: String,
@@ -271,6 +274,52 @@ pub struct AppPreferences {
     /// Entry list panel width in pixels. None means use default (435).
     #[serde(default)]
     pub layout_entry_list_width: Option<u32>,
+    /// Whether cloud sync is enabled.
+    #[serde(default)]
+    pub cloud_sync_enabled: bool,
+    /// Cloud sync protocol: "s3" or "webdav".
+    #[serde(default = "default_cloud_sync_protocol")]
+    pub cloud_sync_protocol: String,
+    /// S3-compatible endpoint URL (e.g., "https://s3.amazonaws.com").
+    #[serde(default)]
+    pub cloud_sync_endpoint: Option<String>,
+    /// S3 bucket name.
+    #[serde(default)]
+    pub cloud_sync_bucket: Option<String>,
+    /// S3 region (default: "auto").
+    #[serde(default = "default_cloud_sync_region")]
+    pub cloud_sync_region: String,
+    /// S3 object key for the sync file.
+    #[serde(default = "default_cloud_sync_object_key")]
+    pub cloud_sync_object_key: String,
+    /// WebDAV server URL (e.g., "https://dav.example.com/remote.php/dav/files/user").
+    #[serde(default)]
+    pub cloud_sync_webdav_url: Option<String>,
+    /// WebDAV username.
+    #[serde(default)]
+    pub cloud_sync_webdav_username: Option<String>,
+    /// WebDAV file path for the sync file.
+    #[serde(default = "default_cloud_sync_webdav_path")]
+    pub cloud_sync_webdav_path: String,
+    /// Whether to auto-pull from cloud on app startup.
+    #[serde(default)]
+    pub cloud_sync_auto_pull: bool,
+}
+
+fn default_cloud_sync_protocol() -> String {
+    "s3".to_string()
+}
+
+fn default_cloud_sync_webdav_path() -> String {
+    "/minikyu/preferences-sync.json".to_string()
+}
+
+fn default_cloud_sync_region() -> String {
+    "auto".to_string()
+}
+
+fn default_cloud_sync_object_key() -> String {
+    "minikyu/preferences-sync.json".to_string()
 }
 
 fn default_reader_code_detection_mode() -> String {
@@ -278,6 +327,10 @@ fn default_reader_code_detection_mode() -> String {
 }
 
 fn default_auto_check_updates() -> bool {
+    true
+}
+
+fn default_auto_download_updates() -> bool {
     true
 }
 
@@ -367,12 +420,23 @@ impl Default for AppPreferences {
             time_format: default_time_format(),
             sync_interval: Some(15),
             auto_check_updates: true,
+            auto_download_updates: true,
             gesture_swipe_left_action: default_gesture_swipe_left_action(),
             gesture_swipe_right_action: default_gesture_swipe_right_action(),
             gesture_pull_top_action: default_gesture_pull_top_action(),
             gesture_pull_bottom_action: default_gesture_pull_bottom_action(),
             gesture_swipe_threshold: default_gesture_swipe_threshold(),
             layout_entry_list_width: None,
+            cloud_sync_enabled: false,
+            cloud_sync_protocol: default_cloud_sync_protocol(),
+            cloud_sync_endpoint: None,
+            cloud_sync_bucket: None,
+            cloud_sync_region: default_cloud_sync_region(),
+            cloud_sync_object_key: default_cloud_sync_object_key(),
+            cloud_sync_webdav_url: None,
+            cloud_sync_webdav_username: None,
+            cloud_sync_webdav_path: default_cloud_sync_webdav_path(),
+            cloud_sync_auto_pull: false,
         }
     }
 }

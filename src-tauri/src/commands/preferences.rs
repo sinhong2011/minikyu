@@ -13,7 +13,7 @@ use crate::types::{
 };
 
 /// Gets the path to the preferences file.
-fn get_preferences_path(app: &AppHandle) -> Result<PathBuf, String> {
+pub(crate) fn get_preferences_path(app: &AppHandle) -> Result<PathBuf, String> {
     let app_data_dir = app
         .path()
         .app_data_dir()
@@ -169,5 +169,16 @@ pub async fn save_preferences(app: AppHandle, preferences: AppPreferences) -> Re
     }
 
     log::info!("Successfully saved preferences to {prefs_path:?}");
+
+    // Notify the debounce worker to push after 5s of inactivity
+    let cloud_sync_configured = match preferences.cloud_sync_protocol.as_str() {
+        "webdav" => preferences.cloud_sync_webdav_url.is_some(),
+        _ => preferences.cloud_sync_endpoint.is_some() && preferences.cloud_sync_bucket.is_some(),
+    };
+    if preferences.cloud_sync_enabled && cloud_sync_configured {
+        let state: tauri::State<'_, crate::AppState> = app.state();
+        state.cloud_sync_notify.notify_one();
+    }
+
     Ok(())
 }

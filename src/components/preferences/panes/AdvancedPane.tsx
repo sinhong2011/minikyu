@@ -48,6 +48,7 @@ import { usePreferences, useSavePreferences } from '@/services/preferences';
 import { useReaderStore } from '@/store/reader-store';
 import { useSyncStore } from '@/store/sync-store';
 import { SettingsField, SettingsSection } from '../shared/SettingsComponents';
+import { CloudSyncSection } from './CloudSyncSection';
 
 const LOG_LEVELS = ['error', 'warn', 'info', 'debug', 'trace'] as const;
 
@@ -504,6 +505,9 @@ export function AdvancedPane() {
             {_(msg`Import`)}
           </Button>
         </SettingsField>
+
+        {/* Cloud Sync */}
+        <CloudSyncSection preferences={preferences} />
       </SettingsSection>
 
       {/* ── OPML ───────────────────────────────────────────────────── */}
