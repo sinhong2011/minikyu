@@ -57,17 +57,21 @@ describe('updater service', () => {
   });
 
   describe('downloadUpdate', () => {
-    it('downloads and transitions to ready', async () => {
+    it('downloads without installing and transitions to ready', async () => {
       const mockUpdate = {
         version: '1.4.0',
-        downloadAndInstall: vi.fn().mockResolvedValue(undefined),
+        download: vi.fn().mockResolvedValue(undefined),
+        install: vi.fn(),
+        downloadAndInstall: vi.fn(),
       };
       useUpdaterStore.setState({ status: 'available', version: '1.4.0', date: '', body: '' });
       useUpdaterStore.getState()._setUpdate(mockUpdate as any);
 
       await downloadUpdate();
 
-      expect(mockUpdate.downloadAndInstall).toHaveBeenCalled();
+      expect(mockUpdate.download).toHaveBeenCalled();
+      expect(mockUpdate.install).not.toHaveBeenCalled();
+      expect(mockUpdate.downloadAndInstall).not.toHaveBeenCalled();
       expect(useUpdaterStore.getState().status).toBe('ready');
     });
 
@@ -81,10 +85,24 @@ describe('updater service', () => {
   });
 
   describe('installAndRelaunch', () => {
-    it('calls relaunch', async () => {
+    it('installs the update then relaunches', async () => {
+      const mockUpdate = {
+        install: vi.fn().mockResolvedValue(undefined),
+      };
+      useUpdaterStore.setState({ status: 'ready', version: '1.4.0' });
+      useUpdaterStore.getState()._setUpdate(mockUpdate as any);
+
       await installAndRelaunch();
 
+      expect(mockUpdate.install).toHaveBeenCalled();
       expect(relaunch).toHaveBeenCalled();
+    });
+
+    it('sets error when no update object available', async () => {
+      await installAndRelaunch();
+
+      expect(useUpdaterStore.getState().status).toBe('error');
+      expect(relaunch).not.toHaveBeenCalled();
     });
   });
 });
