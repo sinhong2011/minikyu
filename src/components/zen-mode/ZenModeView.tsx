@@ -2,12 +2,12 @@ import { ArrowRightIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { convertFileSrc } from '@tauri-apps/api/core';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useState } from 'react';
 import { EntryReading } from '@/components/miniflux/EntryReading';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
+import { useLocalImageUrl } from '@/hooks/use-local-image-url';
 import { useRandomEntry } from '@/hooks/use-random-entry';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import { getReaderThemePalette } from '@/lib/reader-theme';
@@ -26,6 +26,7 @@ export function ZenModeView() {
   const { data: preferences } = usePreferences();
 
   const bgImagePath = preferences?.background_image_path;
+  const bgImageUrl = useLocalImageUrl(bgImagePath);
   const bgImageOpacity = preferences?.background_image_opacity ?? 0.15;
   const bgImageBlur = preferences?.background_image_blur ?? 0;
   const bgImageSize = preferences?.background_image_size ?? 'cover';
@@ -112,9 +113,9 @@ export function ZenModeView() {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
           >
-            {bgImagePath && bgImageSize !== 'tile' && (
+            {bgImageUrl && bgImageSize !== 'tile' && (
               <img
-                src={convertFileSrc(bgImagePath)}
+                src={bgImageUrl}
                 alt=""
                 className="pointer-events-none absolute inset-0 size-full select-none"
                 style={{
@@ -125,11 +126,11 @@ export function ZenModeView() {
                 }}
               />
             )}
-            {bgImagePath && bgImageSize === 'tile' && (
+            {bgImageUrl && bgImageSize === 'tile' && (
               <div
                 className="pointer-events-none absolute inset-0 select-none"
                 style={{
-                  backgroundImage: `url(${convertFileSrc(bgImagePath)})`,
+                  backgroundImage: `url(${bgImageUrl})`,
                   backgroundRepeat: 'repeat',
                   backgroundSize: 'auto',
                   opacity: bgImageOpacity,

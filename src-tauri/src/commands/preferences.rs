@@ -322,3 +322,37 @@ pub async fn download_background_image(app: AppHandle, url: String) -> Result<St
     log::info!("Background image cached to: {path_str}");
     Ok(path_str)
 }
+
+/// Reads a local image file and returns it as a base64 data URL.
+/// This bypasses the asset protocol which has issues on Windows production builds.
+#[tauri::command]
+#[specta::specta]
+pub async fn read_image_as_data_url(path: String) -> Result<String, String> {
+    let file_path = std::path::Path::new(&path);
+    if !file_path.exists() {
+        return Err("File not found".to_string());
+    }
+
+    let mime = match file_path
+        .extension()
+        .and_then(|e| e.to_str())
+        .map(|e| e.to_lowercase())
+        .as_deref()
+    {
+        Some("png") => "image/png",
+        Some("jpg" | "jpeg") => "image/jpeg",
+        Some("webp") => "image/webp",
+        Some("gif") => "image/gif",
+        Some("bmp") => "image/bmp",
+        Some("avif") => "image/avif",
+        _ => "image/png",
+    };
+
+    let bytes = tokio::fs::read(file_path)
+        .await
+        .map_err(|e| format!("Failed to read image: {e}"))?;
+
+    use base64::Engine;
+    let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
+    Ok(format!("data:{mime};base64,{b64}"))
+}
