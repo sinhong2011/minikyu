@@ -48,12 +48,14 @@ export function formatShortDate(date: Date, appLocale: string): string {
 
 export type EntryDateSectionType = 'today' | 'yesterday' | 'weekday' | 'full-date';
 
-interface EntryWithPublishedAt {
+interface EntryWithDateFields {
   // biome-ignore lint/style/useNamingConvention: matches Miniflux API shape
   published_at: string;
+  // biome-ignore lint/style/useNamingConvention: matches Miniflux API shape
+  changed_at?: string | null;
 }
 
-export interface EntryDateGroup<T extends EntryWithPublishedAt> {
+export interface EntryDateGroup<T extends EntryWithDateFields> {
   key: string;
   date: Date;
   entries: T[];
@@ -102,13 +104,16 @@ export function getEntryDateSectionType(date: Date, now: Date = new Date()): Ent
   return 'full-date';
 }
 
-export function groupEntriesByCalendarDate<T extends EntryWithPublishedAt>(
-  entries: T[]
+export function groupEntriesByCalendarDate<T extends EntryWithDateFields>(
+  entries: T[],
+  dateField: 'published_at' | 'changed_at' = 'published_at'
 ): EntryDateGroup<T>[] {
   const groups: EntryDateGroup<T>[] = [];
 
   entries.forEach((entry, index) => {
-    const parsedDate = parseDateInput(entry.published_at);
+    const dateValue =
+      dateField === 'changed_at' ? (entry.changed_at ?? entry.published_at) : entry.published_at;
+    const parsedDate = parseDateInput(dateValue);
     const groupDate = parsedDate ?? new Date(0);
     const key = parsedDate ? format(groupDate, 'yyyy-MM-dd') : `invalid-${index}`;
     const previousGroup = groups.at(-1);

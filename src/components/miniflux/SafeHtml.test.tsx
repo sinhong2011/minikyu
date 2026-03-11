@@ -18,6 +18,9 @@ beforeAll(() => {
 vi.mock('dompurify', () => ({
   default: {
     sanitize: (value: string) => value,
+    addHook: vi.fn(),
+    removeHook: vi.fn(),
+    removeHooks: vi.fn(),
   },
 }));
 
@@ -164,5 +167,34 @@ describe('SafeHtml reader node blocks', () => {
       </TestWrapper>
     );
     expect(document.querySelector('canvas')).not.toBeInTheDocument();
+  });
+});
+
+describe('SafeHtml video iframe rendering', () => {
+  it('renders YouTube iframe with security attributes', () => {
+    const html = '<iframe src="https://www.youtube.com/embed/dQw4w9WgXcQ"></iframe>';
+    const { container } = renderSafeHtml(<SafeHtml html={html} />);
+    const iframe = container.querySelector('iframe');
+    expect(iframe).not.toBeNull();
+    expect(iframe?.getAttribute('src')).toBe('https://www.youtube.com/embed/dQw4w9WgXcQ');
+    expect(iframe?.getAttribute('referrerpolicy')).toBe('strict-origin-when-cross-origin');
+    expect(iframe?.hasAttribute('allowfullscreen')).toBe(true);
+  });
+
+  it('rewrites Bilibili iframe to player URL', () => {
+    const html =
+      '<iframe src="https://www.bilibili.com/blackboard/html5mobileplayer.html?bvid=BV1xx411c7mD&p=1"></iframe>';
+    const { container } = renderSafeHtml(<SafeHtml html={html} />);
+    const iframe = container.querySelector('iframe');
+    expect(iframe).not.toBeNull();
+    expect(iframe?.getAttribute('src')).toContain('player.bilibili.com');
+    expect(iframe?.getAttribute('src')).toContain('bvid=BV1xx411c7mD');
+  });
+
+  it('applies responsive video wrapper class', () => {
+    const html = '<iframe src="https://www.youtube.com/embed/test123"></iframe>';
+    const { container } = renderSafeHtml(<SafeHtml html={html} />);
+    const wrapper = container.querySelector('[data-video-embed]');
+    expect(wrapper).not.toBeNull();
   });
 });

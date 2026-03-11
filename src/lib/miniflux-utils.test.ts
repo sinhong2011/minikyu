@@ -48,4 +48,32 @@ describe('miniflux-utils', () => {
     expect(groups[1]?.key).toBe('2026-02-09');
     expect(groups[1]?.entries.map((entry) => entry.id)).toEqual(['3']);
   });
+
+  it('groups by changed_at when dateField is changed_at', () => {
+    const entries = [
+      { id: '1', published_at: '2026-02-10T09:00:00', changed_at: '2026-02-11T10:00:00' },
+      { id: '2', published_at: '2026-02-09T07:00:00', changed_at: '2026-02-11T08:00:00' },
+      { id: '3', published_at: '2026-02-10T21:00:00', changed_at: '2026-02-10T22:00:00' },
+    ];
+
+    const groups = groupEntriesByCalendarDate(entries, 'changed_at');
+
+    expect(groups).toHaveLength(2);
+    expect(groups[0]?.key).toBe('2026-02-11');
+    expect(groups[0]?.entries.map((e) => e.id)).toEqual(['1', '2']);
+    expect(groups[1]?.key).toBe('2026-02-10');
+    expect(groups[1]?.entries.map((e) => e.id)).toEqual(['3']);
+  });
+
+  it('falls back to published_at when changed_at is null', () => {
+    const entries = [
+      { id: '1', published_at: '2026-02-10T09:00:00', changed_at: null },
+      { id: '2', published_at: '2026-02-10T07:00:00', changed_at: undefined },
+    ];
+
+    const groups = groupEntriesByCalendarDate(entries, 'changed_at');
+
+    expect(groups).toHaveLength(1);
+    expect(groups[0]?.key).toBe('2026-02-10');
+  });
 });

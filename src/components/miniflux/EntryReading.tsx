@@ -52,6 +52,7 @@ import {
 import { formatShortcutDisplay, matchesShortcut } from '@/lib/shortcut-registry';
 import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
+import { getVideoEmbedHtml } from '@/lib/video-embed-utils';
 import {
   useEntry,
   useFetchEntryContent,
@@ -337,10 +338,15 @@ export function EntryReading({
   const smallTitleOpacity = useTransform(scrollY, [60, 120], [0, 1], { ease: easeOutCubic });
   const smallTitleHeight = useTransform(scrollY, [60, 120], [0, 32], { ease: easeOutCubic });
   const headerPadding = useTransform(scrollY, [0, 100], [8, 4], { ease: easeOutCubic });
-  const readingContent = useMemo(
-    () => buildEntryContentWithToc(entry?.content ?? ''),
-    [entry?.content]
-  );
+  const readingContent = useMemo(() => {
+    const content = entry?.content ?? '';
+    // Only prepend a video embed if the content doesn't already contain an iframe
+    // (Miniflux typically injects YouTube iframes, but some setups may not)
+    const hasIframe = content.includes('<iframe');
+    const videoEmbed = !hasIframe && entry?.url ? getVideoEmbedHtml(entry.url) : null;
+    const html = videoEmbed ? `${videoEmbed}\n${content}` : content;
+    return buildEntryContentWithToc(html);
+  }, [entry?.content, entry?.url]);
   const showToc = readingContent.tocItems.length >= 2;
   const activeTocIndex = useMemo(
     () => readingContent.tocItems.findIndex((item) => item.id === activeHeadingId),

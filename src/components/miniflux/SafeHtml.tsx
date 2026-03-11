@@ -55,6 +55,7 @@ import {
 } from '@/lib/shiki-highlight';
 import type { ChineseConversionMode, ChineseConversionRule } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
+import { isAllowedVideoIframeSrc, rewriteBilibiliSrc } from '@/lib/video-embed-utils';
 import { usePreferences } from '@/services/preferences';
 
 const ImageViewer = lazy(() => import('./ImageViewer').then((m) => ({ default: m.ImageViewer })));
@@ -722,23 +723,46 @@ function stripTextAlignStyles(sanitizedHtml: string): string {
 }
 
 export function sanitizeReaderHtml(html: string): string {
-  const sanitized = DOMPurify.sanitize(html, {
-    // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
-    USE_PROFILES: { html: true },
-    // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
-    ADD_ATTR: [
-      'target',
-      'rel',
-      'data-translation-loading',
-      'data-translation-retry',
-      'data-translation-role',
-      'data-translation-segment-id',
-      'data-testid',
-    ],
-    // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
-    FORBID_TAGS: ['center'],
+  // Hook to strip iframes with untrusted src after DOMPurify allows the tag
+  DOMPurify.addHook('afterSanitizeAttributes', (node) => {
+    if (node.tagName === 'IFRAME') {
+      const src = node.getAttribute('src') || '';
+      if (!isAllowedVideoIframeSrc(src)) {
+        node.remove();
+      }
+    }
   });
-  return stripTextAlignStyles(sanitized);
+
+  try {
+    const sanitized = DOMPurify.sanitize(html, {
+      // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
+      USE_PROFILES: { html: true },
+      // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
+      ADD_TAGS: ['iframe'],
+      // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
+      ADD_ATTR: [
+        'target',
+        'rel',
+        'data-translation-loading',
+        'data-translation-retry',
+        'data-translation-role',
+        'data-translation-segment-id',
+        'data-testid',
+        // iframe attributes
+        'allow',
+        'allowfullscreen',
+        'frameborder',
+        'loading',
+        'referrerpolicy',
+        'sandbox',
+      ],
+      // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
+      FORBID_TAGS: ['center'],
+    });
+    return stripTextAlignStyles(sanitized);
+  } finally {
+    DOMPurify.removeHook('afterSanitizeAttributes');
+  }
 }
 
 export function SafeHtml({
@@ -1534,6 +1558,26 @@ export function SafeHtml({
                 }}
               />
             </button>
+          );
+        }
+
+        if (domNode.name === 'iframe') {
+          const src = domNode.attribs.src || '';
+
+          // Rewrite Bilibili iframes to standard player URL
+          const rewrittenSrc = rewriteBilibiliSrc(src);
+          const finalSrc = rewrittenSrc ?? src;
+
+          return (
+            <div data-video-embed className="my-4 aspect-video w-full overflow-hidden rounded-lg">
+              <iframe
+                src={finalSrc}
+                referrerPolicy="strict-origin-when-cross-origin"
+                allowFullScreen
+                className="h-full w-full border-none"
+                title="Embedded video"
+              />
+            </div>
           );
         }
 
