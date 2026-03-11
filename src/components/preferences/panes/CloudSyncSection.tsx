@@ -176,8 +176,8 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
     try {
       const result = await commands.cloudSyncPull();
       if (result.status === 'ok') {
+        queryClient.setQueryData(preferencesQueryKeys.preferences(), result.data);
         showToast.success(_(msg`Preferences restored from cloud`));
-        window.location.reload();
       } else {
         showToast.error(result.error);
       }
