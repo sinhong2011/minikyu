@@ -77,7 +77,7 @@ msgid "{0} feeds synced"
 msgstr "{0}개 피드 동기화됨"
 
 #. placeholder {0}: entry.reading_time
-#: src/components/miniflux/EntryList.tsx:860
+#: src/components/miniflux/EntryList.tsx:861
 msgid "{0} min read"
 msgstr "{0}분 읽기"
 
@@ -253,7 +253,7 @@ msgstr "규칙 추가"
 msgid "Add the current article's podcast to the playlist"
 msgstr "현재 기사의 팟캐스트를 플레이리스트에 추가"
 
-#: src/components/miniflux/EntryList.tsx:837
+#: src/components/miniflux/EntryList.tsx:838
 #: src/components/miniflux/EntryReadingHeader.tsx:476
 #: src/components/miniflux/EntryReadingHeader.tsx:483
 #: src/lib/shortcut-registry.ts:109
@@ -270,7 +270,7 @@ msgstr "플레이리스트에 추가"
 msgid "Add user"
 msgstr "사용자 추가"
 
-#: src/components/miniflux/EntryList.tsx:843
+#: src/components/miniflux/EntryList.tsx:844
 #: src/components/miniflux/EntryReadingHeader.tsx:313
 msgid "Added to playlist"
 msgstr "재생목록에 추가됨"
@@ -769,7 +769,7 @@ msgstr "최신 버전 확인"
 msgid "Check whether a newer release is available."
 msgstr "최신 릴리스가 있는지 확인합니다."
 
-#: src/components/miniflux/EntryList.tsx:591
+#: src/components/miniflux/EntryList.tsx:592
 msgid "Check your connection and try again"
 msgstr "연결 상태를 확인하고 다시 시도하세요"
 
@@ -1504,7 +1504,7 @@ msgid "Done"
 msgstr "완료"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:606
-#: src/components/miniflux/EntryList.tsx:811
+#: src/components/miniflux/EntryList.tsx:812
 #: src/components/podcast/PlayerWindowControls.tsx:313
 #: src/components/podcast/PodcastPlayer.tsx:261
 #: src/components/podcast/PodcastPlayer.tsx:267
@@ -1522,7 +1522,7 @@ msgstr "다운로드 완료"
 #~ msgstr "다운로드 실패"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:308
-#: src/components/miniflux/EntryList.tsx:462
+#: src/components/miniflux/EntryList.tsx:463
 #: src/components/podcast/PodcastPlayer.tsx:240
 #: src/hooks/use-player-command-listener.ts:59
 msgid "Download Failed"
@@ -1559,7 +1559,7 @@ msgid "Download updates automatically when available."
 msgstr "업데이트가 있으면 자동으로 다운로드합니다."
 
 #: src/components/downloads/DownloadManagerDialog.tsx:659
-#: src/components/miniflux/EntryList.tsx:458
+#: src/components/miniflux/EntryList.tsx:459
 #: src/components/podcast/PodcastPlayer.tsx:231
 msgid "Downloading"
 msgstr "다운로드 중"
@@ -1979,7 +1979,7 @@ msgstr "API 키를 불러오는 데 실패했습니다"
 msgid "Failed to load categories"
 msgstr "카테고리 불러오기에 실패했습니다"
 
-#: src/components/miniflux/EntryList.tsx:589
+#: src/components/miniflux/EntryList.tsx:590
 msgid "Failed to load entries"
 msgstr "항목 불러오기에 실패했습니다"
 
@@ -3145,7 +3145,7 @@ msgstr "검색과 일치하는 다운로드가 없습니다"
 msgid "No downloads yet"
 msgstr "다운로드 없음"
 
-#: src/components/miniflux/EntryList.tsx:614
+#: src/components/miniflux/EntryList.tsx:615
 msgid "No entries found"
 msgstr "항목을 찾을 수 없습니다"
 
@@ -3493,7 +3493,7 @@ msgid "Phrase"
 msgstr "구문"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:800
-#: src/components/miniflux/EntryList.tsx:824
+#: src/components/miniflux/EntryList.tsx:825
 #: src/components/miniflux/EntryReadingHeader.tsx:291
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PlayerWindowQueue.tsx:102
@@ -3562,7 +3562,7 @@ msgid "PNG, JPG, WebP, GIF, or AVIF"
 msgstr "PNG, JPG, WebP, GIF 또는 AVIF"
 
 #: src/components/command-palette/CommandPalette.tsx:199
-#: src/components/miniflux/EntryList.tsx:855
+#: src/components/miniflux/EntryList.tsx:856
 #: src/components/miniflux/EntryReading.tsx:1752
 #: src/lib/menu.ts:283
 msgid "Podcast"
@@ -4986,7 +4986,7 @@ msgstr "명령 팔레트를 열고 사용 가능한 명령을 탐색하려면"
 
 #: src/components/layout/AppSidebar.tsx:631
 #: src/components/layout/AppSidebar.tsx:640
-#: src/components/miniflux/EntryList.tsx:165
+#: src/components/miniflux/EntryList.tsx:166
 #: src/components/miniflux/MinifluxLayout.tsx:517
 msgid "Today"
 msgstr "오늘"
@@ -5209,7 +5209,7 @@ msgstr "트레이 아이콘이 활성화되었습니다"
 msgid "Try Again"
 msgstr "다시 시도"
 
-#: src/components/miniflux/EntryList.tsx:616
+#: src/components/miniflux/EntryList.tsx:617
 msgid "Try changing the filter or syncing new content"
 msgstr "필터를 변경하거나 새 콘텐츠를 동기화해 보세요"
 
@@ -5513,7 +5513,7 @@ msgstr "콘텐츠 넓히기"
 msgid "Window"
 msgstr "창"
 
-#: src/components/miniflux/EntryList.tsx:167
+#: src/components/miniflux/EntryList.tsx:168
 msgid "Yesterday"
 msgstr "어제"
 

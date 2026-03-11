@@ -77,7 +77,7 @@ msgid "{0} feeds synced"
 msgstr "已同步 {0} 個訂閱源"
 
 #. placeholder {0}: entry.reading_time
-#: src/components/miniflux/EntryList.tsx:860
+#: src/components/miniflux/EntryList.tsx:861
 msgid "{0} min read"
 msgstr "{0} 分鐘閱讀"
 
@@ -253,7 +253,7 @@ msgstr "新增規則"
 msgid "Add the current article's podcast to the playlist"
 msgstr "將目前文章的 Podcast 新增至播放清單"
 
-#: src/components/miniflux/EntryList.tsx:837
+#: src/components/miniflux/EntryList.tsx:838
 #: src/components/miniflux/EntryReadingHeader.tsx:476
 #: src/components/miniflux/EntryReadingHeader.tsx:483
 #: src/lib/shortcut-registry.ts:109
@@ -270,7 +270,7 @@ msgstr "新增至播放清單"
 msgid "Add user"
 msgstr "新增使用者"
 
-#: src/components/miniflux/EntryList.tsx:843
+#: src/components/miniflux/EntryList.tsx:844
 #: src/components/miniflux/EntryReadingHeader.tsx:313
 msgid "Added to playlist"
 msgstr "已加入播放清單"
@@ -769,7 +769,7 @@ msgstr "檢查最新版本"
 msgid "Check whether a newer release is available."
 msgstr "檢查是否有更新的版本可用。"
 
-#: src/components/miniflux/EntryList.tsx:591
+#: src/components/miniflux/EntryList.tsx:592
 msgid "Check your connection and try again"
 msgstr "請檢查您的連線狀態，然後重試"
 
@@ -1504,7 +1504,7 @@ msgid "Done"
 msgstr "完成"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:606
-#: src/components/miniflux/EntryList.tsx:811
+#: src/components/miniflux/EntryList.tsx:812
 #: src/components/podcast/PlayerWindowControls.tsx:313
 #: src/components/podcast/PodcastPlayer.tsx:261
 #: src/components/podcast/PodcastPlayer.tsx:267
@@ -1522,7 +1522,7 @@ msgstr "下載完成"
 #~ msgstr "下載失敗"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:308
-#: src/components/miniflux/EntryList.tsx:462
+#: src/components/miniflux/EntryList.tsx:463
 #: src/components/podcast/PodcastPlayer.tsx:240
 #: src/hooks/use-player-command-listener.ts:59
 msgid "Download Failed"
@@ -1559,7 +1559,7 @@ msgid "Download updates automatically when available."
 msgstr "有可用更新時自動下載。"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:659
-#: src/components/miniflux/EntryList.tsx:458
+#: src/components/miniflux/EntryList.tsx:459
 #: src/components/podcast/PodcastPlayer.tsx:231
 msgid "Downloading"
 msgstr "下載中"
@@ -1979,7 +1979,7 @@ msgstr "載入 API 金鑰失敗"
 msgid "Failed to load categories"
 msgstr "載入分類失敗"
 
-#: src/components/miniflux/EntryList.tsx:589
+#: src/components/miniflux/EntryList.tsx:590
 msgid "Failed to load entries"
 msgstr "載入文章失敗"
 
@@ -3145,7 +3145,7 @@ msgstr "沒有符合搜尋的下載"
 msgid "No downloads yet"
 msgstr "尚無下載項目"
 
-#: src/components/miniflux/EntryList.tsx:614
+#: src/components/miniflux/EntryList.tsx:615
 msgid "No entries found"
 msgstr "找不到文章"
 
@@ -3493,7 +3493,7 @@ msgid "Phrase"
 msgstr "詞句"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:800
-#: src/components/miniflux/EntryList.tsx:824
+#: src/components/miniflux/EntryList.tsx:825
 #: src/components/miniflux/EntryReadingHeader.tsx:291
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PlayerWindowQueue.tsx:102
@@ -3562,7 +3562,7 @@ msgid "PNG, JPG, WebP, GIF, or AVIF"
 msgstr "PNG、JPG、WebP、GIF 或 AVIF"
 
 #: src/components/command-palette/CommandPalette.tsx:199
-#: src/components/miniflux/EntryList.tsx:855
+#: src/components/miniflux/EntryList.tsx:856
 #: src/components/miniflux/EntryReading.tsx:1752
 #: src/lib/menu.ts:283
 msgid "Podcast"
@@ -4986,7 +4986,7 @@ msgstr "開啟命令面板並探索可用命令。"
 
 #: src/components/layout/AppSidebar.tsx:631
 #: src/components/layout/AppSidebar.tsx:640
-#: src/components/miniflux/EntryList.tsx:165
+#: src/components/miniflux/EntryList.tsx:166
 #: src/components/miniflux/MinifluxLayout.tsx:517
 msgid "Today"
 msgstr "今天"
@@ -5209,7 +5209,7 @@ msgstr "系統匣圖示已啟用"
 msgid "Try Again"
 msgstr "重試"
 
-#: src/components/miniflux/EntryList.tsx:616
+#: src/components/miniflux/EntryList.tsx:617
 msgid "Try changing the filter or syncing new content"
 msgstr "嘗試更改篩選條件或同步新內容"
 
@@ -5513,7 +5513,7 @@ msgstr "加寬內容"
 msgid "Window"
 msgstr "視窗"
 
-#: src/components/miniflux/EntryList.tsx:167
+#: src/components/miniflux/EntryList.tsx:168
 msgid "Yesterday"
 msgstr "昨天"
 

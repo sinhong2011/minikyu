@@ -13,7 +13,7 @@ export interface EntryContentWithToc {
 
 const TOC_HEADING_SELECTOR = 'h2, h3, h4';
 const BLOCK_LEVEL_SELECTOR =
-  'p, div, h1, h2, h3, h4, h5, h6, ul, ol, li, blockquote, pre, table, section, article, figure, hr';
+  'p, div, h1, h2, h3, h4, h5, h6, ul, ol, li, blockquote, pre, table, section, article, figure, hr, iframe';
 
 function toSlug(text: string): string {
   return text
