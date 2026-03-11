@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.3](https://github.com/sinhong2011/minikyu/compare/v1.9.2...v1.9.3) (2026-03-11)
+
+
+### Bug Fixes
+
+* Video embed support and entry list date grouping ([#69](https://github.com/sinhong2011/minikyu/issues/69)) ([25a4b7b](https://github.com/sinhong2011/minikyu/commit/25a4b7b1e38ebbe763d81aaeb7a66dfb2a9c4e1a))
+
 ## [1.9.2](https://github.com/sinhong2011/minikyu/compare/v1.9.1...v1.9.2) (2026-03-10)
 
 
