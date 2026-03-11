@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.5](https://github.com/sinhong2011/minikyu/compare/v1.9.4...v1.9.5) (2026-03-11)
+
+
+### Bug Fixes
+
+* **cloud-sync:** Smooth sync pull without page reload ([#75](https://github.com/sinhong2011/minikyu/issues/75)) ([aaafe26](https://github.com/sinhong2011/minikyu/commit/aaafe26abfe6bb30f2e5f88f265c17abd1877b39))
+
 ## [1.9.4](https://github.com/sinhong2011/minikyu/compare/v1.9.3...v1.9.4) (2026-03-11)
 
 
