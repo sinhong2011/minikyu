@@ -1,7 +1,8 @@
+import { useQueryClient } from '@tanstack/react-query';
 import { useEffect, useRef } from 'react';
 import { logger } from '@/lib/logger';
 import { commands } from '@/lib/tauri-bindings';
-import { usePreferences } from '@/services/preferences';
+import { preferencesQueryKeys, usePreferences } from '@/services/preferences';
 
 /**
  * Auto-pull preferences from cloud on app startup if enabled.
@@ -9,6 +10,7 @@ import { usePreferences } from '@/services/preferences';
  */
 export function useCloudSyncAutoPull() {
   const { data: preferences } = usePreferences();
+  const queryClient = useQueryClient();
   const hasRun = useRef(false);
 
   useEffect(() => {
@@ -20,13 +22,13 @@ export function useCloudSyncAutoPull() {
       logger.info('Cloud sync auto-pull: starting');
       const result = await commands.cloudSyncPull();
       if (result.status === 'ok') {
-        logger.info('Cloud sync auto-pull: success, reloading');
-        window.location.reload();
+        logger.info('Cloud sync auto-pull: success');
+        queryClient.setQueryData(preferencesQueryKeys.preferences(), result.data);
       } else {
         logger.warn(`Cloud sync auto-pull failed: ${result.error}`);
       }
     };
 
     pull();
-  }, [preferences]);
+  }, [preferences, queryClient]);
 }

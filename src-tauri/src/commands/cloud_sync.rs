@@ -164,7 +164,7 @@ pub async fn cloud_sync_push(app: AppHandle) -> Result<(), String> {
 /// Pull preferences + server URLs from remote storage.
 #[tauri::command]
 #[specta::specta]
-pub async fn cloud_sync_pull(app: AppHandle) -> Result<CloudSyncPayload, String> {
+pub async fn cloud_sync_pull(app: AppHandle) -> Result<AppPreferences, String> {
     let prefs = load_preferences(app.clone()).await?;
 
     let json = match prefs.cloud_sync_protocol.as_str() {
@@ -239,7 +239,7 @@ pub async fn cloud_sync_pull(app: AppHandle) -> Result<CloudSyncPayload, String>
         .map_err(|e| format!("Failed to finalize preferences: {e}"))?;
 
     log::info!("Cloud sync pull applied successfully");
-    Ok(payload)
+    Ok(merged)
 }
 
 /// Save the current timestamp as the last synced time in preferences.
