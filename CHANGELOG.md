@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.9.4](https://github.com/sinhong2011/minikyu/compare/v1.9.3...v1.9.4) (2026-03-11)
+
+
+### Bug Fixes
+
+* **ci:** Use RELEASE_PAT for release-please to trigger downstream workflows ([#74](https://github.com/sinhong2011/minikyu/issues/74)) ([ac1ce6f](https://github.com/sinhong2011/minikyu/commit/ac1ce6f0930267aabadfc399f93e44adf2b54a98))
+
 ## [1.9.3](https://github.com/sinhong2011/minikyu/compare/v1.9.2...v1.9.3) (2026-03-11)
 
 
