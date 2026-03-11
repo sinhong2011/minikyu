@@ -92,12 +92,31 @@ git commit --allow-empty -m "chore: release 2.0.0" -m "Release-As: 2.0.0"
 
 For the first stable release (`1.0.0`), you can also run the `release-please` workflow manually and set `release_as=1.0.0`.
 
+## Required Secrets
+
+### `RELEASE_PAT` (Critical)
+
+A GitHub **Personal Access Token** is required for release-please to create tags that trigger the release build workflow. The default `GITHUB_TOKEN` cannot trigger downstream workflows.
+
+**Setup:**
+
+1. Go to **GitHub → Settings → Developer settings → Personal access tokens → Fine-grained tokens**
+2. Click **Generate new token** with:
+   - **Name**: `release-please-minikyu`
+   - **Expiration**: 1 year
+   - **Repository access**: Only select → `sinhong2011/minikyu`
+   - **Permissions**: Contents (R/W), Pull requests (R/W), Actions (R/W)
+3. Go to **repo → Settings → Secrets and variables → Actions**
+4. Add secret: **Name** = `RELEASE_PAT`, **Value** = the token
+
+Without this, release PRs will merge but tags/releases won't be created automatically.
+
 ## Configuration
 
 **GitHub Workflow:** `.github/workflows/release-please.yml`
 
 - Runs on push to main
-- Creates release PRs
+- Creates release PRs using `RELEASE_PAT`
 - Builds Tauri on release
 
 **Config File:** `.release-please.json`
@@ -188,11 +207,18 @@ release-please release-pr \
 2. Check if `release-please:skip` label is on PR
 3. Verify `.release-please.json` configuration
 
+### Release PR Merges But No Tag/Release Created
+
+1. Ensure `RELEASE_PAT` secret is configured (see Required Secrets above)
+2. Check that the PAT has not expired
+3. Check the `autorelease: pending` label on the release PR — if missing, release-please skipped tagging
+4. If needed, manually tag the merge commit: `git tag v1.x.x <commit-sha> && git push origin v1.x.x`
+
 ### Build Fails Release
 
 1. Check workflow logs on GitHub Actions
 2. Verify Tauri builds locally: `bun run tauri:build`
-3. Ensure secrets are configured (GITHUB_TOKEN is auto-provided)
+3. Ensure secrets are configured (RELEASE_PAT, signing certs, etc.)
 
 ## Migration from Manual Release Script
 
