@@ -1408,7 +1408,7 @@ async cloudSyncPush() : Promise<Result<null, string>> {
 /**
  * Pull preferences + server URLs from remote storage.
  */
-async cloudSyncPull() : Promise<Result<CloudSyncPayload, string>> {
+async cloudSyncPull() : Promise<Result<AppPreferences, string>> {
     try {
     return { status: "ok", data: await TAURI_INVOKE("cloud_sync_pull") };
 } catch (e) {
@@ -1812,10 +1812,6 @@ export type CloseBehavior =
  * Minimize to tray (hide window, keep running)
  */
 "minimize_to_tray"
-/**
- * Payload for the sync file stored remotely.
- */
-export type CloudSyncPayload = { preferences: AppPreferences; server_urls: string[]; synced_at: string }
 /**
  * Counters
  */
