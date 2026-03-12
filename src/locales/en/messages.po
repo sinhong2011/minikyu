@@ -137,11 +137,11 @@ msgstr "0 sec"
 msgid "1 episode"
 msgstr "1 episode"
 
-#: src/components/preferences/panes/AppearancePane.tsx:168
+#: src/components/preferences/panes/AppearancePane.tsx:187
 msgid "12-hour"
 msgstr "12-hour"
 
-#: src/components/preferences/panes/AppearancePane.tsx:169
+#: src/components/preferences/panes/AppearancePane.tsx:188
 msgid "24-hour"
 msgstr "24-hour"
 
@@ -279,7 +279,7 @@ msgstr "Added to playlist"
 msgid "Adding..."
 msgstr "Adding..."
 
-#: src/components/preferences/panes/AppearancePane.tsx:228
+#: src/components/preferences/panes/AppearancePane.tsx:247
 msgid "Adjust the background image transparency."
 msgstr "Adjust the background image transparency."
 
@@ -425,7 +425,7 @@ msgstr "Apple Built-in"
 msgid "Applies to all articles when enabled"
 msgstr "Applies to all articles when enabled"
 
-#: src/components/preferences/panes/AppearancePane.tsx:256
+#: src/components/preferences/panes/AppearancePane.tsx:275
 msgid "Apply blur to the background image."
 msgstr "Apply blur to the background image."
 
@@ -570,7 +570,7 @@ msgid "Back"
 msgstr "Back"
 
 #: src/components/command-palette/CommandPalette.tsx:289
-#: src/components/preferences/panes/AppearancePane.tsx:175
+#: src/components/preferences/panes/AppearancePane.tsx:194
 msgid "Background Image"
 msgstr "Background Image"
 
@@ -597,7 +597,7 @@ msgstr "Bionic Reading"
 msgid "Blocklist rules"
 msgstr "Blocklist rules"
 
-#: src/components/preferences/panes/AppearancePane.tsx:255
+#: src/components/preferences/panes/AppearancePane.tsx:274
 msgid "Blur"
 msgstr "Blur"
 
@@ -737,7 +737,7 @@ msgstr "Category translation re-enabled"
 msgid "Category updated"
 msgstr "Category updated"
 
-#: src/components/preferences/panes/AppearancePane.tsx:405
+#: src/components/preferences/panes/AppearancePane.tsx:465
 msgid "Change"
 msgstr "Change"
 
@@ -807,8 +807,8 @@ msgstr "Chinese Conversion"
 msgid "Choose a story from the list and your reading companion will guide the focus."
 msgstr "Choose a story from the list and your reading companion will guide the focus."
 
-#: src/components/preferences/panes/AppearancePane.tsx:412
-#: src/components/preferences/panes/AppearancePane.tsx:473
+#: src/components/preferences/panes/AppearancePane.tsx:472
+#: src/components/preferences/panes/AppearancePane.tsx:533
 msgid "Choose File"
 msgstr "Choose File"
 
@@ -816,7 +816,7 @@ msgstr "Choose File"
 msgid "Choose how the player appears when clicking the tray icon"
 msgstr "Choose how the player appears when clicking the tray icon"
 
-#: src/components/preferences/panes/AppearancePane.tsx:152
+#: src/components/preferences/panes/AppearancePane.tsx:171
 msgid "Choose how times are displayed throughout the app"
 msgstr "Choose how times are displayed throughout the app"
 
@@ -832,6 +832,10 @@ msgstr "Choose how translation requests are routed across engines and LLMs."
 msgid "Choose the background surface for the article reader"
 msgstr "Choose the background surface for the article reader"
 
+#: src/components/preferences/panes/AppearancePane.tsx:153
+msgid "Choose the font used across the app interface"
+msgstr "Choose the font used across the app interface"
+
 #: src/components/preferences/panes/ReaderPane.tsx:231
 msgid "Choose the typeface for article text"
 msgstr "Choose the typeface for article text"
@@ -840,11 +844,11 @@ msgstr "Choose the typeface for article text"
 msgid "Choose what happens when you click the window close button"
 msgstr "Choose what happens when you click the window close button"
 
-#: src/components/preferences/panes/AppearancePane.tsx:130
+#: src/components/preferences/panes/AppearancePane.tsx:131
 msgid "Choose your preferred color theme"
 msgstr "Choose your preferred color theme"
 
-#: src/components/preferences/panes/AppearancePane.tsx:105
+#: src/components/preferences/panes/AppearancePane.tsx:106
 msgid "Choose your preferred display language"
 msgstr "Choose your preferred display language"
 
@@ -973,7 +977,7 @@ msgstr "Code Blocks"
 msgid "Code theme"
 msgstr "Code theme"
 
-#: src/components/preferences/panes/AppearancePane.tsx:129
+#: src/components/preferences/panes/AppearancePane.tsx:130
 msgid "Color Theme"
 msgstr "Color Theme"
 
@@ -1048,7 +1052,7 @@ msgstr "Connection successful, credentials saved"
 msgid "Connection token"
 msgstr "Connection token"
 
-#: src/components/preferences/panes/AppearancePane.tsx:219
+#: src/components/preferences/panes/AppearancePane.tsx:238
 msgid "Contain"
 msgstr "Contain"
 
@@ -1171,7 +1175,7 @@ msgstr "Could not open file"
 msgid "Could not reveal in folder"
 msgstr "Could not reveal in folder"
 
-#: src/components/preferences/panes/AppearancePane.tsx:218
+#: src/components/preferences/panes/AppearancePane.tsx:237
 msgid "Cover"
 msgstr "Cover"
 
@@ -1280,7 +1284,7 @@ msgstr "Customize your application preferences here."
 msgid "Cycle reader theme"
 msgstr "Cycle reader theme"
 
-#: src/components/preferences/panes/AppearancePane.tsx:142
+#: src/components/preferences/panes/AppearancePane.tsx:143
 msgid "Dark"
 msgstr "Dark"
 
@@ -1288,7 +1292,7 @@ msgstr "Dark"
 msgid "Database"
 msgstr "Database"
 
-#: src/components/preferences/panes/AppearancePane.tsx:149
+#: src/components/preferences/panes/AppearancePane.tsx:168
 msgid "Date & Time"
 msgstr "Date & Time"
 
@@ -1352,6 +1356,10 @@ msgstr "DeepSeek"
 #: src/lib/menu.ts:141
 msgid "Default"
 msgstr "Default"
+
+#: src/components/preferences/panes/AppearancePane.tsx:366
+msgid "Default (Figtree)"
+msgstr "Default (Figtree)"
 
 #: src/components/preferences/panes/GeneralPane.tsx:236
 msgid "Default folder for saving images. Leave empty to ask every time."
@@ -1508,8 +1516,8 @@ msgstr "Done"
 #: src/components/podcast/PlayerWindowControls.tsx:313
 #: src/components/podcast/PodcastPlayer.tsx:261
 #: src/components/podcast/PodcastPlayer.tsx:267
-#: src/components/preferences/panes/AppearancePane.tsx:457
-#: src/components/preferences/panes/AppearancePane.tsx:527
+#: src/components/preferences/panes/AppearancePane.tsx:517
+#: src/components/preferences/panes/AppearancePane.tsx:587
 msgid "Download"
 msgstr "Download"
 
@@ -1577,8 +1585,8 @@ msgstr "Downloading recent entries from server"
 msgid "Downloading update v{0}... {1}%"
 msgstr "Downloading update v{0}... {1}%"
 
-#: src/components/preferences/panes/AppearancePane.tsx:457
-#: src/components/preferences/panes/AppearancePane.tsx:527
+#: src/components/preferences/panes/AppearancePane.tsx:517
+#: src/components/preferences/panes/AppearancePane.tsx:587
 msgid "Downloading..."
 msgstr "Downloading..."
 
@@ -1919,7 +1927,7 @@ msgstr "Failed to delete feed"
 msgid "Failed to delete user"
 msgstr "Failed to delete user"
 
-#: src/components/preferences/panes/AppearancePane.tsx:366
+#: src/components/preferences/panes/AppearancePane.tsx:426
 msgid "Failed to download image"
 msgstr "Failed to download image"
 
@@ -2267,7 +2275,7 @@ msgstr "File"
 msgid "File Path"
 msgstr "File Path"
 
-#: src/components/preferences/panes/AppearancePane.tsx:220
+#: src/components/preferences/panes/AppearancePane.tsx:239
 msgid "Fill"
 msgstr "Fill"
 
@@ -2300,6 +2308,10 @@ msgstr "Focus Mode"
 msgid "Follow system theme"
 msgstr "Follow system theme"
 
+#: src/components/preferences/panes/AppearancePane.tsx:150
+msgid "Font"
+msgstr "Font"
+
 #: src/components/miniflux/ReaderSettings.tsx:377
 #: src/components/preferences/panes/ReaderPane.tsx:230
 msgid "Font Family"
@@ -2327,8 +2339,8 @@ msgstr "French"
 msgid "From"
 msgstr "From"
 
-#: src/components/preferences/panes/AppearancePane.tsx:416
-#: src/components/preferences/panes/AppearancePane.tsx:488
+#: src/components/preferences/panes/AppearancePane.tsx:476
+#: src/components/preferences/panes/AppearancePane.tsx:548
 msgid "From URL"
 msgstr "From URL"
 
@@ -2485,7 +2497,7 @@ msgstr "How code block languages are detected for syntax highlighting"
 #~ msgid "How often to automatically sync with your Miniflux server."
 #~ msgstr "How often to automatically sync with your Miniflux server."
 
-#: src/components/preferences/panes/AppearancePane.tsx:199
+#: src/components/preferences/panes/AppearancePane.tsx:218
 msgid "How the image fills the window."
 msgstr "How the image fills the window."
 
@@ -2676,8 +2688,8 @@ msgstr "Korean"
 
 #: src/components/miniflux/SafeHtml.tsx:807
 #: src/components/miniflux/UserNav.tsx:285
-#: src/components/preferences/panes/AppearancePane.tsx:102
-#: src/components/preferences/panes/AppearancePane.tsx:104
+#: src/components/preferences/panes/AppearancePane.tsx:103
+#: src/components/preferences/panes/AppearancePane.tsx:105
 msgid "Language"
 msgstr "Language"
 
@@ -2762,7 +2774,7 @@ msgstr "Latest version"
 #~ msgid "License"
 #~ msgstr "License"
 
-#: src/components/preferences/panes/AppearancePane.tsx:141
+#: src/components/preferences/panes/AppearancePane.tsx:142
 msgid "Light"
 msgstr "Light"
 
@@ -2838,7 +2850,7 @@ msgstr "Make text larger"
 msgid "Make text smaller"
 msgstr "Make text smaller"
 
-#: src/components/preferences/panes/AppearancePane.tsx:284
+#: src/components/preferences/panes/AppearancePane.tsx:303
 msgid "Make UI panels transparent to reveal the background image."
 msgstr "Make UI panels transparent to reveal the background image."
 
@@ -3276,7 +3288,7 @@ msgstr "OLED"
 msgid "Ollama"
 msgstr "Ollama"
 
-#: src/components/preferences/panes/AppearancePane.tsx:227
+#: src/components/preferences/panes/AppearancePane.tsx:246
 msgid "Opacity"
 msgstr "Opacity"
 
@@ -3452,7 +3464,7 @@ msgstr "Password is required"
 msgid "Paste a website URL to discover available RSS/Atom feeds."
 msgstr "Paste a website URL to discover available RSS/Atom feeds."
 
-#: src/components/preferences/panes/AppearancePane.tsx:489
+#: src/components/preferences/panes/AppearancePane.tsx:549
 msgid "Paste an image link"
 msgstr "Paste an image link"
 
@@ -3557,7 +3569,7 @@ msgstr "Please enter a valid URL"
 #~ msgid "Please enter both access key and secret key"
 #~ msgstr "Please enter both access key and secret key"
 
-#: src/components/preferences/panes/AppearancePane.tsx:475
+#: src/components/preferences/panes/AppearancePane.tsx:535
 msgid "PNG, JPG, WebP, GIF, or AVIF"
 msgstr "PNG, JPG, WebP, GIF, or AVIF"
 
@@ -3598,7 +3610,7 @@ msgstr "Preferences pushed to cloud"
 msgid "Preferences reset to defaults"
 msgstr "Preferences reset to defaults"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:179
+#: src/components/preferences/panes/CloudSyncSection.tsx:180
 msgid "Preferences restored from cloud"
 msgstr "Preferences restored from cloud"
 
@@ -4278,7 +4290,7 @@ msgstr "Select a category"
 msgid "Select an entry to read"
 msgstr "Select an entry to read"
 
-#: src/components/preferences/panes/AppearancePane.tsx:329
+#: src/components/preferences/panes/AppearancePane.tsx:389
 msgid "Select Background Image"
 msgstr "Select Background Image"
 
@@ -4298,7 +4310,7 @@ msgstr "Select or enter server URL"
 msgid "Select phrase text"
 msgstr "Select phrase text"
 
-#: src/components/preferences/panes/AppearancePane.tsx:138
+#: src/components/preferences/panes/AppearancePane.tsx:139
 msgid "Select theme"
 msgstr "Select theme"
 
@@ -4472,7 +4484,7 @@ msgid "Sidebar"
 msgstr "Sidebar"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:635
-#: src/components/preferences/panes/AppearancePane.tsx:198
+#: src/components/preferences/panes/AppearancePane.tsx:217
 msgid "Size"
 msgstr "Size"
 
@@ -4529,7 +4541,7 @@ msgid "Some changes may require an app restart."
 msgstr "Some changes may require an app restart."
 
 #: src/components/ErrorBoundary.tsx:194
-#: src/components/preferences/panes/AppearancePane.tsx:89
+#: src/components/preferences/panes/AppearancePane.tsx:90
 msgid "Something went wrong"
 msgstr "Something went wrong"
 
@@ -4812,11 +4824,11 @@ msgstr "Syncing..."
 msgid "Syntax highlighting theme for code blocks"
 msgstr "Syntax highlighting theme for code blocks"
 
-#: src/components/preferences/panes/AppearancePane.tsx:143
+#: src/components/preferences/panes/AppearancePane.tsx:144
 msgid "System"
 msgstr "System"
 
-#: src/components/preferences/panes/AppearancePane.tsx:116
+#: src/components/preferences/panes/AppearancePane.tsx:117
 msgid "System Default"
 msgstr "System Default"
 
@@ -4871,7 +4883,7 @@ msgstr "The application encountered an unexpected error."
 msgid "The URL of your Miniflux server (e.g., miniflux.example.com)"
 msgstr "The URL of your Miniflux server (e.g., miniflux.example.com)"
 
-#: src/components/preferences/panes/AppearancePane.tsx:127
+#: src/components/preferences/panes/AppearancePane.tsx:128
 msgid "Theme"
 msgstr "Theme"
 
@@ -4934,11 +4946,11 @@ msgstr "This will remove the category \"{0}\" from Miniflux."
 #~ msgid "This will remove the category from Miniflux."
 #~ msgstr "This will remove the category from Miniflux."
 
-#: src/components/preferences/panes/AppearancePane.tsx:221
+#: src/components/preferences/panes/AppearancePane.tsx:240
 msgid "Tile"
 msgstr "Tile"
 
-#: src/components/preferences/panes/AppearancePane.tsx:151
+#: src/components/preferences/panes/AppearancePane.tsx:170
 msgid "Time Format"
 msgstr "Time Format"
 
@@ -5236,7 +5248,11 @@ msgstr "Type RESET to confirm"
 msgid "Typography"
 msgstr "Typography"
 
-#: src/components/preferences/panes/AppearancePane.tsx:283
+#: src/components/preferences/panes/AppearancePane.tsx:152
+msgid "UI Font"
+msgstr "UI Font"
+
+#: src/components/preferences/panes/AppearancePane.tsx:302
 msgid "UI Transparency"
 msgstr "UI Transparency"
 

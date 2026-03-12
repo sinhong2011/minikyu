@@ -137,11 +137,11 @@ msgstr "0 초"
 msgid "1 episode"
 msgstr "1개 에피소드"
 
-#: src/components/preferences/panes/AppearancePane.tsx:168
+#: src/components/preferences/panes/AppearancePane.tsx:187
 msgid "12-hour"
 msgstr "12시간제"
 
-#: src/components/preferences/panes/AppearancePane.tsx:169
+#: src/components/preferences/panes/AppearancePane.tsx:188
 msgid "24-hour"
 msgstr "24시간제"
 
@@ -279,7 +279,7 @@ msgstr "재생목록에 추가됨"
 msgid "Adding..."
 msgstr "추가 중..."
 
-#: src/components/preferences/panes/AppearancePane.tsx:228
+#: src/components/preferences/panes/AppearancePane.tsx:247
 msgid "Adjust the background image transparency."
 msgstr "배경 이미지 투명도를 조정합니다."
 
@@ -425,7 +425,7 @@ msgstr "Apple 내장"
 msgid "Applies to all articles when enabled"
 msgstr "활성화하면 모든 글에 적용됩니다"
 
-#: src/components/preferences/panes/AppearancePane.tsx:256
+#: src/components/preferences/panes/AppearancePane.tsx:275
 msgid "Apply blur to the background image."
 msgstr "배경 이미지에 블러를 적용합니다."
 
@@ -570,7 +570,7 @@ msgid "Back"
 msgstr "뒤로"
 
 #: src/components/command-palette/CommandPalette.tsx:289
-#: src/components/preferences/panes/AppearancePane.tsx:175
+#: src/components/preferences/panes/AppearancePane.tsx:194
 msgid "Background Image"
 msgstr "배경 이미지"
 
@@ -597,7 +597,7 @@ msgstr "바이오닉 리딩"
 msgid "Blocklist rules"
 msgstr "차단 목록 규칙"
 
-#: src/components/preferences/panes/AppearancePane.tsx:255
+#: src/components/preferences/panes/AppearancePane.tsx:274
 msgid "Blur"
 msgstr "블러"
 
@@ -737,7 +737,7 @@ msgstr "카테고리 번역이 다시 활성화되었습니다"
 msgid "Category updated"
 msgstr "카테고리가 업데이트되었습니다"
 
-#: src/components/preferences/panes/AppearancePane.tsx:405
+#: src/components/preferences/panes/AppearancePane.tsx:465
 msgid "Change"
 msgstr "변경"
 
@@ -807,8 +807,8 @@ msgstr "중국어 변환"
 msgid "Choose a story from the list and your reading companion will guide the focus."
 msgstr "목록에서 글을 선택하면 읽기 도우미가 안내합니다."
 
-#: src/components/preferences/panes/AppearancePane.tsx:412
-#: src/components/preferences/panes/AppearancePane.tsx:473
+#: src/components/preferences/panes/AppearancePane.tsx:472
+#: src/components/preferences/panes/AppearancePane.tsx:533
 msgid "Choose File"
 msgstr "파일 선택"
 
@@ -816,7 +816,7 @@ msgstr "파일 선택"
 msgid "Choose how the player appears when clicking the tray icon"
 msgstr "트레이 아이콘 클릭 시 플레이어 표시 방식을 선택하세요"
 
-#: src/components/preferences/panes/AppearancePane.tsx:152
+#: src/components/preferences/panes/AppearancePane.tsx:171
 msgid "Choose how times are displayed throughout the app"
 msgstr "앱 전체에서 시간 표시 방식을 선택하세요"
 
@@ -832,6 +832,10 @@ msgstr "번역 요청이 엔진과 LLM에 전달되는 방식을 선택하세요
 msgid "Choose the background surface for the article reader"
 msgstr "글 리더의 배경 스타일을 선택하세요"
 
+#: src/components/preferences/panes/AppearancePane.tsx:153
+msgid "Choose the font used across the app interface"
+msgstr "앱 인터페이스에서 사용할 글꼴을 선택하세요"
+
 #: src/components/preferences/panes/ReaderPane.tsx:231
 msgid "Choose the typeface for article text"
 msgstr "글 텍스트에 사용할 서체를 선택하세요"
@@ -840,11 +844,11 @@ msgstr "글 텍스트에 사용할 서체를 선택하세요"
 msgid "Choose what happens when you click the window close button"
 msgstr "창 닫기 버튼을 클릭할 때의 동작을 선택하세요"
 
-#: src/components/preferences/panes/AppearancePane.tsx:130
+#: src/components/preferences/panes/AppearancePane.tsx:131
 msgid "Choose your preferred color theme"
 msgstr "선호하는 색상 테마를 선택하세요"
 
-#: src/components/preferences/panes/AppearancePane.tsx:105
+#: src/components/preferences/panes/AppearancePane.tsx:106
 msgid "Choose your preferred display language"
 msgstr "선호하는 표시 언어를 선택하세요"
 
@@ -973,7 +977,7 @@ msgstr "코드 블록"
 msgid "Code theme"
 msgstr "코드 테마"
 
-#: src/components/preferences/panes/AppearancePane.tsx:129
+#: src/components/preferences/panes/AppearancePane.tsx:130
 msgid "Color Theme"
 msgstr "색상 테마"
 
@@ -1048,7 +1052,7 @@ msgstr "연결 성공, 자격 증명 저장됨"
 msgid "Connection token"
 msgstr "연결 토큰"
 
-#: src/components/preferences/panes/AppearancePane.tsx:219
+#: src/components/preferences/panes/AppearancePane.tsx:238
 msgid "Contain"
 msgstr "맞춤"
 
@@ -1171,7 +1175,7 @@ msgstr "파일을 열 수 없습니다"
 msgid "Could not reveal in folder"
 msgstr "폴더에서 표시할 수 없습니다"
 
-#: src/components/preferences/panes/AppearancePane.tsx:218
+#: src/components/preferences/panes/AppearancePane.tsx:237
 msgid "Cover"
 msgstr "채우기"
 
@@ -1280,7 +1284,7 @@ msgstr "여기에서 애플리케이션 설정을 사용자 지정하세요."
 msgid "Cycle reader theme"
 msgstr "리더 테마 전환"
 
-#: src/components/preferences/panes/AppearancePane.tsx:142
+#: src/components/preferences/panes/AppearancePane.tsx:143
 msgid "Dark"
 msgstr "다크"
 
@@ -1288,7 +1292,7 @@ msgstr "다크"
 msgid "Database"
 msgstr "데이터베이스"
 
-#: src/components/preferences/panes/AppearancePane.tsx:149
+#: src/components/preferences/panes/AppearancePane.tsx:168
 msgid "Date & Time"
 msgstr "날짜 및 시간"
 
@@ -1352,6 +1356,10 @@ msgstr "DeepSeek"
 #: src/lib/menu.ts:141
 msgid "Default"
 msgstr "기본"
+
+#: src/components/preferences/panes/AppearancePane.tsx:366
+msgid "Default (Figtree)"
+msgstr "기본값 (Figtree)"
 
 #: src/components/preferences/panes/GeneralPane.tsx:236
 msgid "Default folder for saving images. Leave empty to ask every time."
@@ -1508,8 +1516,8 @@ msgstr "완료"
 #: src/components/podcast/PlayerWindowControls.tsx:313
 #: src/components/podcast/PodcastPlayer.tsx:261
 #: src/components/podcast/PodcastPlayer.tsx:267
-#: src/components/preferences/panes/AppearancePane.tsx:457
-#: src/components/preferences/panes/AppearancePane.tsx:527
+#: src/components/preferences/panes/AppearancePane.tsx:517
+#: src/components/preferences/panes/AppearancePane.tsx:587
 msgid "Download"
 msgstr "다운로드"
 
@@ -1577,8 +1585,8 @@ msgstr "서버에서 최근 항목을 다운로드하는 중"
 msgid "Downloading update v{0}... {1}%"
 msgstr "업데이트 v{0} 다운로드 중... {1}%"
 
-#: src/components/preferences/panes/AppearancePane.tsx:457
-#: src/components/preferences/panes/AppearancePane.tsx:527
+#: src/components/preferences/panes/AppearancePane.tsx:517
+#: src/components/preferences/panes/AppearancePane.tsx:587
 msgid "Downloading..."
 msgstr "다운로드 중..."
 
@@ -1919,7 +1927,7 @@ msgstr "피드 삭제에 실패했습니다"
 msgid "Failed to delete user"
 msgstr "사용자 삭제에 실패했습니다"
 
-#: src/components/preferences/panes/AppearancePane.tsx:366
+#: src/components/preferences/panes/AppearancePane.tsx:426
 msgid "Failed to download image"
 msgstr "이미지 다운로드에 실패했습니다"
 
@@ -2267,7 +2275,7 @@ msgstr "파일"
 msgid "File Path"
 msgstr "파일 경로"
 
-#: src/components/preferences/panes/AppearancePane.tsx:220
+#: src/components/preferences/panes/AppearancePane.tsx:239
 msgid "Fill"
 msgstr "늘리기"
 
@@ -2300,6 +2308,10 @@ msgstr "집중 모드"
 msgid "Follow system theme"
 msgstr "시스템 테마 따르기"
 
+#: src/components/preferences/panes/AppearancePane.tsx:150
+msgid "Font"
+msgstr "글꼴"
+
 #: src/components/miniflux/ReaderSettings.tsx:377
 #: src/components/preferences/panes/ReaderPane.tsx:230
 msgid "Font Family"
@@ -2327,8 +2339,8 @@ msgstr "프랑스어"
 msgid "From"
 msgstr "변환 전"
 
-#: src/components/preferences/panes/AppearancePane.tsx:416
-#: src/components/preferences/panes/AppearancePane.tsx:488
+#: src/components/preferences/panes/AppearancePane.tsx:476
+#: src/components/preferences/panes/AppearancePane.tsx:548
 msgid "From URL"
 msgstr "URL에서"
 
@@ -2485,7 +2497,7 @@ msgstr "구문 강조를 위한 코드 블록 언어 감지 방법"
 #~ msgid "How often to automatically sync with your Miniflux server."
 #~ msgstr "Miniflux 서버와 자동 동기화 빈도를 설정합니다."
 
-#: src/components/preferences/panes/AppearancePane.tsx:199
+#: src/components/preferences/panes/AppearancePane.tsx:218
 msgid "How the image fills the window."
 msgstr "이미지가 창을 채우는 방법"
 
@@ -2676,8 +2688,8 @@ msgstr "한국어"
 
 #: src/components/miniflux/SafeHtml.tsx:807
 #: src/components/miniflux/UserNav.tsx:285
-#: src/components/preferences/panes/AppearancePane.tsx:102
-#: src/components/preferences/panes/AppearancePane.tsx:104
+#: src/components/preferences/panes/AppearancePane.tsx:103
+#: src/components/preferences/panes/AppearancePane.tsx:105
 msgid "Language"
 msgstr "언어"
 
@@ -2762,7 +2774,7 @@ msgstr "최신 버전"
 #~ msgid "License"
 #~ msgstr "라이선스"
 
-#: src/components/preferences/panes/AppearancePane.tsx:141
+#: src/components/preferences/panes/AppearancePane.tsx:142
 msgid "Light"
 msgstr "라이트"
 
@@ -2838,7 +2850,7 @@ msgstr "텍스트 크게"
 msgid "Make text smaller"
 msgstr "텍스트 작게"
 
-#: src/components/preferences/panes/AppearancePane.tsx:284
+#: src/components/preferences/panes/AppearancePane.tsx:303
 msgid "Make UI panels transparent to reveal the background image."
 msgstr "UI 패널을 투명하게 하여 배경 이미지를 표시합니다."
 
@@ -3276,7 +3288,7 @@ msgstr "OLED"
 msgid "Ollama"
 msgstr "Ollama"
 
-#: src/components/preferences/panes/AppearancePane.tsx:227
+#: src/components/preferences/panes/AppearancePane.tsx:246
 msgid "Opacity"
 msgstr "불투명도"
 
@@ -3452,7 +3464,7 @@ msgstr "비밀번호가 필요합니다"
 msgid "Paste a website URL to discover available RSS/Atom feeds."
 msgstr "웹사이트 URL을 붙여넣어 사용 가능한 RSS/Atom 피드를 찾아보세요."
 
-#: src/components/preferences/panes/AppearancePane.tsx:489
+#: src/components/preferences/panes/AppearancePane.tsx:549
 msgid "Paste an image link"
 msgstr "이미지 링크 붙여넣기"
 
@@ -3557,7 +3569,7 @@ msgstr "유효한 URL을 입력해 주세요"
 #~ msgid "Please enter both access key and secret key"
 #~ msgstr "액세스 키와 시크릿 키를 모두 입력해 주세요"
 
-#: src/components/preferences/panes/AppearancePane.tsx:475
+#: src/components/preferences/panes/AppearancePane.tsx:535
 msgid "PNG, JPG, WebP, GIF, or AVIF"
 msgstr "PNG, JPG, WebP, GIF 또는 AVIF"
 
@@ -3598,7 +3610,7 @@ msgstr "설정이 클라우드에 푸시되었습니다"
 msgid "Preferences reset to defaults"
 msgstr "설정이 기본값으로 재설정되었습니다"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:179
+#: src/components/preferences/panes/CloudSyncSection.tsx:180
 msgid "Preferences restored from cloud"
 msgstr "클라우드에서 설정이 복원되었습니다"
 
@@ -4278,7 +4290,7 @@ msgstr "카테고리 선택"
 msgid "Select an entry to read"
 msgstr "읽을 항목을 선택하세요"
 
-#: src/components/preferences/panes/AppearancePane.tsx:329
+#: src/components/preferences/panes/AppearancePane.tsx:389
 msgid "Select Background Image"
 msgstr "배경 이미지 선택"
 
@@ -4298,7 +4310,7 @@ msgstr "서버 URL 선택 또는 입력"
 msgid "Select phrase text"
 msgstr "구문 텍스트 선택"
 
-#: src/components/preferences/panes/AppearancePane.tsx:138
+#: src/components/preferences/panes/AppearancePane.tsx:139
 msgid "Select theme"
 msgstr "테마 선택"
 
@@ -4472,7 +4484,7 @@ msgid "Sidebar"
 msgstr "사이드바"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:635
-#: src/components/preferences/panes/AppearancePane.tsx:198
+#: src/components/preferences/panes/AppearancePane.tsx:217
 msgid "Size"
 msgstr "크기"
 
@@ -4529,7 +4541,7 @@ msgid "Some changes may require an app restart."
 msgstr "일부 변경 사항은 앱 재시작이 필요할 수 있습니다."
 
 #: src/components/ErrorBoundary.tsx:194
-#: src/components/preferences/panes/AppearancePane.tsx:89
+#: src/components/preferences/panes/AppearancePane.tsx:90
 msgid "Something went wrong"
 msgstr "문제가 발생했습니다"
 
@@ -4812,11 +4824,11 @@ msgstr "동기화 중..."
 msgid "Syntax highlighting theme for code blocks"
 msgstr "코드 블록의 구문 강조 테마"
 
-#: src/components/preferences/panes/AppearancePane.tsx:143
+#: src/components/preferences/panes/AppearancePane.tsx:144
 msgid "System"
 msgstr "시스템"
 
-#: src/components/preferences/panes/AppearancePane.tsx:116
+#: src/components/preferences/panes/AppearancePane.tsx:117
 msgid "System Default"
 msgstr "시스템 기본값"
 
@@ -4871,7 +4883,7 @@ msgstr "애플리케이션에서 예기치 않은 오류가 발생했습니다."
 msgid "The URL of your Miniflux server (e.g., miniflux.example.com)"
 msgstr "Miniflux 서버의 URL(예: miniflux.example.com)"
 
-#: src/components/preferences/panes/AppearancePane.tsx:127
+#: src/components/preferences/panes/AppearancePane.tsx:128
 msgid "Theme"
 msgstr "테마"
 
@@ -4934,11 +4946,11 @@ msgstr "카테고리 \"{0}\"이(가) Miniflux에서 삭제됩니다."
 #~ msgid "This will remove the category from Miniflux."
 #~ msgstr "이 카테고리가 Miniflux에서 제거됩니다."
 
-#: src/components/preferences/panes/AppearancePane.tsx:221
+#: src/components/preferences/panes/AppearancePane.tsx:240
 msgid "Tile"
 msgstr "타일"
 
-#: src/components/preferences/panes/AppearancePane.tsx:151
+#: src/components/preferences/panes/AppearancePane.tsx:170
 msgid "Time Format"
 msgstr "시간 형식"
 
@@ -5236,7 +5248,11 @@ msgstr "확인하려면 RESET을 입력하세요"
 msgid "Typography"
 msgstr "타이포그래피"
 
-#: src/components/preferences/panes/AppearancePane.tsx:283
+#: src/components/preferences/panes/AppearancePane.tsx:152
+msgid "UI Font"
+msgstr "UI 글꼴"
+
+#: src/components/preferences/panes/AppearancePane.tsx:302
 msgid "UI Transparency"
 msgstr "UI 투명도"
 

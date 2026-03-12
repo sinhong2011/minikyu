@@ -137,11 +137,11 @@ msgstr "0 秒"
 msgid "1 episode"
 msgstr "1 集"
 
-#: src/components/preferences/panes/AppearancePane.tsx:168
+#: src/components/preferences/panes/AppearancePane.tsx:187
 msgid "12-hour"
 msgstr "12 小時制"
 
-#: src/components/preferences/panes/AppearancePane.tsx:169
+#: src/components/preferences/panes/AppearancePane.tsx:188
 msgid "24-hour"
 msgstr "24 小時制"
 
@@ -279,7 +279,7 @@ msgstr "已加入播放清單"
 msgid "Adding..."
 msgstr "新增中..."
 
-#: src/components/preferences/panes/AppearancePane.tsx:228
+#: src/components/preferences/panes/AppearancePane.tsx:247
 msgid "Adjust the background image transparency."
 msgstr "調整背景圖片的透明度。"
 
@@ -425,7 +425,7 @@ msgstr "Apple 內建"
 msgid "Applies to all articles when enabled"
 msgstr "啟用時套用至所有文章"
 
-#: src/components/preferences/panes/AppearancePane.tsx:256
+#: src/components/preferences/panes/AppearancePane.tsx:275
 msgid "Apply blur to the background image."
 msgstr "對背景圖片套用模糊效果。"
 
@@ -570,7 +570,7 @@ msgid "Back"
 msgstr "返回"
 
 #: src/components/command-palette/CommandPalette.tsx:289
-#: src/components/preferences/panes/AppearancePane.tsx:175
+#: src/components/preferences/panes/AppearancePane.tsx:194
 msgid "Background Image"
 msgstr "背景圖片"
 
@@ -597,7 +597,7 @@ msgstr "仿生閱讀"
 msgid "Blocklist rules"
 msgstr "封鎖規則"
 
-#: src/components/preferences/panes/AppearancePane.tsx:255
+#: src/components/preferences/panes/AppearancePane.tsx:274
 msgid "Blur"
 msgstr "模糊"
 
@@ -737,7 +737,7 @@ msgstr "已重新啟用分類翻譯"
 msgid "Category updated"
 msgstr "分類已更新"
 
-#: src/components/preferences/panes/AppearancePane.tsx:405
+#: src/components/preferences/panes/AppearancePane.tsx:465
 msgid "Change"
 msgstr "更換"
 
@@ -807,8 +807,8 @@ msgstr "中文轉換"
 msgid "Choose a story from the list and your reading companion will guide the focus."
 msgstr "從列表中選擇一篇文章，閱讀助手將引導您聚焦閱讀。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:412
-#: src/components/preferences/panes/AppearancePane.tsx:473
+#: src/components/preferences/panes/AppearancePane.tsx:472
+#: src/components/preferences/panes/AppearancePane.tsx:533
 msgid "Choose File"
 msgstr "選擇檔案"
 
@@ -816,7 +816,7 @@ msgstr "選擇檔案"
 msgid "Choose how the player appears when clicking the tray icon"
 msgstr "選擇點擊系統匣圖示時播放器的顯示方式"
 
-#: src/components/preferences/panes/AppearancePane.tsx:152
+#: src/components/preferences/panes/AppearancePane.tsx:171
 msgid "Choose how times are displayed throughout the app"
 msgstr "選擇整個應用程式中時間的顯示方式"
 
@@ -832,6 +832,10 @@ msgstr "選擇翻譯請求如何在翻譯引擎和 LLM 之間路由。"
 msgid "Choose the background surface for the article reader"
 msgstr "選擇文章閱讀器的背景樣式"
 
+#: src/components/preferences/panes/AppearancePane.tsx:153
+msgid "Choose the font used across the app interface"
+msgstr "選擇應用程式介面使用的字型"
+
 #: src/components/preferences/panes/ReaderPane.tsx:231
 msgid "Choose the typeface for article text"
 msgstr "選擇文章內文的字體"
@@ -840,11 +844,11 @@ msgstr "選擇文章內文的字體"
 msgid "Choose what happens when you click the window close button"
 msgstr "選擇點擊視窗關閉按鈕時的行為"
 
-#: src/components/preferences/panes/AppearancePane.tsx:130
+#: src/components/preferences/panes/AppearancePane.tsx:131
 msgid "Choose your preferred color theme"
 msgstr "選擇您喜歡的顏色主題"
 
-#: src/components/preferences/panes/AppearancePane.tsx:105
+#: src/components/preferences/panes/AppearancePane.tsx:106
 msgid "Choose your preferred display language"
 msgstr "選擇您喜歡的顯示語言"
 
@@ -973,7 +977,7 @@ msgstr "程式碼區塊"
 msgid "Code theme"
 msgstr "程式碼主題"
 
-#: src/components/preferences/panes/AppearancePane.tsx:129
+#: src/components/preferences/panes/AppearancePane.tsx:130
 msgid "Color Theme"
 msgstr "顏色主題"
 
@@ -1048,7 +1052,7 @@ msgstr "連線成功，憑證已儲存"
 msgid "Connection token"
 msgstr "連線令牌"
 
-#: src/components/preferences/panes/AppearancePane.tsx:219
+#: src/components/preferences/panes/AppearancePane.tsx:238
 msgid "Contain"
 msgstr "適應"
 
@@ -1171,7 +1175,7 @@ msgstr "無法開啟檔案"
 msgid "Could not reveal in folder"
 msgstr "無法在資料夾中顯示"
 
-#: src/components/preferences/panes/AppearancePane.tsx:218
+#: src/components/preferences/panes/AppearancePane.tsx:237
 msgid "Cover"
 msgstr "覆蓋"
 
@@ -1280,7 +1284,7 @@ msgstr "在此自訂您的應用程式偏好設定。"
 msgid "Cycle reader theme"
 msgstr "切換閱讀器主題"
 
-#: src/components/preferences/panes/AppearancePane.tsx:142
+#: src/components/preferences/panes/AppearancePane.tsx:143
 msgid "Dark"
 msgstr "深色"
 
@@ -1288,7 +1292,7 @@ msgstr "深色"
 msgid "Database"
 msgstr "資料庫"
 
-#: src/components/preferences/panes/AppearancePane.tsx:149
+#: src/components/preferences/panes/AppearancePane.tsx:168
 msgid "Date & Time"
 msgstr "日期與時間"
 
@@ -1352,6 +1356,10 @@ msgstr "DeepSeek"
 #: src/lib/menu.ts:141
 msgid "Default"
 msgstr "預設"
+
+#: src/components/preferences/panes/AppearancePane.tsx:366
+msgid "Default (Figtree)"
+msgstr "預設 (Figtree)"
 
 #: src/components/preferences/panes/GeneralPane.tsx:236
 msgid "Default folder for saving images. Leave empty to ask every time."
@@ -1508,8 +1516,8 @@ msgstr "完成"
 #: src/components/podcast/PlayerWindowControls.tsx:313
 #: src/components/podcast/PodcastPlayer.tsx:261
 #: src/components/podcast/PodcastPlayer.tsx:267
-#: src/components/preferences/panes/AppearancePane.tsx:457
-#: src/components/preferences/panes/AppearancePane.tsx:527
+#: src/components/preferences/panes/AppearancePane.tsx:517
+#: src/components/preferences/panes/AppearancePane.tsx:587
 msgid "Download"
 msgstr "下載"
 
@@ -1577,8 +1585,8 @@ msgstr "正在從伺服器下載最近的文章"
 msgid "Downloading update v{0}... {1}%"
 msgstr "正在下載更新 v{0}... {1}%"
 
-#: src/components/preferences/panes/AppearancePane.tsx:457
-#: src/components/preferences/panes/AppearancePane.tsx:527
+#: src/components/preferences/panes/AppearancePane.tsx:517
+#: src/components/preferences/panes/AppearancePane.tsx:587
 msgid "Downloading..."
 msgstr "下載中..."
 
@@ -1919,7 +1927,7 @@ msgstr "刪除訂閱源失敗"
 msgid "Failed to delete user"
 msgstr "刪除使用者失敗"
 
-#: src/components/preferences/panes/AppearancePane.tsx:366
+#: src/components/preferences/panes/AppearancePane.tsx:426
 msgid "Failed to download image"
 msgstr "下載圖片失敗"
 
@@ -2267,7 +2275,7 @@ msgstr "檔案"
 msgid "File Path"
 msgstr "檔案路徑"
 
-#: src/components/preferences/panes/AppearancePane.tsx:220
+#: src/components/preferences/panes/AppearancePane.tsx:239
 msgid "Fill"
 msgstr "填充"
 
@@ -2300,6 +2308,10 @@ msgstr "專注模式"
 msgid "Follow system theme"
 msgstr "跟隨系統主題"
 
+#: src/components/preferences/panes/AppearancePane.tsx:150
+msgid "Font"
+msgstr "字型"
+
 #: src/components/miniflux/ReaderSettings.tsx:377
 #: src/components/preferences/panes/ReaderPane.tsx:230
 msgid "Font Family"
@@ -2327,8 +2339,8 @@ msgstr "法文"
 msgid "From"
 msgstr "來源"
 
-#: src/components/preferences/panes/AppearancePane.tsx:416
-#: src/components/preferences/panes/AppearancePane.tsx:488
+#: src/components/preferences/panes/AppearancePane.tsx:476
+#: src/components/preferences/panes/AppearancePane.tsx:548
 msgid "From URL"
 msgstr "從 URL"
 
@@ -2485,7 +2497,7 @@ msgstr "程式碼區塊語言的偵測方式，用於語法高亮"
 #~ msgid "How often to automatically sync with your Miniflux server."
 #~ msgstr "設定與 Miniflux 伺服器自動同步的頻率。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:199
+#: src/components/preferences/panes/AppearancePane.tsx:218
 msgid "How the image fills the window."
 msgstr "圖片填充視窗的方式。"
 
@@ -2676,8 +2688,8 @@ msgstr "韓文"
 
 #: src/components/miniflux/SafeHtml.tsx:807
 #: src/components/miniflux/UserNav.tsx:285
-#: src/components/preferences/panes/AppearancePane.tsx:102
-#: src/components/preferences/panes/AppearancePane.tsx:104
+#: src/components/preferences/panes/AppearancePane.tsx:103
+#: src/components/preferences/panes/AppearancePane.tsx:105
 msgid "Language"
 msgstr "語言"
 
@@ -2762,7 +2774,7 @@ msgstr "最新版本"
 #~ msgid "License"
 #~ msgstr "授權條款"
 
-#: src/components/preferences/panes/AppearancePane.tsx:141
+#: src/components/preferences/panes/AppearancePane.tsx:142
 msgid "Light"
 msgstr "淺色"
 
@@ -2838,7 +2850,7 @@ msgstr "放大文字"
 msgid "Make text smaller"
 msgstr "縮小文字"
 
-#: src/components/preferences/panes/AppearancePane.tsx:284
+#: src/components/preferences/panes/AppearancePane.tsx:303
 msgid "Make UI panels transparent to reveal the background image."
 msgstr "使 UI 面板透明以顯示背景圖片。"
 
@@ -3276,7 +3288,7 @@ msgstr "OLED"
 msgid "Ollama"
 msgstr "Ollama"
 
-#: src/components/preferences/panes/AppearancePane.tsx:227
+#: src/components/preferences/panes/AppearancePane.tsx:246
 msgid "Opacity"
 msgstr "不透明度"
 
@@ -3452,7 +3464,7 @@ msgstr "需要提供密碼"
 msgid "Paste a website URL to discover available RSS/Atom feeds."
 msgstr "貼上網站網址以探索可用的 RSS/Atom 訂閱源。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:489
+#: src/components/preferences/panes/AppearancePane.tsx:549
 msgid "Paste an image link"
 msgstr "貼上圖片連結"
 
@@ -3557,7 +3569,7 @@ msgstr "請輸入有效的網址"
 #~ msgid "Please enter both access key and secret key"
 #~ msgstr "請輸入存取金鑰和秘密金鑰"
 
-#: src/components/preferences/panes/AppearancePane.tsx:475
+#: src/components/preferences/panes/AppearancePane.tsx:535
 msgid "PNG, JPG, WebP, GIF, or AVIF"
 msgstr "PNG、JPG、WebP、GIF 或 AVIF"
 
@@ -3598,7 +3610,7 @@ msgstr "設定已推送至雲端"
 msgid "Preferences reset to defaults"
 msgstr "偏好設定已重置為預設值"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:179
+#: src/components/preferences/panes/CloudSyncSection.tsx:180
 msgid "Preferences restored from cloud"
 msgstr "已從雲端還原設定"
 
@@ -4278,7 +4290,7 @@ msgstr "選擇分類"
 msgid "Select an entry to read"
 msgstr "選擇一篇文章閱讀"
 
-#: src/components/preferences/panes/AppearancePane.tsx:329
+#: src/components/preferences/panes/AppearancePane.tsx:389
 msgid "Select Background Image"
 msgstr "選擇背景圖片"
 
@@ -4298,7 +4310,7 @@ msgstr "選擇或輸入伺服器 URL"
 msgid "Select phrase text"
 msgstr "選取詞句文字"
 
-#: src/components/preferences/panes/AppearancePane.tsx:138
+#: src/components/preferences/panes/AppearancePane.tsx:139
 msgid "Select theme"
 msgstr "選擇主題"
 
@@ -4472,7 +4484,7 @@ msgid "Sidebar"
 msgstr "側邊欄"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:635
-#: src/components/preferences/panes/AppearancePane.tsx:198
+#: src/components/preferences/panes/AppearancePane.tsx:217
 msgid "Size"
 msgstr "大小"
 
@@ -4529,7 +4541,7 @@ msgid "Some changes may require an app restart."
 msgstr "部分變更可能需要重新啟動應用程式。"
 
 #: src/components/ErrorBoundary.tsx:194
-#: src/components/preferences/panes/AppearancePane.tsx:89
+#: src/components/preferences/panes/AppearancePane.tsx:90
 msgid "Something went wrong"
 msgstr "發生錯誤"
 
@@ -4812,11 +4824,11 @@ msgstr "同步中⋯"
 msgid "Syntax highlighting theme for code blocks"
 msgstr "程式碼區塊的語法高亮主題"
 
-#: src/components/preferences/panes/AppearancePane.tsx:143
+#: src/components/preferences/panes/AppearancePane.tsx:144
 msgid "System"
 msgstr "系統"
 
-#: src/components/preferences/panes/AppearancePane.tsx:116
+#: src/components/preferences/panes/AppearancePane.tsx:117
 msgid "System Default"
 msgstr "系統預設"
 
@@ -4871,7 +4883,7 @@ msgstr "應用程式遇到意外錯誤。"
 msgid "The URL of your Miniflux server (e.g., miniflux.example.com)"
 msgstr "您的 Miniflux 伺服器 URL（例如：miniflux.example.com）"
 
-#: src/components/preferences/panes/AppearancePane.tsx:127
+#: src/components/preferences/panes/AppearancePane.tsx:128
 msgid "Theme"
 msgstr "主題"
 
@@ -4934,11 +4946,11 @@ msgstr "分類「{0}」將從 Miniflux 中刪除。"
 #~ msgid "This will remove the category from Miniflux."
 #~ msgstr "此分類將從 Miniflux 中移除。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:221
+#: src/components/preferences/panes/AppearancePane.tsx:240
 msgid "Tile"
 msgstr "平鋪"
 
-#: src/components/preferences/panes/AppearancePane.tsx:151
+#: src/components/preferences/panes/AppearancePane.tsx:170
 msgid "Time Format"
 msgstr "時間格式"
 
@@ -5236,7 +5248,11 @@ msgstr "輸入 RESET 以確認"
 msgid "Typography"
 msgstr "字型排版"
 
-#: src/components/preferences/panes/AppearancePane.tsx:283
+#: src/components/preferences/panes/AppearancePane.tsx:152
+msgid "UI Font"
+msgstr "UI 字型"
+
+#: src/components/preferences/panes/AppearancePane.tsx:302
 msgid "UI Transparency"
 msgstr "UI 透明度"
 

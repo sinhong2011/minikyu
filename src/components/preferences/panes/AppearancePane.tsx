@@ -8,6 +8,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { useQuery } from '@tanstack/react-query';
 import { open as openDialog } from '@tauri-apps/plugin-dialog';
 import { locale } from '@tauri-apps/plugin-os';
 import { AnimatePresence, motion } from 'motion/react';
@@ -143,6 +144,24 @@ export function AppearancePane() {
               <SelectItem value="system">{_(msg`System`)}</SelectItem>
             </SelectContent>
           </Select>
+        </SettingsField>
+      </SettingsSection>
+
+      <SettingsSection title={_(msg`Font`)}>
+        <SettingsField
+          label={_(msg`UI Font`)}
+          description={_(msg`Choose the font used across the app interface`)}
+        >
+          <FontSelector
+            value={preferences?.ui_font_family ?? null}
+            onChange={(value) => {
+              if (preferences) {
+                // biome-ignore lint/style/useNamingConvention: preferences field name
+                savePreferences.mutate({ ...preferences, ui_font_family: value });
+              }
+            }}
+            disabled={savePreferences.isPending}
+          />
         </SettingsField>
       </SettingsSection>
 
@@ -311,6 +330,47 @@ export function AppearancePane() {
         </AnimatePresence>
       </SettingsSection>
     </div>
+  );
+}
+
+function FontSelector({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: string | null;
+  onChange: (value: string | null) => void;
+  disabled?: boolean;
+}) {
+  const { _ } = useLingui();
+  const { data: fonts } = useQuery({
+    queryKey: ['system-fonts'],
+    queryFn: async () => {
+      const result = await commands.listSystemFonts();
+      if (result.status === 'ok') return result.data;
+      throw new Error(result.error);
+    },
+    staleTime: Number.POSITIVE_INFINITY,
+  });
+
+  return (
+    <Select
+      value={value ?? '__default__'}
+      onValueChange={(v) => onChange(v === '__default__' ? null : v)}
+      disabled={disabled}
+    >
+      <SelectTrigger className="w-48" style={value ? { fontFamily: value } : undefined}>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent className="max-h-64">
+        <SelectItem value="__default__">{_(msg`Default (Figtree)`)}</SelectItem>
+        {fonts?.map((font) => (
+          <SelectItem key={font} value={font} style={{ fontFamily: font }}>
+            {font}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
   );
 }
 
