@@ -153,6 +153,9 @@ pub struct AppPreferences {
     /// UI background transparency (0.0 to 1.0). 0 = fully opaque, 1 = fully transparent. Defaults to 0.
     #[serde(default)]
     pub background_transparency: f64,
+    /// Custom UI font family. None means use default (Figtree).
+    #[serde(default)]
+    pub ui_font_family: Option<String>,
     /// Global shortcut for quick pane (e.g., "CommandOrControl+Shift+.")
     /// If None, uses to default shortcut
     pub quick_pane_shortcut: Option<String>,
@@ -430,6 +433,7 @@ impl Default for AppPreferences {
             background_image_blur: 0,
             background_image_size: default_background_image_size(),
             background_transparency: 0.0,
+            ui_font_family: None,
             quick_pane_shortcut: None, // None means use default
             language: None,            // None means use system locale
             close_behavior: CloseBehavior::default(),
