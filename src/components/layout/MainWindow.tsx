@@ -11,6 +11,7 @@ import { ZenModeView } from '@/components/zen-mode';
 import { useLocalImageUrl } from '@/hooks/use-local-image-url';
 import { usePlatform } from '@/hooks/use-platform';
 import { useTheme } from '@/hooks/use-theme';
+import { useUiFont } from '@/hooks/use-ui-font';
 import { useMainWindowEventListeners } from '@/hooks/useMainWindowEventListeners';
 import { commands } from '@/lib/tauri-bindings';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
@@ -31,6 +32,7 @@ export function MainWindow({ children }: MainWindowProps = {}) {
   const savePreferences = useSavePreferences();
 
   useMainWindowEventListeners();
+  useUiFont();
 
   // Handle background image commands from command palette
   useEffect(() => {
