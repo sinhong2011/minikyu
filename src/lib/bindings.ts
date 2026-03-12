@@ -212,6 +212,17 @@ async readImageAsDataUrl(path: string) : Promise<Result<string, string>> {
 }
 },
 /**
+ * List available system font families.
+ */
+async listSystemFonts() : Promise<Result<string[], string>> {
+    try {
+    return { status: "ok", data: await TAURI_INVOKE("list_system_fonts") };
+} catch (e) {
+    if(e instanceof Error) throw e;
+    else return { status: "error", error: e  as any };
+}
+},
+/**
  * Loads the last reading entry from disk.
  * Returns None (as null in TypeScript) if the file doesn't exist.
  */
@@ -1499,6 +1510,14 @@ background_image_size?: string;
  * UI background transparency (0.0 to 1.0). 0 = fully opaque, 1 = fully transparent. Defaults to 0.
  */
 background_transparency?: number; 
+/**
+ * Custom UI font family. None means use default (Figtree).
+ */
+ui_font_family?: string | null; 
+/**
+ * Custom UI font size in pixels. None means use browser default (16px).
+ */
+ui_font_size?: number | null; 
 /**
  * Global shortcut for quick pane (e.g., "CommandOrControl+Shift+.")
  * If None, uses to default shortcut

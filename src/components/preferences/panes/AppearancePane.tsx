@@ -8,11 +8,19 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { useQuery } from '@tanstack/react-query';
 import { open as openDialog } from '@tauri-apps/plugin-dialog';
 import { locale } from '@tauri-apps/plugin-os';
 import { AnimatePresence, motion } from 'motion/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '@/components/ui/combobox';
 import { Input } from '@/components/ui/input';
 import { Menu, MenuItem, MenuPanel, MenuTrigger } from '@/components/ui/menu';
 import {
@@ -143,6 +151,51 @@ export function AppearancePane() {
               <SelectItem value="system">{_(msg`System`)}</SelectItem>
             </SelectContent>
           </Select>
+        </SettingsField>
+      </SettingsSection>
+
+      <SettingsSection title={_(msg`Font`)}>
+        <SettingsField
+          label={_(msg`UI Font`)}
+          description={_(msg`Choose the font used across the app interface`)}
+        >
+          <FontSelector
+            value={preferences?.ui_font_family ?? null}
+            onChange={(value) => {
+              if (preferences) {
+                // biome-ignore lint/style/useNamingConvention: preferences field name
+                savePreferences.mutate({ ...preferences, ui_font_family: value });
+              }
+            }}
+            disabled={savePreferences.isPending}
+          />
+        </SettingsField>
+        <SettingsField
+          label={_(msg`UI Font Size`)}
+          description={_(msg`Adjust the interface text size (⌘+/⌘-)`)}
+        >
+          <div className="flex w-48 items-center gap-3">
+            <Slider
+              value={[preferences?.ui_font_size ?? 16]}
+              onValueChange={(values) => {
+                const value = Array.isArray(values) ? values[0] : values;
+                if (preferences) {
+                  savePreferences.mutate({
+                    ...preferences,
+                    // biome-ignore lint/style/useNamingConvention: preferences field name
+                    ui_font_size: value === 16 ? null : value,
+                  });
+                }
+              }}
+              min={12}
+              max={24}
+              step={1}
+              className="flex-1"
+            />
+            <span className="w-12 text-right text-sm tabular-nums text-muted-foreground">
+              {preferences?.ui_font_size ?? 16}px
+            </span>
+          </div>
         </SettingsField>
       </SettingsSection>
 
@@ -311,6 +364,67 @@ export function AppearancePane() {
         </AnimatePresence>
       </SettingsSection>
     </div>
+  );
+}
+
+function FontSelector({
+  value,
+  onChange,
+  disabled,
+}: {
+  value: string | null;
+  onChange: (value: string | null) => void;
+  disabled?: boolean;
+}) {
+  const { _ } = useLingui();
+  const { data: fonts } = useQuery({
+    queryKey: ['system-fonts'],
+    queryFn: async () => {
+      const result = await commands.listSystemFonts();
+      if (result.status === 'ok') return result.data;
+      throw new Error(result.error);
+    },
+    staleTime: Number.POSITIVE_INFINITY,
+  });
+
+  const defaultLabel = _(msg`Default (System)`);
+
+  const allItems = useMemo(() => ['__default__', ...(fonts ?? [])], [fonts]);
+
+  return (
+    <Combobox
+      value={value ?? '__default__'}
+      onValueChange={(v) => {
+        if (v && typeof v === 'string') {
+          onChange(v === '__default__' ? null : v);
+        }
+      }}
+      items={allItems}
+      itemToStringLabel={(v) => (v === '__default__' ? defaultLabel : String(v))}
+      disabled={disabled}
+    >
+      <ComboboxInput
+        data-no-ui-font=""
+        placeholder={_(msg`Search fonts...`)}
+        className="w-48 bg-background/70 text-sm ring-0!"
+        style={value ? { fontFamily: value } : undefined}
+      />
+      <ComboboxContent>
+        <ComboboxList>
+          {(item: string) => (
+            <ComboboxItem key={item} value={item}>
+              {item === '__default__' ? (
+                defaultLabel
+              ) : (
+                <span data-no-ui-font="" style={{ fontFamily: item }}>
+                  {item}
+                </span>
+              )}
+            </ComboboxItem>
+          )}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
   );
 }
 

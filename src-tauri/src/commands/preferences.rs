@@ -356,3 +356,19 @@ pub async fn read_image_as_data_url(path: String) -> Result<String, String> {
     let b64 = base64::engine::general_purpose::STANDARD.encode(&bytes);
     Ok(format!("data:{mime};base64,{b64}"))
 }
+
+/// List available system font families.
+#[tauri::command]
+#[specta::specta]
+pub async fn list_system_fonts() -> Result<Vec<String>, String> {
+    use font_kit::source::SystemSource;
+    use std::collections::BTreeSet;
+
+    let source = SystemSource::new();
+    let families = source
+        .all_families()
+        .map_err(|e| format!("Failed to enumerate system fonts: {e}"))?;
+
+    let unique: BTreeSet<String> = families.into_iter().collect();
+    Ok(unique.into_iter().collect())
+}

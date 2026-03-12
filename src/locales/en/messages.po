@@ -137,11 +137,11 @@ msgstr "0 sec"
 msgid "1 episode"
 msgstr "1 episode"
 
-#: src/components/preferences/panes/AppearancePane.tsx:168
+#: src/components/preferences/panes/AppearancePane.tsx:214
 msgid "12-hour"
 msgstr "12-hour"
 
-#: src/components/preferences/panes/AppearancePane.tsx:169
+#: src/components/preferences/panes/AppearancePane.tsx:215
 msgid "24-hour"
 msgstr "24-hour"
 
@@ -260,7 +260,7 @@ msgstr "Add the current article's podcast to the playlist"
 msgid "Add to playlist"
 msgstr "Add to playlist"
 
-#: src/components/miniflux/EntryReading.tsx:1778
+#: src/components/miniflux/EntryReading.tsx:1779
 #: src/lib/commands/article-commands.ts:135
 msgid "Add to Playlist"
 msgstr "Add to Playlist"
@@ -279,9 +279,13 @@ msgstr "Added to playlist"
 msgid "Adding..."
 msgstr "Adding..."
 
-#: src/components/preferences/panes/AppearancePane.tsx:228
+#: src/components/preferences/panes/AppearancePane.tsx:274
 msgid "Adjust the background image transparency."
 msgstr "Adjust the background image transparency."
+
+#: src/components/preferences/panes/AppearancePane.tsx:168
+msgid "Adjust the interface text size (⌘+/⌘-)"
+msgstr "Adjust the interface text size (⌘+/⌘-)"
 
 #: src/components/preferences/panes/UsersPane.tsx:60
 msgid "Admin"
@@ -302,7 +306,7 @@ msgstr "Advanced"
 msgid "Advanced settings"
 msgstr "Advanced settings"
 
-#: src/components/miniflux/EntryReading.tsx:1533
+#: src/components/miniflux/EntryReading.tsx:1534
 #: src/components/preferences/PreferencesDialog.tsx:113
 msgid "AI"
 msgstr "AI"
@@ -335,12 +339,12 @@ msgid "All feeds in these categories will skip auto-translation. Chinese convers
 msgstr "All feeds in these categories will skip auto-translation. Chinese conversion still applies."
 
 #: src/lib/commands/feed-commands.ts:64
-#: src/lib/menu.ts:533
+#: src/lib/menu.ts:549
 #: src/services/miniflux/feeds.ts:349
 msgid "All feeds refreshed"
 msgstr "All feeds refreshed"
 
-#: src/lib/menu.ts:517
+#: src/lib/menu.ts:533
 msgid "All feeds synchronized"
 msgstr "All feeds synchronized"
 
@@ -425,7 +429,7 @@ msgstr "Apple Built-in"
 msgid "Applies to all articles when enabled"
 msgstr "Applies to all articles when enabled"
 
-#: src/components/preferences/panes/AppearancePane.tsx:256
+#: src/components/preferences/panes/AppearancePane.tsx:302
 msgid "Apply blur to the background image."
 msgstr "Apply blur to the background image."
 
@@ -448,7 +452,7 @@ msgstr "Are you sure you want to delete the API key \"{0}\"? This action cannot 
 #~ msgstr "Are you sure you want to delete this account? This will remove all credentials and data associated with \"{0}\" on {1}."
 
 #: src/lib/commands/account-commands.ts:38
-#: src/lib/menu.ts:499
+#: src/lib/menu.ts:515
 msgid "Are you sure you want to delete this account? This will remove all credentials and data associated with this account."
 msgstr "Are you sure you want to delete this account? This will remove all credentials and data associated with this account."
 
@@ -470,7 +474,7 @@ msgstr "Are you sure you want to unsubscribe from \"{0}\"?"
 #~ msgstr "Are you sure you want to unsubscribe from this feed?"
 
 #: src/components/command-palette/CommandPalette.tsx:197
-#: src/components/miniflux/EntryReading.tsx:1652
+#: src/components/miniflux/EntryReading.tsx:1653
 #: src/lib/menu.ts:215
 msgid "Article"
 msgstr "Article"
@@ -570,7 +574,7 @@ msgid "Back"
 msgstr "Back"
 
 #: src/components/command-palette/CommandPalette.tsx:289
-#: src/components/preferences/panes/AppearancePane.tsx:175
+#: src/components/preferences/panes/AppearancePane.tsx:221
 msgid "Background Image"
 msgstr "Background Image"
 
@@ -597,16 +601,16 @@ msgstr "Bionic Reading"
 msgid "Blocklist rules"
 msgstr "Blocklist rules"
 
-#: src/components/preferences/panes/AppearancePane.tsx:255
+#: src/components/preferences/panes/AppearancePane.tsx:301
 msgid "Blur"
 msgstr "Blur"
 
-#: src/components/miniflux/ReaderSettings.tsx:144
+#: src/components/miniflux/ReaderSettings.tsx:158
 #: src/components/preferences/panes/ReaderPane.tsx:81
 msgid "Book Serif"
 msgstr "Book Serif"
 
-#: src/components/miniflux/ReaderSettings.tsx:165
+#: src/components/miniflux/ReaderSettings.tsx:179
 msgid "Book-like rhythm"
 msgstr "Book-like rhythm"
 
@@ -700,7 +704,7 @@ msgstr "Category created"
 msgid "Category deleted"
 msgstr "Category deleted"
 
-#: src/components/miniflux/EntryReading.tsx:1626
+#: src/components/miniflux/EntryReading.tsx:1627
 msgid "Category excluded from translation"
 msgstr "Category excluded from translation"
 
@@ -729,7 +733,7 @@ msgstr "Category Not Empty"
 msgid "Category Title"
 msgstr "Category Title"
 
-#: src/components/miniflux/EntryReading.tsx:1621
+#: src/components/miniflux/EntryReading.tsx:1622
 msgid "Category translation re-enabled"
 msgstr "Category translation re-enabled"
 
@@ -737,7 +741,7 @@ msgstr "Category translation re-enabled"
 msgid "Category updated"
 msgstr "Category updated"
 
-#: src/components/preferences/panes/AppearancePane.tsx:405
+#: src/components/preferences/panes/AppearancePane.tsx:496
 msgid "Change"
 msgstr "Change"
 
@@ -807,8 +811,8 @@ msgstr "Chinese Conversion"
 msgid "Choose a story from the list and your reading companion will guide the focus."
 msgstr "Choose a story from the list and your reading companion will guide the focus."
 
-#: src/components/preferences/panes/AppearancePane.tsx:412
-#: src/components/preferences/panes/AppearancePane.tsx:473
+#: src/components/preferences/panes/AppearancePane.tsx:503
+#: src/components/preferences/panes/AppearancePane.tsx:564
 msgid "Choose File"
 msgstr "Choose File"
 
@@ -816,7 +820,7 @@ msgstr "Choose File"
 msgid "Choose how the player appears when clicking the tray icon"
 msgstr "Choose how the player appears when clicking the tray icon"
 
-#: src/components/preferences/panes/AppearancePane.tsx:152
+#: src/components/preferences/panes/AppearancePane.tsx:198
 msgid "Choose how times are displayed throughout the app"
 msgstr "Choose how times are displayed throughout the app"
 
@@ -832,6 +836,10 @@ msgstr "Choose how translation requests are routed across engines and LLMs."
 msgid "Choose the background surface for the article reader"
 msgstr "Choose the background surface for the article reader"
 
+#: src/components/preferences/panes/AppearancePane.tsx:153
+msgid "Choose the font used across the app interface"
+msgstr "Choose the font used across the app interface"
+
 #: src/components/preferences/panes/ReaderPane.tsx:231
 msgid "Choose the typeface for article text"
 msgstr "Choose the typeface for article text"
@@ -840,20 +848,20 @@ msgstr "Choose the typeface for article text"
 msgid "Choose what happens when you click the window close button"
 msgstr "Choose what happens when you click the window close button"
 
-#: src/components/preferences/panes/AppearancePane.tsx:130
+#: src/components/preferences/panes/AppearancePane.tsx:131
 msgid "Choose your preferred color theme"
 msgstr "Choose your preferred color theme"
 
-#: src/components/preferences/panes/AppearancePane.tsx:105
+#: src/components/preferences/panes/AppearancePane.tsx:106
 msgid "Choose your preferred display language"
 msgstr "Choose your preferred display language"
 
-#: src/components/miniflux/ReaderSettings.tsx:161
+#: src/components/miniflux/ReaderSettings.tsx:175
 msgid "Classic reading"
 msgstr "Classic reading"
 
-#: src/components/miniflux/ReaderSettings.tsx:155
 #: src/components/miniflux/ReaderSettings.tsx:169
+#: src/components/miniflux/ReaderSettings.tsx:183
 msgid "Clean and balanced"
 msgstr "Clean and balanced"
 
@@ -921,7 +929,7 @@ msgstr "Clearing..."
 #: src/components/miniflux/EntryReadingHeader.tsx:356
 #: src/components/miniflux/ImageViewer.tsx:236
 #: src/components/miniflux/InAppBrowserPane.tsx:274
-#: src/components/miniflux/ReaderSettings.tsx:216
+#: src/components/miniflux/ReaderSettings.tsx:235
 #: src/components/titlebar/WindowsWindowControls.tsx:118
 #: src/components/ui/dialog.tsx:65
 #: src/components/ui/dialog.tsx:96
@@ -960,7 +968,7 @@ msgstr "Close Window"
 msgid "Cloud Sync"
 msgstr "Cloud Sync"
 
-#: src/components/miniflux/ReaderSettings.tsx:167
+#: src/components/miniflux/ReaderSettings.tsx:181
 msgid "Code and precision"
 msgstr "Code and precision"
 
@@ -973,7 +981,11 @@ msgstr "Code Blocks"
 msgid "Code theme"
 msgstr "Code theme"
 
-#: src/components/preferences/panes/AppearancePane.tsx:129
+#: src/components/preferences/panes/AdvancedPane.tsx:814
+msgid "Collapse"
+msgstr "Collapse"
+
+#: src/components/preferences/panes/AppearancePane.tsx:130
 msgid "Color Theme"
 msgstr "Color Theme"
 
@@ -1048,7 +1060,7 @@ msgstr "Connection successful, credentials saved"
 msgid "Connection token"
 msgstr "Connection token"
 
-#: src/components/preferences/panes/AppearancePane.tsx:219
+#: src/components/preferences/panes/AppearancePane.tsx:265
 msgid "Contain"
 msgstr "Contain"
 
@@ -1074,6 +1086,7 @@ msgid "Copied"
 msgstr "Copied"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:735
+#: src/components/preferences/panes/AdvancedPane.tsx:806
 #: src/components/ui/sonner.tsx:56
 msgid "Copied!"
 msgstr "Copied!"
@@ -1081,6 +1094,7 @@ msgstr "Copied!"
 #: src/components/ErrorBoundary.tsx:372
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:164
 #: src/components/preferences/panes/AdvancedPane.tsx:735
+#: src/components/preferences/panes/AdvancedPane.tsx:806
 msgid "Copy"
 msgstr "Copy"
 
@@ -1104,7 +1118,7 @@ msgstr "Copy debug info"
 msgid "Copy link"
 msgstr "Copy link"
 
-#: src/components/miniflux/EntryReading.tsx:1731
+#: src/components/miniflux/EntryReading.tsx:1732
 #: src/lib/commands/article-commands.ts:100
 #: src/lib/menu.ts:261
 msgid "Copy Link"
@@ -1139,7 +1153,7 @@ msgstr "Copy translation"
 #~ msgstr "Copy URL"
 
 #: src/lib/commands/help-commands.ts:31
-#: src/lib/menu.ts:449
+#: src/lib/menu.ts:465
 msgid "Could not check for updates"
 msgstr "Could not check for updates"
 
@@ -1171,7 +1185,7 @@ msgstr "Could not open file"
 msgid "Could not reveal in folder"
 msgstr "Could not reveal in folder"
 
-#: src/components/preferences/panes/AppearancePane.tsx:218
+#: src/components/preferences/panes/AppearancePane.tsx:264
 msgid "Cover"
 msgstr "Cover"
 
@@ -1248,6 +1262,10 @@ msgstr "Credentials removed"
 msgid "Current category"
 msgstr "Current category"
 
+#: src/components/preferences/panes/AdvancedPane.tsx:796
+msgid "Current preferences as JSON"
+msgstr "Current preferences as JSON"
+
 #: src/components/preferences/panes/SyncPane.tsx:84
 msgid "Current state"
 msgstr "Current state"
@@ -1280,7 +1298,7 @@ msgstr "Customize your application preferences here."
 msgid "Cycle reader theme"
 msgstr "Cycle reader theme"
 
-#: src/components/preferences/panes/AppearancePane.tsx:142
+#: src/components/preferences/panes/AppearancePane.tsx:143
 msgid "Dark"
 msgstr "Dark"
 
@@ -1288,7 +1306,7 @@ msgstr "Dark"
 msgid "Database"
 msgstr "Database"
 
-#: src/components/preferences/panes/AppearancePane.tsx:149
+#: src/components/preferences/panes/AppearancePane.tsx:195
 msgid "Date & Time"
 msgstr "Date & Time"
 
@@ -1311,8 +1329,8 @@ msgstr "Decrease font size"
 
 #: src/lib/commands/view-commands.ts:18
 #: src/lib/menu.ts:196
-msgid "Decrease Font Size"
-msgstr "Decrease Font Size"
+#~ msgid "Decrease Font Size"
+#~ msgstr "Decrease Font Size"
 
 #: src/lib/shortcut-registry.ts:78
 msgid "Decrease line height"
@@ -1322,17 +1340,26 @@ msgstr "Decrease line height"
 msgid "Decrease Playback Speed"
 msgstr "Decrease Playback Speed"
 
+#: src/lib/commands/article-commands.ts:157
+#: src/lib/menu.ts:286
+msgid "Decrease Reader Font"
+msgstr "Decrease Reader Font"
+
 #: src/lib/shortcut-registry.ts:126
 msgid "Decrease speed"
 msgstr "Decrease speed"
 
-#: src/lib/menu.ts:304
+#: src/lib/menu.ts:320
 msgid "Decrease Speed"
 msgstr "Decrease Speed"
 
 #: src/lib/commands/podcast-commands.ts:64
 msgid "Decrease speed by 0.25x"
 msgstr "Decrease speed by 0.25x"
+
+#: src/lib/commands/view-commands.ts:19
+msgid "Decrease UI zoom level"
+msgstr "Decrease UI zoom level"
 
 #: src/lib/commands/podcast-commands.ts:136
 msgid "Decrease volume by 10%"
@@ -1352,6 +1379,14 @@ msgstr "DeepSeek"
 #: src/lib/menu.ts:141
 msgid "Default"
 msgstr "Default"
+
+#: src/components/preferences/panes/AppearancePane.tsx:397
+#~ msgid "Default (Figtree)"
+#~ msgstr "Default (Figtree)"
+
+#: src/components/preferences/panes/AppearancePane.tsx:397
+msgid "Default (System)"
+msgstr "Default (System)"
 
 #: src/components/preferences/panes/GeneralPane.tsx:236
 msgid "Default folder for saving images. Leave empty to ask every time."
@@ -1373,7 +1408,7 @@ msgstr "Delete account"
 #: src/components/miniflux/UserNav.tsx:99
 #: src/lib/commands/account-commands.ts:23
 #: src/lib/commands/account-commands.ts:40
-#: src/lib/menu.ts:501
+#: src/lib/menu.ts:517
 msgid "Delete Account"
 msgstr "Delete Account"
 
@@ -1472,7 +1507,7 @@ msgstr "Disabled"
 #~ msgstr "Disabled (manual only)"
 
 #: src/lib/commands/podcast-commands.ts:147
-#: src/lib/menu.ts:349
+#: src/lib/menu.ts:365
 msgid "Dismiss Player"
 msgstr "Dismiss Player"
 
@@ -1508,8 +1543,8 @@ msgstr "Done"
 #: src/components/podcast/PlayerWindowControls.tsx:313
 #: src/components/podcast/PodcastPlayer.tsx:261
 #: src/components/podcast/PodcastPlayer.tsx:267
-#: src/components/preferences/panes/AppearancePane.tsx:457
-#: src/components/preferences/panes/AppearancePane.tsx:527
+#: src/components/preferences/panes/AppearancePane.tsx:548
+#: src/components/preferences/panes/AppearancePane.tsx:618
 msgid "Download"
 msgstr "Download"
 
@@ -1577,8 +1612,8 @@ msgstr "Downloading recent entries from server"
 msgid "Downloading update v{0}... {1}%"
 msgstr "Downloading update v{0}... {1}%"
 
-#: src/components/preferences/panes/AppearancePane.tsx:457
-#: src/components/preferences/panes/AppearancePane.tsx:527
+#: src/components/preferences/panes/AppearancePane.tsx:548
+#: src/components/preferences/panes/AppearancePane.tsx:618
 msgid "Downloading..."
 msgstr "Downloading..."
 
@@ -1800,6 +1835,10 @@ msgstr "Exit fullscreen mode"
 msgid "Exit Zen Mode"
 msgstr "Exit Zen Mode"
 
+#: src/components/preferences/panes/AdvancedPane.tsx:814
+msgid "Expand"
+msgstr "Expand"
+
 #: src/pages/HomePage.tsx:61
 msgid "Explore Features"
 msgstr "Explore Features"
@@ -1919,7 +1958,7 @@ msgstr "Failed to delete feed"
 msgid "Failed to delete user"
 msgstr "Failed to delete user"
 
-#: src/components/preferences/panes/AppearancePane.tsx:366
+#: src/components/preferences/panes/AppearancePane.tsx:457
 msgid "Failed to download image"
 msgstr "Failed to download image"
 
@@ -2170,7 +2209,7 @@ msgstr "Feed created with partial settings"
 msgid "Feed deleted"
 msgstr "Feed deleted"
 
-#: src/components/miniflux/EntryReading.tsx:1584
+#: src/components/miniflux/EntryReading.tsx:1585
 msgid "Feed excluded from translation"
 msgstr "Feed excluded from translation"
 
@@ -2194,7 +2233,7 @@ msgstr "Feed title"
 msgid "Feed Title"
 msgstr "Feed Title"
 
-#: src/components/miniflux/EntryReading.tsx:1579
+#: src/components/miniflux/EntryReading.tsx:1580
 msgid "Feed translation re-enabled"
 msgstr "Feed translation re-enabled"
 
@@ -2239,7 +2278,7 @@ msgstr "Fetch new articles from all feeds"
 msgid "Fetch original content"
 msgstr "Fetch original content"
 
-#: src/components/miniflux/EntryReading.tsx:1670
+#: src/components/miniflux/EntryReading.tsx:1671
 #: src/lib/commands/article-commands.ts:53
 #: src/lib/menu.ts:232
 msgid "Fetch Original Content"
@@ -2267,7 +2306,7 @@ msgstr "File"
 msgid "File Path"
 msgstr "File Path"
 
-#: src/components/preferences/panes/AppearancePane.tsx:220
+#: src/components/preferences/panes/AppearancePane.tsx:266
 msgid "Fill"
 msgstr "Fill"
 
@@ -2292,7 +2331,7 @@ msgstr "Flush History"
 msgid "Focus mode"
 msgstr "Focus mode"
 
-#: src/components/miniflux/EntryReading.tsx:1681
+#: src/components/miniflux/EntryReading.tsx:1682
 msgid "Focus Mode"
 msgstr "Focus Mode"
 
@@ -2300,12 +2339,16 @@ msgstr "Focus Mode"
 msgid "Follow system theme"
 msgstr "Follow system theme"
 
-#: src/components/miniflux/ReaderSettings.tsx:377
+#: src/components/preferences/panes/AppearancePane.tsx:150
+msgid "Font"
+msgstr "Font"
+
+#: src/components/miniflux/ReaderSettings.tsx:396
 #: src/components/preferences/panes/ReaderPane.tsx:230
 msgid "Font Family"
 msgstr "Font Family"
 
-#: src/components/miniflux/ReaderSettings.tsx:236
+#: src/components/miniflux/ReaderSettings.tsx:255
 #: src/components/preferences/panes/ReaderPane.tsx:252
 msgid "Font Size"
 msgstr "Font Size"
@@ -2327,8 +2370,8 @@ msgstr "French"
 msgid "From"
 msgstr "From"
 
-#: src/components/preferences/panes/AppearancePane.tsx:416
-#: src/components/preferences/panes/AppearancePane.tsx:488
+#: src/components/preferences/panes/AppearancePane.tsx:507
+#: src/components/preferences/panes/AppearancePane.tsx:579
 msgid "From URL"
 msgstr "From URL"
 
@@ -2363,7 +2406,7 @@ msgstr "Generate an AI summary of the current article"
 msgid "Generating summary..."
 msgstr "Generating summary..."
 
-#: src/components/miniflux/ReaderSettings.tsx:142
+#: src/components/miniflux/ReaderSettings.tsx:156
 #: src/components/preferences/panes/ReaderPane.tsx:80
 msgid "Georgia"
 msgstr "Georgia"
@@ -2420,7 +2463,7 @@ msgstr "Go to previous page"
 msgid "Go to top"
 msgstr "Go to top"
 
-#: src/components/miniflux/EntryReading.tsx:1523
+#: src/components/miniflux/EntryReading.tsx:1524
 msgid "Go to Top"
 msgstr "Go to Top"
 
@@ -2429,7 +2472,7 @@ msgid "Google Translate"
 msgstr "Google Translate"
 
 #: src/components/command-palette/CommandPalette.tsx:209
-#: src/lib/menu.ts:370
+#: src/lib/menu.ts:386
 msgid "Help"
 msgstr "Help"
 
@@ -2485,7 +2528,7 @@ msgstr "How code block languages are detected for syntax highlighting"
 #~ msgid "How often to automatically sync with your Miniflux server."
 #~ msgstr "How often to automatically sync with your Miniflux server."
 
-#: src/components/preferences/panes/AppearancePane.tsx:199
+#: src/components/preferences/panes/AppearancePane.tsx:245
 msgid "How the image fills the window."
 msgstr "How the image fills the window."
 
@@ -2509,7 +2552,7 @@ msgstr "https://example.com/feed.xml"
 msgid "https://example.com/rss.xml"
 msgstr "https://example.com/rss.xml"
 
-#: src/components/miniflux/ReaderSettings.tsx:138
+#: src/components/miniflux/ReaderSettings.tsx:152
 #: src/components/preferences/panes/ReaderPane.tsx:78
 msgid "Humanist"
 msgstr "Humanist"
@@ -2591,8 +2634,8 @@ msgstr "Increase font size"
 
 #: src/lib/commands/view-commands.ts:7
 #: src/lib/menu.ts:190
-msgid "Increase Font Size"
-msgstr "Increase Font Size"
+#~ msgid "Increase Font Size"
+#~ msgstr "Increase Font Size"
 
 #: src/lib/shortcut-registry.ts:72
 msgid "Increase line height"
@@ -2602,17 +2645,26 @@ msgstr "Increase line height"
 msgid "Increase Playback Speed"
 msgstr "Increase Playback Speed"
 
+#: src/lib/commands/article-commands.ts:147
+#: src/lib/menu.ts:281
+msgid "Increase Reader Font"
+msgstr "Increase Reader Font"
+
 #: src/lib/shortcut-registry.ts:127
 msgid "Increase speed"
 msgstr "Increase speed"
 
-#: src/lib/menu.ts:310
+#: src/lib/menu.ts:326
 msgid "Increase Speed"
 msgstr "Increase Speed"
 
 #: src/lib/commands/podcast-commands.ts:50
 msgid "Increase speed by 0.25x"
 msgstr "Increase speed by 0.25x"
+
+#: src/lib/commands/view-commands.ts:8
+msgid "Increase UI zoom level"
+msgstr "Increase UI zoom level"
 
 #: src/lib/commands/podcast-commands.ts:124
 msgid "Increase volume by 10%"
@@ -2676,8 +2728,8 @@ msgstr "Korean"
 
 #: src/components/miniflux/SafeHtml.tsx:807
 #: src/components/miniflux/UserNav.tsx:285
-#: src/components/preferences/panes/AppearancePane.tsx:102
-#: src/components/preferences/panes/AppearancePane.tsx:104
+#: src/components/preferences/panes/AppearancePane.tsx:103
+#: src/components/preferences/panes/AppearancePane.tsx:105
 msgid "Language"
 msgstr "Language"
 
@@ -2762,21 +2814,21 @@ msgstr "Latest version"
 #~ msgid "License"
 #~ msgstr "License"
 
-#: src/components/preferences/panes/AppearancePane.tsx:141
+#: src/components/preferences/panes/AppearancePane.tsx:142
 msgid "Light"
 msgstr "Light"
 
-#: src/components/miniflux/ReaderSettings.tsx:331
+#: src/components/miniflux/ReaderSettings.tsx:350
 #: src/components/preferences/panes/ReaderPane.tsx:316
 msgid "Line Height"
 msgstr "Line Height"
 
-#: src/components/miniflux/ReaderSettings.tsx:285
+#: src/components/miniflux/ReaderSettings.tsx:304
 #: src/components/preferences/panes/ReaderPane.tsx:284
 msgid "Line Width"
 msgstr "Line Width"
 
-#: src/components/miniflux/EntryReading.tsx:1698
+#: src/components/miniflux/EntryReading.tsx:1699
 #: src/lib/shortcut-registry.ts:29
 msgid "Links"
 msgstr "Links"
@@ -2830,15 +2882,23 @@ msgstr "Log level"
 msgid "Log level updated"
 msgstr "Log level updated"
 
+#: src/lib/commands/article-commands.ts:148
+msgid "Make reader text larger"
+msgstr "Make reader text larger"
+
+#: src/lib/commands/article-commands.ts:158
+msgid "Make reader text smaller"
+msgstr "Make reader text smaller"
+
 #: src/lib/commands/view-commands.ts:8
-msgid "Make text larger"
-msgstr "Make text larger"
+#~ msgid "Make text larger"
+#~ msgstr "Make text larger"
 
 #: src/lib/commands/view-commands.ts:19
-msgid "Make text smaller"
-msgstr "Make text smaller"
+#~ msgid "Make text smaller"
+#~ msgstr "Make text smaller"
 
-#: src/components/preferences/panes/AppearancePane.tsx:284
+#: src/components/preferences/panes/AppearancePane.tsx:330
 msgid "Make UI panels transparent to reveal the background image."
 msgstr "Make UI panels transparent to reveal the background image."
 
@@ -2860,7 +2920,7 @@ msgstr "Mark all as read"
 
 #: src/components/layout/AppSidebar.tsx:180
 #: src/components/layout/AppSidebar.tsx:396
-#: src/components/miniflux/EntryReading.tsx:1659
+#: src/components/miniflux/EntryReading.tsx:1660
 #: src/components/miniflux/EntryReadingHeader.tsx:799
 #: src/components/miniflux/EntryReadingHeader.tsx:818
 #: src/components/preferences/panes/CategoriesPane.tsx:84
@@ -2873,7 +2933,7 @@ msgstr "Mark as read"
 msgid "Mark as Read/Unread"
 msgstr "Mark as Read/Unread"
 
-#: src/components/miniflux/EntryReading.tsx:1659
+#: src/components/miniflux/EntryReading.tsx:1660
 #: src/components/miniflux/EntryReadingHeader.tsx:799
 #: src/components/miniflux/EntryReadingHeader.tsx:818
 msgid "Mark as unread"
@@ -2980,7 +3040,7 @@ msgstr "Model name for AI summaries. If not set, uses the model configured for t
 msgid "Modern Rust-powered desktop framework"
 msgstr "Modern Rust-powered desktop framework"
 
-#: src/components/miniflux/ReaderSettings.tsx:146
+#: src/components/miniflux/ReaderSettings.tsx:160
 #: src/components/preferences/panes/ReaderPane.tsx:82
 msgid "Monospace"
 msgstr "Monospace"
@@ -3021,7 +3081,7 @@ msgid "Mute"
 msgstr "Mute"
 
 #: src/lib/commands/podcast-commands.ts:77
-#: src/lib/menu.ts:322
+#: src/lib/menu.ts:338
 msgid "Mute / Unmute"
 msgstr "Mute / Unmute"
 
@@ -3033,7 +3093,7 @@ msgstr "Name"
 msgid "Narrow content"
 msgstr "Narrow content"
 
-#: src/components/miniflux/ReaderSettings.tsx:157
+#: src/components/miniflux/ReaderSettings.tsx:171
 msgid "Native platform feel"
 msgstr "Native platform feel"
 
@@ -3078,7 +3138,7 @@ msgstr "Next"
 msgid "Next article"
 msgstr "Next article"
 
-#: src/components/miniflux/EntryReading.tsx:1498
+#: src/components/miniflux/EntryReading.tsx:1499
 #: src/lib/menu.ts:274
 msgid "Next Article"
 msgstr "Next Article"
@@ -3129,7 +3189,7 @@ msgstr "No category"
 msgid "No completed downloads"
 msgstr "No completed downloads"
 
-#: src/components/miniflux/EntryReading.tsx:1474
+#: src/components/miniflux/EntryReading.tsx:1475
 msgid "No content available"
 msgstr "No content available"
 
@@ -3276,7 +3336,7 @@ msgstr "OLED"
 msgid "Ollama"
 msgstr "Ollama"
 
-#: src/components/preferences/panes/AppearancePane.tsx:227
+#: src/components/preferences/panes/AppearancePane.tsx:273
 msgid "Opacity"
 msgstr "Opacity"
 
@@ -3295,7 +3355,7 @@ msgstr "Open appearance preferences"
 msgid "Open in app browser"
 msgstr "Open in app browser"
 
-#: src/components/miniflux/EntryReading.tsx:1719
+#: src/components/miniflux/EntryReading.tsx:1720
 #: src/lib/commands/article-commands.ts:89
 #: src/lib/menu.ts:256
 msgid "Open in App Browser"
@@ -3309,7 +3369,7 @@ msgstr "Open in App Browser"
 msgid "Open in browser"
 msgstr "Open in browser"
 
-#: src/components/miniflux/EntryReading.tsx:1707
+#: src/components/miniflux/EntryReading.tsx:1708
 #: src/lib/commands/article-commands.ts:77
 #: src/lib/menu.ts:250
 msgid "Open in Browser"
@@ -3329,7 +3389,7 @@ msgid "Open player"
 msgstr "Open player"
 
 #: src/lib/commands/podcast-commands.ts:158
-#: src/lib/menu.ts:338
+#: src/lib/menu.ts:354
 msgid "Open Player Window"
 msgstr "Open Player Window"
 
@@ -3452,7 +3512,7 @@ msgstr "Password is required"
 msgid "Paste a website URL to discover available RSS/Atom feeds."
 msgstr "Paste a website URL to discover available RSS/Atom feeds."
 
-#: src/components/preferences/panes/AppearancePane.tsx:489
+#: src/components/preferences/panes/AppearancePane.tsx:580
 msgid "Paste an image link"
 msgstr "Paste an image link"
 
@@ -3502,9 +3562,9 @@ msgstr "Phrase"
 msgid "Play"
 msgstr "Play"
 
-#: src/components/miniflux/EntryReading.tsx:1763
+#: src/components/miniflux/EntryReading.tsx:1764
 #: src/lib/commands/podcast-commands.ts:9
-#: src/lib/menu.ts:287
+#: src/lib/menu.ts:303
 #: src/lib/shortcut-registry.ts:118
 msgid "Play / Pause"
 msgstr "Play / Pause"
@@ -3557,14 +3617,14 @@ msgstr "Please enter a valid URL"
 #~ msgid "Please enter both access key and secret key"
 #~ msgstr "Please enter both access key and secret key"
 
-#: src/components/preferences/panes/AppearancePane.tsx:475
+#: src/components/preferences/panes/AppearancePane.tsx:566
 msgid "PNG, JPG, WebP, GIF, or AVIF"
 msgstr "PNG, JPG, WebP, GIF, or AVIF"
 
 #: src/components/command-palette/CommandPalette.tsx:199
 #: src/components/miniflux/EntryList.tsx:856
-#: src/components/miniflux/EntryReading.tsx:1752
-#: src/lib/menu.ts:283
+#: src/components/miniflux/EntryReading.tsx:1753
+#: src/lib/menu.ts:299
 msgid "Podcast"
 msgstr "Podcast"
 
@@ -3598,7 +3658,7 @@ msgstr "Preferences pushed to cloud"
 msgid "Preferences reset to defaults"
 msgstr "Preferences reset to defaults"
 
-#: src/components/preferences/panes/CloudSyncSection.tsx:179
+#: src/components/preferences/panes/CloudSyncSection.tsx:180
 msgid "Preferences restored from cloud"
 msgstr "Preferences restored from cloud"
 
@@ -3628,7 +3688,7 @@ msgstr "Previous"
 msgid "Previous article"
 msgstr "Previous article"
 
-#: src/components/miniflux/EntryReading.tsx:1489
+#: src/components/miniflux/EntryReading.tsx:1490
 #: src/lib/menu.ts:268
 msgid "Previous Article"
 msgstr "Previous Article"
@@ -3761,7 +3821,7 @@ msgstr "Qwen-MT"
 msgid "Randomize the playback queue order"
 msgstr "Randomize the playback queue order"
 
-#: src/components/miniflux/EntryReading.tsx:1543
+#: src/components/miniflux/EntryReading.tsx:1544
 msgid "Re-summarize"
 msgstr "Re-summarize"
 
@@ -3806,7 +3866,7 @@ msgstr "Reader Theme: Sepia"
 msgid "Reader Theme: Slate"
 msgstr "Reader Theme: Slate"
 
-#: src/components/miniflux/ReaderSettings.tsx:186
+#: src/components/miniflux/ReaderSettings.tsx:205
 msgid "Reader typography settings"
 msgstr "Reader typography settings"
 
@@ -3865,12 +3925,12 @@ msgstr "Refresh all"
 msgid "Refresh All Feeds"
 msgstr "Refresh All Feeds"
 
-#: src/lib/menu.ts:533
+#: src/lib/menu.ts:549
 msgid "Refresh Complete"
 msgstr "Refresh Complete"
 
-#: src/lib/menu.ts:535
-#: src/lib/menu.ts:540
+#: src/lib/menu.ts:551
+#: src/lib/menu.ts:556
 msgid "Refresh Failed"
 msgstr "Refresh Failed"
 
@@ -3954,7 +4014,7 @@ msgstr "Replace key"
 msgid "Report an Issue"
 msgstr "Report an Issue"
 
-#: src/lib/menu.ts:374
+#: src/lib/menu.ts:390
 msgid "Report an Issue..."
 msgstr "Report an Issue..."
 
@@ -3962,7 +4022,7 @@ msgstr "Report an Issue..."
 msgid "Required fields"
 msgstr "Required fields"
 
-#: src/components/miniflux/ReaderSettings.tsx:207
+#: src/components/miniflux/ReaderSettings.tsx:226
 #: src/components/preferences/KeyCapture.tsx:118
 #: src/components/preferences/panes/AdvancedPane.tsx:644
 #: src/components/preferences/panes/AdvancedPane.tsx:660
@@ -3977,8 +4037,8 @@ msgstr "Reset all to defaults"
 
 #: src/lib/commands/view-commands.ts:29
 #: src/lib/menu.ts:202
-msgid "Reset Font Size"
-msgstr "Reset Font Size"
+#~ msgid "Reset Font Size"
+#~ msgstr "Reset Font Size"
 
 #: src/lib/commands/podcast-commands.ts:180
 msgid "Reset Playback Speed"
@@ -3992,7 +4052,16 @@ msgstr "Reset preferences"
 msgid "Reset preferences?"
 msgstr "Reset preferences?"
 
-#: src/lib/menu.ts:316
+#: src/lib/commands/article-commands.ts:167
+#: src/lib/menu.ts:291
+msgid "Reset Reader Font"
+msgstr "Reset Reader Font"
+
+#: src/lib/commands/article-commands.ts:168
+msgid "Reset reader text to default size"
+msgstr "Reset reader text to default size"
+
+#: src/lib/menu.ts:332
 msgid "Reset Speed"
 msgstr "Reset Speed"
 
@@ -4001,8 +4070,17 @@ msgid "Reset speed to 1.0x"
 msgstr "Reset speed to 1.0x"
 
 #: src/lib/commands/view-commands.ts:30
-msgid "Reset text to default size"
-msgstr "Reset text to default size"
+#~ msgid "Reset text to default size"
+#~ msgstr "Reset text to default size"
+
+#: src/lib/commands/view-commands.ts:30
+msgid "Reset UI zoom to default"
+msgstr "Reset UI zoom to default"
+
+#: src/lib/commands/view-commands.ts:29
+#: src/lib/menu.ts:202
+msgid "Reset Zoom"
+msgstr "Reset Zoom"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:644
 #: src/components/preferences/panes/AdvancedPane.tsx:685
@@ -4105,8 +4183,8 @@ msgstr "Running"
 msgid "Runtime"
 msgstr "Runtime"
 
-#: src/components/miniflux/ReaderSettings.tsx:134
 #: src/components/miniflux/ReaderSettings.tsx:148
+#: src/components/miniflux/ReaderSettings.tsx:162
 msgid "Sans"
 msgstr "Sans"
 
@@ -4134,7 +4212,7 @@ msgstr "Save Changes"
 msgid "Save Rules"
 msgstr "Save Rules"
 
-#: src/components/miniflux/EntryReading.tsx:1742
+#: src/components/miniflux/EntryReading.tsx:1743
 #: src/components/miniflux/EntryReadingHeader.tsx:946
 msgid "Save to services"
 msgstr "Save to services"
@@ -4220,7 +4298,7 @@ msgstr "Search feeds to exclude..."
 msgid "Search feeds..."
 msgstr "Search feeds..."
 
-#: src/components/miniflux/ReaderSettings.tsx:391
+#: src/components/miniflux/ReaderSettings.tsx:408
 msgid "Search fonts..."
 msgstr "Search fonts..."
 
@@ -4278,7 +4356,7 @@ msgstr "Select a category"
 msgid "Select an entry to read"
 msgstr "Select an entry to read"
 
-#: src/components/preferences/panes/AppearancePane.tsx:329
+#: src/components/preferences/panes/AppearancePane.tsx:420
 msgid "Select Background Image"
 msgstr "Select Background Image"
 
@@ -4298,7 +4376,7 @@ msgstr "Select or enter server URL"
 msgid "Select phrase text"
 msgstr "Select phrase text"
 
-#: src/components/preferences/panes/AppearancePane.tsx:138
+#: src/components/preferences/panes/AppearancePane.tsx:139
 msgid "Select theme"
 msgstr "Select theme"
 
@@ -4316,7 +4394,7 @@ msgstr "Sensitivity"
 msgid "Sepia"
 msgstr "Sepia"
 
-#: src/components/miniflux/ReaderSettings.tsx:140
+#: src/components/miniflux/ReaderSettings.tsx:154
 #: src/components/preferences/panes/ReaderPane.tsx:79
 msgid "Serif"
 msgstr "Serif"
@@ -4371,6 +4449,10 @@ msgstr "Set background from file or URL"
 #: src/components/titlebar/WindowTitleBar.tsx:87
 msgid "Settings"
 msgstr "Settings"
+
+#: src/components/preferences/panes/AdvancedPane.tsx:792
+msgid "Settings Preview"
+msgstr "Settings Preview"
 
 #: src/pages/HomePage.tsx:48
 msgid "shadcn/ui"
@@ -4472,7 +4554,7 @@ msgid "Sidebar"
 msgstr "Sidebar"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:635
-#: src/components/preferences/panes/AppearancePane.tsx:198
+#: src/components/preferences/panes/AppearancePane.tsx:244
 msgid "Size"
 msgstr "Size"
 
@@ -4487,7 +4569,7 @@ msgid "Skip back 15s"
 msgstr "Skip back 15s"
 
 #: src/lib/commands/podcast-commands.ts:36
-#: src/lib/menu.ts:293
+#: src/lib/menu.ts:309
 msgid "Skip Back 15s"
 msgstr "Skip Back 15s"
 
@@ -4502,7 +4584,7 @@ msgid "Skip forward 30s"
 msgstr "Skip forward 30s"
 
 #: src/lib/commands/podcast-commands.ts:23
-#: src/lib/menu.ts:298
+#: src/lib/menu.ts:314
 msgid "Skip Forward 30s"
 msgstr "Skip Forward 30s"
 
@@ -4510,11 +4592,11 @@ msgstr "Skip Forward 30s"
 msgid "Skip source languages"
 msgstr "Skip source languages"
 
-#: src/components/miniflux/EntryReading.tsx:1637
+#: src/components/miniflux/EntryReading.tsx:1638
 msgid "Skip this category"
 msgstr "Skip this category"
 
-#: src/components/miniflux/EntryReading.tsx:1595
+#: src/components/miniflux/EntryReading.tsx:1596
 msgid "Skip this feed"
 msgstr "Skip this feed"
 
@@ -4529,7 +4611,7 @@ msgid "Some changes may require an app restart."
 msgstr "Some changes may require an app restart."
 
 #: src/components/ErrorBoundary.tsx:194
-#: src/components/preferences/panes/AppearancePane.tsx:89
+#: src/components/preferences/panes/AppearancePane.tsx:90
 msgid "Something went wrong"
 msgstr "Something went wrong"
 
@@ -4561,7 +4643,7 @@ msgstr "Spanish"
 msgid "Stack Trace"
 msgstr "Stack Trace"
 
-#: src/components/miniflux/EntryReading.tsx:1510
+#: src/components/miniflux/EntryReading.tsx:1511
 #: src/components/miniflux/EntryReadingHeader.tsx:830
 #: src/components/miniflux/EntryReadingHeader.tsx:836
 msgid "Star"
@@ -4653,7 +4735,7 @@ msgstr "Storage & Data"
 msgid "streaming..."
 msgstr "streaming..."
 
-#: src/components/miniflux/ReaderSettings.tsx:163
+#: src/components/miniflux/ReaderSettings.tsx:177
 msgid "Strong newspaper tone"
 msgstr "Strong newspaper tone"
 
@@ -4665,7 +4747,7 @@ msgstr "Subscribe to a new RSS feed"
 msgid "Summarize article"
 msgstr "Summarize article"
 
-#: src/components/miniflux/EntryReading.tsx:1543
+#: src/components/miniflux/EntryReading.tsx:1544
 msgid "Summarize Article"
 msgstr "Summarize Article"
 
@@ -4727,7 +4809,7 @@ msgstr "Sync article content and metadata"
 msgid "Sync completed"
 msgstr "Sync completed"
 
-#: src/lib/menu.ts:517
+#: src/lib/menu.ts:533
 msgid "Sync Completed"
 msgstr "Sync Completed"
 
@@ -4737,8 +4819,8 @@ msgstr "Sync Completed"
 msgid "Sync failed"
 msgstr "Sync failed"
 
-#: src/lib/menu.ts:519
-#: src/lib/menu.ts:524
+#: src/lib/menu.ts:535
+#: src/lib/menu.ts:540
 msgid "Sync Failed"
 msgstr "Sync Failed"
 
@@ -4812,11 +4894,11 @@ msgstr "Syncing..."
 msgid "Syntax highlighting theme for code blocks"
 msgstr "Syntax highlighting theme for code blocks"
 
-#: src/components/preferences/panes/AppearancePane.tsx:143
+#: src/components/preferences/panes/AppearancePane.tsx:144
 msgid "System"
 msgstr "System"
 
-#: src/components/preferences/panes/AppearancePane.tsx:116
+#: src/components/preferences/panes/AppearancePane.tsx:117
 msgid "System Default"
 msgstr "System Default"
 
@@ -4825,11 +4907,15 @@ msgstr "System Default"
 #~ msgid "System default (ask every time)"
 #~ msgstr "System default (ask every time)"
 
+#: src/components/miniflux/ReaderSettings.tsx:434
+msgid "System Fonts"
+msgstr "System Fonts"
+
 #: src/components/preferences/panes/GeneralPane.tsx:167
 msgid "System Tray"
 msgstr "System Tray"
 
-#: src/components/miniflux/ReaderSettings.tsx:136
+#: src/components/miniflux/ReaderSettings.tsx:150
 #: src/components/preferences/panes/ReaderPane.tsx:77
 msgid "System UI"
 msgstr "System UI"
@@ -4871,7 +4957,7 @@ msgstr "The application encountered an unexpected error."
 msgid "The URL of your Miniflux server (e.g., miniflux.example.com)"
 msgstr "The URL of your Miniflux server (e.g., miniflux.example.com)"
 
-#: src/components/preferences/panes/AppearancePane.tsx:127
+#: src/components/preferences/panes/AppearancePane.tsx:128
 msgid "Theme"
 msgstr "Theme"
 
@@ -4934,11 +5020,11 @@ msgstr "This will remove the category \"{0}\" from Miniflux."
 #~ msgid "This will remove the category from Miniflux."
 #~ msgstr "This will remove the category from Miniflux."
 
-#: src/components/preferences/panes/AppearancePane.tsx:221
+#: src/components/preferences/panes/AppearancePane.tsx:267
 msgid "Tile"
 msgstr "Tile"
 
-#: src/components/preferences/panes/AppearancePane.tsx:151
+#: src/components/preferences/panes/AppearancePane.tsx:197
 msgid "Time Format"
 msgstr "Time Format"
 
@@ -4966,7 +5052,7 @@ msgstr "Tip:"
 msgid "Tip: Use h / j to jump between entries quickly."
 msgstr "Tip: Use h / j to jump between entries quickly."
 
-#: src/components/miniflux/ReaderSettings.tsx:228
+#: src/components/miniflux/ReaderSettings.tsx:247
 msgid "Tips: +/- font size, [ ] line width, Alt+↑/↓ line height"
 msgstr "Tips: +/- font size, [ ] line width, Alt+↑/↓ line height"
 
@@ -5029,7 +5115,7 @@ msgid "Toggle Maximize"
 msgstr "Toggle Maximize"
 
 #: src/lib/commands/podcast-commands.ts:169
-#: src/lib/menu.ts:343
+#: src/lib/menu.ts:359
 msgid "Toggle Mini Player"
 msgstr "Toggle Mini Player"
 
@@ -5112,7 +5198,7 @@ msgstr "Total downloaded:"
 msgid "Trace"
 msgstr "Trace"
 
-#: src/components/miniflux/EntryReading.tsx:1562
+#: src/components/miniflux/EntryReading.tsx:1563
 #: src/lib/commands/translation-commands.ts:7
 #: src/lib/menu.ts:238
 msgid "Translate Article"
@@ -5139,7 +5225,7 @@ msgstr "Translate with..."
 msgid "Translated only"
 msgstr "Translated only"
 
-#: src/components/miniflux/EntryReading.tsx:1553
+#: src/components/miniflux/EntryReading.tsx:1554
 #: src/components/miniflux/EntryReadingHeader.tsx:556
 #: src/components/miniflux/EntryReadingHeader.tsx:564
 #: src/components/miniflux/SafeHtml.tsx:797
@@ -5213,7 +5299,7 @@ msgstr "Try Again"
 msgid "Try changing the filter or syncing new content"
 msgstr "Try changing the filter or syncing new content"
 
-#: src/components/miniflux/ReaderSettings.tsx:225
+#: src/components/miniflux/ReaderSettings.tsx:244
 msgid "Tune the reading layout for long-form comfort."
 msgstr "Tune the reading layout for long-form comfort."
 
@@ -5231,12 +5317,20 @@ msgstr "Type or fetch to pick a model"
 msgid "Type RESET to confirm"
 msgstr "Type RESET to confirm"
 
-#: src/components/miniflux/ReaderSettings.tsx:197
+#: src/components/miniflux/ReaderSettings.tsx:216
 #: src/components/preferences/panes/ReaderPane.tsx:228
 msgid "Typography"
 msgstr "Typography"
 
-#: src/components/preferences/panes/AppearancePane.tsx:283
+#: src/components/preferences/panes/AppearancePane.tsx:152
+msgid "UI Font"
+msgstr "UI Font"
+
+#: src/components/preferences/panes/AppearancePane.tsx:167
+msgid "UI Font Size"
+msgstr "UI Font Size"
+
+#: src/components/preferences/panes/AppearancePane.tsx:329
 msgid "UI Transparency"
 msgstr "UI Transparency"
 
@@ -5259,7 +5353,7 @@ msgstr "Unread"
 msgid "unread items"
 msgstr "unread items"
 
-#: src/components/miniflux/EntryReading.tsx:1510
+#: src/components/miniflux/EntryReading.tsx:1511
 #: src/components/miniflux/EntryReadingHeader.tsx:830
 #: src/components/miniflux/EntryReadingHeader.tsx:836
 msgid "Unstar"
@@ -5278,17 +5372,17 @@ msgid "Up to date"
 msgstr "Up to date"
 
 #: src/lib/commands/help-commands.ts:33
-#: src/lib/menu.ts:451
+#: src/lib/menu.ts:467
 msgid "Up to Date"
 msgstr "Up to Date"
 
 #: src/lib/commands/help-commands.ts:23
-#: src/lib/menu.ts:441
+#: src/lib/menu.ts:457
 msgid "Update Available"
 msgstr "Update Available"
 
 #: src/lib/commands/help-commands.ts:31
-#: src/lib/menu.ts:449
+#: src/lib/menu.ts:465
 msgid "Update Check Failed"
 msgstr "Update Check Failed"
 
@@ -5426,7 +5520,7 @@ msgstr "Version {0} is available."
 
 #. placeholder {0}: state.version
 #: src/lib/commands/help-commands.ts:24
-#: src/lib/menu.ts:442
+#: src/lib/menu.ts:458
 msgid "Version {0} is available. Downloading..."
 msgstr "Version {0} is available. Downloading..."
 
@@ -5475,16 +5569,16 @@ msgid "Volume"
 msgstr "Volume"
 
 #: src/lib/commands/podcast-commands.ts:135
-#: src/lib/menu.ts:332
+#: src/lib/menu.ts:348
 msgid "Volume Down"
 msgstr "Volume Down"
 
 #: src/lib/commands/podcast-commands.ts:123
-#: src/lib/menu.ts:327
+#: src/lib/menu.ts:343
 msgid "Volume Up"
 msgstr "Volume Up"
 
-#: src/components/miniflux/ReaderSettings.tsx:159
+#: src/components/miniflux/ReaderSettings.tsx:173
 msgid "Warm and friendly"
 msgstr "Warm and friendly"
 
@@ -5509,7 +5603,7 @@ msgid "Widen content"
 msgstr "Widen content"
 
 #: src/components/command-palette/CommandPalette.tsx:207
-#: src/lib/menu.ts:357
+#: src/lib/menu.ts:373
 msgid "Window"
 msgstr "Window"
 
@@ -5518,7 +5612,7 @@ msgid "Yesterday"
 msgstr "Yesterday"
 
 #: src/lib/commands/help-commands.ts:33
-#: src/lib/menu.ts:451
+#: src/lib/menu.ts:467
 msgid "You are running the latest version"
 msgstr "You are running the latest version"
 
@@ -5537,6 +5631,16 @@ msgstr "Your data has been saved automatically."
 #: src/lib/menu.ts:184
 msgid "Zen Mode"
 msgstr "Zen Mode"
+
+#: src/lib/commands/view-commands.ts:7
+#: src/lib/menu.ts:190
+msgid "Zoom In"
+msgstr "Zoom In"
+
+#: src/lib/commands/view-commands.ts:18
+#: src/lib/menu.ts:196
+msgid "Zoom Out"
+msgstr "Zoom Out"
 
 #: src/components/miniflux/EntryReadingHeader.tsx:645
 msgid "中文顯示"

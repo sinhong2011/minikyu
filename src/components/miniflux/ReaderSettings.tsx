@@ -8,7 +8,8 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { useEffect, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import { useEffect, useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
 import {
   Combobox,
@@ -30,11 +31,13 @@ import { Slider } from '@/components/ui/slider';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import {
   getReaderFontStack,
+  isCustomReaderFont,
   isReaderFontFamily,
   normalizeReaderFontFamily,
   type ReaderFontFamily,
   readerFontFamilies,
 } from '@/lib/reader-fonts';
+import { commands } from '@/lib/tauri-bindings';
 
 const MIN_FONT_SIZE = 14;
 const MAX_FONT_SIZE = 24;
@@ -84,7 +87,18 @@ export function ReaderSettings() {
     resetReaderTypography,
     isLoading,
   } = useReaderSettings();
-  const selectedFontFamily = normalizeReaderFontFamily(fontFamily);
+  const selectedFontFamily = isCustomReaderFont(fontFamily)
+    ? fontFamily
+    : normalizeReaderFontFamily(fontFamily);
+  const { data: systemFonts } = useQuery({
+    queryKey: ['system-fonts'],
+    queryFn: async () => {
+      const result = await commands.listSystemFonts();
+      if (result.status === 'ok') return result.data;
+      throw new Error(result.error);
+    },
+    staleTime: Number.POSITIVE_INFINITY,
+  });
   const [fontSizeValue, setFontSizeValue] = useState(fontSize);
   const [lineWidthValue, setLineWidthValue] = useState(lineWidth);
   const [lineHeightValue, setLineHeightValue] = useState(lineHeight);
@@ -169,6 +183,16 @@ export function ReaderSettings() {
         return _(msg`Clean and balanced`);
     }
   };
+
+  const getFontDisplayLabel = (value: string) => {
+    if (isReaderFontFamily(value)) return getFontLabel(value);
+    return value; // Custom system font — use the font name directly
+  };
+
+  const allFontItems = useMemo(
+    () => [...readerFontFamilies, ...(systemFonts ?? [])],
+    [systemFonts]
+  );
 
   const typographyIsDefault =
     fontSize === DEFAULT_FONT_SIZE &&
@@ -382,32 +406,40 @@ export function ReaderSettings() {
                     setFontFamily(value);
                   }
                 }}
-                itemToStringLabel={(value) =>
-                  isReaderFontFamily(value) ? getFontLabel(value) : String(value)
-                }
+                items={allFontItems}
+                itemToStringLabel={(value) => getFontDisplayLabel(String(value))}
                 disabled={isLoading}
               >
                 <ComboboxInput
                   placeholder={_(msg`Search fonts...`)}
-                  className="h-8 w-full bg-background/70 text-xs"
+                  className="h-8 w-full bg-background/70 text-xs ring-0!"
                 />
                 <ComboboxContent>
                   <ComboboxList>
-                    {readerFontFamilies.map((family) => (
-                      <ComboboxItem key={family} value={family}>
-                        <span className="flex flex-col items-start gap-0.5 leading-tight">
-                          <span style={{ fontFamily: getReaderFontStack(family) }}>
-                            {getFontLabel(family)}
-                          </span>
+                    {(item: string) => (
+                      <ComboboxItem key={item} value={item}>
+                        {isReaderFontFamily(item) ? (
                           <span
-                            className="text-[11px] text-muted-foreground"
-                            style={{ fontFamily: getReaderFontStack(family) }}
+                            className="flex flex-col items-start gap-0.5 leading-tight"
+                            data-no-ui-font=""
                           >
-                            {getFontTone(family)}
+                            <span style={{ fontFamily: getReaderFontStack(item) }}>
+                              {getFontLabel(item)}
+                            </span>
+                            <span
+                              className="text-[11px] text-muted-foreground"
+                              style={{ fontFamily: getReaderFontStack(item) }}
+                            >
+                              {getFontTone(item)}
+                            </span>
                           </span>
-                        </span>
+                        ) : (
+                          <span data-no-ui-font="" style={{ fontFamily: item }}>
+                            {item}
+                          </span>
+                        )}
                       </ComboboxItem>
-                    ))}
+                    )}
                   </ComboboxList>
                 </ComboboxContent>
               </Combobox>

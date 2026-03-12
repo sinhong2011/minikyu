@@ -122,9 +122,14 @@ vi.mock('@/lib/tauri-bindings', () => ({
         video_download_path: null,
         // biome-ignore lint/style/useNamingConvention: preferences field name
         player_display_mode: 'FloatingWindow',
+        // biome-ignore lint/style/useNamingConvention: preferences field name
+        ui_font_family: null,
+        // biome-ignore lint/style/useNamingConvention: preferences field name
+        ui_font_size: null,
       },
     }),
     savePreferences: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
+    listSystemFonts: vi.fn().mockResolvedValue({ status: 'ok', data: [] }),
     sendNativeNotification: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
     saveEmergencyData: vi.fn().mockResolvedValue({ status: 'ok', data: null }),
     loadEmergencyData: vi.fn().mockResolvedValue({ status: 'ok', data: null }),

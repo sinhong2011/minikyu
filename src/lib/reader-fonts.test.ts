@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import {
   defaultReaderFontFamily,
   getReaderFontStack,
+  isCustomReaderFont,
   isReaderFontFamily,
   normalizeReaderFontFamily,
   readerFontFamilies,
@@ -24,5 +25,18 @@ describe('reader-fonts', () => {
     for (const family of readerFontFamilies) {
       expect(getReaderFontStack(family).length).toBeGreaterThan(0);
     }
+  });
+
+  it('returns a quoted font stack for custom system fonts', () => {
+    const stack = getReaderFontStack('Helvetica Neue');
+    expect(stack).toContain('"Helvetica Neue"');
+    expect(stack).toContain('sans-serif');
+  });
+
+  it('identifies custom reader fonts', () => {
+    expect(isCustomReaderFont('Helvetica Neue')).toBe(true);
+    expect(isCustomReaderFont('sans-serif')).toBe(false);
+    expect(isCustomReaderFont(null)).toBe(false);
+    expect(isCustomReaderFont(undefined)).toBe(false);
   });
 });

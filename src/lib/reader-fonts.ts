@@ -41,5 +41,13 @@ export function normalizeReaderFontFamily(value: string | null | undefined): Rea
 }
 
 export function getReaderFontStack(value: string | null | undefined): string {
-  return READER_FONT_STACKS[normalizeReaderFontFamily(value)];
+  if (!value) return READER_FONT_STACKS[defaultReaderFontFamily];
+  if (isReaderFontFamily(value)) return READER_FONT_STACKS[value];
+  // Custom system font — wrap in quotes and add sans-serif fallback
+  return `"${value}", -apple-system, BlinkMacSystemFont, "Segoe UI", system-ui, sans-serif`;
+}
+
+/** Returns true if the value is a custom (system) font rather than a preset. */
+export function isCustomReaderFont(value: string | null | undefined): boolean {
+  return !!value && !isReaderFontFamily(value);
 }

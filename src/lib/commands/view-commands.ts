@@ -3,36 +3,36 @@ import type { AppCommand } from './types';
 
 export const viewCommands: AppCommand[] = [
   {
-    id: 'view-increase-font',
-    label: msg`Increase Font Size`,
-    description: msg`Make text larger`,
+    id: 'view-zoom-in',
+    label: msg`Zoom In`,
+    description: msg`Increase UI zoom level`,
     group: 'view',
     shortcut: '⌘+',
-    keywords: ['font', 'size', 'larger', 'bigger', 'zoom'],
+    keywords: ['zoom', 'in', 'larger', 'bigger', 'ui', 'size'],
     execute: () => {
-      document.dispatchEvent(new CustomEvent('command:font-size-increase'));
+      document.dispatchEvent(new CustomEvent('command:ui-zoom-in'));
     },
   },
   {
-    id: 'view-decrease-font',
-    label: msg`Decrease Font Size`,
-    description: msg`Make text smaller`,
+    id: 'view-zoom-out',
+    label: msg`Zoom Out`,
+    description: msg`Decrease UI zoom level`,
     group: 'view',
     shortcut: '⌘-',
-    keywords: ['font', 'size', 'smaller', 'zoom'],
+    keywords: ['zoom', 'out', 'smaller', 'ui', 'size'],
     execute: () => {
-      document.dispatchEvent(new CustomEvent('command:font-size-decrease'));
+      document.dispatchEvent(new CustomEvent('command:ui-zoom-out'));
     },
   },
   {
-    id: 'view-reset-font',
-    label: msg`Reset Font Size`,
-    description: msg`Reset text to default size`,
+    id: 'view-zoom-reset',
+    label: msg`Reset Zoom`,
+    description: msg`Reset UI zoom to default`,
     group: 'view',
     shortcut: '⌘0',
-    keywords: ['font', 'size', 'reset', 'default'],
+    keywords: ['zoom', 'reset', 'default', 'ui', 'size'],
     execute: () => {
-      document.dispatchEvent(new CustomEvent('command:font-size-reset'));
+      document.dispatchEvent(new CustomEvent('command:ui-zoom-reset'));
     },
   },
   {

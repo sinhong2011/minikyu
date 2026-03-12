@@ -64,6 +64,26 @@
   }
 }
 
+/* UI font override — placed outside @layer so it beats Tailwind utilities.
+   When data-ui-font is set on html, override font-family everywhere
+   EXCEPT elements with data-no-ui-font (reader content, font previews)
+   and their descendants. */
+html[data-ui-font],
+html[data-ui-font] body,
+html[data-ui-font] *:not([data-no-ui-font]):not([data-no-ui-font] *) {
+  /* biome-ignore lint/complexity/noImportantStyles: required to override Tailwind utilities for global font override */
+  font-family: var(--ui-font-override) !important;
+}
+html[data-ui-font] code:not([data-no-ui-font] *),
+html[data-ui-font] pre:not([data-no-ui-font] *),
+html[data-ui-font] kbd:not([data-no-ui-font] *),
+html[data-ui-font] samp:not([data-no-ui-font] *) {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    /* biome-ignore lint/complexity/noImportantStyles: required to preserve monospace under global font override */
+    monospace !important;
+}
+
 /* Required for drag regions to work with touch/pen on Windows */
 *[data-tauri-drag-region] {
   -webkit-app-region: drag;

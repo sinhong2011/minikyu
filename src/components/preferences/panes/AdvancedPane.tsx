@@ -16,7 +16,7 @@ import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
 import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { arch, version as osVersion, platform } from '@tauri-apps/plugin-os';
-import { useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -761,6 +761,83 @@ export function AdvancedPane() {
           </SettingsField>
         </SettingsSection>
       )}
+
+      {/* ── Settings JSON Preview ──────────────────────────────────── */}
+      {preferences && <SettingsJsonPreview preferences={preferences} />}
     </div>
+  );
+}
+
+function SettingsJsonPreview({ preferences }: { preferences: AppPreferences }) {
+  const { _ } = useLingui();
+  const { copy, copied } = useClipboard();
+  const [expanded, setExpanded] = useState(false);
+  const [highlightedHtml, setHighlightedHtml] = useState<string | null>(null);
+  const json = useMemo(() => JSON.stringify(preferences, null, 2), [preferences]);
+  const isDark = document.documentElement.classList.contains('dark');
+
+  useEffect(() => {
+    let cancelled = false;
+    import('@/lib/shiki-highlight').then(({ highlightCodeWithShiki }) =>
+      highlightCodeWithShiki({
+        code: json,
+        language: 'json',
+        isDarkMode: isDark,
+        theme: 'tokyo-night',
+      }).then((html) => {
+        if (!cancelled && html) setHighlightedHtml(html);
+      })
+    );
+    return () => {
+      cancelled = true;
+    };
+  }, [json, isDark]);
+
+  return (
+    <SettingsSection title={_(msg`Settings Preview`)}>
+      <div className="space-y-2">
+        <div className="flex items-center justify-between">
+          <p className="text-xs text-muted-foreground">{_(msg`Current preferences as JSON`)}</p>
+          <div className="flex items-center gap-1.5">
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              onClick={() => copy(json)}
+            >
+              <HugeiconsIcon icon={Copy01Icon} className="size-3.5" />
+              {copied ? _(msg`Copied!`) : _(msg`Copy`)}
+            </Button>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-7 px-2 text-xs"
+              onClick={() => setExpanded(!expanded)}
+            >
+              {expanded ? _(msg`Collapse`) : _(msg`Expand`)}
+            </Button>
+          </div>
+        </div>
+        {highlightedHtml ? (
+          <div
+            data-no-ui-font=""
+            className={`overflow-auto rounded-lg border font-mono text-[11px] leading-relaxed [&_pre]:!p-3 [&_pre]:!m-0 [&_pre]:!rounded-lg [&_pre]:!font-mono ${
+              expanded ? 'max-h-[60vh]' : 'max-h-48'
+            }`}
+            // biome-ignore lint/security/noDangerouslySetInnerHtml: trusted shiki output from local preferences JSON
+            dangerouslySetInnerHTML={{ __html: highlightedHtml }}
+          />
+        ) : (
+          <pre
+            data-no-ui-font=""
+            className={`overflow-auto rounded-lg border bg-muted/30 p-3 font-mono text-[11px] leading-relaxed text-foreground/80 ${
+              expanded ? 'max-h-[60vh]' : 'max-h-48'
+            }`}
+          >
+            {json}
+          </pre>
+        )}
+      </div>
+    </SettingsSection>
   );
 }

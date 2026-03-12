@@ -1421,6 +1421,7 @@ export function EntryReading({
                     }}
                     transition={articleEnterTransition}
                     className="px-4 py-8 transition-colors duration-300 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
+                    data-no-ui-font=""
                     style={readerSurfaceStyle}
                   >
                     <ArticleSummaryCard

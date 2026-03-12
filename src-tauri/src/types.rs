@@ -153,6 +153,12 @@ pub struct AppPreferences {
     /// UI background transparency (0.0 to 1.0). 0 = fully opaque, 1 = fully transparent. Defaults to 0.
     #[serde(default)]
     pub background_transparency: f64,
+    /// Custom UI font family. None means use default (Figtree).
+    #[serde(default)]
+    pub ui_font_family: Option<String>,
+    /// Custom UI font size in pixels. None means use browser default (16px).
+    #[serde(default)]
+    pub ui_font_size: Option<f64>,
     /// Global shortcut for quick pane (e.g., "CommandOrControl+Shift+.")
     /// If None, uses to default shortcut
     pub quick_pane_shortcut: Option<String>,
@@ -430,6 +436,8 @@ impl Default for AppPreferences {
             background_image_blur: 0,
             background_image_size: default_background_image_size(),
             background_transparency: 0.0,
+            ui_font_family: None,
+            ui_font_size: None,
             quick_pane_shortcut: None, // None means use default
             language: None,            // None means use system locale
             close_behavior: CloseBehavior::default(),
@@ -638,11 +646,10 @@ pub fn validate_reader_settings(
     if !line_height.is_finite() || !(1.4..=2.2).contains(&line_height) {
         return Err("Line height must be between 1.4 and 2.2".to_string());
     }
-    match font_family {
-        "sans-serif" | "system-ui" | "humanist" | "serif" | "georgia" | "book-serif"
-        | "monospace" => Ok(()),
-        _ => Err("Invalid font family: must be one of 'sans-serif', 'system-ui', 'humanist', 'serif', 'georgia', 'book-serif', or 'monospace'".to_string()),
+    if font_family.is_empty() {
+        return Err("Font family cannot be empty".to_string());
     }
+    Ok(())
 }
 
 /// Validates reader theme value.
