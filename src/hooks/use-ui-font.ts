@@ -13,13 +13,10 @@ export function useUiFont() {
   const uiFontFamily = preferences?.ui_font_family;
 
   useEffect(() => {
-    const root = document.documentElement;
-    if (uiFontFamily) {
-      // Tailwind v4 @theme inline compiles font-sans to a static value,
-      // so we must override font-family directly instead of the CSS variable.
-      root.style.fontFamily = `"${uiFontFamily}", ${FONT_FALLBACK}`;
-    } else {
-      root.style.fontFamily = '';
-    }
+    // Tailwind v4 @theme inline compiles font-sans to a static value on both
+    // html and body, so we must override font-family directly on both elements.
+    const fontValue = uiFontFamily ? `"${uiFontFamily}", ${FONT_FALLBACK}` : '';
+    document.documentElement.style.fontFamily = fontValue;
+    document.body.style.fontFamily = fontValue;
   }, [uiFontFamily]);
 }
