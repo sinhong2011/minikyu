@@ -15,9 +15,11 @@ export function useUiFont() {
   useEffect(() => {
     const root = document.documentElement;
     if (uiFontFamily) {
-      root.style.setProperty('--font-sans', `"${uiFontFamily}", ${FONT_FALLBACK}`);
+      // Tailwind v4 @theme inline compiles font-sans to a static value,
+      // so we must override font-family directly instead of the CSS variable.
+      root.style.fontFamily = `"${uiFontFamily}", ${FONT_FALLBACK}`;
     } else {
-      root.style.removeProperty('--font-sans');
+      root.style.fontFamily = '';
     }
   }, [uiFontFamily]);
 }
