@@ -358,17 +358,35 @@ pub async fn read_image_as_data_url(path: String) -> Result<String, String> {
 }
 
 /// List available system font families.
+///
+/// Runs on a blocking thread because font_kit calls CoreText APIs
+/// via synchronous XPC, which must not block the tokio runtime.
+/// Wrapped in catch_unwind because font_kit's CoreText FFI can
+/// panic internally on certain system configurations.
 #[tauri::command]
 #[specta::specta]
 pub async fn list_system_fonts() -> Result<Vec<String>, String> {
-    use font_kit::source::SystemSource;
-    use std::collections::BTreeSet;
+    tokio::task::spawn_blocking(|| {
+        use font_kit::source::SystemSource;
+        use std::collections::BTreeSet;
 
-    let source = SystemSource::new();
-    let families = source
-        .all_families()
-        .map_err(|e| format!("Failed to enumerate system fonts: {e}"))?;
+        let result = std::panic::catch_unwind(|| {
+            let source = SystemSource::new();
+            source.all_families()
+        });
 
-    let unique: BTreeSet<String> = families.into_iter().collect();
-    Ok(unique.into_iter().collect())
+        match result {
+            Ok(Ok(families)) => {
+                let unique: BTreeSet<String> = families.into_iter().collect();
+                Ok(unique.into_iter().collect())
+            }
+            Ok(Err(e)) => Err(format!("Failed to enumerate system fonts: {e}")),
+            Err(_) => {
+                log::error!("font_kit panicked while enumerating system fonts");
+                Err("System font enumeration failed unexpectedly".to_string())
+            }
+        }
+    })
+    .await
+    .map_err(|e| format!("Font enumeration task failed: {e}"))?
 }
