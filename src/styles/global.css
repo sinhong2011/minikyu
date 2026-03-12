@@ -65,17 +65,19 @@
 }
 
 /* UI font override — placed outside @layer so it beats Tailwind utilities.
-   When data-ui-font is set on html, override font-family everywhere. */
+   When data-ui-font is set on html, override font-family everywhere
+   EXCEPT elements with data-no-ui-font (reader content, font previews)
+   and their descendants. */
 html[data-ui-font],
 html[data-ui-font] body,
-html[data-ui-font] * {
+html[data-ui-font] *:not([data-no-ui-font]):not([data-no-ui-font] *) {
   font-family: var(--ui-font-override) !important;
 }
 /* Preserve monospace for code elements */
-html[data-ui-font] code,
-html[data-ui-font] pre,
-html[data-ui-font] kbd,
-html[data-ui-font] samp {
+html[data-ui-font] code:not([data-no-ui-font] *),
+html[data-ui-font] pre:not([data-no-ui-font] *),
+html[data-ui-font] kbd:not([data-no-ui-font] *),
+html[data-ui-font] samp:not([data-no-ui-font] *) {
   font-family:
     ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
     monospace !important;

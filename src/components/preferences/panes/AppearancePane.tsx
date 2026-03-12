@@ -12,8 +12,15 @@ import { useQuery } from '@tanstack/react-query';
 import { open as openDialog } from '@tauri-apps/plugin-dialog';
 import { locale } from '@tauri-apps/plugin-os';
 import { AnimatePresence, motion } from 'motion/react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import {
+  Combobox,
+  ComboboxContent,
+  ComboboxInput,
+  ComboboxItem,
+  ComboboxList,
+} from '@/components/ui/combobox';
 import { Input } from '@/components/ui/input';
 import { Menu, MenuItem, MenuPanel, MenuTrigger } from '@/components/ui/menu';
 import {
@@ -162,6 +169,33 @@ export function AppearancePane() {
             }}
             disabled={savePreferences.isPending}
           />
+        </SettingsField>
+        <SettingsField
+          label={_(msg`UI Font Size`)}
+          description={_(msg`Adjust the interface text size (⌘+/⌘-)`)}
+        >
+          <div className="flex w-48 items-center gap-3">
+            <Slider
+              value={[preferences?.ui_font_size ?? 16]}
+              onValueChange={(values) => {
+                const value = Array.isArray(values) ? values[0] : values;
+                if (preferences) {
+                  savePreferences.mutate({
+                    ...preferences,
+                    // biome-ignore lint/style/useNamingConvention: preferences field name
+                    ui_font_size: value === 16 ? null : value,
+                  });
+                }
+              }}
+              min={12}
+              max={24}
+              step={1}
+              className="flex-1"
+            />
+            <span className="w-12 text-right text-sm tabular-nums text-muted-foreground">
+              {preferences?.ui_font_size ?? 16}px
+            </span>
+          </div>
         </SettingsField>
       </SettingsSection>
 
@@ -353,24 +387,44 @@ function FontSelector({
     staleTime: Number.POSITIVE_INFINITY,
   });
 
+  const defaultLabel = _(msg`Default (System)`);
+
+  const allItems = useMemo(() => ['__default__', ...(fonts ?? [])], [fonts]);
+
   return (
-    <Select
+    <Combobox
       value={value ?? '__default__'}
-      onValueChange={(v) => onChange(v === '__default__' ? null : v)}
+      onValueChange={(v) => {
+        if (v && typeof v === 'string') {
+          onChange(v === '__default__' ? null : v);
+        }
+      }}
+      items={allItems}
+      itemToStringLabel={(v) => (v === '__default__' ? defaultLabel : String(v))}
       disabled={disabled}
     >
-      <SelectTrigger className="w-48" style={value ? { fontFamily: value } : undefined}>
-        <SelectValue />
-      </SelectTrigger>
-      <SelectContent className="max-h-64">
-        <SelectItem value="__default__">{_(msg`Default (Figtree)`)}</SelectItem>
-        {fonts?.map((font) => (
-          <SelectItem key={font} value={font} style={{ fontFamily: font }}>
-            {font}
-          </SelectItem>
-        ))}
-      </SelectContent>
-    </Select>
+      <ComboboxInput
+        data-no-ui-font=""
+        placeholder={_(msg`Search fonts...`)}
+        className="w-48 bg-background/70 text-sm ring-0!"
+        style={value ? { fontFamily: value } : undefined}
+      />
+      <ComboboxContent>
+        <ComboboxList>
+          {(item: string) => (
+            <ComboboxItem key={item} value={item}>
+              {item === '__default__' ? (
+                defaultLabel
+              ) : (
+                <span data-no-ui-font="" style={{ fontFamily: item }}>
+                  {item}
+                </span>
+              )}
+            </ComboboxItem>
+          )}
+        </ComboboxList>
+      </ComboboxContent>
+    </Combobox>
   );
 }
 

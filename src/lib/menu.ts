@@ -186,22 +186,22 @@ export async function buildAppMenu(): Promise<Menu> {
         }),
         await PredefinedMenuItem.new({ item: 'Separator' }),
         await MenuItem.new({
-          id: 'font-increase',
-          text: _(msg`Increase Font Size`),
+          id: 'ui-zoom-in',
+          text: _(msg`Zoom In`),
           accelerator: 'CmdOrCtrl+Plus',
-          action: handleFontSizeIncrease,
+          action: handleUiZoomIn,
         }),
         await MenuItem.new({
-          id: 'font-decrease',
-          text: _(msg`Decrease Font Size`),
+          id: 'ui-zoom-out',
+          text: _(msg`Zoom Out`),
           accelerator: 'CmdOrCtrl+-',
-          action: handleFontSizeDecrease,
+          action: handleUiZoomOut,
         }),
         await MenuItem.new({
-          id: 'font-reset',
-          text: _(msg`Reset Font Size`),
+          id: 'ui-zoom-reset',
+          text: _(msg`Reset Zoom`),
           accelerator: 'CmdOrCtrl+0',
-          action: handleFontSizeReset,
+          action: handleUiZoomReset,
         }),
         await PredefinedMenuItem.new({ item: 'Separator' }),
         readerThemeSubmenu,
@@ -274,6 +274,22 @@ export async function buildAppMenu(): Promise<Menu> {
           text: _(msg`Next Article`),
           accelerator: 'CmdOrCtrl+]',
           action: () => dispatchCommand('command:next-article'),
+        }),
+        await PredefinedMenuItem.new({ item: 'Separator' }),
+        await MenuItem.new({
+          id: 'article-font-increase',
+          text: _(msg`Increase Reader Font`),
+          action: handleFontSizeIncrease,
+        }),
+        await MenuItem.new({
+          id: 'article-font-decrease',
+          text: _(msg`Decrease Reader Font`),
+          action: handleFontSizeDecrease,
+        }),
+        await MenuItem.new({
+          id: 'article-font-reset',
+          text: _(msg`Reset Reader Font`),
+          action: handleFontSizeReset,
         }),
       ],
     });
@@ -547,6 +563,18 @@ function handleToggleDownloads(): void {
 
 function handleZenMode(): void {
   useUIStore.getState().toggleZenMode();
+}
+
+function handleUiZoomIn(): void {
+  document.dispatchEvent(new CustomEvent('command:ui-zoom-in'));
+}
+
+function handleUiZoomOut(): void {
+  document.dispatchEvent(new CustomEvent('command:ui-zoom-out'));
+}
+
+function handleUiZoomReset(): void {
+  document.dispatchEvent(new CustomEvent('command:ui-zoom-reset'));
 }
 
 function handleFontSizeIncrease(): void {

@@ -1515,6 +1515,10 @@ background_transparency?: number;
  */
 ui_font_family?: string | null; 
 /**
+ * Custom UI font size in pixels. None means use browser default (16px).
+ */
+ui_font_size?: number | null; 
+/**
  * Global shortcut for quick pane (e.g., "CommandOrControl+Shift+.")
  * If None, uses to default shortcut
  */

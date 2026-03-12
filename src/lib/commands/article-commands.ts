@@ -142,4 +142,34 @@ export const articleCommands: AppCommand[] = [
       document.dispatchEvent(new CustomEvent('command:podcast-add-to-playlist'));
     },
   },
+  {
+    id: 'article-increase-font',
+    label: msg`Increase Reader Font`,
+    description: msg`Make reader text larger`,
+    group: 'article',
+    keywords: ['font', 'size', 'larger', 'bigger', 'reader'],
+    execute: () => {
+      document.dispatchEvent(new CustomEvent('command:font-size-increase'));
+    },
+  },
+  {
+    id: 'article-decrease-font',
+    label: msg`Decrease Reader Font`,
+    description: msg`Make reader text smaller`,
+    group: 'article',
+    keywords: ['font', 'size', 'smaller', 'reader'],
+    execute: () => {
+      document.dispatchEvent(new CustomEvent('command:font-size-decrease'));
+    },
+  },
+  {
+    id: 'article-reset-font',
+    label: msg`Reset Reader Font`,
+    description: msg`Reset reader text to default size`,
+    group: 'article',
+    keywords: ['font', 'size', 'reset', 'default', 'reader'],
+    execute: () => {
+      document.dispatchEvent(new CustomEvent('command:font-size-reset'));
+    },
+  },
 ];
