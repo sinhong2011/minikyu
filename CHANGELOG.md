@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.1](https://github.com/sinhong2011/minikyu/compare/v1.10.0...v1.10.1) (2026-03-12)
+
+
+### Bug Fixes
+
+* Prevent crash on macOS font enumeration during system font changes ([#79](https://github.com/sinhong2011/minikyu/issues/79)) ([76cdde2](https://github.com/sinhong2011/minikyu/commit/76cdde2a527e1a219c2938f11527679b87e96829))
+
 ## [1.10.0](https://github.com/sinhong2011/minikyu/compare/v1.9.5...v1.10.0) (2026-03-12)
 
 
