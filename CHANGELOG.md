@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.0](https://github.com/sinhong2011/minikyu/compare/v1.9.5...v1.10.0) (2026-03-12)
+
+
+### Features
+
+* Custom UI font selection ([#77](https://github.com/sinhong2011/minikyu/issues/77)) ([6a3812c](https://github.com/sinhong2011/minikyu/commit/6a3812c0dfdb46140fa5e8f296ccfead45658a81))
+
 ## [1.9.5](https://github.com/sinhong2011/minikyu/compare/v1.9.4...v1.9.5) (2026-03-11)
 
 
