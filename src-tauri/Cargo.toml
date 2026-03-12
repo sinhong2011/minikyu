@@ -109,5 +109,5 @@ webdriver = ["tauri-plugin-webdriver"]
 codegen-units = 1 # Better LLVM optimization (slower build, smaller binary)
 lto = true        # Link-time optimizations
 opt-level = "s"   # Optimize for size over speed
-panic = "abort"   # Don't include panic unwinding code
-strip = true      # Remove debug symbols
+panic = "abort"        # Don't include panic unwinding code
+strip = "debuginfo"    # Keep function names for crash reports, strip only debug info
