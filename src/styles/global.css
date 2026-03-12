@@ -62,12 +62,23 @@
   html {
     @apply font-sans;
   }
-  /* When --ui-font-override is set, apply it everywhere including portals */
-  html[data-ui-font],
-  html[data-ui-font] body,
-  html[data-ui-font] [data-slot="dialog-content"] {
-    font-family: var(--ui-font-override);
-  }
+}
+
+/* UI font override — placed outside @layer so it beats Tailwind utilities.
+   When data-ui-font is set on html, override font-family everywhere. */
+html[data-ui-font],
+html[data-ui-font] body,
+html[data-ui-font] * {
+  font-family: var(--ui-font-override) !important;
+}
+/* Preserve monospace for code elements */
+html[data-ui-font] code,
+html[data-ui-font] pre,
+html[data-ui-font] kbd,
+html[data-ui-font] samp {
+  font-family:
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
+    monospace !important;
 }
 
 /* Required for drag regions to work with touch/pen on Windows */
