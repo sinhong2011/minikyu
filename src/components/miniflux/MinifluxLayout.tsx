@@ -11,7 +11,7 @@ import { useLingui } from '@lingui/react';
 import { useSearch } from '@tanstack/react-router';
 import { confirm } from '@tauri-apps/plugin-dialog';
 import { AnimatePresence, motion } from 'motion/react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import {
   Menu,
@@ -43,7 +43,11 @@ import { useMarkFeedAsRead, useSyncMiniflux } from '@/services/miniflux/feeds';
 import { useLastReadingEntry, useSaveLastReading } from '@/services/reading-state';
 import { useSyncStore } from '@/store/sync-store';
 import { useUIStore } from '@/store/ui-store';
-import { ConnectionDialog } from './ConnectionDialog';
+
+const ConnectionDialog = lazy(() =>
+  import('./ConnectionDialog').then((m) => ({ default: m.ConnectionDialog }))
+);
+
 import { EntryFiltersUI } from './EntryFilters';
 import { EntryList, type EntryListFilterStatus } from './EntryList';
 
@@ -453,7 +457,14 @@ export function MinifluxLayout() {
           >
             {inactiveAccounts.length > 0 ? _(msg`Add New Account`) : _(msg`Connect to Server`)}
           </Button>
-          <ConnectionDialog open={showConnectionDialog} onOpenChange={setShowConnectionDialog} />
+          {showConnectionDialog && (
+            <Suspense>
+              <ConnectionDialog
+                open={showConnectionDialog}
+                onOpenChange={setShowConnectionDialog}
+              />
+            </Suspense>
+          )}
         </div>
       </div>
     );
@@ -714,7 +725,11 @@ export function MinifluxLayout() {
           />
         </div>
       </div>
-      <ConnectionDialog open={showConnectionDialog} onOpenChange={setShowConnectionDialog} />
+      {showConnectionDialog && (
+        <Suspense>
+          <ConnectionDialog open={showConnectionDialog} onOpenChange={setShowConnectionDialog} />
+        </Suspense>
+      )}
     </MainWindowContent>
   );
 }
