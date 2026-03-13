@@ -1,10 +1,10 @@
 import { resolve } from 'node:path';
 import { lingui } from '@lingui/vite-plugin';
+import babel from '@rolldown/plugin-babel';
 import tailwindcss from '@tailwindcss/vite';
 import { tanstackRouter } from '@tanstack/router-plugin/vite';
-import react from '@vitejs/plugin-react';
+import react, { reactCompilerPreset } from '@vitejs/plugin-react';
 import { defineConfig } from 'vite';
-import tsconfigPaths from 'vite-tsconfig-paths';
 import packageJson from './package.json';
 
 const host = process.env.TAURI_DEV_HOST;
@@ -17,22 +17,23 @@ export default defineConfig(async () => ({
   },
   plugins: [
     tanstackRouter(), // MUST be before react()
-    tsconfigPaths(),
-    react({
-      babel: {
-        plugins: ['babel-plugin-react-compiler', '@lingui/babel-plugin-lingui-macro'],
-      },
+    react(), // v6: Oxc-based JSX transform and Fast Refresh
+    babel({
+      presets: [reactCompilerPreset()],
+      plugins: ['@lingui/babel-plugin-lingui-macro'],
     }),
     lingui(),
     tailwindcss(),
   ],
+  resolve: {
+    tsconfigPaths: true, // Native in Vite 8, replaces vite-tsconfig-paths
+  },
   css: {
     transformer: 'lightningcss',
-    minifier: 'lightningcss',
   },
   build: {
     chunkSizeWarningLimit: 600, // Prevent warnings for template's bundled components
-    rollupOptions: {
+    rolldownOptions: {
       input: {
         main: resolve(__dirname, 'index.html'),
         'quick-pane': resolve(__dirname, 'quick-pane.html'),
