@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.10.2](https://github.com/sinhong2011/minikyu/compare/v1.10.1...v1.10.2) (2026-03-13)
+
+
+### Bug Fixes
+
+* Suppress startup notifications when Miniflux server is not connected ([#83](https://github.com/sinhong2011/minikyu/issues/83)) ([abead89](https://github.com/sinhong2011/minikyu/commit/abead89046441f8e76c51ce86888a810533d95a5))
+
 ## [1.10.1](https://github.com/sinhong2011/minikyu/compare/v1.10.0...v1.10.1) (2026-03-12)
 
 
