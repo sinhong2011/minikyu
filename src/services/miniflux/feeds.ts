@@ -57,10 +57,17 @@ export function useFeeds(enabled: boolean = true) {
       const result = await commands.getFeeds();
 
       if (result.status === 'error') {
-        logger.error('Failed to fetch feeds', {
-          error: result.error,
-        });
-        toast.error(translate(msg`Failed to load feeds`), { description: result.error });
+        const isNotConnected = result.error === 'Not connected to Miniflux server';
+        if (isNotConnected) {
+          logger.debug('Miniflux not connected (expected on first launch)', {
+            error: result.error,
+          });
+        } else {
+          logger.error('Failed to fetch feeds', {
+            error: result.error,
+          });
+          toast.error(translate(msg`Failed to load feeds`), { description: result.error });
+        }
         throw new Error(result.error);
       }
 

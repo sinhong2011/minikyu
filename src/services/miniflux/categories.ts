@@ -35,12 +35,19 @@ export function useCategories(enabled: boolean = true) {
       const result = await commands.getCategories();
 
       if (result.status === 'error') {
-        logger.error('Failed to fetch categories', {
-          error: result.error,
-        });
-        toast.error(translate(msg`Failed to load categories`), {
-          description: result.error,
-        });
+        const isNotConnected = result.error === 'Not connected to Miniflux server';
+        if (isNotConnected) {
+          logger.debug('Miniflux not connected (expected on first launch)', {
+            error: result.error,
+          });
+        } else {
+          logger.error('Failed to fetch categories', {
+            error: result.error,
+          });
+          toast.error(translate(msg`Failed to load categories`), {
+            description: result.error,
+          });
+        }
         throw new Error(result.error);
       }
 
