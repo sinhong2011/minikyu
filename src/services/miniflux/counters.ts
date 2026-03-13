@@ -16,9 +16,16 @@ export function useUnreadCounts() {
       const result = await commands.getUnreadCounts();
 
       if (result.status === 'error') {
-        const errorMessage = `Failed to fetch unread counts: ${result.error}`;
-        logger.error(errorMessage);
-        toast.error(errorMessage);
+        const isNotConnected = result.error === 'Not connected to Miniflux server';
+        if (isNotConnected) {
+          logger.debug('Miniflux not connected (expected on first launch)', {
+            error: result.error,
+          });
+        } else {
+          const errorMessage = `Failed to fetch unread counts: ${result.error}`;
+          logger.error(errorMessage);
+          toast.error(errorMessage);
+        }
         throw new Error(result.error);
       }
 
