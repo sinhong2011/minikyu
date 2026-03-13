@@ -1,9 +1,21 @@
 import { open as openDialog } from '@tauri-apps/plugin-dialog';
-import { useEffect } from 'react';
-import { CommandPalette } from '@/components/command-palette/CommandPalette';
-import { DownloadManagerDialog } from '@/components/downloads/DownloadManagerDialog';
+import { lazy, Suspense, useEffect } from 'react';
 import { MinifluxSettingsDialogProvider } from '@/components/miniflux/settings/store';
-import { PreferencesDialog } from '@/components/preferences/PreferencesDialog';
+
+const CommandPalette = lazy(() =>
+  import('@/components/command-palette/CommandPalette').then((m) => ({ default: m.CommandPalette }))
+);
+const DownloadManagerDialog = lazy(() =>
+  import('@/components/downloads/DownloadManagerDialog').then((m) => ({
+    default: m.DownloadManagerDialog,
+  }))
+);
+const PreferencesDialog = lazy(() =>
+  import('@/components/preferences/PreferencesDialog').then((m) => ({
+    default: m.PreferencesDialog,
+  }))
+);
+
 import { TitleBar } from '@/components/titlebar';
 import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { showToast, Toaster } from '@/components/ui/sonner';
@@ -154,11 +166,13 @@ export function MainWindow({ children }: MainWindowProps = {}) {
           </SidebarProvider>
         </div>
 
-        <CommandPalette />
-        <DownloadManagerDialog />
-        <MinifluxSettingsDialogProvider>
-          <PreferencesDialog />
-        </MinifluxSettingsDialogProvider>
+        <Suspense>
+          <CommandPalette />
+          <DownloadManagerDialog />
+          <MinifluxSettingsDialogProvider>
+            <PreferencesDialog />
+          </MinifluxSettingsDialogProvider>
+        </Suspense>
 
         <ZenModeView />
       </div>
