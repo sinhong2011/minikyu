@@ -14,6 +14,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { FeedAvatar } from '@/components/miniflux';
+import { NewEntryAnimationWrapper } from '@/components/miniflux/NewEntryAnimationWrapper';
 import {
   Item,
   ItemActions,
@@ -92,7 +93,9 @@ export function EntryList({
     isFetchingNextPage,
   } = useEntries(filters);
   const prefetchEntry = usePrefetchEntry();
-  const [newEntryIds, setNewEntryIds] = useState<Set<string>>(() => new Set());
+  const [newEntryMap, setNewEntryMap] = useState<Map<string, number>>(() => new Map());
+  const [routeChangeMap, setRouteChangeMap] = useState<Map<string, number>>(() => new Map());
+  const isRouteChangeRef = useRef(false);
   const [listScrolling, setListScrolling] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
   const [pullReady, setPullReady] = useState(false);
@@ -194,7 +197,9 @@ export function EntryList({
     if (filterKeyRef.current !== filtersKey) {
       filterKeyRef.current = filtersKey;
       previousEntryIdsRef.current = [];
-      setNewEntryIds(new Set());
+      isRouteChangeRef.current = true;
+      setNewEntryMap(new Map());
+      setRouteChangeMap(new Map());
       removalTimersRef.current.forEach((timeoutId) => {
         window.clearTimeout(timeoutId);
       });
@@ -211,6 +216,10 @@ export function EntryList({
     previousEntryIdsRef.current = nextIds;
 
     if (prevIds.length === 0) {
+      if (isRouteChangeRef.current) {
+        isRouteChangeRef.current = false;
+        setRouteChangeMap(new Map(nextIds.map((id, i) => [id, Math.min(i, 10)])));
+      }
       return;
     }
 
@@ -218,10 +227,10 @@ export function EntryList({
     const added = nextIds.filter((id) => !prevSet.has(id));
     if (added.length === 0) return;
 
-    setNewEntryIds((current) => {
-      const next = new Set(current);
-      added.forEach((id) => {
-        next.add(id);
+    setNewEntryMap((current) => {
+      const next = new Map(current);
+      added.forEach((id, i) => {
+        next.set(id, Math.min(i, 8));
       });
       return next;
     });
@@ -233,8 +242,8 @@ export function EntryList({
       }
 
       const timeoutId = window.setTimeout(() => {
-        setNewEntryIds((current) => {
-          const next = new Set(current);
+        setNewEntryMap((current) => {
+          const next = new Map(current);
           next.delete(id);
           return next;
         });
@@ -724,7 +733,7 @@ export function EntryList({
                 : 'transform 280ms cubic-bezier(0.175, 0.885, 0.32, 1.08)',
             }}
           >
-            <AnimatePresence mode="popLayout">
+            <AnimatePresence key={filtersKey}>
               {listRows.map((row) => {
                 if (row.type === 'section') {
                   if (row.key === firstSectionKey) {
@@ -754,7 +763,9 @@ export function EntryList({
                 }
 
                 const entry = row.entry;
-                const isNew = newEntryIds.has(entry.id);
+                const isNew = newEntryMap.has(entry.id);
+                const staggerIndex = newEntryMap.get(entry.id) ?? 0;
+                const routeChangeIndex = routeChangeMap.get(entry.id);
                 const thumbnailUrl = extractThumbnail(entry);
                 const podcastEnclosure = getPodcastEnclosure(entry);
                 const podcastDuration = podcastEnclosure?.length
@@ -764,150 +775,160 @@ export function EntryList({
                 return (
                   <motion.div
                     key={entry.id}
-                    className="px-3"
-                    layout
-                    initial={isNew ? { opacity: 0, y: -16, scale: 0.98 } : false}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                    transition={{
-                      duration: isNew ? 0.35 : 0.25,
-                      ease: [0.4, 0, 0.2, 1],
+                    className="overflow-hidden"
+                    exit={{
+                      height: 0,
+                      opacity: 0,
+                      filter: 'blur(0.8px)',
+                      transition: {
+                        height: { type: 'spring', stiffness: 400, damping: 35 },
+                        opacity: { duration: 0.18, ease: [0.45, 0, 1, 1] as const },
+                        filter: { duration: 0.2, ease: [0.35, 0, 0.9, 1] as const },
+                      },
                     }}
                   >
-                    <button
-                      type="button"
-                      onClick={() => handleEntryClick(entry.id)}
-                      onKeyDown={handleKeyDown(entry.id)}
-                      onMouseEnter={() => handleEntryHover(entry.id)}
-                      className="w-full cursor-pointer border-none bg-transparent text-left focus:outline-none"
+                    <NewEntryAnimationWrapper
+                      isNew={isNew}
+                      staggerIndex={staggerIndex}
+                      routeChangeIndex={routeChangeIndex}
                     >
-                      <Item
-                        variant={selectedEntryId === entry.id ? 'outline' : 'default'}
-                        className={cn(
-                          'relative group p-4 transition-all duration-300 ease-out',
-                          'hover:border-border/50 hover:bg-black/[0.04] dark:hover:bg-white/[0.07]',
-                          selectedEntryId === entry.id &&
-                            'bg-black/[0.06] dark:bg-white/10 shadow-md',
-                          isNew && 'border-primary/50 bg-primary/5 ring-1 ring-primary/20'
-                        )}
+                      <button
+                        type="button"
+                        onClick={() => handleEntryClick(entry.id)}
+                        onKeyDown={handleKeyDown(entry.id)}
+                        onMouseEnter={() => handleEntryHover(entry.id)}
+                        className="w-full cursor-pointer border-none bg-transparent text-left focus:outline-none"
                       >
-                        <ItemHeader>
-                          <div className="flex w-full items-center justify-between gap-2 text-xs text-muted-foreground/60">
-                            <div className="flex min-w-0 items-center gap-2">
-                              {entry.feed.site_url && (
-                                <FeedAvatar
-                                  className="size-4!"
-                                  domain={entry.feed.site_url}
-                                  title={entry.feed.title}
-                                />
-                              )}
-                              <span className="max-w-[120px] truncate">{entry.feed.title}</span>
-                            </div>
-                            <div className="flex shrink-0 items-center gap-2">
-                              {podcastEnclosure ? (
-                                <div className="flex items-center gap-1">
-                                  <button
-                                    type="button"
-                                    className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-muted-foreground/80 transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-foreground"
-                                    title={_(msg`Download`)}
-                                    data-testid="podcast-indicator-download"
-                                    onClick={(event) => {
-                                      event.preventDefault();
-                                      event.stopPropagation();
-                                      handleDownloadPodcast(entry, podcastEnclosure);
-                                    }}
-                                  >
-                                    <HugeiconsIcon icon={Download01Icon} className="size-3" />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-muted-foreground/80 transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-foreground"
-                                    title={_(msg`Play`)}
-                                    data-testid="podcast-indicator-play"
-                                    onClick={(event) => {
-                                      event.preventDefault();
-                                      event.stopPropagation();
-                                      handlePlayPodcast(entry, podcastEnclosure);
-                                    }}
-                                  >
-                                    <HugeiconsIcon icon={PlayIcon} className="size-3" />
-                                  </button>
-                                  <button
-                                    type="button"
-                                    className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-muted-foreground/80 transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-foreground"
-                                    title={_(msg`Add to playlist`)}
-                                    data-testid="podcast-indicator-queue"
-                                    onClick={(event) => {
-                                      event.preventDefault();
-                                      event.stopPropagation();
-                                      usePlayerStore.getState().addToQueue(entry, podcastEnclosure);
-                                      toast.message(_(msg`Added to playlist`), {
-                                        description: entry.title,
-                                      });
-                                    }}
-                                  >
-                                    <HugeiconsIcon icon={Playlist03Icon} className="size-3" />
-                                  </button>
-                                  <span
-                                    className="flex items-center gap-1"
-                                    data-testid="podcast-indicator"
-                                  >
-                                    <HugeiconsIcon icon={HeadphonesIcon} className="size-3" />
-                                    {podcastDuration || _(msg`Podcast`)}
-                                  </span>
-                                </div>
-                              ) : (
-                                entry.reading_time && (
-                                  <span>{_(msg`${entry.reading_time} min read`)}</span>
-                                )
-                              )}
-                              <span className="text-border">•</span>
-                              <span className="text-xs text-muted-foreground/70">
-                                {formatEntryTime(entry.published_at, use24h)}
-                              </span>
-                              {entry.status === 'unread' && (
-                                <div className="h-2.5 w-2.5 rounded-full bg-primary/70 shadow-sm" />
-                              )}
-                            </div>
-                          </div>
-                        </ItemHeader>
-                        <ItemContent className="basis-full min-w-0 space-y-1">
-                          <ItemTitle
-                            className={cn(
-                              'line-clamp-2 w-full break-words font-semibold text-base leading-snug tracking-tight transition-colors',
-                              entry.status === 'unread'
-                                ? 'text-foreground'
-                                : 'text-muted-foreground'
-                            )}
-                          >
-                            {entry.title}
-                          </ItemTitle>
-
-                          {thumbnailUrl && (
-                            <div className="relative mt-3 h-32 w-full shrink-0 overflow-hidden rounded-lg border border-border/30 bg-muted">
-                              <img
-                                src={thumbnailUrl}
-                                alt=""
-                                className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
-                                loading="lazy"
-                              />
-                            </div>
+                        <Item
+                          variant={selectedEntryId === entry.id ? 'outline' : 'default'}
+                          className={cn(
+                            'relative group p-4 transition-all duration-300 ease-out',
+                            'hover:border-border/50 hover:bg-black/[0.04] dark:hover:bg-white/[0.07]',
+                            selectedEntryId === entry.id &&
+                              'bg-black/[0.06] dark:bg-white/10 shadow-md',
+                            isNew && 'border-primary/50 bg-primary/5 ring-1 ring-primary/20'
                           )}
+                        >
+                          <ItemHeader>
+                            <div className="flex w-full items-center justify-between gap-2 text-xs text-muted-foreground/60">
+                              <div className="flex min-w-0 items-center gap-2">
+                                {entry.feed.site_url && (
+                                  <FeedAvatar
+                                    className="size-4!"
+                                    domain={entry.feed.site_url}
+                                    title={entry.feed.title}
+                                  />
+                                )}
+                                <span className="max-w-[120px] truncate">{entry.feed.title}</span>
+                              </div>
+                              <div className="flex shrink-0 items-center gap-2">
+                                {podcastEnclosure ? (
+                                  <div className="flex items-center gap-1">
+                                    <button
+                                      type="button"
+                                      className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-muted-foreground/80 transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-foreground"
+                                      title={_(msg`Download`)}
+                                      data-testid="podcast-indicator-download"
+                                      onClick={(event) => {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                        handleDownloadPodcast(entry, podcastEnclosure);
+                                      }}
+                                    >
+                                      <HugeiconsIcon icon={Download01Icon} className="size-3" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-muted-foreground/80 transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-foreground"
+                                      title={_(msg`Play`)}
+                                      data-testid="podcast-indicator-play"
+                                      onClick={(event) => {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                        handlePlayPodcast(entry, podcastEnclosure);
+                                      }}
+                                    >
+                                      <HugeiconsIcon icon={PlayIcon} className="size-3" />
+                                    </button>
+                                    <button
+                                      type="button"
+                                      className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-muted-foreground/80 transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-foreground"
+                                      title={_(msg`Add to playlist`)}
+                                      data-testid="podcast-indicator-queue"
+                                      onClick={(event) => {
+                                        event.preventDefault();
+                                        event.stopPropagation();
+                                        usePlayerStore
+                                          .getState()
+                                          .addToQueue(entry, podcastEnclosure);
+                                        toast.message(_(msg`Added to playlist`), {
+                                          description: entry.title,
+                                        });
+                                      }}
+                                    >
+                                      <HugeiconsIcon icon={Playlist03Icon} className="size-3" />
+                                    </button>
+                                    <span
+                                      className="flex items-center gap-1"
+                                      data-testid="podcast-indicator"
+                                    >
+                                      <HugeiconsIcon icon={HeadphonesIcon} className="size-3" />
+                                      {podcastDuration || _(msg`Podcast`)}
+                                    </span>
+                                  </div>
+                                ) : (
+                                  entry.reading_time && (
+                                    <span>{_(msg`${entry.reading_time} min read`)}</span>
+                                  )
+                                )}
+                                <span className="text-border">•</span>
+                                <span className="text-xs text-muted-foreground/70">
+                                  {formatEntryTime(entry.published_at, use24h)}
+                                </span>
+                                {entry.status === 'unread' && (
+                                  <div className="h-2.5 w-2.5 rounded-full bg-primary/70 shadow-sm" />
+                                )}
+                              </div>
+                            </div>
+                          </ItemHeader>
+                          <ItemContent className="basis-full min-w-0 space-y-1">
+                            <ItemTitle
+                              className={cn(
+                                'line-clamp-2 w-full break-words font-semibold text-base leading-snug tracking-tight transition-colors',
+                                entry.status === 'unread'
+                                  ? 'text-foreground'
+                                  : 'text-muted-foreground'
+                              )}
+                            >
+                              {entry.title}
+                            </ItemTitle>
 
-                          <ItemDescription className="mt-3 line-clamp-3 break-all">
-                            {entry.content
-                              ?.replace(/<[^>]*>/g, '')
-                              .replace(/&nbsp;/g, ' ')
-                              .replace(/\s+/g, ' ')
-                              .trim()}
-                          </ItemDescription>
-                        </ItemContent>
+                            {thumbnailUrl && (
+                              <div className="relative mt-3 h-32 w-full shrink-0 overflow-hidden rounded-lg border border-border/30 bg-muted">
+                                <img
+                                  src={thumbnailUrl}
+                                  alt=""
+                                  className="absolute inset-0 h-full w-full object-cover transition-transform duration-500 ease-out group-hover:scale-105"
+                                  loading="lazy"
+                                />
+                              </div>
+                            )}
 
-                        <ItemActions></ItemActions>
-                      </Item>
-                    </button>
+                            <ItemDescription className="mt-3 line-clamp-3 break-all">
+                              {entry.content
+                                ?.replace(/<[^>]*>/g, '')
+                                .replace(/&nbsp;/g, ' ')
+                                .replace(/\s+/g, ' ')
+                                .trim()}
+                            </ItemDescription>
+                          </ItemContent>
 
-                    {row.showSeparator && <div className="my-2" />}
+                          <ItemActions></ItemActions>
+                        </Item>
+                      </button>
+
+                      {row.showSeparator && <div className="my-2" />}
+                    </NewEntryAnimationWrapper>
                   </motion.div>
                 );
               })}
