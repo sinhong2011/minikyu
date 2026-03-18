@@ -2,12 +2,8 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { commands } from '@/lib/tauri-bindings';
 import { useUIStore } from '@/store/ui-store';
 
-// Duration matching the shadcn SidebarProvider CSS transition.
-const SIDEBAR_ANIMATION_MS = 250;
-
 export function useInAppBrowser() {
   const setInAppBrowserUrl = useUIStore((state) => state.setInAppBrowserUrl);
-  const setLeftSidebarVisible = useUIStore((state) => state.setLeftSidebarVisible);
   const inAppBrowserUrl = useUIStore((state) => state.inAppBrowserUrl);
   // Modal states — native webview must be hidden while these are open because
   // WKWebView sits above all React content regardless of CSS z-index.
@@ -31,17 +27,13 @@ export function useInAppBrowser() {
     return () => observer.disconnect();
   }, []);
 
-  /**
-   * Opens the browser for the given URL.
-   * Hides the sidebar, then after the CSS transition completes reads the
-   * pane rect and calls the Tauri open command.
-   */
+  /** Opens the browser for the given URL. */
   const openBrowser = useCallback(
     (url: string) => {
       setInAppBrowserUrl(url);
-      setLeftSidebarVisible(false);
 
-      setTimeout(() => {
+      // Use rAF to wait for the browser pane to render and have a valid rect.
+      requestAnimationFrame(() => {
         const el = browserContentRef.current;
         if (!el) return;
         const rect = el.getBoundingClientRect();
@@ -51,12 +43,12 @@ export function useInAppBrowser() {
         commands
           .openInAppBrowser(url, rect.left, rect.top, rect.width, rect.height, dark)
           .catch((err) => console.error('[useInAppBrowser] open failed:', err));
-      }, SIDEBAR_ANIMATION_MS);
+      });
     },
-    [setInAppBrowserUrl, setLeftSidebarVisible]
+    [setInAppBrowserUrl]
   );
 
-  /** Closes the browser and restores the sidebar. */
+  /** Closes the browser. */
   const closeBrowser = useCallback(async () => {
     try {
       await commands.closeInAppBrowser();
@@ -64,8 +56,7 @@ export function useInAppBrowser() {
       console.error('[useInAppBrowser] close failed:', err);
     }
     setInAppBrowserUrl(null);
-    setLeftSidebarVisible(true);
-  }, [setInAppBrowserUrl, setLeftSidebarVisible]);
+  }, [setInAppBrowserUrl]);
 
   // ESC and Cmd/Ctrl+W close the browser when it is open.
   useEffect(() => {
