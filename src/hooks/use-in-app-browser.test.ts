@@ -36,7 +36,7 @@ describe('useInAppBrowser', () => {
     expect(useUIStore.getState().inAppBrowserUrl).toBeNull();
   });
 
-  it('closeBrowser restores sidebar visibility', async () => {
+  it('closeBrowser does not affect sidebar visibility', async () => {
     const { result } = renderHook(() => useInAppBrowser());
     useUIStore.setState({ leftSidebarVisible: false });
 
@@ -44,6 +44,6 @@ describe('useInAppBrowser', () => {
       await result.current.closeBrowser();
     });
 
-    expect(useUIStore.getState().leftSidebarVisible).toBe(true);
+    expect(useUIStore.getState().leftSidebarVisible).toBe(false);
   });
 });
