@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.0](https://github.com/sinhong2011/minikyu/compare/v1.10.2...v1.11.0) (2026-03-18)
+
+
+### Features
+
+* Entry list animation system overhaul ([#85](https://github.com/sinhong2011/minikyu/issues/85)) ([d6a6cd8](https://github.com/sinhong2011/minikyu/commit/d6a6cd88e74394813225d74a6d4b9df3e567f97a))
+
 ## [1.10.2](https://github.com/sinhong2011/minikyu/compare/v1.10.1...v1.10.2) (2026-03-13)
 
 
