@@ -134,6 +134,7 @@ describe('ImmersiveTranslationLayer', () => {
     );
 
     await screen.findByText('Translated: Paragraph one original');
+    await screen.findByText('Translated: Paragraph two original');
     expect(screen.queryByText('Paragraph one original')).not.toBeInTheDocument();
     expect(screen.queryByText('Paragraph two original')).not.toBeInTheDocument();
   });
