@@ -14,6 +14,7 @@ import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { FeedAvatar } from '@/components/miniflux';
+import { NewEntryAnimationWrapper } from '@/components/miniflux/NewEntryAnimationWrapper';
 import {
   Item,
   ItemActions,
@@ -92,7 +93,7 @@ export function EntryList({
     isFetchingNextPage,
   } = useEntries(filters);
   const prefetchEntry = usePrefetchEntry();
-  const [newEntryIds, setNewEntryIds] = useState<Set<string>>(() => new Set());
+  const [newEntryMap, setNewEntryMap] = useState<Map<string, number>>(() => new Map());
   const [listScrolling, setListScrolling] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
   const [pullReady, setPullReady] = useState(false);
@@ -194,7 +195,7 @@ export function EntryList({
     if (filterKeyRef.current !== filtersKey) {
       filterKeyRef.current = filtersKey;
       previousEntryIdsRef.current = [];
-      setNewEntryIds(new Set());
+      setNewEntryMap(new Map());
       removalTimersRef.current.forEach((timeoutId) => {
         window.clearTimeout(timeoutId);
       });
@@ -218,10 +219,10 @@ export function EntryList({
     const added = nextIds.filter((id) => !prevSet.has(id));
     if (added.length === 0) return;
 
-    setNewEntryIds((current) => {
-      const next = new Set(current);
-      added.forEach((id) => {
-        next.add(id);
+    setNewEntryMap((current) => {
+      const next = new Map(current);
+      added.forEach((id, i) => {
+        next.set(id, Math.min(i, 8));
       });
       return next;
     });
@@ -233,8 +234,8 @@ export function EntryList({
       }
 
       const timeoutId = window.setTimeout(() => {
-        setNewEntryIds((current) => {
-          const next = new Set(current);
+        setNewEntryMap((current) => {
+          const next = new Map(current);
           next.delete(id);
           return next;
         });
@@ -724,7 +725,7 @@ export function EntryList({
                 : 'transform 280ms cubic-bezier(0.175, 0.885, 0.32, 1.08)',
             }}
           >
-            <AnimatePresence mode="popLayout">
+            <>
               {listRows.map((row) => {
                 if (row.type === 'section') {
                   if (row.key === firstSectionKey) {
@@ -754,7 +755,8 @@ export function EntryList({
                 }
 
                 const entry = row.entry;
-                const isNew = newEntryIds.has(entry.id);
+                const isNew = newEntryMap.has(entry.id);
+                const staggerIndex = newEntryMap.get(entry.id) ?? 0;
                 const thumbnailUrl = extractThumbnail(entry);
                 const podcastEnclosure = getPodcastEnclosure(entry);
                 const podcastDuration = podcastEnclosure?.length
@@ -762,17 +764,10 @@ export function EntryList({
                   : null;
 
                 return (
-                  <motion.div
+                  <NewEntryAnimationWrapper
                     key={entry.id}
-                    className="px-3"
-                    layout
-                    initial={isNew ? { opacity: 0, y: -16, scale: 0.98 } : false}
-                    animate={{ opacity: 1, y: 0, scale: 1 }}
-                    exit={{ opacity: 0, y: -8, scale: 0.98 }}
-                    transition={{
-                      duration: isNew ? 0.35 : 0.25,
-                      ease: [0.4, 0, 0.2, 1],
-                    }}
+                    isNew={isNew}
+                    staggerIndex={staggerIndex}
                   >
                     <button
                       type="button"
@@ -908,10 +903,10 @@ export function EntryList({
                     </button>
 
                     {row.showSeparator && <div className="my-2" />}
-                  </motion.div>
+                  </NewEntryAnimationWrapper>
                 );
               })}
-            </AnimatePresence>
+            </>
 
             <div ref={loadMoreRef} className="h-4" />
 
