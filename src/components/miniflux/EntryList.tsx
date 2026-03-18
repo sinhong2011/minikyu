@@ -94,6 +94,8 @@ export function EntryList({
   } = useEntries(filters);
   const prefetchEntry = usePrefetchEntry();
   const [newEntryMap, setNewEntryMap] = useState<Map<string, number>>(() => new Map());
+  const [routeChangeMap, setRouteChangeMap] = useState<Map<string, number>>(() => new Map());
+  const isRouteChangeRef = useRef(false);
   const [listScrolling, setListScrolling] = useState(false);
   const [pullDistance, setPullDistance] = useState(0);
   const [pullReady, setPullReady] = useState(false);
@@ -195,7 +197,9 @@ export function EntryList({
     if (filterKeyRef.current !== filtersKey) {
       filterKeyRef.current = filtersKey;
       previousEntryIdsRef.current = [];
+      isRouteChangeRef.current = true;
       setNewEntryMap(new Map());
+      setRouteChangeMap(new Map());
       removalTimersRef.current.forEach((timeoutId) => {
         window.clearTimeout(timeoutId);
       });
@@ -212,6 +216,10 @@ export function EntryList({
     previousEntryIdsRef.current = nextIds;
 
     if (prevIds.length === 0) {
+      if (isRouteChangeRef.current) {
+        isRouteChangeRef.current = false;
+        setRouteChangeMap(new Map(nextIds.map((id, i) => [id, Math.min(i, 10)])));
+      }
       return;
     }
 
@@ -757,6 +765,7 @@ export function EntryList({
                 const entry = row.entry;
                 const isNew = newEntryMap.has(entry.id);
                 const staggerIndex = newEntryMap.get(entry.id) ?? 0;
+                const routeChangeIndex = routeChangeMap.get(entry.id);
                 const thumbnailUrl = extractThumbnail(entry);
                 const podcastEnclosure = getPodcastEnclosure(entry);
                 const podcastDuration = podcastEnclosure?.length
@@ -768,6 +777,7 @@ export function EntryList({
                     key={entry.id}
                     isNew={isNew}
                     staggerIndex={staggerIndex}
+                    routeChangeIndex={routeChangeIndex}
                   >
                     <button
                       type="button"
