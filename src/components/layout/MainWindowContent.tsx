@@ -72,26 +72,23 @@ export function MainWindowContent({
           </ResizablePanel>
           <ResizableHandle />
           <ResizablePanel id="entry-reading">
-            <div className="flex h-full min-w-0 flex-col overflow-hidden">
+            <div className="relative flex h-full min-w-0 flex-col overflow-hidden">
               <AnimatePresence mode="sync">
                 {inAppBrowserUrl ? (
                   <motion.div
                     key="browser"
-                    className="flex h-full flex-col p-2"
-                    initial={{ opacity: 0, x: 18, filter: 'blur(0.8px)' }}
-                    animate={{ opacity: 1, x: 0, filter: 'blur(0px)' }}
+                    className="absolute inset-0 flex flex-col p-2"
+                    initial={{ opacity: 0, filter: 'blur(0.8px)' }}
+                    animate={{ opacity: 1, filter: 'blur(0px)' }}
                     exit={{
                       opacity: 0,
-                      x: 18,
                       filter: 'blur(0.8px)',
                       transition: {
-                        x: { duration: 0.3, ease: [0.35, 0, 0.9, 1] },
                         filter: { duration: 0.28, ease: [0.35, 0, 0.9, 1] },
                         opacity: { duration: 0.24, ease: [0.45, 0, 1, 1] },
                       },
                     }}
                     transition={{
-                      x: { duration: 0.42, ease: [0.22, 1, 0.36, 1] },
                       filter: { duration: 0.38, ease: [0.22, 1, 0.36, 1] },
                       opacity: { duration: 0.32, ease: [0.2, 0.95, 0.35, 1] },
                     }}
