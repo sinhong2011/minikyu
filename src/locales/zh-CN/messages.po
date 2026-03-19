@@ -77,7 +77,7 @@ msgid "{0} feeds synced"
 msgstr "{0} 个订阅源已同步"
 
 #. placeholder {0}: entry.reading_time
-#: src/components/miniflux/EntryList.tsx:861
+#: src/components/miniflux/EntryList.tsx:881
 msgid "{0} min read"
 msgstr "{0} 分钟阅读"
 
@@ -137,11 +137,11 @@ msgstr "0 秒"
 msgid "1 episode"
 msgstr "1 集"
 
-#: src/components/preferences/panes/AppearancePane.tsx:214
+#: src/components/preferences/panes/AppearancePane.tsx:221
 msgid "12-hour"
 msgstr "12 小时制"
 
-#: src/components/preferences/panes/AppearancePane.tsx:215
+#: src/components/preferences/panes/AppearancePane.tsx:222
 msgid "24-hour"
 msgstr "24 小时制"
 
@@ -219,12 +219,12 @@ msgstr "添加订阅源"
 #: src/components/layout/AppSidebar.tsx:561
 #: src/components/layout/AppSidebar.tsx:708
 #: src/components/layout/AppSidebar.tsx:710
-#: src/components/miniflux/AddFeedDialog.tsx:380
-#: src/components/miniflux/AddFeedDialog.tsx:855
+#: src/components/miniflux/AddFeedDialog.tsx:478
+#: src/components/miniflux/AddFeedDialog.tsx:546
 msgid "Add Feed"
 msgstr "添加订阅源"
 
-#: src/components/miniflux/MinifluxLayout.tsx:454
+#: src/components/miniflux/MinifluxLayout.tsx:458
 msgid "Add New Account"
 msgstr "添加新帐户"
 
@@ -236,7 +236,7 @@ msgstr "新建分类"
 msgid "Add New Category..."
 msgstr "新建分类..."
 
-#: src/components/miniflux/AddFeedDialog.tsx:360
+#: src/components/miniflux/AddFeedDialog.tsx:456
 msgid "Add New Feed"
 msgstr "新建订阅源"
 
@@ -253,7 +253,7 @@ msgstr "添加规则"
 msgid "Add the current article's podcast to the playlist"
 msgstr "将当前文章的播客添加到播放列表"
 
-#: src/components/miniflux/EntryList.tsx:838
+#: src/components/miniflux/EntryList.tsx:856
 #: src/components/miniflux/EntryReadingHeader.tsx:476
 #: src/components/miniflux/EntryReadingHeader.tsx:483
 #: src/lib/shortcut-registry.ts:109
@@ -270,20 +270,20 @@ msgstr "添加到播放列表"
 msgid "Add user"
 msgstr "添加用户"
 
-#: src/components/miniflux/EntryList.tsx:844
+#: src/components/miniflux/EntryList.tsx:864
 #: src/components/miniflux/EntryReadingHeader.tsx:313
 msgid "Added to playlist"
 msgstr "已添加到播放列表"
 
-#: src/components/miniflux/AddFeedDialog.tsx:855
+#: src/components/miniflux/AddFeedDialog.tsx:546
 msgid "Adding..."
 msgstr "添加中..."
 
-#: src/components/preferences/panes/AppearancePane.tsx:274
+#: src/components/preferences/panes/AppearancePane.tsx:281
 msgid "Adjust the background image transparency."
 msgstr "调整背景图片的透明度。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:168
+#: src/components/preferences/panes/AppearancePane.tsx:175
 msgid "Adjust the interface text size (⌘+/⌘-)"
 msgstr "调整界面文字大小（⌘+/⌘-）"
 
@@ -300,7 +300,7 @@ msgstr "管理员"
 msgid "Advanced"
 msgstr "高级"
 
-#: src/components/miniflux/AddFeedDialog.tsx:619
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:210
 #: src/components/miniflux/EditFeedDialog.tsx:246
 #: src/components/miniflux/settings/FeedFormDialog.tsx:463
 msgid "Advanced settings"
@@ -321,8 +321,8 @@ msgstr "AI 摘要"
 #: src/components/layout/AppSidebar.tsx:616
 #: src/components/miniflux/EntryFilters.tsx:102
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:33
-#: src/components/miniflux/MinifluxLayout.tsx:513
-#: src/components/miniflux/MinifluxLayout.tsx:521
+#: src/components/miniflux/MinifluxLayout.tsx:524
+#: src/components/miniflux/MinifluxLayout.tsx:532
 msgid "All"
 msgstr "全部"
 
@@ -340,7 +340,7 @@ msgstr "这些分类中的所有订阅源将跳过自动翻译。中文转换仍
 
 #: src/lib/commands/feed-commands.ts:64
 #: src/lib/menu.ts:549
-#: src/services/miniflux/feeds.ts:349
+#: src/services/miniflux/feeds.ts:356
 msgid "All feeds refreshed"
 msgstr "所有订阅源已刷新"
 
@@ -352,7 +352,7 @@ msgstr "所有订阅源已同步"
 msgid "All read"
 msgstr "全部已读"
 
-#: src/components/miniflux/MinifluxLayout.tsx:355
+#: src/components/miniflux/MinifluxLayout.tsx:359
 msgid "All read entries have been deleted"
 msgstr "所有已读条目已删除"
 
@@ -429,7 +429,7 @@ msgstr "Apple 内置"
 msgid "Applies to all articles when enabled"
 msgstr "启用后适用于所有文章"
 
-#: src/components/preferences/panes/AppearancePane.tsx:302
+#: src/components/preferences/panes/AppearancePane.tsx:309
 msgid "Apply blur to the background image."
 msgstr "对背景图片应用模糊效果。"
 
@@ -460,7 +460,7 @@ msgstr "确定要删除此账户吗？这将删除与此账户关联的所有凭
 #~ msgid "Are you sure you want to delete this category and all its feeds?"
 #~ msgstr "确定要删除此分类及其所有订阅源吗？"
 
-#: src/components/miniflux/MinifluxLayout.tsx:334
+#: src/components/miniflux/MinifluxLayout.tsx:338
 msgid "Are you sure you want to flush history? This will delete all read entries from the Miniflux server."
 msgstr "确定要清除历史记录吗？这将从 Miniflux 服务器上删除所有已读条目。"
 
@@ -491,7 +491,7 @@ msgstr "文章目录"
 msgid "Article text size in pixels (14-24)"
 msgstr "文章字号，单位像素 (14-24)"
 
-#: src/components/miniflux/MinifluxLayout.tsx:666
+#: src/components/miniflux/MinifluxLayout.tsx:677
 msgid "Ascending"
 msgstr "升序"
 
@@ -574,7 +574,7 @@ msgid "Back"
 msgstr "返回"
 
 #: src/components/command-palette/CommandPalette.tsx:289
-#: src/components/preferences/panes/AppearancePane.tsx:221
+#: src/components/preferences/panes/AppearancePane.tsx:228
 msgid "Background Image"
 msgstr "背景图片"
 
@@ -595,13 +595,13 @@ msgstr "双语"
 msgid "Bionic Reading"
 msgstr "仿生阅读"
 
-#: src/components/miniflux/AddFeedDialog.tsx:800
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:391
 #: src/components/miniflux/EditFeedDialog.tsx:417
 #: src/components/miniflux/settings/FeedFormDialog.tsx:638
 msgid "Blocklist rules"
 msgstr "屏蔽规则"
 
-#: src/components/preferences/panes/AppearancePane.tsx:301
+#: src/components/preferences/panes/AppearancePane.tsx:308
 msgid "Blur"
 msgstr "模糊"
 
@@ -635,16 +635,15 @@ msgstr "存储桶"
 msgid "Build date"
 msgstr "构建日期"
 
-#: src/components/miniflux/AddFeedDialog.tsx:594
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:185
 msgid "Can’t find a category? Create a new one."
 msgstr "找不到分类？创建一个新的。"
 
 #: src/components/miniflux/AddCategoryDialog.tsx:97
-#: src/components/miniflux/AddFeedDialog.tsx:842
+#: src/components/miniflux/AddFeedDialog.tsx:533
 #: src/components/miniflux/ConnectionDialog.tsx:359
 #: src/components/miniflux/EditCategoryDialog.tsx:103
 #: src/components/miniflux/EditFeedDialog.tsx:453
-#: src/components/miniflux/SearchSourceDialog.tsx:155
 #: src/components/miniflux/settings/CategoryFormDialog.tsx:103
 #: src/components/miniflux/settings/DeleteEntityDialog.tsx:60
 #: src/components/miniflux/settings/FeedFormDialog.tsx:681
@@ -683,9 +682,9 @@ msgstr "分类"
 msgid "Categories are folders, Feeds are subscriptions, and Entries are articles."
 msgstr "分类即文件夹，订阅源即订阅，条目即文章。"
 
-#: src/components/miniflux/AddFeedDialog.tsx:551
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:142
 #: src/components/miniflux/EditFeedDialog.tsx:220
-#: src/components/miniflux/MinifluxLayout.tsx:503
+#: src/components/miniflux/MinifluxLayout.tsx:514
 #: src/components/miniflux/settings/FeedFormDialog.tsx:419
 #: src/components/preferences/PreferencesDialog.tsx:324
 msgid "Category"
@@ -696,11 +695,11 @@ msgstr "分类"
 msgid "Category actions"
 msgstr "分类操作"
 
-#: src/services/miniflux/categories.ts:118
+#: src/services/miniflux/categories.ts:125
 msgid "Category created"
 msgstr "分类已创建"
 
-#: src/services/miniflux/categories.ts:181
+#: src/services/miniflux/categories.ts:188
 msgid "Category deleted"
 msgstr "分类已删除"
 
@@ -708,11 +707,11 @@ msgstr "分类已删除"
 msgid "Category excluded from translation"
 msgstr "该分类已排除翻译"
 
-#: src/components/miniflux/AddFeedDialog.tsx:225
+#: src/components/miniflux/AddFeedDialog.tsx:264
 msgid "Category is required"
 msgstr "分类为必填项"
 
-#: src/services/miniflux/categories.ts:86
+#: src/services/miniflux/categories.ts:93
 msgid "Category marked as read"
 msgstr "分类已标记为已读"
 
@@ -737,11 +736,11 @@ msgstr "分类标题"
 msgid "Category translation re-enabled"
 msgstr "该分类已重新启用翻译"
 
-#: src/services/miniflux/categories.ts:150
+#: src/services/miniflux/categories.ts:157
 msgid "Category updated"
 msgstr "分类已更新"
 
-#: src/components/preferences/panes/AppearancePane.tsx:496
+#: src/components/preferences/panes/AppearancePane.tsx:519
 msgid "Change"
 msgstr "更换"
 
@@ -773,7 +772,7 @@ msgstr "检查最新版本"
 msgid "Check whether a newer release is available."
 msgstr "检查是否有更新版本可用。"
 
-#: src/components/miniflux/EntryList.tsx:592
+#: src/components/miniflux/EntryList.tsx:601
 msgid "Check your connection and try again"
 msgstr "请检查网络连接后重试"
 
@@ -811,8 +810,8 @@ msgstr "中文转换"
 msgid "Choose a story from the list and your reading companion will guide the focus."
 msgstr "从列表中选择一篇文章，阅读助手将引导你聚焦阅读。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:503
-#: src/components/preferences/panes/AppearancePane.tsx:564
+#: src/components/preferences/panes/AppearancePane.tsx:526
+#: src/components/preferences/panes/AppearancePane.tsx:587
 msgid "Choose File"
 msgstr "选择文件"
 
@@ -820,7 +819,7 @@ msgstr "选择文件"
 msgid "Choose how the player appears when clicking the tray icon"
 msgstr "选择点击托盘图标时播放器的显示方式"
 
-#: src/components/preferences/panes/AppearancePane.tsx:198
+#: src/components/preferences/panes/AppearancePane.tsx:205
 msgid "Choose how times are displayed throughout the app"
 msgstr "选择应用中时间的显示格式"
 
@@ -836,7 +835,7 @@ msgstr "选择翻译请求在引擎和大语言模型之间的路由方式。"
 msgid "Choose the background surface for the article reader"
 msgstr "选择文章阅读器的背景样式"
 
-#: src/components/preferences/panes/AppearancePane.tsx:153
+#: src/components/preferences/panes/AppearancePane.tsx:160
 msgid "Choose the font used across the app interface"
 msgstr "选择应用界面使用的字体"
 
@@ -848,11 +847,11 @@ msgstr "选择文章正文的字体"
 msgid "Choose what happens when you click the window close button"
 msgstr "选择点击窗口关闭按钮时的行为"
 
-#: src/components/preferences/panes/AppearancePane.tsx:131
+#: src/components/preferences/panes/AppearancePane.tsx:138
 msgid "Choose your preferred color theme"
 msgstr "选择您喜欢的颜色主题"
 
-#: src/components/preferences/panes/AppearancePane.tsx:106
+#: src/components/preferences/panes/AppearancePane.tsx:113
 msgid "Choose your preferred display language"
 msgstr "选择您喜欢的显示语言"
 
@@ -929,7 +928,7 @@ msgstr "正在清除..."
 #: src/components/miniflux/EntryReadingHeader.tsx:356
 #: src/components/miniflux/ImageViewer.tsx:236
 #: src/components/miniflux/InAppBrowserPane.tsx:274
-#: src/components/miniflux/ReaderSettings.tsx:235
+#: src/components/miniflux/ReaderSettings.tsx:240
 #: src/components/titlebar/WindowsWindowControls.tsx:118
 #: src/components/ui/dialog.tsx:65
 #: src/components/ui/dialog.tsx:96
@@ -981,11 +980,11 @@ msgstr "代码块"
 msgid "Code theme"
 msgstr "代码主题"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:814
+#: src/components/preferences/panes/AdvancedPane.tsx:817
 msgid "Collapse"
 msgstr "收起"
 
-#: src/components/preferences/panes/AppearancePane.tsx:130
+#: src/components/preferences/panes/AppearancePane.tsx:137
 msgid "Color Theme"
 msgstr "颜色主题"
 
@@ -1030,11 +1029,11 @@ msgstr "连接至 Miniflux"
 msgid "Connect to Miniflux to see server version."
 msgstr "连接 Miniflux 以查看服务器版本。"
 
-#: src/components/miniflux/MinifluxLayout.tsx:454
+#: src/components/miniflux/MinifluxLayout.tsx:458
 msgid "Connect to Server"
 msgstr "连接至服务器"
 
-#: src/components/miniflux/MinifluxLayout.tsx:425
+#: src/components/miniflux/MinifluxLayout.tsx:429
 msgid "Connect to your Miniflux server to get started"
 msgstr "连接至您的 Miniflux 服务器以开始使用"
 
@@ -1060,11 +1059,11 @@ msgstr "连接成功，凭据已保存"
 msgid "Connection token"
 msgstr "连接令牌"
 
-#: src/components/preferences/panes/AppearancePane.tsx:265
+#: src/components/preferences/panes/AppearancePane.tsx:272
 msgid "Contain"
 msgstr "适应"
 
-#: src/components/miniflux/AddFeedDialog.tsx:846
+#: src/components/miniflux/AddFeedDialog.tsx:537
 msgid "Continue to Add Feed"
 msgstr "继续添加订阅源"
 
@@ -1086,7 +1085,7 @@ msgid "Copied"
 msgstr "已复制"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:735
-#: src/components/preferences/panes/AdvancedPane.tsx:806
+#: src/components/preferences/panes/AdvancedPane.tsx:809
 #: src/components/ui/sonner.tsx:56
 msgid "Copied!"
 msgstr "已复制！"
@@ -1094,7 +1093,7 @@ msgstr "已复制！"
 #: src/components/ErrorBoundary.tsx:372
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:164
 #: src/components/preferences/panes/AdvancedPane.tsx:735
-#: src/components/preferences/panes/AdvancedPane.tsx:806
+#: src/components/preferences/panes/AdvancedPane.tsx:809
 msgid "Copy"
 msgstr "复制"
 
@@ -1185,7 +1184,7 @@ msgstr "无法打开文件"
 msgid "Could not reveal in folder"
 msgstr "无法在文件夹中显示"
 
-#: src/components/preferences/panes/AppearancePane.tsx:264
+#: src/components/preferences/panes/AppearancePane.tsx:271
 msgid "Cover"
 msgstr "覆盖"
 
@@ -1215,8 +1214,8 @@ msgstr "创建 API 密钥"
 msgid "Create category"
 msgstr "创建分类"
 
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:195
 #: src/components/miniflux/AddCategoryDialog.tsx:100
-#: src/components/miniflux/AddFeedDialog.tsx:604
 msgid "Create Category"
 msgstr "创建分类"
 
@@ -1262,7 +1261,7 @@ msgstr "凭据已删除"
 msgid "Current category"
 msgstr "当前分类"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:796
+#: src/components/preferences/panes/AdvancedPane.tsx:800
 msgid "Current preferences as JSON"
 msgstr "当前设置（JSON）"
 
@@ -1298,7 +1297,7 @@ msgstr "在此自定义您的应用偏好设置。"
 msgid "Cycle reader theme"
 msgstr "切换阅读主题"
 
-#: src/components/preferences/panes/AppearancePane.tsx:143
+#: src/components/preferences/panes/AppearancePane.tsx:150
 msgid "Dark"
 msgstr "深色"
 
@@ -1306,7 +1305,7 @@ msgstr "深色"
 msgid "Database"
 msgstr "数据库"
 
-#: src/components/preferences/panes/AppearancePane.tsx:195
+#: src/components/preferences/panes/AppearancePane.tsx:202
 msgid "Date & Time"
 msgstr "日期与时间"
 
@@ -1384,7 +1383,7 @@ msgstr "默认"
 #~ msgid "Default (Figtree)"
 #~ msgstr "默认 (Figtree)"
 
-#: src/components/preferences/panes/AppearancePane.tsx:397
+#: src/components/preferences/panes/AppearancePane.tsx:390
 msgid "Default (System)"
 msgstr "默认（系统）"
 
@@ -1468,7 +1467,7 @@ msgstr "删除用户"
 msgid "Delete user?"
 msgstr "删除用户？"
 
-#: src/components/miniflux/MinifluxLayout.tsx:672
+#: src/components/miniflux/MinifluxLayout.tsx:683
 msgid "Descending"
 msgstr "降序"
 
@@ -1485,11 +1484,11 @@ msgstr "诊断"
 msgid "Dim paragraphs except the one you're reading"
 msgstr "除正在阅读的段落外，其余段落变暗"
 
-#: src/components/miniflux/MinifluxLayout.tsx:661
+#: src/components/miniflux/MinifluxLayout.tsx:672
 msgid "Direction"
 msgstr "排序方向"
 
-#: src/components/miniflux/AddFeedDialog.tsx:713
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:304
 #: src/components/miniflux/EditFeedDialog.tsx:334
 #: src/components/miniflux/settings/FeedFormDialog.tsx:554
 msgid "Disable feed"
@@ -1539,12 +1538,12 @@ msgid "Done"
 msgstr "完成"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:606
-#: src/components/miniflux/EntryList.tsx:812
+#: src/components/miniflux/EntryList.tsx:830
 #: src/components/podcast/PlayerWindowControls.tsx:313
 #: src/components/podcast/PodcastPlayer.tsx:261
 #: src/components/podcast/PodcastPlayer.tsx:267
-#: src/components/preferences/panes/AppearancePane.tsx:548
-#: src/components/preferences/panes/AppearancePane.tsx:618
+#: src/components/preferences/panes/AppearancePane.tsx:571
+#: src/components/preferences/panes/AppearancePane.tsx:641
 msgid "Download"
 msgstr "下载"
 
@@ -1557,7 +1556,7 @@ msgstr "下载完成"
 #~ msgstr "下载失败"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:308
-#: src/components/miniflux/EntryList.tsx:463
+#: src/components/miniflux/EntryList.tsx:472
 #: src/components/podcast/PodcastPlayer.tsx:240
 #: src/hooks/use-player-command-listener.ts:59
 msgid "Download Failed"
@@ -1571,7 +1570,7 @@ msgstr "从网址下载"
 msgid "Download original content"
 msgstr "下载原始内容"
 
-#: src/components/miniflux/AddFeedDialog.tsx:691
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:282
 #: src/components/miniflux/EditFeedDialog.tsx:312
 #: src/components/miniflux/settings/FeedFormDialog.tsx:532
 msgid "Download original content (crawler)"
@@ -1594,7 +1593,7 @@ msgid "Download updates automatically when available."
 msgstr "有可用更新时自动下载。"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:659
-#: src/components/miniflux/EntryList.tsx:459
+#: src/components/miniflux/EntryList.tsx:468
 #: src/components/podcast/PodcastPlayer.tsx:231
 msgid "Downloading"
 msgstr "下载中"
@@ -1612,8 +1611,8 @@ msgstr "正在从服务器下载最近的文章"
 msgid "Downloading update v{0}... {1}%"
 msgstr "正在下载更新 v{0}... {1}%"
 
-#: src/components/preferences/panes/AppearancePane.tsx:548
-#: src/components/preferences/panes/AppearancePane.tsx:618
+#: src/components/preferences/panes/AppearancePane.tsx:571
+#: src/components/preferences/panes/AppearancePane.tsx:641
 msgid "Downloading..."
 msgstr "下载中..."
 
@@ -1623,8 +1622,7 @@ msgstr "下载中..."
 msgid "Downloads"
 msgstr "下载"
 
-#: src/components/miniflux/AddFeedDialog.tsx:410
-#: src/components/miniflux/SearchSourceDialog.tsx:137
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:73
 #: src/components/miniflux/settings/FeedFormDialog.tsx:327
 msgid "e.g. blog.example.com"
 msgstr "例如 blog.example.com"
@@ -1835,7 +1833,7 @@ msgstr "退出全屏模式"
 msgid "Exit Zen Mode"
 msgstr "退出专注模式"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:814
+#: src/components/preferences/panes/AdvancedPane.tsx:817
 msgid "Expand"
 msgstr "展开"
 
@@ -1925,11 +1923,11 @@ msgstr "复制调试信息失败"
 msgid "Failed to create API key"
 msgstr "创建 API 密钥失败"
 
-#: src/services/miniflux/categories.ts:107
+#: src/services/miniflux/categories.ts:114
 msgid "Failed to create category"
 msgstr "创建分类失败"
 
-#: src/services/miniflux/feeds.ts:124
+#: src/services/miniflux/feeds.ts:131
 msgid "Failed to create feed"
 msgstr "创建订阅源失败"
 
@@ -1946,11 +1944,11 @@ msgstr "删除账户失败"
 msgid "Failed to delete API key"
 msgstr "删除 API 密钥失败"
 
-#: src/services/miniflux/categories.ts:171
+#: src/services/miniflux/categories.ts:178
 msgid "Failed to delete category"
 msgstr "删除分类失败"
 
-#: src/services/miniflux/feeds.ts:243
+#: src/services/miniflux/feeds.ts:250
 msgid "Failed to delete feed"
 msgstr "删除订阅源失败"
 
@@ -1958,7 +1956,7 @@ msgstr "删除订阅源失败"
 msgid "Failed to delete user"
 msgstr "删除用户失败"
 
-#: src/components/preferences/panes/AppearancePane.tsx:457
+#: src/components/preferences/panes/AppearancePane.tsx:480
 msgid "Failed to download image"
 msgstr "下载图片失败"
 
@@ -1995,7 +1993,7 @@ msgstr "获取可用模型失败"
 msgid "Failed to fetch content"
 msgstr "获取内容失败"
 
-#: src/components/miniflux/MinifluxLayout.tsx:346
+#: src/components/miniflux/MinifluxLayout.tsx:350
 msgid "Failed to flush history"
 msgstr "清除历史记录失败"
 
@@ -2014,17 +2012,17 @@ msgstr "导入偏好设置失败"
 msgid "Failed to load API keys"
 msgstr "加载 API 密钥失败"
 
-#: src/services/miniflux/categories.ts:41
+#: src/services/miniflux/categories.ts:47
 msgid "Failed to load categories"
 msgstr "加载分类失败"
 
-#: src/components/miniflux/EntryList.tsx:590
+#: src/components/miniflux/EntryList.tsx:599
 msgid "Failed to load entries"
 msgstr "加载文章失败"
 
 #: src/components/layout/AppSidebar.tsx:259
-#: src/services/miniflux/feeds.ts:63
-#: src/services/miniflux/feeds.ts:93
+#: src/services/miniflux/feeds.ts:69
+#: src/services/miniflux/feeds.ts:100
 msgid "Failed to load feeds"
 msgstr "加载订阅源失败"
 
@@ -2032,11 +2030,11 @@ msgstr "加载订阅源失败"
 msgid "Failed to load users"
 msgstr "加载用户失败"
 
-#: src/services/miniflux/categories.ts:74
+#: src/services/miniflux/categories.ts:81
 msgid "Failed to mark category as read"
 msgstr "无法将分类标记为已读"
 
-#: src/services/miniflux/feeds.ts:170
+#: src/services/miniflux/feeds.ts:177
 msgid "Failed to mark feed as read"
 msgstr "无法将订阅源标记为已读"
 
@@ -2048,16 +2046,16 @@ msgstr "最小化窗口失败：{message}"
 msgid "Failed to pause download"
 msgstr "暂停下载失败"
 
-#: src/components/miniflux/MinifluxLayout.tsx:399
 #: src/components/miniflux/MinifluxLayout.tsx:403
+#: src/components/miniflux/MinifluxLayout.tsx:407
 msgid "Failed to reconnect account"
 msgstr "重新连接帐户失败"
 
-#: src/services/miniflux/feeds.ts:309
+#: src/services/miniflux/feeds.ts:316
 msgid "Failed to refresh feed"
 msgstr "刷新订阅源失败"
 
-#: src/services/miniflux/feeds.ts:340
+#: src/services/miniflux/feeds.ts:347
 msgid "Failed to refresh feeds"
 msgstr "刷新订阅源失败"
 
@@ -2084,7 +2082,7 @@ msgstr "保存条目失败"
 msgid "Failed to save provider key"
 msgstr "保存提供商密钥失败"
 
-#: src/services/miniflux/feeds.ts:280
+#: src/services/miniflux/feeds.ts:287
 msgid "Failed to search sources"
 msgstr "搜索来源失败"
 
@@ -2110,7 +2108,7 @@ msgstr "切换星标失败"
 msgid "Failed to update API token"
 msgstr "更新 API 令牌失败"
 
-#: src/services/miniflux/categories.ts:139
+#: src/services/miniflux/categories.ts:146
 msgid "Failed to update category"
 msgstr "更新分类失败"
 
@@ -2122,7 +2120,7 @@ msgstr "更新关闭行为失败"
 msgid "Failed to update code theme"
 msgstr "更新代码主题失败"
 
-#: src/services/miniflux/feeds.ts:201
+#: src/services/miniflux/feeds.ts:208
 msgid "Failed to update feed"
 msgstr "更新订阅源失败"
 
@@ -2192,20 +2190,20 @@ msgstr "更新用户失败"
 msgid "Failed to update video download path"
 msgstr "更新视频下载路径失败"
 
-#: src/components/miniflux/MinifluxLayout.tsx:508
+#: src/components/miniflux/MinifluxLayout.tsx:519
 #: src/components/preferences/PreferencesDialog.tsx:290
 msgid "Feed"
 msgstr "订阅源"
 
-#: src/services/miniflux/feeds.ts:149
+#: src/services/miniflux/feeds.ts:156
 msgid "Feed created"
 msgstr "订阅源已创建"
 
-#: src/services/miniflux/feeds.ts:135
+#: src/services/miniflux/feeds.ts:142
 msgid "Feed created with partial settings"
 msgstr "订阅源已创建（部分设置）"
 
-#: src/services/miniflux/feeds.ts:261
+#: src/services/miniflux/feeds.ts:268
 msgid "Feed deleted"
 msgstr "订阅源已删除"
 
@@ -2217,11 +2215,11 @@ msgstr "该订阅源已排除翻译"
 msgid "Feed Management"
 msgstr "订阅管理"
 
-#: src/services/miniflux/feeds.ts:180
+#: src/services/miniflux/feeds.ts:187
 msgid "Feed marked as read"
 msgstr "订阅源已标记为已读"
 
-#: src/services/miniflux/feeds.ts:320
+#: src/services/miniflux/feeds.ts:327
 msgid "Feed refreshed"
 msgstr "订阅源已刷新"
 
@@ -2237,11 +2235,11 @@ msgstr "订阅源标题"
 msgid "Feed translation re-enabled"
 msgstr "该订阅源已重新启用翻译"
 
-#: src/services/miniflux/feeds.ts:214
+#: src/services/miniflux/feeds.ts:221
 msgid "Feed updated"
 msgstr "订阅源已更新"
 
-#: src/components/miniflux/AddFeedDialog.tsx:513
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:99
 #: src/components/miniflux/EditFeedDialog.tsx:176
 #: src/components/miniflux/settings/FeedFormDialog.tsx:370
 msgid "Feed URL"
@@ -2284,7 +2282,7 @@ msgstr "获取原始内容"
 msgid "Fetch Original Content"
 msgstr "获取原始内容"
 
-#: src/components/miniflux/AddFeedDialog.tsx:747
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:338
 #: src/components/miniflux/EditFeedDialog.tsx:368
 #: src/components/miniflux/settings/FeedFormDialog.tsx:588
 msgid "Fetch via proxy"
@@ -2306,7 +2304,7 @@ msgstr "文件"
 msgid "File Path"
 msgstr "文件路径"
 
-#: src/components/preferences/panes/AppearancePane.tsx:266
+#: src/components/preferences/panes/AppearancePane.tsx:273
 msgid "Fill"
 msgstr "填充"
 
@@ -2318,11 +2316,11 @@ msgstr "从 .env 填充"
 msgid "Floating player window"
 msgstr "悬浮播放器窗口"
 
-#: src/components/miniflux/MinifluxLayout.tsx:631
+#: src/components/miniflux/MinifluxLayout.tsx:642
 msgid "Flush history"
 msgstr "清除历史记录"
 
-#: src/components/miniflux/MinifluxLayout.tsx:336
+#: src/components/miniflux/MinifluxLayout.tsx:340
 msgid "Flush History"
 msgstr "清除历史记录"
 
@@ -2339,23 +2337,22 @@ msgstr "专注模式"
 msgid "Follow system theme"
 msgstr "跟随系统主题"
 
-#: src/components/preferences/panes/AppearancePane.tsx:150
+#: src/components/preferences/panes/AppearancePane.tsx:157
 msgid "Font"
 msgstr "字体"
 
-#: src/components/miniflux/ReaderSettings.tsx:396
+#: src/components/miniflux/ReaderSettings.tsx:401
 #: src/components/preferences/panes/ReaderPane.tsx:230
 msgid "Font Family"
 msgstr "字体"
 
-#: src/components/miniflux/ReaderSettings.tsx:255
+#: src/components/miniflux/ReaderSettings.tsx:260
 #: src/components/preferences/panes/ReaderPane.tsx:252
 msgid "Font Size"
 msgstr "字号"
 
-#: src/components/miniflux/AddFeedDialog.tsx:440
-#: src/components/miniflux/AddFeedDialog.tsx:457
-#: src/components/miniflux/SearchSourceDialog.tsx:175
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:111
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:128
 #: src/components/miniflux/settings/FeedFormDialog.tsx:347
 msgid "Found sources"
 msgstr "发现的来源"
@@ -2370,8 +2367,8 @@ msgstr "法语"
 msgid "From"
 msgstr "来源"
 
-#: src/components/preferences/panes/AppearancePane.tsx:507
-#: src/components/preferences/panes/AppearancePane.tsx:579
+#: src/components/preferences/panes/AppearancePane.tsx:530
+#: src/components/preferences/panes/AppearancePane.tsx:602
 msgid "From URL"
 msgstr "从 URL"
 
@@ -2504,19 +2501,19 @@ msgstr "隐藏左侧边栏"
 
 #: src/components/layout/AppSidebar.tsx:673
 #: src/components/layout/AppSidebar.tsx:682
-#: src/components/miniflux/MinifluxLayout.tsx:519
+#: src/components/miniflux/MinifluxLayout.tsx:530
 msgid "History"
 msgstr "历史记录"
 
-#: src/components/miniflux/MinifluxLayout.tsx:354
+#: src/components/miniflux/MinifluxLayout.tsx:358
 msgid "History flushed"
 msgstr "历史记录已清除"
 
-#: src/components/miniflux/MinifluxLayout.tsx:543
+#: src/components/miniflux/MinifluxLayout.tsx:554
 msgid "history items"
 msgstr "历史条目"
 
-#: src/components/miniflux/MinifluxLayout.tsx:381
+#: src/components/miniflux/MinifluxLayout.tsx:385
 msgid "History page is only available when connected to Miniflux server."
 msgstr "历史记录页面仅在连接到 Miniflux 服务器时可用。"
 
@@ -2528,23 +2525,23 @@ msgstr "代码块语言的检测方式，用于语法高亮"
 #~ msgid "How often to automatically sync with your Miniflux server."
 #~ msgstr "设置与 Miniflux 服务器自动同步的频率。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:245
+#: src/components/preferences/panes/AppearancePane.tsx:252
 msgid "How the image fills the window."
 msgstr "图片填充窗口的方式。"
 
-#: src/components/miniflux/AddFeedDialog.tsx:667
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:258
 #: src/components/miniflux/EditFeedDialog.tsx:289
 #: src/components/miniflux/settings/FeedFormDialog.tsx:508
 msgid "HTTP password"
 msgstr "HTTP 密码"
 
-#: src/components/miniflux/AddFeedDialog.tsx:650
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:241
 #: src/components/miniflux/EditFeedDialog.tsx:274
 #: src/components/miniflux/settings/FeedFormDialog.tsx:492
 msgid "HTTP username"
 msgstr "HTTP 用户名"
 
-#: src/components/miniflux/AddFeedDialog.tsx:517
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:103
 msgid "https://example.com/feed.xml"
 msgstr "https://example.com/feed.xml"
 
@@ -2569,7 +2566,7 @@ msgstr "混合自动"
 msgid "Idle"
 msgstr "空闲"
 
-#: src/components/miniflux/AddFeedDialog.tsx:730
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:321
 #: src/components/miniflux/EditFeedDialog.tsx:351
 #: src/components/miniflux/settings/FeedFormDialog.tsx:571
 msgid "Ignore HTTP cache"
@@ -2710,7 +2707,7 @@ msgstr "日语"
 msgid "Just now"
 msgstr "刚刚"
 
-#: src/components/miniflux/AddFeedDialog.tsx:818
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:409
 #: src/components/miniflux/EditFeedDialog.tsx:434
 #: src/components/miniflux/settings/FeedFormDialog.tsx:655
 msgid "Keeplist rules"
@@ -2728,8 +2725,8 @@ msgstr "韩语"
 
 #: src/components/miniflux/SafeHtml.tsx:807
 #: src/components/miniflux/UserNav.tsx:285
-#: src/components/preferences/panes/AppearancePane.tsx:103
-#: src/components/preferences/panes/AppearancePane.tsx:105
+#: src/components/preferences/panes/AppearancePane.tsx:110
+#: src/components/preferences/panes/AppearancePane.tsx:112
 msgid "Language"
 msgstr "语言"
 
@@ -2773,7 +2770,7 @@ msgstr "上次登录"
 msgid "Last Modified"
 msgstr "最后修改"
 
-#: src/components/miniflux/MinifluxLayout.tsx:656
+#: src/components/miniflux/MinifluxLayout.tsx:667
 msgid "Last read date"
 msgstr "最近阅读日期"
 
@@ -2814,16 +2811,16 @@ msgstr "最新版本"
 #~ msgid "License"
 #~ msgstr "许可证"
 
-#: src/components/preferences/panes/AppearancePane.tsx:142
+#: src/components/preferences/panes/AppearancePane.tsx:149
 msgid "Light"
 msgstr "浅色"
 
-#: src/components/miniflux/ReaderSettings.tsx:350
+#: src/components/miniflux/ReaderSettings.tsx:355
 #: src/components/preferences/panes/ReaderPane.tsx:316
 msgid "Line Height"
 msgstr "行高"
 
-#: src/components/miniflux/ReaderSettings.tsx:304
+#: src/components/miniflux/ReaderSettings.tsx:309
 #: src/components/preferences/panes/ReaderPane.tsx:284
 msgid "Line Width"
 msgstr "行宽"
@@ -2859,7 +2856,7 @@ msgstr "正在加载版本信息..."
 
 #: src/components/layout/AppSidebar.tsx:595
 #: src/components/miniflux/EntryReadingHeader.tsx:288
-#: src/components/miniflux/MinifluxLayout.tsx:363
+#: src/components/miniflux/MinifluxLayout.tsx:367
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PodcastPlayer.tsx:575
 #: src/pages/TrayPopover.tsx:226
@@ -2898,7 +2895,7 @@ msgstr "缩小阅读器文字"
 #~ msgid "Make text smaller"
 #~ msgstr "缩小文字"
 
-#: src/components/preferences/panes/AppearancePane.tsx:330
+#: src/components/preferences/panes/AppearancePane.tsx:337
 msgid "Make UI panels transparent to reveal the background image."
 msgstr "使 UI 面板透明以显示背景图片。"
 
@@ -2914,7 +2911,7 @@ msgstr "管理第三方服务集成。"
 msgid "Manage third-party service integrations. Configure services in Miniflux settings."
 msgstr "管理第三方服务集成。在 Miniflux 设置中配置服务。"
 
-#: src/components/miniflux/MinifluxLayout.tsx:620
+#: src/components/miniflux/MinifluxLayout.tsx:631
 msgid "Mark all as read"
 msgstr "全部标记为已读"
 
@@ -3168,7 +3165,7 @@ msgstr "尚未创建 API 密钥。"
 #~ msgid "No categories excluded. All categories will be translated when translation is enabled."
 #~ msgstr "没有排除任何分类。启用翻译后，所有分类都将被翻译。"
 
-#: src/components/miniflux/AddFeedDialog.tsx:575
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:166
 #: src/components/miniflux/settings/FeedFormDialog.tsx:442
 #: src/components/preferences/panes/CategoriesPane.tsx:67
 #: src/components/preferences/panes/TranslationPane.tsx:2263
@@ -3205,7 +3202,7 @@ msgstr "没有匹配搜索的下载"
 msgid "No downloads yet"
 msgstr "暂无下载"
 
-#: src/components/miniflux/EntryList.tsx:615
+#: src/components/miniflux/EntryList.tsx:624
 msgid "No entries found"
 msgstr "未找到文章"
 
@@ -3272,8 +3269,7 @@ msgstr "无结果。"
 msgid "No server URL found."
 msgstr "找不到服务器 URL。"
 
-#: src/components/miniflux/AddFeedDialog.tsx:492
-#: src/components/miniflux/SearchSourceDialog.tsx:199
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:159
 msgid "No sources found"
 msgstr "未找到来源"
 
@@ -3318,7 +3314,7 @@ msgstr "关闭"
 msgid "Offline cached data"
 msgstr "离线缓存数据"
 
-#: src/components/miniflux/MinifluxLayout.tsx:378
+#: src/components/miniflux/MinifluxLayout.tsx:382
 msgid "Offline Mode"
 msgstr "离线模式"
 
@@ -3336,7 +3332,7 @@ msgstr "OLED"
 msgid "Ollama"
 msgstr "Ollama"
 
-#: src/components/preferences/panes/AppearancePane.tsx:273
+#: src/components/preferences/panes/AppearancePane.tsx:280
 msgid "Opacity"
 msgstr "不透明度"
 
@@ -3508,11 +3504,11 @@ msgstr "密码"
 msgid "Password is required"
 msgstr "需要提供密码"
 
-#: src/components/miniflux/AddFeedDialog.tsx:391
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:54
 msgid "Paste a website URL to discover available RSS/Atom feeds."
 msgstr "粘贴网站 URL 以发现可用的 RSS/Atom 订阅源。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:580
+#: src/components/preferences/panes/AppearancePane.tsx:603
 msgid "Paste an image link"
 msgstr "粘贴图片链接"
 
@@ -3553,7 +3549,7 @@ msgid "Phrase"
 msgstr "短语"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:800
-#: src/components/miniflux/EntryList.tsx:825
+#: src/components/miniflux/EntryList.tsx:843
 #: src/components/miniflux/EntryReadingHeader.tsx:291
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PlayerWindowQueue.tsx:102
@@ -3595,7 +3591,7 @@ msgstr "播放器显示模式已更新"
 msgid "Playlist"
 msgstr "播放列表"
 
-#: src/components/miniflux/MinifluxLayout.tsx:385
+#: src/components/miniflux/MinifluxLayout.tsx:389
 msgid "Please connect to your server to use this feature."
 msgstr "请连接到服务器以使用此功能。"
 
@@ -3603,12 +3599,11 @@ msgstr "请连接到服务器以使用此功能。"
 #~ msgid "Please enter a password"
 #~ msgstr "请输入密码"
 
-#: src/components/miniflux/AddFeedDialog.tsx:295
-#: src/components/miniflux/SearchSourceDialog.tsx:67
+#: src/components/miniflux/AddFeedDialog.tsx:289
 msgid "Please enter a valid source URL"
 msgstr "请输入有效的来源 URL"
 
-#: src/components/miniflux/AddFeedDialog.tsx:224
+#: src/components/miniflux/AddFeedDialog.tsx:263
 #: src/components/miniflux/EditFeedDialog.tsx:84
 msgid "Please enter a valid URL"
 msgstr "请输入有效的 URL"
@@ -3617,12 +3612,12 @@ msgstr "请输入有效的 URL"
 #~ msgid "Please enter both access key and secret key"
 #~ msgstr "请输入访问密钥和秘密密钥"
 
-#: src/components/preferences/panes/AppearancePane.tsx:566
+#: src/components/preferences/panes/AppearancePane.tsx:589
 msgid "PNG, JPG, WebP, GIF, or AVIF"
 msgstr "PNG、JPG、WebP、GIF 或 AVIF"
 
 #: src/components/command-palette/CommandPalette.tsx:199
-#: src/components/miniflux/EntryList.tsx:856
+#: src/components/miniflux/EntryList.tsx:876
 #: src/components/miniflux/EntryReading.tsx:1753
 #: src/lib/menu.ts:299
 msgid "Podcast"
@@ -3749,7 +3744,7 @@ msgstr "提供商"
 msgid "Providers resorted"
 msgstr "提供商已重排"
 
-#: src/components/miniflux/MinifluxLayout.tsx:650
+#: src/components/miniflux/MinifluxLayout.tsx:661
 msgid "Published date"
 msgstr "发布日期"
 
@@ -3866,7 +3861,7 @@ msgstr "阅读主题：泛黄"
 msgid "Reader Theme: Slate"
 msgstr "阅读主题：石板"
 
-#: src/components/miniflux/ReaderSettings.tsx:205
+#: src/components/miniflux/ReaderSettings.tsx:210
 msgid "Reader typography settings"
 msgstr "阅读器排版设置"
 
@@ -3899,7 +3894,7 @@ msgstr "就绪"
 msgid "Recent"
 msgstr "最近"
 
-#: src/components/miniflux/MinifluxLayout.tsx:424
+#: src/components/miniflux/MinifluxLayout.tsx:428
 msgid "Reconnect to an existing account or add a new one"
 msgstr "重新连接到现有帐户或添加新帐户"
 
@@ -4022,7 +4017,7 @@ msgstr "报告问题..."
 msgid "Required fields"
 msgstr "必填字段"
 
-#: src/components/miniflux/ReaderSettings.tsx:226
+#: src/components/miniflux/ReaderSettings.tsx:231
 #: src/components/preferences/KeyCapture.tsx:118
 #: src/components/preferences/panes/AdvancedPane.tsx:644
 #: src/components/preferences/panes/AdvancedPane.tsx:660
@@ -4143,7 +4138,7 @@ msgstr "重试失败"
 msgid "Retry translation"
 msgstr "重试翻译"
 
-#: src/components/miniflux/AddFeedDialog.tsx:781
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:372
 #: src/components/miniflux/EditFeedDialog.tsx:399
 #: src/components/miniflux/settings/FeedFormDialog.tsx:620
 msgid "Rewrite rules"
@@ -4231,7 +4226,7 @@ msgstr "已保存！"
 msgid "Saving..."
 msgstr "正在保存..."
 
-#: src/components/miniflux/AddFeedDialog.tsx:763
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:354
 #: src/components/miniflux/EditFeedDialog.tsx:383
 #: src/components/miniflux/settings/FeedFormDialog.tsx:603
 msgid "Scraper rules"
@@ -4257,10 +4252,9 @@ msgstr "滚动到顶部"
 msgid "Scroll up"
 msgstr "向上滚动"
 
-#: src/components/miniflux/AddFeedDialog.tsx:422
-#: src/components/miniflux/MinifluxLayout.tsx:682
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:93
+#: src/components/miniflux/MinifluxLayout.tsx:693
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:165
-#: src/components/miniflux/SearchSourceDialog.tsx:163
 #: src/components/miniflux/settings/FeedFormDialog.tsx:337
 msgid "Search"
 msgstr "搜索"
@@ -4269,11 +4263,11 @@ msgstr "搜索"
 msgid "Search a source URL or paste a direct feed URL."
 msgstr "搜索来源 URL 或直接粘贴订阅源 URL。"
 
-#: src/components/miniflux/AddFeedDialog.tsx:495
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:163
 msgid "Search a website first, then select one source to continue."
 msgstr "先搜索网站，然后选择一个来源继续。"
 
-#: src/components/miniflux/AddFeedDialog.tsx:569
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:160
 #: src/components/miniflux/settings/FeedFormDialog.tsx:436
 msgid "Search categories"
 msgstr "搜索分类"
@@ -4298,13 +4292,14 @@ msgstr "搜索要排除的订阅源..."
 msgid "Search feeds..."
 msgstr "搜索订阅源..."
 
-#: src/components/miniflux/ReaderSettings.tsx:408
+#: src/components/miniflux/ReaderSettings.tsx:414
+#: src/components/preferences/panes/AppearancePane.tsx:408
 msgid "Search fonts..."
 msgstr "搜索字体..."
 
 #: src/components/miniflux/SearchSourceDialog.tsx:118
-msgid "Search for websites or blog URLs to discover available feeds."
-msgstr "搜索网站或博客 URL 以发现可用的订阅源。"
+#~ msgid "Search for websites or blog URLs to discover available feeds."
+#~ msgstr "搜索网站或博客 URL 以发现可用的订阅源。"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:927
 msgid "Search in downloads"
@@ -4319,27 +4314,24 @@ msgid "Search or type a command..."
 msgstr "搜索或输入命令..."
 
 #: src/components/layout/AppSidebar.tsx:565
-#: src/components/miniflux/AddFeedDialog.tsx:374
-#: src/components/miniflux/SearchSourceDialog.tsx:115
+#: src/components/miniflux/AddFeedDialog.tsx:472
 msgid "Search Source"
 msgstr "搜索来源"
 
-#: src/components/miniflux/AddFeedDialog.tsx:362
+#: src/components/miniflux/AddFeedDialog.tsx:459
 msgid "Search source first, then confirm feed details before subscribing."
 msgstr "先搜索来源，确认订阅源详情后再订阅。"
 
-#: src/components/miniflux/AddFeedDialog.tsx:405
-#: src/components/miniflux/SearchSourceDialog.tsx:131
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:68
 #: src/components/miniflux/settings/FeedFormDialog.tsx:319
 msgid "Search source URL"
 msgstr "搜索来源 URL"
 
 #: src/components/miniflux/SearchSourceDialog.tsx:171
-msgid "Searching sources..."
-msgstr "正在搜索来源..."
+#~ msgid "Searching sources..."
+#~ msgstr "正在搜索来源..."
 
-#: src/components/miniflux/AddFeedDialog.tsx:422
-#: src/components/miniflux/SearchSourceDialog.tsx:163
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:93
 msgid "Searching..."
 msgstr "正在搜索..."
 
@@ -4356,7 +4348,7 @@ msgstr "选择分类"
 msgid "Select an entry to read"
 msgstr "选择一篇文章阅读"
 
-#: src/components/preferences/panes/AppearancePane.tsx:420
+#: src/components/preferences/panes/AppearancePane.tsx:443
 msgid "Select Background Image"
 msgstr "选择背景图片"
 
@@ -4376,7 +4368,7 @@ msgstr "选择或输入服务器 URL"
 msgid "Select phrase text"
 msgstr "选择短语文本"
 
-#: src/components/preferences/panes/AppearancePane.tsx:139
+#: src/components/preferences/panes/AppearancePane.tsx:146
 msgid "Select theme"
 msgstr "选择主题"
 
@@ -4450,7 +4442,7 @@ msgstr "从文件或网址设置背景"
 msgid "Settings"
 msgstr "设置"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:792
+#: src/components/preferences/panes/AdvancedPane.tsx:797
 msgid "Settings Preview"
 msgstr "设置预览"
 
@@ -4554,7 +4546,7 @@ msgid "Sidebar"
 msgstr "侧边栏"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:635
-#: src/components/preferences/panes/AppearancePane.tsx:244
+#: src/components/preferences/panes/AppearancePane.tsx:251
 msgid "Size"
 msgstr "大小"
 
@@ -4611,12 +4603,12 @@ msgid "Some changes may require an app restart."
 msgstr "部分更改可能需要重启应用。"
 
 #: src/components/ErrorBoundary.tsx:194
-#: src/components/preferences/panes/AppearancePane.tsx:90
+#: src/components/preferences/panes/AppearancePane.tsx:97
 msgid "Something went wrong"
 msgstr "出错了"
 
-#: src/components/miniflux/MinifluxLayout.tsx:639
-#: src/components/miniflux/MinifluxLayout.tsx:645
+#: src/components/miniflux/MinifluxLayout.tsx:650
+#: src/components/miniflux/MinifluxLayout.tsx:656
 msgid "Sort by"
 msgstr "排序方式"
 
@@ -4624,8 +4616,7 @@ msgstr "排序方式"
 #~ msgid "Source code"
 #~ msgstr "源代码"
 
-#: src/components/miniflux/AddFeedDialog.tsx:294
-#: src/components/miniflux/SearchSourceDialog.tsx:66
+#: src/components/miniflux/AddFeedDialog.tsx:286
 msgid "Source URL is required"
 msgstr "来源 URL 为必填项"
 
@@ -4657,15 +4648,15 @@ msgstr "为当前文章添加或取消星标"
 #: src/components/layout/AppSidebar.tsx:664
 #: src/components/miniflux/EntryFilters.tsx:118
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:44
-#: src/components/miniflux/MinifluxLayout.tsx:515
+#: src/components/miniflux/MinifluxLayout.tsx:526
 msgid "Starred"
 msgstr "已加星标"
 
-#: src/components/miniflux/MinifluxLayout.tsx:539
+#: src/components/miniflux/MinifluxLayout.tsx:550
 msgid "starred items"
 msgstr "星标条目"
 
-#: src/components/miniflux/MinifluxLayout.tsx:382
+#: src/components/miniflux/MinifluxLayout.tsx:386
 msgid "Starred items page is only available when connected to Miniflux server."
 msgstr "星标条目页面仅在连接到 Miniflux 服务器时可用。"
 
@@ -4815,7 +4806,7 @@ msgstr "同步完成"
 
 #: src/components/sync/SyncProgressPopover.tsx:170
 #: src/hooks/use-sync-indicator.ts:29
-#: src/services/miniflux/feeds.ts:393
+#: src/services/miniflux/feeds.ts:400
 msgid "Sync failed"
 msgstr "同步失败"
 
@@ -4894,11 +4885,11 @@ msgstr "正在同步..."
 msgid "Syntax highlighting theme for code blocks"
 msgstr "代码块的语法高亮主题"
 
-#: src/components/preferences/panes/AppearancePane.tsx:144
+#: src/components/preferences/panes/AppearancePane.tsx:151
 msgid "System"
 msgstr "系统"
 
-#: src/components/preferences/panes/AppearancePane.tsx:117
+#: src/components/preferences/panes/AppearancePane.tsx:124
 msgid "System Default"
 msgstr "系统默认"
 
@@ -4908,8 +4899,8 @@ msgstr "系统默认"
 #~ msgstr "系统默认（每次询问）"
 
 #: src/components/miniflux/ReaderSettings.tsx:434
-msgid "System Fonts"
-msgstr "系统字体"
+#~ msgid "System Fonts"
+#~ msgstr "系统字体"
 
 #: src/components/preferences/panes/GeneralPane.tsx:167
 msgid "System Tray"
@@ -4957,7 +4948,7 @@ msgstr "应用遇到了意外错误。"
 msgid "The URL of your Miniflux server (e.g., miniflux.example.com)"
 msgstr "您的 Miniflux 服务器 URL（例如：miniflux.example.com）"
 
-#: src/components/preferences/panes/AppearancePane.tsx:128
+#: src/components/preferences/panes/AppearancePane.tsx:135
 msgid "Theme"
 msgstr "主题"
 
@@ -5020,11 +5011,11 @@ msgstr "分类「{0}」将从 Miniflux 中删除。"
 #~ msgid "This will remove the category from Miniflux."
 #~ msgstr "此操作将从 Miniflux 中删除该分类。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:267
+#: src/components/preferences/panes/AppearancePane.tsx:274
 msgid "Tile"
 msgstr "平铺"
 
-#: src/components/preferences/panes/AppearancePane.tsx:197
+#: src/components/preferences/panes/AppearancePane.tsx:204
 msgid "Time Format"
 msgstr "时间格式"
 
@@ -5052,7 +5043,7 @@ msgstr "提示："
 msgid "Tip: Use h / j to jump between entries quickly."
 msgstr "提示：使用 h / j 快速切换文章。"
 
-#: src/components/miniflux/ReaderSettings.tsx:247
+#: src/components/miniflux/ReaderSettings.tsx:252
 msgid "Tips: +/- font size, [ ] line width, Alt+↑/↓ line height"
 msgstr "提示：+/- 调整字号，[ ] 调整行宽，Alt+↑/↓ 调整行高"
 
@@ -5072,8 +5063,8 @@ msgstr "打开命令面板并探索可用命令。"
 
 #: src/components/layout/AppSidebar.tsx:631
 #: src/components/layout/AppSidebar.tsx:640
-#: src/components/miniflux/EntryList.tsx:166
-#: src/components/miniflux/MinifluxLayout.tsx:517
+#: src/components/miniflux/EntryList.tsx:169
+#: src/components/miniflux/MinifluxLayout.tsx:528
 msgid "Today"
 msgstr "今天"
 
@@ -5295,11 +5286,11 @@ msgstr "托盘图标已启用"
 msgid "Try Again"
 msgstr "重试"
 
-#: src/components/miniflux/EntryList.tsx:617
+#: src/components/miniflux/EntryList.tsx:626
 msgid "Try changing the filter or syncing new content"
 msgstr "尝试更改筛选条件或同步新内容"
 
-#: src/components/miniflux/ReaderSettings.tsx:244
+#: src/components/miniflux/ReaderSettings.tsx:249
 msgid "Tune the reading layout for long-form comfort."
 msgstr "调整阅读排版，让长文阅读更舒适。"
 
@@ -5317,20 +5308,20 @@ msgstr "输入或获取以选择模型"
 msgid "Type RESET to confirm"
 msgstr "输入 RESET 以确认"
 
-#: src/components/miniflux/ReaderSettings.tsx:216
+#: src/components/miniflux/ReaderSettings.tsx:221
 #: src/components/preferences/panes/ReaderPane.tsx:228
 msgid "Typography"
 msgstr "排版"
 
-#: src/components/preferences/panes/AppearancePane.tsx:152
+#: src/components/preferences/panes/AppearancePane.tsx:159
 msgid "UI Font"
 msgstr "UI 字体"
 
-#: src/components/preferences/panes/AppearancePane.tsx:167
+#: src/components/preferences/panes/AppearancePane.tsx:174
 msgid "UI Font Size"
 msgstr "界面字体大小"
 
-#: src/components/preferences/panes/AppearancePane.tsx:329
+#: src/components/preferences/panes/AppearancePane.tsx:336
 msgid "UI Transparency"
 msgstr "UI 透明度"
 
@@ -5349,7 +5340,7 @@ msgstr "未读"
 msgid "Unread"
 msgstr "未读"
 
-#: src/components/miniflux/MinifluxLayout.tsx:535
+#: src/components/miniflux/MinifluxLayout.tsx:546
 msgid "unread items"
 msgstr "未读条目"
 
@@ -5423,13 +5414,13 @@ msgstr "链接已复制到剪贴板"
 msgid "URL copied!"
 msgstr "URL 已复制！"
 
-#: src/components/miniflux/AddFeedDialog.tsx:530
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:120
 msgid "URL selected from discovered sources"
 msgstr "已从发现的来源中选择 URL"
 
 #: src/components/miniflux/SearchSourceDialog.tsx:193
-msgid "Use in Add Feed"
-msgstr "在添加订阅源中使用"
+#~ msgid "Use in Add Feed"
+#~ msgstr "在添加订阅源中使用"
 
 #: src/components/miniflux/settings/FeedFormDialog.tsx:402
 msgid "Use source title"
@@ -5443,7 +5434,7 @@ msgstr "使用翻译的大语言模型提供商"
 #~ msgid "Use URL"
 #~ msgstr "使用此链接"
 
-#: src/components/miniflux/AddFeedDialog.tsx:694
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:285
 #: src/components/miniflux/EditFeedDialog.tsx:315
 #: src/components/miniflux/settings/FeedFormDialog.tsx:535
 msgid "Useful for summary-only feeds"
@@ -5454,7 +5445,7 @@ msgstr "适用于仅包含摘要的订阅源"
 msgid "User"
 msgstr "用户"
 
-#: src/components/miniflux/AddFeedDialog.tsx:633
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:224
 #: src/components/miniflux/EditFeedDialog.tsx:259
 #: src/components/miniflux/settings/FeedFormDialog.tsx:476
 msgid "User agent"
@@ -5590,7 +5581,7 @@ msgstr "警告"
 msgid "WebDAV URL"
 msgstr "WebDAV URL"
 
-#: src/components/miniflux/MinifluxLayout.tsx:421
+#: src/components/miniflux/MinifluxLayout.tsx:425
 msgid "Welcome to Miniflux"
 msgstr "欢迎使用 Miniflux"
 
@@ -5607,7 +5598,7 @@ msgstr "加宽内容"
 msgid "Window"
 msgstr "窗口"
 
-#: src/components/miniflux/EntryList.tsx:168
+#: src/components/miniflux/EntryList.tsx:171
 msgid "Yesterday"
 msgstr "昨天"
 

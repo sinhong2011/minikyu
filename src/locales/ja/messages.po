@@ -77,7 +77,7 @@ msgid "{0} feeds synced"
 msgstr "{0} 件のフィードを同期しました"
 
 #. placeholder {0}: entry.reading_time
-#: src/components/miniflux/EntryList.tsx:861
+#: src/components/miniflux/EntryList.tsx:881
 msgid "{0} min read"
 msgstr "{0}分で読了"
 
@@ -137,11 +137,11 @@ msgstr "0 秒"
 msgid "1 episode"
 msgstr "1 エピソード"
 
-#: src/components/preferences/panes/AppearancePane.tsx:214
+#: src/components/preferences/panes/AppearancePane.tsx:221
 msgid "12-hour"
 msgstr "12時間制"
 
-#: src/components/preferences/panes/AppearancePane.tsx:215
+#: src/components/preferences/panes/AppearancePane.tsx:222
 msgid "24-hour"
 msgstr "24時間制"
 
@@ -219,12 +219,12 @@ msgstr "フィードを追加"
 #: src/components/layout/AppSidebar.tsx:561
 #: src/components/layout/AppSidebar.tsx:708
 #: src/components/layout/AppSidebar.tsx:710
-#: src/components/miniflux/AddFeedDialog.tsx:380
-#: src/components/miniflux/AddFeedDialog.tsx:855
+#: src/components/miniflux/AddFeedDialog.tsx:478
+#: src/components/miniflux/AddFeedDialog.tsx:546
 msgid "Add Feed"
 msgstr "フィードを追加"
 
-#: src/components/miniflux/MinifluxLayout.tsx:454
+#: src/components/miniflux/MinifluxLayout.tsx:458
 msgid "Add New Account"
 msgstr "新しいアカウントを追加"
 
@@ -236,7 +236,7 @@ msgstr "新しいカテゴリーを追加"
 msgid "Add New Category..."
 msgstr "新しいカテゴリーを追加..."
 
-#: src/components/miniflux/AddFeedDialog.tsx:360
+#: src/components/miniflux/AddFeedDialog.tsx:456
 msgid "Add New Feed"
 msgstr "新しいフィードを追加"
 
@@ -253,7 +253,7 @@ msgstr "ルールを追加"
 msgid "Add the current article's podcast to the playlist"
 msgstr "この記事のポッドキャストをプレイリストに追加"
 
-#: src/components/miniflux/EntryList.tsx:838
+#: src/components/miniflux/EntryList.tsx:856
 #: src/components/miniflux/EntryReadingHeader.tsx:476
 #: src/components/miniflux/EntryReadingHeader.tsx:483
 #: src/lib/shortcut-registry.ts:109
@@ -270,20 +270,20 @@ msgstr "プレイリストに追加"
 msgid "Add user"
 msgstr "ユーザーを追加"
 
-#: src/components/miniflux/EntryList.tsx:844
+#: src/components/miniflux/EntryList.tsx:864
 #: src/components/miniflux/EntryReadingHeader.tsx:313
 msgid "Added to playlist"
 msgstr "プレイリストに追加しました"
 
-#: src/components/miniflux/AddFeedDialog.tsx:855
+#: src/components/miniflux/AddFeedDialog.tsx:546
 msgid "Adding..."
 msgstr "追加中..."
 
-#: src/components/preferences/panes/AppearancePane.tsx:274
+#: src/components/preferences/panes/AppearancePane.tsx:281
 msgid "Adjust the background image transparency."
 msgstr "背景画像の透明度を調整します。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:168
+#: src/components/preferences/panes/AppearancePane.tsx:175
 msgid "Adjust the interface text size (⌘+/⌘-)"
 msgstr "インターフェースの文字サイズを調整（⌘+/⌘-）"
 
@@ -300,7 +300,7 @@ msgstr "管理者"
 msgid "Advanced"
 msgstr "詳細"
 
-#: src/components/miniflux/AddFeedDialog.tsx:619
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:210
 #: src/components/miniflux/EditFeedDialog.tsx:246
 #: src/components/miniflux/settings/FeedFormDialog.tsx:463
 msgid "Advanced settings"
@@ -321,8 +321,8 @@ msgstr "AI要約"
 #: src/components/layout/AppSidebar.tsx:616
 #: src/components/miniflux/EntryFilters.tsx:102
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:33
-#: src/components/miniflux/MinifluxLayout.tsx:513
-#: src/components/miniflux/MinifluxLayout.tsx:521
+#: src/components/miniflux/MinifluxLayout.tsx:524
+#: src/components/miniflux/MinifluxLayout.tsx:532
 msgid "All"
 msgstr "すべて"
 
@@ -340,7 +340,7 @@ msgstr "これらのカテゴリーのフィードは自動翻訳をスキップ
 
 #: src/lib/commands/feed-commands.ts:64
 #: src/lib/menu.ts:549
-#: src/services/miniflux/feeds.ts:349
+#: src/services/miniflux/feeds.ts:356
 msgid "All feeds refreshed"
 msgstr "すべてのフィードを更新しました"
 
@@ -352,7 +352,7 @@ msgstr "すべてのフィードを同期しました"
 msgid "All read"
 msgstr "すべて既読"
 
-#: src/components/miniflux/MinifluxLayout.tsx:355
+#: src/components/miniflux/MinifluxLayout.tsx:359
 msgid "All read entries have been deleted"
 msgstr "すべての既読エントリーが削除されました"
 
@@ -429,7 +429,7 @@ msgstr "Apple内蔵"
 msgid "Applies to all articles when enabled"
 msgstr "有効時はすべての記事に適用されます"
 
-#: src/components/preferences/panes/AppearancePane.tsx:302
+#: src/components/preferences/panes/AppearancePane.tsx:309
 msgid "Apply blur to the background image."
 msgstr "背景画像にぼかしを適用します。"
 
@@ -460,7 +460,7 @@ msgstr "このアカウントを削除しますか？このアカウントに関
 #~ msgid "Are you sure you want to delete this category and all its feeds?"
 #~ msgstr "このカテゴリーとすべてのフィードを削除してもよろしいですか？"
 
-#: src/components/miniflux/MinifluxLayout.tsx:334
+#: src/components/miniflux/MinifluxLayout.tsx:338
 msgid "Are you sure you want to flush history? This will delete all read entries from the Miniflux server."
 msgstr "履歴を削除しますか？Minifluxサーバーからすべての既読エントリーが削除されます。"
 
@@ -491,7 +491,7 @@ msgstr "記事の目次"
 msgid "Article text size in pixels (14-24)"
 msgstr "記事のテキストサイズ（ピクセル、14-24）"
 
-#: src/components/miniflux/MinifluxLayout.tsx:666
+#: src/components/miniflux/MinifluxLayout.tsx:677
 msgid "Ascending"
 msgstr "昇順"
 
@@ -574,7 +574,7 @@ msgid "Back"
 msgstr "戻る"
 
 #: src/components/command-palette/CommandPalette.tsx:289
-#: src/components/preferences/panes/AppearancePane.tsx:221
+#: src/components/preferences/panes/AppearancePane.tsx:228
 msgid "Background Image"
 msgstr "背景画像"
 
@@ -595,13 +595,13 @@ msgstr "バイリンガル"
 msgid "Bionic Reading"
 msgstr "バイオニック・リーディング"
 
-#: src/components/miniflux/AddFeedDialog.tsx:800
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:391
 #: src/components/miniflux/EditFeedDialog.tsx:417
 #: src/components/miniflux/settings/FeedFormDialog.tsx:638
 msgid "Blocklist rules"
 msgstr "ブロックリストルール"
 
-#: src/components/preferences/panes/AppearancePane.tsx:301
+#: src/components/preferences/panes/AppearancePane.tsx:308
 msgid "Blur"
 msgstr "ぼかし"
 
@@ -635,16 +635,15 @@ msgstr "バケット"
 msgid "Build date"
 msgstr "ビルド日"
 
-#: src/components/miniflux/AddFeedDialog.tsx:594
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:185
 msgid "Can’t find a category? Create a new one."
 msgstr "カテゴリーが見つかりませんか？新しく作成できます。"
 
 #: src/components/miniflux/AddCategoryDialog.tsx:97
-#: src/components/miniflux/AddFeedDialog.tsx:842
+#: src/components/miniflux/AddFeedDialog.tsx:533
 #: src/components/miniflux/ConnectionDialog.tsx:359
 #: src/components/miniflux/EditCategoryDialog.tsx:103
 #: src/components/miniflux/EditFeedDialog.tsx:453
-#: src/components/miniflux/SearchSourceDialog.tsx:155
 #: src/components/miniflux/settings/CategoryFormDialog.tsx:103
 #: src/components/miniflux/settings/DeleteEntityDialog.tsx:60
 #: src/components/miniflux/settings/FeedFormDialog.tsx:681
@@ -683,9 +682,9 @@ msgstr "カテゴリー"
 msgid "Categories are folders, Feeds are subscriptions, and Entries are articles."
 msgstr "カテゴリはフォルダ、フィードは購読、エントリは記事です。"
 
-#: src/components/miniflux/AddFeedDialog.tsx:551
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:142
 #: src/components/miniflux/EditFeedDialog.tsx:220
-#: src/components/miniflux/MinifluxLayout.tsx:503
+#: src/components/miniflux/MinifluxLayout.tsx:514
 #: src/components/miniflux/settings/FeedFormDialog.tsx:419
 #: src/components/preferences/PreferencesDialog.tsx:324
 msgid "Category"
@@ -696,11 +695,11 @@ msgstr "カテゴリー"
 msgid "Category actions"
 msgstr "カテゴリーの操作"
 
-#: src/services/miniflux/categories.ts:118
+#: src/services/miniflux/categories.ts:125
 msgid "Category created"
 msgstr "カテゴリーを作成しました"
 
-#: src/services/miniflux/categories.ts:181
+#: src/services/miniflux/categories.ts:188
 msgid "Category deleted"
 msgstr "カテゴリーを削除しました"
 
@@ -708,11 +707,11 @@ msgstr "カテゴリーを削除しました"
 msgid "Category excluded from translation"
 msgstr "このカテゴリーを翻訳から除外しました"
 
-#: src/components/miniflux/AddFeedDialog.tsx:225
+#: src/components/miniflux/AddFeedDialog.tsx:264
 msgid "Category is required"
 msgstr "カテゴリーは必須です"
 
-#: src/services/miniflux/categories.ts:86
+#: src/services/miniflux/categories.ts:93
 msgid "Category marked as read"
 msgstr "カテゴリを既読にしました"
 
@@ -737,11 +736,11 @@ msgstr "カテゴリータイトル"
 msgid "Category translation re-enabled"
 msgstr "このカテゴリーの翻訳を再有効化しました"
 
-#: src/services/miniflux/categories.ts:150
+#: src/services/miniflux/categories.ts:157
 msgid "Category updated"
 msgstr "カテゴリーを更新しました"
 
-#: src/components/preferences/panes/AppearancePane.tsx:496
+#: src/components/preferences/panes/AppearancePane.tsx:519
 msgid "Change"
 msgstr "変更"
 
@@ -773,7 +772,7 @@ msgstr "最新バージョンを確認"
 msgid "Check whether a newer release is available."
 msgstr "新しいリリースが利用可能か確認します。"
 
-#: src/components/miniflux/EntryList.tsx:592
+#: src/components/miniflux/EntryList.tsx:601
 msgid "Check your connection and try again"
 msgstr "接続を確認してもう一度お試しください"
 
@@ -811,8 +810,8 @@ msgstr "中国語変換"
 msgid "Choose a story from the list and your reading companion will guide the focus."
 msgstr "リストから記事を選ぶと、リーディングコンパニオンがフォーカスをガイドします。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:503
-#: src/components/preferences/panes/AppearancePane.tsx:564
+#: src/components/preferences/panes/AppearancePane.tsx:526
+#: src/components/preferences/panes/AppearancePane.tsx:587
 msgid "Choose File"
 msgstr "ファイルを選択"
 
@@ -820,7 +819,7 @@ msgstr "ファイルを選択"
 msgid "Choose how the player appears when clicking the tray icon"
 msgstr "トレイアイコンをクリックしたときのプレーヤーの表示方法を選択"
 
-#: src/components/preferences/panes/AppearancePane.tsx:198
+#: src/components/preferences/panes/AppearancePane.tsx:205
 msgid "Choose how times are displayed throughout the app"
 msgstr "アプリ全体での時刻の表示形式を選択"
 
@@ -836,7 +835,7 @@ msgstr "翻訳リクエストのエンジンとLLM間のルーティング方法
 msgid "Choose the background surface for the article reader"
 msgstr "記事リーダーの背景を選択"
 
-#: src/components/preferences/panes/AppearancePane.tsx:153
+#: src/components/preferences/panes/AppearancePane.tsx:160
 msgid "Choose the font used across the app interface"
 msgstr "アプリのインターフェースで使用するフォントを選択"
 
@@ -848,11 +847,11 @@ msgstr "記事テキストの書体を選択"
 msgid "Choose what happens when you click the window close button"
 msgstr "ウィンドウの閉じるボタンをクリックしたときの動作を選択"
 
-#: src/components/preferences/panes/AppearancePane.tsx:131
+#: src/components/preferences/panes/AppearancePane.tsx:138
 msgid "Choose your preferred color theme"
 msgstr "お好みのカラーテーマを選択"
 
-#: src/components/preferences/panes/AppearancePane.tsx:106
+#: src/components/preferences/panes/AppearancePane.tsx:113
 msgid "Choose your preferred display language"
 msgstr "お好みの表示言語を選択"
 
@@ -929,7 +928,7 @@ msgstr "消去中..."
 #: src/components/miniflux/EntryReadingHeader.tsx:356
 #: src/components/miniflux/ImageViewer.tsx:236
 #: src/components/miniflux/InAppBrowserPane.tsx:274
-#: src/components/miniflux/ReaderSettings.tsx:235
+#: src/components/miniflux/ReaderSettings.tsx:240
 #: src/components/titlebar/WindowsWindowControls.tsx:118
 #: src/components/ui/dialog.tsx:65
 #: src/components/ui/dialog.tsx:96
@@ -981,11 +980,11 @@ msgstr "コードブロック"
 msgid "Code theme"
 msgstr "コードテーマ"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:814
+#: src/components/preferences/panes/AdvancedPane.tsx:817
 msgid "Collapse"
 msgstr "折りたたむ"
 
-#: src/components/preferences/panes/AppearancePane.tsx:130
+#: src/components/preferences/panes/AppearancePane.tsx:137
 msgid "Color Theme"
 msgstr "カラーテーマ"
 
@@ -1030,11 +1029,11 @@ msgstr "Miniflux に接続"
 msgid "Connect to Miniflux to see server version."
 msgstr "サーバーバージョンを確認するにはMinifluxに接続してください。"
 
-#: src/components/miniflux/MinifluxLayout.tsx:454
+#: src/components/miniflux/MinifluxLayout.tsx:458
 msgid "Connect to Server"
 msgstr "サーバーに接続"
 
-#: src/components/miniflux/MinifluxLayout.tsx:425
+#: src/components/miniflux/MinifluxLayout.tsx:429
 msgid "Connect to your Miniflux server to get started"
 msgstr "Miniflux サーバーに接続して開始"
 
@@ -1060,11 +1059,11 @@ msgstr "接続成功、認証情報を保存しました"
 msgid "Connection token"
 msgstr "接続トークン"
 
-#: src/components/preferences/panes/AppearancePane.tsx:265
+#: src/components/preferences/panes/AppearancePane.tsx:272
 msgid "Contain"
 msgstr "収める"
 
-#: src/components/miniflux/AddFeedDialog.tsx:846
+#: src/components/miniflux/AddFeedDialog.tsx:537
 msgid "Continue to Add Feed"
 msgstr "フィード追加に進む"
 
@@ -1086,7 +1085,7 @@ msgid "Copied"
 msgstr "コピーしました"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:735
-#: src/components/preferences/panes/AdvancedPane.tsx:806
+#: src/components/preferences/panes/AdvancedPane.tsx:809
 #: src/components/ui/sonner.tsx:56
 msgid "Copied!"
 msgstr "コピーしました！"
@@ -1094,7 +1093,7 @@ msgstr "コピーしました！"
 #: src/components/ErrorBoundary.tsx:372
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:164
 #: src/components/preferences/panes/AdvancedPane.tsx:735
-#: src/components/preferences/panes/AdvancedPane.tsx:806
+#: src/components/preferences/panes/AdvancedPane.tsx:809
 msgid "Copy"
 msgstr "コピー"
 
@@ -1185,7 +1184,7 @@ msgstr "ファイルを開けませんでした"
 msgid "Could not reveal in folder"
 msgstr "フォルダーに表示できませんでした"
 
-#: src/components/preferences/panes/AppearancePane.tsx:264
+#: src/components/preferences/panes/AppearancePane.tsx:271
 msgid "Cover"
 msgstr "カバー"
 
@@ -1215,8 +1214,8 @@ msgstr "APIキーを作成"
 msgid "Create category"
 msgstr "カテゴリーを作成"
 
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:195
 #: src/components/miniflux/AddCategoryDialog.tsx:100
-#: src/components/miniflux/AddFeedDialog.tsx:604
 msgid "Create Category"
 msgstr "カテゴリーを作成"
 
@@ -1262,7 +1261,7 @@ msgstr "認証情報を削除しました"
 msgid "Current category"
 msgstr "現在のカテゴリ"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:796
+#: src/components/preferences/panes/AdvancedPane.tsx:800
 msgid "Current preferences as JSON"
 msgstr "現在の設定（JSON）"
 
@@ -1298,7 +1297,7 @@ msgstr "ここでアプリケーションの設定をカスタマイズします
 msgid "Cycle reader theme"
 msgstr "リーダーテーマを切り替え"
 
-#: src/components/preferences/panes/AppearancePane.tsx:143
+#: src/components/preferences/panes/AppearancePane.tsx:150
 msgid "Dark"
 msgstr "ダーク"
 
@@ -1306,7 +1305,7 @@ msgstr "ダーク"
 msgid "Database"
 msgstr "データベース"
 
-#: src/components/preferences/panes/AppearancePane.tsx:195
+#: src/components/preferences/panes/AppearancePane.tsx:202
 msgid "Date & Time"
 msgstr "日付と時刻"
 
@@ -1384,7 +1383,7 @@ msgstr "デフォルト"
 #~ msgid "Default (Figtree)"
 #~ msgstr "デフォルト (Figtree)"
 
-#: src/components/preferences/panes/AppearancePane.tsx:397
+#: src/components/preferences/panes/AppearancePane.tsx:390
 msgid "Default (System)"
 msgstr "デフォルト（システム）"
 
@@ -1468,7 +1467,7 @@ msgstr "ユーザーを削除"
 msgid "Delete user?"
 msgstr "ユーザーを削除しますか？"
 
-#: src/components/miniflux/MinifluxLayout.tsx:672
+#: src/components/miniflux/MinifluxLayout.tsx:683
 msgid "Descending"
 msgstr "降順"
 
@@ -1485,11 +1484,11 @@ msgstr "診断"
 msgid "Dim paragraphs except the one you're reading"
 msgstr "読んでいる段落以外を暗くします"
 
-#: src/components/miniflux/MinifluxLayout.tsx:661
+#: src/components/miniflux/MinifluxLayout.tsx:672
 msgid "Direction"
 msgstr "並び順"
 
-#: src/components/miniflux/AddFeedDialog.tsx:713
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:304
 #: src/components/miniflux/EditFeedDialog.tsx:334
 #: src/components/miniflux/settings/FeedFormDialog.tsx:554
 msgid "Disable feed"
@@ -1539,12 +1538,12 @@ msgid "Done"
 msgstr "完了"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:606
-#: src/components/miniflux/EntryList.tsx:812
+#: src/components/miniflux/EntryList.tsx:830
 #: src/components/podcast/PlayerWindowControls.tsx:313
 #: src/components/podcast/PodcastPlayer.tsx:261
 #: src/components/podcast/PodcastPlayer.tsx:267
-#: src/components/preferences/panes/AppearancePane.tsx:548
-#: src/components/preferences/panes/AppearancePane.tsx:618
+#: src/components/preferences/panes/AppearancePane.tsx:571
+#: src/components/preferences/panes/AppearancePane.tsx:641
 msgid "Download"
 msgstr "ダウンロード"
 
@@ -1557,7 +1556,7 @@ msgstr "ダウンロード完了"
 #~ msgstr "ダウンロード失敗"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:308
-#: src/components/miniflux/EntryList.tsx:463
+#: src/components/miniflux/EntryList.tsx:472
 #: src/components/podcast/PodcastPlayer.tsx:240
 #: src/hooks/use-player-command-listener.ts:59
 msgid "Download Failed"
@@ -1571,7 +1570,7 @@ msgstr "URLからダウンロード"
 msgid "Download original content"
 msgstr "オリジナルコンテンツをダウンロード"
 
-#: src/components/miniflux/AddFeedDialog.tsx:691
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:282
 #: src/components/miniflux/EditFeedDialog.tsx:312
 #: src/components/miniflux/settings/FeedFormDialog.tsx:532
 msgid "Download original content (crawler)"
@@ -1594,7 +1593,7 @@ msgid "Download updates automatically when available."
 msgstr "利用可能な更新を自動的にダウンロードします。"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:659
-#: src/components/miniflux/EntryList.tsx:459
+#: src/components/miniflux/EntryList.tsx:468
 #: src/components/podcast/PodcastPlayer.tsx:231
 msgid "Downloading"
 msgstr "ダウンロード中"
@@ -1612,8 +1611,8 @@ msgstr "サーバーから最近のエントリーをダウンロード中"
 msgid "Downloading update v{0}... {1}%"
 msgstr "更新 v{0} をダウンロード中... {1}%"
 
-#: src/components/preferences/panes/AppearancePane.tsx:548
-#: src/components/preferences/panes/AppearancePane.tsx:618
+#: src/components/preferences/panes/AppearancePane.tsx:571
+#: src/components/preferences/panes/AppearancePane.tsx:641
 msgid "Downloading..."
 msgstr "ダウンロード中..."
 
@@ -1623,8 +1622,7 @@ msgstr "ダウンロード中..."
 msgid "Downloads"
 msgstr "ダウンロード"
 
-#: src/components/miniflux/AddFeedDialog.tsx:410
-#: src/components/miniflux/SearchSourceDialog.tsx:137
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:73
 #: src/components/miniflux/settings/FeedFormDialog.tsx:327
 msgid "e.g. blog.example.com"
 msgstr "例: blog.example.com"
@@ -1835,7 +1833,7 @@ msgstr "全画面モードを終了"
 msgid "Exit Zen Mode"
 msgstr "Zenモードを終了"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:814
+#: src/components/preferences/panes/AdvancedPane.tsx:817
 msgid "Expand"
 msgstr "展開する"
 
@@ -1925,11 +1923,11 @@ msgstr "デバッグ情報のコピーに失敗しました"
 msgid "Failed to create API key"
 msgstr "APIキーの作成に失敗しました"
 
-#: src/services/miniflux/categories.ts:107
+#: src/services/miniflux/categories.ts:114
 msgid "Failed to create category"
 msgstr "カテゴリーの作成に失敗しました"
 
-#: src/services/miniflux/feeds.ts:124
+#: src/services/miniflux/feeds.ts:131
 msgid "Failed to create feed"
 msgstr "フィードの作成に失敗しました"
 
@@ -1946,11 +1944,11 @@ msgstr "アカウントの削除に失敗しました"
 msgid "Failed to delete API key"
 msgstr "APIキーの削除に失敗しました"
 
-#: src/services/miniflux/categories.ts:171
+#: src/services/miniflux/categories.ts:178
 msgid "Failed to delete category"
 msgstr "カテゴリーの削除に失敗しました"
 
-#: src/services/miniflux/feeds.ts:243
+#: src/services/miniflux/feeds.ts:250
 msgid "Failed to delete feed"
 msgstr "フィードの削除に失敗しました"
 
@@ -1958,7 +1956,7 @@ msgstr "フィードの削除に失敗しました"
 msgid "Failed to delete user"
 msgstr "ユーザーの削除に失敗しました"
 
-#: src/components/preferences/panes/AppearancePane.tsx:457
+#: src/components/preferences/panes/AppearancePane.tsx:480
 msgid "Failed to download image"
 msgstr "画像のダウンロードに失敗しました"
 
@@ -1995,7 +1993,7 @@ msgstr "利用可能なモデルの取得に失敗しました"
 msgid "Failed to fetch content"
 msgstr "コンテンツの取得に失敗しました"
 
-#: src/components/miniflux/MinifluxLayout.tsx:346
+#: src/components/miniflux/MinifluxLayout.tsx:350
 msgid "Failed to flush history"
 msgstr "履歴の削除に失敗しました"
 
@@ -2014,17 +2012,17 @@ msgstr "設定のインポートに失敗しました"
 msgid "Failed to load API keys"
 msgstr "APIキーの読み込みに失敗しました"
 
-#: src/services/miniflux/categories.ts:41
+#: src/services/miniflux/categories.ts:47
 msgid "Failed to load categories"
 msgstr "カテゴリーの読み込みに失敗しました"
 
-#: src/components/miniflux/EntryList.tsx:590
+#: src/components/miniflux/EntryList.tsx:599
 msgid "Failed to load entries"
 msgstr "エントリーの読み込みに失敗しました"
 
 #: src/components/layout/AppSidebar.tsx:259
-#: src/services/miniflux/feeds.ts:63
-#: src/services/miniflux/feeds.ts:93
+#: src/services/miniflux/feeds.ts:69
+#: src/services/miniflux/feeds.ts:100
 msgid "Failed to load feeds"
 msgstr "フィードの読み込みに失敗しました"
 
@@ -2032,11 +2030,11 @@ msgstr "フィードの読み込みに失敗しました"
 msgid "Failed to load users"
 msgstr "ユーザーの読み込みに失敗しました"
 
-#: src/services/miniflux/categories.ts:74
+#: src/services/miniflux/categories.ts:81
 msgid "Failed to mark category as read"
 msgstr "カテゴリの既読に失敗しました"
 
-#: src/services/miniflux/feeds.ts:170
+#: src/services/miniflux/feeds.ts:177
 msgid "Failed to mark feed as read"
 msgstr "フィードの既読に失敗しました"
 
@@ -2048,16 +2046,16 @@ msgstr "ウィンドウの最小化に失敗しました：{message}"
 msgid "Failed to pause download"
 msgstr "ダウンロードの一時停止に失敗しました"
 
-#: src/components/miniflux/MinifluxLayout.tsx:399
 #: src/components/miniflux/MinifluxLayout.tsx:403
+#: src/components/miniflux/MinifluxLayout.tsx:407
 msgid "Failed to reconnect account"
 msgstr "アカウントの再接続に失敗しました"
 
-#: src/services/miniflux/feeds.ts:309
+#: src/services/miniflux/feeds.ts:316
 msgid "Failed to refresh feed"
 msgstr "フィードの更新に失敗しました"
 
-#: src/services/miniflux/feeds.ts:340
+#: src/services/miniflux/feeds.ts:347
 msgid "Failed to refresh feeds"
 msgstr "フィードの更新に失敗しました"
 
@@ -2084,7 +2082,7 @@ msgstr "エントリーの保存に失敗しました"
 msgid "Failed to save provider key"
 msgstr "プロバイダーキーの保存に失敗しました"
 
-#: src/services/miniflux/feeds.ts:280
+#: src/services/miniflux/feeds.ts:287
 msgid "Failed to search sources"
 msgstr "ソースの検索に失敗しました"
 
@@ -2110,7 +2108,7 @@ msgstr "スターの切り替えに失敗しました"
 msgid "Failed to update API token"
 msgstr "APIトークンの更新に失敗しました"
 
-#: src/services/miniflux/categories.ts:139
+#: src/services/miniflux/categories.ts:146
 msgid "Failed to update category"
 msgstr "カテゴリーの更新に失敗しました"
 
@@ -2122,7 +2120,7 @@ msgstr "閉じる動作の更新に失敗しました"
 msgid "Failed to update code theme"
 msgstr "コードテーマの更新に失敗しました"
 
-#: src/services/miniflux/feeds.ts:201
+#: src/services/miniflux/feeds.ts:208
 msgid "Failed to update feed"
 msgstr "フィードの更新に失敗しました"
 
@@ -2192,20 +2190,20 @@ msgstr "ユーザーの更新に失敗しました"
 msgid "Failed to update video download path"
 msgstr "動画のダウンロードパスの更新に失敗しました"
 
-#: src/components/miniflux/MinifluxLayout.tsx:508
+#: src/components/miniflux/MinifluxLayout.tsx:519
 #: src/components/preferences/PreferencesDialog.tsx:290
 msgid "Feed"
 msgstr "フィード"
 
-#: src/services/miniflux/feeds.ts:149
+#: src/services/miniflux/feeds.ts:156
 msgid "Feed created"
 msgstr "フィードを作成しました"
 
-#: src/services/miniflux/feeds.ts:135
+#: src/services/miniflux/feeds.ts:142
 msgid "Feed created with partial settings"
 msgstr "一部の設定でフィードを作成しました"
 
-#: src/services/miniflux/feeds.ts:261
+#: src/services/miniflux/feeds.ts:268
 msgid "Feed deleted"
 msgstr "フィードを削除しました"
 
@@ -2217,11 +2215,11 @@ msgstr "このフィードを翻訳から除外しました"
 msgid "Feed Management"
 msgstr "フィード管理"
 
-#: src/services/miniflux/feeds.ts:180
+#: src/services/miniflux/feeds.ts:187
 msgid "Feed marked as read"
 msgstr "フィードを既読にしました"
 
-#: src/services/miniflux/feeds.ts:320
+#: src/services/miniflux/feeds.ts:327
 msgid "Feed refreshed"
 msgstr "フィードを更新しました"
 
@@ -2237,11 +2235,11 @@ msgstr "フィードタイトル"
 msgid "Feed translation re-enabled"
 msgstr "このフィードの翻訳を再有効化しました"
 
-#: src/services/miniflux/feeds.ts:214
+#: src/services/miniflux/feeds.ts:221
 msgid "Feed updated"
 msgstr "フィードを更新しました"
 
-#: src/components/miniflux/AddFeedDialog.tsx:513
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:99
 #: src/components/miniflux/EditFeedDialog.tsx:176
 #: src/components/miniflux/settings/FeedFormDialog.tsx:370
 msgid "Feed URL"
@@ -2284,7 +2282,7 @@ msgstr "オリジナルコンテンツを取得"
 msgid "Fetch Original Content"
 msgstr "オリジナルコンテンツを取得"
 
-#: src/components/miniflux/AddFeedDialog.tsx:747
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:338
 #: src/components/miniflux/EditFeedDialog.tsx:368
 #: src/components/miniflux/settings/FeedFormDialog.tsx:588
 msgid "Fetch via proxy"
@@ -2306,7 +2304,7 @@ msgstr "ファイル"
 msgid "File Path"
 msgstr "ファイルパス"
 
-#: src/components/preferences/panes/AppearancePane.tsx:266
+#: src/components/preferences/panes/AppearancePane.tsx:273
 msgid "Fill"
 msgstr "フィル"
 
@@ -2318,11 +2316,11 @@ msgstr ".env から入力"
 msgid "Floating player window"
 msgstr "フローティングプレーヤーウィンドウ"
 
-#: src/components/miniflux/MinifluxLayout.tsx:631
+#: src/components/miniflux/MinifluxLayout.tsx:642
 msgid "Flush history"
 msgstr "履歴を削除"
 
-#: src/components/miniflux/MinifluxLayout.tsx:336
+#: src/components/miniflux/MinifluxLayout.tsx:340
 msgid "Flush History"
 msgstr "履歴を削除"
 
@@ -2339,23 +2337,22 @@ msgstr "フォーカスモード"
 msgid "Follow system theme"
 msgstr "システムテーマに従う"
 
-#: src/components/preferences/panes/AppearancePane.tsx:150
+#: src/components/preferences/panes/AppearancePane.tsx:157
 msgid "Font"
 msgstr "フォント"
 
-#: src/components/miniflux/ReaderSettings.tsx:396
+#: src/components/miniflux/ReaderSettings.tsx:401
 #: src/components/preferences/panes/ReaderPane.tsx:230
 msgid "Font Family"
 msgstr "フォントファミリー"
 
-#: src/components/miniflux/ReaderSettings.tsx:255
+#: src/components/miniflux/ReaderSettings.tsx:260
 #: src/components/preferences/panes/ReaderPane.tsx:252
 msgid "Font Size"
 msgstr "フォントサイズ"
 
-#: src/components/miniflux/AddFeedDialog.tsx:440
-#: src/components/miniflux/AddFeedDialog.tsx:457
-#: src/components/miniflux/SearchSourceDialog.tsx:175
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:111
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:128
 #: src/components/miniflux/settings/FeedFormDialog.tsx:347
 msgid "Found sources"
 msgstr "ソースが見つかりました"
@@ -2370,8 +2367,8 @@ msgstr "フランス語"
 msgid "From"
 msgstr "変換元"
 
-#: src/components/preferences/panes/AppearancePane.tsx:507
-#: src/components/preferences/panes/AppearancePane.tsx:579
+#: src/components/preferences/panes/AppearancePane.tsx:530
+#: src/components/preferences/panes/AppearancePane.tsx:602
 msgid "From URL"
 msgstr "URLから"
 
@@ -2504,19 +2501,19 @@ msgstr "左サイドバーを非表示"
 
 #: src/components/layout/AppSidebar.tsx:673
 #: src/components/layout/AppSidebar.tsx:682
-#: src/components/miniflux/MinifluxLayout.tsx:519
+#: src/components/miniflux/MinifluxLayout.tsx:530
 msgid "History"
 msgstr "履歴"
 
-#: src/components/miniflux/MinifluxLayout.tsx:354
+#: src/components/miniflux/MinifluxLayout.tsx:358
 msgid "History flushed"
 msgstr "履歴を削除しました"
 
-#: src/components/miniflux/MinifluxLayout.tsx:543
+#: src/components/miniflux/MinifluxLayout.tsx:554
 msgid "history items"
 msgstr "履歴"
 
-#: src/components/miniflux/MinifluxLayout.tsx:381
+#: src/components/miniflux/MinifluxLayout.tsx:385
 msgid "History page is only available when connected to Miniflux server."
 msgstr "履歴ページはMinifluxサーバーに接続している場合のみ利用できます。"
 
@@ -2528,23 +2525,23 @@ msgstr "シンタックスハイライト用のコードブロック言語の検
 #~ msgid "How often to automatically sync with your Miniflux server."
 #~ msgstr "Minifluxサーバーとの自動同期の頻度を設定します。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:245
+#: src/components/preferences/panes/AppearancePane.tsx:252
 msgid "How the image fills the window."
 msgstr "画像のウィンドウへの表示方法。"
 
-#: src/components/miniflux/AddFeedDialog.tsx:667
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:258
 #: src/components/miniflux/EditFeedDialog.tsx:289
 #: src/components/miniflux/settings/FeedFormDialog.tsx:508
 msgid "HTTP password"
 msgstr "HTTPパスワード"
 
-#: src/components/miniflux/AddFeedDialog.tsx:650
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:241
 #: src/components/miniflux/EditFeedDialog.tsx:274
 #: src/components/miniflux/settings/FeedFormDialog.tsx:492
 msgid "HTTP username"
 msgstr "HTTPユーザー名"
 
-#: src/components/miniflux/AddFeedDialog.tsx:517
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:103
 msgid "https://example.com/feed.xml"
 msgstr "https://example.com/feed.xml"
 
@@ -2569,7 +2566,7 @@ msgstr "ハイブリッド自動"
 msgid "Idle"
 msgstr "待機中"
 
-#: src/components/miniflux/AddFeedDialog.tsx:730
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:321
 #: src/components/miniflux/EditFeedDialog.tsx:351
 #: src/components/miniflux/settings/FeedFormDialog.tsx:571
 msgid "Ignore HTTP cache"
@@ -2710,7 +2707,7 @@ msgstr "日本語"
 msgid "Just now"
 msgstr "たった今"
 
-#: src/components/miniflux/AddFeedDialog.tsx:818
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:409
 #: src/components/miniflux/EditFeedDialog.tsx:434
 #: src/components/miniflux/settings/FeedFormDialog.tsx:655
 msgid "Keeplist rules"
@@ -2728,8 +2725,8 @@ msgstr "韓国語"
 
 #: src/components/miniflux/SafeHtml.tsx:807
 #: src/components/miniflux/UserNav.tsx:285
-#: src/components/preferences/panes/AppearancePane.tsx:103
-#: src/components/preferences/panes/AppearancePane.tsx:105
+#: src/components/preferences/panes/AppearancePane.tsx:110
+#: src/components/preferences/panes/AppearancePane.tsx:112
 msgid "Language"
 msgstr "言語"
 
@@ -2773,7 +2770,7 @@ msgstr "最終ログイン"
 msgid "Last Modified"
 msgstr "最終更新"
 
-#: src/components/miniflux/MinifluxLayout.tsx:656
+#: src/components/miniflux/MinifluxLayout.tsx:667
 msgid "Last read date"
 msgstr "最終閲覧日"
 
@@ -2814,16 +2811,16 @@ msgstr "最新バージョン"
 #~ msgid "License"
 #~ msgstr "ライセンス"
 
-#: src/components/preferences/panes/AppearancePane.tsx:142
+#: src/components/preferences/panes/AppearancePane.tsx:149
 msgid "Light"
 msgstr "ライト"
 
-#: src/components/miniflux/ReaderSettings.tsx:350
+#: src/components/miniflux/ReaderSettings.tsx:355
 #: src/components/preferences/panes/ReaderPane.tsx:316
 msgid "Line Height"
 msgstr "行の高さ"
 
-#: src/components/miniflux/ReaderSettings.tsx:304
+#: src/components/miniflux/ReaderSettings.tsx:309
 #: src/components/preferences/panes/ReaderPane.tsx:284
 msgid "Line Width"
 msgstr "行幅"
@@ -2859,7 +2856,7 @@ msgstr "バージョン情報を読み込み中..."
 
 #: src/components/layout/AppSidebar.tsx:595
 #: src/components/miniflux/EntryReadingHeader.tsx:288
-#: src/components/miniflux/MinifluxLayout.tsx:363
+#: src/components/miniflux/MinifluxLayout.tsx:367
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PodcastPlayer.tsx:575
 #: src/pages/TrayPopover.tsx:226
@@ -2898,7 +2895,7 @@ msgstr "リーダーの文字を小さくする"
 #~ msgid "Make text smaller"
 #~ msgstr "テキストを小さくする"
 
-#: src/components/preferences/panes/AppearancePane.tsx:330
+#: src/components/preferences/panes/AppearancePane.tsx:337
 msgid "Make UI panels transparent to reveal the background image."
 msgstr "UIパネルを透明にして背景画像を表示します。"
 
@@ -2914,7 +2911,7 @@ msgstr "サードパーティサービスの連携を管理します。"
 msgid "Manage third-party service integrations. Configure services in Miniflux settings."
 msgstr "サードパーティサービスの連携を管理します。Minifluxの設定でサービスを構成してください。"
 
-#: src/components/miniflux/MinifluxLayout.tsx:620
+#: src/components/miniflux/MinifluxLayout.tsx:631
 msgid "Mark all as read"
 msgstr "すべて既読にする"
 
@@ -3168,7 +3165,7 @@ msgstr "APIキーはまだ作成されていません。"
 #~ msgid "No categories excluded. All categories will be translated when translation is enabled."
 #~ msgstr "除外カテゴリーはありません。翻訳が有効な場合、すべてのカテゴリーが翻訳されます。"
 
-#: src/components/miniflux/AddFeedDialog.tsx:575
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:166
 #: src/components/miniflux/settings/FeedFormDialog.tsx:442
 #: src/components/preferences/panes/CategoriesPane.tsx:67
 #: src/components/preferences/panes/TranslationPane.tsx:2263
@@ -3205,7 +3202,7 @@ msgstr "検索に一致するダウンロードはありません"
 msgid "No downloads yet"
 msgstr "ダウンロードはまだありません"
 
-#: src/components/miniflux/EntryList.tsx:615
+#: src/components/miniflux/EntryList.tsx:624
 msgid "No entries found"
 msgstr "エントリーが見つかりません"
 
@@ -3272,8 +3269,7 @@ msgstr "結果がありません。"
 msgid "No server URL found."
 msgstr "サーバー URL が見つかりません。"
 
-#: src/components/miniflux/AddFeedDialog.tsx:492
-#: src/components/miniflux/SearchSourceDialog.tsx:199
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:159
 msgid "No sources found"
 msgstr "ソースが見つかりません"
 
@@ -3318,7 +3314,7 @@ msgstr "オフ"
 msgid "Offline cached data"
 msgstr "オフラインキャッシュデータ"
 
-#: src/components/miniflux/MinifluxLayout.tsx:378
+#: src/components/miniflux/MinifluxLayout.tsx:382
 msgid "Offline Mode"
 msgstr "オフラインモード"
 
@@ -3336,7 +3332,7 @@ msgstr "OLED"
 msgid "Ollama"
 msgstr "Ollama"
 
-#: src/components/preferences/panes/AppearancePane.tsx:273
+#: src/components/preferences/panes/AppearancePane.tsx:280
 msgid "Opacity"
 msgstr "不透明度"
 
@@ -3508,11 +3504,11 @@ msgstr "パスワード"
 msgid "Password is required"
 msgstr "パスワードが必要です"
 
-#: src/components/miniflux/AddFeedDialog.tsx:391
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:54
 msgid "Paste a website URL to discover available RSS/Atom feeds."
 msgstr "ウェブサイトのURLを貼り付けて、利用可能なRSS/Atomフィードを検出します。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:580
+#: src/components/preferences/panes/AppearancePane.tsx:603
 msgid "Paste an image link"
 msgstr "画像のリンクを貼り付け"
 
@@ -3553,7 +3549,7 @@ msgid "Phrase"
 msgstr "フレーズ"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:800
-#: src/components/miniflux/EntryList.tsx:825
+#: src/components/miniflux/EntryList.tsx:843
 #: src/components/miniflux/EntryReadingHeader.tsx:291
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PlayerWindowQueue.tsx:102
@@ -3595,7 +3591,7 @@ msgstr "プレーヤー表示モードを更新しました"
 msgid "Playlist"
 msgstr "プレイリスト"
 
-#: src/components/miniflux/MinifluxLayout.tsx:385
+#: src/components/miniflux/MinifluxLayout.tsx:389
 msgid "Please connect to your server to use this feature."
 msgstr "この機能を使用するにはサーバーに接続してください。"
 
@@ -3603,12 +3599,11 @@ msgstr "この機能を使用するにはサーバーに接続してください
 #~ msgid "Please enter a password"
 #~ msgstr "パスワードを入力してください"
 
-#: src/components/miniflux/AddFeedDialog.tsx:295
-#: src/components/miniflux/SearchSourceDialog.tsx:67
+#: src/components/miniflux/AddFeedDialog.tsx:289
 msgid "Please enter a valid source URL"
 msgstr "有効なソースURLを入力してください"
 
-#: src/components/miniflux/AddFeedDialog.tsx:224
+#: src/components/miniflux/AddFeedDialog.tsx:263
 #: src/components/miniflux/EditFeedDialog.tsx:84
 msgid "Please enter a valid URL"
 msgstr "有効なURLを入力してください"
@@ -3617,12 +3612,12 @@ msgstr "有効なURLを入力してください"
 #~ msgid "Please enter both access key and secret key"
 #~ msgstr "アクセスキーとシークレットキーの両方を入力してください"
 
-#: src/components/preferences/panes/AppearancePane.tsx:566
+#: src/components/preferences/panes/AppearancePane.tsx:589
 msgid "PNG, JPG, WebP, GIF, or AVIF"
 msgstr "PNG、JPG、WebP、GIF、AVIF"
 
 #: src/components/command-palette/CommandPalette.tsx:199
-#: src/components/miniflux/EntryList.tsx:856
+#: src/components/miniflux/EntryList.tsx:876
 #: src/components/miniflux/EntryReading.tsx:1753
 #: src/lib/menu.ts:299
 msgid "Podcast"
@@ -3749,7 +3744,7 @@ msgstr "プロバイダー"
 msgid "Providers resorted"
 msgstr "プロバイダーを並べ替えました"
 
-#: src/components/miniflux/MinifluxLayout.tsx:650
+#: src/components/miniflux/MinifluxLayout.tsx:661
 msgid "Published date"
 msgstr "公開日"
 
@@ -3866,7 +3861,7 @@ msgstr "リーダーテーマ：セピア"
 msgid "Reader Theme: Slate"
 msgstr "リーダーテーマ：スレート"
 
-#: src/components/miniflux/ReaderSettings.tsx:205
+#: src/components/miniflux/ReaderSettings.tsx:210
 msgid "Reader typography settings"
 msgstr "リーダーのタイポグラフィ設定"
 
@@ -3899,7 +3894,7 @@ msgstr "準備完了"
 msgid "Recent"
 msgstr "最近"
 
-#: src/components/miniflux/MinifluxLayout.tsx:424
+#: src/components/miniflux/MinifluxLayout.tsx:428
 msgid "Reconnect to an existing account or add a new one"
 msgstr "既存のアカウントに再接続するか、新しいアカウントを追加"
 
@@ -4022,7 +4017,7 @@ msgstr "問題を報告..."
 msgid "Required fields"
 msgstr "必須項目"
 
-#: src/components/miniflux/ReaderSettings.tsx:226
+#: src/components/miniflux/ReaderSettings.tsx:231
 #: src/components/preferences/KeyCapture.tsx:118
 #: src/components/preferences/panes/AdvancedPane.tsx:644
 #: src/components/preferences/panes/AdvancedPane.tsx:660
@@ -4143,7 +4138,7 @@ msgstr "再試行に失敗しました"
 msgid "Retry translation"
 msgstr "翻訳を再試行"
 
-#: src/components/miniflux/AddFeedDialog.tsx:781
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:372
 #: src/components/miniflux/EditFeedDialog.tsx:399
 #: src/components/miniflux/settings/FeedFormDialog.tsx:620
 msgid "Rewrite rules"
@@ -4231,7 +4226,7 @@ msgstr "保存しました！"
 msgid "Saving..."
 msgstr "保存中..."
 
-#: src/components/miniflux/AddFeedDialog.tsx:763
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:354
 #: src/components/miniflux/EditFeedDialog.tsx:383
 #: src/components/miniflux/settings/FeedFormDialog.tsx:603
 msgid "Scraper rules"
@@ -4257,10 +4252,9 @@ msgstr "トップにスクロール"
 msgid "Scroll up"
 msgstr "上にスクロール"
 
-#: src/components/miniflux/AddFeedDialog.tsx:422
-#: src/components/miniflux/MinifluxLayout.tsx:682
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:93
+#: src/components/miniflux/MinifluxLayout.tsx:693
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:165
-#: src/components/miniflux/SearchSourceDialog.tsx:163
 #: src/components/miniflux/settings/FeedFormDialog.tsx:337
 msgid "Search"
 msgstr "検索"
@@ -4269,11 +4263,11 @@ msgstr "検索"
 msgid "Search a source URL or paste a direct feed URL."
 msgstr "ソースURLを検索するか、フィードURLを直接貼り付けてください。"
 
-#: src/components/miniflux/AddFeedDialog.tsx:495
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:163
 msgid "Search a website first, then select one source to continue."
 msgstr "まずウェブサイトを検索し、ソースを選択して続行してください。"
 
-#: src/components/miniflux/AddFeedDialog.tsx:569
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:160
 #: src/components/miniflux/settings/FeedFormDialog.tsx:436
 msgid "Search categories"
 msgstr "カテゴリーを検索"
@@ -4298,13 +4292,14 @@ msgstr "除外するフィードを検索..."
 msgid "Search feeds..."
 msgstr "フィードを検索..."
 
-#: src/components/miniflux/ReaderSettings.tsx:408
+#: src/components/miniflux/ReaderSettings.tsx:414
+#: src/components/preferences/panes/AppearancePane.tsx:408
 msgid "Search fonts..."
 msgstr "フォントを検索..."
 
 #: src/components/miniflux/SearchSourceDialog.tsx:118
-msgid "Search for websites or blog URLs to discover available feeds."
-msgstr "ウェブサイトやブログのURLを検索して、利用可能なフィードを検出します。"
+#~ msgid "Search for websites or blog URLs to discover available feeds."
+#~ msgstr "ウェブサイトやブログのURLを検索して、利用可能なフィードを検出します。"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:927
 msgid "Search in downloads"
@@ -4319,27 +4314,24 @@ msgid "Search or type a command..."
 msgstr "検索またはコマンドを入力..."
 
 #: src/components/layout/AppSidebar.tsx:565
-#: src/components/miniflux/AddFeedDialog.tsx:374
-#: src/components/miniflux/SearchSourceDialog.tsx:115
+#: src/components/miniflux/AddFeedDialog.tsx:472
 msgid "Search Source"
 msgstr "ソースを検索"
 
-#: src/components/miniflux/AddFeedDialog.tsx:362
+#: src/components/miniflux/AddFeedDialog.tsx:459
 msgid "Search source first, then confirm feed details before subscribing."
 msgstr "まずソースを検索し、購読する前にフィードの詳細を確認してください。"
 
-#: src/components/miniflux/AddFeedDialog.tsx:405
-#: src/components/miniflux/SearchSourceDialog.tsx:131
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:68
 #: src/components/miniflux/settings/FeedFormDialog.tsx:319
 msgid "Search source URL"
 msgstr "ソースURLを検索"
 
 #: src/components/miniflux/SearchSourceDialog.tsx:171
-msgid "Searching sources..."
-msgstr "ソースを検索中..."
+#~ msgid "Searching sources..."
+#~ msgstr "ソースを検索中..."
 
-#: src/components/miniflux/AddFeedDialog.tsx:422
-#: src/components/miniflux/SearchSourceDialog.tsx:163
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:93
 msgid "Searching..."
 msgstr "検索中..."
 
@@ -4356,7 +4348,7 @@ msgstr "カテゴリーを選択"
 msgid "Select an entry to read"
 msgstr "読むエントリーを選択"
 
-#: src/components/preferences/panes/AppearancePane.tsx:420
+#: src/components/preferences/panes/AppearancePane.tsx:443
 msgid "Select Background Image"
 msgstr "背景画像を選択"
 
@@ -4376,7 +4368,7 @@ msgstr "サーバー URL を選択または入力"
 msgid "Select phrase text"
 msgstr "フレーズテキストを選択"
 
-#: src/components/preferences/panes/AppearancePane.tsx:139
+#: src/components/preferences/panes/AppearancePane.tsx:146
 msgid "Select theme"
 msgstr "テーマを選択"
 
@@ -4450,7 +4442,7 @@ msgstr "ファイルまたはURLから背景を設定"
 msgid "Settings"
 msgstr "設定"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:792
+#: src/components/preferences/panes/AdvancedPane.tsx:797
 msgid "Settings Preview"
 msgstr "設定プレビュー"
 
@@ -4554,7 +4546,7 @@ msgid "Sidebar"
 msgstr "サイドバー"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:635
-#: src/components/preferences/panes/AppearancePane.tsx:244
+#: src/components/preferences/panes/AppearancePane.tsx:251
 msgid "Size"
 msgstr "サイズ"
 
@@ -4611,12 +4603,12 @@ msgid "Some changes may require an app restart."
 msgstr "一部の変更にはアプリの再起動が必要な場合があります。"
 
 #: src/components/ErrorBoundary.tsx:194
-#: src/components/preferences/panes/AppearancePane.tsx:90
+#: src/components/preferences/panes/AppearancePane.tsx:97
 msgid "Something went wrong"
 msgstr "エラーが発生しました"
 
-#: src/components/miniflux/MinifluxLayout.tsx:639
-#: src/components/miniflux/MinifluxLayout.tsx:645
+#: src/components/miniflux/MinifluxLayout.tsx:650
+#: src/components/miniflux/MinifluxLayout.tsx:656
 msgid "Sort by"
 msgstr "並べ替え"
 
@@ -4624,8 +4616,7 @@ msgstr "並べ替え"
 #~ msgid "Source code"
 #~ msgstr "ソースコード"
 
-#: src/components/miniflux/AddFeedDialog.tsx:294
-#: src/components/miniflux/SearchSourceDialog.tsx:66
+#: src/components/miniflux/AddFeedDialog.tsx:286
 msgid "Source URL is required"
 msgstr "ソースURLは必須です"
 
@@ -4657,15 +4648,15 @@ msgstr "現在の記事のスターを切り替え"
 #: src/components/layout/AppSidebar.tsx:664
 #: src/components/miniflux/EntryFilters.tsx:118
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:44
-#: src/components/miniflux/MinifluxLayout.tsx:515
+#: src/components/miniflux/MinifluxLayout.tsx:526
 msgid "Starred"
 msgstr "スター付き"
 
-#: src/components/miniflux/MinifluxLayout.tsx:539
+#: src/components/miniflux/MinifluxLayout.tsx:550
 msgid "starred items"
 msgstr "スター付き"
 
-#: src/components/miniflux/MinifluxLayout.tsx:382
+#: src/components/miniflux/MinifluxLayout.tsx:386
 msgid "Starred items page is only available when connected to Miniflux server."
 msgstr "スター付きページはMinifluxサーバーに接続している場合のみ利用できます。"
 
@@ -4815,7 +4806,7 @@ msgstr "同期完了"
 
 #: src/components/sync/SyncProgressPopover.tsx:170
 #: src/hooks/use-sync-indicator.ts:29
-#: src/services/miniflux/feeds.ts:393
+#: src/services/miniflux/feeds.ts:400
 msgid "Sync failed"
 msgstr "同期に失敗しました"
 
@@ -4894,11 +4885,11 @@ msgstr "同期中..."
 msgid "Syntax highlighting theme for code blocks"
 msgstr "コードブロックのシンタックスハイライトテーマ"
 
-#: src/components/preferences/panes/AppearancePane.tsx:144
+#: src/components/preferences/panes/AppearancePane.tsx:151
 msgid "System"
 msgstr "システム"
 
-#: src/components/preferences/panes/AppearancePane.tsx:117
+#: src/components/preferences/panes/AppearancePane.tsx:124
 msgid "System Default"
 msgstr "システムデフォルト"
 
@@ -4908,8 +4899,8 @@ msgstr "システムデフォルト"
 #~ msgstr "システムデフォルト（毎回確認）"
 
 #: src/components/miniflux/ReaderSettings.tsx:434
-msgid "System Fonts"
-msgstr "システムフォント"
+#~ msgid "System Fonts"
+#~ msgstr "システムフォント"
 
 #: src/components/preferences/panes/GeneralPane.tsx:167
 msgid "System Tray"
@@ -4957,7 +4948,7 @@ msgstr "アプリケーションで予期しないエラーが発生しました
 msgid "The URL of your Miniflux server (e.g., miniflux.example.com)"
 msgstr "Miniflux サーバーの URL（例：miniflux.example.com）"
 
-#: src/components/preferences/panes/AppearancePane.tsx:128
+#: src/components/preferences/panes/AppearancePane.tsx:135
 msgid "Theme"
 msgstr "テーマ"
 
@@ -5020,11 +5011,11 @@ msgstr "カテゴリ「{0}」がMinifluxから削除されます。"
 #~ msgid "This will remove the category from Miniflux."
 #~ msgstr "このカテゴリーはMinifluxから削除されます。"
 
-#: src/components/preferences/panes/AppearancePane.tsx:267
+#: src/components/preferences/panes/AppearancePane.tsx:274
 msgid "Tile"
 msgstr "タイル"
 
-#: src/components/preferences/panes/AppearancePane.tsx:197
+#: src/components/preferences/panes/AppearancePane.tsx:204
 msgid "Time Format"
 msgstr "時刻形式"
 
@@ -5052,7 +5043,7 @@ msgstr "ヒント："
 msgid "Tip: Use h / j to jump between entries quickly."
 msgstr "ヒント：h / j キーでエントリー間をすばやく移動できます。"
 
-#: src/components/miniflux/ReaderSettings.tsx:247
+#: src/components/miniflux/ReaderSettings.tsx:252
 msgid "Tips: +/- font size, [ ] line width, Alt+↑/↓ line height"
 msgstr "ヒント：+/- フォントサイズ、[ ] 行幅、Alt+↑/↓ 行の高さ"
 
@@ -5072,8 +5063,8 @@ msgstr "コマンドパレットを開いて利用可能なコマンドを探索
 
 #: src/components/layout/AppSidebar.tsx:631
 #: src/components/layout/AppSidebar.tsx:640
-#: src/components/miniflux/EntryList.tsx:166
-#: src/components/miniflux/MinifluxLayout.tsx:517
+#: src/components/miniflux/EntryList.tsx:169
+#: src/components/miniflux/MinifluxLayout.tsx:528
 msgid "Today"
 msgstr "今日"
 
@@ -5295,11 +5286,11 @@ msgstr "トレイアイコンを有効にしました"
 msgid "Try Again"
 msgstr "もう一度試す"
 
-#: src/components/miniflux/EntryList.tsx:617
+#: src/components/miniflux/EntryList.tsx:626
 msgid "Try changing the filter or syncing new content"
 msgstr "フィルターを変更するか、新しいコンテンツを同期してみてください"
 
-#: src/components/miniflux/ReaderSettings.tsx:244
+#: src/components/miniflux/ReaderSettings.tsx:249
 msgid "Tune the reading layout for long-form comfort."
 msgstr "長文を快適に読むためにレイアウトを調整します。"
 
@@ -5317,20 +5308,20 @@ msgstr "モデルを入力または取得して選択"
 msgid "Type RESET to confirm"
 msgstr "RESETと入力して確認"
 
-#: src/components/miniflux/ReaderSettings.tsx:216
+#: src/components/miniflux/ReaderSettings.tsx:221
 #: src/components/preferences/panes/ReaderPane.tsx:228
 msgid "Typography"
 msgstr "タイポグラフィ"
 
-#: src/components/preferences/panes/AppearancePane.tsx:152
+#: src/components/preferences/panes/AppearancePane.tsx:159
 msgid "UI Font"
 msgstr "UIフォント"
 
-#: src/components/preferences/panes/AppearancePane.tsx:167
+#: src/components/preferences/panes/AppearancePane.tsx:174
 msgid "UI Font Size"
 msgstr "UIフォントサイズ"
 
-#: src/components/preferences/panes/AppearancePane.tsx:329
+#: src/components/preferences/panes/AppearancePane.tsx:336
 msgid "UI Transparency"
 msgstr "UI透明度"
 
@@ -5349,7 +5340,7 @@ msgstr "未読"
 msgid "Unread"
 msgstr "未読"
 
-#: src/components/miniflux/MinifluxLayout.tsx:535
+#: src/components/miniflux/MinifluxLayout.tsx:546
 msgid "unread items"
 msgstr "未読"
 
@@ -5423,13 +5414,13 @@ msgstr "URLをクリップボードにコピーしました"
 msgid "URL copied!"
 msgstr "URLをコピーしました！"
 
-#: src/components/miniflux/AddFeedDialog.tsx:530
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:120
 msgid "URL selected from discovered sources"
 msgstr "検出されたソースからURLを選択しました"
 
 #: src/components/miniflux/SearchSourceDialog.tsx:193
-msgid "Use in Add Feed"
-msgstr "フィード追加で使用"
+#~ msgid "Use in Add Feed"
+#~ msgstr "フィード追加で使用"
 
 #: src/components/miniflux/settings/FeedFormDialog.tsx:402
 msgid "Use source title"
@@ -5443,7 +5434,7 @@ msgstr "翻訳LLMプロバイダーを使用"
 #~ msgid "Use URL"
 #~ msgstr "URLを使用"
 
-#: src/components/miniflux/AddFeedDialog.tsx:694
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:285
 #: src/components/miniflux/EditFeedDialog.tsx:315
 #: src/components/miniflux/settings/FeedFormDialog.tsx:535
 msgid "Useful for summary-only feeds"
@@ -5454,7 +5445,7 @@ msgstr "要約のみのフィードに便利"
 msgid "User"
 msgstr "ユーザー"
 
-#: src/components/miniflux/AddFeedDialog.tsx:633
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:224
 #: src/components/miniflux/EditFeedDialog.tsx:259
 #: src/components/miniflux/settings/FeedFormDialog.tsx:476
 msgid "User agent"
@@ -5590,7 +5581,7 @@ msgstr "警告"
 msgid "WebDAV URL"
 msgstr "WebDAV URL"
 
-#: src/components/miniflux/MinifluxLayout.tsx:421
+#: src/components/miniflux/MinifluxLayout.tsx:425
 msgid "Welcome to Miniflux"
 msgstr "Miniflux へようこそ"
 
@@ -5607,7 +5598,7 @@ msgstr "コンテンツ幅を広げる"
 msgid "Window"
 msgstr "ウィンドウ"
 
-#: src/components/miniflux/EntryList.tsx:168
+#: src/components/miniflux/EntryList.tsx:171
 msgid "Yesterday"
 msgstr "昨日"
 
