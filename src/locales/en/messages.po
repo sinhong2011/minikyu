@@ -77,7 +77,7 @@ msgid "{0} feeds synced"
 msgstr "{0} feeds synced"
 
 #. placeholder {0}: entry.reading_time
-#: src/components/miniflux/EntryList.tsx:861
+#: src/components/miniflux/EntryList.tsx:881
 msgid "{0} min read"
 msgstr "{0} min read"
 
@@ -137,11 +137,11 @@ msgstr "0 sec"
 msgid "1 episode"
 msgstr "1 episode"
 
-#: src/components/preferences/panes/AppearancePane.tsx:214
+#: src/components/preferences/panes/AppearancePane.tsx:221
 msgid "12-hour"
 msgstr "12-hour"
 
-#: src/components/preferences/panes/AppearancePane.tsx:215
+#: src/components/preferences/panes/AppearancePane.tsx:222
 msgid "24-hour"
 msgstr "24-hour"
 
@@ -219,12 +219,12 @@ msgstr "Add feed"
 #: src/components/layout/AppSidebar.tsx:561
 #: src/components/layout/AppSidebar.tsx:708
 #: src/components/layout/AppSidebar.tsx:710
-#: src/components/miniflux/AddFeedDialog.tsx:380
-#: src/components/miniflux/AddFeedDialog.tsx:855
+#: src/components/miniflux/AddFeedDialog.tsx:478
+#: src/components/miniflux/AddFeedDialog.tsx:546
 msgid "Add Feed"
 msgstr "Add Feed"
 
-#: src/components/miniflux/MinifluxLayout.tsx:454
+#: src/components/miniflux/MinifluxLayout.tsx:458
 msgid "Add New Account"
 msgstr "Add New Account"
 
@@ -236,7 +236,7 @@ msgstr "Add New Category"
 msgid "Add New Category..."
 msgstr "Add New Category..."
 
-#: src/components/miniflux/AddFeedDialog.tsx:360
+#: src/components/miniflux/AddFeedDialog.tsx:456
 msgid "Add New Feed"
 msgstr "Add New Feed"
 
@@ -253,7 +253,7 @@ msgstr "Add Rule"
 msgid "Add the current article's podcast to the playlist"
 msgstr "Add the current article's podcast to the playlist"
 
-#: src/components/miniflux/EntryList.tsx:838
+#: src/components/miniflux/EntryList.tsx:856
 #: src/components/miniflux/EntryReadingHeader.tsx:476
 #: src/components/miniflux/EntryReadingHeader.tsx:483
 #: src/lib/shortcut-registry.ts:109
@@ -270,20 +270,20 @@ msgstr "Add to Playlist"
 msgid "Add user"
 msgstr "Add user"
 
-#: src/components/miniflux/EntryList.tsx:844
+#: src/components/miniflux/EntryList.tsx:864
 #: src/components/miniflux/EntryReadingHeader.tsx:313
 msgid "Added to playlist"
 msgstr "Added to playlist"
 
-#: src/components/miniflux/AddFeedDialog.tsx:855
+#: src/components/miniflux/AddFeedDialog.tsx:546
 msgid "Adding..."
 msgstr "Adding..."
 
-#: src/components/preferences/panes/AppearancePane.tsx:274
+#: src/components/preferences/panes/AppearancePane.tsx:281
 msgid "Adjust the background image transparency."
 msgstr "Adjust the background image transparency."
 
-#: src/components/preferences/panes/AppearancePane.tsx:168
+#: src/components/preferences/panes/AppearancePane.tsx:175
 msgid "Adjust the interface text size (⌘+/⌘-)"
 msgstr "Adjust the interface text size (⌘+/⌘-)"
 
@@ -300,7 +300,7 @@ msgstr "Administrator"
 msgid "Advanced"
 msgstr "Advanced"
 
-#: src/components/miniflux/AddFeedDialog.tsx:619
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:210
 #: src/components/miniflux/EditFeedDialog.tsx:246
 #: src/components/miniflux/settings/FeedFormDialog.tsx:463
 msgid "Advanced settings"
@@ -321,8 +321,8 @@ msgstr "AI Summary"
 #: src/components/layout/AppSidebar.tsx:616
 #: src/components/miniflux/EntryFilters.tsx:102
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:33
-#: src/components/miniflux/MinifluxLayout.tsx:513
-#: src/components/miniflux/MinifluxLayout.tsx:521
+#: src/components/miniflux/MinifluxLayout.tsx:524
+#: src/components/miniflux/MinifluxLayout.tsx:532
 msgid "All"
 msgstr "All"
 
@@ -340,7 +340,7 @@ msgstr "All feeds in these categories will skip auto-translation. Chinese conver
 
 #: src/lib/commands/feed-commands.ts:64
 #: src/lib/menu.ts:549
-#: src/services/miniflux/feeds.ts:349
+#: src/services/miniflux/feeds.ts:356
 msgid "All feeds refreshed"
 msgstr "All feeds refreshed"
 
@@ -352,7 +352,7 @@ msgstr "All feeds synchronized"
 msgid "All read"
 msgstr "All read"
 
-#: src/components/miniflux/MinifluxLayout.tsx:355
+#: src/components/miniflux/MinifluxLayout.tsx:359
 msgid "All read entries have been deleted"
 msgstr "All read entries have been deleted"
 
@@ -429,7 +429,7 @@ msgstr "Apple Built-in"
 msgid "Applies to all articles when enabled"
 msgstr "Applies to all articles when enabled"
 
-#: src/components/preferences/panes/AppearancePane.tsx:302
+#: src/components/preferences/panes/AppearancePane.tsx:309
 msgid "Apply blur to the background image."
 msgstr "Apply blur to the background image."
 
@@ -460,7 +460,7 @@ msgstr "Are you sure you want to delete this account? This will remove all crede
 #~ msgid "Are you sure you want to delete this category and all its feeds?"
 #~ msgstr "Are you sure you want to delete this category and all its feeds?"
 
-#: src/components/miniflux/MinifluxLayout.tsx:334
+#: src/components/miniflux/MinifluxLayout.tsx:338
 msgid "Are you sure you want to flush history? This will delete all read entries from the Miniflux server."
 msgstr "Are you sure you want to flush history? This will delete all read entries from the Miniflux server."
 
@@ -491,7 +491,7 @@ msgstr "Article table of contents"
 msgid "Article text size in pixels (14-24)"
 msgstr "Article text size in pixels (14-24)"
 
-#: src/components/miniflux/MinifluxLayout.tsx:666
+#: src/components/miniflux/MinifluxLayout.tsx:677
 msgid "Ascending"
 msgstr "Ascending"
 
@@ -574,7 +574,7 @@ msgid "Back"
 msgstr "Back"
 
 #: src/components/command-palette/CommandPalette.tsx:289
-#: src/components/preferences/panes/AppearancePane.tsx:221
+#: src/components/preferences/panes/AppearancePane.tsx:228
 msgid "Background Image"
 msgstr "Background Image"
 
@@ -595,13 +595,13 @@ msgstr "Bilingual"
 msgid "Bionic Reading"
 msgstr "Bionic Reading"
 
-#: src/components/miniflux/AddFeedDialog.tsx:800
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:391
 #: src/components/miniflux/EditFeedDialog.tsx:417
 #: src/components/miniflux/settings/FeedFormDialog.tsx:638
 msgid "Blocklist rules"
 msgstr "Blocklist rules"
 
-#: src/components/preferences/panes/AppearancePane.tsx:301
+#: src/components/preferences/panes/AppearancePane.tsx:308
 msgid "Blur"
 msgstr "Blur"
 
@@ -635,16 +635,15 @@ msgstr "Bucket"
 msgid "Build date"
 msgstr "Build date"
 
-#: src/components/miniflux/AddFeedDialog.tsx:594
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:185
 msgid "Can’t find a category? Create a new one."
 msgstr "Can’t find a category? Create a new one."
 
 #: src/components/miniflux/AddCategoryDialog.tsx:97
-#: src/components/miniflux/AddFeedDialog.tsx:842
+#: src/components/miniflux/AddFeedDialog.tsx:533
 #: src/components/miniflux/ConnectionDialog.tsx:359
 #: src/components/miniflux/EditCategoryDialog.tsx:103
 #: src/components/miniflux/EditFeedDialog.tsx:453
-#: src/components/miniflux/SearchSourceDialog.tsx:155
 #: src/components/miniflux/settings/CategoryFormDialog.tsx:103
 #: src/components/miniflux/settings/DeleteEntityDialog.tsx:60
 #: src/components/miniflux/settings/FeedFormDialog.tsx:681
@@ -683,9 +682,9 @@ msgstr "Categories"
 msgid "Categories are folders, Feeds are subscriptions, and Entries are articles."
 msgstr "Categories are folders, Feeds are subscriptions, and Entries are articles."
 
-#: src/components/miniflux/AddFeedDialog.tsx:551
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:142
 #: src/components/miniflux/EditFeedDialog.tsx:220
-#: src/components/miniflux/MinifluxLayout.tsx:503
+#: src/components/miniflux/MinifluxLayout.tsx:514
 #: src/components/miniflux/settings/FeedFormDialog.tsx:419
 #: src/components/preferences/PreferencesDialog.tsx:324
 msgid "Category"
@@ -696,11 +695,11 @@ msgstr "Category"
 msgid "Category actions"
 msgstr "Category actions"
 
-#: src/services/miniflux/categories.ts:118
+#: src/services/miniflux/categories.ts:125
 msgid "Category created"
 msgstr "Category created"
 
-#: src/services/miniflux/categories.ts:181
+#: src/services/miniflux/categories.ts:188
 msgid "Category deleted"
 msgstr "Category deleted"
 
@@ -708,11 +707,11 @@ msgstr "Category deleted"
 msgid "Category excluded from translation"
 msgstr "Category excluded from translation"
 
-#: src/components/miniflux/AddFeedDialog.tsx:225
+#: src/components/miniflux/AddFeedDialog.tsx:264
 msgid "Category is required"
 msgstr "Category is required"
 
-#: src/services/miniflux/categories.ts:86
+#: src/services/miniflux/categories.ts:93
 msgid "Category marked as read"
 msgstr "Category marked as read"
 
@@ -737,11 +736,11 @@ msgstr "Category Title"
 msgid "Category translation re-enabled"
 msgstr "Category translation re-enabled"
 
-#: src/services/miniflux/categories.ts:150
+#: src/services/miniflux/categories.ts:157
 msgid "Category updated"
 msgstr "Category updated"
 
-#: src/components/preferences/panes/AppearancePane.tsx:496
+#: src/components/preferences/panes/AppearancePane.tsx:519
 msgid "Change"
 msgstr "Change"
 
@@ -773,7 +772,7 @@ msgstr "Check latest version"
 msgid "Check whether a newer release is available."
 msgstr "Check whether a newer release is available."
 
-#: src/components/miniflux/EntryList.tsx:592
+#: src/components/miniflux/EntryList.tsx:601
 msgid "Check your connection and try again"
 msgstr "Check your connection and try again"
 
@@ -811,8 +810,8 @@ msgstr "Chinese Conversion"
 msgid "Choose a story from the list and your reading companion will guide the focus."
 msgstr "Choose a story from the list and your reading companion will guide the focus."
 
-#: src/components/preferences/panes/AppearancePane.tsx:503
-#: src/components/preferences/panes/AppearancePane.tsx:564
+#: src/components/preferences/panes/AppearancePane.tsx:526
+#: src/components/preferences/panes/AppearancePane.tsx:587
 msgid "Choose File"
 msgstr "Choose File"
 
@@ -820,7 +819,7 @@ msgstr "Choose File"
 msgid "Choose how the player appears when clicking the tray icon"
 msgstr "Choose how the player appears when clicking the tray icon"
 
-#: src/components/preferences/panes/AppearancePane.tsx:198
+#: src/components/preferences/panes/AppearancePane.tsx:205
 msgid "Choose how times are displayed throughout the app"
 msgstr "Choose how times are displayed throughout the app"
 
@@ -836,7 +835,7 @@ msgstr "Choose how translation requests are routed across engines and LLMs."
 msgid "Choose the background surface for the article reader"
 msgstr "Choose the background surface for the article reader"
 
-#: src/components/preferences/panes/AppearancePane.tsx:153
+#: src/components/preferences/panes/AppearancePane.tsx:160
 msgid "Choose the font used across the app interface"
 msgstr "Choose the font used across the app interface"
 
@@ -848,11 +847,11 @@ msgstr "Choose the typeface for article text"
 msgid "Choose what happens when you click the window close button"
 msgstr "Choose what happens when you click the window close button"
 
-#: src/components/preferences/panes/AppearancePane.tsx:131
+#: src/components/preferences/panes/AppearancePane.tsx:138
 msgid "Choose your preferred color theme"
 msgstr "Choose your preferred color theme"
 
-#: src/components/preferences/panes/AppearancePane.tsx:106
+#: src/components/preferences/panes/AppearancePane.tsx:113
 msgid "Choose your preferred display language"
 msgstr "Choose your preferred display language"
 
@@ -929,7 +928,7 @@ msgstr "Clearing..."
 #: src/components/miniflux/EntryReadingHeader.tsx:356
 #: src/components/miniflux/ImageViewer.tsx:236
 #: src/components/miniflux/InAppBrowserPane.tsx:274
-#: src/components/miniflux/ReaderSettings.tsx:235
+#: src/components/miniflux/ReaderSettings.tsx:240
 #: src/components/titlebar/WindowsWindowControls.tsx:118
 #: src/components/ui/dialog.tsx:65
 #: src/components/ui/dialog.tsx:96
@@ -981,11 +980,11 @@ msgstr "Code Blocks"
 msgid "Code theme"
 msgstr "Code theme"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:814
+#: src/components/preferences/panes/AdvancedPane.tsx:817
 msgid "Collapse"
 msgstr "Collapse"
 
-#: src/components/preferences/panes/AppearancePane.tsx:130
+#: src/components/preferences/panes/AppearancePane.tsx:137
 msgid "Color Theme"
 msgstr "Color Theme"
 
@@ -1030,11 +1029,11 @@ msgstr "Connect to Miniflux"
 msgid "Connect to Miniflux to see server version."
 msgstr "Connect to Miniflux to see server version."
 
-#: src/components/miniflux/MinifluxLayout.tsx:454
+#: src/components/miniflux/MinifluxLayout.tsx:458
 msgid "Connect to Server"
 msgstr "Connect to Server"
 
-#: src/components/miniflux/MinifluxLayout.tsx:425
+#: src/components/miniflux/MinifluxLayout.tsx:429
 msgid "Connect to your Miniflux server to get started"
 msgstr "Connect to your Miniflux server to get started"
 
@@ -1060,11 +1059,11 @@ msgstr "Connection successful, credentials saved"
 msgid "Connection token"
 msgstr "Connection token"
 
-#: src/components/preferences/panes/AppearancePane.tsx:265
+#: src/components/preferences/panes/AppearancePane.tsx:272
 msgid "Contain"
 msgstr "Contain"
 
-#: src/components/miniflux/AddFeedDialog.tsx:846
+#: src/components/miniflux/AddFeedDialog.tsx:537
 msgid "Continue to Add Feed"
 msgstr "Continue to Add Feed"
 
@@ -1086,7 +1085,7 @@ msgid "Copied"
 msgstr "Copied"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:735
-#: src/components/preferences/panes/AdvancedPane.tsx:806
+#: src/components/preferences/panes/AdvancedPane.tsx:809
 #: src/components/ui/sonner.tsx:56
 msgid "Copied!"
 msgstr "Copied!"
@@ -1094,7 +1093,7 @@ msgstr "Copied!"
 #: src/components/ErrorBoundary.tsx:372
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:164
 #: src/components/preferences/panes/AdvancedPane.tsx:735
-#: src/components/preferences/panes/AdvancedPane.tsx:806
+#: src/components/preferences/panes/AdvancedPane.tsx:809
 msgid "Copy"
 msgstr "Copy"
 
@@ -1185,7 +1184,7 @@ msgstr "Could not open file"
 msgid "Could not reveal in folder"
 msgstr "Could not reveal in folder"
 
-#: src/components/preferences/panes/AppearancePane.tsx:264
+#: src/components/preferences/panes/AppearancePane.tsx:271
 msgid "Cover"
 msgstr "Cover"
 
@@ -1215,8 +1214,8 @@ msgstr "Create API key"
 msgid "Create category"
 msgstr "Create category"
 
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:195
 #: src/components/miniflux/AddCategoryDialog.tsx:100
-#: src/components/miniflux/AddFeedDialog.tsx:604
 msgid "Create Category"
 msgstr "Create Category"
 
@@ -1262,7 +1261,7 @@ msgstr "Credentials removed"
 msgid "Current category"
 msgstr "Current category"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:796
+#: src/components/preferences/panes/AdvancedPane.tsx:800
 msgid "Current preferences as JSON"
 msgstr "Current preferences as JSON"
 
@@ -1298,7 +1297,7 @@ msgstr "Customize your application preferences here."
 msgid "Cycle reader theme"
 msgstr "Cycle reader theme"
 
-#: src/components/preferences/panes/AppearancePane.tsx:143
+#: src/components/preferences/panes/AppearancePane.tsx:150
 msgid "Dark"
 msgstr "Dark"
 
@@ -1306,7 +1305,7 @@ msgstr "Dark"
 msgid "Database"
 msgstr "Database"
 
-#: src/components/preferences/panes/AppearancePane.tsx:195
+#: src/components/preferences/panes/AppearancePane.tsx:202
 msgid "Date & Time"
 msgstr "Date & Time"
 
@@ -1384,7 +1383,7 @@ msgstr "Default"
 #~ msgid "Default (Figtree)"
 #~ msgstr "Default (Figtree)"
 
-#: src/components/preferences/panes/AppearancePane.tsx:397
+#: src/components/preferences/panes/AppearancePane.tsx:390
 msgid "Default (System)"
 msgstr "Default (System)"
 
@@ -1468,7 +1467,7 @@ msgstr "Delete user"
 msgid "Delete user?"
 msgstr "Delete user?"
 
-#: src/components/miniflux/MinifluxLayout.tsx:672
+#: src/components/miniflux/MinifluxLayout.tsx:683
 msgid "Descending"
 msgstr "Descending"
 
@@ -1485,11 +1484,11 @@ msgstr "Diagnostics"
 msgid "Dim paragraphs except the one you're reading"
 msgstr "Dim paragraphs except the one you're reading"
 
-#: src/components/miniflux/MinifluxLayout.tsx:661
+#: src/components/miniflux/MinifluxLayout.tsx:672
 msgid "Direction"
 msgstr "Direction"
 
-#: src/components/miniflux/AddFeedDialog.tsx:713
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:304
 #: src/components/miniflux/EditFeedDialog.tsx:334
 #: src/components/miniflux/settings/FeedFormDialog.tsx:554
 msgid "Disable feed"
@@ -1539,12 +1538,12 @@ msgid "Done"
 msgstr "Done"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:606
-#: src/components/miniflux/EntryList.tsx:812
+#: src/components/miniflux/EntryList.tsx:830
 #: src/components/podcast/PlayerWindowControls.tsx:313
 #: src/components/podcast/PodcastPlayer.tsx:261
 #: src/components/podcast/PodcastPlayer.tsx:267
-#: src/components/preferences/panes/AppearancePane.tsx:548
-#: src/components/preferences/panes/AppearancePane.tsx:618
+#: src/components/preferences/panes/AppearancePane.tsx:571
+#: src/components/preferences/panes/AppearancePane.tsx:641
 msgid "Download"
 msgstr "Download"
 
@@ -1557,7 +1556,7 @@ msgstr "Download Completed"
 #~ msgstr "Download failed"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:308
-#: src/components/miniflux/EntryList.tsx:463
+#: src/components/miniflux/EntryList.tsx:472
 #: src/components/podcast/PodcastPlayer.tsx:240
 #: src/hooks/use-player-command-listener.ts:59
 msgid "Download Failed"
@@ -1571,7 +1570,7 @@ msgstr "Download from URL"
 msgid "Download original content"
 msgstr "Download original content"
 
-#: src/components/miniflux/AddFeedDialog.tsx:691
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:282
 #: src/components/miniflux/EditFeedDialog.tsx:312
 #: src/components/miniflux/settings/FeedFormDialog.tsx:532
 msgid "Download original content (crawler)"
@@ -1594,7 +1593,7 @@ msgid "Download updates automatically when available."
 msgstr "Download updates automatically when available."
 
 #: src/components/downloads/DownloadManagerDialog.tsx:659
-#: src/components/miniflux/EntryList.tsx:459
+#: src/components/miniflux/EntryList.tsx:468
 #: src/components/podcast/PodcastPlayer.tsx:231
 msgid "Downloading"
 msgstr "Downloading"
@@ -1612,8 +1611,8 @@ msgstr "Downloading recent entries from server"
 msgid "Downloading update v{0}... {1}%"
 msgstr "Downloading update v{0}... {1}%"
 
-#: src/components/preferences/panes/AppearancePane.tsx:548
-#: src/components/preferences/panes/AppearancePane.tsx:618
+#: src/components/preferences/panes/AppearancePane.tsx:571
+#: src/components/preferences/panes/AppearancePane.tsx:641
 msgid "Downloading..."
 msgstr "Downloading..."
 
@@ -1623,8 +1622,7 @@ msgstr "Downloading..."
 msgid "Downloads"
 msgstr "Downloads"
 
-#: src/components/miniflux/AddFeedDialog.tsx:410
-#: src/components/miniflux/SearchSourceDialog.tsx:137
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:73
 #: src/components/miniflux/settings/FeedFormDialog.tsx:327
 msgid "e.g. blog.example.com"
 msgstr "e.g. blog.example.com"
@@ -1835,7 +1833,7 @@ msgstr "Exit fullscreen mode"
 msgid "Exit Zen Mode"
 msgstr "Exit Zen Mode"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:814
+#: src/components/preferences/panes/AdvancedPane.tsx:817
 msgid "Expand"
 msgstr "Expand"
 
@@ -1925,11 +1923,11 @@ msgstr "Failed to copy debug info"
 msgid "Failed to create API key"
 msgstr "Failed to create API key"
 
-#: src/services/miniflux/categories.ts:107
+#: src/services/miniflux/categories.ts:114
 msgid "Failed to create category"
 msgstr "Failed to create category"
 
-#: src/services/miniflux/feeds.ts:124
+#: src/services/miniflux/feeds.ts:131
 msgid "Failed to create feed"
 msgstr "Failed to create feed"
 
@@ -1946,11 +1944,11 @@ msgstr "Failed to delete account"
 msgid "Failed to delete API key"
 msgstr "Failed to delete API key"
 
-#: src/services/miniflux/categories.ts:171
+#: src/services/miniflux/categories.ts:178
 msgid "Failed to delete category"
 msgstr "Failed to delete category"
 
-#: src/services/miniflux/feeds.ts:243
+#: src/services/miniflux/feeds.ts:250
 msgid "Failed to delete feed"
 msgstr "Failed to delete feed"
 
@@ -1958,7 +1956,7 @@ msgstr "Failed to delete feed"
 msgid "Failed to delete user"
 msgstr "Failed to delete user"
 
-#: src/components/preferences/panes/AppearancePane.tsx:457
+#: src/components/preferences/panes/AppearancePane.tsx:480
 msgid "Failed to download image"
 msgstr "Failed to download image"
 
@@ -1995,7 +1993,7 @@ msgstr "Failed to fetch available models"
 msgid "Failed to fetch content"
 msgstr "Failed to fetch content"
 
-#: src/components/miniflux/MinifluxLayout.tsx:346
+#: src/components/miniflux/MinifluxLayout.tsx:350
 msgid "Failed to flush history"
 msgstr "Failed to flush history"
 
@@ -2014,17 +2012,17 @@ msgstr "Failed to import preferences"
 msgid "Failed to load API keys"
 msgstr "Failed to load API keys"
 
-#: src/services/miniflux/categories.ts:41
+#: src/services/miniflux/categories.ts:47
 msgid "Failed to load categories"
 msgstr "Failed to load categories"
 
-#: src/components/miniflux/EntryList.tsx:590
+#: src/components/miniflux/EntryList.tsx:599
 msgid "Failed to load entries"
 msgstr "Failed to load entries"
 
 #: src/components/layout/AppSidebar.tsx:259
-#: src/services/miniflux/feeds.ts:63
-#: src/services/miniflux/feeds.ts:93
+#: src/services/miniflux/feeds.ts:69
+#: src/services/miniflux/feeds.ts:100
 msgid "Failed to load feeds"
 msgstr "Failed to load feeds"
 
@@ -2032,11 +2030,11 @@ msgstr "Failed to load feeds"
 msgid "Failed to load users"
 msgstr "Failed to load users"
 
-#: src/services/miniflux/categories.ts:74
+#: src/services/miniflux/categories.ts:81
 msgid "Failed to mark category as read"
 msgstr "Failed to mark category as read"
 
-#: src/services/miniflux/feeds.ts:170
+#: src/services/miniflux/feeds.ts:177
 msgid "Failed to mark feed as read"
 msgstr "Failed to mark feed as read"
 
@@ -2048,16 +2046,16 @@ msgstr "Failed to minimize window: {message}"
 msgid "Failed to pause download"
 msgstr "Failed to pause download"
 
-#: src/components/miniflux/MinifluxLayout.tsx:399
 #: src/components/miniflux/MinifluxLayout.tsx:403
+#: src/components/miniflux/MinifluxLayout.tsx:407
 msgid "Failed to reconnect account"
 msgstr "Failed to reconnect account"
 
-#: src/services/miniflux/feeds.ts:309
+#: src/services/miniflux/feeds.ts:316
 msgid "Failed to refresh feed"
 msgstr "Failed to refresh feed"
 
-#: src/services/miniflux/feeds.ts:340
+#: src/services/miniflux/feeds.ts:347
 msgid "Failed to refresh feeds"
 msgstr "Failed to refresh feeds"
 
@@ -2084,7 +2082,7 @@ msgstr "Failed to save entry"
 msgid "Failed to save provider key"
 msgstr "Failed to save provider key"
 
-#: src/services/miniflux/feeds.ts:280
+#: src/services/miniflux/feeds.ts:287
 msgid "Failed to search sources"
 msgstr "Failed to search sources"
 
@@ -2110,7 +2108,7 @@ msgstr "Failed to toggle star"
 msgid "Failed to update API token"
 msgstr "Failed to update API token"
 
-#: src/services/miniflux/categories.ts:139
+#: src/services/miniflux/categories.ts:146
 msgid "Failed to update category"
 msgstr "Failed to update category"
 
@@ -2122,7 +2120,7 @@ msgstr "Failed to update close behavior"
 msgid "Failed to update code theme"
 msgstr "Failed to update code theme"
 
-#: src/services/miniflux/feeds.ts:201
+#: src/services/miniflux/feeds.ts:208
 msgid "Failed to update feed"
 msgstr "Failed to update feed"
 
@@ -2192,20 +2190,20 @@ msgstr "Failed to update user"
 msgid "Failed to update video download path"
 msgstr "Failed to update video download path"
 
-#: src/components/miniflux/MinifluxLayout.tsx:508
+#: src/components/miniflux/MinifluxLayout.tsx:519
 #: src/components/preferences/PreferencesDialog.tsx:290
 msgid "Feed"
 msgstr "Feed"
 
-#: src/services/miniflux/feeds.ts:149
+#: src/services/miniflux/feeds.ts:156
 msgid "Feed created"
 msgstr "Feed created"
 
-#: src/services/miniflux/feeds.ts:135
+#: src/services/miniflux/feeds.ts:142
 msgid "Feed created with partial settings"
 msgstr "Feed created with partial settings"
 
-#: src/services/miniflux/feeds.ts:261
+#: src/services/miniflux/feeds.ts:268
 msgid "Feed deleted"
 msgstr "Feed deleted"
 
@@ -2217,11 +2215,11 @@ msgstr "Feed excluded from translation"
 msgid "Feed Management"
 msgstr "Feed Management"
 
-#: src/services/miniflux/feeds.ts:180
+#: src/services/miniflux/feeds.ts:187
 msgid "Feed marked as read"
 msgstr "Feed marked as read"
 
-#: src/services/miniflux/feeds.ts:320
+#: src/services/miniflux/feeds.ts:327
 msgid "Feed refreshed"
 msgstr "Feed refreshed"
 
@@ -2237,11 +2235,11 @@ msgstr "Feed Title"
 msgid "Feed translation re-enabled"
 msgstr "Feed translation re-enabled"
 
-#: src/services/miniflux/feeds.ts:214
+#: src/services/miniflux/feeds.ts:221
 msgid "Feed updated"
 msgstr "Feed updated"
 
-#: src/components/miniflux/AddFeedDialog.tsx:513
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:99
 #: src/components/miniflux/EditFeedDialog.tsx:176
 #: src/components/miniflux/settings/FeedFormDialog.tsx:370
 msgid "Feed URL"
@@ -2284,7 +2282,7 @@ msgstr "Fetch original content"
 msgid "Fetch Original Content"
 msgstr "Fetch Original Content"
 
-#: src/components/miniflux/AddFeedDialog.tsx:747
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:338
 #: src/components/miniflux/EditFeedDialog.tsx:368
 #: src/components/miniflux/settings/FeedFormDialog.tsx:588
 msgid "Fetch via proxy"
@@ -2306,7 +2304,7 @@ msgstr "File"
 msgid "File Path"
 msgstr "File Path"
 
-#: src/components/preferences/panes/AppearancePane.tsx:266
+#: src/components/preferences/panes/AppearancePane.tsx:273
 msgid "Fill"
 msgstr "Fill"
 
@@ -2318,11 +2316,11 @@ msgstr "Fill from .env"
 msgid "Floating player window"
 msgstr "Floating player window"
 
-#: src/components/miniflux/MinifluxLayout.tsx:631
+#: src/components/miniflux/MinifluxLayout.tsx:642
 msgid "Flush history"
 msgstr "Flush history"
 
-#: src/components/miniflux/MinifluxLayout.tsx:336
+#: src/components/miniflux/MinifluxLayout.tsx:340
 msgid "Flush History"
 msgstr "Flush History"
 
@@ -2339,23 +2337,22 @@ msgstr "Focus Mode"
 msgid "Follow system theme"
 msgstr "Follow system theme"
 
-#: src/components/preferences/panes/AppearancePane.tsx:150
+#: src/components/preferences/panes/AppearancePane.tsx:157
 msgid "Font"
 msgstr "Font"
 
-#: src/components/miniflux/ReaderSettings.tsx:396
+#: src/components/miniflux/ReaderSettings.tsx:401
 #: src/components/preferences/panes/ReaderPane.tsx:230
 msgid "Font Family"
 msgstr "Font Family"
 
-#: src/components/miniflux/ReaderSettings.tsx:255
+#: src/components/miniflux/ReaderSettings.tsx:260
 #: src/components/preferences/panes/ReaderPane.tsx:252
 msgid "Font Size"
 msgstr "Font Size"
 
-#: src/components/miniflux/AddFeedDialog.tsx:440
-#: src/components/miniflux/AddFeedDialog.tsx:457
-#: src/components/miniflux/SearchSourceDialog.tsx:175
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:111
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:128
 #: src/components/miniflux/settings/FeedFormDialog.tsx:347
 msgid "Found sources"
 msgstr "Found sources"
@@ -2370,8 +2367,8 @@ msgstr "French"
 msgid "From"
 msgstr "From"
 
-#: src/components/preferences/panes/AppearancePane.tsx:507
-#: src/components/preferences/panes/AppearancePane.tsx:579
+#: src/components/preferences/panes/AppearancePane.tsx:530
+#: src/components/preferences/panes/AppearancePane.tsx:602
 msgid "From URL"
 msgstr "From URL"
 
@@ -2504,19 +2501,19 @@ msgstr "Hide the left sidebar"
 
 #: src/components/layout/AppSidebar.tsx:673
 #: src/components/layout/AppSidebar.tsx:682
-#: src/components/miniflux/MinifluxLayout.tsx:519
+#: src/components/miniflux/MinifluxLayout.tsx:530
 msgid "History"
 msgstr "History"
 
-#: src/components/miniflux/MinifluxLayout.tsx:354
+#: src/components/miniflux/MinifluxLayout.tsx:358
 msgid "History flushed"
 msgstr "History flushed"
 
-#: src/components/miniflux/MinifluxLayout.tsx:543
+#: src/components/miniflux/MinifluxLayout.tsx:554
 msgid "history items"
 msgstr "history items"
 
-#: src/components/miniflux/MinifluxLayout.tsx:381
+#: src/components/miniflux/MinifluxLayout.tsx:385
 msgid "History page is only available when connected to Miniflux server."
 msgstr "History page is only available when connected to Miniflux server."
 
@@ -2528,23 +2525,23 @@ msgstr "How code block languages are detected for syntax highlighting"
 #~ msgid "How often to automatically sync with your Miniflux server."
 #~ msgstr "How often to automatically sync with your Miniflux server."
 
-#: src/components/preferences/panes/AppearancePane.tsx:245
+#: src/components/preferences/panes/AppearancePane.tsx:252
 msgid "How the image fills the window."
 msgstr "How the image fills the window."
 
-#: src/components/miniflux/AddFeedDialog.tsx:667
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:258
 #: src/components/miniflux/EditFeedDialog.tsx:289
 #: src/components/miniflux/settings/FeedFormDialog.tsx:508
 msgid "HTTP password"
 msgstr "HTTP password"
 
-#: src/components/miniflux/AddFeedDialog.tsx:650
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:241
 #: src/components/miniflux/EditFeedDialog.tsx:274
 #: src/components/miniflux/settings/FeedFormDialog.tsx:492
 msgid "HTTP username"
 msgstr "HTTP username"
 
-#: src/components/miniflux/AddFeedDialog.tsx:517
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:103
 msgid "https://example.com/feed.xml"
 msgstr "https://example.com/feed.xml"
 
@@ -2569,7 +2566,7 @@ msgstr "Hybrid auto"
 msgid "Idle"
 msgstr "Idle"
 
-#: src/components/miniflux/AddFeedDialog.tsx:730
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:321
 #: src/components/miniflux/EditFeedDialog.tsx:351
 #: src/components/miniflux/settings/FeedFormDialog.tsx:571
 msgid "Ignore HTTP cache"
@@ -2710,7 +2707,7 @@ msgstr "Japanese"
 msgid "Just now"
 msgstr "Just now"
 
-#: src/components/miniflux/AddFeedDialog.tsx:818
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:409
 #: src/components/miniflux/EditFeedDialog.tsx:434
 #: src/components/miniflux/settings/FeedFormDialog.tsx:655
 msgid "Keeplist rules"
@@ -2728,8 +2725,8 @@ msgstr "Korean"
 
 #: src/components/miniflux/SafeHtml.tsx:807
 #: src/components/miniflux/UserNav.tsx:285
-#: src/components/preferences/panes/AppearancePane.tsx:103
-#: src/components/preferences/panes/AppearancePane.tsx:105
+#: src/components/preferences/panes/AppearancePane.tsx:110
+#: src/components/preferences/panes/AppearancePane.tsx:112
 msgid "Language"
 msgstr "Language"
 
@@ -2773,7 +2770,7 @@ msgstr "Last login"
 msgid "Last Modified"
 msgstr "Last Modified"
 
-#: src/components/miniflux/MinifluxLayout.tsx:656
+#: src/components/miniflux/MinifluxLayout.tsx:667
 msgid "Last read date"
 msgstr "Last read date"
 
@@ -2814,16 +2811,16 @@ msgstr "Latest version"
 #~ msgid "License"
 #~ msgstr "License"
 
-#: src/components/preferences/panes/AppearancePane.tsx:142
+#: src/components/preferences/panes/AppearancePane.tsx:149
 msgid "Light"
 msgstr "Light"
 
-#: src/components/miniflux/ReaderSettings.tsx:350
+#: src/components/miniflux/ReaderSettings.tsx:355
 #: src/components/preferences/panes/ReaderPane.tsx:316
 msgid "Line Height"
 msgstr "Line Height"
 
-#: src/components/miniflux/ReaderSettings.tsx:304
+#: src/components/miniflux/ReaderSettings.tsx:309
 #: src/components/preferences/panes/ReaderPane.tsx:284
 msgid "Line Width"
 msgstr "Line Width"
@@ -2859,7 +2856,7 @@ msgstr "Loading version information..."
 
 #: src/components/layout/AppSidebar.tsx:595
 #: src/components/miniflux/EntryReadingHeader.tsx:288
-#: src/components/miniflux/MinifluxLayout.tsx:363
+#: src/components/miniflux/MinifluxLayout.tsx:367
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PodcastPlayer.tsx:575
 #: src/pages/TrayPopover.tsx:226
@@ -2898,7 +2895,7 @@ msgstr "Make reader text smaller"
 #~ msgid "Make text smaller"
 #~ msgstr "Make text smaller"
 
-#: src/components/preferences/panes/AppearancePane.tsx:330
+#: src/components/preferences/panes/AppearancePane.tsx:337
 msgid "Make UI panels transparent to reveal the background image."
 msgstr "Make UI panels transparent to reveal the background image."
 
@@ -2914,7 +2911,7 @@ msgstr "Manage third-party service integrations."
 msgid "Manage third-party service integrations. Configure services in Miniflux settings."
 msgstr "Manage third-party service integrations. Configure services in Miniflux settings."
 
-#: src/components/miniflux/MinifluxLayout.tsx:620
+#: src/components/miniflux/MinifluxLayout.tsx:631
 msgid "Mark all as read"
 msgstr "Mark all as read"
 
@@ -3168,7 +3165,7 @@ msgstr "No API keys created yet."
 #~ msgid "No categories excluded. All categories will be translated when translation is enabled."
 #~ msgstr "No categories excluded. All categories will be translated when translation is enabled."
 
-#: src/components/miniflux/AddFeedDialog.tsx:575
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:166
 #: src/components/miniflux/settings/FeedFormDialog.tsx:442
 #: src/components/preferences/panes/CategoriesPane.tsx:67
 #: src/components/preferences/panes/TranslationPane.tsx:2263
@@ -3205,7 +3202,7 @@ msgstr "No downloads match your search"
 msgid "No downloads yet"
 msgstr "No downloads yet"
 
-#: src/components/miniflux/EntryList.tsx:615
+#: src/components/miniflux/EntryList.tsx:624
 msgid "No entries found"
 msgstr "No entries found"
 
@@ -3272,8 +3269,7 @@ msgstr "No results."
 msgid "No server URL found."
 msgstr "No server URL found."
 
-#: src/components/miniflux/AddFeedDialog.tsx:492
-#: src/components/miniflux/SearchSourceDialog.tsx:199
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:159
 msgid "No sources found"
 msgstr "No sources found"
 
@@ -3318,7 +3314,7 @@ msgstr "Off"
 msgid "Offline cached data"
 msgstr "Offline cached data"
 
-#: src/components/miniflux/MinifluxLayout.tsx:378
+#: src/components/miniflux/MinifluxLayout.tsx:382
 msgid "Offline Mode"
 msgstr "Offline Mode"
 
@@ -3336,7 +3332,7 @@ msgstr "OLED"
 msgid "Ollama"
 msgstr "Ollama"
 
-#: src/components/preferences/panes/AppearancePane.tsx:273
+#: src/components/preferences/panes/AppearancePane.tsx:280
 msgid "Opacity"
 msgstr "Opacity"
 
@@ -3508,11 +3504,11 @@ msgstr "Password"
 msgid "Password is required"
 msgstr "Password is required"
 
-#: src/components/miniflux/AddFeedDialog.tsx:391
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:54
 msgid "Paste a website URL to discover available RSS/Atom feeds."
 msgstr "Paste a website URL to discover available RSS/Atom feeds."
 
-#: src/components/preferences/panes/AppearancePane.tsx:580
+#: src/components/preferences/panes/AppearancePane.tsx:603
 msgid "Paste an image link"
 msgstr "Paste an image link"
 
@@ -3553,7 +3549,7 @@ msgid "Phrase"
 msgstr "Phrase"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:800
-#: src/components/miniflux/EntryList.tsx:825
+#: src/components/miniflux/EntryList.tsx:843
 #: src/components/miniflux/EntryReadingHeader.tsx:291
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PlayerWindowQueue.tsx:102
@@ -3595,7 +3591,7 @@ msgstr "Player display mode updated"
 msgid "Playlist"
 msgstr "Playlist"
 
-#: src/components/miniflux/MinifluxLayout.tsx:385
+#: src/components/miniflux/MinifluxLayout.tsx:389
 msgid "Please connect to your server to use this feature."
 msgstr "Please connect to your server to use this feature."
 
@@ -3603,12 +3599,11 @@ msgstr "Please connect to your server to use this feature."
 #~ msgid "Please enter a password"
 #~ msgstr "Please enter a password"
 
-#: src/components/miniflux/AddFeedDialog.tsx:295
-#: src/components/miniflux/SearchSourceDialog.tsx:67
+#: src/components/miniflux/AddFeedDialog.tsx:289
 msgid "Please enter a valid source URL"
 msgstr "Please enter a valid source URL"
 
-#: src/components/miniflux/AddFeedDialog.tsx:224
+#: src/components/miniflux/AddFeedDialog.tsx:263
 #: src/components/miniflux/EditFeedDialog.tsx:84
 msgid "Please enter a valid URL"
 msgstr "Please enter a valid URL"
@@ -3617,12 +3612,12 @@ msgstr "Please enter a valid URL"
 #~ msgid "Please enter both access key and secret key"
 #~ msgstr "Please enter both access key and secret key"
 
-#: src/components/preferences/panes/AppearancePane.tsx:566
+#: src/components/preferences/panes/AppearancePane.tsx:589
 msgid "PNG, JPG, WebP, GIF, or AVIF"
 msgstr "PNG, JPG, WebP, GIF, or AVIF"
 
 #: src/components/command-palette/CommandPalette.tsx:199
-#: src/components/miniflux/EntryList.tsx:856
+#: src/components/miniflux/EntryList.tsx:876
 #: src/components/miniflux/EntryReading.tsx:1753
 #: src/lib/menu.ts:299
 msgid "Podcast"
@@ -3749,7 +3744,7 @@ msgstr "Providers"
 msgid "Providers resorted"
 msgstr "Providers resorted"
 
-#: src/components/miniflux/MinifluxLayout.tsx:650
+#: src/components/miniflux/MinifluxLayout.tsx:661
 msgid "Published date"
 msgstr "Published date"
 
@@ -3866,7 +3861,7 @@ msgstr "Reader Theme: Sepia"
 msgid "Reader Theme: Slate"
 msgstr "Reader Theme: Slate"
 
-#: src/components/miniflux/ReaderSettings.tsx:205
+#: src/components/miniflux/ReaderSettings.tsx:210
 msgid "Reader typography settings"
 msgstr "Reader typography settings"
 
@@ -3899,7 +3894,7 @@ msgstr "Ready"
 msgid "Recent"
 msgstr "Recent"
 
-#: src/components/miniflux/MinifluxLayout.tsx:424
+#: src/components/miniflux/MinifluxLayout.tsx:428
 msgid "Reconnect to an existing account or add a new one"
 msgstr "Reconnect to an existing account or add a new one"
 
@@ -4022,7 +4017,7 @@ msgstr "Report an Issue..."
 msgid "Required fields"
 msgstr "Required fields"
 
-#: src/components/miniflux/ReaderSettings.tsx:226
+#: src/components/miniflux/ReaderSettings.tsx:231
 #: src/components/preferences/KeyCapture.tsx:118
 #: src/components/preferences/panes/AdvancedPane.tsx:644
 #: src/components/preferences/panes/AdvancedPane.tsx:660
@@ -4143,7 +4138,7 @@ msgstr "Retry failed"
 msgid "Retry translation"
 msgstr "Retry translation"
 
-#: src/components/miniflux/AddFeedDialog.tsx:781
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:372
 #: src/components/miniflux/EditFeedDialog.tsx:399
 #: src/components/miniflux/settings/FeedFormDialog.tsx:620
 msgid "Rewrite rules"
@@ -4231,7 +4226,7 @@ msgstr "Saved!"
 msgid "Saving..."
 msgstr "Saving..."
 
-#: src/components/miniflux/AddFeedDialog.tsx:763
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:354
 #: src/components/miniflux/EditFeedDialog.tsx:383
 #: src/components/miniflux/settings/FeedFormDialog.tsx:603
 msgid "Scraper rules"
@@ -4257,10 +4252,9 @@ msgstr "Scroll to top"
 msgid "Scroll up"
 msgstr "Scroll up"
 
-#: src/components/miniflux/AddFeedDialog.tsx:422
-#: src/components/miniflux/MinifluxLayout.tsx:682
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:93
+#: src/components/miniflux/MinifluxLayout.tsx:693
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:165
-#: src/components/miniflux/SearchSourceDialog.tsx:163
 #: src/components/miniflux/settings/FeedFormDialog.tsx:337
 msgid "Search"
 msgstr "Search"
@@ -4269,11 +4263,11 @@ msgstr "Search"
 msgid "Search a source URL or paste a direct feed URL."
 msgstr "Search a source URL or paste a direct feed URL."
 
-#: src/components/miniflux/AddFeedDialog.tsx:495
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:163
 msgid "Search a website first, then select one source to continue."
 msgstr "Search a website first, then select one source to continue."
 
-#: src/components/miniflux/AddFeedDialog.tsx:569
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:160
 #: src/components/miniflux/settings/FeedFormDialog.tsx:436
 msgid "Search categories"
 msgstr "Search categories"
@@ -4298,13 +4292,14 @@ msgstr "Search feeds to exclude..."
 msgid "Search feeds..."
 msgstr "Search feeds..."
 
-#: src/components/miniflux/ReaderSettings.tsx:408
+#: src/components/miniflux/ReaderSettings.tsx:414
+#: src/components/preferences/panes/AppearancePane.tsx:408
 msgid "Search fonts..."
 msgstr "Search fonts..."
 
 #: src/components/miniflux/SearchSourceDialog.tsx:118
-msgid "Search for websites or blog URLs to discover available feeds."
-msgstr "Search for websites or blog URLs to discover available feeds."
+#~ msgid "Search for websites or blog URLs to discover available feeds."
+#~ msgstr "Search for websites or blog URLs to discover available feeds."
 
 #: src/components/downloads/DownloadManagerDialog.tsx:927
 msgid "Search in downloads"
@@ -4319,27 +4314,24 @@ msgid "Search or type a command..."
 msgstr "Search or type a command..."
 
 #: src/components/layout/AppSidebar.tsx:565
-#: src/components/miniflux/AddFeedDialog.tsx:374
-#: src/components/miniflux/SearchSourceDialog.tsx:115
+#: src/components/miniflux/AddFeedDialog.tsx:472
 msgid "Search Source"
 msgstr "Search Source"
 
-#: src/components/miniflux/AddFeedDialog.tsx:362
+#: src/components/miniflux/AddFeedDialog.tsx:459
 msgid "Search source first, then confirm feed details before subscribing."
 msgstr "Search source first, then confirm feed details before subscribing."
 
-#: src/components/miniflux/AddFeedDialog.tsx:405
-#: src/components/miniflux/SearchSourceDialog.tsx:131
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:68
 #: src/components/miniflux/settings/FeedFormDialog.tsx:319
 msgid "Search source URL"
 msgstr "Search source URL"
 
 #: src/components/miniflux/SearchSourceDialog.tsx:171
-msgid "Searching sources..."
-msgstr "Searching sources..."
+#~ msgid "Searching sources..."
+#~ msgstr "Searching sources..."
 
-#: src/components/miniflux/AddFeedDialog.tsx:422
-#: src/components/miniflux/SearchSourceDialog.tsx:163
+#: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:93
 msgid "Searching..."
 msgstr "Searching..."
 
@@ -4356,7 +4348,7 @@ msgstr "Select a category"
 msgid "Select an entry to read"
 msgstr "Select an entry to read"
 
-#: src/components/preferences/panes/AppearancePane.tsx:420
+#: src/components/preferences/panes/AppearancePane.tsx:443
 msgid "Select Background Image"
 msgstr "Select Background Image"
 
@@ -4376,7 +4368,7 @@ msgstr "Select or enter server URL"
 msgid "Select phrase text"
 msgstr "Select phrase text"
 
-#: src/components/preferences/panes/AppearancePane.tsx:139
+#: src/components/preferences/panes/AppearancePane.tsx:146
 msgid "Select theme"
 msgstr "Select theme"
 
@@ -4450,7 +4442,7 @@ msgstr "Set background from file or URL"
 msgid "Settings"
 msgstr "Settings"
 
-#: src/components/preferences/panes/AdvancedPane.tsx:792
+#: src/components/preferences/panes/AdvancedPane.tsx:797
 msgid "Settings Preview"
 msgstr "Settings Preview"
 
@@ -4554,7 +4546,7 @@ msgid "Sidebar"
 msgstr "Sidebar"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:635
-#: src/components/preferences/panes/AppearancePane.tsx:244
+#: src/components/preferences/panes/AppearancePane.tsx:251
 msgid "Size"
 msgstr "Size"
 
@@ -4611,12 +4603,12 @@ msgid "Some changes may require an app restart."
 msgstr "Some changes may require an app restart."
 
 #: src/components/ErrorBoundary.tsx:194
-#: src/components/preferences/panes/AppearancePane.tsx:90
+#: src/components/preferences/panes/AppearancePane.tsx:97
 msgid "Something went wrong"
 msgstr "Something went wrong"
 
-#: src/components/miniflux/MinifluxLayout.tsx:639
-#: src/components/miniflux/MinifluxLayout.tsx:645
+#: src/components/miniflux/MinifluxLayout.tsx:650
+#: src/components/miniflux/MinifluxLayout.tsx:656
 msgid "Sort by"
 msgstr "Sort by"
 
@@ -4624,8 +4616,7 @@ msgstr "Sort by"
 #~ msgid "Source code"
 #~ msgstr "Source code"
 
-#: src/components/miniflux/AddFeedDialog.tsx:294
-#: src/components/miniflux/SearchSourceDialog.tsx:66
+#: src/components/miniflux/AddFeedDialog.tsx:286
 msgid "Source URL is required"
 msgstr "Source URL is required"
 
@@ -4657,15 +4648,15 @@ msgstr "Star or unstar the current article"
 #: src/components/layout/AppSidebar.tsx:664
 #: src/components/miniflux/EntryFilters.tsx:118
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:44
-#: src/components/miniflux/MinifluxLayout.tsx:515
+#: src/components/miniflux/MinifluxLayout.tsx:526
 msgid "Starred"
 msgstr "Starred"
 
-#: src/components/miniflux/MinifluxLayout.tsx:539
+#: src/components/miniflux/MinifluxLayout.tsx:550
 msgid "starred items"
 msgstr "starred items"
 
-#: src/components/miniflux/MinifluxLayout.tsx:382
+#: src/components/miniflux/MinifluxLayout.tsx:386
 msgid "Starred items page is only available when connected to Miniflux server."
 msgstr "Starred items page is only available when connected to Miniflux server."
 
@@ -4815,7 +4806,7 @@ msgstr "Sync Completed"
 
 #: src/components/sync/SyncProgressPopover.tsx:170
 #: src/hooks/use-sync-indicator.ts:29
-#: src/services/miniflux/feeds.ts:393
+#: src/services/miniflux/feeds.ts:400
 msgid "Sync failed"
 msgstr "Sync failed"
 
@@ -4894,11 +4885,11 @@ msgstr "Syncing..."
 msgid "Syntax highlighting theme for code blocks"
 msgstr "Syntax highlighting theme for code blocks"
 
-#: src/components/preferences/panes/AppearancePane.tsx:144
+#: src/components/preferences/panes/AppearancePane.tsx:151
 msgid "System"
 msgstr "System"
 
-#: src/components/preferences/panes/AppearancePane.tsx:117
+#: src/components/preferences/panes/AppearancePane.tsx:124
 msgid "System Default"
 msgstr "System Default"
 
@@ -4908,8 +4899,8 @@ msgstr "System Default"
 #~ msgstr "System default (ask every time)"
 
 #: src/components/miniflux/ReaderSettings.tsx:434
-msgid "System Fonts"
-msgstr "System Fonts"
+#~ msgid "System Fonts"
+#~ msgstr "System Fonts"
 
 #: src/components/preferences/panes/GeneralPane.tsx:167
 msgid "System Tray"
@@ -4957,7 +4948,7 @@ msgstr "The application encountered an unexpected error."
 msgid "The URL of your Miniflux server (e.g., miniflux.example.com)"
 msgstr "The URL of your Miniflux server (e.g., miniflux.example.com)"
 
-#: src/components/preferences/panes/AppearancePane.tsx:128
+#: src/components/preferences/panes/AppearancePane.tsx:135
 msgid "Theme"
 msgstr "Theme"
 
@@ -5020,11 +5011,11 @@ msgstr "This will remove the category \"{0}\" from Miniflux."
 #~ msgid "This will remove the category from Miniflux."
 #~ msgstr "This will remove the category from Miniflux."
 
-#: src/components/preferences/panes/AppearancePane.tsx:267
+#: src/components/preferences/panes/AppearancePane.tsx:274
 msgid "Tile"
 msgstr "Tile"
 
-#: src/components/preferences/panes/AppearancePane.tsx:197
+#: src/components/preferences/panes/AppearancePane.tsx:204
 msgid "Time Format"
 msgstr "Time Format"
 
@@ -5052,7 +5043,7 @@ msgstr "Tip:"
 msgid "Tip: Use h / j to jump between entries quickly."
 msgstr "Tip: Use h / j to jump between entries quickly."
 
-#: src/components/miniflux/ReaderSettings.tsx:247
+#: src/components/miniflux/ReaderSettings.tsx:252
 msgid "Tips: +/- font size, [ ] line width, Alt+↑/↓ line height"
 msgstr "Tips: +/- font size, [ ] line width, Alt+↑/↓ line height"
 
@@ -5072,8 +5063,8 @@ msgstr "to open the command palette and explore available commands."
 
 #: src/components/layout/AppSidebar.tsx:631
 #: src/components/layout/AppSidebar.tsx:640
-#: src/components/miniflux/EntryList.tsx:166
-#: src/components/miniflux/MinifluxLayout.tsx:517
+#: src/components/miniflux/EntryList.tsx:169
+#: src/components/miniflux/MinifluxLayout.tsx:528
 msgid "Today"
 msgstr "Today"
 
@@ -5295,11 +5286,11 @@ msgstr "Tray icon enabled"
 msgid "Try Again"
 msgstr "Try Again"
 
-#: src/components/miniflux/EntryList.tsx:617
+#: src/components/miniflux/EntryList.tsx:626
 msgid "Try changing the filter or syncing new content"
 msgstr "Try changing the filter or syncing new content"
 
-#: src/components/miniflux/ReaderSettings.tsx:244
+#: src/components/miniflux/ReaderSettings.tsx:249
 msgid "Tune the reading layout for long-form comfort."
 msgstr "Tune the reading layout for long-form comfort."
 
@@ -5317,20 +5308,20 @@ msgstr "Type or fetch to pick a model"
 msgid "Type RESET to confirm"
 msgstr "Type RESET to confirm"
 
-#: src/components/miniflux/ReaderSettings.tsx:216
+#: src/components/miniflux/ReaderSettings.tsx:221
 #: src/components/preferences/panes/ReaderPane.tsx:228
 msgid "Typography"
 msgstr "Typography"
 
-#: src/components/preferences/panes/AppearancePane.tsx:152
+#: src/components/preferences/panes/AppearancePane.tsx:159
 msgid "UI Font"
 msgstr "UI Font"
 
-#: src/components/preferences/panes/AppearancePane.tsx:167
+#: src/components/preferences/panes/AppearancePane.tsx:174
 msgid "UI Font Size"
 msgstr "UI Font Size"
 
-#: src/components/preferences/panes/AppearancePane.tsx:329
+#: src/components/preferences/panes/AppearancePane.tsx:336
 msgid "UI Transparency"
 msgstr "UI Transparency"
 
@@ -5349,7 +5340,7 @@ msgstr "unread"
 msgid "Unread"
 msgstr "Unread"
 
-#: src/components/miniflux/MinifluxLayout.tsx:535
+#: src/components/miniflux/MinifluxLayout.tsx:546
 msgid "unread items"
 msgstr "unread items"
 
@@ -5423,13 +5414,13 @@ msgstr "URL copied to clipboard"
 msgid "URL copied!"
 msgstr "URL copied!"
 
-#: src/components/miniflux/AddFeedDialog.tsx:530
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:120
 msgid "URL selected from discovered sources"
 msgstr "URL selected from discovered sources"
 
 #: src/components/miniflux/SearchSourceDialog.tsx:193
-msgid "Use in Add Feed"
-msgstr "Use in Add Feed"
+#~ msgid "Use in Add Feed"
+#~ msgstr "Use in Add Feed"
 
 #: src/components/miniflux/settings/FeedFormDialog.tsx:402
 msgid "Use source title"
@@ -5443,7 +5434,7 @@ msgstr "Use translation LLM providers"
 #~ msgid "Use URL"
 #~ msgstr "Use URL"
 
-#: src/components/miniflux/AddFeedDialog.tsx:694
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:285
 #: src/components/miniflux/EditFeedDialog.tsx:315
 #: src/components/miniflux/settings/FeedFormDialog.tsx:535
 msgid "Useful for summary-only feeds"
@@ -5454,7 +5445,7 @@ msgstr "Useful for summary-only feeds"
 msgid "User"
 msgstr "User"
 
-#: src/components/miniflux/AddFeedDialog.tsx:633
+#: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:224
 #: src/components/miniflux/EditFeedDialog.tsx:259
 #: src/components/miniflux/settings/FeedFormDialog.tsx:476
 msgid "User agent"
@@ -5590,7 +5581,7 @@ msgstr "Warn"
 msgid "WebDAV URL"
 msgstr "WebDAV URL"
 
-#: src/components/miniflux/MinifluxLayout.tsx:421
+#: src/components/miniflux/MinifluxLayout.tsx:425
 msgid "Welcome to Miniflux"
 msgstr "Welcome to Miniflux"
 
@@ -5607,7 +5598,7 @@ msgstr "Widen content"
 msgid "Window"
 msgstr "Window"
 
-#: src/components/miniflux/EntryList.tsx:168
+#: src/components/miniflux/EntryList.tsx:171
 msgid "Yesterday"
 msgstr "Yesterday"
 

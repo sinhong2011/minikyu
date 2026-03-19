@@ -5,6 +5,7 @@ import { useUIStore } from '@/store/ui-store';
 export function useInAppBrowser() {
   const setInAppBrowserUrl = useUIStore((state) => state.setInAppBrowserUrl);
   const inAppBrowserUrl = useUIStore((state) => state.inAppBrowserUrl);
+  const selectedEntryId = useUIStore((state) => state.selectedEntryId);
   // Modal states — native webview must be hidden while these are open because
   // WKWebView sits above all React content regardless of CSS z-index.
   const preferencesOpen = useUIStore((state) => state.preferencesOpen);
@@ -31,22 +32,23 @@ export function useInAppBrowser() {
   const openBrowser = useCallback(
     (url: string) => {
       setInAppBrowserUrl(url);
-
-      // Use rAF to wait for the browser pane to render and have a valid rect.
-      requestAnimationFrame(() => {
-        const el = browserContentRef.current;
-        if (!el) return;
-        const rect = el.getBoundingClientRect();
-        // Read dark mode from the DOM at call time, not from the closure,
-        // so we always use the current resolved theme.
-        const dark = document.documentElement.classList.contains('dark');
-        commands
-          .openInAppBrowser(url, rect.left, rect.top, rect.width, rect.height, dark)
-          .catch((err) => console.error('[useInAppBrowser] open failed:', err));
-      });
     },
     [setInAppBrowserUrl]
   );
+
+  // Open the native webview after React commits the browser pane to the DOM.
+  // Using useEffect guarantees browserContentRef.current is valid and the
+  // element is at its final position (no CSS transform offset from x animation).
+  useEffect(() => {
+    if (!inAppBrowserUrl) return;
+    const el = browserContentRef.current;
+    if (!el) return;
+    const rect = el.getBoundingClientRect();
+    const dark = document.documentElement.classList.contains('dark');
+    commands
+      .openInAppBrowser(inAppBrowserUrl, rect.left, rect.top, rect.width, rect.height, dark)
+      .catch((err) => console.error('[useInAppBrowser] open failed:', err));
+  }, [inAppBrowserUrl]);
 
   /** Closes the browser. */
   const closeBrowser = useCallback(async () => {
@@ -57,6 +59,17 @@ export function useInAppBrowser() {
     }
     setInAppBrowserUrl(null);
   }, [setInAppBrowserUrl]);
+
+  // Close the browser when the user navigates to a different entry.
+  // Tracks the previous selectedEntryId so we only close on actual changes.
+  const prevSelectedEntryIdRef = useRef(selectedEntryId);
+  useEffect(() => {
+    const changed = prevSelectedEntryIdRef.current !== selectedEntryId;
+    prevSelectedEntryIdRef.current = selectedEntryId;
+    if (inAppBrowserUrl && changed) {
+      closeBrowser();
+    }
+  }, [selectedEntryId, inAppBrowserUrl, closeBrowser]);
 
   // ESC and Cmd/Ctrl+W close the browser when it is open.
   useEffect(() => {

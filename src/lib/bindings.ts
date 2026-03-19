@@ -213,6 +213,11 @@ async readImageAsDataUrl(path: string) : Promise<Result<string, string>> {
 },
 /**
  * List available system font families.
+ * 
+ * Runs on a blocking thread because font_kit calls CoreText APIs
+ * via synchronous XPC, which must not block the tokio runtime.
+ * Wrapped in catch_unwind because font_kit's CoreText FFI can
+ * panic internally on certain system configurations.
  */
 async listSystemFonts() : Promise<Result<string[], string>> {
     try {
