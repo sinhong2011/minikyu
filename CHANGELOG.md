@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.1](https://github.com/sinhong2011/minikyu/compare/v1.11.0...v1.11.1) (2026-03-19)
+
+
+### Bug Fixes
+
+* In-app browser positioning and AddFeedDialog refactor ([#88](https://github.com/sinhong2011/minikyu/issues/88)) ([da7d0e7](https://github.com/sinhong2011/minikyu/commit/da7d0e7419057f1f58148698f51e27d5139dce93))
+
 ## [1.11.0](https://github.com/sinhong2011/minikyu/compare/v1.10.2...v1.11.0) (2026-03-18)
 
 
