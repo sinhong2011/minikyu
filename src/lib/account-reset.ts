@@ -16,6 +16,23 @@ export async function resetAccountState(): Promise<void> {
   await queryClient.resetQueries({ queryKey: ['unread-counters'] });
   await queryClient.resetQueries({ queryKey: ['podcast'] });
   await queryClient.resetQueries({ queryKey: ['reading-state'] });
+  await queryClient.resetQueries({ queryKey: ['miniflux', 'accounts'] });
+  await queryClient.resetQueries({ queryKey: ['miniflux', 'auth'] });
+  await queryClient.resetQueries({ queryKey: ['miniflux', 'users'] });
+
+  // 1.5. Clear account-scoped route params so we don't keep a stale feed/category
+  // selection from the previous account.
+  if (typeof window !== 'undefined') {
+    const url = new URL(window.location.href);
+    const hadFeed = url.searchParams.has('feedId');
+    const hadCategory = url.searchParams.has('categoryId');
+    if (hadFeed || hadCategory) {
+      url.searchParams.delete('feedId');
+      url.searchParams.delete('categoryId');
+      const nextUrl = `${url.pathname}${url.search}${url.hash}`;
+      window.history.replaceState(window.history.state, '', nextUrl);
+    }
+  }
 
   // 2. Reset account-specific UI state
   const uiStore = useUIStore.getState();

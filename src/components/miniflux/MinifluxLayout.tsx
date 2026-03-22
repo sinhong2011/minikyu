@@ -394,16 +394,65 @@ export function MinifluxLayout() {
   }
 
   const handleReconnectAccount = async (accountId: string) => {
+    const getErrorMessage = (error: unknown): string => {
+      if (error instanceof Error) return error.message;
+      if (typeof error === 'string') return error;
+      try {
+        return JSON.stringify(error);
+      } catch {
+        return String(error);
+      }
+    };
+
     try {
       const result = await commands.switchMinifluxAccount(accountId);
       if (result.status === 'ok') {
-        await resetAccountState();
+        try {
+          await resetAccountState();
+        } catch (resetError) {
+          logger.warn('Reconnect switch succeeded but state reset had non-fatal errors:', {
+            error: resetError,
+            message: getErrorMessage(resetError),
+          });
+        }
+        toast.success(_(msg`Switched account`));
+
+        // Best-effort background reconnect to refresh account identity/cache when online.
+        // Do not block UI on keyring/network prompts.
+        void commands
+          .autoReconnectMiniflux()
+          .then(async (reconnectResult) => {
+            if (reconnectResult.status === 'ok') {
+              try {
+                await resetAccountState();
+              } catch (resetError) {
+                logger.warn('Background reconnect reset had non-fatal errors:', {
+                  error: resetError,
+                  message: getErrorMessage(resetError),
+                });
+              }
+            } else {
+              logger.warn('Background reconnect after switch failed:', {
+                error: reconnectResult.error,
+                message: getErrorMessage(reconnectResult.error),
+              });
+            }
+          })
+          .catch((reconnectError) => {
+            logger.warn('Background reconnect after switch threw:', {
+              error: reconnectError,
+              message: getErrorMessage(reconnectError),
+            });
+          });
       } else {
-        logger.error('Failed to reconnect account:', { error: result.error });
+        logger.error('Failed to reconnect account:', {
+          error: result.error,
+          message: getErrorMessage(result.error),
+        });
         toast.error(_(msg`Failed to reconnect account`));
       }
     } catch (error) {
-      logger.error('Error reconnecting account:', { error });
+      logger.error('Error reconnecting account:', { error, message: getErrorMessage(error) });
       toast.error(_(msg`Failed to reconnect account`));
     }
   };

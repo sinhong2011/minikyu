@@ -714,8 +714,7 @@ pub async fn detect_code_language(app: AppHandle, code: String) -> Result<String
         if api_key.is_some() || provider == OLLAMA_PROVIDER {
             let settings = provider_settings.get(provider);
             if let Ok(result) =
-                call_llm(provider, truncated, prompt, api_key.as_deref(), settings)
-                    .await
+                call_llm(provider, truncated, prompt, api_key.as_deref(), settings).await
             {
                 return Ok(result.trim().to_lowercase());
             }
@@ -749,8 +748,7 @@ pub async fn detect_code_language(app: AppHandle, code: String) -> Result<String
         };
         let settings = provider_settings.get(provider.as_str());
         if let Ok(result) =
-            call_llm(provider, truncated, prompt, api_key.as_deref(), settings)
-                .await
+            call_llm(provider, truncated, prompt, api_key.as_deref(), settings).await
         {
             return Ok(result.trim().to_lowercase());
         }

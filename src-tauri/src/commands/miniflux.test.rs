@@ -1,9 +1,13 @@
 #[cfg(test)]
 mod tests {
+    use crate::commands::miniflux::MinifluxState;
     use crate::database::migrations::run_migrations;
     use crate::miniflux::EntryFilters;
+    use crate::AppState;
     use chrono::{Duration, Utc};
     use sqlx::SqlitePool;
+    use std::sync::Arc;
+    use tokio::sync::{Mutex, Notify};
 
     async fn setup_test_db() -> SqlitePool {
         let pool = SqlitePool::connect("sqlite::memory:")
@@ -13,6 +17,17 @@ mod tests {
             .await
             .expect("Failed to run migrations");
         pool
+    }
+
+    fn setup_app_state(pool: SqlitePool) -> AppState {
+        AppState {
+            db_pool: Arc::new(Mutex::new(Some(pool))),
+            miniflux: MinifluxState {
+                client: Arc::new(Mutex::new(None)),
+                user_id: Arc::new(Mutex::new(None)),
+            },
+            cloud_sync_notify: Arc::new(Notify::new()),
+        }
     }
 
     async fn insert_category(pool: &SqlitePool, id: i64, title: &str, now: &str) {
@@ -315,6 +330,155 @@ mod tests {
             "Full entries should include full content"
         );
         assert_eq!(preview, &long_content);
+    }
+
+    #[tokio::test]
+    async fn test_get_active_user_id_falls_back_to_cached_entries_when_account_user_id_missing() {
+        let pool = setup_test_db().await;
+        let now = Utc::now().to_rfc3339();
+
+        sqlx::query(
+            r#"
+            INSERT INTO miniflux_connections (id, username, server_url, auth_method, is_active, created_at, updated_at, is_admin)
+            VALUES (1, 'offline-user', 'https://example.com', 'token', 1, ?, ?, 0)
+            "#,
+        )
+        .bind(&now)
+        .bind(&now)
+        .execute(&pool)
+        .await
+        .expect("Failed to insert account");
+
+        insert_category(&pool, 1, "Technology", &now).await;
+        insert_feed(
+            &pool,
+            1,
+            "Tech News",
+            "https://tech.example.com",
+            "https://tech.example.com/rss",
+            1,
+            &now,
+        )
+        .await;
+        sqlx::query(
+            r#"
+            INSERT INTO entries (id, user_id, feed_id, title, url, hash, published_at, created_at, status, starred, content)
+            VALUES (1, 42, 1, 'Offline Entry', 'https://example.com/offline', 'hash-offline', ?, ?, 'unread', 0, 'content')
+            "#,
+        )
+        .bind(&now)
+        .bind(&now)
+        .execute(&pool)
+        .await
+        .expect("Failed to insert cached entry");
+
+        let state = setup_app_state(pool.clone());
+
+        let user_id = super::super::get_active_user_id(&state)
+            .await
+            .expect("Expected cached user_id fallback to succeed");
+
+        assert_eq!(user_id, 42);
+
+        let persisted: Option<i64> =
+            sqlx::query_scalar("SELECT miniflux_user_id FROM miniflux_connections WHERE id = 1")
+                .fetch_optional(&pool)
+                .await
+                .expect("Failed to fetch persisted user_id")
+                .flatten();
+        assert_eq!(persisted, Some(42));
+    }
+
+    #[tokio::test]
+    async fn test_get_active_user_id_errors_when_no_connected_or_cached_user() {
+        let pool = setup_test_db().await;
+        let now = Utc::now().to_rfc3339();
+
+        sqlx::query(
+            r#"
+            INSERT INTO miniflux_connections (id, username, server_url, auth_method, is_active, created_at, updated_at, is_admin)
+            VALUES (1, 'offline-user', 'https://example.com', 'token', 1, ?, ?, 0)
+            "#,
+        )
+        .bind(&now)
+        .bind(&now)
+        .execute(&pool)
+        .await
+        .expect("Failed to insert account");
+
+        let state = setup_app_state(pool);
+
+        let result = super::super::get_active_user_id(&state).await;
+
+        assert!(result.is_err(), "Expected error without any cached user id");
+        assert_eq!(
+            result.err().as_deref(),
+            Some("Not connected to Miniflux server")
+        );
+    }
+
+    #[tokio::test]
+    async fn test_get_active_user_id_does_not_cross_account_fallback_in_multi_account_mode() {
+        let pool = setup_test_db().await;
+        let now = Utc::now().to_rfc3339();
+
+        sqlx::query(
+            r#"
+            INSERT INTO miniflux_connections (id, username, server_url, auth_method, is_active, created_at, updated_at, is_admin, miniflux_user_id)
+            VALUES (1, 'account-a', 'https://a.example.com', 'token', 0, ?, ?, 0, 11)
+            "#,
+        )
+        .bind(&now)
+        .bind(&now)
+        .execute(&pool)
+        .await
+        .expect("Failed to insert account A");
+
+        sqlx::query(
+            r#"
+            INSERT INTO miniflux_connections (id, username, server_url, auth_method, is_active, created_at, updated_at, is_admin, miniflux_user_id)
+            VALUES (2, 'account-b', 'https://b.example.com', 'token', 1, ?, ?, 0, NULL)
+            "#,
+        )
+        .bind(&now)
+        .bind(&now)
+        .execute(&pool)
+        .await
+        .expect("Failed to insert account B");
+
+        insert_category(&pool, 1, "Technology", &now).await;
+        insert_feed(
+            &pool,
+            1,
+            "Tech News",
+            "https://tech.example.com",
+            "https://tech.example.com/rss",
+            1,
+            &now,
+        )
+        .await;
+        sqlx::query(
+            r#"
+            INSERT INTO entries (id, user_id, feed_id, title, url, hash, published_at, created_at, status, starred, content)
+            VALUES (1, 11, 1, 'Entry A', 'https://example.com/a', 'hash-a', ?, ?, 'unread', 0, 'content')
+            "#,
+        )
+        .bind(&now)
+        .bind(&now)
+        .execute(&pool)
+        .await
+        .expect("Failed to insert entry for account A");
+
+        let state = setup_app_state(pool);
+
+        let result = super::super::get_active_user_id(&state).await;
+        assert!(result.is_err());
+        assert_eq!(
+            result.err().as_deref(),
+            Some(
+                "Active account has no cached identity. Reconnect this account once while online."
+            )
+        );
     }
 
     #[tokio::test]

@@ -253,8 +253,7 @@ fn save_last_synced(app: &AppHandle) -> Result<(), String> {
     let updated = serde_json::to_string_pretty(&prefs)
         .map_err(|e| format!("Failed to serialize prefs: {e}"))?;
     let temp_path = prefs_path.with_extension("sync-tmp");
-    std::fs::write(&temp_path, &updated)
-        .map_err(|e| format!("Failed to write prefs: {e}"))?;
+    std::fs::write(&temp_path, &updated).map_err(|e| format!("Failed to write prefs: {e}"))?;
     std::fs::rename(&temp_path, &prefs_path)
         .map_err(|e| format!("Failed to finalize prefs: {e}"))?;
     Ok(())

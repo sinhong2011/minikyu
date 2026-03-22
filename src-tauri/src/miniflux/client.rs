@@ -496,11 +496,8 @@ impl MinifluxClient {
 
     /// Mark all entries in a category as read
     pub async fn mark_category_as_read(&self, category_id: i64) -> Result<(), String> {
-        self.put_empty(
-            &format!("categories/{}/mark-all-as-read", category_id),
-            &(),
-        )
-        .await
+        self.put_empty(&format!("categories/{}/mark-all-as-read", category_id), &())
+            .await
     }
 
     /// Toggle entry bookmark

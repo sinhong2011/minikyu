@@ -330,6 +330,31 @@ export function useRefreshFeed() {
 }
 
 /**
+ * Hook to refresh all feeds in a category by their IDs
+ */
+export function useRefreshCategoryFeeds() {
+  const queryClient = useQueryClient();
+
+  return useMutation({
+    mutationFn: async (feedIds: string[]) => {
+      logger.debug('Refreshing category feeds', { count: feedIds.length });
+      const results = await Promise.all(feedIds.map((id) => commands.refreshFeed(id)));
+      const failed = results.find((r) => r.status === 'error');
+      if (failed && failed.status === 'error') {
+        throw new Error(failed.error);
+      }
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ['miniflux'] });
+      toast.success(translate(msg`Category feeds refreshed`));
+    },
+    onError: (error: Error) => {
+      toast.error(translate(msg`Failed to refresh feeds`), { description: error.message });
+    },
+  });
+}
+
+/**
  * Hook to refresh all feeds
  */
 export function useRefreshAllFeeds() {

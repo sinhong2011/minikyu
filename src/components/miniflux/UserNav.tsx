@@ -60,15 +60,66 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
   const handleSwitchAccount = async (accountId: string) => {
     if (accountId === currentAccount.id) return;
 
+    const getErrorMessage = (error: unknown): string => {
+      if (error instanceof Error) return error.message;
+      if (typeof error === 'string') return error;
+      try {
+        return JSON.stringify(error);
+      } catch {
+        return String(error);
+      }
+    };
+
     try {
       const result = await commands.switchMinifluxAccount(accountId);
       if (result.status === 'ok') {
-        await resetAccountState();
+        try {
+          await resetAccountState();
+        } catch (resetError) {
+          logger.warn('Switch succeeded but state reset had non-fatal errors:', {
+            error: resetError,
+            message: getErrorMessage(resetError),
+          });
+        }
+        toast.success(_(msg`Switched account`));
+
+        // Best-effort background reconnect to refresh account identity/cache when online.
+        // Do not block UI on keyring/network prompts.
+        void commands
+          .autoReconnectMiniflux()
+          .then(async (reconnectResult) => {
+            if (reconnectResult.status === 'ok') {
+              try {
+                await resetAccountState();
+              } catch (resetError) {
+                logger.warn('Background reconnect reset had non-fatal errors:', {
+                  error: resetError,
+                  message: getErrorMessage(resetError),
+                });
+              }
+            } else {
+              logger.warn('Background reconnect after switch failed:', {
+                error: reconnectResult.error,
+                message: getErrorMessage(reconnectResult.error),
+              });
+            }
+          })
+          .catch((reconnectError) => {
+            logger.warn('Background reconnect after switch threw:', {
+              error: reconnectError,
+              message: getErrorMessage(reconnectError),
+            });
+          });
       } else {
-        logger.error('Failed to switch account:', { error: result.error });
+        logger.error('Failed to switch account:', {
+          error: result.error,
+          message: getErrorMessage(result.error),
+        });
+        toast.error(_(msg`Failed to switch account`));
       }
     } catch (error) {
-      logger.error('Error switching account:', { error });
+      logger.error('Error switching account:', { error, message: getErrorMessage(error) });
+      toast.error(_(msg`Failed to switch account`));
     }
   };
 

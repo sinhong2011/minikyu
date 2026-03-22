@@ -59,10 +59,7 @@ mod tests {
         );
 
         // Pull
-        let get_resp = bucket
-            .get_object(key)
-            .await
-            .expect("Pull should succeed");
+        let get_resp = bucket.get_object(key).await.expect("Pull should succeed");
         assert!(
             get_resp.status_code() < 300,
             "Pull status {} should be success",

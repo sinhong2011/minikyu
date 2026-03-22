@@ -11,6 +11,7 @@ import {
   Key01Icon,
   KeyboardIcon,
   Link02Icon,
+  RefreshIcon,
   ReloadIcon,
   RssIcon,
   Settings01Icon,
@@ -73,6 +74,8 @@ import {
   useMarkFeedAsRead,
   useMinifluxUsers,
   useRefreshAllFeeds,
+  useRefreshCategoryFeeds,
+  useRefreshFeed,
   useUpdateMinifluxUser,
 } from '@/services/miniflux';
 import { useActiveAccount } from '@/services/miniflux/accounts';
@@ -231,6 +234,10 @@ export function PreferencesDialog() {
   const markFeedAsRead = useMarkFeedAsRead();
   const markCategoryAsRead = useMarkCategoryAsRead();
   const refreshAllFeeds = useRefreshAllFeeds();
+  const refreshCategoryFeeds = useRefreshCategoryFeeds();
+  const refreshFeed = useRefreshFeed();
+  const [refreshingCategoryId, setRefreshingCategoryId] = React.useState<string | null>(null);
+  const [refreshingFeedId, setRefreshingFeedId] = React.useState<string | null>(null);
 
   // Filtered data
   const normalizedCategorySearchQuery = categorySearchQuery.trim().toLowerCase();
@@ -288,7 +295,7 @@ export function PreferencesDialog() {
       {
         accessorKey: 'title',
         header: _(msg`Feed`),
-        size: 250,
+        size: 200,
         cell: ({ row }) => {
           const feed = row.original;
           const hasError = (feed.parsing_error_count ?? 0) > 0;
@@ -346,12 +353,36 @@ export function PreferencesDialog() {
       {
         id: 'actions',
         header: _(msg`Actions`),
-        size: 110,
+        size: 175,
         enableSorting: false,
         cell: ({ row }) => {
           const feed = row.original;
           return (
             <div className="flex items-center gap-2">
+              <Tooltip>
+                <TooltipTrigger>
+                  <Button
+                    size="sm"
+                    variant="ghost"
+                    onClick={() => {
+                      setRefreshingFeedId(feed.id);
+                      refreshFeed
+                        .mutateAsync(feed.id)
+                        .catch(() => {})
+                        .finally(() => setRefreshingFeedId(null));
+                    }}
+                    disabled={refreshingFeedId === feed.id}
+                  >
+                    <HugeiconsIcon
+                      icon={RefreshIcon}
+                      className={cn('size-4', refreshingFeedId === feed.id && 'animate-spin')}
+                    />
+                  </Button>
+                </TooltipTrigger>
+                <TooltipPanel>
+                  {refreshingFeedId === feed.id ? _(msg`Refreshing...`) : _(msg`Refresh feed`)}
+                </TooltipPanel>
+              </Tooltip>
               <Tooltip>
                 <TooltipTrigger
                   render={
@@ -408,7 +439,7 @@ export function PreferencesDialog() {
         },
       },
     ],
-    [_, formatRelativeTime, markFeedAsRead, setFeedDialogState]
+    [_, formatRelativeTime, markFeedAsRead, refreshFeed, refreshingFeedId, setFeedDialogState]
   );
 
   // Handler functions
@@ -464,7 +495,7 @@ export function PreferencesDialog() {
 
   return (
     <Dialog open={preferencesOpen} onOpenChange={setPreferencesOpen}>
-      <DialogContent className="flex min-h-0 flex-col gap-0 overflow-hidden p-0 max-h-[90vh] md:h-[50rem] md:max-w-248 lg:max-w-276 font-sans rounded-xl">
+      <DialogContent className="flex min-h-0 flex-col gap-0 overflow-hidden p-0 max-h-[90vh] md:h-[50rem] md:max-w-260 lg:max-w-288 font-sans rounded-xl">
         <DialogTitle className="sr-only">{_(msg`Preferences`)}</DialogTitle>
         <DialogDescription className="sr-only">
           {_(msg`Customize your application preferences here.`)}
@@ -672,6 +703,18 @@ export function PreferencesDialog() {
                     onMarkAsRead={(category) => {
                       markCategoryAsRead.mutateAsync(category.id).catch(() => {});
                     }}
+                    onRefreshCategory={(category) => {
+                      const categoryId = String(category.id);
+                      const feedIds = feeds
+                        .filter((f) => String(f.category?.id) === categoryId)
+                        .map((f) => f.id);
+                      setRefreshingCategoryId(categoryId);
+                      refreshCategoryFeeds
+                        .mutateAsync(feedIds)
+                        .catch(() => {})
+                        .finally(() => setRefreshingCategoryId(null));
+                    }}
+                    isRefreshingCategoryId={refreshingCategoryId}
                   />
                 ) : (
                   <ConnectionStatePane />
