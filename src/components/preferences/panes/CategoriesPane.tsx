@@ -3,6 +3,7 @@ import {
   CheckmarkCircle02Icon,
   Delete02Icon,
   Edit02Icon,
+  RefreshIcon,
   Search01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
@@ -12,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Category } from '@/lib/tauri-bindings';
+import { cn } from '@/lib/utils';
 
 interface CategoriesPaneProps {
   categories: Category[];
@@ -22,6 +24,8 @@ interface CategoriesPaneProps {
   onEditCategory: (category: Category) => void;
   onDeleteCategory: (category: Category) => void;
   onMarkAsRead: (category: Category) => void;
+  onRefreshCategory: (category: Category) => void;
+  isRefreshingCategoryId: string | null;
 }
 
 export function CategoriesPane({
@@ -33,6 +37,8 @@ export function CategoriesPane({
   onEditCategory,
   onDeleteCategory,
   onMarkAsRead,
+  onRefreshCategory,
+  isRefreshingCategoryId,
 }: CategoriesPaneProps) {
   const { _ } = useLingui();
 
@@ -73,6 +79,29 @@ export function CategoriesPane({
             >
               <span className="min-w-0 flex-1 truncate text-sm">{category.title}</span>
               <div className="flex shrink-0 items-center gap-1">
+                <Tooltip>
+                  <TooltipTrigger>
+                    <Button
+                      size="sm"
+                      variant="ghost"
+                      onClick={() => onRefreshCategory(category)}
+                      disabled={isRefreshingCategoryId === String(category.id)}
+                    >
+                      <HugeiconsIcon
+                        icon={RefreshIcon}
+                        className={cn(
+                          'size-4',
+                          isRefreshingCategoryId === String(category.id) && 'animate-spin'
+                        )}
+                      />
+                    </Button>
+                  </TooltipTrigger>
+                  <TooltipPanel>
+                    {isRefreshingCategoryId === String(category.id)
+                      ? _(msg`Refreshing...`)
+                      : _(msg`Refresh feeds`)}
+                  </TooltipPanel>
+                </Tooltip>
                 <Tooltip>
                   <TooltipTrigger
                     render={

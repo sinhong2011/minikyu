@@ -3,6 +3,7 @@ import { useEffect, useRef } from 'react';
 import { toast } from 'sonner';
 import i18n from '@/i18n/config';
 import { logger } from '@/lib/logger';
+import { notifications } from '@/lib/notifications';
 import { checkForUpdate, downloadUpdate, installAndRelaunch } from '@/lib/updater';
 import { usePreferences } from '@/services/preferences';
 import { useUpdaterStore } from '@/store/updater-store';
@@ -14,6 +15,7 @@ const ERROR_RETRY_MS = 60 * 60 * 1000; // 1 hour
 export function useAutoUpdater() {
   const status = useUpdaterStore((s) => s.status);
   const toastIdRef = useRef<string | number | undefined>(undefined);
+  const lastReadyNotificationVersionRef = useRef<string | null>(null);
   const { data: preferences } = usePreferences();
   const autoCheckEnabled = preferences?.auto_check_updates ?? true;
 
@@ -65,6 +67,12 @@ export function useAutoUpdater() {
     if (status === 'ready') {
       const state = useUpdaterStore.getState();
       if (state.status === 'ready') {
+        // Avoid duplicate prompts for the same version.
+        if (lastReadyNotificationVersionRef.current === state.version) {
+          return;
+        }
+        lastReadyNotificationVersionRef.current = state.version;
+
         // Dismiss progress toast and show action toast
         if (toastIdRef.current) {
           toast.dismiss(toastIdRef.current);
@@ -75,7 +83,7 @@ export function useAutoUpdater() {
           description: _(msg`Restart to apply the update.`),
           duration: Number.POSITIVE_INFINITY,
           action: {
-            label: _(msg`Restart Now`),
+            label: _(msg`Install & Restart`),
             onClick: () => {
               installAndRelaunch().catch((error) => {
                 logger.error('Relaunch failed', { error });
@@ -89,6 +97,14 @@ export function useAutoUpdater() {
             },
           },
         });
+
+        // Also send a native notification so users still see it when toast
+        // is obscured/minimized.
+        notifications.info(
+          _(msg`Update v${state.version} is ready`),
+          _(msg`Version ${state.version} is ready to install.`),
+          true
+        );
       }
     }
 

@@ -10,6 +10,33 @@ use serde::{Deserialize, Serialize};
 use sqlx::SqlitePool;
 use tauri::{AppHandle, Emitter, State};
 
+async fn execute_with_busy_retry(
+    pool: &SqlitePool,
+    sql: &str,
+    bind_id: Option<i64>,
+) -> Result<(), sqlx::Error> {
+    let mut attempts = 0;
+    loop {
+        let mut query = sqlx::query(sql);
+        if let Some(id) = bind_id {
+            query = query.bind(id);
+        }
+
+        match query.execute(pool).await {
+            Ok(_) => return Ok(()),
+            Err(e) => {
+                attempts += 1;
+                let message = e.to_string().to_lowercase();
+                let is_busy = message.contains("database is locked") || message.contains("busy");
+                if !is_busy || attempts >= 5 {
+                    return Err(e);
+                }
+                tokio::time::sleep(std::time::Duration::from_millis(80)).await;
+            }
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, specta::Type, sqlx::FromRow)]
 pub struct MinifluxConnection {
     #[serde(
@@ -386,19 +413,88 @@ pub async fn switch_miniflux_account(
 
     let account_id: i64 = id.parse().map_err(|_| AccountError::InvalidCredentials)?;
 
-    sqlx::query("UPDATE miniflux_connections SET is_active = 0")
-        .execute(&pool)
-        .await?;
+    execute_with_busy_retry(&pool, "UPDATE miniflux_connections SET is_active = 0", None)
+        .await
+        .map_err(|e| AccountError::DatabaseError(format!("Failed to deactivate accounts: {e}")))?;
 
-    sqlx::query("UPDATE miniflux_connections SET is_active = 1 WHERE id = ?")
-        .bind(account_id)
-        .execute(&pool)
-        .await?;
+    execute_with_busy_retry(
+        &pool,
+        "UPDATE miniflux_connections SET is_active = 1 WHERE id = ?",
+        Some(account_id),
+    )
+    .await
+    .map_err(|e| AccountError::DatabaseError(format!("Failed to activate account: {e}")))?;
+
+    // Reset in-memory connection context to avoid carrying over the previous
+    // account's client/session while we reconnect.
+    *state.miniflux.client.lock().await = None;
+
+    let mut selected_user_id: Option<i64> = match sqlx::query_scalar::<_, Option<i64>>(
+        "SELECT miniflux_user_id FROM miniflux_connections WHERE id = ? LIMIT 1",
+    )
+    .bind(account_id)
+    .fetch_optional(&pool)
+    .await
+    {
+        Ok(Some(value)) => value,
+        Ok(None) => None,
+        Err(e) => {
+            // Graceful compatibility for DBs that haven't added this column yet.
+            if e.to_string().contains("no such column: miniflux_user_id") {
+                log::warn!(
+                    "miniflux_user_id column missing during account switch; continuing without cached user id"
+                );
+                None
+            } else {
+                // Non-critical: account switch already succeeded in DB.
+                // Keep switching responsive even if this lookup fails.
+                log::warn!(
+                    "Failed to read selected account user_id during switch; continuing: {}",
+                    e
+                );
+                None
+            }
+        }
+    };
+
+    // If multiple accounts share the same cached user_id, offline reads become
+    // ambiguous and can show another account's data. Invalidate this account's
+    // cached identity and force one online reconnect to re-establish ownership.
+    if let Some(user_id) = selected_user_id {
+        let duplicate_count: i64 =
+            sqlx::query_scalar("SELECT COUNT(*) FROM miniflux_connections WHERE miniflux_user_id = ?")
+                .bind(user_id)
+                .fetch_one(&pool)
+                .await
+                .unwrap_or(0);
+
+        if duplicate_count > 1 {
+            log::warn!(
+                "Detected duplicate cached user_id={} across {} accounts; clearing cached identity for account {}",
+                user_id,
+                duplicate_count,
+                account_id
+            );
+            selected_user_id = None;
+            let _ = sqlx::query("UPDATE miniflux_connections SET miniflux_user_id = NULL WHERE id = ?")
+                .bind(account_id)
+                .execute(&pool)
+                .await;
+        }
+    }
+    *state.miniflux.user_id.lock().await = selected_user_id;
 
     // Per-account sync state is preserved — no need to reset.
     // Each account has its own sync_state row keyed by account_id.
 
-    auto_reconnect_miniflux(app_handle, state).await
+    // IMPORTANT: do not auto-reconnect here.
+    // On macOS, keychain access can block while waiting for user interaction,
+    // which makes account switch feel like "nothing happens" in offline mode.
+    // We switch account context immediately; reconnect is handled by explicit
+    // connect/sync flows elsewhere.
+    let _ = app_handle;
+
+    Ok(())
 }
 
 #[tauri::command]

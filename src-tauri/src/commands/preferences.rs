@@ -66,9 +66,12 @@ fn grant_asset_scope_for_preferences(app: &AppHandle, preferences: &AppPreferenc
     }
 
     // Download directories (for audio/video playback of downloaded files)
-    for dir_path in [&preferences.image_download_path, &preferences.video_download_path]
-        .into_iter()
-        .flatten()
+    for dir_path in [
+        &preferences.image_download_path,
+        &preferences.video_download_path,
+    ]
+    .into_iter()
+    .flatten()
     {
         let p = std::path::PathBuf::from(dir_path);
         if p.is_dir() {
@@ -250,7 +253,10 @@ pub async fn download_background_image(app: AppHandle, url: String) -> Result<St
         .map_err(|e| format!("Failed to download image: {e}"))?;
 
     if !response.status().is_success() {
-        return Err(format!("Download failed with status: {}", response.status()));
+        return Err(format!(
+            "Download failed with status: {}",
+            response.status()
+        ));
     }
 
     // Check content type

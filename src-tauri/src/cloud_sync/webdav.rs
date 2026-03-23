@@ -63,11 +63,7 @@ pub async fn pull(url: &str, username: &str, file_path: &str) -> Result<String, 
 }
 
 /// Test WebDAV connection by listing root.
-pub async fn test_connection(
-    url: &str,
-    username: &str,
-    password: &str,
-) -> Result<(), String> {
+pub async fn test_connection(url: &str, username: &str, password: &str) -> Result<(), String> {
     debug!("Testing cloud sync WebDAV connection to {url}");
 
     let client = ClientBuilder::new()
@@ -76,13 +72,10 @@ pub async fn test_connection(
         .build()
         .map_err(|e| format!("Failed to create WebDAV client: {e}"))?;
 
-    client
-        .list("/", Depth::Number(0))
-        .await
-        .map_err(|e| {
-            error!("Cloud sync WebDAV connection test failed: {e}");
-            format!("Connection test failed: {e}")
-        })?;
+    client.list("/", Depth::Number(0)).await.map_err(|e| {
+        error!("Cloud sync WebDAV connection test failed: {e}");
+        format!("Connection test failed: {e}")
+    })?;
 
     info!("Cloud sync WebDAV connection test successful");
     Ok(())

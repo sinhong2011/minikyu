@@ -56,12 +56,10 @@ pub fn save_webdav_password(password: &str) -> Result<(), String> {
 }
 
 pub fn get_webdav_password() -> Result<String, String> {
-    create_entry("webdav-password")
-        .get_password()
-        .map_err(|e| {
-            debug!("Failed to get WebDAV password: {e}");
-            format!("Failed to get WebDAV password: {e}")
-        })
+    create_entry("webdav-password").get_password().map_err(|e| {
+        debug!("Failed to get WebDAV password: {e}");
+        format!("Failed to get WebDAV password: {e}")
+    })
 }
 
 pub fn delete_credentials() -> Result<(), String> {

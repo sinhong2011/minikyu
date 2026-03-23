@@ -266,7 +266,7 @@ pub async fn get_downloads_from_db(app: tauri::AppHandle) -> Result<Vec<Download
 
             let parse_time = |s: &str| -> SystemTime {
                 chrono::DateTime::parse_from_rfc3339(s)
-                    .map(|dt| SystemTime::from(dt))
+                    .map(SystemTime::from)
                     .unwrap_or_else(|_| SystemTime::now())
             };
             let created_time = parse_time(&created_at_str);
@@ -385,9 +385,10 @@ pub async fn download_file(
     // Check for active download with same URL
     {
         let downloads = get_download_manager().active_downloads.lock().unwrap();
-        if downloads.iter().any(|d| {
-            matches!(d, DownloadState::Downloading { url: dl_url, .. } if dl_url == &url)
-        }) {
+        if downloads
+            .iter()
+            .any(|d| matches!(d, DownloadState::Downloading { url: dl_url, .. } if dl_url == &url))
+        {
             return Err("Download already in progress for this URL".to_string());
         }
     }
@@ -601,8 +602,12 @@ pub async fn cancel_download(app: tauri::AppHandle, url: String) -> Result<(), S
         let downloads = get_download_manager().active_downloads.lock().unwrap();
         for dl in downloads.iter() {
             match dl {
-                DownloadState::Downloading { id, url: dl_url, .. }
-                | DownloadState::Paused { id, url: dl_url, .. } => {
+                DownloadState::Downloading {
+                    id, url: dl_url, ..
+                }
+                | DownloadState::Paused {
+                    id, url: dl_url, ..
+                } => {
                     if dl_url == &url {
                         id_opt = Some(*id);
                         break;
@@ -708,10 +713,7 @@ pub async fn delete_download(app: tauri::AppHandle, id: i64) -> Result<(), Strin
 /// Clear downloads from database by status filter
 #[tauri::command]
 #[specta::specta]
-pub async fn clear_downloads(
-    app: tauri::AppHandle,
-    status: Option<String>,
-) -> Result<i64, String> {
+pub async fn clear_downloads(app: tauri::AppHandle, status: Option<String>) -> Result<i64, String> {
     let state: tauri::State<'_, AppState> = app.state();
     let pool_lock = state.db_pool.lock().await;
     if let Some(pool) = &*pool_lock {
@@ -885,8 +887,9 @@ pub async fn resume_download(
     }
 
     if let Some((id, downloaded_bytes, total_bytes)) = paused_info {
-        let file_name_str = file_name
-            .unwrap_or_else(|| extract_filename(&url).unwrap_or_else(|| "download.bin".to_string()));
+        let file_name_str = file_name.unwrap_or_else(|| {
+            extract_filename(&url).unwrap_or_else(|| "download.bin".to_string())
+        });
 
         let cancel_token = get_download_manager().create_cancellation_token(id);
 

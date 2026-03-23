@@ -18,6 +18,7 @@ const Toaster = ({ ...props }: ToasterProps) => {
   return (
     <Sonner
       className="toaster group"
+      closeButton
       icons={{
         success: <HugeiconsIcon icon={CheckmarkCircle01Icon} className="size-4 text-green-600" />,
         info: <HugeiconsIcon icon={InformationCircleIcon} className="size-4 text-blue-600" />,
@@ -26,9 +27,11 @@ const Toaster = ({ ...props }: ToasterProps) => {
         loading: <HugeiconsIcon icon={Loading02Icon} className="size-4 animate-spin" />,
       }}
       toastOptions={{
+        duration: 5000,
         classNames: {
-          toast: 'border-border/50! shadow-sm!',
+          toast: 'border-border/50! shadow-sm! group',
           description: 'text-muted-foreground! text-[13px]!',
+          closeButton: 'opacity-0! group-hover:opacity-100! transition-opacity! duration-200!',
         },
       }}
       style={

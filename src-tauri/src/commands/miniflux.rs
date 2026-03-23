@@ -71,12 +71,13 @@ pub async fn miniflux_connect(
                 log::error!("{}", error_msg);
             }
 
-            // Update is_admin flag on the account
+            // Update is_admin and miniflux_user_id on the account
             if let Some(pool) = state.db_pool.lock().await.as_ref() {
                 let _ = sqlx::query(
-                    "UPDATE miniflux_connections SET is_admin = ? WHERE username = ? AND is_active = 1",
+                    "UPDATE miniflux_connections SET is_admin = ?, miniflux_user_id = ? WHERE username = ? AND is_active = 1",
                 )
                 .bind(user.is_admin)
+                .bind(user.id)
                 .bind(&user.username)
                 .execute(pool)
                 .await;
@@ -998,12 +999,100 @@ pub async fn get_feed_icon_data(
 }
 
 pub async fn get_active_user_id(state: &AppState) -> Result<i64, String> {
-    state
-        .miniflux
-        .user_id
+    // Fast path: use in-memory user_id when connected
+    if let Some(user_id) = *state.miniflux.user_id.lock().await {
+        return Ok(user_id);
+    }
+
+    // Offline fallback: read account-linked user_id from DB.
+    let pool = state
+        .db_pool
         .lock()
         .await
-        .ok_or_else(|| "Not connected to Miniflux server".to_string())
+        .as_ref()
+        .ok_or_else(|| "Not connected to Miniflux server".to_string())?
+        .clone();
+
+    let active_account_id: Option<i64> =
+        sqlx::query_scalar("SELECT id FROM miniflux_connections WHERE is_active = 1 LIMIT 1")
+            .fetch_optional(&pool)
+            .await
+            .map_err(|e| format!("Failed to fetch active account: {e}"))?;
+
+    let account_id =
+        active_account_id.ok_or_else(|| "Not connected to Miniflux server".to_string())?;
+
+    let stored_user_id = match sqlx::query_scalar::<_, Option<i64>>(
+        "SELECT miniflux_user_id FROM miniflux_connections WHERE id = ? LIMIT 1",
+    )
+    .bind(account_id)
+    .fetch_optional(&pool)
+    .await
+    {
+        Ok(Some(value)) => value,
+        Ok(None) => None,
+        Err(e) => {
+            // Graceful fallback for older DBs where this column doesn't exist yet.
+            if e.to_string().contains("no such column: miniflux_user_id") {
+                log::warn!("miniflux_user_id column missing, falling back to cached entry user_id");
+                None
+            } else {
+                return Err(format!("Failed to fetch user id: {e}"));
+            }
+        }
+    };
+
+    if let Some(user_id) = stored_user_id {
+        return Ok(user_id);
+    }
+
+    let account_count: i64 = sqlx::query_scalar("SELECT COUNT(*) FROM miniflux_connections")
+        .fetch_one(&pool)
+        .await
+        .map_err(|e| format!("Failed to inspect accounts: {e}"))?;
+
+    // In multi-account setups, guessing from global cache can pick another
+    // account's data and make account switching look broken.
+    if account_count > 1 {
+        return Err(
+            "Active account has no cached identity. Reconnect this account once while online."
+                .to_string(),
+        );
+    }
+
+    // Last-resort fallback: infer from locally cached entries so offline mode
+    // can still load data for already-synced accounts.
+    let inferred_user_id: Option<i64> = sqlx::query_scalar(
+        r#"
+        SELECT user_id
+        FROM entries
+        WHERE user_id IS NOT NULL
+        ORDER BY datetime(created_at) DESC, id DESC
+        LIMIT 1
+        "#,
+    )
+    .fetch_optional(&pool)
+    .await
+    .map_err(|e| format!("Failed to infer user id from local cache: {e}"))?;
+
+    if let Some(user_id) = inferred_user_id {
+        // Best effort: persist inferred user_id for faster offline lookups later.
+        if let Err(e) =
+            sqlx::query("UPDATE miniflux_connections SET miniflux_user_id = ? WHERE id = ?")
+                .bind(user_id)
+                .bind(account_id)
+                .execute(&pool)
+                .await
+        {
+            if !e.to_string().contains("no such column: miniflux_user_id") {
+                log::warn!("Failed to persist inferred user_id for account {account_id}: {e}");
+            }
+        }
+
+        return Ok(user_id);
+    }
+
+    Err("Not connected to Miniflux server".to_string())
 }
 
 pub async fn get_categories_from_db(

@@ -51,6 +51,11 @@ pub async fn run_migrations(pool: &SqlitePool) -> Result<(), sqlx::Error> {
         record_migration(pool, 9, "account_is_admin").await?;
     }
 
+    if !applied_migrations.contains(&10) {
+        apply_account_miniflux_user_id_migration(pool).await?;
+        record_migration(pool, 10, "account_miniflux_user_id").await?;
+    }
+
     Ok(())
 }
 
@@ -556,15 +561,43 @@ pub(crate) async fn apply_downloads_media_type_migration(
     Ok(())
 }
 
-pub(crate) async fn apply_account_is_admin_migration(
-    pool: &SqlitePool,
-) -> Result<(), sqlx::Error> {
+pub(crate) async fn apply_account_is_admin_migration(pool: &SqlitePool) -> Result<(), sqlx::Error> {
     sqlx::query("ALTER TABLE miniflux_connections ADD COLUMN is_admin INTEGER DEFAULT 0")
         .execute(pool)
         .await
         .ok(); // OK if column already exists
 
     log::info!("Account is_admin migration applied (version 9)");
+    Ok(())
+}
+
+pub(crate) async fn apply_account_miniflux_user_id_migration(
+    pool: &SqlitePool,
+) -> Result<(), sqlx::Error> {
+    sqlx::query("ALTER TABLE miniflux_connections ADD COLUMN miniflux_user_id INTEGER")
+        .execute(pool)
+        .await
+        .ok(); // OK if column already exists
+
+    // Backfill miniflux_user_id for accounts that have cached entries.
+    // Each account's entries are stored with the Miniflux user_id — use that
+    // to populate the column so offline mode works immediately without needing
+    // a fresh online connection.
+    sqlx::query(
+        r#"
+        UPDATE miniflux_connections
+        SET miniflux_user_id = (
+            SELECT user_id FROM entries WHERE user_id IS NOT NULL LIMIT 1
+        )
+        WHERE miniflux_user_id IS NULL
+          AND EXISTS (SELECT 1 FROM entries WHERE user_id IS NOT NULL LIMIT 1)
+        "#,
+    )
+    .execute(pool)
+    .await
+    .ok();
+
+    log::info!("Account miniflux_user_id migration applied (version 10)");
     Ok(())
 }
 
