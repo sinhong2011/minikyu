@@ -173,11 +173,11 @@ msgstr "Access Key ID"
 msgid "Account data cleared"
 msgstr "Account data cleared"
 
-#: src/components/miniflux/UserNav.tsx:112
+#: src/components/miniflux/UserNav.tsx:163
 msgid "Account deleted successfully"
 msgstr "Account deleted successfully"
 
-#: src/components/miniflux/UserNav.tsx:306
+#: src/components/miniflux/UserNav.tsx:357
 msgid "Accounts"
 msgstr "Accounts"
 
@@ -193,7 +193,7 @@ msgstr "Active"
 msgid "Add a tag..."
 msgstr "Add a tag..."
 
-#: src/components/miniflux/UserNav.tsx:346
+#: src/components/miniflux/UserNav.tsx:397
 #: src/lib/commands/account-commands.ts:12
 msgid "Add Account"
 msgstr "Add Account"
@@ -224,7 +224,7 @@ msgstr "Add feed"
 msgid "Add Feed"
 msgstr "Add Feed"
 
-#: src/components/miniflux/MinifluxLayout.tsx:458
+#: src/components/miniflux/MinifluxLayout.tsx:507
 msgid "Add New Account"
 msgstr "Add New Account"
 
@@ -292,7 +292,7 @@ msgid "Admin"
 msgstr "Admin"
 
 #: src/components/miniflux/settings/UserFormDialog.tsx:141
-#: src/components/miniflux/UserNav.tsx:279
+#: src/components/miniflux/UserNav.tsx:330
 msgid "Administrator"
 msgstr "Administrator"
 
@@ -321,8 +321,8 @@ msgstr "AI Summary"
 #: src/components/layout/AppSidebar.tsx:616
 #: src/components/miniflux/EntryFilters.tsx:102
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:33
-#: src/components/miniflux/MinifluxLayout.tsx:524
-#: src/components/miniflux/MinifluxLayout.tsx:532
+#: src/components/miniflux/MinifluxLayout.tsx:573
+#: src/components/miniflux/MinifluxLayout.tsx:581
 msgid "All"
 msgstr "All"
 
@@ -491,7 +491,7 @@ msgstr "Article table of contents"
 msgid "Article text size in pixels (14-24)"
 msgstr "Article text size in pixels (14-24)"
 
-#: src/components/miniflux/MinifluxLayout.tsx:677
+#: src/components/miniflux/MinifluxLayout.tsx:726
 msgid "Ascending"
 msgstr "Ascending"
 
@@ -684,7 +684,7 @@ msgstr "Categories are folders, Feeds are subscriptions, and Entries are article
 
 #: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:132
 #: src/components/miniflux/EditFeedDialog.tsx:220
-#: src/components/miniflux/MinifluxLayout.tsx:514
+#: src/components/miniflux/MinifluxLayout.tsx:563
 #: src/components/miniflux/settings/FeedFormDialog.tsx:419
 #: src/components/preferences/PreferencesDialog.tsx:331
 msgid "Category"
@@ -1033,11 +1033,11 @@ msgstr "Connect to Miniflux"
 msgid "Connect to Miniflux to see server version."
 msgstr "Connect to Miniflux to see server version."
 
-#: src/components/miniflux/MinifluxLayout.tsx:458
+#: src/components/miniflux/MinifluxLayout.tsx:507
 msgid "Connect to Server"
 msgstr "Connect to Server"
 
-#: src/components/miniflux/MinifluxLayout.tsx:429
+#: src/components/miniflux/MinifluxLayout.tsx:478
 msgid "Connect to your Miniflux server to get started"
 msgstr "Connect to your Miniflux server to get started"
 
@@ -1404,11 +1404,11 @@ msgstr "Default folder for saving videos. Leave empty to ask every time."
 msgid "Delete"
 msgstr "Delete"
 
-#: src/components/miniflux/UserNav.tsx:336
+#: src/components/miniflux/UserNav.tsx:387
 msgid "Delete account"
 msgstr "Delete account"
 
-#: src/components/miniflux/UserNav.tsx:99
+#: src/components/miniflux/UserNav.tsx:150
 #: src/lib/commands/account-commands.ts:23
 #: src/lib/commands/account-commands.ts:40
 #: src/lib/menu.ts:517
@@ -1416,18 +1416,18 @@ msgid "Delete Account"
 msgstr "Delete Account"
 
 #. placeholder {0}: account.username
-#: src/components/miniflux/UserNav.tsx:85
+#: src/components/miniflux/UserNav.tsx:136
 msgid "Delete account \"{0}\" on {domain}? This is your only account. Deleting it will disconnect you completely."
 msgstr "Delete account \"{0}\" on {domain}? This is your only account. Deleting it will disconnect you completely."
 
 #. placeholder {0}: account.username
-#: src/components/miniflux/UserNav.tsx:93
+#: src/components/miniflux/UserNav.tsx:144
 msgid "Delete account \"{0}\" on {domain}? This will remove all saved credentials."
 msgstr "Delete account \"{0}\" on {domain}? This will remove all saved credentials."
 
 #. placeholder {0}: account.username
 #. placeholder {1}: nextAccount.username
-#: src/components/miniflux/UserNav.tsx:89
+#: src/components/miniflux/UserNav.tsx:140
 msgid "Delete account \"{0}\" on {domain}? You are currently connected to this account. You'll be switched to \"{1}\" automatically."
 msgstr "Delete account \"{0}\" on {domain}? You are currently connected to this account. You'll be switched to \"{1}\" automatically."
 
@@ -1471,7 +1471,7 @@ msgstr "Delete user"
 msgid "Delete user?"
 msgstr "Delete user?"
 
-#: src/components/miniflux/MinifluxLayout.tsx:683
+#: src/components/miniflux/MinifluxLayout.tsx:732
 msgid "Descending"
 msgstr "Descending"
 
@@ -1488,7 +1488,7 @@ msgstr "Diagnostics"
 msgid "Dim paragraphs except the one you're reading"
 msgstr "Dim paragraphs except the one you're reading"
 
-#: src/components/miniflux/MinifluxLayout.tsx:672
+#: src/components/miniflux/MinifluxLayout.tsx:721
 msgid "Direction"
 msgstr "Direction"
 
@@ -1611,7 +1611,7 @@ msgstr "Downloading recent entries from server"
 #. placeholder {1}: String(downloadProgress)
 #. placeholder {1}: String(state.progress)
 #: src/components/preferences/panes/AboutPane.tsx:57
-#: src/hooks/use-auto-updater.ts:55
+#: src/hooks/use-auto-updater.ts:57
 msgid "Downloading update v{0}... {1}%"
 msgstr "Downloading update v{0}... {1}%"
 
@@ -1939,8 +1939,8 @@ msgstr "Failed to create feed"
 msgid "Failed to create user"
 msgstr "Failed to create user"
 
-#: src/components/miniflux/UserNav.tsx:114
-#: src/components/miniflux/UserNav.tsx:118
+#: src/components/miniflux/UserNav.tsx:165
+#: src/components/miniflux/UserNav.tsx:169
 msgid "Failed to delete account"
 msgstr "Failed to delete account"
 
@@ -2050,8 +2050,8 @@ msgstr "Failed to minimize window: {message}"
 msgid "Failed to pause download"
 msgstr "Failed to pause download"
 
-#: src/components/miniflux/MinifluxLayout.tsx:403
-#: src/components/miniflux/MinifluxLayout.tsx:407
+#: src/components/miniflux/MinifluxLayout.tsx:452
+#: src/components/miniflux/MinifluxLayout.tsx:456
 msgid "Failed to reconnect account"
 msgstr "Failed to reconnect account"
 
@@ -2094,6 +2094,11 @@ msgstr "Failed to search sources"
 #: src/components/preferences/panes/GeneralPane.tsx:125
 msgid "Failed to select folder"
 msgstr "Failed to select folder"
+
+#: src/components/miniflux/UserNav.tsx:118
+#: src/components/miniflux/UserNav.tsx:122
+msgid "Failed to switch account"
+msgstr "Failed to switch account"
 
 #: src/lib/commands/window-commands.ts:55
 msgid "Failed to toggle maximize: {message}"
@@ -2195,7 +2200,7 @@ msgstr "Failed to update user"
 msgid "Failed to update video download path"
 msgstr "Failed to update video download path"
 
-#: src/components/miniflux/MinifluxLayout.tsx:519
+#: src/components/miniflux/MinifluxLayout.tsx:568
 #: src/components/preferences/PreferencesDialog.tsx:297
 msgid "Feed"
 msgstr "Feed"
@@ -2321,7 +2326,7 @@ msgstr "Fill from .env"
 msgid "Floating player window"
 msgstr "Floating player window"
 
-#: src/components/miniflux/MinifluxLayout.tsx:642
+#: src/components/miniflux/MinifluxLayout.tsx:691
 msgid "Flush history"
 msgstr "Flush history"
 
@@ -2506,7 +2511,7 @@ msgstr "Hide the left sidebar"
 
 #: src/components/layout/AppSidebar.tsx:673
 #: src/components/layout/AppSidebar.tsx:682
-#: src/components/miniflux/MinifluxLayout.tsx:530
+#: src/components/miniflux/MinifluxLayout.tsx:579
 msgid "History"
 msgstr "History"
 
@@ -2514,7 +2519,7 @@ msgstr "History"
 msgid "History flushed"
 msgstr "History flushed"
 
-#: src/components/miniflux/MinifluxLayout.tsx:554
+#: src/components/miniflux/MinifluxLayout.tsx:603
 msgid "history items"
 msgstr "history items"
 
@@ -2678,6 +2683,7 @@ msgstr "Info"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:758
 #: src/components/downloads/DownloadManagerDialog.tsx:762
+#: src/hooks/use-auto-updater.ts:86
 msgid "Install & Restart"
 msgstr "Install & Restart"
 
@@ -2729,7 +2735,7 @@ msgid "Korean"
 msgstr "Korean"
 
 #: src/components/miniflux/SafeHtml.tsx:807
-#: src/components/miniflux/UserNav.tsx:285
+#: src/components/miniflux/UserNav.tsx:336
 #: src/components/preferences/panes/AppearancePane.tsx:110
 #: src/components/preferences/panes/AppearancePane.tsx:112
 msgid "Language"
@@ -2775,7 +2781,7 @@ msgstr "Last login"
 msgid "Last Modified"
 msgstr "Last Modified"
 
-#: src/components/miniflux/MinifluxLayout.tsx:667
+#: src/components/miniflux/MinifluxLayout.tsx:716
 msgid "Last read date"
 msgstr "Last read date"
 
@@ -2796,7 +2802,7 @@ msgstr "Last synced at {0}"
 msgid "Last used"
 msgstr "Last used"
 
-#: src/hooks/use-auto-updater.ts:86
+#: src/hooks/use-auto-updater.ts:94
 msgid "Later"
 msgstr "Later"
 
@@ -2916,7 +2922,7 @@ msgstr "Manage third-party service integrations."
 msgid "Manage third-party service integrations. Configure services in Miniflux settings."
 msgstr "Manage third-party service integrations. Configure services in Miniflux settings."
 
-#: src/components/miniflux/MinifluxLayout.tsx:631
+#: src/components/miniflux/MinifluxLayout.tsx:680
 msgid "Mark all as read"
 msgstr "Mark all as read"
 
@@ -3315,7 +3321,7 @@ msgid "Off"
 msgstr "Off"
 
 #: src/components/layout/AppSidebar.tsx:743
-#: src/components/miniflux/UserNav.tsx:260
+#: src/components/miniflux/UserNav.tsx:311
 msgid "Offline cached data"
 msgstr "Offline cached data"
 
@@ -3749,7 +3755,7 @@ msgstr "Providers"
 msgid "Providers resorted"
 msgstr "Providers resorted"
 
-#: src/components/miniflux/MinifluxLayout.tsx:661
+#: src/components/miniflux/MinifluxLayout.tsx:710
 msgid "Published date"
 msgstr "Published date"
 
@@ -3899,7 +3905,7 @@ msgstr "Ready"
 msgid "Recent"
 msgstr "Recent"
 
-#: src/components/miniflux/MinifluxLayout.tsx:428
+#: src/components/miniflux/MinifluxLayout.tsx:477
 msgid "Reconnect to an existing account or add a new one"
 msgstr "Reconnect to an existing account or add a new one"
 
@@ -4102,10 +4108,10 @@ msgid "Resort providers"
 msgstr "Resort providers"
 
 #: src/hooks/use-auto-updater.ts:78
-msgid "Restart Now"
-msgstr "Restart Now"
+#~ msgid "Restart Now"
+#~ msgstr "Restart Now"
 
-#: src/hooks/use-auto-updater.ts:75
+#: src/hooks/use-auto-updater.ts:83
 msgid "Restart to apply the update."
 msgstr "Restart to apply the update."
 
@@ -4160,7 +4166,7 @@ msgid "Rewrite rules"
 msgstr "Rewrite rules"
 
 #: src/components/miniflux/settings/UserFormDialog.tsx:132
-#: src/components/miniflux/UserNav.tsx:277
+#: src/components/miniflux/UserNav.tsx:328
 msgid "Role"
 msgstr "Role"
 
@@ -4268,7 +4274,7 @@ msgid "Scroll up"
 msgstr "Scroll up"
 
 #: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:83
-#: src/components/miniflux/MinifluxLayout.tsx:693
+#: src/components/miniflux/MinifluxLayout.tsx:742
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:165
 #: src/components/miniflux/settings/FeedFormDialog.tsx:337
 msgid "Search"
@@ -4622,8 +4628,8 @@ msgstr "Some changes may require an app restart."
 msgid "Something went wrong"
 msgstr "Something went wrong"
 
-#: src/components/miniflux/MinifluxLayout.tsx:650
-#: src/components/miniflux/MinifluxLayout.tsx:656
+#: src/components/miniflux/MinifluxLayout.tsx:699
+#: src/components/miniflux/MinifluxLayout.tsx:705
 msgid "Sort by"
 msgstr "Sort by"
 
@@ -4663,11 +4669,11 @@ msgstr "Star or unstar the current article"
 #: src/components/layout/AppSidebar.tsx:664
 #: src/components/miniflux/EntryFilters.tsx:118
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:44
-#: src/components/miniflux/MinifluxLayout.tsx:526
+#: src/components/miniflux/MinifluxLayout.tsx:575
 msgid "Starred"
 msgstr "Starred"
 
-#: src/components/miniflux/MinifluxLayout.tsx:550
+#: src/components/miniflux/MinifluxLayout.tsx:599
 msgid "starred items"
 msgstr "starred items"
 
@@ -4799,6 +4805,11 @@ msgstr "Switch to dark theme"
 #: src/lib/commands/view-commands.ts:97
 msgid "Switch to light theme"
 msgstr "Switch to light theme"
+
+#: src/components/miniflux/MinifluxLayout.tsx:418
+#: src/components/miniflux/UserNav.tsx:84
+msgid "Switched account"
+msgstr "Switched account"
 
 #: src/components/preferences/panes/SyncPane.tsx:158
 #: src/components/preferences/PreferencesDialog.tsx:169
@@ -5042,7 +5053,7 @@ msgstr "Time Left"
 msgid "Timeout must be a positive number"
 msgstr "Timeout must be a positive number"
 
-#: src/components/miniflux/UserNav.tsx:294
+#: src/components/miniflux/UserNav.tsx:345
 msgid "Timezone"
 msgstr "Timezone"
 
@@ -5079,7 +5090,7 @@ msgstr "to open the command palette and explore available commands."
 #: src/components/layout/AppSidebar.tsx:631
 #: src/components/layout/AppSidebar.tsx:640
 #: src/components/miniflux/EntryList.tsx:169
-#: src/components/miniflux/MinifluxLayout.tsx:528
+#: src/components/miniflux/MinifluxLayout.tsx:577
 msgid "Today"
 msgstr "Today"
 
@@ -5355,7 +5366,7 @@ msgstr "unread"
 msgid "Unread"
 msgstr "Unread"
 
-#: src/components/miniflux/MinifluxLayout.tsx:546
+#: src/components/miniflux/MinifluxLayout.tsx:595
 msgid "unread items"
 msgstr "unread items"
 
@@ -5417,7 +5428,8 @@ msgid "Update username or password."
 msgstr "Update username or password."
 
 #. placeholder {0}: state.version
-#: src/hooks/use-auto-updater.ts:74
+#: src/hooks/use-auto-updater.ts:82
+#: src/hooks/use-auto-updater.ts:104
 msgid "Update v{0} is ready"
 msgstr "Update v{0} is ready"
 
@@ -5456,7 +5468,7 @@ msgid "Useful for summary-only feeds"
 msgstr "Useful for summary-only feeds"
 
 #: src/components/miniflux/settings/UserFormDialog.tsx:140
-#: src/components/miniflux/UserNav.tsx:279
+#: src/components/miniflux/UserNav.tsx:330
 msgid "User"
 msgstr "User"
 
@@ -5478,7 +5490,7 @@ msgstr "User deleted"
 msgid "User management requires an administrator account."
 msgstr "User management requires an administrator account."
 
-#: src/components/miniflux/UserNav.tsx:271
+#: src/components/miniflux/UserNav.tsx:322
 msgid "User Profile"
 msgstr "User Profile"
 
@@ -5530,8 +5542,10 @@ msgstr "Version {0} is available."
 msgid "Version {0} is available. Downloading..."
 msgstr "Version {0} is available. Downloading..."
 
+#. placeholder {0}: state.version
 #. placeholder {0}: updaterVersion ?? ''
 #: src/components/preferences/panes/AboutPane.tsx:59
+#: src/hooks/use-auto-updater.ts:105
 msgid "Version {0} is ready to install."
 msgstr "Version {0} is ready to install."
 
@@ -5596,7 +5610,7 @@ msgstr "Warn"
 msgid "WebDAV URL"
 msgstr "WebDAV URL"
 
-#: src/components/miniflux/MinifluxLayout.tsx:425
+#: src/components/miniflux/MinifluxLayout.tsx:474
 msgid "Welcome to Miniflux"
 msgstr "Welcome to Miniflux"
 
