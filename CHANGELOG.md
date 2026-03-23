@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.2](https://github.com/sinhong2011/minikyu/compare/v1.11.1...v1.11.2) (2026-03-23)
+
+
+### Bug Fixes
+
+* Improve offline account switching and updater ready notifications ([#91](https://github.com/sinhong2011/minikyu/issues/91)) ([9ddd18d](https://github.com/sinhong2011/minikyu/commit/9ddd18db6778a784a933338fb20af7afdee99c41))
+
 ## [1.11.1](https://github.com/sinhong2011/minikyu/compare/v1.11.0...v1.11.1) (2026-03-19)
 
 
