@@ -709,7 +709,7 @@ msgstr "このカテゴリーを翻訳から除外しました"
 
 #: src/services/miniflux/feeds.ts:349
 msgid "Category feeds refreshed"
-msgstr ""
+msgstr "カテゴリのフィードを更新しました"
 
 #: src/components/miniflux/AddFeedDialog.tsx:254
 msgid "Category is required"
@@ -3951,11 +3951,11 @@ msgstr "更新に失敗しました：{message}"
 
 #: src/components/preferences/PreferencesDialog.tsx:383
 msgid "Refresh feed"
-msgstr ""
+msgstr "フィードを更新"
 
 #: src/components/preferences/panes/CategoriesPane.tsx:102
 msgid "Refresh feeds"
-msgstr ""
+msgstr "フィードを更新"
 
 #: src/components/preferences/panes/CategoriesPane.tsx:101
 #: src/components/preferences/panes/FeedsPane.tsx:67

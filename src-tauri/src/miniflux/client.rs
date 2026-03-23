@@ -223,6 +223,26 @@ impl MinifluxClient {
             .map_err(|e| format!("Parse error: {}", e))
     }
 
+    /// Execute PUT request with no request body and no response body (e.g. refresh endpoints → 204)
+    async fn put_no_body(&self, path: &str) -> Result<(), String> {
+        let response = self
+            .build_put_request(path)
+            .send()
+            .await
+            .map_err(|e| format!("Network error: {}", e))?;
+
+        if !response.status().is_success() {
+            let status = response.status();
+            let body_text = response.text().await.unwrap_or_default();
+            if body_text.is_empty() {
+                return Err(format!("API error: {}", status));
+            }
+            return Err(format!("API error: {} - {}", status, body_text));
+        }
+
+        Ok(())
+    }
+
     /// Execute PUT request without expecting a response body
     async fn put_empty<B: serde::Serialize>(&self, path: &str, body: &B) -> Result<(), String> {
         let request = self.build_put_request(path).json(body);
@@ -372,13 +392,12 @@ impl MinifluxClient {
 
     /// Refresh a feed
     pub async fn refresh_feed(&self, id: i64) -> Result<(), String> {
-        self.put(&format!("feeds/{}/refresh", id), None::<&()>)
-            .await
+        self.put_no_body(&format!("feeds/{}/refresh", id)).await
     }
 
     /// Refresh all feeds
     pub async fn refresh_all_feeds(&self) -> Result<(), String> {
-        self.put("feeds/refresh", None::<&()>).await
+        self.put_no_body("feeds/refresh").await
     }
 
     /// Get feed icon
