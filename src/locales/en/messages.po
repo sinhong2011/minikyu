@@ -340,7 +340,7 @@ msgstr "All feeds in these categories will skip auto-translation. Chinese conver
 
 #: src/lib/commands/feed-commands.ts:64
 #: src/lib/menu.ts:549
-#: src/services/miniflux/feeds.ts:381
+#: src/services/miniflux/feeds.ts:395
 msgid "All feeds refreshed"
 msgstr "All feeds refreshed"
 
@@ -707,7 +707,7 @@ msgstr "Category deleted"
 msgid "Category excluded from translation"
 msgstr "Category excluded from translation"
 
-#: src/services/miniflux/feeds.ts:349
+#: src/services/miniflux/feeds.ts:363
 msgid "Category feeds refreshed"
 msgstr "Category feeds refreshed"
 
@@ -1090,7 +1090,7 @@ msgstr "Copied"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:735
 #: src/components/preferences/panes/AdvancedPane.tsx:809
-#: src/components/ui/sonner.tsx:56
+#: src/components/ui/sonner.tsx:59
 msgid "Copied!"
 msgstr "Copied!"
 
@@ -1127,7 +1127,7 @@ msgstr "Copy link"
 msgid "Copy Link"
 msgstr "Copy Link"
 
-#: src/components/ui/sonner.tsx:65
+#: src/components/ui/sonner.tsx:68
 msgid "Copy message"
 msgstr "Copy message"
 
@@ -2059,8 +2059,8 @@ msgstr "Failed to reconnect account"
 msgid "Failed to refresh feed"
 msgstr "Failed to refresh feed"
 
-#: src/services/miniflux/feeds.ts:352
-#: src/services/miniflux/feeds.ts:372
+#: src/services/miniflux/feeds.ts:366
+#: src/services/miniflux/feeds.ts:386
 msgid "Failed to refresh feeds"
 msgstr "Failed to refresh feeds"
 
@@ -2229,7 +2229,7 @@ msgstr "Feed Management"
 msgid "Feed marked as read"
 msgstr "Feed marked as read"
 
-#: src/services/miniflux/feeds.ts:327
+#: src/services/miniflux/feeds.ts:341
 msgid "Feed refreshed"
 msgstr "Feed refreshed"
 
@@ -4832,7 +4832,7 @@ msgstr "Sync Completed"
 
 #: src/components/sync/SyncProgressPopover.tsx:170
 #: src/hooks/use-sync-indicator.ts:29
-#: src/services/miniflux/feeds.ts:425
+#: src/services/miniflux/feeds.ts:439
 msgid "Sync failed"
 msgstr "Sync failed"
 

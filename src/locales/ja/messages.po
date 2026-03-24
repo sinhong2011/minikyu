@@ -340,7 +340,7 @@ msgstr "これらのカテゴリーのフィードは自動翻訳をスキップ
 
 #: src/lib/commands/feed-commands.ts:64
 #: src/lib/menu.ts:549
-#: src/services/miniflux/feeds.ts:381
+#: src/services/miniflux/feeds.ts:395
 msgid "All feeds refreshed"
 msgstr "すべてのフィードを更新しました"
 
@@ -707,7 +707,7 @@ msgstr "カテゴリーを削除しました"
 msgid "Category excluded from translation"
 msgstr "このカテゴリーを翻訳から除外しました"
 
-#: src/services/miniflux/feeds.ts:349
+#: src/services/miniflux/feeds.ts:363
 msgid "Category feeds refreshed"
 msgstr "カテゴリのフィードを更新しました"
 
@@ -1090,7 +1090,7 @@ msgstr "コピーしました"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:735
 #: src/components/preferences/panes/AdvancedPane.tsx:809
-#: src/components/ui/sonner.tsx:56
+#: src/components/ui/sonner.tsx:59
 msgid "Copied!"
 msgstr "コピーしました！"
 
@@ -1127,7 +1127,7 @@ msgstr "リンクをコピー"
 msgid "Copy Link"
 msgstr "リンクをコピー"
 
-#: src/components/ui/sonner.tsx:65
+#: src/components/ui/sonner.tsx:68
 msgid "Copy message"
 msgstr "メッセージをコピー"
 
@@ -2059,8 +2059,8 @@ msgstr "アカウントの再接続に失敗しました"
 msgid "Failed to refresh feed"
 msgstr "フィードの更新に失敗しました"
 
-#: src/services/miniflux/feeds.ts:352
-#: src/services/miniflux/feeds.ts:372
+#: src/services/miniflux/feeds.ts:366
+#: src/services/miniflux/feeds.ts:386
 msgid "Failed to refresh feeds"
 msgstr "フィードの更新に失敗しました"
 
@@ -2229,7 +2229,7 @@ msgstr "フィード管理"
 msgid "Feed marked as read"
 msgstr "フィードを既読にしました"
 
-#: src/services/miniflux/feeds.ts:327
+#: src/services/miniflux/feeds.ts:341
 msgid "Feed refreshed"
 msgstr "フィードを更新しました"
 
@@ -4832,7 +4832,7 @@ msgstr "同期完了"
 
 #: src/components/sync/SyncProgressPopover.tsx:170
 #: src/hooks/use-sync-indicator.ts:29
-#: src/services/miniflux/feeds.ts:425
+#: src/services/miniflux/feeds.ts:439
 msgid "Sync failed"
 msgstr "同期に失敗しました"
 

@@ -340,7 +340,7 @@ msgstr "這些分類中的所有訂閱源將不會自動翻譯。中文轉換仍
 
 #: src/lib/commands/feed-commands.ts:64
 #: src/lib/menu.ts:549
-#: src/services/miniflux/feeds.ts:381
+#: src/services/miniflux/feeds.ts:395
 msgid "All feeds refreshed"
 msgstr "所有訂閱源已重新整理"
 
@@ -707,7 +707,7 @@ msgstr "分類已刪除"
 msgid "Category excluded from translation"
 msgstr "已將此分類排除翻譯"
 
-#: src/services/miniflux/feeds.ts:349
+#: src/services/miniflux/feeds.ts:363
 msgid "Category feeds refreshed"
 msgstr "分類訂閱源已重新整理"
 
@@ -1090,7 +1090,7 @@ msgstr "已複製"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:735
 #: src/components/preferences/panes/AdvancedPane.tsx:809
-#: src/components/ui/sonner.tsx:56
+#: src/components/ui/sonner.tsx:59
 msgid "Copied!"
 msgstr "已複製！"
 
@@ -1127,7 +1127,7 @@ msgstr "複製連結"
 msgid "Copy Link"
 msgstr "複製連結"
 
-#: src/components/ui/sonner.tsx:65
+#: src/components/ui/sonner.tsx:68
 msgid "Copy message"
 msgstr "複製訊息"
 
@@ -2059,8 +2059,8 @@ msgstr "重新連線帳戶失敗"
 msgid "Failed to refresh feed"
 msgstr "重新整理訂閱源失敗"
 
-#: src/services/miniflux/feeds.ts:352
-#: src/services/miniflux/feeds.ts:372
+#: src/services/miniflux/feeds.ts:366
+#: src/services/miniflux/feeds.ts:386
 msgid "Failed to refresh feeds"
 msgstr "重新整理訂閱源失敗"
 
@@ -2229,7 +2229,7 @@ msgstr "訂閱源管理"
 msgid "Feed marked as read"
 msgstr "訂閱源已標記為已讀"
 
-#: src/services/miniflux/feeds.ts:327
+#: src/services/miniflux/feeds.ts:341
 msgid "Feed refreshed"
 msgstr "訂閱源已重新整理"
 
@@ -4832,7 +4832,7 @@ msgstr "同步完成"
 
 #: src/components/sync/SyncProgressPopover.tsx:170
 #: src/hooks/use-sync-indicator.ts:29
-#: src/services/miniflux/feeds.ts:425
+#: src/services/miniflux/feeds.ts:439
 msgid "Sync failed"
 msgstr "同步失敗"
 
