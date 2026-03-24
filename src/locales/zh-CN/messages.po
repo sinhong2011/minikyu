@@ -340,7 +340,7 @@ msgstr "这些分类中的所有订阅源将跳过自动翻译。中文转换仍
 
 #: src/lib/commands/feed-commands.ts:64
 #: src/lib/menu.ts:549
-#: src/services/miniflux/feeds.ts:381
+#: src/services/miniflux/feeds.ts:395
 msgid "All feeds refreshed"
 msgstr "所有订阅源已刷新"
 
@@ -707,7 +707,7 @@ msgstr "分类已删除"
 msgid "Category excluded from translation"
 msgstr "该分类已排除翻译"
 
-#: src/services/miniflux/feeds.ts:349
+#: src/services/miniflux/feeds.ts:363
 msgid "Category feeds refreshed"
 msgstr "分类订阅源已刷新"
 
@@ -1090,7 +1090,7 @@ msgstr "已复制"
 
 #: src/components/preferences/panes/AdvancedPane.tsx:735
 #: src/components/preferences/panes/AdvancedPane.tsx:809
-#: src/components/ui/sonner.tsx:56
+#: src/components/ui/sonner.tsx:59
 msgid "Copied!"
 msgstr "已复制！"
 
@@ -1127,7 +1127,7 @@ msgstr "复制链接"
 msgid "Copy Link"
 msgstr "复制链接"
 
-#: src/components/ui/sonner.tsx:65
+#: src/components/ui/sonner.tsx:68
 msgid "Copy message"
 msgstr "复制消息"
 
@@ -2059,8 +2059,8 @@ msgstr "重新连接帐户失败"
 msgid "Failed to refresh feed"
 msgstr "刷新订阅源失败"
 
-#: src/services/miniflux/feeds.ts:352
-#: src/services/miniflux/feeds.ts:372
+#: src/services/miniflux/feeds.ts:366
+#: src/services/miniflux/feeds.ts:386
 msgid "Failed to refresh feeds"
 msgstr "刷新订阅源失败"
 
@@ -2229,7 +2229,7 @@ msgstr "订阅管理"
 msgid "Feed marked as read"
 msgstr "订阅源已标记为已读"
 
-#: src/services/miniflux/feeds.ts:327
+#: src/services/miniflux/feeds.ts:341
 msgid "Feed refreshed"
 msgstr "订阅源已刷新"
 
@@ -4832,7 +4832,7 @@ msgstr "同步完成"
 
 #: src/components/sync/SyncProgressPopover.tsx:170
 #: src/hooks/use-sync-indicator.ts:29
-#: src/services/miniflux/feeds.ts:425
+#: src/services/miniflux/feeds.ts:439
 msgid "Sync failed"
 msgstr "同步失败"
 

@@ -319,9 +319,23 @@ export function useRefreshFeed() {
 
       logger.info('Feed refreshed successfully', { id });
     },
+    onMutate: async (id: string) => {
+      await queryClient.cancelQueries({ queryKey: feedQueryKeys.lists() });
+      const previous = queryClient.getQueryData<Feed[]>(feedQueryKeys.list());
+      if (previous) {
+        const now = new Date().toISOString();
+        queryClient.setQueryData<Feed[]>(feedQueryKeys.list(), (old) =>
+          old?.map((f) => (f.id === id ? { ...f, checked_at: now } : f))
+        );
+      }
+      return { previous };
+    },
+    onError: (_err, _id, context) => {
+      if (context?.previous) {
+        queryClient.setQueryData(feedQueryKeys.list(), context.previous);
+      }
+    },
     onSuccess: (_, id) => {
-      // Invalidate feeds and entries queries
-      queryClient.invalidateQueries({ queryKey: feedQueryKeys.lists() });
       queryClient.invalidateQueries({ queryKey: feedQueryKeys.detail(id) });
       queryClient.invalidateQueries({ queryKey: ['miniflux', 'entries'] });
       toast.success(translate(msg`Feed refreshed`));
