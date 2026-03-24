@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.3](https://github.com/sinhong2011/minikyu/compare/v1.11.2...v1.11.3) (2026-03-24)
+
+
+### Bug Fixes
+
+* Reduce next article button size and optimistic feed refresh update ([#93](https://github.com/sinhong2011/minikyu/issues/93)) ([ea7e8a0](https://github.com/sinhong2011/minikyu/commit/ea7e8a022b526ee85a7fee25d4d9d06e95014f22))
+
 ## [1.11.2](https://github.com/sinhong2011/minikyu/compare/v1.11.1...v1.11.2) (2026-03-23)
 
 
