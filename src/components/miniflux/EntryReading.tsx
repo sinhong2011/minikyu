@@ -983,6 +983,7 @@ export function EntryReading({
       if (pullBottomResetTimer) clearTimeout(pullBottomResetTimer);
     };
   }, [
+    _,
     cancelScrollAnimation,
     readingContent.tocItems,
     scrollY,
@@ -1217,6 +1218,7 @@ export function EntryReading({
     window.addEventListener('keydown', handleKeyDown, true);
     return () => window.removeEventListener('keydown', handleKeyDown, true);
   }, [
+    _,
     animateViewportScrollTo,
     fontSize,
     handleFetchOriginalContent,
@@ -1311,6 +1313,7 @@ export function EntryReading({
       document.removeEventListener('command:set-reader-theme', handleSetTheme);
     };
   }, [
+    _,
     entry,
     toggleEntryRead,
     toggleStar,
