@@ -20,6 +20,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { openUrl } from '@tauri-apps/plugin-opener';
 import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArticleSummaryCard, useArticleSummary } from '@/components/miniflux/ArticleSummary';
@@ -796,7 +797,10 @@ export function EntryReading({
           }
           break;
         case 'open_in_external_browser':
-          if (currentEntry?.url) window.open(currentEntry.url, '_blank', 'noopener,noreferrer');
+          if (currentEntry?.url)
+            openUrl(currentEntry.url).catch(() =>
+              showToast.error(_(msg`Failed to open in browser`))
+            );
           break;
         case 'toggle_read':
           if (currentEntry) toggleEntryReadRef.current.mutate(currentEntry.id);
@@ -979,6 +983,7 @@ export function EntryReading({
       if (pullBottomResetTimer) clearTimeout(pullBottomResetTimer);
     };
   }, [
+    _,
     cancelScrollAnimation,
     readingContent.tocItems,
     scrollY,
@@ -1185,7 +1190,7 @@ export function EntryReading({
         const currentEntry = entryRef.current;
         if (currentEntry?.url) {
           e.preventDefault();
-          window.open(currentEntry.url, '_blank', 'noopener,noreferrer');
+          openUrl(currentEntry.url).catch(() => showToast.error(_(msg`Failed to open in browser`)));
         }
       } else if (match('open-app-browser', e)) {
         const currentEntry = entryRef.current;
@@ -1213,6 +1218,7 @@ export function EntryReading({
     window.addEventListener('keydown', handleKeyDown, true);
     return () => window.removeEventListener('keydown', handleKeyDown, true);
   }, [
+    _,
     animateViewportScrollTo,
     fontSize,
     handleFetchOriginalContent,
@@ -1276,7 +1282,8 @@ export function EntryReading({
       },
       'command:fetch-content': () => handleFetchOriginalContent(),
       'command:open-in-browser': () => {
-        if (entry?.url) window.open(entry.url, '_blank', 'noopener,noreferrer');
+        if (entry?.url)
+          openUrl(entry.url).catch(() => showToast.error(_(msg`Failed to open in browser`)));
       },
       'command:open-in-app-browser': () => {
         if (entry?.url && onOpenInAppBrowser) onOpenInAppBrowser(entry.url);
@@ -1306,6 +1313,7 @@ export function EntryReading({
       document.removeEventListener('command:set-reader-theme', handleSetTheme);
     };
   }, [
+    _,
     entry,
     toggleEntryRead,
     toggleStar,
@@ -1698,7 +1706,11 @@ export function EntryReading({
                   <ContextMenuGroup>
                     <ContextMenuLabel>{_(msg`Links`)}</ContextMenuLabel>
                     <ContextMenuItem
-                      onClick={() => window.open(entry.url, '_blank', 'noopener,noreferrer')}
+                      onClick={() =>
+                        openUrl(entry.url).catch(() =>
+                          showToast.error(_(msg`Failed to open in browser`))
+                        )
+                      }
                     >
                       <HugeiconsIcon
                         icon={Link01Icon}

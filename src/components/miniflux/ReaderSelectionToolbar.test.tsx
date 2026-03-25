@@ -9,6 +9,10 @@ vi.mock('@/services/translation', () => ({
   translateReaderSegmentWithPreferences: vi.fn(),
 }));
 
+vi.mock('@tauri-apps/plugin-opener', () => ({
+  openUrl: vi.fn().mockResolvedValue(undefined),
+}));
+
 const baseTranslationPreferences = {
   reader_translation_route_mode: 'engine_first' as const,
   reader_translation_target_language: 'zh-CN',
@@ -202,11 +206,14 @@ describe('ReaderSelectionToolbar', () => {
     });
 
     await act(async () => {
-      container.dispatchEvent(new Event('scroll'));
+      container.dispatchEvent(new Event('scroll', { bubbles: true }));
     });
-    await waitFor(() => {
-      expect(screen.queryByLabelText('Translate selection')).not.toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.queryByLabelText('Translate selection')).not.toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it('calls translateReaderSegmentWithPreferences with selected text', async () => {
@@ -308,8 +315,8 @@ describe('ReaderSelectionToolbar', () => {
   });
 
   it('opens Google search URL when search button is clicked', async () => {
-    const openMock = vi.fn();
-    vi.spyOn(window, 'open').mockImplementation(openMock);
+    const { openUrl } = await import('@tauri-apps/plugin-opener');
+    const openMock = vi.mocked(openUrl);
 
     setupSelection('Hello world');
     renderWithI18n(
@@ -326,11 +333,7 @@ describe('ReaderSelectionToolbar', () => {
 
     fireEvent.click(screen.getByLabelText('Search'));
 
-    expect(openMock).toHaveBeenCalledWith(
-      'https://www.google.com/search?q=Hello%20world',
-      '_blank',
-      'noopener,noreferrer'
-    );
+    expect(openMock).toHaveBeenCalledWith('https://www.google.com/search?q=Hello%20world');
   });
 
   it('passes sourceLanguage to translation service', async () => {
