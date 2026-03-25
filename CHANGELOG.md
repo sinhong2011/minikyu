@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.4](https://github.com/sinhong2011/minikyu/compare/v1.11.3...v1.11.4) (2026-03-25)
+
+
+### Bug Fixes
+
+* Fix open-in-browser and restore in-app browser option ([#95](https://github.com/sinhong2011/minikyu/issues/95)) ([8d32fdb](https://github.com/sinhong2011/minikyu/commit/8d32fdbceaaf6912a1ae2ac65b806c3034471f21))
+
 ## [1.11.3](https://github.com/sinhong2011/minikyu/compare/v1.11.2...v1.11.3) (2026-03-24)
 
 
