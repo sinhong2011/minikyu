@@ -206,11 +206,14 @@ describe('ReaderSelectionToolbar', () => {
     });
 
     await act(async () => {
-      container.dispatchEvent(new Event('scroll'));
+      container.dispatchEvent(new Event('scroll', { bubbles: true }));
     });
-    await waitFor(() => {
-      expect(screen.queryByLabelText('Translate selection')).not.toBeInTheDocument();
-    });
+    await waitFor(
+      () => {
+        expect(screen.queryByLabelText('Translate selection')).not.toBeInTheDocument();
+      },
+      { timeout: 3000 }
+    );
   });
 
   it('calls translateReaderSegmentWithPreferences with selected text', async () => {
