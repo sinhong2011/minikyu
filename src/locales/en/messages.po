@@ -260,7 +260,7 @@ msgstr "Add the current article's podcast to the playlist"
 msgid "Add to playlist"
 msgstr "Add to playlist"
 
-#: src/components/miniflux/EntryReading.tsx:1780
+#: src/components/miniflux/EntryReading.tsx:1788
 #: src/lib/commands/article-commands.ts:135
 msgid "Add to Playlist"
 msgstr "Add to Playlist"
@@ -306,7 +306,7 @@ msgstr "Advanced"
 msgid "Advanced settings"
 msgstr "Advanced settings"
 
-#: src/components/miniflux/EntryReading.tsx:1535
+#: src/components/miniflux/EntryReading.tsx:1539
 #: src/components/preferences/PreferencesDialog.tsx:116
 msgid "AI"
 msgstr "AI"
@@ -474,7 +474,7 @@ msgstr "Are you sure you want to unsubscribe from \"{0}\"?"
 #~ msgstr "Are you sure you want to unsubscribe from this feed?"
 
 #: src/components/command-palette/CommandPalette.tsx:197
-#: src/components/miniflux/EntryReading.tsx:1654
+#: src/components/miniflux/EntryReading.tsx:1658
 #: src/lib/menu.ts:215
 msgid "Article"
 msgstr "Article"
@@ -703,7 +703,7 @@ msgstr "Category created"
 msgid "Category deleted"
 msgstr "Category deleted"
 
-#: src/components/miniflux/EntryReading.tsx:1628
+#: src/components/miniflux/EntryReading.tsx:1632
 msgid "Category excluded from translation"
 msgstr "Category excluded from translation"
 
@@ -736,7 +736,7 @@ msgstr "Category Not Empty"
 msgid "Category Title"
 msgstr "Category Title"
 
-#: src/components/miniflux/EntryReading.tsx:1623
+#: src/components/miniflux/EntryReading.tsx:1627
 msgid "Category translation re-enabled"
 msgstr "Category translation re-enabled"
 
@@ -1121,7 +1121,7 @@ msgstr "Copy debug info"
 msgid "Copy link"
 msgstr "Copy link"
 
-#: src/components/miniflux/EntryReading.tsx:1733
+#: src/components/miniflux/EntryReading.tsx:1741
 #: src/lib/commands/article-commands.ts:100
 #: src/lib/menu.ts:261
 msgid "Copy Link"
@@ -1775,7 +1775,7 @@ msgstr "Enter Zen Mode"
 msgid "Entries"
 msgstr "Entries"
 
-#: src/components/miniflux/EntryReading.tsx:1343
+#: src/components/miniflux/EntryReading.tsx:1347
 msgid "Entry not found"
 msgstr "Entry not found"
 
@@ -2046,10 +2046,10 @@ msgstr "Failed to mark feed as read"
 msgid "Failed to minimize window: {message}"
 msgstr "Failed to minimize window: {message}"
 
-#: src/components/miniflux/EntryReading.tsx:800
-#: src/components/miniflux/EntryReading.tsx:1189
-#: src/components/miniflux/EntryReading.tsx:1280
-#: src/components/miniflux/EntryReading.tsx:1702
+#: src/components/miniflux/EntryReading.tsx:802
+#: src/components/miniflux/EntryReading.tsx:1192
+#: src/components/miniflux/EntryReading.tsx:1284
+#: src/components/miniflux/EntryReading.tsx:1708
 msgid "Failed to open in browser"
 msgstr "Failed to open in browser"
 
@@ -2224,7 +2224,7 @@ msgstr "Feed created with partial settings"
 msgid "Feed deleted"
 msgstr "Feed deleted"
 
-#: src/components/miniflux/EntryReading.tsx:1586
+#: src/components/miniflux/EntryReading.tsx:1590
 msgid "Feed excluded from translation"
 msgstr "Feed excluded from translation"
 
@@ -2248,7 +2248,7 @@ msgstr "Feed title"
 msgid "Feed Title"
 msgstr "Feed Title"
 
-#: src/components/miniflux/EntryReading.tsx:1581
+#: src/components/miniflux/EntryReading.tsx:1585
 msgid "Feed translation re-enabled"
 msgstr "Feed translation re-enabled"
 
@@ -2293,7 +2293,7 @@ msgstr "Fetch new articles from all feeds"
 msgid "Fetch original content"
 msgstr "Fetch original content"
 
-#: src/components/miniflux/EntryReading.tsx:1672
+#: src/components/miniflux/EntryReading.tsx:1676
 #: src/lib/commands/article-commands.ts:53
 #: src/lib/menu.ts:232
 msgid "Fetch Original Content"
@@ -2346,7 +2346,7 @@ msgstr "Flush History"
 msgid "Focus mode"
 msgstr "Focus mode"
 
-#: src/components/miniflux/EntryReading.tsx:1683
+#: src/components/miniflux/EntryReading.tsx:1687
 msgid "Focus Mode"
 msgstr "Focus Mode"
 
@@ -2477,7 +2477,7 @@ msgstr "Go to previous page"
 msgid "Go to top"
 msgstr "Go to top"
 
-#: src/components/miniflux/EntryReading.tsx:1525
+#: src/components/miniflux/EntryReading.tsx:1529
 msgid "Go to Top"
 msgstr "Go to Top"
 
@@ -2843,7 +2843,7 @@ msgstr "Line Height"
 msgid "Line Width"
 msgstr "Line Width"
 
-#: src/components/miniflux/EntryReading.tsx:1700
+#: src/components/miniflux/EntryReading.tsx:1704
 #: src/lib/shortcut-registry.ts:29
 msgid "Links"
 msgstr "Links"
@@ -2935,7 +2935,7 @@ msgstr "Mark all as read"
 
 #: src/components/layout/AppSidebar.tsx:180
 #: src/components/layout/AppSidebar.tsx:396
-#: src/components/miniflux/EntryReading.tsx:1661
+#: src/components/miniflux/EntryReading.tsx:1665
 #: src/components/miniflux/EntryReadingHeader.tsx:807
 #: src/components/miniflux/EntryReadingHeader.tsx:826
 #: src/components/preferences/panes/CategoriesPane.tsx:113
@@ -2948,7 +2948,7 @@ msgstr "Mark as read"
 msgid "Mark as Read/Unread"
 msgstr "Mark as Read/Unread"
 
-#: src/components/miniflux/EntryReading.tsx:1661
+#: src/components/miniflux/EntryReading.tsx:1665
 #: src/components/miniflux/EntryReadingHeader.tsx:807
 #: src/components/miniflux/EntryReadingHeader.tsx:826
 msgid "Mark as unread"
@@ -3153,7 +3153,7 @@ msgstr "Next"
 msgid "Next article"
 msgstr "Next article"
 
-#: src/components/miniflux/EntryReading.tsx:1500
+#: src/components/miniflux/EntryReading.tsx:1504
 #: src/lib/menu.ts:274
 msgid "Next Article"
 msgstr "Next Article"
@@ -3204,7 +3204,7 @@ msgstr "No category"
 msgid "No completed downloads"
 msgstr "No completed downloads"
 
-#: src/components/miniflux/EntryReading.tsx:1476
+#: src/components/miniflux/EntryReading.tsx:1480
 msgid "No content available"
 msgstr "No content available"
 
@@ -3370,7 +3370,7 @@ msgstr "Open appearance preferences"
 msgid "Open in app browser"
 msgstr "Open in app browser"
 
-#: src/components/miniflux/EntryReading.tsx:1721
+#: src/components/miniflux/EntryReading.tsx:1729
 #: src/lib/commands/article-commands.ts:89
 #: src/lib/menu.ts:256
 msgid "Open in App Browser"
@@ -3384,7 +3384,7 @@ msgstr "Open in App Browser"
 msgid "Open in browser"
 msgstr "Open in browser"
 
-#: src/components/miniflux/EntryReading.tsx:1709
+#: src/components/miniflux/EntryReading.tsx:1717
 #: src/lib/commands/article-commands.ts:77
 #: src/lib/menu.ts:250
 msgid "Open in Browser"
@@ -3577,7 +3577,7 @@ msgstr "Phrase"
 msgid "Play"
 msgstr "Play"
 
-#: src/components/miniflux/EntryReading.tsx:1765
+#: src/components/miniflux/EntryReading.tsx:1773
 #: src/lib/commands/podcast-commands.ts:9
 #: src/lib/menu.ts:303
 #: src/lib/shortcut-registry.ts:118
@@ -3637,7 +3637,7 @@ msgstr "PNG, JPG, WebP, GIF, or AVIF"
 
 #: src/components/command-palette/CommandPalette.tsx:199
 #: src/components/miniflux/EntryList.tsx:876
-#: src/components/miniflux/EntryReading.tsx:1754
+#: src/components/miniflux/EntryReading.tsx:1762
 #: src/lib/menu.ts:299
 msgid "Podcast"
 msgstr "Podcast"
@@ -3702,7 +3702,7 @@ msgstr "Previous"
 msgid "Previous article"
 msgstr "Previous article"
 
-#: src/components/miniflux/EntryReading.tsx:1491
+#: src/components/miniflux/EntryReading.tsx:1495
 #: src/lib/menu.ts:268
 msgid "Previous Article"
 msgstr "Previous Article"
@@ -3835,7 +3835,7 @@ msgstr "Qwen-MT"
 msgid "Randomize the playback queue order"
 msgstr "Randomize the playback queue order"
 
-#: src/components/miniflux/EntryReading.tsx:1545
+#: src/components/miniflux/EntryReading.tsx:1549
 msgid "Re-summarize"
 msgstr "Re-summarize"
 
@@ -4236,7 +4236,7 @@ msgstr "Save Changes"
 msgid "Save Rules"
 msgstr "Save Rules"
 
-#: src/components/miniflux/EntryReading.tsx:1744
+#: src/components/miniflux/EntryReading.tsx:1752
 #: src/components/miniflux/EntryReadingHeader.tsx:964
 msgid "Save to services"
 msgstr "Save to services"
@@ -4613,11 +4613,11 @@ msgstr "Skip Forward 30s"
 msgid "Skip source languages"
 msgstr "Skip source languages"
 
-#: src/components/miniflux/EntryReading.tsx:1639
+#: src/components/miniflux/EntryReading.tsx:1643
 msgid "Skip this category"
 msgstr "Skip this category"
 
-#: src/components/miniflux/EntryReading.tsx:1597
+#: src/components/miniflux/EntryReading.tsx:1601
 msgid "Skip this feed"
 msgstr "Skip this feed"
 
@@ -4663,7 +4663,7 @@ msgstr "Spanish"
 msgid "Stack Trace"
 msgstr "Stack Trace"
 
-#: src/components/miniflux/EntryReading.tsx:1512
+#: src/components/miniflux/EntryReading.tsx:1516
 #: src/components/miniflux/EntryReadingHeader.tsx:838
 #: src/components/miniflux/EntryReadingHeader.tsx:844
 msgid "Star"
@@ -4767,7 +4767,7 @@ msgstr "Subscribe to a new RSS feed"
 msgid "Summarize article"
 msgstr "Summarize article"
 
-#: src/components/miniflux/EntryReading.tsx:1545
+#: src/components/miniflux/EntryReading.tsx:1549
 msgid "Summarize Article"
 msgstr "Summarize Article"
 
@@ -5223,7 +5223,7 @@ msgstr "Total downloaded:"
 msgid "Trace"
 msgstr "Trace"
 
-#: src/components/miniflux/EntryReading.tsx:1564
+#: src/components/miniflux/EntryReading.tsx:1568
 #: src/lib/commands/translation-commands.ts:7
 #: src/lib/menu.ts:238
 msgid "Translate Article"
@@ -5250,7 +5250,7 @@ msgstr "Translate with..."
 msgid "Translated only"
 msgstr "Translated only"
 
-#: src/components/miniflux/EntryReading.tsx:1555
+#: src/components/miniflux/EntryReading.tsx:1559
 #: src/components/miniflux/EntryReadingHeader.tsx:564
 #: src/components/miniflux/EntryReadingHeader.tsx:572
 #: src/components/miniflux/SafeHtml.tsx:797
@@ -5378,7 +5378,7 @@ msgstr "Unread"
 msgid "unread items"
 msgstr "unread items"
 
-#: src/components/miniflux/EntryReading.tsx:1512
+#: src/components/miniflux/EntryReading.tsx:1516
 #: src/components/miniflux/EntryReadingHeader.tsx:838
 #: src/components/miniflux/EntryReadingHeader.tsx:844
 msgid "Unstar"
