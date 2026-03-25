@@ -121,11 +121,11 @@ msgstr "{diffHours}h ago"
 msgid "{diffMins}m ago"
 msgstr "{diffMins}m ago"
 
-#: src/components/miniflux/EntryReading.tsx:423
+#: src/components/miniflux/EntryReading.tsx:424
 msgid "{minutesLeft} min left"
 msgstr "{minutesLeft} min left"
 
-#: src/components/miniflux/EntryReading.tsx:422
+#: src/components/miniflux/EntryReading.tsx:423
 msgid "{progressPercent}% read"
 msgstr "{progressPercent}% read"
 
@@ -254,13 +254,13 @@ msgid "Add the current article's podcast to the playlist"
 msgstr "Add the current article's podcast to the playlist"
 
 #: src/components/miniflux/EntryList.tsx:856
-#: src/components/miniflux/EntryReadingHeader.tsx:476
-#: src/components/miniflux/EntryReadingHeader.tsx:483
+#: src/components/miniflux/EntryReadingHeader.tsx:484
+#: src/components/miniflux/EntryReadingHeader.tsx:491
 #: src/lib/shortcut-registry.ts:109
 msgid "Add to playlist"
 msgstr "Add to playlist"
 
-#: src/components/miniflux/EntryReading.tsx:1779
+#: src/components/miniflux/EntryReading.tsx:1780
 #: src/lib/commands/article-commands.ts:135
 msgid "Add to Playlist"
 msgstr "Add to Playlist"
@@ -271,7 +271,7 @@ msgid "Add user"
 msgstr "Add user"
 
 #: src/components/miniflux/EntryList.tsx:864
-#: src/components/miniflux/EntryReadingHeader.tsx:313
+#: src/components/miniflux/EntryReadingHeader.tsx:321
 msgid "Added to playlist"
 msgstr "Added to playlist"
 
@@ -306,7 +306,7 @@ msgstr "Advanced"
 msgid "Advanced settings"
 msgstr "Advanced settings"
 
-#: src/components/miniflux/EntryReading.tsx:1534
+#: src/components/miniflux/EntryReading.tsx:1535
 #: src/components/preferences/PreferencesDialog.tsx:116
 msgid "AI"
 msgstr "AI"
@@ -421,11 +421,11 @@ msgstr "Appearance"
 msgid "Appearance Settings"
 msgstr "Appearance Settings"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:220
+#: src/components/miniflux/EntryReadingHeader.tsx:222
 msgid "Apple Built-in"
 msgstr "Apple Built-in"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:579
+#: src/components/miniflux/EntryReadingHeader.tsx:587
 msgid "Applies to all articles when enabled"
 msgstr "Applies to all articles when enabled"
 
@@ -474,7 +474,7 @@ msgstr "Are you sure you want to unsubscribe from \"{0}\"?"
 #~ msgstr "Are you sure you want to unsubscribe from this feed?"
 
 #: src/components/command-palette/CommandPalette.tsx:197
-#: src/components/miniflux/EntryReading.tsx:1653
+#: src/components/miniflux/EntryReading.tsx:1654
 #: src/lib/menu.ts:215
 msgid "Article"
 msgstr "Article"
@@ -483,7 +483,7 @@ msgstr "Article"
 msgid "Article Actions"
 msgstr "Article Actions"
 
-#: src/components/miniflux/EntryReading.tsx:372
+#: src/components/miniflux/EntryReading.tsx:373
 msgid "Article table of contents"
 msgstr "Article table of contents"
 
@@ -504,7 +504,7 @@ msgstr "Ask every time"
 #~ msgid "Author"
 #~ msgstr "Author"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:194
+#: src/components/miniflux/EntryReadingHeader.tsx:196
 #: src/components/preferences/panes/ReaderPane.tsx:165
 msgid "Auto"
 msgstr "Auto"
@@ -586,11 +586,11 @@ msgstr "Baidu Translate"
 msgid "Beautiful, accessible components"
 msgstr "Beautiful, accessible components"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:622
+#: src/components/miniflux/EntryReadingHeader.tsx:630
 msgid "Bilingual"
 msgstr "Bilingual"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:763
+#: src/components/miniflux/EntryReadingHeader.tsx:771
 #: src/components/preferences/panes/ReaderPane.tsx:433
 msgid "Bionic Reading"
 msgstr "Bionic Reading"
@@ -703,7 +703,7 @@ msgstr "Category created"
 msgid "Category deleted"
 msgstr "Category deleted"
 
-#: src/components/miniflux/EntryReading.tsx:1627
+#: src/components/miniflux/EntryReading.tsx:1628
 msgid "Category excluded from translation"
 msgstr "Category excluded from translation"
 
@@ -736,7 +736,7 @@ msgstr "Category Not Empty"
 msgid "Category Title"
 msgstr "Category Title"
 
-#: src/components/miniflux/EntryReading.tsx:1622
+#: src/components/miniflux/EntryReading.tsx:1623
 msgid "Category translation re-enabled"
 msgstr "Category translation re-enabled"
 
@@ -796,12 +796,12 @@ msgstr "Checking..."
 msgid "Chinese"
 msgstr "Chinese"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:183
+#: src/components/miniflux/EntryReadingHeader.tsx:185
 #: src/components/preferences/panes/TranslationPane.tsx:1743
 msgid "Chinese (Simplified)"
 msgstr "Chinese (Simplified)"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:184
+#: src/components/miniflux/EntryReadingHeader.tsx:186
 #: src/components/preferences/panes/TranslationPane.tsx:1744
 msgid "Chinese (Traditional)"
 msgstr "Chinese (Traditional)"
@@ -928,8 +928,8 @@ msgstr "Clearing..."
 
 #: src/components/command-palette/CommandPalette.tsx:330
 #: src/components/downloads/DownloadManagerDialog.tsx:907
-#: src/components/miniflux/EntryReadingHeader.tsx:350
-#: src/components/miniflux/EntryReadingHeader.tsx:356
+#: src/components/miniflux/EntryReadingHeader.tsx:358
+#: src/components/miniflux/EntryReadingHeader.tsx:364
 #: src/components/miniflux/ImageViewer.tsx:236
 #: src/components/miniflux/InAppBrowserPane.tsx:274
 #: src/components/miniflux/ReaderSettings.tsx:240
@@ -979,7 +979,7 @@ msgstr "Code and precision"
 msgid "Code Blocks"
 msgstr "Code Blocks"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:718
+#: src/components/miniflux/EntryReadingHeader.tsx:726
 #: src/components/preferences/panes/ReaderPane.tsx:351
 msgid "Code theme"
 msgstr "Code theme"
@@ -1084,7 +1084,7 @@ msgid "Convert Chinese characters between Simplified and Traditional variants."
 msgstr "Convert Chinese characters between Simplified and Traditional variants."
 
 #: src/components/ErrorBoundary.tsx:372
-#: src/components/miniflux/ReaderSelectionToolbar.tsx:164
+#: src/components/miniflux/ReaderSelectionToolbar.tsx:161
 msgid "Copied"
 msgstr "Copied"
 
@@ -1095,7 +1095,7 @@ msgid "Copied!"
 msgstr "Copied!"
 
 #: src/components/ErrorBoundary.tsx:372
-#: src/components/miniflux/ReaderSelectionToolbar.tsx:164
+#: src/components/miniflux/ReaderSelectionToolbar.tsx:161
 #: src/components/preferences/panes/AdvancedPane.tsx:735
 #: src/components/preferences/panes/AdvancedPane.tsx:809
 msgid "Copy"
@@ -1105,7 +1105,7 @@ msgstr "Copy"
 msgid "Copy app version, OS, and environment details for bug reports."
 msgstr "Copy app version, OS, and environment details for bug reports."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:905
+#: src/components/miniflux/EntryReadingHeader.tsx:913
 msgid "Copy article URL"
 msgstr "Copy article URL"
 
@@ -1121,7 +1121,7 @@ msgstr "Copy debug info"
 msgid "Copy link"
 msgstr "Copy link"
 
-#: src/components/miniflux/EntryReading.tsx:1732
+#: src/components/miniflux/EntryReading.tsx:1733
 #: src/lib/commands/article-commands.ts:100
 #: src/lib/menu.ts:261
 msgid "Copy Link"
@@ -1135,7 +1135,7 @@ msgstr "Copy message"
 msgid "Copy phrase text"
 msgstr "Copy phrase text"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:921
+#: src/components/miniflux/EntryReadingHeader.tsx:929
 msgid "Copy share link"
 msgstr "Copy share link"
 
@@ -1376,8 +1376,8 @@ msgstr "DeepL"
 msgid "DeepSeek"
 msgstr "DeepSeek"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:205
-#: src/components/miniflux/EntryReadingHeader.tsx:215
+#: src/components/miniflux/EntryReadingHeader.tsx:207
+#: src/components/miniflux/EntryReadingHeader.tsx:217
 #: src/components/preferences/panes/ReaderPane.tsx:65
 #: src/lib/menu.ts:141
 msgid "Default"
@@ -1514,7 +1514,7 @@ msgstr "Disabled"
 msgid "Dismiss Player"
 msgstr "Dismiss Player"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:609
+#: src/components/miniflux/EntryReadingHeader.tsx:617
 msgid "Display mode"
 msgstr "Display mode"
 
@@ -1570,7 +1570,7 @@ msgstr "Download Failed"
 msgid "Download from URL"
 msgstr "Download from URL"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:284
+#: src/components/miniflux/EntryReadingHeader.tsx:292
 msgid "Download original content"
 msgstr "Download original content"
 
@@ -1715,13 +1715,13 @@ msgstr "Engine"
 msgid "Engine first"
 msgstr "Engine first"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:182
+#: src/components/miniflux/EntryReadingHeader.tsx:184
 #: src/components/preferences/panes/TranslationPane.tsx:1742
 #: src/components/preferences/panes/TranslationPane.tsx:2290
 msgid "English"
 msgstr "English"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:764
+#: src/components/miniflux/EntryReadingHeader.tsx:772
 msgid "English only"
 msgstr "English only"
 
@@ -1775,12 +1775,12 @@ msgstr "Enter Zen Mode"
 msgid "Entries"
 msgstr "Entries"
 
-#: src/components/miniflux/EntryReading.tsx:1342
+#: src/components/miniflux/EntryReading.tsx:1343
 msgid "Entry not found"
 msgstr "Entry not found"
 
-#: src/components/miniflux/EntryReading.tsx:649
-#: src/components/miniflux/EntryReadingHeader.tsx:274
+#: src/components/miniflux/EntryReading.tsx:650
+#: src/components/miniflux/EntryReadingHeader.tsx:282
 msgid "Entry sent to services"
 msgstr "Entry sent to services"
 
@@ -2046,6 +2046,13 @@ msgstr "Failed to mark feed as read"
 msgid "Failed to minimize window: {message}"
 msgstr "Failed to minimize window: {message}"
 
+#: src/components/miniflux/EntryReading.tsx:800
+#: src/components/miniflux/EntryReading.tsx:1189
+#: src/components/miniflux/EntryReading.tsx:1280
+#: src/components/miniflux/EntryReading.tsx:1702
+msgid "Failed to open in browser"
+msgstr "Failed to open in browser"
+
 #: src/components/downloads/DownloadManagerDialog.tsx:463
 msgid "Failed to pause download"
 msgstr "Failed to pause download"
@@ -2076,10 +2083,10 @@ msgstr "Failed to resort providers"
 msgid "Failed to resume download"
 msgstr "Failed to resume download"
 
-#: src/components/miniflux/EntryReading.tsx:646
-#: src/components/miniflux/EntryReading.tsx:652
-#: src/components/miniflux/EntryReadingHeader.tsx:270
-#: src/components/miniflux/EntryReadingHeader.tsx:277
+#: src/components/miniflux/EntryReading.tsx:647
+#: src/components/miniflux/EntryReading.tsx:653
+#: src/components/miniflux/EntryReadingHeader.tsx:278
+#: src/components/miniflux/EntryReadingHeader.tsx:285
 msgid "Failed to save entry"
 msgstr "Failed to save entry"
 
@@ -2217,7 +2224,7 @@ msgstr "Feed created with partial settings"
 msgid "Feed deleted"
 msgstr "Feed deleted"
 
-#: src/components/miniflux/EntryReading.tsx:1585
+#: src/components/miniflux/EntryReading.tsx:1586
 msgid "Feed excluded from translation"
 msgstr "Feed excluded from translation"
 
@@ -2241,7 +2248,7 @@ msgstr "Feed title"
 msgid "Feed Title"
 msgstr "Feed Title"
 
-#: src/components/miniflux/EntryReading.tsx:1580
+#: src/components/miniflux/EntryReading.tsx:1581
 msgid "Feed translation re-enabled"
 msgstr "Feed translation re-enabled"
 
@@ -2286,7 +2293,7 @@ msgstr "Fetch new articles from all feeds"
 msgid "Fetch original content"
 msgstr "Fetch original content"
 
-#: src/components/miniflux/EntryReading.tsx:1671
+#: src/components/miniflux/EntryReading.tsx:1672
 #: src/lib/commands/article-commands.ts:53
 #: src/lib/menu.ts:232
 msgid "Fetch Original Content"
@@ -2298,7 +2305,7 @@ msgstr "Fetch Original Content"
 msgid "Fetch via proxy"
 msgstr "Fetch via proxy"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:285
+#: src/components/miniflux/EntryReadingHeader.tsx:293
 msgid "Fetching original content..."
 msgstr "Fetching original content..."
 
@@ -2334,12 +2341,12 @@ msgstr "Flush history"
 msgid "Flush History"
 msgstr "Flush History"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:683
-#: src/components/miniflux/EntryReadingHeader.tsx:690
+#: src/components/miniflux/EntryReadingHeader.tsx:691
+#: src/components/miniflux/EntryReadingHeader.tsx:698
 msgid "Focus mode"
 msgstr "Focus mode"
 
-#: src/components/miniflux/EntryReading.tsx:1682
+#: src/components/miniflux/EntryReading.tsx:1683
 msgid "Focus Mode"
 msgstr "Focus Mode"
 
@@ -2367,7 +2374,7 @@ msgstr "Font Size"
 msgid "Found sources"
 msgstr "Found sources"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:188
+#: src/components/miniflux/EntryReadingHeader.tsx:190
 #: src/components/preferences/panes/TranslationPane.tsx:1748
 #: src/components/preferences/panes/TranslationPane.tsx:2292
 msgid "French"
@@ -2418,7 +2425,7 @@ msgstr "Generating summary..."
 msgid "Georgia"
 msgstr "Georgia"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:189
+#: src/components/miniflux/EntryReadingHeader.tsx:191
 #: src/components/preferences/panes/TranslationPane.tsx:1749
 #: src/components/preferences/panes/TranslationPane.tsx:2293
 msgid "German"
@@ -2470,7 +2477,7 @@ msgstr "Go to previous page"
 msgid "Go to top"
 msgstr "Go to top"
 
-#: src/components/miniflux/EntryReading.tsx:1524
+#: src/components/miniflux/EntryReading.tsx:1525
 msgid "Go to Top"
 msgstr "Go to Top"
 
@@ -2501,7 +2508,7 @@ msgstr "Hide Others"
 msgid "Hide playlist"
 msgstr "Hide playlist"
 
-#: src/components/miniflux/EntryReading.tsx:424
+#: src/components/miniflux/EntryReading.tsx:425
 msgid "Hide reading status"
 msgstr "Hide reading status"
 
@@ -2708,7 +2715,7 @@ msgstr "Integrations"
 msgid "Interrupted — app was closed"
 msgstr "Interrupted — app was closed"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:185
+#: src/components/miniflux/EntryReadingHeader.tsx:187
 #: src/components/preferences/panes/TranslationPane.tsx:1745
 #: src/components/preferences/panes/TranslationPane.tsx:2288
 msgid "Japanese"
@@ -2728,7 +2735,7 @@ msgstr "Keeplist rules"
 msgid "Kimi"
 msgstr "Kimi"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:186
+#: src/components/miniflux/EntryReadingHeader.tsx:188
 #: src/components/preferences/panes/TranslationPane.tsx:1746
 #: src/components/preferences/panes/TranslationPane.tsx:2289
 msgid "Korean"
@@ -2836,7 +2843,7 @@ msgstr "Line Height"
 msgid "Line Width"
 msgstr "Line Width"
 
-#: src/components/miniflux/EntryReading.tsx:1699
+#: src/components/miniflux/EntryReading.tsx:1700
 #: src/lib/shortcut-registry.ts:29
 msgid "Links"
 msgstr "Links"
@@ -2866,7 +2873,7 @@ msgid "Loading version information..."
 msgstr "Loading version information..."
 
 #: src/components/layout/AppSidebar.tsx:595
-#: src/components/miniflux/EntryReadingHeader.tsx:288
+#: src/components/miniflux/EntryReadingHeader.tsx:296
 #: src/components/miniflux/MinifluxLayout.tsx:367
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PodcastPlayer.tsx:575
@@ -2928,9 +2935,9 @@ msgstr "Mark all as read"
 
 #: src/components/layout/AppSidebar.tsx:180
 #: src/components/layout/AppSidebar.tsx:396
-#: src/components/miniflux/EntryReading.tsx:1660
-#: src/components/miniflux/EntryReadingHeader.tsx:799
-#: src/components/miniflux/EntryReadingHeader.tsx:818
+#: src/components/miniflux/EntryReading.tsx:1661
+#: src/components/miniflux/EntryReadingHeader.tsx:807
+#: src/components/miniflux/EntryReadingHeader.tsx:826
 #: src/components/preferences/panes/CategoriesPane.tsx:113
 #: src/components/preferences/PreferencesDialog.tsx:400
 msgid "Mark as read"
@@ -2941,9 +2948,9 @@ msgstr "Mark as read"
 msgid "Mark as Read/Unread"
 msgstr "Mark as Read/Unread"
 
-#: src/components/miniflux/EntryReading.tsx:1660
-#: src/components/miniflux/EntryReadingHeader.tsx:799
-#: src/components/miniflux/EntryReadingHeader.tsx:818
+#: src/components/miniflux/EntryReading.tsx:1661
+#: src/components/miniflux/EntryReadingHeader.tsx:807
+#: src/components/miniflux/EntryReadingHeader.tsx:826
 msgid "Mark as unread"
 msgstr "Mark as unread"
 
@@ -2972,7 +2979,7 @@ msgstr "Maximum width of article text in characters (45-80)"
 msgid "Microsoft Translator"
 msgstr "Microsoft Translator"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:1017
+#: src/components/miniflux/EntryReadingHeader.tsx:1035
 msgid "min read"
 msgstr "min read"
 
@@ -3146,17 +3153,17 @@ msgstr "Next"
 msgid "Next article"
 msgstr "Next article"
 
-#: src/components/miniflux/EntryReading.tsx:1499
+#: src/components/miniflux/EntryReading.tsx:1500
 #: src/lib/menu.ts:274
 msgid "Next Article"
 msgstr "Next Article"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:391
-#: src/components/miniflux/EntryReadingHeader.tsx:397
+#: src/components/miniflux/EntryReadingHeader.tsx:399
+#: src/components/miniflux/EntryReadingHeader.tsx:405
 msgid "Next entry (j or →)"
 msgstr "Next entry (j or →)"
 
-#: src/components/miniflux/EntryReading.tsx:371
+#: src/components/miniflux/EntryReading.tsx:372
 msgid "Next section"
 msgstr "Next section"
 
@@ -3197,7 +3204,7 @@ msgstr "No category"
 msgid "No completed downloads"
 msgstr "No completed downloads"
 
-#: src/components/miniflux/EntryReading.tsx:1475
+#: src/components/miniflux/EntryReading.tsx:1476
 msgid "No content available"
 msgstr "No content available"
 
@@ -3316,7 +3323,7 @@ msgstr "Object Key"
 msgid "of"
 msgstr "of"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:176
+#: src/components/miniflux/EntryReadingHeader.tsx:178
 msgid "Off"
 msgstr "Off"
 
@@ -3333,7 +3340,7 @@ msgstr "Offline Mode"
 msgid "OK"
 msgstr "OK"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:213
+#: src/components/miniflux/EntryReadingHeader.tsx:215
 #: src/components/preferences/panes/ReaderPane.tsx:69
 #: src/lib/menu.ts:161
 msgid "OLED"
@@ -3358,17 +3365,18 @@ msgstr "Open"
 msgid "Open appearance preferences"
 msgstr "Open appearance preferences"
 
+#: src/components/miniflux/EntryReadingHeader.tsx:940
 #: src/lib/shortcut-registry.ts:114
 msgid "Open in app browser"
 msgstr "Open in app browser"
 
-#: src/components/miniflux/EntryReading.tsx:1720
+#: src/components/miniflux/EntryReading.tsx:1721
 #: src/lib/commands/article-commands.ts:89
 #: src/lib/menu.ts:256
 msgid "Open in App Browser"
 msgstr "Open in App Browser"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:931
+#: src/components/miniflux/EntryReadingHeader.tsx:949
 #: src/components/miniflux/InAppBrowserPane.tsx:208
 #: src/components/miniflux/InAppBrowserPane.tsx:214
 #: src/lib/gesture-actions.ts:19
@@ -3376,7 +3384,7 @@ msgstr "Open in App Browser"
 msgid "Open in browser"
 msgstr "Open in browser"
 
-#: src/components/miniflux/EntryReading.tsx:1708
+#: src/components/miniflux/EntryReading.tsx:1709
 #: src/lib/commands/article-commands.ts:77
 #: src/lib/menu.ts:250
 msgid "Open in Browser"
@@ -3466,7 +3474,7 @@ msgstr "Optional timeout"
 msgid "Optional. Leave empty for local Ollama. Required for the Ollama cloud API (ollama.com)."
 msgstr "Optional. Leave empty for local Ollama. Required for the Ollama cloud API (ollama.com)."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:286
+#: src/components/miniflux/EntryReadingHeader.tsx:294
 #: src/services/miniflux/entries.ts:580
 msgid "Original content downloaded"
 msgstr "Original content downloaded"
@@ -3493,7 +3501,7 @@ msgstr "Override the default translation instruction. Supports {source_lang} and
 msgid "Page {0} of {1}"
 msgstr "Page {0} of {1}"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:207
+#: src/components/miniflux/EntryReadingHeader.tsx:209
 #: src/components/preferences/panes/ReaderPane.tsx:66
 #: src/lib/menu.ts:146
 msgid "Paper"
@@ -3536,7 +3544,7 @@ msgid "Paste new API token"
 msgstr "Paste new API token"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:815
-#: src/components/miniflux/EntryReadingHeader.tsx:290
+#: src/components/miniflux/EntryReadingHeader.tsx:298
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PodcastPlayer.tsx:577
 #: src/pages/TrayPopover.tsx:226
@@ -3561,7 +3569,7 @@ msgstr "Phrase"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:800
 #: src/components/miniflux/EntryList.tsx:843
-#: src/components/miniflux/EntryReadingHeader.tsx:291
+#: src/components/miniflux/EntryReadingHeader.tsx:299
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PlayerWindowQueue.tsx:102
 #: src/components/podcast/PodcastPlayer.tsx:578
@@ -3569,7 +3577,7 @@ msgstr "Phrase"
 msgid "Play"
 msgstr "Play"
 
-#: src/components/miniflux/EntryReading.tsx:1764
+#: src/components/miniflux/EntryReading.tsx:1765
 #: src/lib/commands/podcast-commands.ts:9
 #: src/lib/menu.ts:303
 #: src/lib/shortcut-registry.ts:118
@@ -3629,7 +3637,7 @@ msgstr "PNG, JPG, WebP, GIF, or AVIF"
 
 #: src/components/command-palette/CommandPalette.tsx:199
 #: src/components/miniflux/EntryList.tsx:876
-#: src/components/miniflux/EntryReading.tsx:1753
+#: src/components/miniflux/EntryReading.tsx:1754
 #: src/lib/menu.ts:299
 msgid "Podcast"
 msgstr "Podcast"
@@ -3694,17 +3702,17 @@ msgstr "Previous"
 msgid "Previous article"
 msgstr "Previous article"
 
-#: src/components/miniflux/EntryReading.tsx:1490
+#: src/components/miniflux/EntryReading.tsx:1491
 #: src/lib/menu.ts:268
 msgid "Previous Article"
 msgstr "Previous Article"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:372
-#: src/components/miniflux/EntryReadingHeader.tsx:378
+#: src/components/miniflux/EntryReadingHeader.tsx:380
+#: src/components/miniflux/EntryReadingHeader.tsx:386
 msgid "Previous entry (h or ←)"
 msgstr "Previous entry (h or ←)"
 
-#: src/components/miniflux/EntryReading.tsx:370
+#: src/components/miniflux/EntryReading.tsx:371
 msgid "Previous section"
 msgstr "Previous section"
 
@@ -3716,7 +3724,7 @@ msgstr "Previous section"
 msgid "Protocol"
 msgstr "Protocol"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:633
+#: src/components/miniflux/EntryReadingHeader.tsx:641
 #: src/components/preferences/panes/TranslationPane.tsx:1785
 msgid "Provider"
 msgstr "Provider"
@@ -3827,7 +3835,7 @@ msgstr "Qwen-MT"
 msgid "Randomize the playback queue order"
 msgstr "Randomize the playback queue order"
 
-#: src/components/miniflux/EntryReading.tsx:1544
+#: src/components/miniflux/EntryReading.tsx:1545
 msgid "Re-summarize"
 msgstr "Re-summarize"
 
@@ -3880,8 +3888,8 @@ msgstr "Reader typography settings"
 msgid "Reading"
 msgstr "Reading"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:701
-#: src/components/miniflux/EntryReadingHeader.tsx:714
+#: src/components/miniflux/EntryReadingHeader.tsx:709
+#: src/components/miniflux/EntryReadingHeader.tsx:722
 msgid "Reading display"
 msgstr "Reading display"
 
@@ -3889,7 +3897,7 @@ msgstr "Reading display"
 msgid "Reading Features"
 msgstr "Reading Features"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:742
+#: src/components/miniflux/EntryReadingHeader.tsx:750
 msgid "Reading theme"
 msgstr "Reading theme"
 
@@ -4228,8 +4236,8 @@ msgstr "Save Changes"
 msgid "Save Rules"
 msgstr "Save Rules"
 
-#: src/components/miniflux/EntryReading.tsx:1743
-#: src/components/miniflux/EntryReadingHeader.tsx:946
+#: src/components/miniflux/EntryReading.tsx:1744
+#: src/components/miniflux/EntryReadingHeader.tsx:964
 msgid "Save to services"
 msgstr "Save to services"
 
@@ -4237,7 +4245,7 @@ msgstr "Save to services"
 msgid "Save your current settings to a JSON file for backup or migration."
 msgstr "Save your current settings to a JSON file for backup or migration."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:946
+#: src/components/miniflux/EntryReadingHeader.tsx:964
 msgid "Saved!"
 msgstr "Saved!"
 
@@ -4265,7 +4273,7 @@ msgstr "Scroll page"
 msgid "Scroll page up"
 msgstr "Scroll page up"
 
-#: src/components/miniflux/EntryReading.tsx:426
+#: src/components/miniflux/EntryReading.tsx:427
 msgid "Scroll to top"
 msgstr "Scroll to top"
 
@@ -4275,7 +4283,7 @@ msgstr "Scroll up"
 
 #: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:83
 #: src/components/miniflux/MinifluxLayout.tsx:742
-#: src/components/miniflux/ReaderSelectionToolbar.tsx:165
+#: src/components/miniflux/ReaderSelectionToolbar.tsx:162
 #: src/components/miniflux/settings/FeedFormDialog.tsx:337
 msgid "Search"
 msgstr "Search"
@@ -4401,7 +4409,7 @@ msgstr "Select Video Download Folder"
 msgid "Sensitivity"
 msgstr "Sensitivity"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:209
+#: src/components/miniflux/EntryReadingHeader.tsx:211
 #: src/components/preferences/panes/ReaderPane.tsx:67
 #: src/lib/menu.ts:151
 msgid "Sepia"
@@ -4471,11 +4479,11 @@ msgstr "Settings Preview"
 msgid "shadcn/ui"
 msgstr "shadcn/ui"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:884
+#: src/components/miniflux/EntryReadingHeader.tsx:892
 msgid "Share"
 msgstr "Share"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:921
+#: src/components/miniflux/EntryReadingHeader.tsx:929
 msgid "Share link copied!"
 msgstr "Share link copied!"
 
@@ -4534,11 +4542,11 @@ msgstr "Show original text alongside translation"
 msgid "Show playlist"
 msgstr "Show playlist"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:777
+#: src/components/miniflux/EntryReadingHeader.tsx:785
 msgid "Show reading progress at bottom-left"
 msgstr "Show reading progress at bottom-left"
 
-#: src/components/miniflux/EntryReading.tsx:425
+#: src/components/miniflux/EntryReading.tsx:426
 msgid "Show reading status"
 msgstr "Show reading status"
 
@@ -4605,15 +4613,15 @@ msgstr "Skip Forward 30s"
 msgid "Skip source languages"
 msgstr "Skip source languages"
 
-#: src/components/miniflux/EntryReading.tsx:1638
+#: src/components/miniflux/EntryReading.tsx:1639
 msgid "Skip this category"
 msgstr "Skip this category"
 
-#: src/components/miniflux/EntryReading.tsx:1596
+#: src/components/miniflux/EntryReading.tsx:1597
 msgid "Skip this feed"
 msgstr "Skip this feed"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:211
+#: src/components/miniflux/EntryReadingHeader.tsx:213
 #: src/components/preferences/panes/ReaderPane.tsx:68
 #: src/lib/menu.ts:156
 msgid "Slate"
@@ -4645,7 +4653,7 @@ msgstr "Source URL is required"
 msgid "Spacing between lines of text (1.4-2.2)"
 msgstr "Spacing between lines of text (1.4-2.2)"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:187
+#: src/components/miniflux/EntryReadingHeader.tsx:189
 #: src/components/preferences/panes/TranslationPane.tsx:1747
 #: src/components/preferences/panes/TranslationPane.tsx:2291
 msgid "Spanish"
@@ -4655,9 +4663,9 @@ msgstr "Spanish"
 msgid "Stack Trace"
 msgstr "Stack Trace"
 
-#: src/components/miniflux/EntryReading.tsx:1511
-#: src/components/miniflux/EntryReadingHeader.tsx:830
-#: src/components/miniflux/EntryReadingHeader.tsx:836
+#: src/components/miniflux/EntryReading.tsx:1512
+#: src/components/miniflux/EntryReadingHeader.tsx:838
+#: src/components/miniflux/EntryReadingHeader.tsx:844
 msgid "Star"
 msgstr "Star"
 
@@ -4702,7 +4710,7 @@ msgstr "Starting"
 msgid "Status"
 msgstr "Status"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:775
+#: src/components/miniflux/EntryReadingHeader.tsx:783
 #: src/components/preferences/panes/ReaderPane.tsx:444
 msgid "Status Bar"
 msgstr "Status Bar"
@@ -4759,18 +4767,18 @@ msgstr "Subscribe to a new RSS feed"
 msgid "Summarize article"
 msgstr "Summarize article"
 
-#: src/components/miniflux/EntryReading.tsx:1544
+#: src/components/miniflux/EntryReading.tsx:1545
 msgid "Summarize Article"
 msgstr "Summarize Article"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:505
-#: src/components/miniflux/EntryReadingHeader.tsx:522
+#: src/components/miniflux/EntryReadingHeader.tsx:513
+#: src/components/miniflux/EntryReadingHeader.tsx:530
 #: src/lib/commands/article-commands.ts:112
 #: src/lib/menu.ts:244
 msgid "Summarize with AI"
 msgstr "Summarize with AI"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:522
+#: src/components/miniflux/EntryReadingHeader.tsx:530
 msgid "Summarizing..."
 msgstr "Summarizing..."
 
@@ -4941,7 +4949,7 @@ msgstr "System UI"
 msgid "TanStack"
 msgstr "TanStack"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:590
+#: src/components/miniflux/EntryReadingHeader.tsx:598
 #: src/components/preferences/panes/TranslationPane.tsx:1727
 msgid "Target language"
 msgstr "Target language"
@@ -5215,18 +5223,18 @@ msgstr "Total downloaded:"
 msgid "Trace"
 msgstr "Trace"
 
-#: src/components/miniflux/EntryReading.tsx:1563
+#: src/components/miniflux/EntryReading.tsx:1564
 #: src/lib/commands/translation-commands.ts:7
 #: src/lib/menu.ts:238
 msgid "Translate Article"
 msgstr "Translate Article"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:577
 #: src/components/miniflux/EntryReadingHeader.tsx:585
+#: src/components/miniflux/EntryReadingHeader.tsx:593
 msgid "Translate now"
 msgstr "Translate now"
 
-#: src/components/miniflux/ReaderSelectionToolbar.tsx:163
+#: src/components/miniflux/ReaderSelectionToolbar.tsx:160
 msgid "Translate selection"
 msgstr "Translate selection"
 
@@ -5238,13 +5246,13 @@ msgstr "Translate this paragraph"
 msgid "Translate with..."
 msgstr "Translate with..."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:623
+#: src/components/miniflux/EntryReadingHeader.tsx:631
 msgid "Translated only"
 msgstr "Translated only"
 
-#: src/components/miniflux/EntryReading.tsx:1554
-#: src/components/miniflux/EntryReadingHeader.tsx:556
+#: src/components/miniflux/EntryReading.tsx:1555
 #: src/components/miniflux/EntryReadingHeader.tsx:564
+#: src/components/miniflux/EntryReadingHeader.tsx:572
 #: src/components/miniflux/SafeHtml.tsx:797
 #: src/components/preferences/panes/TranslationPane.tsx:1699
 msgid "Translation"
@@ -5254,7 +5262,7 @@ msgstr "Translation"
 msgid "Translation controls in top bar"
 msgstr "Translation controls in top bar"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:570
+#: src/components/miniflux/EntryReadingHeader.tsx:578
 msgid "Translation disabled for this feed"
 msgstr "Translation disabled for this feed"
 
@@ -5263,12 +5271,12 @@ msgid "Translation engines"
 msgstr "Translation engines"
 
 #: src/components/miniflux/ImmersiveTranslationLayer.tsx:811
-#: src/components/miniflux/ReaderSelectionToolbar.tsx:270
+#: src/components/miniflux/ReaderSelectionToolbar.tsx:267
 #: src/components/miniflux/SafeHtml.tsx:806
 msgid "Translation failed"
 msgstr "Translation failed"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:542
+#: src/components/miniflux/EntryReadingHeader.tsx:550
 msgid "Translation options"
 msgstr "Translation options"
 
@@ -5370,9 +5378,9 @@ msgstr "Unread"
 msgid "unread items"
 msgstr "unread items"
 
-#: src/components/miniflux/EntryReading.tsx:1511
-#: src/components/miniflux/EntryReadingHeader.tsx:830
-#: src/components/miniflux/EntryReadingHeader.tsx:836
+#: src/components/miniflux/EntryReading.tsx:1512
+#: src/components/miniflux/EntryReadingHeader.tsx:838
+#: src/components/miniflux/EntryReadingHeader.tsx:844
 msgid "Unstar"
 msgstr "Unstar"
 
@@ -5437,7 +5445,7 @@ msgstr "Update v{0} is ready"
 msgid "URL copied to clipboard"
 msgstr "URL copied to clipboard"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:905
+#: src/components/miniflux/EntryReadingHeader.tsx:913
 msgid "URL copied!"
 msgstr "URL copied!"
 
@@ -5550,7 +5558,7 @@ msgid "Version {0} is ready to install."
 msgstr "Version {0} is ready to install."
 
 #. placeholder {0}: translationState.provider
-#: src/components/miniflux/ReaderSelectionToolbar.tsx:265
+#: src/components/miniflux/ReaderSelectionToolbar.tsx:262
 msgid "via {0}"
 msgstr "via {0}"
 
@@ -5662,21 +5670,21 @@ msgstr "Zoom In"
 msgid "Zoom Out"
 msgstr "Zoom Out"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:645
+#: src/components/miniflux/EntryReadingHeader.tsx:653
 msgid "中文顯示"
 msgstr "中文顯示"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:179
+#: src/components/miniflux/EntryReadingHeader.tsx:181
 #: src/components/preferences/panes/TranslationPane.tsx:2005
 msgid "簡體中文"
 msgstr "簡體中文"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:178
+#: src/components/miniflux/EntryReadingHeader.tsx:180
 #: src/components/preferences/panes/TranslationPane.tsx:2004
 msgid "繁體中文（台灣）"
 msgstr "繁體中文（台灣）"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:177
+#: src/components/miniflux/EntryReadingHeader.tsx:179
 #: src/components/preferences/panes/TranslationPane.tsx:2003
 msgid "繁體中文（香港）"
 msgstr "繁體中文（香港）"

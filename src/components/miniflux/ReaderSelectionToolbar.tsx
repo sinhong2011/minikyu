@@ -7,6 +7,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { openUrl } from '@tauri-apps/plugin-opener';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
@@ -153,11 +154,7 @@ export function ReaderSelectionToolbar({
   };
 
   const handleSearch = () => {
-    window.open(
-      `https://www.google.com/search?q=${encodeURIComponent(selectedText)}`,
-      '_blank',
-      'noopener,noreferrer'
-    );
+    openUrl(`https://www.google.com/search?q=${encodeURIComponent(selectedText)}`).catch(() => {});
   };
 
   const translateLabel = _(msg`Translate selection`);

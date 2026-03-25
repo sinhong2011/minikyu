@@ -17,11 +17,13 @@ import {
   SparklesIcon,
   StarIcon,
   TextIcon,
+  ViewIcon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { writeText } from '@tauri-apps/plugin-clipboard-manager';
+import { openUrl } from '@tauri-apps/plugin-opener';
 import { parseISO } from 'date-fns';
 import { AnimatePresence, type MotionValue, motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
@@ -259,7 +261,13 @@ export function EntryReadingHeader({
   };
 
   const handleOpenInBrowser = () => {
-    window.open(entry.url, '_blank', 'noopener,noreferrer');
+    console.log('[OpenInBrowser] url:', entry.url);
+    openUrl(entry.url)
+      .then(() => console.log('[OpenInBrowser] success'))
+      .catch((err) => {
+        console.error('[OpenInBrowser] error:', err);
+        toast.error('Failed to open in browser');
+      });
   };
 
   const handleSaveToServices = async () => {
@@ -920,6 +928,16 @@ export function EntryReadingHeader({
                     <span className={copiedShareCode ? 'text-primary' : ''}>
                       {copiedShareCode ? _(msg`Share link copied!`) : _(msg`Copy share link`)}
                     </span>
+                  </button>
+                )}
+                {onOpenInAppBrowser && (
+                  <button
+                    type="button"
+                    onClick={() => onOpenInAppBrowser(entry.url)}
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
+                  >
+                    <HugeiconsIcon icon={ViewIcon} className="h-4 w-4 text-muted-foreground" />
+                    <span>{_(msg`Open in app browser`)}</span>
                   </button>
                 )}
                 <button
