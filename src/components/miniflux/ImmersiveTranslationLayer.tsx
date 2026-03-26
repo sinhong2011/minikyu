@@ -44,6 +44,9 @@ export interface ImmersiveTranslationLayerProps {
   style?: React.CSSProperties;
   onActiveProviderChange?: (provider: string | null) => void;
   onTranslationProgressChange?: (completed: number, total: number) => void;
+  entryTitle?: string;
+  entryUrl?: string;
+  onSummarizeParagraph?: (text: string) => void;
 }
 
 function extractParagraphSegments(html: string): TranslationSegment[] {
@@ -188,6 +191,9 @@ export function ImmersiveTranslationLayer({
   style,
   onActiveProviderChange,
   onTranslationProgressChange,
+  entryTitle,
+  entryUrl,
+  onSummarizeParagraph,
 }: ImmersiveTranslationLayerProps) {
   const { _ } = useLingui();
   const safeSourceHtml = useMemo(() => sanitizeReaderHtml(html), [html]);
@@ -875,6 +881,9 @@ export function ImmersiveTranslationLayer({
         onTranslateWithProvider={translateWithProvider}
         onRetryTranslation={handleTranslateNode}
         onCopyTranslation={handleCopyTranslation}
+        entryTitle={entryTitle}
+        entryUrl={entryUrl}
+        onSummarizeParagraph={onSummarizeParagraph}
       />
     </div>
   );

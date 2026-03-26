@@ -157,6 +157,8 @@ export function ReaderSelectionToolbar({
     openUrl(`https://www.google.com/search?q=${encodeURIComponent(selectedText)}`).catch(() => {});
   };
 
+  const { copy: copyTranslation, copied: translationCopied } = useClipboard(1500);
+
   const translateLabel = _(msg`Translate selection`);
   const copyLabel = copied ? _(msg`Copied`) : _(msg`Copy`);
   const searchLabel = _(msg`Search`);
@@ -172,6 +174,8 @@ export function ReaderSelectionToolbar({
           transition={{ duration: 0.18, ease: 'easeOut' }}
           style={{ position: 'fixed', top: position.top, left: position.left, zIndex: 50 }}
           className="flex flex-col items-start gap-1"
+          onMouseDown={(e) => e.preventDefault()}
+          onPointerDown={(e) => e.preventDefault()}
         >
           <div className="flex items-center gap-0.5 rounded-xl border border-border/60 bg-popover/90 supports-[backdrop-filter]:bg-popover/75 p-1 shadow-lg backdrop-blur-xl">
             <Tooltip>
@@ -258,9 +262,24 @@ export function ReaderSelectionToolbar({
                       <p className="text-sm leading-relaxed text-foreground">
                         {translationState.text}
                       </p>
-                      <span className="inline-flex items-center rounded-md border border-border/50 bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground">
-                        {_(msg`via ${translationState.provider}`)}
-                      </span>
+                      <div className="flex items-center justify-between gap-2">
+                        <span className="inline-flex items-center rounded-md border border-border/50 bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground">
+                          {_(msg`via ${translationState.provider}`)}
+                        </span>
+                        <button
+                          type="button"
+                          onClick={() => copyTranslation(translationState.text)}
+                          className="inline-flex items-center gap-1 rounded-md border border-border/50 bg-muted/60 px-1.5 py-0.5 text-[10px] text-muted-foreground transition-colors hover:bg-muted hover:text-foreground"
+                          aria-label={_(msg`Copy translation`)}
+                        >
+                          <HugeiconsIcon
+                            icon={translationCopied ? CheckmarkCircle01Icon : Copy01Icon}
+                            className="h-2.5 w-2.5"
+                            strokeWidth={2}
+                          />
+                          {translationCopied ? _(msg`Copied`) : _(msg`Copy`)}
+                        </button>
+                      </div>
                     </div>
                   )}
                   {translationState.status === 'error' && (

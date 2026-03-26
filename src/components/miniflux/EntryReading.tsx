@@ -11,6 +11,7 @@ import {
   MailOpen01Icon,
   PlayIcon,
   Playlist03Icon,
+  Search01Icon,
   SentIcon,
   SparklesIcon,
   StarIcon,
@@ -20,6 +21,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { listen } from '@tauri-apps/api/event';
 import { openUrl } from '@tauri-apps/plugin-opener';
 import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
@@ -187,6 +189,54 @@ export function EntryReading({
   );
   const articleSummaryRef = useRef(articleSummary);
   articleSummaryRef.current = articleSummary;
+
+  useEffect(() => {
+    const unlisten = listen<{
+      // biome-ignore lint/style/useNamingConvention: Tauri event payload field name
+      stream_id: string;
+      event: 'delta' | 'done' | 'error';
+      text: string;
+    }>('summarize-stream', (event) => {
+      const data = event.payload;
+      if (data.stream_id !== paragraphSummaryStreamIdRef.current) return;
+      if (data.event === 'delta') {
+        setParagraphSummaryState((prev) =>
+          prev ? { ...prev, summary: (prev.summary ?? '') + data.text } : null
+        );
+      } else if (data.event === 'done') {
+        setParagraphSummaryState((prev) =>
+          prev ? { ...prev, summary: data.text, loading: false } : null
+        );
+        paragraphSummaryStreamIdRef.current = null;
+      } else if (data.event === 'error') {
+        setParagraphSummaryState((prev) =>
+          prev ? { ...prev, error: true, loading: false } : null
+        );
+        paragraphSummaryStreamIdRef.current = null;
+      }
+    });
+    return () => {
+      unlisten.then((fn) => fn());
+    };
+  }, []);
+
+  const handleSummarizeParagraph = useCallback(
+    (text: string) => {
+      const streamId = `paragraph-${entryId}-${Date.now()}`;
+      paragraphSummaryStreamIdRef.current = streamId;
+      setParagraphSummaryState({ text, summary: null, loading: true, error: false });
+      commands.summarizeArticleStream({ text, language: null }, streamId).then((result) => {
+        if (result.status === 'error') {
+          setParagraphSummaryState((prev) =>
+            prev ? { ...prev, error: true, loading: false } : null
+          );
+          paragraphSummaryStreamIdRef.current = null;
+        }
+      });
+    },
+    [entryId]
+  );
+
   const isExcludedFeed = entry
     ? translationExcludedFeedIds.includes(entry.feed_id) ||
       (entry.feed.category !== null &&
@@ -227,6 +277,14 @@ export function EntryReading({
   const previousEntryIdRef = useRef<string | null>(null);
   const previousContentRef = useRef<string | null>(null);
   const previousDownloadStatusEntryIdRef = useRef<string | null>(null);
+  const [contextMenuSelectedText, setContextMenuSelectedText] = useState('');
+  const [paragraphSummaryState, setParagraphSummaryState] = useState<{
+    text: string;
+    summary: string | null;
+    loading: boolean;
+    error: boolean;
+  } | null>(null);
+  const paragraphSummaryStreamIdRef = useRef<string | null>(null);
   const swipeLeftProgress = useMotionValue(0);
   const swipeLeftHintX = useTransform(swipeLeftProgress, [0, 1], [64, 0]);
   const swipeLeftHintOpacity = useTransform(swipeLeftProgress, [0, 0.15, 1], [0, 0.8, 1]);
@@ -1409,8 +1467,12 @@ export function EntryReading({
             willChange: 'transform',
           }}
         >
-          <ContextMenu>
-            <ContextMenuTrigger className="h-full">
+          <ContextMenu
+            onOpenChange={(open) => {
+              if (open) setContextMenuSelectedText(window.getSelection()?.toString().trim() ?? '');
+            }}
+          >
+            <ContextMenuTrigger className="h-full" style={{ userSelect: 'text' }}>
               <ScrollArea className="h-full min-h-0" ref={scrollRef}>
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -1459,6 +1521,9 @@ export function EntryReading({
                         onTranslationProgressChange={(completed, total) =>
                           setTranslationProgress({ completed, total })
                         }
+                        entryTitle={entry.title}
+                        entryUrl={entry.url ?? undefined}
+                        onSummarizeParagraph={handleSummarizeParagraph}
                         className={cn(
                           'mx-auto max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
                           useInvertedProse && 'prose-invert',
@@ -1483,11 +1548,91 @@ export function EntryReading({
                         {_(msg`No content available`)}
                       </p>
                     )}
+                    <AnimatePresence>
+                      {paragraphSummaryState && (
+                        <motion.div
+                          key="paragraph-summary"
+                          initial={{ opacity: 0, y: 8 }}
+                          animate={{ opacity: 1, y: 0 }}
+                          exit={{ opacity: 0, y: 8 }}
+                          transition={{ duration: 0.2, ease: 'easeOut' }}
+                          className="mt-4 rounded-xl border border-border/60 bg-muted/40 p-4"
+                        >
+                          <div className="mb-2 flex items-center justify-between gap-2">
+                            <div className="flex items-center gap-1.5 text-xs font-medium text-muted-foreground">
+                              <HugeiconsIcon
+                                icon={SparklesIcon}
+                                className="h-3.5 w-3.5"
+                                strokeWidth={2}
+                              />
+                              {_(msg`Paragraph summary`)}
+                            </div>
+                            <button
+                              type="button"
+                              onClick={() => setParagraphSummaryState(null)}
+                              className="text-xs text-muted-foreground hover:text-foreground"
+                            >
+                              {_(msg`Dismiss`)}
+                            </button>
+                          </div>
+                          {paragraphSummaryState.loading && !paragraphSummaryState.summary && (
+                            <p className="animate-pulse text-sm text-muted-foreground">
+                              {_(msg`Generating summary...`)}
+                            </p>
+                          )}
+                          {paragraphSummaryState.error && (
+                            <p className="text-sm text-destructive">
+                              {_(msg`Failed to summarize paragraph`)}
+                            </p>
+                          )}
+                          {paragraphSummaryState.summary && (
+                            <p className="text-sm leading-relaxed text-foreground">
+                              {paragraphSummaryState.summary}
+                            </p>
+                          )}
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
                   </motion.div>
                 </AnimatePresence>
               </ScrollArea>
             </ContextMenuTrigger>
             <ContextMenuContent className="w-64">
+              {/* Selection-aware actions */}
+              {contextMenuSelectedText && (
+                <>
+                  <ContextMenuGroup>
+                    <ContextMenuLabel>{_(msg`Selection`)}</ContextMenuLabel>
+                    <ContextMenuItem
+                      onClick={() => navigator.clipboard.writeText(contextMenuSelectedText)}
+                    >
+                      <HugeiconsIcon
+                        icon={Copy01Icon}
+                        strokeWidth={2}
+                        className="size-4 text-muted-foreground"
+                      />
+                      {_(msg`Copy Selection`)}
+                    </ContextMenuItem>
+                    <ContextMenuItem
+                      onClick={() =>
+                        openUrl(
+                          `https://www.google.com/search?q=${encodeURIComponent(contextMenuSelectedText)}`
+                        ).catch(() => {})
+                      }
+                    >
+                      <HugeiconsIcon
+                        icon={Search01Icon}
+                        strokeWidth={2}
+                        className="size-4 text-muted-foreground"
+                      />
+                      {_(
+                        msg`Search for "${contextMenuSelectedText.length > 30 ? `${contextMenuSelectedText.slice(0, 30)}…` : contextMenuSelectedText}"`
+                      )}
+                    </ContextMenuItem>
+                  </ContextMenuGroup>
+                  <ContextMenuSeparator />
+                </>
+              )}
               {/* Quick actions toolbar */}
               <div className="flex items-center gap-1 px-1.5 py-1">
                 <button

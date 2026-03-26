@@ -1,4 +1,5 @@
 import {
+  CloudDownloadIcon,
   PanelLeftCloseIcon,
   PanelLeftIcon,
   Settings01Icon,
@@ -143,7 +144,7 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
           className="pt-0.5 h-8 w-8 shrink-0 text-foreground/70 hover:text-foreground"
           title={_(msg`Downloads`)}
         >
-          ↓
+          <HugeiconsIcon icon={CloudDownloadIcon} className="h-4 w-4" strokeWidth={2} />
         </Button>
         <TitleBarPodcastAnchor />
       </div>
