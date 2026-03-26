@@ -1,7 +1,16 @@
-import { CheckmarkCircle01Icon, CopyIcon, MoreVerticalIcon } from '@hugeicons/core-free-icons';
+import {
+  CheckmarkCircle01Icon,
+  CopyIcon,
+  MoreVerticalIcon,
+  Search01Icon,
+  Share01Icon,
+  SparklesIcon,
+  VolumeHighIcon,
+} from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
+import { openUrl } from '@tauri-apps/plugin-opener';
 import DOMPurify from 'dompurify';
 import parse, {
   attributesToProps,
@@ -115,6 +124,9 @@ interface SafeHtmlProps {
   onTranslateWithProvider?: (text: string, providerId: string) => void;
   onRetryTranslation?: (text: string) => void;
   onCopyTranslation?: (translatedText: string) => void;
+  entryTitle?: string;
+  entryUrl?: string;
+  onSummarizeParagraph?: (text: string) => void;
 }
 
 interface TransitionRect {
@@ -779,6 +791,9 @@ export function SafeHtml({
   onTranslateWithProvider,
   onRetryTranslation,
   onCopyTranslation,
+  entryTitle,
+  entryUrl,
+  onSummarizeParagraph,
 }: SafeHtmlProps) {
   const { _ } = useLingui();
   const { copy: copyReaderNodeText } = useClipboard();
@@ -795,7 +810,6 @@ export function SafeHtml({
   const copyCodeLabel = _(msg`Copy code`);
   const phraseActionsLabel = _(msg`Phrase`);
   const translationActionsLabel = _(msg`Translation`);
-  const selectPhraseTextLabel = _(msg`Select phrase text`);
   const copyPhraseTextLabel = _(msg`Copy phrase text`);
   const translationToolbarHintLabel = _(msg`Translation controls in top bar`);
   const translateParagraphLabel = _(msg`Translate this paragraph`);
@@ -806,6 +820,73 @@ export function SafeHtml({
   const translationFailedLabel = _(msg`Translation failed`);
   const codeLanguageLabel = _(msg`Language`);
   const imageFallbackAlt = _(msg`Image`);
+  const searchLabel = _(msg`Search`);
+  const lookUpLabel = _(msg`Look up`);
+  const readAloudLabel = _(msg`Read aloud`);
+  const stopReadingLabel = _(msg`Stop reading`);
+  const copyWithCitationLabel = _(msg`Copy with citation`);
+  const summarizeParagraphLabel = _(msg`Summarize paragraph`);
+  const aiActionsLabel = _(msg`AI`);
+  const shareParagraphLabel = _(msg`Share paragraph`);
+  const shareActionsLabel = _(msg`Share`);
+
+  const [speakingText, setSpeakingText] = useState<string | null>(null);
+
+  const handleSearchNode = useCallback((text: string) => {
+    openUrl(`https://www.google.com/search?q=${encodeURIComponent(text)}`).catch(() => {});
+  }, []);
+
+  const handleLookUpNode = useCallback((text: string) => {
+    openUrl(`https://www.google.com/search?q=define+${encodeURIComponent(text)}`).catch(() => {});
+  }, []);
+
+  const handleReadAloudNode = useCallback(
+    (text: string) => {
+      if (speakingText === text) {
+        window.speechSynthesis.cancel();
+        setSpeakingText(null);
+      } else {
+        window.speechSynthesis.cancel();
+        const utterance = new SpeechSynthesisUtterance(text);
+        utterance.onend = () => setSpeakingText(null);
+        utterance.onerror = () => setSpeakingText(null);
+        window.speechSynthesis.speak(utterance);
+        setSpeakingText(text);
+      }
+    },
+    [speakingText]
+  );
+
+  const handleCopyWithCitationNode = useCallback(
+    (text: string) => {
+      const parts: string[] = [`"${text}"`];
+      if (entryTitle) parts.push(`— ${entryTitle}`);
+      if (entryUrl) parts.push(entryUrl);
+      copyReaderNodeText(parts.join('\n\n'));
+    },
+    [entryTitle, entryUrl, copyReaderNodeText]
+  );
+
+  const handleShareNode = useCallback(
+    async (text: string) => {
+      const shareData: ShareData = {
+        title: entryTitle ?? undefined,
+        text,
+        url: entryUrl ?? undefined,
+      };
+      if (navigator.share) {
+        try {
+          await navigator.share(shareData);
+        } catch {
+          // Cancelled or not supported
+        }
+      } else {
+        const citation = [text, entryTitle, entryUrl].filter(Boolean).join('\n');
+        copyReaderNodeText(citation);
+      }
+    },
+    [entryTitle, entryUrl, copyReaderNodeText]
+  );
 
   const clearSharedImageTransition = useCallback(() => {
     const animation = transitionAnimationRef.current;
@@ -1223,28 +1304,6 @@ export function SafeHtml({
     viewerImages,
   ]);
 
-  const selectReaderNodeText = useCallback((nodeIndex: number) => {
-    const contentContainer = document.querySelector(
-      `[data-reader-node-index="${String(nodeIndex)}"] [data-reader-node-content="true"]`
-    );
-    if (!(contentContainer instanceof HTMLElement)) {
-      return;
-    }
-
-    const selection = window.getSelection();
-    if (!selection) {
-      return;
-    }
-
-    const range = document.createRange();
-    range.selectNodeContents(contentContainer);
-    selection.removeAllRanges();
-    selection.addRange(range);
-
-    document.dispatchEvent(new MouseEvent('mouseup', { bubbles: true }));
-    document.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', bubbles: true }));
-  }, []);
-
   useEffect(
     () => () => {
       clearOpenViewerTransitionFrame();
@@ -1330,15 +1389,6 @@ export function SafeHtml({
                       {phraseActionsLabel}
                     </MenuGroupLabel>
                     <MenuItem
-                      onClick={() => selectReaderNodeText(nodeIndex)}
-                      className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
-                    >
-                      <span>{selectPhraseTextLabel}</span>
-                      <MenuShortcut className="text-[11px] font-medium tracking-[0.08em] text-muted-foreground/75">
-                        ⌥ S
-                      </MenuShortcut>
-                    </MenuItem>
-                    <MenuItem
                       onClick={() => copyReaderNodeText(nodeText)}
                       className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
                     >
@@ -1346,6 +1396,54 @@ export function SafeHtml({
                       <MenuShortcut className="text-[11px] font-medium tracking-[0.08em] text-muted-foreground/75">
                         ⌘ C
                       </MenuShortcut>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => handleCopyWithCitationNode(nodeText)}
+                      className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <HugeiconsIcon icon={CopyIcon} className="h-3.5 w-3.5" strokeWidth={2} />
+                        {copyWithCitationLabel}
+                      </span>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => handleSearchNode(nodeText)}
+                      className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <HugeiconsIcon
+                          icon={Search01Icon}
+                          className="h-3.5 w-3.5"
+                          strokeWidth={2}
+                        />
+                        {searchLabel}
+                      </span>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => handleLookUpNode(nodeText)}
+                      className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <HugeiconsIcon
+                          icon={Search01Icon}
+                          className="h-3.5 w-3.5"
+                          strokeWidth={2}
+                        />
+                        {lookUpLabel}
+                      </span>
+                    </MenuItem>
+                    <MenuItem
+                      onClick={() => handleReadAloudNode(nodeText)}
+                      className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
+                    >
+                      <span className="flex items-center gap-1.5">
+                        <HugeiconsIcon
+                          icon={VolumeHighIcon}
+                          className="h-3.5 w-3.5"
+                          strokeWidth={2}
+                        />
+                        {speakingText === nodeText ? stopReadingLabel : readAloudLabel}
+                      </span>
                     </MenuItem>
                   </MenuGroup>
                   <MenuSeparator className="my-1.5 bg-border/70" />
@@ -1466,6 +1564,52 @@ export function SafeHtml({
                       </>
                     )}
                   </MenuGroup>
+                  {onSummarizeParagraph && (
+                    <>
+                      <MenuSeparator className="my-1.5 bg-border/70" />
+                      <MenuGroup>
+                        <MenuGroupLabel className="px-2.5 pb-1 pt-1 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground/90">
+                          {aiActionsLabel}
+                        </MenuGroupLabel>
+                        <MenuItem
+                          onClick={() => onSummarizeParagraph(nodeText)}
+                          className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
+                        >
+                          <span className="flex items-center gap-1.5">
+                            <HugeiconsIcon
+                              icon={SparklesIcon}
+                              className="h-3.5 w-3.5"
+                              strokeWidth={2}
+                            />
+                            {summarizeParagraphLabel}
+                          </span>
+                        </MenuItem>
+                      </MenuGroup>
+                    </>
+                  )}
+                  {(entryTitle || entryUrl) && (
+                    <>
+                      <MenuSeparator className="my-1.5 bg-border/70" />
+                      <MenuGroup>
+                        <MenuGroupLabel className="px-2.5 pb-1 pt-1 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground/90">
+                          {shareActionsLabel}
+                        </MenuGroupLabel>
+                        <MenuItem
+                          onClick={() => handleShareNode(nodeText)}
+                          className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
+                        >
+                          <span className="flex items-center gap-1.5">
+                            <HugeiconsIcon
+                              icon={Share01Icon}
+                              className="h-3.5 w-3.5"
+                              strokeWidth={2}
+                            />
+                            {shareParagraphLabel}
+                          </span>
+                        </MenuItem>
+                      </MenuGroup>
+                    </>
+                  )}
                 </MenuPanel>
               </Menu>
             </div>
@@ -1715,8 +1859,6 @@ export function SafeHtml({
     onTranslateNode,
     openImageViewer,
     phraseActionsLabel,
-    selectPhraseTextLabel,
-    selectReaderNodeText,
     topBarLabel,
     translateParagraphLabel,
     translationActionsLabel,
@@ -1730,6 +1872,24 @@ export function SafeHtml({
     onTranslateWithProvider,
     onRetryTranslation,
     onCopyTranslation,
+    searchLabel,
+    lookUpLabel,
+    readAloudLabel,
+    stopReadingLabel,
+    copyWithCitationLabel,
+    summarizeParagraphLabel,
+    aiActionsLabel,
+    shareParagraphLabel,
+    shareActionsLabel,
+    speakingText,
+    handleSearchNode,
+    handleLookUpNode,
+    handleReadAloudNode,
+    handleCopyWithCitationNode,
+    handleShareNode,
+    onSummarizeParagraph,
+    entryTitle,
+    entryUrl,
   ]);
 
   const sanitizedHtml = useMemo(() => sanitizeReaderHtml(html), [html]);

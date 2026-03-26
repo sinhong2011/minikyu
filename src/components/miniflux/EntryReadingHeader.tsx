@@ -698,101 +698,108 @@ export function EntryReadingHeader({
               <TooltipPanel>{_(msg`Focus mode`)}</TooltipPanel>
             </Tooltip>
 
-            <Popover>
-              <PopoverTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className={toolbarButtonClass}
-                    aria-label={_(msg`Reading display`)}
-                    disabled={isLoading}
-                  >
-                    <HugeiconsIcon icon={TextIcon} className="h-5 w-5" strokeWidth={2} />
-                  </Button>
-                }
-              />
-              <PopoverContent
-                className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 p-3.5 shadow-xl"
-                side="bottom"
-                align="start"
-              >
-                <PopoverHeader>
-                  <PopoverTitle>{_(msg`Reading display`)}</PopoverTitle>
-                </PopoverHeader>
-
-                <div className="space-y-1.5">
-                  <p className="text-xs text-muted-foreground">{_(msg`Code theme`)}</p>
-                  <Select
-                    value={codeTheme}
-                    onValueChange={(value: string) => {
-                      if ((readerCodeThemeOptions as readonly string[]).includes(value)) {
-                        setCodeTheme(value as ReaderCodeTheme);
+            <Tooltip>
+              <Popover>
+                <TooltipTrigger
+                  render={
+                    <PopoverTrigger
+                      render={
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className={toolbarButtonClass}
+                          aria-label={_(msg`Reading display`)}
+                          disabled={isLoading}
+                        />
                       }
-                    }}
-                    disabled={isLoading}
-                  >
-                    <SelectTrigger className="h-8 w-full text-xs">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="max-h-80">
-                      {readerCodeThemeOptions.map((themeOption) => (
-                        <SelectItem key={themeOption} value={themeOption}>
-                          {formatCodeThemeLabel(themeOption)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+                    >
+                      <HugeiconsIcon icon={TextIcon} className="h-5 w-5" strokeWidth={2} />
+                    </PopoverTrigger>
+                  }
+                />
+                <TooltipPanel>{_(msg`Reading display`)}</TooltipPanel>
+                <PopoverContent
+                  className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 p-3.5 shadow-xl"
+                  side="bottom"
+                  align="start"
+                >
+                  <PopoverHeader>
+                    <PopoverTitle>{_(msg`Reading display`)}</PopoverTitle>
+                  </PopoverHeader>
 
-                <div className="space-y-1.5">
-                  <p className="text-xs text-muted-foreground">{_(msg`Reading theme`)}</p>
-                  <Select
-                    value={selectedReaderTheme}
-                    onValueChange={(value: string) => setReaderTheme(value)}
-                    disabled={isLoading}
-                  >
-                    <SelectTrigger className="h-8 w-full text-xs">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {readerThemeOptions.map((themeOption) => (
-                        <SelectItem key={themeOption} value={themeOption}>
-                          {getReaderThemeLabel(themeOption)}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
-                  <div className="space-y-0.5">
-                    <p className="text-xs font-medium">{_(msg`Bionic Reading`)}</p>
-                    <p className="text-[11px] text-muted-foreground">{_(msg`English only`)}</p>
+                  <div className="space-y-1.5">
+                    <p className="text-xs text-muted-foreground">{_(msg`Code theme`)}</p>
+                    <Select
+                      value={codeTheme}
+                      onValueChange={(value: string) => {
+                        if ((readerCodeThemeOptions as readonly string[]).includes(value)) {
+                          setCodeTheme(value as ReaderCodeTheme);
+                        }
+                      }}
+                      disabled={isLoading}
+                    >
+                      <SelectTrigger className="h-8 w-full text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="max-h-80">
+                        {readerCodeThemeOptions.map((themeOption) => (
+                          <SelectItem key={themeOption} value={themeOption}>
+                            {formatCodeThemeLabel(themeOption)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <Switch
-                    checked={bionicReading}
-                    onCheckedChange={(checked) => setBionicReading(Boolean(checked))}
-                    disabled={isLoading}
-                  />
-                </div>
 
-                <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
-                  <div className="space-y-0.5">
-                    <p className="text-xs font-medium">{_(msg`Status Bar`)}</p>
-                    <p className="text-[11px] text-muted-foreground">
-                      {_(msg`Show reading progress at bottom-left`)}
-                    </p>
+                  <div className="space-y-1.5">
+                    <p className="text-xs text-muted-foreground">{_(msg`Reading theme`)}</p>
+                    <Select
+                      value={selectedReaderTheme}
+                      onValueChange={(value: string) => setReaderTheme(value)}
+                      disabled={isLoading}
+                    >
+                      <SelectTrigger className="h-8 w-full text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {readerThemeOptions.map((themeOption) => (
+                          <SelectItem key={themeOption} value={themeOption}>
+                            {getReaderThemeLabel(themeOption)}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
-                  <Switch
-                    checked={statusBarVisible}
-                    onCheckedChange={(checked) => setStatusBarVisible(Boolean(checked))}
-                    disabled={isLoading}
-                  />
-                </div>
-              </PopoverContent>
-            </Popover>
+
+                  <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
+                    <div className="space-y-0.5">
+                      <p className="text-xs font-medium">{_(msg`Bionic Reading`)}</p>
+                      <p className="text-[11px] text-muted-foreground">{_(msg`English only`)}</p>
+                    </div>
+                    <Switch
+                      checked={bionicReading}
+                      onCheckedChange={(checked) => setBionicReading(Boolean(checked))}
+                      disabled={isLoading}
+                    />
+                  </div>
+
+                  <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
+                    <div className="space-y-0.5">
+                      <p className="text-xs font-medium">{_(msg`Status Bar`)}</p>
+                      <p className="text-[11px] text-muted-foreground">
+                        {_(msg`Show reading progress at bottom-left`)}
+                      </p>
+                    </div>
+                    <Switch
+                      checked={statusBarVisible}
+                      onCheckedChange={(checked) => setStatusBarVisible(Boolean(checked))}
+                      disabled={isLoading}
+                    />
+                  </div>
+                </PopoverContent>
+              </Popover>
+            </Tooltip>
 
             <Tooltip>
               <TooltipTrigger
@@ -881,91 +888,100 @@ export function EntryReadingHeader({
               </TooltipPanel>
             </Tooltip>
 
-            <Popover>
-              <PopoverTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className={toolbarButtonClass}
-                    aria-label={_(msg`Share`)}
-                  />
-                }
-              >
-                <HugeiconsIcon icon={Share01Icon} className="h-5 w-5" />
-              </PopoverTrigger>
-              <PopoverContent
-                className="w-56 p-1.5 rounded-xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 shadow-xl"
-                side="bottom"
-                align="end"
-              >
-                <button
-                  type="button"
-                  onClick={handleCopyUrl}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
+            <Tooltip>
+              <Popover>
+                <TooltipTrigger
+                  render={
+                    <PopoverTrigger
+                      render={
+                        <Button
+                          type="button"
+                          variant="ghost"
+                          size="icon"
+                          className={toolbarButtonClass}
+                          aria-label={_(msg`Share`)}
+                        />
+                      }
+                    >
+                      <HugeiconsIcon icon={Share01Icon} className="h-5 w-5" />
+                    </PopoverTrigger>
+                  }
+                />
+                <TooltipPanel>{_(msg`Share`)}</TooltipPanel>
+                <PopoverContent
+                  className="w-56 p-1.5 rounded-xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 shadow-xl"
+                  side="bottom"
+                  align="end"
                 >
-                  <HugeiconsIcon
-                    icon={copiedUrl ? CheckmarkCircle02Icon : Copy01Icon}
-                    className={copiedUrl ? 'h-4 w-4 text-primary' : 'h-4 w-4 text-muted-foreground'}
-                  />
-                  <span className={copiedUrl ? 'text-primary' : ''}>
-                    {copiedUrl ? _(msg`URL copied!`) : _(msg`Copy article URL`)}
-                  </span>
-                </button>
-                {entry.share_code && (
                   <button
                     type="button"
-                    onClick={handleCopyShareCode}
+                    onClick={handleCopyUrl}
                     className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
                   >
                     <HugeiconsIcon
-                      icon={copiedShareCode ? CheckmarkCircle02Icon : Share01Icon}
+                      icon={copiedUrl ? CheckmarkCircle02Icon : Copy01Icon}
                       className={
-                        copiedShareCode ? 'h-4 w-4 text-primary' : 'h-4 w-4 text-muted-foreground'
+                        copiedUrl ? 'h-4 w-4 text-primary' : 'h-4 w-4 text-muted-foreground'
                       }
                     />
-                    <span className={copiedShareCode ? 'text-primary' : ''}>
-                      {copiedShareCode ? _(msg`Share link copied!`) : _(msg`Copy share link`)}
+                    <span className={copiedUrl ? 'text-primary' : ''}>
+                      {copiedUrl ? _(msg`URL copied!`) : _(msg`Copy article URL`)}
                     </span>
                   </button>
-                )}
-                {onOpenInAppBrowser && (
+                  {entry.share_code && (
+                    <button
+                      type="button"
+                      onClick={handleCopyShareCode}
+                      className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
+                    >
+                      <HugeiconsIcon
+                        icon={copiedShareCode ? CheckmarkCircle02Icon : Share01Icon}
+                        className={
+                          copiedShareCode ? 'h-4 w-4 text-primary' : 'h-4 w-4 text-muted-foreground'
+                        }
+                      />
+                      <span className={copiedShareCode ? 'text-primary' : ''}>
+                        {copiedShareCode ? _(msg`Share link copied!`) : _(msg`Copy share link`)}
+                      </span>
+                    </button>
+                  )}
+                  {onOpenInAppBrowser && (
+                    <button
+                      type="button"
+                      onClick={() => onOpenInAppBrowser(entry.url)}
+                      className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
+                    >
+                      <HugeiconsIcon icon={ViewIcon} className="h-4 w-4 text-muted-foreground" />
+                      <span>{_(msg`Open in app browser`)}</span>
+                    </button>
+                  )}
                   <button
                     type="button"
-                    onClick={() => onOpenInAppBrowser(entry.url)}
+                    onClick={handleOpenInBrowser}
                     className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
                   >
-                    <HugeiconsIcon icon={ViewIcon} className="h-4 w-4 text-muted-foreground" />
-                    <span>{_(msg`Open in app browser`)}</span>
+                    <HugeiconsIcon icon={Globe02Icon} className="h-4 w-4 text-muted-foreground" />
+                    <span>{_(msg`Open in browser`)}</span>
                   </button>
-                )}
-                <button
-                  type="button"
-                  onClick={handleOpenInBrowser}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
-                >
-                  <HugeiconsIcon icon={Globe02Icon} className="h-4 w-4 text-muted-foreground" />
-                  <span>{_(msg`Open in browser`)}</span>
-                </button>
-                <button
-                  type="button"
-                  onClick={handleSaveToServices}
-                  disabled={isSavingToServices}
-                  className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer disabled:opacity-50"
-                >
-                  <HugeiconsIcon
-                    icon={SentIcon}
-                    className={
-                      savedToServices ? 'h-4 w-4 text-primary' : 'h-4 w-4 text-muted-foreground'
-                    }
-                  />
-                  <span className={savedToServices ? 'text-primary' : ''}>
-                    {savedToServices ? _(msg`Saved!`) : _(msg`Save to services`)}
-                  </span>
-                </button>
-              </PopoverContent>
-            </Popover>
+                  <button
+                    type="button"
+                    onClick={handleSaveToServices}
+                    disabled={isSavingToServices}
+                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer disabled:opacity-50"
+                  >
+                    <HugeiconsIcon
+                      icon={SentIcon}
+                      className={
+                        savedToServices ? 'h-4 w-4 text-primary' : 'h-4 w-4 text-muted-foreground'
+                      }
+                    />
+                    <span className={savedToServices ? 'text-primary' : ''}>
+                      {savedToServices ? _(msg`Saved!`) : _(msg`Save to services`)}
+                    </span>
+                  </button>
+                </PopoverContent>
+              </Popover>
+            </Tooltip>
           </div>
         </div>
 
