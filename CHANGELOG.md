@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.5](https://github.com/sinhong2011/minikyu/compare/v1.11.4...v1.11.5) (2026-03-26)
+
+
+### Bug Fixes
+
+* Improve reader text selection, toolbar tooltips, and node menu actions ([#97](https://github.com/sinhong2011/minikyu/issues/97)) ([03c7338](https://github.com/sinhong2011/minikyu/commit/03c73387964d650a0e68dc2e3095ec162ced9f53))
+
 ## [1.11.4](https://github.com/sinhong2011/minikyu/compare/v1.11.3...v1.11.4) (2026-03-25)
 
 
