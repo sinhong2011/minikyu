@@ -4,3 +4,4 @@ pub mod llm_stream;
 pub mod logger;
 pub mod platform;
 pub mod serde_helpers;
+pub mod str_utils;
