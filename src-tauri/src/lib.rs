@@ -54,6 +54,36 @@ pub fn run() {
         }
     }
 
+    // Install a panic hook that logs details before the process aborts.
+    // Tokio's default abort-on-panic means we lose context otherwise.
+    let default_hook = std::panic::take_hook();
+    std::panic::set_hook(Box::new(move |info| {
+        let thread = std::thread::current();
+        let thread_name = thread.name().unwrap_or("<unnamed>");
+        let location = info
+            .location()
+            .map(|l| format!("{}:{}:{}", l.file(), l.line(), l.column()))
+            .unwrap_or_else(|| "unknown".to_string());
+        let payload = if let Some(s) = info.payload().downcast_ref::<&str>() {
+            s.to_string()
+        } else if let Some(s) = info.payload().downcast_ref::<String>() {
+            s.clone()
+        } else {
+            "Box<dyn Any>".to_string()
+        };
+        eprintln!(
+            "\n=== PANIC on thread '{thread_name}' ===\n  location: {location}\n  message:  {payload}\n"
+        );
+        // Also try the log crate in case the file logger is alive
+        log::error!(
+            "PANIC on thread '{}' at {}: {}",
+            thread_name,
+            location,
+            payload
+        );
+        default_hook(info);
+    }));
+
     let builder = bindings::generate_bindings();
 
     // Export TypeScript bindings in debug builds

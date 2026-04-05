@@ -8,6 +8,7 @@ use std::time::Duration;
 use tauri::{AppHandle, Emitter, Manager};
 
 use crate::commands::preferences::load_preferences_sync;
+use crate::utils::str_utils::truncate_str;
 use crate::types::ReaderTranslationProviderSettings;
 use crate::utils::llm_stream;
 
@@ -155,11 +156,7 @@ pub async fn summarize_article(
     if text.is_empty() {
         return Err("Article text is empty".to_string());
     }
-    let text = if text.len() > max_len {
-        &text[..max_len]
-    } else {
-        text
-    };
+    let text = truncate_str(text, max_len);
 
     let provider_settings = &preferences.reader_translation_provider_settings;
     let system_prompt = build_summary_prompt(
@@ -690,7 +687,7 @@ pub async fn detect_code_language(app: AppHandle, code: String) -> Result<String
     }
 
     // Truncate to save tokens
-    let truncated = if code.len() > 500 { &code[..500] } else { code };
+    let truncated = truncate_str(code, 500);
 
     let preferences = load_preferences_sync(&app).unwrap_or_default();
     let provider_settings = &preferences.reader_translation_provider_settings;
@@ -789,11 +786,7 @@ pub async fn summarize_article_stream(
     if text.is_empty() {
         return Err("Article text is empty".to_string());
     }
-    let text = if text.len() > max_len {
-        &text[..max_len]
-    } else {
-        text
-    };
+    let text = truncate_str(text, max_len);
 
     let provider_settings = &preferences.reader_translation_provider_settings;
     let system_prompt = build_summary_prompt(
