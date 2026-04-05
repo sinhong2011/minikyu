@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.6](https://github.com/sinhong2011/minikyu/compare/v1.11.5...v1.11.6) (2026-04-05)
+
+
+### Bug Fixes
+
+* Fix UTF-8 string slicing panics and add crash diagnostics ([#99](https://github.com/sinhong2011/minikyu/issues/99)) ([6eebfd7](https://github.com/sinhong2011/minikyu/commit/6eebfd7f319f2e421fdbc543ebba033a3273af0e))
+
 ## [1.11.5](https://github.com/sinhong2011/minikyu/compare/v1.11.4...v1.11.5) (2026-03-26)
 
 
