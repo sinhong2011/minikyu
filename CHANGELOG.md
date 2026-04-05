@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.7](https://github.com/sinhong2011/minikyu/compare/v1.11.6...v1.11.7) (2026-04-05)
+
+
+### Bug Fixes
+
+* Write panic crash log directly to file bypassing async logger ([#101](https://github.com/sinhong2011/minikyu/issues/101)) ([2bd3f94](https://github.com/sinhong2011/minikyu/commit/2bd3f941e90a45e3dd093f7ae4336c604ecfae0b))
+
 ## [1.11.6](https://github.com/sinhong2011/minikyu/compare/v1.11.5...v1.11.6) (2026-04-05)
 
 
