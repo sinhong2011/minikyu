@@ -54,8 +54,8 @@ pub fn run() {
         }
     }
 
-    // Install a panic hook that logs details before the process aborts.
-    // Tokio's default abort-on-panic means we lose context otherwise.
+    // Install a panic hook that writes crash details directly to a file.
+    // The async logger won't flush before SIGABRT, so we bypass it entirely.
     let default_hook = std::panic::take_hook();
     std::panic::set_hook(Box::new(move |info| {
         let thread = std::thread::current();
@@ -71,16 +71,40 @@ pub fn run() {
         } else {
             "Box<dyn Any>".to_string()
         };
-        eprintln!(
-            "\n=== PANIC on thread '{thread_name}' ===\n  location: {location}\n  message:  {payload}\n"
-        );
-        // Also try the log crate in case the file logger is alive
-        log::error!(
-            "PANIC on thread '{}' at {}: {}",
+        let backtrace = std::backtrace::Backtrace::force_capture();
+        let crash_msg = format!(
+            "=== PANIC at {} ===\n\
+             thread: {}\n\
+             location: {}\n\
+             message: {}\n\
+             backtrace:\n{}\n",
+            chrono::Utc::now().to_rfc3339(),
             thread_name,
             location,
-            payload
+            payload,
+            backtrace,
         );
+
+        // Write directly to a crash file (sync I/O, no buffering).
+        // Use the standard macOS Application Support path.
+        #[cfg(target_os = "macos")]
+        {
+            if let Some(home) = std::env::var_os("HOME") {
+                let crash_path = std::path::PathBuf::from(home)
+                    .join("Library/Application Support/com.minikyu.app/crash.log");
+                use std::io::Write;
+                if let Ok(mut f) = std::fs::OpenOptions::new()
+                    .create(true)
+                    .append(true)
+                    .open(&crash_path)
+                {
+                    let _ = f.write_all(crash_msg.as_bytes());
+                    let _ = f.sync_all();
+                }
+            }
+        }
+
+        eprintln!("{crash_msg}");
         default_hook(info);
     }));
 
