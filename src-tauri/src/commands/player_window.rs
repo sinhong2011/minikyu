@@ -55,7 +55,8 @@ tauri_panel! {
 // ============================================================================
 
 /// Creates the player window at app startup (hidden).
-/// Must be called from the main thread (e.g., in setup()).
+/// On non-macOS, creation is deferred to first show to avoid idle CPU overhead
+/// from hidden transparent WebView2 windows.
 pub fn init_player_window(app: &AppHandle) -> Result<(), String> {
     #[cfg(target_os = "macos")]
     {
@@ -64,7 +65,9 @@ pub fn init_player_window(app: &AppHandle) -> Result<(), String> {
 
     #[cfg(not(target_os = "macos"))]
     {
-        init_player_window_standard(app)
+        log::info!("Player window creation deferred until first show (non-macOS)");
+        let _ = app;
+        Ok(())
     }
 }
 
@@ -110,12 +113,14 @@ fn init_player_window_macos(app: &AppHandle) -> Result<(), String> {
 }
 
 #[cfg(not(target_os = "macos"))]
-fn init_player_window_standard(app: &AppHandle) -> Result<(), String> {
+fn create_player_window_standard(
+    app: &AppHandle,
+) -> Result<tauri::WebviewWindow, String> {
     use tauri::webview::WebviewWindowBuilder;
 
     log::debug!("Creating player window as standard window");
 
-    WebviewWindowBuilder::new(
+    let window = WebviewWindowBuilder::new(
         app,
         PLAYER_WINDOW_LABEL,
         WebviewUrl::App("player-window.html".into()),
@@ -133,8 +138,8 @@ fn init_player_window_standard(app: &AppHandle) -> Result<(), String> {
     .build()
     .map_err(|e| format!("Failed to create player window: {e}"))?;
 
-    log::info!("Player window created (hidden)");
-    Ok(())
+    log::info!("Player window created");
+    Ok(window)
 }
 
 // ============================================================================
@@ -173,9 +178,14 @@ pub fn show_player_window(app: AppHandle) -> Result<(), String> {
 
     #[cfg(not(target_os = "macos"))]
     {
-        let window = app.get_webview_window(PLAYER_WINDOW_LABEL).ok_or_else(|| {
-            "Player window not found - was init_player_window called at startup?".to_string()
-        })?;
+        // Lazy creation: create the window on first show, reuse if already exists
+        let window = match app.get_webview_window(PLAYER_WINDOW_LABEL) {
+            Some(w) => w,
+            None => {
+                log::info!("Creating player window on first show");
+                create_player_window_standard(&app)?
+            }
+        };
         window
             .show()
             .map_err(|e| format!("Failed to show window: {e}"))?;
@@ -212,11 +222,10 @@ pub fn hide_player_window(app: AppHandle) -> Result<(), String> {
             if !is_visible {
                 return Ok(());
             }
-            log::info!("Hiding player window");
+            log::info!("Closing player window to free resources");
             window
-                .hide()
-                .map_err(|e| format!("Failed to hide window: {e}"))?;
-            log::debug!("Player window hidden");
+                .destroy()
+                .map_err(|e| format!("Failed to close player window: {e}"))?;
         }
     }
 
@@ -241,6 +250,8 @@ pub fn toggle_player_window(app: AppHandle) -> Result<(), String> {
 // ============================================================================
 
 /// Creates the tray popover window at app startup (hidden).
+/// On non-macOS, creation is deferred to first show to avoid idle CPU overhead
+/// from hidden transparent WebView2 windows.
 pub fn init_tray_popover(app: &AppHandle) -> Result<(), String> {
     #[cfg(target_os = "macos")]
     {
@@ -249,7 +260,9 @@ pub fn init_tray_popover(app: &AppHandle) -> Result<(), String> {
 
     #[cfg(not(target_os = "macos"))]
     {
-        init_tray_popover_standard(app)
+        log::info!("Tray popover creation deferred until first show (non-macOS)");
+        let _ = app;
+        Ok(())
     }
 }
 
@@ -306,12 +319,14 @@ fn init_tray_popover_macos(app: &AppHandle) -> Result<(), String> {
 }
 
 #[cfg(not(target_os = "macos"))]
-fn init_tray_popover_standard(app: &AppHandle) -> Result<(), String> {
+fn create_tray_popover_standard(
+    app: &AppHandle,
+) -> Result<tauri::WebviewWindow, String> {
     use tauri::webview::WebviewWindowBuilder;
 
     log::debug!("Creating tray popover as standard window");
 
-    WebviewWindowBuilder::new(
+    let window = WebviewWindowBuilder::new(
         app,
         TRAY_POPOVER_LABEL,
         WebviewUrl::App("tray-popover.html".into()),
@@ -327,8 +342,8 @@ fn init_tray_popover_standard(app: &AppHandle) -> Result<(), String> {
     .build()
     .map_err(|e| format!("Failed to create tray popover: {e}"))?;
 
-    log::info!("Tray popover created (hidden)");
-    Ok(())
+    log::info!("Tray popover created");
+    Ok(window)
 }
 
 fn is_tray_popover_visible(app: &AppHandle) -> bool {
@@ -394,9 +409,14 @@ pub fn show_tray_popover(app: AppHandle) -> Result<(), String> {
 
     #[cfg(not(target_os = "macos"))]
     {
-        let window = app
-            .get_webview_window(TRAY_POPOVER_LABEL)
-            .ok_or_else(|| "Tray popover not found".to_string())?;
+        // Lazy creation: create the window on first show, reuse if already exists
+        let window = match app.get_webview_window(TRAY_POPOVER_LABEL) {
+            Some(w) => w,
+            None => {
+                log::info!("Creating tray popover on first show");
+                create_tray_popover_standard(&app)?
+            }
+        };
         if let Some(monitor) = app
             .get_webview_window("main")
             .and_then(|w| w.current_monitor().ok().flatten())
@@ -440,10 +460,10 @@ pub fn hide_tray_popover(app: AppHandle) -> Result<(), String> {
             if !is_visible {
                 return Ok(());
             }
-            log::info!("Hiding tray popover");
+            log::info!("Closing tray popover to free resources");
             window
-                .hide()
-                .map_err(|e| format!("Failed to hide tray popover: {e}"))?;
+                .destroy()
+                .map_err(|e| format!("Failed to close tray popover: {e}"))?;
         }
     }
 
