@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.8](https://github.com/sinhong2011/minikyu/compare/v1.11.7...v1.11.8) (2026-04-14)
+
+
+### Bug Fixes
+
+* **tauri:** Lazy-create secondary windows on Windows to eliminate idle CPU overhead ([#103](https://github.com/sinhong2011/minikyu/issues/103)) ([abe6d41](https://github.com/sinhong2011/minikyu/commit/abe6d412a40d3f325bcfb8ef542cdfac45bc75f4))
+
 ## [1.11.7](https://github.com/sinhong2011/minikyu/compare/v1.11.6...v1.11.7) (2026-04-05)
 
 
