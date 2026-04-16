@@ -1361,10 +1361,8 @@ export function SafeHtml({
             'reader-node-block relative rounded-xl bg-transparent px-2.5 pt-1 pb-0 shadow-none',
             interactive &&
               !isTranslatedBlock &&
-              'group/reader-node transition-[background-color,box-shadow,transform] duration-180 hover:-translate-y-px hover:bg-black/[0.05] dark:hover:bg-white/[0.08] hover:shadow-[0_16px_32px_-22px_hsl(var(--foreground)/0.56),0_8px_16px_-12px_hsl(var(--foreground)/0.34)] focus-within:-translate-y-px focus-within:bg-black/[0.05] dark:focus-within:bg-white/[0.08] focus-within:shadow-[0_16px_32px_-22px_hsl(var(--foreground)/0.56),0_8px_16px_-12px_hsl(var(--foreground)/0.34)]',
-            interactive &&
-              isTranslatedBlock &&
-              'group/reader-node transition-[background-color] duration-180 hover:bg-black/[0.04] dark:hover:bg-white/[0.07] focus-within:bg-black/[0.04] dark:focus-within:bg-white/[0.07]',
+              'group/reader-node transition-[box-shadow,transform] duration-180 hover:-translate-y-px hover:shadow-[0_16px_32px_-22px_hsl(var(--foreground)/0.56),0_8px_16px_-12px_hsl(var(--foreground)/0.34)] focus-within:-translate-y-px focus-within:shadow-[0_16px_32px_-22px_hsl(var(--foreground)/0.56),0_8px_16px_-12px_hsl(var(--foreground)/0.34)]',
+            interactive && isTranslatedBlock && 'group/reader-node',
             shouldUseLayoutCenter && 'flex justify-center'
           )}
         >
