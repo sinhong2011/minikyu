@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.11.9](https://github.com/sinhong2011/minikyu/compare/v1.11.8...v1.11.9) (2026-04-16)
+
+
+### Bug Fixes
+
+* Remove hover background color from reader node blocks ([#105](https://github.com/sinhong2011/minikyu/issues/105)) ([275c837](https://github.com/sinhong2011/minikyu/commit/275c837208684fc3e51db9d575999c4450c41bbf))
+
 ## [1.11.8](https://github.com/sinhong2011/minikyu/compare/v1.11.7...v1.11.8) (2026-04-14)
 
 
