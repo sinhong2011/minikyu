@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.2](https://github.com/sinhong2011/minikyu/compare/v1.12.1...v1.12.2) (2026-08-21)
+
+
+### Bug Fixes
+
+* **deploy:** Deploy Cloudflare as a Worker, not Pages ([#114](https://github.com/sinhong2011/minikyu/issues/114)) ([5335245](https://github.com/sinhong2011/minikyu/commit/53352454df97f0e2c98ffb7addc677e7cb471200))
+
 ## [1.12.1](https://github.com/sinhong2011/minikyu/compare/v1.12.0...v1.12.1) (2026-08-21)
 
 
