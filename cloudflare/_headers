@@ -1,4 +1,8 @@
-# Cloudflare Pages: response headers. Copied into dist/ by `bun run build:cf`.
+# Cloudflare Workers static assets: response headers. Copied into dist/ by
+# `bun run build:cf`.
+#
+# Only asset responses get these — the /miniflux-api proxy in
+# cloudflare/worker.ts answers for itself, which is fine: it serves API JSON.
 #
 # Kept in step with netlify.toml, vercel.json and docker/default.conf.template.
 # `connect-src 'self'` is the load-bearing rule: the browser build keeps

@@ -5,11 +5,11 @@
  * every request goes to the same-origin `/miniflux-api` prefix and the
  * deployment decides what that resolves to (see `docs/developer/pwa.md`).
  * Netlify expresses that as a generated `_redirects` rule and the Docker image
- * as an nginx `proxy_pass`; Vercel and Cloudflare Pages cannot interpolate an
+ * as an nginx `proxy_pass`; Vercel and Cloudflare cannot interpolate an
  * environment variable into a static rewrite, so they run this instead:
  *
- *   api/miniflux-api.ts                → Vercel Edge Function
- *   functions/miniflux-api/[[path]].ts → Cloudflare Pages Function
+ *   api/miniflux-api.ts  → Vercel Edge Function
+ *   cloudflare/worker.ts → Cloudflare Worker, in front of the static assets
  *
  * Both are thin adapters over `proxyToMiniflux`; what differs is how the
  * runtime hands over `MINIFLUX_URL`, and — on Vercel — how the request path
@@ -63,7 +63,7 @@ function stripHopByHop(source: Headers): Headers {
  * @param whereToSetIt Host-specific hint naming where `MINIFLUX_URL` belongs.
  * @param route Overrides the path and query to forward, for hosts where the
  *   rewrite does not leave them on `request.url`. Vercel needs it; Cloudflare
- *   routes by file path and does not.
+ *   leaves the original path on the request and does not.
  */
 export async function proxyToMiniflux(
   request: Request,
