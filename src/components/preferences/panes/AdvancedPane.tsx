@@ -13,9 +13,6 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useQuery, useQueryClient } from '@tanstack/react-query';
-import { open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
-import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
-import { arch, version as osVersion, platform } from '@tauri-apps/plugin-os';
 import { useEffect, useMemo, useState } from 'react';
 import {
   AlertDialog,
@@ -40,7 +37,10 @@ import {
 } from '@/components/ui/select';
 import { showToast } from '@/components/ui/sonner';
 import { useClipboard } from '@/hooks/use-clipboard';
+import { getPlatform } from '@/hooks/use-platform';
+import { pickTextFile, saveTextFile } from '@/lib/file-transfer';
 import { logger } from '@/lib/logger';
+import { capabilities, isTauri } from '@/lib/platform';
 import type { AppPreferences, LocalDataSize } from '@/lib/tauri-bindings';
 import { commands } from '@/lib/tauri-bindings';
 import { useActiveAccount } from '@/services/miniflux/accounts';
@@ -128,6 +128,9 @@ export function AdvancedPane() {
       return result.data;
     },
     staleTime: 1000 * 60 * 5,
+    // The breakdown measures the Rust-owned app-data directory, which the PWA
+    // does not have.
+    enabled: capabilities.appDataManagement,
   });
 
   // ── Clear local data ──────────────────────────────────────────────────
@@ -174,76 +177,41 @@ export function AdvancedPane() {
     try {
       const defaults: AppPreferences = {
         theme: 'system',
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         quick_pane_shortcut: null,
         language: null,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         close_behavior: 'minimize_to_tray',
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         show_tray_icon: true,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         start_minimized: false,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_font_size: 16,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_line_width: 65,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_line_height: 1.75,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_font_family: 'sans-serif',
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_theme: 'default',
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_code_theme: 'auto',
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_chinese_conversion: 's2tw',
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_bionic_reading: false,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_status_bar: false,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_custom_conversions: [],
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_display_mode: 'bilingual',
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_trigger_mode: 'manual',
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_route_mode: 'engine_first',
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_target_language: null,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_primary_engine: 'deepl',
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_engine_fallbacks: ['google_translate'],
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_llm_fallbacks: [],
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_apple_fallback_enabled: false,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_provider_settings: {},
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_auto_enabled: false,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_exclusions: {},
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         image_download_path: null,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         video_download_path: null,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         ai_summary_auto_enabled: false,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         ai_summary_custom_prompt: null,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         ai_summary_provider: null,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         ai_summary_model: null,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         ai_summary_max_text_length: 100000,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         player_display_mode: 'FloatingWindow',
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         keyboard_shortcuts: {},
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         log_level: 'info',
       };
 
@@ -305,15 +273,16 @@ export function AdvancedPane() {
 
     try {
       const date = new Date().toISOString().split('T')[0];
-      const filePath = await saveDialog({
+      const saved = await saveTextFile({
         title: _(msg`Export Preferences`),
-        defaultPath: `minikyu-preferences-${date}.json`,
+        defaultFileName: `minikyu-preferences-${date}.json`,
+        contents: JSON.stringify(preferences, null, 2),
         filters: [{ name: 'JSON', extensions: ['json'] }],
+        mimeType: 'application/json',
       });
 
-      if (!filePath) return;
+      if (!saved) return;
 
-      await writeTextFile(filePath, JSON.stringify(preferences, null, 2));
       showToast.success(_(msg`Preferences exported successfully`));
     } catch (error) {
       logger.error('Failed to export preferences', { error });
@@ -328,15 +297,13 @@ export function AdvancedPane() {
 
   const handleImportPreferences = async () => {
     try {
-      const filePath = await openDialog({
+      const contents = await pickTextFile({
         title: _(msg`Import Preferences`),
-        multiple: false,
         filters: [{ name: 'JSON', extensions: ['json'] }],
       });
 
-      if (!filePath) return;
+      if (contents === null) return;
 
-      const contents = await readTextFile(filePath);
       const imported = JSON.parse(contents) as AppPreferences;
 
       await savePreferences.mutateAsync(imported);
@@ -363,23 +330,24 @@ export function AdvancedPane() {
   const handleExportOpml = async () => {
     try {
       const date = new Date().toISOString().split('T')[0];
-      const filePath = await saveDialog({
-        title: _(msg`Export OPML`),
-        defaultPath: `miniflux-feeds-${date}.opml`,
-        filters: [
-          { name: 'OPML', extensions: ['opml'] },
-          { name: 'XML', extensions: ['xml'] },
-        ],
-      });
-      if (!filePath) return;
-
       const result = await commands.exportOpml();
       if (result.status === 'error') {
         showToast.error(_(msg`Failed to export OPML`), result.error);
         return;
       }
 
-      await writeTextFile(filePath, result.data);
+      const saved = await saveTextFile({
+        title: _(msg`Export OPML`),
+        defaultFileName: `miniflux-feeds-${date}.opml`,
+        contents: result.data,
+        filters: [
+          { name: 'OPML', extensions: ['opml'] },
+          { name: 'XML', extensions: ['xml'] },
+        ],
+        mimeType: 'text/xml',
+      });
+      if (!saved) return;
+
       queryClient.invalidateQueries({ queryKey: ['miniflux'] });
       showToast.success(_(msg`OPML exported successfully`));
     } catch (error) {
@@ -393,18 +361,16 @@ export function AdvancedPane() {
 
   const handleImportOpml = async () => {
     try {
-      const filePath = await openDialog({
+      const opmlContent = await pickTextFile({
         title: _(msg`Import OPML`),
-        multiple: false,
         filters: [
           { name: 'OPML', extensions: ['opml'] },
           { name: 'XML', extensions: ['xml'] },
           { name: 'All Files', extensions: ['*'] },
         ],
       });
-      if (!filePath) return;
+      if (opmlContent === null) return;
 
-      const opmlContent = await readTextFile(filePath);
       const result = await commands.importOpml(opmlContent);
       if (result.status === 'error') {
         showToast.error(_(msg`Failed to import OPML`), result.error);
@@ -426,17 +392,25 @@ export function AdvancedPane() {
 
   const handleCopyDebugInfo = async () => {
     try {
-      const osName = platform();
-      const osArch = arch();
-      let osVer = '';
-      try {
-        osVer = osVersion();
-      } catch {
-        osVer = 'unknown';
+      // The OS plugin only exists in the desktop shell; the PWA falls back to
+      // the user-agent guess `getPlatform()` already makes for CSS.
+      let osName: string = getPlatform();
+      let osArch = 'unknown';
+      let osVer = 'unknown';
+      if (isTauri) {
+        try {
+          const { arch, platform, version } = await import('@tauri-apps/plugin-os');
+          osName = platform();
+          osArch = arch();
+          osVer = version();
+        } catch {
+          logger.warn('OS details unavailable for debug info');
+        }
       }
 
       const lines = [
         `Minikyu: ${typeof __APP_VERSION__ !== 'undefined' ? __APP_VERSION__ : 'unknown'}`,
+        `Target: ${isTauri ? 'desktop' : 'web'}`,
         `OS: ${osName} ${osVer} (${osArch})`,
         `Locale: ${navigator.language}`,
         `Theme: ${preferences?.theme ?? 'unknown'}`,
@@ -461,7 +435,6 @@ export function AdvancedPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         log_level: value,
       });
       logger.setLogLevel(value as 'trace' | 'debug' | 'info' | 'warn' | 'error');
@@ -504,8 +477,8 @@ export function AdvancedPane() {
           </Button>
         </SettingsField>
 
-        {/* Cloud Sync */}
-        <CloudSyncSection preferences={preferences} />
+        {/* Cloud Sync — the whole section is backed by Rust + the OS keychain */}
+        {capabilities.cloudSync && <CloudSyncSection preferences={preferences} />}
       </SettingsSection>
 
       {/* ── OPML ───────────────────────────────────────────────────── */}
@@ -665,62 +638,64 @@ export function AdvancedPane() {
         </SettingsField>
 
         {/* Tier 3: Factory reset (most destructive, type-to-confirm) */}
-        <SettingsField
-          label={_(msg`Factory reset`)}
-          description={_(
-            msg`Permanently deletes everything — all accounts, synced data, preferences, downloads, and credentials. This cannot be undone.`
-          )}
-        >
-          <AlertDialog
-            open={factoryResetDialogOpen}
-            onOpenChange={(open) => {
-              setFactoryResetDialogOpen(open);
-              if (!open) setFactoryResetConfirmText('');
-            }}
+        {capabilities.appDataManagement && (
+          <SettingsField
+            label={_(msg`Factory reset`)}
+            description={_(
+              msg`Permanently deletes everything — all accounts, synced data, preferences, downloads, and credentials. This cannot be undone.`
+            )}
           >
-            <AlertDialogTrigger
-              render={
-                <Button variant="destructive" disabled={factoryResetting}>
-                  <HugeiconsIcon icon={AlertCircleIcon} className="size-4" />
-                  {factoryResetting ? _(msg`Resetting...`) : _(msg`Factory reset`)}
-                </Button>
-              }
-            />
-            <AlertDialogContent>
-              <AlertDialogHeader>
-                <AlertDialogTitle>{_(msg`Factory reset?`)}</AlertDialogTitle>
-                <AlertDialogDescription>
-                  {_(
-                    msg`This will permanently delete all accounts, synced data, preferences, downloads, and saved credentials. The app will return to its initial state.`
-                  )}
-                </AlertDialogDescription>
-              </AlertDialogHeader>
-              <div className="px-6 pb-2">
-                <label className="text-sm text-muted-foreground" htmlFor="factory-reset-confirm">
-                  {_(msg`Type RESET to confirm`)}
-                </label>
-                <Input
-                  id="factory-reset-confirm"
-                  className="mt-1.5"
-                  placeholder="RESET"
-                  value={factoryResetConfirmText}
-                  onChange={(e) => setFactoryResetConfirmText(e.target.value)}
-                  autoComplete="off"
-                />
-              </div>
-              <AlertDialogFooter>
-                <AlertDialogCancel>{_(msg`Cancel`)}</AlertDialogCancel>
-                <AlertDialogAction
-                  onClick={handleFactoryReset}
-                  variant="destructive"
-                  disabled={factoryResetConfirmText !== 'RESET' || factoryResetting}
-                >
-                  {_(msg`Delete everything`)}
-                </AlertDialogAction>
-              </AlertDialogFooter>
-            </AlertDialogContent>
-          </AlertDialog>
-        </SettingsField>
+            <AlertDialog
+              open={factoryResetDialogOpen}
+              onOpenChange={(open) => {
+                setFactoryResetDialogOpen(open);
+                if (!open) setFactoryResetConfirmText('');
+              }}
+            >
+              <AlertDialogTrigger
+                render={
+                  <Button variant="destructive" disabled={factoryResetting}>
+                    <HugeiconsIcon icon={AlertCircleIcon} className="size-4" />
+                    {factoryResetting ? _(msg`Resetting...`) : _(msg`Factory reset`)}
+                  </Button>
+                }
+              />
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>{_(msg`Factory reset?`)}</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    {_(
+                      msg`This will permanently delete all accounts, synced data, preferences, downloads, and saved credentials. The app will return to its initial state.`
+                    )}
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <div className="px-6 pb-2">
+                  <label className="text-sm text-muted-foreground" htmlFor="factory-reset-confirm">
+                    {_(msg`Type RESET to confirm`)}
+                  </label>
+                  <Input
+                    id="factory-reset-confirm"
+                    className="mt-1.5"
+                    placeholder="RESET"
+                    value={factoryResetConfirmText}
+                    onChange={(e) => setFactoryResetConfirmText(e.target.value)}
+                    autoComplete="off"
+                  />
+                </div>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>{_(msg`Cancel`)}</AlertDialogCancel>
+                  <AlertDialogAction
+                    onClick={handleFactoryReset}
+                    variant="destructive"
+                    disabled={factoryResetConfirmText !== 'RESET' || factoryResetting}
+                  >
+                    {_(msg`Delete everything`)}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          </SettingsField>
+        )}
       </SettingsSection>
 
       {/* ── Diagnostics (dev only) ─────────────────────────────────── */}
@@ -824,7 +799,6 @@ function SettingsJsonPreview({ preferences }: { preferences: AppPreferences }) {
             className={`overflow-auto rounded-lg border font-mono text-[11px] leading-relaxed [&_pre]:!p-3 [&_pre]:!m-0 [&_pre]:!rounded-lg [&_pre]:!font-mono ${
               expanded ? 'max-h-[60vh]' : 'max-h-48'
             }`}
-            // biome-ignore lint/security/noDangerouslySetInnerHtml: trusted shiki output from local preferences JSON
             dangerouslySetInnerHTML={{ __html: highlightedHtml }}
           />
         ) : (

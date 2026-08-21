@@ -4,6 +4,7 @@
  */
 import { locale } from '@tauri-apps/plugin-os';
 import { logger } from '@/lib/logger';
+import { isTauri } from '@/lib/platform';
 import { availableLanguages, loadAndActivate } from './config';
 
 /**
@@ -34,7 +35,9 @@ export async function initializeLanguage(savedLanguage: string | null): Promise<
       return;
     }
 
-    const systemLocale = await locale();
+    // The Tauri OS plugin is desktop-only; the browser exposes the same thing
+    // through `navigator.language`.
+    const systemLocale = isTauri ? await locale() : navigator.language;
     logger.debug('Detected system locale', { systemLocale });
 
     if (systemLocale) {

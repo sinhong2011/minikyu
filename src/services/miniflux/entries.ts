@@ -1,6 +1,12 @@
 import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { useInfiniteQuery, useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
+import {
+  type QueryClient,
+  useInfiniteQuery,
+  useMutation,
+  useQuery,
+  useQueryClient,
+} from '@tanstack/react-query';
 import { toast } from 'sonner';
 import { logger } from '@/lib/logger';
 import {
@@ -23,6 +29,70 @@ export const entryQueryKeys = {
 };
 
 const ENTRIES_PAGE_SIZE = 100;
+
+/**
+ * Patch a status change into every cached entry list and detail.
+ *
+ * Every list query — including Zen Mode's pool — lives under
+ * `entryQueryKeys.lists()`, so a single prefixed write reaches all of them and
+ * keeps read state consistent across views without a refetch.
+ */
+function patchEntryStatusInCaches(
+  queryClient: QueryClient,
+  ids: string[],
+  status: 'read' | 'unread'
+) {
+  const idSet = new Set(ids);
+
+  for (const id of ids) {
+    queryClient.setQueryData(entryQueryKeys.detail(id), (old: Entry | undefined) =>
+      old ? { ...old, status } : old
+    );
+  }
+
+  queryClient.setQueriesData<{ pages: EntryResponse[] }>(
+    { queryKey: entryQueryKeys.lists() },
+    (data) => {
+      if (!data?.pages) return data;
+      return {
+        ...data,
+        pages: data.pages.map((page) => ({
+          ...page,
+          entries: page.entries?.map((entry) =>
+            idSet.has(entry.id) ? { ...entry, status } : entry
+          ),
+        })),
+      };
+    }
+  );
+}
+
+/**
+ * Invalidate History lists (`status: 'read'`).
+ *
+ * A status change adds or removes rows there — something a cache patch cannot
+ * express, since the entry is simply absent from the cached pages. Unread lists
+ * are deliberately left alone so an entry does not vanish from under the reader
+ * while it is open.
+ */
+function invalidateReadEntryLists(queryClient: QueryClient) {
+  queryClient.invalidateQueries({
+    predicate: (query) => {
+      const [namespace, resource, kind, filters] = query.queryKey as [
+        string?,
+        string?,
+        string?,
+        EntryFilters?,
+      ];
+      return (
+        namespace === 'miniflux' &&
+        resource === 'entries' &&
+        kind === 'list' &&
+        filters?.status === 'read'
+      );
+    },
+  });
+}
 
 export function getNextEntriesOffset(
   pages: Array<{ total: string; entries?: Array<unknown> | null }>
@@ -103,9 +173,7 @@ export function useEntries(filters: EntryFilters = {}) {
           sampleEntries: result.data.entries?.slice(0, 3).map((e) => ({
             id: e.id,
             title: e.title,
-            // biome-ignore lint/style/useNamingConvention: Miniflux API field name
             published_at: e.published_at,
-            // biome-ignore lint/style/useNamingConvention: Miniflux API field name
             changed_at: e.changed_at,
           })),
         });
@@ -151,7 +219,7 @@ export function useEntries(filters: EntryFilters = {}) {
           bTime = new Date(b.published_at).getTime();
         }
 
-        return sortDirectionMultiplier * (bTime - aTime);
+        return sortDirectionMultiplier * (aTime - bTime);
       });
 
       logger.debug('Applied client-side sorting', {
@@ -284,51 +352,16 @@ export function useToggleEntryRead() {
       const previousDetail = queryClient.getQueryData<Entry>(entryQueryKeys.detail(id));
       const optimisticStatus = previousDetail?.status === 'read' ? 'unread' : 'read';
 
-      queryClient.setQueryData(entryQueryKeys.detail(id), (old: Entry | undefined) =>
-        old ? { ...old, status: optimisticStatus } : old
-      );
-
-      queryClient.setQueriesData<{ pages: EntryResponse[] }>(
-        { queryKey: entryQueryKeys.lists() },
-        (data) => {
-          if (!data?.pages) return data;
-          return {
-            ...data,
-            pages: data.pages.map((page) => ({
-              ...page,
-              entries: page.entries?.map((entry) =>
-                entry.id === id ? { ...entry, status: optimisticStatus } : entry
-              ),
-            })),
-          };
-        }
-      );
+      patchEntryStatusInCaches(queryClient, [id], optimisticStatus);
 
       return { previousDetail };
     },
     onSuccess: (newStatus, id) => {
       // Reconcile with actual server response (in case optimistic guess was wrong)
-      queryClient.setQueryData(entryQueryKeys.detail(id), (old: Entry | undefined) =>
-        old ? { ...old, status: newStatus } : old
-      );
-
-      queryClient.setQueriesData<{ pages: EntryResponse[] }>(
-        { queryKey: entryQueryKeys.lists() },
-        (data) => {
-          if (!data?.pages) return data;
-          return {
-            ...data,
-            pages: data.pages.map((page) => ({
-              ...page,
-              entries: page.entries?.map((entry) =>
-                entry.id === id ? { ...entry, status: newStatus } : entry
-              ),
-            })),
-          };
-        }
-      );
+      patchEntryStatusInCaches(queryClient, [id], newStatus === 'read' ? 'read' : 'unread');
 
       queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
+      invalidateReadEntryLists(queryClient);
     },
     onError: (_error, id, context) => {
       // Rollback optimistic update on failure
@@ -341,8 +374,11 @@ export function useToggleEntryRead() {
 }
 
 /**
- * Hook to mark entry as read
- * @deprecated Use useToggleEntryRead instead
+ * Hook to mark an entry as read.
+ *
+ * Idempotent, unlike {@link useToggleEntryRead} — use it wherever "read" is the
+ * intended end state rather than a flip (Zen Mode advancing past an article,
+ * auto-mark-on-scroll), so a double call cannot flip the entry back to unread.
  */
 export function useMarkEntryRead() {
   const queryClient = useQueryClient();
@@ -369,31 +405,26 @@ export function useMarkEntryRead() {
 
       logger.info('Entry marked as read', { id });
     },
-    onSuccess: (_, id) => {
-      queryClient.setQueryData(entryQueryKeys.detail(id), (old: Entry | undefined) => {
-        if (old) {
-          return { ...old, status: 'read' };
-        }
-        return old;
-      });
+    // Optimistic update — the entry leaves the unread pool right away
+    onMutate: async (id) => {
+      await queryClient.cancelQueries({ queryKey: entryQueryKeys.detail(id) });
 
-      queryClient.setQueriesData<{ pages: EntryResponse[] }>(
-        { queryKey: entryQueryKeys.lists() },
-        (data) => {
-          if (!data?.pages) return data;
-          return {
-            ...data,
-            pages: data.pages.map((page) => ({
-              ...page,
-              entries: page.entries?.map((entry) =>
-                entry.id === id ? { ...entry, status: 'read' } : entry
-              ),
-            })),
-          };
-        }
-      );
+      const previousDetail = queryClient.getQueryData<Entry>(entryQueryKeys.detail(id));
+      patchEntryStatusInCaches(queryClient, [id], 'read');
+
+      return { previousDetail };
+    },
+    onSuccess: (_, id) => {
+      patchEntryStatusInCaches(queryClient, [id], 'read');
 
       queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
+      invalidateReadEntryLists(queryClient);
+    },
+    onError: (_error, id, context) => {
+      if (context?.previousDetail) {
+        queryClient.setQueryData(entryQueryKeys.detail(id), context.previousDetail);
+      }
+      queryClient.invalidateQueries({ queryKey: entryQueryKeys.lists() });
     },
   });
 }
@@ -423,33 +454,10 @@ export function useMarkEntriesRead() {
       logger.info('Entries marked as read', { count: ids.length });
     },
     onSuccess: (_, ids) => {
-      ids.forEach((id) => {
-        queryClient.setQueryData(entryQueryKeys.detail(id), (old: Entry | undefined) => {
-          if (old) {
-            return { ...old, status: 'read' };
-          }
-          return old;
-        });
-      });
-
-      queryClient.setQueriesData<{ pages: EntryResponse[] }>(
-        { queryKey: entryQueryKeys.lists() },
-        (data) => {
-          if (!data?.pages) return data;
-          const idSet = new Set(ids);
-          return {
-            ...data,
-            pages: data.pages.map((page) => ({
-              ...page,
-              entries: page.entries?.map((entry) =>
-                idSet.has(entry.id) ? { ...entry, status: 'read' } : entry
-              ),
-            })),
-          };
-        }
-      );
+      patchEntryStatusInCaches(queryClient, ids, 'read');
 
       queryClient.invalidateQueries({ queryKey: counterQueryKeys.all });
+      invalidateReadEntryLists(queryClient);
       toast.success(`${ids.length} entries marked as read`);
     },
   });

@@ -1,5 +1,6 @@
 import { type Platform, platform } from '@tauri-apps/plugin-os';
 import { logger } from '@/lib/logger';
+import { isTauri } from '@/lib/platform';
 
 /**
  * Supported desktop platforms for this template.
@@ -33,8 +34,22 @@ function mapPlatform(p: Platform): AppPlatform {
  * Initialize platform detection.
  * Called on first access and caches the result.
  */
+/** Best-effort platform detection from the user agent, for the PWA build. */
+function detectFromUserAgent(): AppPlatform {
+  const ua = navigator.userAgent;
+  if (/Mac|iPhone|iPad|iPod/i.test(ua)) return 'macos';
+  if (/Win/i.test(ua)) return 'windows';
+  return 'linux';
+}
+
 function initPlatform(): AppPlatform {
   if (cachedPlatform === null) {
+    if (!isTauri) {
+      // No Tauri OS plugin in the browser; the value only drives cosmetic
+      // platform-specific CSS, so the user agent is good enough.
+      cachedPlatform = detectFromUserAgent();
+      return cachedPlatform;
+    }
     try {
       cachedPlatform = mapPlatform(platform());
     } catch {

@@ -1,5 +1,5 @@
 import { render } from '@testing-library/react';
-import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vite-plus/test';
 import { ParticleColumn } from './ParticleColumn';
 
 beforeAll(() => {

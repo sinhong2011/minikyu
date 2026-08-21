@@ -78,10 +78,9 @@ const MOCK_ENCLOSURE = {
 };
 
 async function waitForTestBridge() {
-  await browser.waitUntil(
-    async () => browser.execute(() => window.__TEST__ != null),
-    { timeout: 5000 },
-  );
+  await browser.waitUntil(async () => browser.execute(() => window.__TEST__ != null), {
+    timeout: 5000,
+  });
 }
 
 async function resetPlayerStore() {
@@ -89,18 +88,24 @@ async function resetPlayerStore() {
     window.__TEST__.playerStore.getState().dismiss();
   });
   // Wait for AnimatePresence exit animation to complete
-  await browser.waitUntil(
-    async () => !(await $('[data-testid="podcast-mini-player"]').isExisting()),
-    { timeout: 2000, interval: 100 },
-  ).catch(() => {});
+  await browser
+    .waitUntil(async () => !(await $('[data-testid="podcast-mini-player"]').isExisting()), {
+      timeout: 2000,
+      interval: 100,
+    })
+    .catch(() => {});
 }
 
 /** Play and minimize to show mini player, then wait for DOM */
 async function showMiniPlayer() {
-  await browser.execute((entry, enclosure) => {
-    const store = window.__TEST__.playerStore.getState();
-    store.play(entry, enclosure);
-  }, MOCK_ENTRY, MOCK_ENCLOSURE);
+  await browser.execute(
+    (entry, enclosure) => {
+      const store = window.__TEST__.playerStore.getState();
+      store.play(entry, enclosure);
+    },
+    MOCK_ENTRY,
+    MOCK_ENCLOSURE
+  );
 
   // Wait for React effects to settle, then explicitly minimize
   await browser.pause(200);
@@ -109,10 +114,11 @@ async function showMiniPlayer() {
     window.__TEST__.playerStore.getState().setMinimized(true);
   });
 
-  await browser.waitUntil(
-    async () => $('[data-testid="podcast-mini-player"]').isExisting(),
-    { timeout: 3000, interval: 100, timeoutMsg: 'Mini player did not appear' },
-  );
+  await browser.waitUntil(async () => $('[data-testid="podcast-mini-player"]').isExisting(), {
+    timeout: 3000,
+    interval: 100,
+    timeoutMsg: 'Mini player did not appear',
+  });
 }
 
 describe('Podcast Mini Player', () => {
@@ -146,7 +152,7 @@ describe('Podcast Mini Player', () => {
 
       await browser.waitUntil(
         async () => !(await $('[data-testid="podcast-mini-player"]').isExisting()),
-        { timeout: 2000, interval: 100, timeoutMsg: 'Mini player did not disappear' },
+        { timeout: 2000, interval: 100, timeoutMsg: 'Mini player did not disappear' }
       );
     });
   });
@@ -181,7 +187,7 @@ describe('Podcast Mini Player', () => {
           const text = await $('[data-testid="mini-player-navigate"]').getText();
           return text.includes('10:00');
         },
-        { timeout: 2000, interval: 100 },
+        { timeout: 2000, interval: 100 }
       );
 
       const text = await $('[data-testid="mini-player-navigate"]').getText();
@@ -206,9 +212,7 @@ describe('Podcast Mini Player', () => {
     });
 
     it('should toggle play/pause on button click', async () => {
-      let isPlaying = await browser.execute(() =>
-        window.__TEST__.playerStore.getState().isPlaying,
-      );
+      let isPlaying = await browser.execute(() => window.__TEST__.playerStore.getState().isPlaying);
       expect(isPlaying).toBe(true);
 
       const btn = await $('[data-testid="mini-player-play-pause"]');
@@ -216,16 +220,12 @@ describe('Podcast Mini Player', () => {
 
       await browser.waitUntil(
         async () => {
-          return !(await browser.execute(() =>
-            window.__TEST__.playerStore.getState().isPlaying,
-          ));
+          return !(await browser.execute(() => window.__TEST__.playerStore.getState().isPlaying));
         },
-        { timeout: 2000, interval: 100 },
+        { timeout: 2000, interval: 100 }
       );
 
-      isPlaying = await browser.execute(() =>
-        window.__TEST__.playerStore.getState().isPlaying,
-      );
+      isPlaying = await browser.execute(() => window.__TEST__.playerStore.getState().isPlaying);
       expect(isPlaying).toBe(false);
 
       // Click again to resume
@@ -233,16 +233,12 @@ describe('Podcast Mini Player', () => {
 
       await browser.waitUntil(
         async () => {
-          return browser.execute(() =>
-            window.__TEST__.playerStore.getState().isPlaying,
-          );
+          return browser.execute(() => window.__TEST__.playerStore.getState().isPlaying);
         },
-        { timeout: 2000, interval: 100 },
+        { timeout: 2000, interval: 100 }
       );
 
-      isPlaying = await browser.execute(() =>
-        window.__TEST__.playerStore.getState().isPlaying,
-      );
+      isPlaying = await browser.execute(() => window.__TEST__.playerStore.getState().isPlaying);
       expect(isPlaying).toBe(true);
     });
 
@@ -258,17 +254,15 @@ describe('Podcast Mini Player', () => {
 
       await browser.waitUntil(
         async () => {
-          const time = await browser.execute(() =>
-            window.__TEST__.playerStore.getState().currentTime,
+          const time = await browser.execute(
+            () => window.__TEST__.playerStore.getState().currentTime
           );
           return time === 130;
         },
-        { timeout: 2000, interval: 100 },
+        { timeout: 2000, interval: 100 }
       );
 
-      const time = await browser.execute(() =>
-        window.__TEST__.playerStore.getState().currentTime,
-      );
+      const time = await browser.execute(() => window.__TEST__.playerStore.getState().currentTime);
       expect(time).toBe(130);
     });
 
@@ -278,11 +272,11 @@ describe('Podcast Mini Player', () => {
 
       await browser.waitUntil(
         async () => !(await $('[data-testid="podcast-mini-player"]').isExisting()),
-        { timeout: 2000, interval: 100 },
+        { timeout: 2000, interval: 100 }
       );
 
-      const hasEntry = await browser.execute(() =>
-        window.__TEST__.playerStore.getState().currentEntry !== null,
+      const hasEntry = await browser.execute(
+        () => window.__TEST__.playerStore.getState().currentEntry !== null
       );
       expect(hasEntry).toBe(false);
     });
@@ -297,11 +291,9 @@ describe('Podcast Mini Player', () => {
 
       await browser.waitUntil(
         async () => {
-          return !(await browser.execute(() =>
-            window.__TEST__.playerStore.getState().isMinimized,
-          ));
+          return !(await browser.execute(() => window.__TEST__.playerStore.getState().isMinimized));
         },
-        { timeout: 2000, interval: 100 },
+        { timeout: 2000, interval: 100 }
       );
 
       const result = await browser.execute(() => ({

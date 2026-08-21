@@ -14,13 +14,19 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import {
   type ColumnDef,
-  flexRender,
-  getCoreRowModel,
-  getPaginationRowModel,
-  getSortedRowModel,
+  columnSizingFeature,
+  columnVisibilityFeature,
+  createPaginatedRowModel,
+  createSortedRowModel,
+  FlexRender,
   type Row,
+  type RowData,
+  rowPaginationFeature,
+  rowSortingFeature,
   type SortingState,
-  useReactTable,
+  sortFns,
+  tableFeatures,
+  useTable,
 } from '@tanstack/react-table';
 import type * as React from 'react';
 import { useState } from 'react';
@@ -43,8 +49,31 @@ import {
 } from '@/components/ui/table';
 import { cn } from '@/lib/utils';
 
-interface DataTableProps<TData, TValue> {
-  columns: ColumnDef<TData, TValue>[];
+/**
+ * The v9 feature set backing every DataTable. Features are static per table, so
+ * sorting/pagination are always registered here and toggled at runtime via the
+ * `enableSorting` option and the page-size passed in `initialState`.
+ */
+export const dataTableFeatures = tableFeatures({
+  rowSortingFeature,
+  rowPaginationFeature,
+  columnSizingFeature,
+  columnVisibilityFeature,
+  sortedRowModel: createSortedRowModel(),
+  paginatedRowModel: createPaginatedRowModel(),
+  sortFns,
+});
+
+export type DataTableFeatures = typeof dataTableFeatures;
+
+/** Column definition bound to the DataTable feature set. */
+export type DataTableColumnDef<TData extends RowData> = ColumnDef<DataTableFeatures, TData>;
+
+/** Row bound to the DataTable feature set. */
+export type DataTableRow<TData extends RowData> = Row<DataTableFeatures, TData>;
+
+interface DataTableProps<TData extends RowData> {
+  columns: DataTableColumnDef<TData>[];
   data: TData[];
   pageSize?: number;
   className?: string;
@@ -52,14 +81,14 @@ interface DataTableProps<TData, TValue> {
   tableFrameClassName?: string;
   tableClassName?: string;
   emptyMessage?: string;
-  getRowProps?: (row: Row<TData>) => React.ComponentProps<'tr'>;
+  getRowProps?: (row: DataTableRow<TData>) => React.ComponentProps<'tr'>;
   enableSorting?: boolean;
   footerLeftContent?: React.ReactNode;
   compactPagination?: boolean;
   pageSizeOptions?: number[];
 }
 
-export function DataTable<TData, TValue>({
+export function DataTable<TData extends RowData>({
   columns,
   data,
   pageSize = 10,
@@ -73,17 +102,17 @@ export function DataTable<TData, TValue>({
   footerLeftContent,
   compactPagination = false,
   pageSizeOptions = [10, 20, 30, 40, 50],
-}: DataTableProps<TData, TValue>) {
+}: DataTableProps<TData>) {
   const { _ } = useLingui();
   const [sorting, setSorting] = useState<SortingState>([]);
-  const table = useReactTable({
+  const table = useTable({
+    features: dataTableFeatures,
     data,
     columns,
-    getCoreRowModel: getCoreRowModel(),
-    ...(enableSorting ? { getSortedRowModel: getSortedRowModel() } : {}),
-    ...(showPagination ? { getPaginationRowModel: getPaginationRowModel() } : {}),
+    enableSorting,
     initialState: {
       pagination: {
+        pageIndex: 0,
         pageSize: showPagination ? pageSize : 9999,
       },
     },
@@ -129,7 +158,7 @@ export function DataTable<TData, TValue>({
                                 : 'cursor-pointer hover:text-foreground'
                             )}
                           >
-                            {flexRender(header.column.columnDef.header, header.getContext())}
+                            <FlexRender header={header} />
                             {enableSorting &&
                               header.column.getCanSort() &&
                               (header.column.getIsSorted() === 'asc' ? (
@@ -156,12 +185,7 @@ export function DataTable<TData, TValue>({
                   const rowProps = getRowProps?.(row);
                   const { className: rowClassName, ...restRowProps } = rowProps ?? {};
                   return (
-                    <TableRow
-                      key={row.id}
-                      data-state={row.getIsSelected() && 'selected'}
-                      className={rowClassName}
-                      {...restRowProps}
-                    >
+                    <TableRow key={row.id} className={rowClassName} {...restRowProps}>
                       {row.getVisibleCells().map((cell) => (
                         <TableCell
                           key={cell.id}
@@ -177,7 +201,7 @@ export function DataTable<TData, TValue>({
                             textOverflow: 'ellipsis',
                           }}
                         >
-                          {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                          <FlexRender cell={cell} />
                         </TableCell>
                       ))}
                     </TableRow>
@@ -208,7 +232,7 @@ export function DataTable<TData, TValue>({
               compactPagination && 'text-[11px]'
             )}
           >
-            {footerLeftContent ?? _(msg`${table.getFilteredRowModel().rows.length} total`)}
+            {footerLeftContent ?? _(msg`${table.getRowCount()} total`)}
           </div>
           <div
             className={cn(
@@ -221,7 +245,7 @@ export function DataTable<TData, TValue>({
                 {_(msg`Rows per page`)}
               </p>
               <Select
-                value={`${table.getState().pagination.pageSize}`}
+                value={`${table.state.pagination.pageSize}`}
                 onValueChange={(value: string) => {
                   table.setPageSize(Number(value));
                 }}
@@ -232,7 +256,7 @@ export function DataTable<TData, TValue>({
                     compactPagination && 'h-4 w-[62px] text-[10px] py-0'
                   )}
                 >
-                  <SelectValue placeholder={table.getState().pagination.pageSize} />
+                  <SelectValue placeholder={table.state.pagination.pageSize} />
                 </SelectTrigger>
                 <SelectContent side="top" className="min-w-[60px]">
                   {pageSizeOptions.map((pageSize) => (
@@ -250,9 +274,7 @@ export function DataTable<TData, TValue>({
                   compactPagination && 'w-auto px-1 text-[11px]'
                 )}
               >
-                {_(
-                  msg`Page ${table.getState().pagination.pageIndex + 1} of ${table.getPageCount()}`
-                )}
+                {_(msg`Page ${table.state.pagination.pageIndex + 1} of ${table.getPageCount()}`)}
               </div>
               <div className="flex items-center space-x-1">
                 <Button

@@ -255,7 +255,6 @@ export function ImageViewer({
         root: {
           backgroundColor: 'rgba(0, 0, 0, 0.6)',
           backdropFilter: 'blur(20px) saturate(180%)',
-          // biome-ignore lint/style/useNamingConvention: vendor-prefixed CSS property
           WebkitBackdropFilter: 'blur(20px) saturate(180%)',
           '--yarl__fade_animation_duration': '420ms',
           '--yarl__fade_animation_timing_function': 'cubic-bezier(0.22, 1, 0.36, 1)',

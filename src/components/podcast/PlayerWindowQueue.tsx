@@ -8,7 +8,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { emit } from '@tauri-apps/api/event';
+import { emit } from '@/lib/tauri-event';
 import { PLAYER_CMD, type PlayerCmdPayload, type UpNextEntry } from '@/lib/player-events';
 
 interface PlayerWindowQueueProps {

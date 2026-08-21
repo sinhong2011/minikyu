@@ -4,7 +4,8 @@
 
 import { toast } from 'sonner';
 import { logger } from './logger';
-import { commands } from './tauri-bindings';
+import { capabilities } from './platform';
+import { commands } from '@/lib/tauri-bindings';
 
 type NotificationType = 'success' | 'error' | 'info' | 'warning';
 
@@ -44,7 +45,9 @@ export async function notify(
   const { type = 'info', native = false, duration } = options;
 
   try {
-    if (native) {
+    // Fall through to the toast branch on web: attempting the native call
+    // there would only throw and land in the catch below.
+    if (native && capabilities.nativeNotifications) {
       // Send native system notification via Tauri
       logger.debug('Sending native notification', { title, message, type });
       const result = await commands.sendNativeNotification(title, message ?? null);

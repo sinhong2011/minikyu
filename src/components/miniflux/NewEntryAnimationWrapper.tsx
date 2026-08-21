@@ -29,7 +29,6 @@ export function NewEntryAnimationWrapper({
     const delay = routeChangeIndex * 0.045;
     return (
       <motion.div
-        className="px-3"
         initial={{ opacity: 0, y: 16, scale: 0.99, filter: 'blur(0.8px)' }}
         animate={{ opacity: 1, y: 0, scale: 1, filter: 'blur(0px)' }}
         transition={{
@@ -46,7 +45,7 @@ export function NewEntryAnimationWrapper({
 
   // Stable entry — no motion overhead
   if (!isNew && !animating) {
-    return <div className="px-3">{children}</div>;
+    return <div>{children}</div>;
   }
 
   // Insert animation: height expansion with spring physics
@@ -54,7 +53,6 @@ export function NewEntryAnimationWrapper({
 
   return (
     <motion.div
-      className="px-3"
       initial={isNew ? { height: 0, opacity: 0, filter: 'blur(0.8px)' } : false}
       animate={{ height: measuredHeight, opacity: 1, filter: 'blur(0px)' }}
       transition={{

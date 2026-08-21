@@ -1,5 +1,5 @@
 import type { MessageDescriptor } from '@lingui/core';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import type { AppCommand, CommandContext } from './types';
 
 const createMsgDescriptor = (text: string): MessageDescriptor => ({

@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
 const { resetQueriesMock, syncStoreState, uiStoreState, dismissMock, getSyncStatusMock } =
   vi.hoisted(() => ({
@@ -62,13 +62,9 @@ describe('resetAccountState', () => {
     getSyncStatusMock.mockResolvedValue({
       status: 'ok',
       data: {
-        // biome-ignore lint/style/useNamingConvention: backend payload shape
         last_sync_at: null,
-        // biome-ignore lint/style/useNamingConvention: backend payload shape
         categories_synced: 0,
-        // biome-ignore lint/style/useNamingConvention: backend payload shape
         feeds_synced: 0,
-        // biome-ignore lint/style/useNamingConvention: backend payload shape
         entries_synced: 0,
       },
     });

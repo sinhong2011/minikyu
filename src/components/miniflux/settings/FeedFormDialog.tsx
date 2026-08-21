@@ -111,16 +111,16 @@ function isValidUrl(value: string): boolean {
 function hasAdvancedDefaults(values: FeedAdvancedValues): boolean {
   return Boolean(
     values.userAgent.trim() ||
-      values.username.trim() ||
-      values.password.trim() ||
-      values.scraperRules.trim() ||
-      values.rewriteRules.trim() ||
-      values.blocklistRules.trim() ||
-      values.keeplistRules.trim() ||
-      values.crawler ||
-      values.disabled ||
-      values.ignoreHttpCache ||
-      values.fetchViaProxy
+    values.username.trim() ||
+    values.password.trim() ||
+    values.scraperRules.trim() ||
+    values.rewriteRules.trim() ||
+    values.blocklistRules.trim() ||
+    values.keeplistRules.trim() ||
+    values.crawler ||
+    values.disabled ||
+    values.ignoreHttpCache ||
+    values.fetchViaProxy
   );
 }
 

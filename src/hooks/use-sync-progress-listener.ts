@@ -1,5 +1,5 @@
 import { useQueryClient } from '@tanstack/react-query';
-import { listen } from '@tauri-apps/api/event';
+import { listen } from '@/lib/tauri-event';
 import { useEffect, useRef } from 'react';
 import { logger } from '@/lib/logger';
 import { commands } from '@/lib/tauri-bindings';

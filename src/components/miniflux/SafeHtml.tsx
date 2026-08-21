@@ -10,7 +10,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { openUrl } from '@tauri-apps/plugin-opener';
+import { openUrl } from '@/lib/shell';
 import DOMPurify from 'dompurify';
 import parse, {
   attributesToProps,
@@ -747,11 +747,8 @@ export function sanitizeReaderHtml(html: string): string {
 
   try {
     const sanitized = DOMPurify.sanitize(html, {
-      // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
       USE_PROFILES: { html: true },
-      // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
       ADD_TAGS: ['iframe'],
-      // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
       ADD_ATTR: [
         'target',
         'rel',
@@ -768,7 +765,6 @@ export function sanitizeReaderHtml(html: string): string {
         'referrerpolicy',
         'sandbox',
       ],
-      // biome-ignore lint/style/useNamingConvention: DOMPurify API requires SCREAMING_SNAKE_CASE
       FORBID_TAGS: ['center'],
     });
     return stripTextAlignStyles(sanitized);

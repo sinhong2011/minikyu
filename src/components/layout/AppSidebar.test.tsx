@@ -1,9 +1,9 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen } from '@testing-library/react';
+import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import React from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { SidebarProvider } from '@/components/ui/sidebar';
 import {
   useCategories,
@@ -352,22 +352,28 @@ describe('AppSidebar', () => {
     expect(screen.getByText('Search Source')).toBeInTheDocument();
   });
 
-  it('opens add feed dialog with feed tab by default from Add Feed action', () => {
+  // The dialogs host is code-split (FeedCategoryDialogProvider), so it mounts a
+  // tick after the click rather than synchronously.
+  it('opens add feed dialog with feed tab by default from Add Feed action', async () => {
     renderComponent();
 
     fireEvent.click(screen.getByLabelText('Category actions'));
     fireEvent.click(screen.getByText('Add Feed'));
 
-    expect(screen.getAllByText('Add Feed').length).toBeGreaterThan(1);
+    await waitFor(() => {
+      expect(screen.getAllByText('Add Feed').length).toBeGreaterThan(1);
+    });
   });
 
-  it('opens add feed dialog with search tab from Search Source action', () => {
+  it('opens add feed dialog with search tab from Search Source action', async () => {
     renderComponent();
 
     fireEvent.click(screen.getByLabelText('Category actions'));
     fireEvent.click(screen.getByText('Search Source'));
 
-    expect(screen.getAllByText('Search Source').length).toBeGreaterThan(1);
+    await waitFor(() => {
+      expect(screen.getAllByText('Search Source').length).toBeGreaterThan(1);
+    });
   });
 
   it('shows icon-only minimized sidebar without categories', () => {

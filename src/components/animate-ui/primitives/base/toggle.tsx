@@ -1,6 +1,6 @@
 'use client';
 
-import { Toggle as TogglePrimitive } from '@base-ui-components/react/toggle';
+import { Toggle as TogglePrimitive } from '@base-ui/react/toggle';
 import { AnimatePresence, type HTMLMotionProps, motion } from 'motion/react';
 import type * as React from 'react';
 import { useControlledState } from '@/hooks/use-controlled-state';

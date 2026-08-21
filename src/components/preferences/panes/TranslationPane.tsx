@@ -119,7 +119,6 @@ const DEFAULT_LLM_PROVIDER_IDS = TRANSLATION_PROVIDERS.filter(
 
 const PROVIDER_ENDPOINT_PLACEHOLDERS: Readonly<Record<string, string>> = {
   deepl: 'https://api-free.deepl.com/v2',
-  // biome-ignore lint/style/useNamingConvention: provider ID from backend
   google_translate: 'https://translation.googleapis.com',
   ollama: 'http://localhost:11434',
   openai: 'https://api.openai.com',
@@ -148,27 +147,22 @@ const PROVIDER_ICON_SPECS: Readonly<Record<string, ProviderIconSpec>> = {
     icon: Link02Icon,
     className: 'bg-blue-500/20 text-blue-600 dark:text-blue-300',
   },
-  // biome-ignore lint/style/useNamingConvention: provider ID from backend
   google_translate: {
     icon: Globe02Icon,
     className: 'bg-emerald-500/20 text-emerald-600 dark:text-emerald-300',
   },
-  // biome-ignore lint/style/useNamingConvention: provider ID from backend
   microsoft_translator: {
     icon: Globe02Icon,
     className: 'bg-cyan-500/20 text-cyan-600 dark:text-cyan-300',
   },
-  // biome-ignore lint/style/useNamingConvention: provider ID from backend
   qwen_mt: {
     icon: RssIcon,
     className: 'bg-violet-500/20 text-violet-600 dark:text-violet-300',
   },
-  // biome-ignore lint/style/useNamingConvention: provider ID from backend
   hunyuan_mt: {
     icon: RssIcon,
     className: 'bg-fuchsia-500/20 text-fuchsia-600 dark:text-fuchsia-300',
   },
-  // biome-ignore lint/style/useNamingConvention: provider ID from backend
   baidu_translate: {
     icon: RssIcon,
     className: 'bg-orange-500/20 text-orange-600 dark:text-orange-300',
@@ -790,12 +784,9 @@ export function TranslationPane() {
 
     return {
       enabled: existingSettings?.enabled ?? fallbackEnabled,
-      // biome-ignore lint/style/useNamingConvention: backend preference field name
       base_url: existingSettings?.base_url ?? null,
       model: existingSettings?.model ?? null,
-      // biome-ignore lint/style/useNamingConvention: backend preference field name
       timeout_ms: existingSettings?.timeout_ms ?? null,
-      // biome-ignore lint/style/useNamingConvention: backend preference field name
       system_prompt: existingSettings?.system_prompt ?? null,
     };
   };
@@ -814,11 +805,8 @@ export function TranslationPane() {
     });
 
     return {
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       reader_translation_primary_engine: enabledEngineIds[0] ?? null,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       reader_translation_engine_fallbacks: enabledEngineIds.slice(1),
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       reader_translation_llm_fallbacks: enabledLlmIds,
     };
   };
@@ -843,7 +831,6 @@ export function TranslationPane() {
     };
 
     await savePreferencePatch({
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       reader_translation_provider_settings: nextMap,
       ...buildRoutingPatch(nextMap),
     });
@@ -916,7 +903,6 @@ export function TranslationPane() {
     if (!preferences || hasInvalidCustomRules) return;
     await savePreferences.mutateAsync({
       ...preferences,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       reader_custom_conversions: normalizedDraftRules,
     });
   };
@@ -926,7 +912,6 @@ export function TranslationPane() {
 
     try {
       await savePreferencePatch({
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_route_mode: value as ReaderTranslationRouteMode,
       });
       showToast.success(_(msg`Translation route mode updated`));
@@ -940,7 +925,6 @@ export function TranslationPane() {
 
     try {
       await savePreferencePatch({
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_translation_target_language: value,
       });
       showToast.success(_(msg`Translation target language updated`));
@@ -1106,12 +1090,9 @@ export function TranslationPane() {
 
     try {
       await saveProviderRuntimeSettings(provider, {
-        // biome-ignore lint/style/useNamingConvention: backend preference field name
         base_url: input.baseUrl.trim().length > 0 ? input.baseUrl.trim() : null,
         model: input.model.trim().length > 0 ? input.model.trim() : null,
-        // biome-ignore lint/style/useNamingConvention: backend preference field name
         timeout_ms: parsedTimeout === null ? null : Math.round(parsedTimeout),
-        // biome-ignore lint/style/useNamingConvention: backend preference field name
         system_prompt: input.systemPrompt.trim().length > 0 ? input.systemPrompt.trim() : null,
       });
     } catch {
@@ -1226,21 +1207,13 @@ export function TranslationPane() {
     const targetLanguage = targetLanguageRaw.toLowerCase() === 'en' ? 'ja' : targetLanguageRaw;
     const verifyRequest: TranslationSegmentRequest = {
       text: 'Hello world',
-      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
       source_language: 'en',
-      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
       target_language: targetLanguage,
-      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
       route_mode: 'engine_first',
-      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
       primary_engine: provider.kind === 'engine' ? provider.id : null,
-      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
       engine_fallbacks: [],
-      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
       llm_fallbacks: provider.kind === 'llm' ? [provider.id] : [],
-      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
       apple_fallback_enabled: false,
-      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
       forced_provider: null,
     };
 
@@ -1557,16 +1530,13 @@ export function TranslationPane() {
                               };
                               // Save directly with the new value to avoid stale state
                               void saveProviderRuntimeSettings(selectedProvider, {
-                                // biome-ignore lint/style/useNamingConvention: backend field
                                 base_url:
                                   updated.baseUrl.trim().length > 0 ? updated.baseUrl.trim() : null,
                                 model: modelName.trim().length > 0 ? modelName.trim() : null,
-                                // biome-ignore lint/style/useNamingConvention: backend field
                                 timeout_ms:
                                   updated.timeoutMs.trim().length > 0
                                     ? Math.round(Number(updated.timeoutMs))
                                     : null,
-                                // biome-ignore lint/style/useNamingConvention: backend field
                                 system_prompt:
                                   updated.systemPrompt.trim().length > 0
                                     ? updated.systemPrompt.trim()
@@ -1793,7 +1763,6 @@ export function TranslationPane() {
               if (preferences) {
                 savePreferences.mutate({
                   ...preferences,
-                  // biome-ignore lint/style/useNamingConvention: preferences field name
                   ai_summary_provider: value || null,
                 });
               }
@@ -1829,7 +1798,6 @@ export function TranslationPane() {
                       if (preferences) {
                         savePreferences.mutate({
                           ...preferences,
-                          // biome-ignore lint/style/useNamingConvention: preferences field name
                           ai_summary_model: e.target.value || null,
                         });
                       }
@@ -1867,7 +1835,6 @@ export function TranslationPane() {
                     if (preferences) {
                       savePreferences.mutate({
                         ...preferences,
-                        // biome-ignore lint/style/useNamingConvention: preferences field name
                         ai_summary_model: modelName || null,
                       });
                     }
@@ -1903,7 +1870,6 @@ export function TranslationPane() {
               if (preferences) {
                 savePreferences.mutate({
                   ...preferences,
-                  // biome-ignore lint/style/useNamingConvention: preferences field name
                   ai_summary_auto_enabled: Boolean(checked),
                 });
               }
@@ -1923,7 +1889,6 @@ export function TranslationPane() {
               if (preferences) {
                 savePreferences.mutate({
                   ...preferences,
-                  // biome-ignore lint/style/useNamingConvention: preferences field name
                   ai_summary_custom_prompt: e.target.value || null,
                 });
               }
@@ -1945,7 +1910,6 @@ export function TranslationPane() {
               if (preferences) {
                 savePreferences.mutate({
                   ...preferences,
-                  // biome-ignore lint/style/useNamingConvention: preferences field name
                   ai_summary_max_text_length: value,
                 });
               }
@@ -1967,7 +1931,6 @@ export function TranslationPane() {
               if (preferences) {
                 savePreferences.mutate({
                   ...preferences,
-                  // biome-ignore lint/style/useNamingConvention: preferences field name
                   reader_chinese_conversion: checked ? 's2tw' : 'off',
                 });
               }
@@ -1989,7 +1952,6 @@ export function TranslationPane() {
                   if (preferences) {
                     savePreferences.mutate({
                       ...preferences,
-                      // biome-ignore lint/style/useNamingConvention: preferences field name
                       reader_chinese_conversion:
                         value as typeof preferences.reader_chinese_conversion,
                     });
@@ -2142,13 +2104,10 @@ function FeedExclusionList() {
     if (!preferences || !accountKey) return;
     savePreferencesAction({
       ...preferences,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       reader_translation_exclusions: {
         ...preferences.reader_translation_exclusions,
         [accountKey]: {
-          // biome-ignore lint/style/useNamingConvention: Rust struct field names
           ...(exclusions ?? { feed_ids: [], category_ids: [] }),
-          // biome-ignore lint/style/useNamingConvention: field name
           feed_ids: feedIds,
         },
       },
@@ -2217,13 +2176,10 @@ function CategoryExclusionList() {
     if (!preferences || !accountKey) return;
     savePreferencesAction({
       ...preferences,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       reader_translation_exclusions: {
         ...preferences.reader_translation_exclusions,
         [accountKey]: {
-          // biome-ignore lint/style/useNamingConvention: Rust struct field names
           ...(exclusions ?? { feed_ids: [], category_ids: [] }),
-          // biome-ignore lint/style/useNamingConvention: field name
           category_ids: categoryIds,
         },
       },
@@ -2304,7 +2260,6 @@ function SkipSourceLanguagesList() {
         if (!preferences || !Array.isArray(values)) return;
         savePreferencesAction({
           ...preferences,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_translation_skip_source_languages: values as string[],
         });
       }}

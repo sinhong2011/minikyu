@@ -98,7 +98,6 @@ export function ReaderPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_theme: themeId,
       });
     } catch {
@@ -115,7 +114,6 @@ export function ReaderPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_font_family: value,
       });
     } catch {
@@ -152,7 +150,6 @@ export function ReaderPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_code_theme: normalized,
       });
     } catch {
@@ -197,6 +194,7 @@ export function ReaderPane() {
         <SettingsField
           label={_(msg`Surface Theme`)}
           description={_(msg`Choose the background surface for the article reader`)}
+          stackOnMobile
         >
           <div className="flex flex-wrap gap-3">
             {READER_THEMES.map((theme) => (
@@ -379,7 +377,6 @@ export function ReaderPane() {
               try {
                 await savePreferences.mutateAsync({
                   ...preferences,
-                  // biome-ignore lint/style/useNamingConvention: preferences field name
                   reader_code_detection_mode: value,
                 });
               } catch {
@@ -411,7 +408,6 @@ export function ReaderPane() {
               if (preferences) {
                 savePreferences.mutate({
                   ...preferences,
-                  // biome-ignore lint/style/useNamingConvention: preferences field name
                   reader_code_detection_prompt: e.target.value || null,
                 });
               }

@@ -112,8 +112,16 @@ export function useAutoReconnect() {
     try {
       const result = await commands.autoReconnectMiniflux();
       if (result.status === 'error') {
-        logger.error('Auto-reconnect failed', { error: result.error });
-        setAutoReconnectError(String(result.error.type || 'Unknown error'));
+        // `NotFound` is not a failure — it is the ordinary "no account stored
+        // yet" state every first run passes through. Logging it at error level
+        // buries genuine reconnect problems in first-run noise.
+        const noAccountYet = result.error.type === 'NotFound';
+        if (noAccountYet) {
+          logger.debug('Auto-reconnect skipped: no stored account');
+        } else {
+          logger.error('Auto-reconnect failed', { error: result.error });
+        }
+        setAutoReconnectError(noAccountYet ? null : String(result.error.type || 'Unknown error'));
       } else {
         logger.info('Auto-reconnect succeeded');
         // Invalidate connection status query to trigger immediate UI update

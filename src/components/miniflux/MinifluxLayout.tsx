@@ -1,6 +1,7 @@
 import {
   CheckmarkCircle02Icon,
   Delete01Icon,
+  FilterIcon,
   Search01Icon,
   Sorting01Icon,
   WifiOffIcon,
@@ -8,8 +9,8 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { useSearch } from '@tanstack/react-router';
-import { confirm } from '@tauri-apps/plugin-dialog';
+import { useNavigate, useRouter, useSearch } from '@tanstack/react-router';
+
 import { AnimatePresence, motion } from 'motion/react';
 import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -29,6 +30,8 @@ import { useAutoSync } from '@/hooks/use-auto-sync';
 import { usePlayerCommandListener } from '@/hooks/use-player-command-listener';
 import { useSyncProgressListener } from '@/hooks/use-sync-progress-listener';
 import { resetAccountState } from '@/lib/account-reset';
+import { confirm } from '@/lib/dialog';
+import { capabilities } from '@/lib/platform';
 import { logger } from '@/lib/logger';
 import { queryClient } from '@/lib/query-client';
 import type { EntryFilters } from '@/lib/tauri-bindings';
@@ -41,7 +44,9 @@ import { useUnreadCounts } from '@/services/miniflux/counters';
 import { useEntries, usePrefetchEntry, useToggleEntryRead } from '@/services/miniflux/entries';
 import { useMarkFeedAsRead, useSyncMiniflux } from '@/services/miniflux/feeds';
 import { useLastReadingEntry, useSaveLastReading } from '@/services/reading-state';
+import { useSyncIndicator } from '@/hooks/use-sync-indicator';
 import { useSyncStore } from '@/store/sync-store';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useUIStore } from '@/store/ui-store';
 
 const ConnectionDialog = lazy(() =>
@@ -56,12 +61,24 @@ type FilterType = 'all' | 'starred' | 'today' | 'history';
 type SortOrder = 'published_at' | 'changed_at';
 type SortDirection = 'asc' | 'desc';
 
+const STATUS_SEGMENTS = [
+  { value: 'all', label: msg`All` },
+  { value: 'unread', label: msg`Unread` },
+  { value: 'starred', label: msg`Starred` },
+] as const;
+
 export function MinifluxLayout() {
   const { _, i18n } = useLingui();
   useAudioEngine();
   useAutoSync();
   usePlayerCommandListener();
   const search = useSearch({ from: '/' });
+  const navigate = useNavigate({ from: '/' });
+  const router = useRouter();
+  // True while the open reader owes its history entry to a push we made —
+  // lets ✕ use history.back() so the stack stays balanced. Deep links
+  // (?entry= on load) never push, so ✕ falls back to a replace.
+  const readerPushedRef = useRef(false);
   const filter: FilterType = search.filter || 'all';
   const categoryId = search.categoryId;
   const feedId = search.feedId;
@@ -72,49 +89,49 @@ export function MinifluxLayout() {
   const { data: unreadCounts } = useUnreadCounts();
   const showConnectionDialog = useUIStore((state) => state.showConnectionDialog);
   const setShowConnectionDialog = useUIStore((state) => state.setShowConnectionDialog);
-  const selectedEntryId = useUIStore((state) => state.selectedEntryId);
-  const setSelectedEntryId = useUIStore((state) => state.setSelectedEntryId);
   const searchFiltersVisible = useUIStore((state) => state.searchFiltersVisible);
   const toggleSearchFilters = useUIStore((state) => state.toggleSearchFilters);
-  const [localFilters, setLocalFilters] = useState<EntryFilters>({});
-  const [hasInteractedBottomFilter, setHasInteractedBottomFilter] = useState(false);
   const [entryTransitionDirection, setEntryTransitionDirection] = useState<'forward' | 'backward'>(
     'forward'
   );
-  const [sortOrder, setSortOrder] = useState<SortOrder>(
-    filter === 'history' ? 'changed_at' : 'published_at'
+  const selectedEntryId = search.entry;
+
+  // Sort, status and the search/date filters are all read straight from the
+  // URL. An absent param means "this view's default", so switching views —
+  // the sidebar links replace the whole search object — resets them without
+  // an effect, and every combination stays linkable and reload-safe.
+  const sortOrder: SortOrder =
+    search.sort ?? (filter === 'history' ? 'changed_at' : 'published_at');
+  const sortDirection: SortDirection = search.dir ?? 'desc';
+  const searchQuery = search.q;
+  const afterFilter = search.after;
+
+  /** Write one or more search params, keeping the rest of the URL intact. */
+  const updateSearch = useCallback(
+    (patch: Partial<typeof search>, options?: { replace?: boolean }) => {
+      navigate({
+        search: (prev) => ({ ...prev, ...patch }),
+        replace: options?.replace ?? true,
+        resetScroll: false,
+      });
+    },
+    [navigate]
   );
-  const [sortDirection, setSortDirection] = useState<SortDirection>('asc');
-  // Default sort order: history uses changed_at desc, others use published_at asc
-  useEffect(() => {
-    if (filter === 'history') {
-      setSortOrder('changed_at');
-      setSortDirection('asc');
-    } else {
-      setSortOrder('published_at');
-      setSortDirection('asc');
-    }
-  }, [filter]);
 
   const syncMiniflux = useSyncMiniflux();
   const markFeedAsRead = useMarkFeedAsRead();
   const markCategoryAsRead = useMarkCategoryAsRead();
   const syncing = useSyncStore((state) => state.syncing);
+  const { status: syncStatus, icon: syncIcon, title: syncTitle } = useSyncIndicator();
   const hasAutoSyncedRef = useRef(false);
   const suppressAutoSelectRef = useRef(false);
+  const isMobile = useIsMobile();
   useSyncProgressListener();
-  const hasExplicitStatusFilter = localFilters.starred != null || localFilters.status != null;
-  const shouldDefaultToUnread =
-    !hasInteractedBottomFilter &&
-    !hasExplicitStatusFilter &&
-    filter !== 'starred' &&
-    filter !== 'history';
-  const currentStatus = localFilters.starred
-    ? 'starred'
-    : localFilters.status === 'unread' || shouldDefaultToUnread
-      ? 'unread'
-      : 'all';
+  // Starred and History already pin a status, so they have no default of their
+  // own; every other view starts on unread.
   const showBottomFilterTab = filter !== 'starred' && filter !== 'history';
+  const currentStatus: EntryListFilterStatus =
+    search.status ?? (showBottomFilterTab ? 'unread' : 'all');
   const prefetchEntry = usePrefetchEntry();
   const { data: lastReadingEntry } = useLastReadingEntry();
   const saveLastReading = useSaveLastReading();
@@ -124,23 +141,47 @@ export function MinifluxLayout() {
     maximumFractionDigits: 1,
   });
 
+  // "Today" spans the local calendar day; after/before are unix seconds
+  // compared against published_at (same window as the sidebar's today count).
+  // Primitive deps keep mergedFilters stable until the day rolls over.
+  const startOfDay = new Date();
+  startOfDay.setHours(0, 0, 0, 0);
+  const endOfDay = new Date(startOfDay);
+  endOfDay.setDate(endOfDay.getDate() + 1);
+  const todayAfter = String(Math.floor(startOfDay.getTime() / 1000));
+  const todayBefore = String(Math.floor(endOfDay.getTime() / 1000));
+
   // Merge router filters with local filters
   const mergedFilters: EntryFilters = useMemo(
     () =>
       ({
-        // biome-ignore lint/style/useNamingConvention: API field name
         ...(categoryId ? { category_id: Number(categoryId) } : {}),
-        // biome-ignore lint/style/useNamingConvention: API field name
         ...(feedId ? { feed_id: Number(feedId) } : {}),
         ...(filter === 'starred' ? { starred: true } : {}),
         ...(filter === 'history' ? { status: 'read' } : {}),
-        ...(shouldDefaultToUnread ? { status: 'unread' as const } : {}),
-        ...localFilters, // <-- localFilters spreads first
-        // Use selected sort order and direction
+        ...(filter === 'today' ? { after: todayAfter, before: todayBefore } : {}),
+        // The status tab only applies where it is shown; on Starred and
+        // History the view's own status wins.
+        ...(currentStatus === 'unread' ? { status: 'unread' as const } : {}),
+        ...(currentStatus === 'starred' ? { starred: true } : {}),
+        // An explicit date filter overrides Today's window, as before.
+        ...(searchQuery ? { search: searchQuery } : {}),
+        ...(afterFilter ? { after: afterFilter } : {}),
         order: sortOrder,
         direction: sortDirection,
       }) as EntryFilters,
-    [categoryId, feedId, filter, shouldDefaultToUnread, localFilters, sortOrder, sortDirection]
+    [
+      categoryId,
+      feedId,
+      filter,
+      todayAfter,
+      todayBefore,
+      currentStatus,
+      searchQuery,
+      afterFilter,
+      sortOrder,
+      sortDirection,
+    ]
   );
 
   // Get entries for logging - needed to log entry data on selection
@@ -201,13 +242,43 @@ export function MinifluxLayout() {
   };
 
   const handleClose = () => {
-    suppressAutoSelectRef.current = true;
-    setSelectedEntryId(undefined);
+    if (readerPushedRef.current) {
+      // Balanced with the push in handleEntrySelect; the URL→store effect
+      // performs the actual close when the router pops.
+      readerPushedRef.current = false;
+      router.history.back();
+      return;
+    }
+    // Deep-linked or restored sessions have no entry to pop.
+    updateSearch({ entry: undefined });
   };
 
-  // Handle entry selection with logging - logs entry details when user selects an entry
+  // A close — the ✕, or the browser's Back — must not be undone by the
+  // resume-last-reading effect below. Watching the URL covers both, since the
+  // URL is now the only thing that closes the reader.
+  //
+  // An account switch also clears ?entry=, but there the reader *should*
+  // reopen on the new account's last article, so that case opts out.
+  const previousEntryRef = useRef(search.entry);
+  const accountResetRef = useRef(false);
+  useEffect(() => {
+    if (previousEntryRef.current && !search.entry) {
+      suppressAutoSelectRef.current = !accountResetRef.current;
+      readerPushedRef.current = false;
+    }
+    accountResetRef.current = false;
+    previousEntryRef.current = search.entry;
+  }, [search.entry]);
+
   const handleEntrySelect = (entryId: string) => {
     suppressAutoSelectRef.current = false;
+
+    // One history entry per reading session: push when the reader opens,
+    // replace while flipping prev/next inside it. Back (or swipe-back) then
+    // closes the reader; the URL stays a shareable deep link throughout.
+    const opening = !selectedEntryId;
+    updateSearch({ entry: entryId }, { replace: !opening });
+    if (opening) readerPushedRef.current = true;
 
     // Use snapshot for transition direction
     if (selectedEntryId && selectedEntryId !== entryId) {
@@ -239,15 +310,12 @@ export function MinifluxLayout() {
 
       // Save last reading entry.
       saveLastReading.mutate({
-        // biome-ignore lint/style/useNamingConvention: API field name
         entry_id: String(entry.id),
         timestamp: String(Date.now()),
       });
     } else {
       logger.warn('Entry selected but not found in data', { entryId });
     }
-
-    setSelectedEntryId(entryId);
 
     // Update snapshot to include the new entry's position from live data
     if (entriesData?.entries) {
@@ -281,15 +349,24 @@ export function MinifluxLayout() {
       return;
     }
 
+    // Phones are single-pane: auto-opening the reader would hijack the whole
+    // screen (hiding the list and tab bar) the moment the app loads. Desktop
+    // restores the last entry into the side pane, where it is unobtrusive.
+    if (isMobile) {
+      return;
+    }
+
     if (lastReadingEntry) {
       setEntryTransitionDirection('forward');
       logger.info('Auto-selecting last reading entry', {
         entryId: lastReadingEntry.entry_id,
         timestamp: lastReadingEntry.timestamp,
       });
-      setSelectedEntryId(lastReadingEntry.entry_id);
+      // Replace, never push: a restored session is not somewhere the user
+      // navigated to, so Back must still leave the view rather than undo it.
+      updateSearch({ entry: lastReadingEntry.entry_id });
     }
-  }, [lastReadingEntry, selectedEntryId, setSelectedEntryId]);
+  }, [lastReadingEntry, selectedEntryId, updateSearch, isMobile]);
 
   // Reset state when account changes (skip initial load from undefined → first account)
   const activeAccountId = activeAccount?.id;
@@ -306,11 +383,11 @@ export function MinifluxLayout() {
     hasInitialAccountRef.current = true;
     hasAutoSyncedRef.current = false;
     suppressAutoSelectRef.current = false;
-    setSelectedEntryId(undefined);
-  }, [activeAccountId, setSelectedEntryId]);
+    accountResetRef.current = true;
+    updateSearch({ entry: undefined });
+  }, [activeAccountId, updateSearch]);
 
   // Auto-sync on connect or account switch
-  // biome-ignore lint/correctness/useExhaustiveDependencies: activeAccountId triggers sync for new account
   useEffect(() => {
     if (!isConnected) {
       hasAutoSyncedRef.current = false;
@@ -466,7 +543,12 @@ export function MinifluxLayout() {
   };
 
   if (!isConnected && !hasCachedContent) {
-    const inactiveAccounts = allAccounts.filter((a) => !a.is_active);
+    // Reconnecting switches the active account through Rust. Without a
+    // multi-account store there is never a second account to switch to, so the
+    // list stays empty and the welcome screen offers only "connect".
+    const inactiveAccounts = capabilities.multiAccount
+      ? allAccounts.filter((a) => !a.is_active)
+      : [];
 
     return (
       <div className="flex h-full items-center justify-center">
@@ -606,13 +688,11 @@ export function MinifluxLayout() {
     return null;
   };
 
+  // `all` is written out rather than dropped, so it stays distinguishable from
+  // "untouched" after a reload. Replace keeps Back for leaving the view rather
+  // than un-toggling filters.
   const handleBottomFilterChange = (status: EntryListFilterStatus) => {
-    setHasInteractedBottomFilter(true);
-    setLocalFilters({
-      ...localFilters,
-      status: status === 'all' || status === 'starred' ? null : status,
-      starred: status === 'starred' ? true : null,
-    });
+    updateSearch({ status });
   };
   const filterTitle = getFilterTitle();
   const filterCountSummary = getFilterCountSummary();
@@ -628,12 +708,12 @@ export function MinifluxLayout() {
       entryTransitionDirection={entryTransitionDirection}
     >
       <div className="flex flex-col h-full relative">
-        <div className="px-2.5 pt-2 pb-3 flex items-center justify-between">
-          <div className="flex flex-col overflow-hidden">
+        <div className="px-2.5 pt-2 pb-3 flex items-center justify-between max-sm:px-4 max-sm:pt-[max(0.75rem,env(safe-area-inset-top))]">
+          <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.h1
                 key={filterTitle}
-                className="text-xl font-semibold"
+                className="max-w-full truncate text-xl font-semibold"
                 initial={{ opacity: 0, x: -30, scale: 0.96 }}
                 animate={{ opacity: 1, x: 0, scale: 1 }}
                 exit={{ opacity: 0, x: 30, scale: 0.96 }}
@@ -664,12 +744,64 @@ export function MinifluxLayout() {
               )}
             </AnimatePresence>
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex shrink-0 items-center gap-2 max-sm:gap-1">
+            {/* Phones: read-status filter as a popover; desktop keeps the floating pill. */}
+            {showBottomFilterTab && currentStatus && (
+              <Menu>
+                <MenuTrigger
+                  className="relative flex size-10 items-center justify-center rounded-lg transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 sm:hidden"
+                  title={_(msg`Filter`)}
+                >
+                  <HugeiconsIcon icon={FilterIcon} className="h-4 w-4" />
+                  {/* dot = a non-default filter is active */}
+                  {currentStatus !== 'all' && (
+                    <span className="absolute top-1.5 right-1.5 size-1.5 rounded-full bg-primary" />
+                  )}
+                </MenuTrigger>
+                <MenuPanel>
+                  <MenuGroup>
+                    <MenuGroupLabel>{_(msg`Show`)}</MenuGroupLabel>
+                    {STATUS_SEGMENTS.map((segment) => (
+                      <MenuItem
+                        key={segment.value}
+                        onClick={() => handleBottomFilterChange(segment.value)}
+                        className={cn(currentStatus === segment.value && 'bg-white/10')}
+                      >
+                        {_(segment.label)}
+                      </MenuItem>
+                    ))}
+                  </MenuGroup>
+                </MenuPanel>
+              </Menu>
+            )}
+            {/* Phones: the app header is gone, so sync lives here. */}
+            <Button
+              variant="ghost"
+              size="icon"
+              className={cn(
+                'size-10 sm:hidden',
+                syncStatus === 'failed' ? 'text-destructive' : 'text-foreground/70'
+              )}
+              title={syncTitle}
+              onClick={() => {
+                if (!syncing) syncMiniflux.mutate();
+              }}
+            >
+              <HugeiconsIcon
+                icon={syncIcon}
+                className={cn(
+                  'h-4 w-4 transition-[transform,color,opacity] duration-200',
+                  syncStatus === 'syncing' && 'sync-indicator-active',
+                  syncStatus === 'completed' && 'sync-indicator-completed',
+                  syncStatus === 'failed' && 'sync-indicator-failed'
+                )}
+              />
+            </Button>
             {(feedId || categoryId) && (
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8"
+                className="size-10 sm:size-8"
                 onClick={() => {
                   if (feedId) {
                     markFeedAsRead.mutateAsync(feedId).catch(() => {});
@@ -686,7 +818,7 @@ export function MinifluxLayout() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-8 w-8"
+                className="size-10 sm:size-8"
                 onClick={handleFlushHistory}
                 title={_(msg`Flush history`)}
               >
@@ -695,7 +827,7 @@ export function MinifluxLayout() {
             )}
             <Menu>
               <MenuTrigger
-                className="flex h-8 w-8 items-center justify-center rounded-lg transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10"
+                className="flex size-10 sm:size-8 items-center justify-center rounded-lg transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10"
                 title={_(msg`Sort by`)}
               >
                 <HugeiconsIcon icon={Sorting01Icon} className="h-4 w-4" />
@@ -704,13 +836,13 @@ export function MinifluxLayout() {
                 <MenuGroup>
                   <MenuGroupLabel>{_(msg`Sort by`)}</MenuGroupLabel>
                   <MenuItem
-                    onClick={() => setSortOrder('published_at')}
+                    onClick={() => updateSearch({ sort: 'published_at' })}
                     className={cn(sortOrder === 'published_at' && 'bg-white/10')}
                   >
                     {_(msg`Published date`)}
                   </MenuItem>
                   <MenuItem
-                    onClick={() => setSortOrder('changed_at')}
+                    onClick={() => updateSearch({ sort: 'changed_at' })}
                     className={cn(sortOrder === 'changed_at' && 'bg-white/10')}
                   >
                     {_(msg`Last read date`)}
@@ -720,13 +852,13 @@ export function MinifluxLayout() {
                 <MenuGroup>
                   <MenuGroupLabel>{_(msg`Direction`)}</MenuGroupLabel>
                   <MenuItem
-                    onClick={() => setSortDirection('asc')}
+                    onClick={() => updateSearch({ dir: 'asc' })}
                     className={cn(sortDirection === 'asc' && 'bg-white/10')}
                   >
                     {_(msg`Ascending`)}
                   </MenuItem>
                   <MenuItem
-                    onClick={() => setSortDirection('desc')}
+                    onClick={() => updateSearch({ dir: 'desc' })}
                     className={cn(sortDirection === 'desc' && 'bg-white/10')}
                   >
                     {_(msg`Descending`)}
@@ -737,7 +869,10 @@ export function MinifluxLayout() {
             <Button
               variant="ghost"
               size="icon"
-              className={cn('h-8 w-8', searchFiltersVisible && 'text-primary bg-primary/10')}
+              className={cn(
+                'size-10 sm:size-8',
+                searchFiltersVisible && 'text-primary bg-primary/10'
+              )}
               onClick={toggleSearchFilters}
               title={_(msg`Search`)}
             >
@@ -756,7 +891,12 @@ export function MinifluxLayout() {
             >
               <EntryFiltersUI
                 filters={mergedFilters}
-                onFiltersChange={(f: EntryFilters) => setLocalFilters({ ...localFilters, ...f })}
+                onFiltersChange={(f: EntryFilters) =>
+                  updateSearch({
+                    q: f.search || undefined,
+                    after: f.after ?? undefined,
+                  })
+                }
                 hideToggleBar
               />
             </motion.div>

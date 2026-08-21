@@ -12,17 +12,11 @@ export function normalizeTranslationSegmentRequest(
 ): TranslationSegmentRequest {
   return {
     ...request,
-    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     route_mode: request.route_mode.trim(),
-    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     target_language: request.target_language.trim(),
-    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     primary_engine: request.primary_engine?.trim() || null,
-    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     engine_fallbacks: request.engine_fallbacks.map((provider) => provider.trim()),
-    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     llm_fallbacks: request.llm_fallbacks.map((provider) => provider.trim()),
-    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     forced_provider: request.forced_provider?.trim() || null,
   };
 }

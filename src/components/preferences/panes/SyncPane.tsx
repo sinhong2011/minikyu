@@ -66,7 +66,6 @@ export function SyncPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         sync_interval: minutes === 0 ? null : minutes,
       });
       showToast.success(minutes === 0 ? _(msg`Auto-sync disabled`) : _(msg`Sync interval updated`));

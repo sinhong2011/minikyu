@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen } from '@testing-library/react';
-import { beforeAll, describe, expect, it, vi } from 'vitest';
+import { beforeAll, describe, expect, it, vi } from 'vite-plus/test';
 import { SafeHtml } from './SafeHtml';
 
 beforeAll(() => {
@@ -104,7 +104,6 @@ describe('SafeHtml reader node blocks', () => {
         '[data-reader-node-menu-trigger="true"]'
       );
       expect(menuTrigger).toBeInTheDocument();
-      // biome-ignore lint/style/noNonNullAssertion: test assertion above ensures non-null
       fireEvent.click(menuTrigger!);
 
       // Find and click the Translate menu item
@@ -124,7 +123,6 @@ describe('SafeHtml reader node blocks', () => {
       const menuTrigger = container.querySelector<HTMLElement>(
         '[data-reader-node-menu-trigger="true"]'
       );
-      // biome-ignore lint/style/noNonNullAssertion: querySelector result checked by context
       fireEvent.click(menuTrigger!);
 
       expect(screen.queryByText('Translate this paragraph')).not.toBeInTheDocument();

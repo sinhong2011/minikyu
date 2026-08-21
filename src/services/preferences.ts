@@ -24,94 +24,50 @@ export function usePreferences() {
         });
         return {
           theme: 'system',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           quick_pane_shortcut: null,
           language: null,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           close_behavior: 'minimize_to_tray',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           show_tray_icon: true,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           start_minimized: false,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_font_size: 16,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_line_width: 65,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_line_height: 1.75,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_font_family: 'sans-serif',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_theme: 'default',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_code_theme: 'auto',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_chinese_conversion: 's2tw',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_bionic_reading: false,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_status_bar: false,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_focus_mode: false,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_custom_conversions: [],
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_translation_display_mode: 'bilingual',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_translation_trigger_mode: 'manual',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_translation_route_mode: 'engine_first',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_translation_target_language: null,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_translation_primary_engine: 'deepl',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_translation_engine_fallbacks: ['google_translate'],
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_translation_llm_fallbacks: [],
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_translation_apple_fallback_enabled: false,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_translation_provider_settings: {},
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_translation_auto_enabled: false,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           reader_translation_exclusions: {},
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           image_download_path: null,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           video_download_path: null,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           ai_summary_auto_enabled: false,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           ai_summary_custom_prompt: null,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           ai_summary_provider: null,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           ai_summary_model: null,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           ai_summary_max_text_length: 100000,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           player_display_mode: 'FloatingWindow',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           keyboard_shortcuts: {},
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           log_level: 'info',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           time_format: '24h',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           sync_interval: 15,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           auto_check_updates: true,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           gesture_swipe_left_action: 'open_in_app_browser',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           gesture_swipe_right_action: 'toggle_read',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           gesture_pull_top_action: 'prev_article',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           gesture_pull_bottom_action: 'next_article',
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           gesture_swipe_threshold: 250,
         };
       }

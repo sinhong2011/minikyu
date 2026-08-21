@@ -34,7 +34,10 @@ export function UserFormDialog({
   const { _ } = useLingui();
 
   const userSchema = z.object({
-    username: z.string().trim().min(1, _(msg`Username is required`)),
+    username: z
+      .string()
+      .trim()
+      .min(1, _(msg`Username is required`)),
     password: mode === 'create' ? z.string().min(1, _(msg`Password is required`)) : z.string(),
     isAdmin: z.enum(['yes', 'no']),
   });

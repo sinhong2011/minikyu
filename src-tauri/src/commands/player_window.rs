@@ -113,9 +113,7 @@ fn init_player_window_macos(app: &AppHandle) -> Result<(), String> {
 }
 
 #[cfg(not(target_os = "macos"))]
-fn create_player_window_standard(
-    app: &AppHandle,
-) -> Result<tauri::WebviewWindow, String> {
+fn create_player_window_standard(app: &AppHandle) -> Result<tauri::WebviewWindow, String> {
     use tauri::webview::WebviewWindowBuilder;
 
     log::debug!("Creating player window as standard window");
@@ -319,9 +317,7 @@ fn init_tray_popover_macos(app: &AppHandle) -> Result<(), String> {
 }
 
 #[cfg(not(target_os = "macos"))]
-fn create_tray_popover_standard(
-    app: &AppHandle,
-) -> Result<tauri::WebviewWindow, String> {
+fn create_tray_popover_standard(app: &AppHandle) -> Result<tauri::WebviewWindow, String> {
     use tauri::webview::WebviewWindowBuilder;
 
     log::debug!("Creating tray popover as standard window");

@@ -11,25 +11,23 @@ test.describe('Resizable Panel Debugging', () => {
     const handle = page.locator('[data-slot="resizable-handle"]').first();
     await expect(handle).toBeVisible();
 
-    // Get initial sidebar width
+    // Get initial sidebar width. `boundingBox()` is nullable, and
+    // `expect(...).toBeTruthy()` does not narrow the type, so assert explicitly.
     const sidebar = page.locator('[data-slot="resizable-panel"]').first();
     const initialBox = await sidebar.boundingBox();
-    expect(initialBox).toBeTruthy();
-    const initialWidth = initialBox?.width;
+    if (!initialBox) throw new Error('Sidebar panel has no bounding box');
+    const initialWidth = initialBox.width;
 
     console.log('Initial sidebar width:', initialWidth);
 
     // Get handle position
     const handleBox = await handle.boundingBox();
-    expect(handleBox).toBeTruthy();
+    if (!handleBox) throw new Error('Resize handle has no bounding box');
 
     // Drag the handle to the right by 150px
-    await page.mouse.move(
-      handleBox?.x + handleBox?.width / 2,
-      handleBox?.y + handleBox?.height / 2
-    );
+    await page.mouse.move(handleBox.x + handleBox.width / 2, handleBox.y + handleBox.height / 2);
     await page.mouse.down();
-    await page.mouse.move(handleBox?.x + 150, handleBox?.y + handleBox?.height / 2, { steps: 10 });
+    await page.mouse.move(handleBox.x + 150, handleBox.y + handleBox.height / 2, { steps: 10 });
     await page.mouse.up();
 
     // Wait for any animations to complete
@@ -37,8 +35,8 @@ test.describe('Resizable Panel Debugging', () => {
 
     // Check new width
     const finalBox = await sidebar.boundingBox();
-    expect(finalBox).toBeTruthy();
-    const finalWidth = finalBox?.width;
+    if (!finalBox) throw new Error('Sidebar panel has no bounding box after resize');
+    const finalWidth = finalBox.width;
 
     console.log('Final sidebar width:', finalWidth);
     console.log('Width change:', finalWidth - initialWidth);

@@ -2,21 +2,19 @@ import { SparklesIcon } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { listen } from '@tauri-apps/api/event';
+import { listen } from '@/lib/tauri-event';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';
+import { capabilities } from '@/lib/platform';
 import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
 
 interface SummarizeStreamEvent {
-  // biome-ignore lint/style/useNamingConvention: Tauri event payload field name
   stream_id: string;
   event: 'delta' | 'done' | 'error';
   text: string;
-  // biome-ignore lint/style/useNamingConvention: Tauri event payload field name
   provider_used: string | null;
-  // biome-ignore lint/style/useNamingConvention: Tauri event payload field name
   model_used: string | null;
 }
 
@@ -78,7 +76,9 @@ export function useArticleSummary(
       setError(null);
       setLoading(false);
       setCollapsed(false);
-      // Try loading from DB
+      // Try loading from DB. Summaries are generated and cached by the Rust
+      // backend, so there is nothing to load in the web build.
+      if (!capabilities.summaries) return;
       commands.getArticleSummary(entryId).then((result) => {
         if (result.status !== 'ok' || !result.data) return;
         // Guard: only apply if still on the same entry

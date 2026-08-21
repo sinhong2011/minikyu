@@ -2,7 +2,7 @@ import { Add01Icon, Copy01Icon, Delete02Icon, Key01Icon } from '@hugeicons/core-
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { writeText } from '@tauri-apps/plugin-clipboard-manager';
+import { copyText } from '@/lib/shell';
 import * as React from 'react';
 import { toast } from 'sonner';
 import { Badge } from '@/components/ui/badge';
@@ -47,9 +47,7 @@ export function ApiTokenPane() {
 
     try {
       const result = await commands.minifluxConnect({
-        // biome-ignore lint/style/useNamingConvention: API field names
         server_url: currentAccount.server_url,
-        // biome-ignore lint/style/useNamingConvention: API field names
         auth_token: tokenValue.trim(),
       });
 
@@ -93,7 +91,7 @@ export function ApiTokenPane() {
   };
 
   const handleCopyToken = async (token: string) => {
-    await writeText(token);
+    await copyText(token);
     toast.success(_(msg`Token copied to clipboard`));
   };
 

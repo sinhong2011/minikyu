@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import type { AppCommand } from './types';
+import { capabilities } from '@/lib/platform';
 
 export const viewCommands: AppCommand[] = [
   {
@@ -192,6 +193,8 @@ export const viewCommands: AppCommand[] = [
     description: msg`Set background from file or URL`,
     group: 'view',
     keywords: ['background', 'wallpaper', 'image', 'url', 'picture'],
+    // Desktop-only: Rust downloads the image to disk and reads it back.
+    isAvailable: () => capabilities.backgroundImage,
     execute: () => {
       document.dispatchEvent(
         new CustomEvent('command:navigate-page', { detail: 'background-image' })

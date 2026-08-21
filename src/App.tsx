@@ -9,9 +9,10 @@ import { availableLanguages } from './i18n';
 import { initializeLanguage } from './i18n/language-init';
 import { initializeCommandSystem } from './lib/commands';
 import { logger } from './lib/logger';
+import { capabilities } from '@/lib/platform';
 import { buildAppMenu, setupMenuLanguageListener } from './lib/menu';
 import { cleanupOldFiles } from './lib/recovery';
-import { commands } from './lib/tauri-bindings';
+import { commands } from '@/lib/tauri-bindings';
 
 function App() {
   useAccountInitialization();
@@ -35,9 +36,12 @@ function App() {
         await initializeLanguage(savedLanguage);
 
         // Build the application menu with the initialized language
-        await buildAppMenu();
-        logger.debug('Application menu built');
-        setupMenuLanguageListener();
+        // The native menu bar is a Tauri window feature; skip it in the PWA.
+        if (capabilities.nativeMenu) {
+          await buildAppMenu();
+          logger.debug('Application menu built');
+          setupMenuLanguageListener();
+        }
       } catch (error) {
         logger.warn('Failed to initialize language or menu', { error });
       }
@@ -62,7 +66,7 @@ function App() {
       try {
         const { loadAndActivate } = await import('./i18n/config');
         await loadAndActivate(lang);
-        await buildAppMenu();
+        if (capabilities.nativeMenu) await buildAppMenu();
         // Persist language preference
         const result = await commands.loadPreferences();
         if (result.status === 'ok') {

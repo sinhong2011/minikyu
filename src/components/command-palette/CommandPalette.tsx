@@ -14,6 +14,7 @@ import {
   CommandShortcut,
 } from '@/components/ui/command';
 import { useCommandContext } from '@/hooks/use-command-context';
+import { useSelectedEntryId } from '@/hooks/use-selected-entry';
 import { executeCommand, getAllCommands, getCommandById } from '@/lib/commands';
 import { getRecentCommandIds, trackCommandUsage } from '@/lib/commands/recent-commands';
 import type { AppCommand } from '@/lib/commands/types';
@@ -36,7 +37,7 @@ const BASE_GROUP_ORDER = [
 ];
 
 function useContextAwareGroupOrder(): string[] {
-  const hasSelectedEntry = useUIStore((s) => s.selectedEntryId !== undefined);
+  const hasSelectedEntry = useSelectedEntryId() !== undefined;
   const hasPodcast = usePlayerStore((s) => s.currentEntry !== null);
 
   return useMemo(() => {

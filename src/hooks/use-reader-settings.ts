@@ -68,9 +68,7 @@ export function useReaderSettings() {
     : null;
 
   const defaultExclusions: AccountTranslationExclusions = {
-    // biome-ignore lint/style/useNamingConvention: Rust struct field name
     feed_ids: [],
-    // biome-ignore lint/style/useNamingConvention: Rust struct field name
     category_ids: [],
   };
   const currentExclusions: AccountTranslationExclusions =
@@ -81,7 +79,6 @@ export function useReaderSettings() {
     if (!preferences || !accountKey) return;
     savePreferences({
       ...preferences,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       reader_translation_exclusions: {
         ...preferences.reader_translation_exclusions,
         [accountKey]: updated,
@@ -118,7 +115,6 @@ export function useReaderSettings() {
     if (normalizedLegacyTheme !== currentTheme) {
       savePreferences({
         ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_code_theme: normalizedLegacyTheme,
       });
     }
@@ -165,13 +161,9 @@ export function useReaderSettings() {
 
       savePreferences({
         ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_font_size: DEFAULT_READER_FONT_SIZE,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_line_width: DEFAULT_READER_LINE_WIDTH,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_line_height: DEFAULT_READER_LINE_HEIGHT,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         reader_font_family: DEFAULT_READER_FONT_FAMILY,
       });
     },
@@ -195,10 +187,8 @@ export function useReaderSettings() {
     setTranslationAutoEnabled: (enabled: boolean) =>
       updateSetting('reader_translation_auto_enabled', enabled),
     setTranslationExcludedFeedIds: (ids: string[]) =>
-      // biome-ignore lint/style/useNamingConvention: Rust struct field name
       updateExclusions({ ...currentExclusions, feed_ids: ids }),
     setTranslationExcludedCategoryIds: (ids: string[]) =>
-      // biome-ignore lint/style/useNamingConvention: Rust struct field name
       updateExclusions({ ...currentExclusions, category_ids: ids }),
     setTranslationSkipSourceLanguages: (langs: string[]) =>
       updateSetting('reader_translation_skip_source_languages', langs),

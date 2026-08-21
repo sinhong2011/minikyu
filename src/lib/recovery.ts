@@ -1,4 +1,5 @@
 import { logger } from '@/lib/logger';
+import { capabilities } from '@/lib/platform';
 import { commands, type JsonValue, type RecoveryError } from '@/lib/tauri-bindings';
 
 /** Convert RecoveryError to a human-readable message */
@@ -120,6 +121,9 @@ export async function loadEmergencyData<T = unknown>(filename: string): Promise<
  * ```
  */
 export async function cleanupOldFiles(): Promise<number> {
+  // Recovery files live on the desktop filesystem; the PWA has none.
+  if (!capabilities.offlineSync) return 0;
+
   logger.debug('Starting recovery file cleanup');
 
   const result = await commands.cleanupOldRecoveryFiles();

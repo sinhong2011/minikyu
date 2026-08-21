@@ -1,4 +1,4 @@
-import type { DownloadState, Enclosure, Entry } from '@/lib/tauri-bindings';
+import type { Enclosure, Entry } from '@/lib/tauri-bindings';
 
 /**
  * Check if a feed is a podcast feed based on its entries.
@@ -115,49 +115,4 @@ export function buildPodcastDownloadFileName(entryTitle: string, enclosure: Encl
   const urlExt = inferExtensionFromUrl(enclosure.url);
   const ext = mimeExt ?? urlExt ?? 'mp3';
   return `${stem}.${ext}`;
-}
-
-export type PodcastDownloadSnapshot =
-  | { status: 'downloading'; progress: number }
-  | { status: 'completed'; progress: number; filePath: string }
-  | { status: 'failed'; progress: number; error: string }
-  | { status: 'cancelled'; progress: number };
-
-/**
- * Resolve download status for one podcast URL from download history.
- */
-export function getPodcastDownloadSnapshotForUrl(
-  history: DownloadState[],
-  enclosureUrl: string
-): PodcastDownloadSnapshot | null {
-  for (const item of history) {
-    if ('Downloading' in item && item.Downloading.url === enclosureUrl) {
-      return { status: 'downloading', progress: item.Downloading.progress };
-    }
-
-    if ('Completed' in item && item.Completed.url === enclosureUrl) {
-      return {
-        status: 'completed',
-        progress: item.Completed.progress,
-        filePath: item.Completed.file_path,
-      };
-    }
-
-    if ('Failed' in item && item.Failed.url === enclosureUrl) {
-      return {
-        status: 'failed',
-        progress: item.Failed.progress,
-        error: item.Failed.error,
-      };
-    }
-
-    if ('Cancelled' in item && item.Cancelled.url === enclosureUrl) {
-      return {
-        status: 'cancelled',
-        progress: item.Cancelled.progress,
-      };
-    }
-  }
-
-  return null;
 }

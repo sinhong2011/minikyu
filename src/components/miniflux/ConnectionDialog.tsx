@@ -33,6 +33,7 @@ import { PasswordInput } from '@/components/ui/password-input';
 import { Spinner } from '@/components/ui/spinner';
 import { resetAccountState } from '@/lib/account-reset';
 import { logger } from '@/lib/logger';
+import { capabilities } from '@/lib/platform';
 import { cn } from '@/lib/utils';
 import { useConnect } from '@/services/miniflux';
 import { useAccounts } from '@/services/miniflux/accounts';
@@ -95,7 +96,9 @@ export function ConnectionDialog({
 
   const form = useForm({
     defaultValues: {
-      serverUrl: '',
+      // On web the same-origin proxy is the real endpoint, and the field is
+      // read-only — prefill it so it reflects reality and still validates.
+      serverUrl: capabilities.configurableServerUrl ? '' : window.location.origin,
       authToken: '',
       username: '',
       password: '',
@@ -115,17 +118,13 @@ export function ConnectionDialog({
       const config =
         value.authMethod === 'token'
           ? {
-              // biome-ignore lint/style/useNamingConvention: Required by Rust backend
               server_url: normalizedServerUrl,
-              // biome-ignore lint/style/useNamingConvention: Required by Rust backend
               auth_token: value.authToken,
               username: null,
               password: null,
             }
           : {
-              // biome-ignore lint/style/useNamingConvention: Required by Rust backend
               server_url: normalizedServerUrl,
-              // biome-ignore lint/style/useNamingConvention: Required by Rust backend
               auth_token: null,
               username: value.username,
               password: value.password,
@@ -191,31 +190,44 @@ export function ConnectionDialog({
               {(field) => (
                 <Field>
                   <FieldLabel htmlFor={field.name}>{_(msg`Server URL`)}</FieldLabel>
-                  <Autocomplete
-                    items={serverUrls}
-                    value={field.state.value}
-                    onValueChange={field.handleChange}
-                  >
-                    <div className="flex items-center gap-2">
-                      <AutocompleteInput
-                        placeholder={_(msg`Select or enter server URL`)}
-                        className={cn(
-                          'flex-1 h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:ring-2 file:ring-ring file:ring-offset-2 placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
-                          field.state.meta.errors.length > 0 ? 'border-destructive' : ''
-                        )}
-                      />
-                    </div>
-                    <AutocompleteContent className="w-full p-0" align="start">
-                      <AutocompleteList>
-                        <AutocompleteEmpty>{_(msg`No server URL found.`)}</AutocompleteEmpty>
-                        {serverUrls.map((url) => (
-                          <AutocompleteItem key={url} value={url}>
-                            {url}
-                          </AutocompleteItem>
-                        ))}
-                      </AutocompleteList>
-                    </AutocompleteContent>
-                  </Autocomplete>
+                  {capabilities.configurableServerUrl ? (
+                    <Autocomplete
+                      items={serverUrls}
+                      value={field.state.value}
+                      onValueChange={field.handleChange}
+                    >
+                      <div className="flex items-center gap-2">
+                        <AutocompleteInput
+                          placeholder={_(msg`Select or enter server URL`)}
+                          className={cn(
+                            'flex-1 h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:ring-2 file:ring-ring file:ring-offset-2 placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50',
+                            field.state.meta.errors.length > 0 ? 'border-destructive' : ''
+                          )}
+                        />
+                      </div>
+                      <AutocompleteContent className="w-full p-0" align="start">
+                        <AutocompleteList>
+                          <AutocompleteEmpty>{_(msg`No server URL found.`)}</AutocompleteEmpty>
+                          {serverUrls.map((url) => (
+                            <AutocompleteItem key={url} value={url}>
+                              {url}
+                            </AutocompleteItem>
+                          ))}
+                        </AutocompleteList>
+                      </AutocompleteContent>
+                    </Autocomplete>
+                  ) : (
+                    // The deployment's proxy decides which Miniflux this reaches,
+                    // so an editable field would be a lie. Show where requests
+                    // actually go and let the token do the real work.
+                    <Input
+                      id={field.name}
+                      value={field.state.value}
+                      readOnly
+                      disabled
+                      aria-describedby={`${field.name}-fixed`}
+                    />
+                  )}
                   <FieldError
                     errors={
                       field.state.meta.isTouched || form.state.isSubmitted
@@ -223,8 +235,12 @@ export function ConnectionDialog({
                         : []
                     }
                   />
-                  <FieldDescription>
-                    {_(msg`The URL of your Miniflux server (e.g., miniflux.example.com)`)}
+                  <FieldDescription id={`${field.name}-fixed`}>
+                    {capabilities.configurableServerUrl
+                      ? _(msg`The URL of your Miniflux server (e.g., miniflux.example.com)`)
+                      : _(
+                          msg`Fixed by this deployment — requests are proxied to the Miniflux instance it was configured with. Sign in with an API token.`
+                        )}
                   </FieldDescription>
                 </Field>
               )}

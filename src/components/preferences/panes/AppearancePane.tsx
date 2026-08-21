@@ -36,6 +36,7 @@ import { useLocalImageUrl } from '@/hooks/use-local-image-url';
 import { useTheme } from '@/hooks/use-theme';
 import { availableLanguages } from '@/i18n';
 import { logger } from '@/lib/logger';
+import { capabilities, isTauri } from '@/lib/platform';
 import { commands } from '@/lib/tauri-bindings';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
 import { SettingsField, SettingsSection } from '../shared/SettingsComponents';
@@ -71,7 +72,9 @@ export function AppearancePane() {
         const { loadAndActivate } = await import('@/i18n/config');
         await loadAndActivate(language);
       } else {
-        const systemLocale = await locale();
+        // The OS plugin is desktop-only; the browser reports the same thing
+        // through `navigator.language`.
+        const systemLocale = isTauri ? await locale() : navigator.language;
         const systemLocaleLower = systemLocale?.toLowerCase() ?? 'en';
 
         // Try full locale code first (e.g., "zh-cn", "zh-tw")
@@ -163,7 +166,6 @@ export function AppearancePane() {
             value={preferences?.ui_font_family ?? null}
             onChange={(value) => {
               if (preferences) {
-                // biome-ignore lint/style/useNamingConvention: preferences field name
                 savePreferences.mutate({ ...preferences, ui_font_family: value });
               }
             }}
@@ -182,7 +184,6 @@ export function AppearancePane() {
                 if (preferences) {
                   savePreferences.mutate({
                     ...preferences,
-                    // biome-ignore lint/style/useNamingConvention: preferences field name
                     ui_font_size: value === 16 ? null : value,
                   });
                 }
@@ -208,7 +209,6 @@ export function AppearancePane() {
             value={preferences?.time_format ?? '24h'}
             onValueChange={(value: string) => {
               if (preferences) {
-                // biome-ignore lint/style/useNamingConvention: Rust backend field
                 savePreferences.mutate({ ...preferences, time_format: value });
               }
             }}
@@ -225,144 +225,143 @@ export function AppearancePane() {
         </SettingsField>
       </SettingsSection>
 
-      <SettingsSection title={_(msg`Background Image`)}>
-        <AnimatePresence mode="wait">
-          <motion.div
-            key={preferences?.background_image_path ? 'has-image' : 'no-image'}
-            initial={{ opacity: 0, y: 8 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -8 }}
-            transition={{ duration: 0.25, ease: 'easeOut' }}
-          >
-            <BackgroundImagePicker />
-          </motion.div>
-        </AnimatePresence>
-
-        <AnimatePresence>
-          {preferences?.background_image_path && (
+      {/* Desktop-only: the image is fetched to disk by Rust and read back as a data URL. */}
+      {capabilities.backgroundImage && (
+        <SettingsSection title={_(msg`Background Image`)}>
+          <AnimatePresence mode="wait">
             <motion.div
-              className="space-y-4"
-              initial={{ opacity: 0, height: 0 }}
-              animate={{ opacity: 1, height: 'auto' }}
-              exit={{ opacity: 0, height: 0 }}
-              transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              key={preferences?.background_image_path ? 'has-image' : 'no-image'}
+              initial={{ opacity: 0, y: 8 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: -8 }}
+              transition={{ duration: 0.25, ease: 'easeOut' }}
             >
-              <SettingsField
-                label={_(msg`Size`)}
-                description={_(msg`How the image fills the window.`)}
-              >
-                <Select
-                  value={preferences.background_image_size ?? 'cover'}
-                  onValueChange={(value: string) => {
-                    if (preferences) {
-                      savePreferences.mutate({
-                        ...preferences,
-                        // biome-ignore lint/style/useNamingConvention: preferences field name
-                        background_image_size: value,
-                      });
-                    }
-                  }}
-                  disabled={savePreferences.isPending}
-                >
-                  <SelectTrigger className="w-32">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="cover">{_(msg`Cover`)}</SelectItem>
-                    <SelectItem value="contain">{_(msg`Contain`)}</SelectItem>
-                    <SelectItem value="fill">{_(msg`Fill`)}</SelectItem>
-                    <SelectItem value="tile">{_(msg`Tile`)}</SelectItem>
-                  </SelectContent>
-                </Select>
-              </SettingsField>
-
-              <SettingsField
-                label={_(msg`Opacity`)}
-                description={_(msg`Adjust the background image transparency.`)}
-              >
-                <div className="flex w-48 items-center gap-3">
-                  <Slider
-                    value={[(preferences.background_image_opacity ?? 0.15) * 100]}
-                    onValueChange={(values) => {
-                      const value = Array.isArray(values) ? values[0] : values;
-                      if (preferences) {
-                        savePreferences.mutate({
-                          ...preferences,
-                          // biome-ignore lint/style/useNamingConvention: preferences field name
-                          background_image_opacity: value / 100,
-                        });
-                      }
-                    }}
-                    min={0}
-                    max={100}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <span className="w-10 text-right text-sm tabular-nums text-muted-foreground">
-                    {Math.round((preferences.background_image_opacity ?? 0.15) * 100)}%
-                  </span>
-                </div>
-              </SettingsField>
-
-              <SettingsField
-                label={_(msg`Blur`)}
-                description={_(msg`Apply blur to the background image.`)}
-              >
-                <div className="flex w-48 items-center gap-3">
-                  <Slider
-                    value={[preferences.background_image_blur ?? 0]}
-                    onValueChange={(values) => {
-                      const value = Array.isArray(values) ? values[0] : values;
-                      if (preferences) {
-                        savePreferences.mutate({
-                          ...preferences,
-                          // biome-ignore lint/style/useNamingConvention: preferences field name
-                          background_image_blur: value,
-                        });
-                      }
-                    }}
-                    min={0}
-                    max={40}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <span className="w-10 text-right text-sm tabular-nums text-muted-foreground">
-                    {preferences.background_image_blur}px
-                  </span>
-                </div>
-              </SettingsField>
-
-              <SettingsField
-                label={_(msg`UI Transparency`)}
-                description={_(msg`Make UI panels transparent to reveal the background image.`)}
-              >
-                <div className="flex w-48 items-center gap-3">
-                  <Slider
-                    value={[(preferences.background_transparency ?? 0) * 100]}
-                    onValueChange={(values) => {
-                      const value = Array.isArray(values) ? values[0] : values;
-                      if (preferences) {
-                        savePreferences.mutate({
-                          ...preferences,
-                          // biome-ignore lint/style/useNamingConvention: preferences field name
-                          background_transparency: value / 100,
-                        });
-                      }
-                    }}
-                    min={0}
-                    max={100}
-                    step={1}
-                    className="flex-1"
-                  />
-                  <span className="w-10 text-right text-sm tabular-nums text-muted-foreground">
-                    {Math.round((preferences.background_transparency ?? 0) * 100)}%
-                  </span>
-                </div>
-              </SettingsField>
+              <BackgroundImagePicker />
             </motion.div>
-          )}
-        </AnimatePresence>
-      </SettingsSection>
+          </AnimatePresence>
+
+          <AnimatePresence>
+            {preferences?.background_image_path && (
+              <motion.div
+                className="space-y-4"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: 'auto' }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3, ease: [0.4, 0, 0.2, 1] }}
+              >
+                <SettingsField
+                  label={_(msg`Size`)}
+                  description={_(msg`How the image fills the window.`)}
+                >
+                  <Select
+                    value={preferences.background_image_size ?? 'cover'}
+                    onValueChange={(value: string) => {
+                      if (preferences) {
+                        savePreferences.mutate({
+                          ...preferences,
+                          background_image_size: value,
+                        });
+                      }
+                    }}
+                    disabled={savePreferences.isPending}
+                  >
+                    <SelectTrigger className="w-32">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="cover">{_(msg`Cover`)}</SelectItem>
+                      <SelectItem value="contain">{_(msg`Contain`)}</SelectItem>
+                      <SelectItem value="fill">{_(msg`Fill`)}</SelectItem>
+                      <SelectItem value="tile">{_(msg`Tile`)}</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </SettingsField>
+
+                <SettingsField
+                  label={_(msg`Opacity`)}
+                  description={_(msg`Adjust the background image transparency.`)}
+                >
+                  <div className="flex w-48 items-center gap-3">
+                    <Slider
+                      value={[(preferences.background_image_opacity ?? 0.15) * 100]}
+                      onValueChange={(values) => {
+                        const value = Array.isArray(values) ? values[0] : values;
+                        if (preferences) {
+                          savePreferences.mutate({
+                            ...preferences,
+                            background_image_opacity: value / 100,
+                          });
+                        }
+                      }}
+                      min={0}
+                      max={100}
+                      step={1}
+                      className="flex-1"
+                    />
+                    <span className="w-10 text-right text-sm tabular-nums text-muted-foreground">
+                      {Math.round((preferences.background_image_opacity ?? 0.15) * 100)}%
+                    </span>
+                  </div>
+                </SettingsField>
+
+                <SettingsField
+                  label={_(msg`Blur`)}
+                  description={_(msg`Apply blur to the background image.`)}
+                >
+                  <div className="flex w-48 items-center gap-3">
+                    <Slider
+                      value={[preferences.background_image_blur ?? 0]}
+                      onValueChange={(values) => {
+                        const value = Array.isArray(values) ? values[0] : values;
+                        if (preferences) {
+                          savePreferences.mutate({
+                            ...preferences,
+                            background_image_blur: value,
+                          });
+                        }
+                      }}
+                      min={0}
+                      max={40}
+                      step={1}
+                      className="flex-1"
+                    />
+                    <span className="w-10 text-right text-sm tabular-nums text-muted-foreground">
+                      {preferences.background_image_blur}px
+                    </span>
+                  </div>
+                </SettingsField>
+
+                <SettingsField
+                  label={_(msg`UI Transparency`)}
+                  description={_(msg`Make UI panels transparent to reveal the background image.`)}
+                >
+                  <div className="flex w-48 items-center gap-3">
+                    <Slider
+                      value={[(preferences.background_transparency ?? 0) * 100]}
+                      onValueChange={(values) => {
+                        const value = Array.isArray(values) ? values[0] : values;
+                        if (preferences) {
+                          savePreferences.mutate({
+                            ...preferences,
+                            background_transparency: value / 100,
+                          });
+                        }
+                      }}
+                      min={0}
+                      max={100}
+                      step={1}
+                      className="flex-1"
+                    />
+                    <span className="w-10 text-right text-sm tabular-nums text-muted-foreground">
+                      {Math.round((preferences.background_transparency ?? 0) * 100)}%
+                    </span>
+                  </div>
+                </SettingsField>
+              </motion.div>
+            )}
+          </AnimatePresence>
+        </SettingsSection>
+      )}
     </div>
   );
 }
@@ -449,9 +448,7 @@ function BackgroundImagePicker() {
     if (!filePath || !preferences) return;
     savePreferences.mutate({
       ...preferences,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       background_image_path: filePath,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       background_image_url: null,
     });
   };
@@ -466,9 +463,7 @@ function BackgroundImagePicker() {
       if (result.status === 'ok') {
         savePreferences.mutate({
           ...preferences,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           background_image_path: result.data,
-          // biome-ignore lint/style/useNamingConvention: preferences field name
           background_image_url: trimmed,
         });
         setUrlValue('');
@@ -487,9 +482,7 @@ function BackgroundImagePicker() {
     if (!preferences) return;
     savePreferences.mutate({
       ...preferences,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       background_image_path: null,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       background_image_url: null,
     });
   };

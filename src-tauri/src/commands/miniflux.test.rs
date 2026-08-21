@@ -849,4 +849,123 @@ mod tests {
         assert_eq!(entries.len(), 1);
         assert_eq!(entries[0].title, "Recent Entry");
     }
+
+    // ==================== mark_entries_read_in_db tests ====================
+
+    #[tokio::test]
+    async fn test_mark_entries_read_stamps_changed_at_for_history_order() {
+        let pool = setup_test_db().await;
+        let now = Utc::now();
+        let now_str = now.to_rfc3339();
+        let old_publish = (now - Duration::days(30)).to_rfc3339();
+
+        insert_category(&pool, 1, "Technology", &now_str).await;
+        insert_feed(
+            &pool,
+            1,
+            "Tech News",
+            "https://tech.example.com",
+            "https://tech.example.com/rss",
+            1,
+            &now_str,
+        )
+        .await;
+
+        // An old article read now, and a recent one left unread.
+        insert_entry(
+            &pool,
+            1,
+            1,
+            "Old Article",
+            "unread",
+            false,
+            &old_publish,
+            None,
+        )
+        .await;
+        insert_entry(
+            &pool,
+            2,
+            1,
+            "Fresh Article",
+            "unread",
+            false,
+            &now_str,
+            None,
+        )
+        .await;
+
+        super::super::mark_entries_read_in_db(&pool, &[1])
+            .await
+            .expect("mark_entries_read_in_db should not error");
+
+        let (status, changed_at): (String, Option<String>) =
+            sqlx::query_as("SELECT status, changed_at FROM entries WHERE id = 1")
+                .fetch_one(&pool)
+                .await
+                .expect("Failed to read back entry");
+
+        assert_eq!(status, "read");
+        let changed_at = changed_at.expect("changed_at should be stamped when marking read");
+        assert!(
+            changed_at > old_publish,
+            "changed_at should record when the entry was read, not when it was published"
+        );
+
+        // History sorts by changed_at, so the just-read article must come first.
+        let filters = EntryFilters {
+            status: Some("read".to_string()),
+            order: Some("changed_at".to_string()),
+            direction: Some("desc".to_string()),
+            ..EntryFilters::default()
+        };
+        let response = super::super::get_entries_list_from_db(&pool, &filters, 1)
+            .await
+            .expect("get_entries_list_from_db should not error");
+        let entries = response.entries.expect("Should have entries");
+        assert_eq!(entries.len(), 1);
+        assert_eq!(entries[0].title, "Old Article");
+    }
+
+    #[tokio::test]
+    async fn test_mark_entries_read_is_idempotent() {
+        let pool = setup_test_db().await;
+        let now = Utc::now().to_rfc3339();
+
+        insert_category(&pool, 1, "Technology", &now).await;
+        insert_feed(
+            &pool,
+            1,
+            "Tech News",
+            "https://tech.example.com",
+            "https://tech.example.com/rss",
+            1,
+            &now,
+        )
+        .await;
+        insert_entry(&pool, 1, 1, "Article", "unread", false, &now, None).await;
+
+        super::super::mark_entries_read_in_db(&pool, &[1])
+            .await
+            .expect("first mark should not error");
+        let first: Option<String> =
+            sqlx::query_scalar("SELECT changed_at FROM entries WHERE id = 1")
+                .fetch_one(&pool)
+                .await
+                .expect("Failed to read back entry");
+
+        super::super::mark_entries_read_in_db(&pool, &[1])
+            .await
+            .expect("second mark should not error");
+        let second: Option<String> =
+            sqlx::query_scalar("SELECT changed_at FROM entries WHERE id = 1")
+                .fetch_one(&pool)
+                .await
+                .expect("Failed to read back entry");
+
+        assert_eq!(
+            first, second,
+            "Re-marking a read entry must not move it back to the top of History"
+        );
+    }
 }

@@ -1,5 +1,5 @@
 import { act, renderHook, waitFor } from '@testing-library/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test';
 import type { Enclosure, Entry } from '@/lib/tauri-bindings';
 
 vi.mock('@/lib/tauri-bindings', () => ({

@@ -22,7 +22,7 @@ describe('App Launch', () => {
       async () => {
         return browser.execute(() => window.__TEST__ != null);
       },
-      { timeout: 5000, timeoutMsg: 'Test bridge not loaded in time' },
+      { timeout: 5000, timeoutMsg: 'Test bridge not loaded in time' }
     );
 
     const stores = await browser.execute(() => ({

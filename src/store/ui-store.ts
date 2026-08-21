@@ -18,43 +18,50 @@ export type PreferencesPane =
   | 'integrations'
   | 'sync';
 
+/** Mobile-only drill-down view inside the preferences dialog (<768px layouts). */
+export type PreferencesMobileView = 'menu' | 'pane';
+
+/**
+ * Client-only UI state.
+ *
+ * Anything that is a *location* — the open entry, the active filter, the sort,
+ * Zen Mode and the article it is showing — lives in the URL instead, via the
+ * route's `validateSearch` schema. See `useSelectedEntryId` and `useZenMode`.
+ */
 interface UIState {
   leftSidebarVisible: boolean;
+  /** Mobile-only: whether the sidebar Sheet is open (<768px layouts). */
+  mobileSidebarOpen: boolean;
   commandPaletteOpen: boolean;
   preferencesOpen: boolean;
   preferencesActivePane: PreferencesPane;
+  /** Mobile-only: whether the dialog shows the root menu or a pane (<768px layouts). */
+  preferencesMobileView: PreferencesMobileView;
   downloadsOpen: boolean;
   downloadsCompact: boolean;
   lastQuickPaneEntry: string | null;
-  selectedEntryId: string | undefined;
   selectionMode: boolean;
   searchFiltersVisible: boolean;
-  zenModeEnabled: boolean;
-  zenModeEntryId: string | null;
   inAppBrowserUrl: string | null;
   showConnectionDialog: boolean;
 
   toggleLeftSidebar: () => void;
   setLeftSidebarVisible: (visible: boolean) => void;
+  setMobileSidebarOpen: (open: boolean) => void;
   toggleCommandPalette: () => void;
   setCommandPaletteOpen: (open: boolean) => void;
   togglePreferences: () => void;
   setPreferencesOpen: (open: boolean) => void;
   setPreferencesActivePane: (pane: PreferencesPane) => void;
+  setPreferencesMobileView: (view: PreferencesMobileView) => void;
   openPreferencesToPane: (pane: PreferencesPane) => void;
   toggleDownloads: () => void;
   setDownloadsOpen: (open: boolean) => void;
   toggleDownloadsCompact: () => void;
   setLastQuickPaneEntry: (text: string) => void;
-  setSelectedEntryId: (entryId: string | undefined) => void;
-  toggleEntrySelection: (entryId: string) => void;
   setSelectionMode: (enabled: boolean) => void;
-  clearSelection: () => void;
   setSearchFiltersVisible: (visible: boolean) => void;
   toggleSearchFilters: () => void;
-  toggleZenMode: () => void;
-  setZenModeEnabled: (enabled: boolean) => void;
-  setZenModeEntryId: (entryId: string | null) => void;
   setInAppBrowserUrl: (url: string | null) => void;
   setShowConnectionDialog: (show: boolean) => void;
 }
@@ -66,17 +73,16 @@ export const useUIStore = create<UIState>()(
         console.log('[ui-store] creating actions, set type:', typeof set);
         return {
           leftSidebarVisible: true,
+          mobileSidebarOpen: false,
           commandPaletteOpen: false,
           preferencesOpen: false,
           preferencesActivePane: 'general',
+          preferencesMobileView: 'menu',
           downloadsOpen: false,
           downloadsCompact: false,
           lastQuickPaneEntry: null,
-          selectedEntryId: undefined,
           selectionMode: false,
           searchFiltersVisible: false,
-          zenModeEnabled: false,
-          zenModeEntryId: null,
           inAppBrowserUrl: null,
           showConnectionDialog: false,
 
@@ -94,6 +100,9 @@ export const useUIStore = create<UIState>()(
           setLeftSidebarVisible: (visible: boolean) =>
             set({ leftSidebarVisible: visible }, undefined, 'setLeftSidebarVisible'),
 
+          setMobileSidebarOpen: (open: boolean) =>
+            set({ mobileSidebarOpen: open }, undefined, 'setMobileSidebarOpen'),
+
           toggleCommandPalette: () =>
             set(
               (state: UIState) => ({
@@ -108,20 +117,34 @@ export const useUIStore = create<UIState>()(
 
           togglePreferences: () =>
             set(
-              (state: UIState) => ({ preferencesOpen: !state.preferencesOpen }),
+              (state: UIState) => ({
+                preferencesOpen: !state.preferencesOpen,
+                // A plain open always starts at the mobile root menu.
+                preferencesMobileView: 'menu',
+              }),
               undefined,
               'togglePreferences'
             ),
 
           setPreferencesOpen: (open: boolean) =>
-            set({ preferencesOpen: open }, undefined, 'setPreferencesOpen'),
+            set(
+              open
+                ? { preferencesOpen: true, preferencesMobileView: 'menu' }
+                : { preferencesOpen: false },
+              undefined,
+              'setPreferencesOpen'
+            ),
 
           setPreferencesActivePane: (pane: PreferencesPane) =>
             set({ preferencesActivePane: pane }, undefined, 'setPreferencesActivePane'),
 
+          setPreferencesMobileView: (view: PreferencesMobileView) =>
+            set({ preferencesMobileView: view }, undefined, 'setPreferencesMobileView'),
+
           openPreferencesToPane: (pane: PreferencesPane) =>
             set(
-              { preferencesActivePane: pane, preferencesOpen: true },
+              // Deep links land directly on the pane, skipping the mobile menu.
+              { preferencesActivePane: pane, preferencesOpen: true, preferencesMobileView: 'pane' },
               undefined,
               'openPreferencesToPane'
             ),
@@ -148,8 +171,8 @@ export const useUIStore = create<UIState>()(
           setLastQuickPaneEntry: (text: string | null) =>
             set({ lastQuickPaneEntry: text }, undefined, 'setLastQuickPaneEntry'),
 
-          setSelectedEntryId: (entryId: string | undefined) =>
-            set({ selectedEntryId: entryId }, undefined, 'setSelectedEntryId'),
+          setSelectionMode: (enabled: boolean) =>
+            set({ selectionMode: enabled }, undefined, 'setSelectionMode'),
 
           setSearchFiltersVisible: (visible: boolean) =>
             set({ searchFiltersVisible: visible }, undefined, 'setSearchFiltersVisible'),
@@ -162,21 +185,6 @@ export const useUIStore = create<UIState>()(
               undefined,
               'toggleSearchFilters'
             ),
-
-          toggleZenMode: () =>
-            set(
-              (state: UIState) => ({
-                zenModeEnabled: !state.zenModeEnabled,
-              }),
-              undefined,
-              'toggleZenMode'
-            ),
-
-          setZenModeEnabled: (enabled: boolean) =>
-            set({ zenModeEnabled: enabled }, undefined, 'setZenModeEnabled'),
-
-          setZenModeEntryId: (entryId: string | null) =>
-            set({ zenModeEntryId: entryId }, undefined, 'setZenModeEntryId'),
 
           setInAppBrowserUrl: (url: string | null) =>
             set({ inAppBrowserUrl: url }, undefined, 'setInAppBrowserUrl'),

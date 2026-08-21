@@ -4,9 +4,10 @@ import { ThemeProvider } from './components/ThemeProvider';
 import { initializeLanguage } from './i18n/language-init';
 import { initializeCommandSystem } from './lib/commands';
 import { logger } from './lib/logger';
+import { capabilities } from '@/lib/platform';
 import { buildAppMenu, setupMenuLanguageListener } from './lib/menu';
 import { cleanupOldFiles } from './lib/recovery';
-import { commands } from './lib/tauri-bindings';
+import { commands } from '@/lib/tauri-bindings';
 import { useAutoReconnect } from './services/miniflux/auth';
 
 interface AppProvidersProps {
@@ -28,9 +29,12 @@ export function AppProviders({ children }: AppProvidersProps) {
 
         await initializeLanguage(savedLanguage);
 
-        await buildAppMenu();
-        logger.debug('Application menu built');
-        setupMenuLanguageListener();
+        // The native menu bar is a Tauri window feature; skip it in the PWA.
+        if (capabilities.nativeMenu) {
+          await buildAppMenu();
+          logger.debug('Application menu built');
+          setupMenuLanguageListener();
+        }
 
         window.dispatchEvent(new Event('app-init-complete'));
         logger.debug('Dispatched app-init-complete event');

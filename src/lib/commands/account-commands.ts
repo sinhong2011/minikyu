@@ -26,7 +26,7 @@ export const accountCommands: AppCommand[] = [
     group: 'account',
     keywords: ['delete', 'remove', 'disconnect', 'logout', 'sign out'],
     execute: async () => {
-      const { confirm } = await import('@tauri-apps/plugin-dialog');
+      const { confirm } = await import('@/lib/dialog');
       const _ = i18n._.bind(i18n);
 
       const accountResult = await commands.getActiveMinifluxAccount();

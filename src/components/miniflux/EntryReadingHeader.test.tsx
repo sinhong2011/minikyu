@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test';
 import type { Entry } from '@/lib/bindings';
 import { usePlayerStore } from '@/store/player-store';
 import { fireEvent, render, screen } from '@/test/test-utils';

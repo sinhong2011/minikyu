@@ -146,7 +146,6 @@ export function ParticleColumn() {
   }, []);
 
   return (
-    // biome-ignore lint/a11y/noAriaHiddenOnFocusable: decorative animation canvas, not keyboard-focusable
     <canvas
       ref={canvasRef}
       aria-hidden="true"

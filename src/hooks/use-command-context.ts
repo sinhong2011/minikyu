@@ -1,3 +1,4 @@
+import { getSelectedEntryId } from '@/hooks/use-selected-entry';
 import type { CommandContext } from '@/lib/commands/types';
 import { notify } from '@/lib/notifications';
 import { queryClient } from '@/lib/query-client';
@@ -15,7 +16,7 @@ const commandContext: CommandContext = {
   openPreferencesPane: (pane: string) =>
     useUIStore.getState().openPreferencesToPane(pane as PreferencesPane),
   showToast: (message, type = 'info') => void notify(message, undefined, { type }),
-  getSelectedEntryId: () => useUIStore.getState().selectedEntryId,
+  getSelectedEntryId,
   isConnected: () => {
     const data = queryClient.getQueryData<boolean>(['miniflux', 'auth', 'connection']);
     return data === true;

@@ -1,7 +1,7 @@
 'use client';
 
-import { Toggle as TogglePrimitive } from '@base-ui-components/react/toggle';
-import { ToggleGroup as ToggleGroupPrimitive } from '@base-ui-components/react/toggle-group';
+import { Toggle as TogglePrimitive } from '@base-ui/react/toggle';
+import { ToggleGroup as ToggleGroupPrimitive } from '@base-ui/react/toggle-group';
 import { AnimatePresence, type HTMLMotionProps, motion } from 'motion/react';
 import * as React from 'react';
 

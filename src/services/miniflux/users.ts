@@ -95,7 +95,6 @@ export function useCreateMinifluxUser() {
       const result = await commands.createUser({
         username: input.username,
         password: input.password,
-        // biome-ignore lint/style/useNamingConvention: API field names
         is_admin: input.isAdmin,
       });
 

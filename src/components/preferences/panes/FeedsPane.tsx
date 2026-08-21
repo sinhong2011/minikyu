@@ -2,9 +2,8 @@ import { Add01Icon, RefreshIcon, Search01Icon } from '@hugeicons/core-free-icons
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import type { ColumnDef } from '@tanstack/react-table';
 import { Button } from '@/components/ui/button';
-import { DataTable } from '@/components/ui/data-table';
+import { DataTable, type DataTableColumnDef } from '@/components/ui/data-table';
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import type { Feed } from '@/lib/tauri-bindings';
@@ -18,7 +17,7 @@ interface FeedsPaneProps {
   onAddFeed: () => void;
   onRefreshAll: () => void;
   isRefreshingAll: boolean;
-  columns: ColumnDef<Feed>[];
+  columns: DataTableColumnDef<Feed>[];
 }
 
 export function FeedsPane({

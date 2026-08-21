@@ -34,6 +34,14 @@ const SHORT_DATE_FORMATS: Record<string, string> = {
   'zh-TW': 'yyyy年M月d日 EEEE',
 };
 
+/** Same dates as {@link SHORT_DATE_FORMATS}, minus the weekday. */
+const COMPACT_DATE_FORMATS: Record<string, string> = {
+  ja: 'yyyy年M月d日',
+  ko: 'yyyy년 M월 d일',
+  'zh-CN': 'yyyy年M月d日',
+  'zh-TW': 'yyyy年M月d日',
+};
+
 export function formatSectionDate(date: Date, appLocale: string): string {
   const locale = getDateLocale(appLocale);
   const pattern = SECTION_DATE_FORMATS[appLocale] ?? 'EEEE, MMMM d, yyyy';
@@ -46,12 +54,20 @@ export function formatShortDate(date: Date, appLocale: string): string {
   return format(date, pattern, { locale });
 }
 
+/**
+ * Weekday-less date, for layouts too narrow for {@link formatShortDate} —
+ * "Aug 21, 2026" rather than "Friday, Aug 21, 2026".
+ */
+export function formatCompactDate(date: Date, appLocale: string): string {
+  const locale = getDateLocale(appLocale);
+  const pattern = COMPACT_DATE_FORMATS[appLocale] ?? 'MMM d, yyyy';
+  return format(date, pattern, { locale });
+}
+
 export type EntryDateSectionType = 'today' | 'yesterday' | 'weekday' | 'full-date';
 
 interface EntryWithDateFields {
-  // biome-ignore lint/style/useNamingConvention: matches Miniflux API shape
   published_at: string;
-  // biome-ignore lint/style/useNamingConvention: matches Miniflux API shape
   changed_at?: string | null;
 }
 

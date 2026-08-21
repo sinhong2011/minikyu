@@ -85,7 +85,6 @@ export function useAutoHeight<T extends HTMLElement = HTMLDivElement>(
       ro.disconnect();
       roRef.current = null;
     };
-    // biome-ignore lint/correctness/useExhaustiveDependencies: dynamic dependencies handled by hook consumer
   }, deps);
 
   React.useLayoutEffect(() => {

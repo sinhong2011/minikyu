@@ -43,6 +43,8 @@ import { useEntries, usePrefetchEntry } from '@/services/miniflux';
 import { usePreferences } from '@/services/preferences';
 import { usePlayerStore } from '@/store/player-store';
 import { useUIStore } from '@/store/ui-store';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { capabilities } from '@/lib/platform';
 import {
   type EntryListFilterStatus,
   EntryListFloatingFilterBar,
@@ -102,7 +104,10 @@ export function EntryList({
   const [isPulling, setIsPulling] = useState(false);
   const [pullRefreshPending, setPullRefreshPending] = useState(false);
   const [activeStickySectionKey, setActiveStickySectionKey] = useState<string | null>(null);
-  const showFloatingFilterBar = Boolean(currentStatus && onStatusChange);
+  const isMobile = useIsMobile();
+  // Phones surface the status filter in the list title row instead; the
+  // floating pill would collide with the bottom tab bar.
+  const showFloatingFilterBar = Boolean(currentStatus && onStatusChange) && !isMobile;
 
   const parentRef = useRef<HTMLDivElement>(null);
   const loadMoreRef = useRef<HTMLDivElement>(null);
@@ -649,12 +654,11 @@ export function EntryList({
               height: SECTION_HEADER_HEIGHT,
             }}
           >
-            <div className="relative h-full w-full px-2 py-2">
+            <div className="relative h-full w-full px-3 py-2 sm:px-6">
               <div
                 data-testid="entry-list-section-mask"
                 className="pointer-events-none absolute inset-0"
                 style={{
-                  // biome-ignore lint/style/useNamingConvention: WebKit vendor-prefixed CSS property
                   WebkitMaskImage:
                     'linear-gradient(to bottom, rgba(0, 0, 0, 1) 0%, rgba(0, 0, 0, 0.98) 62%, rgba(0, 0, 0, 0.7) 82%, rgba(0, 0, 0, 0) 100%)',
                   maskImage:
@@ -670,7 +674,7 @@ export function EntryList({
                   animate={{ opacity: 1, y: 0 }}
                   exit={{ opacity: 0, y: -8 }}
                   transition={{ duration: 0.2, ease: [0.22, 1, 0.36, 1] }}
-                  className="relative px-1 text-[0.68rem] font-semibold tracking-[0.1em] text-foreground/92 uppercase drop-shadow-[0_1px_8px_rgba(0,0,0,0.42)]"
+                  className="relative px-3.5 text-[0.68rem] font-semibold tracking-[0.1em] text-foreground/92 uppercase drop-shadow-[0_1px_8px_rgba(0,0,0,0.42)]"
                 >
                   {activeStickySection.title}
                 </motion.h2>
@@ -683,7 +687,7 @@ export function EntryList({
           ref={parentRef}
           data-testid="entry-list-scroll-container"
           className={cn(
-            'min-h-0 flex-1 overflow-y-auto overflow-x-hidden pb-3',
+            'min-h-0 flex-1 overflow-y-auto overflow-x-hidden pb-3 [scrollbar-gutter:stable_both-edges] max-sm:pb-[calc(4.5rem+env(safe-area-inset-bottom))]',
             showFloatingFilterBar && 'pb-20'
           )}
         >
@@ -753,8 +757,9 @@ export function EntryList({
                       }}
                       className="relative bg-transparent"
                     >
-                      <div className="px-2 pt-2 pb-2">
-                        <h2 className="px-1 text-[0.68rem] font-semibold tracking-[0.1em] text-foreground/70 uppercase">
+                      {/* Horizontal inset mirrors the card text: mx-3 sm:mx-6 + p-3.5 */}
+                      <div className="px-3 pt-2 pb-2 sm:px-6">
+                        <h2 className="px-3.5 text-[0.68rem] font-semibold tracking-[0.1em] text-foreground/70 uppercase">
                           {row.title}
                         </h2>
                       </div>
@@ -771,6 +776,8 @@ export function EntryList({
                 const podcastDuration = podcastEnclosure?.length
                   ? formatDuration(Number(podcastEnclosure.length))
                   : null;
+                const isSelected = selectedEntryId === entry.id;
+                const isRead = entry.status !== 'unread';
 
                 return (
                   <motion.div
@@ -797,15 +804,21 @@ export function EntryList({
                         onClick={() => handleEntryClick(entry.id)}
                         onKeyDown={handleKeyDown(entry.id)}
                         onMouseEnter={() => handleEntryHover(entry.id)}
-                        className="w-full cursor-pointer border-none bg-transparent text-left focus:outline-none"
+                        // Horizontal inset lives here, not on the Item: the Item is `w-full`,
+                        // so margins on it would overflow the list and clip the card.
+                        className="w-full cursor-pointer border-none bg-transparent px-3 py-1 text-left focus:outline-none sm:px-6"
                       >
                         <Item
-                          variant={selectedEntryId === entry.id ? 'outline' : 'default'}
+                          variant={isSelected ? 'outline' : 'default'}
                           className={cn(
-                            'relative group p-4 transition-all duration-300 ease-out',
-                            'hover:border-border/50 hover:bg-black/[0.04] dark:hover:bg-white/[0.07]',
-                            selectedEntryId === entry.id &&
-                              'bg-black/[0.06] dark:bg-white/10 shadow-md',
+                            // Entries read as cards on the plain background, on every size
+                            'relative group rounded-2xl border p-3.5 transition-all duration-300 ease-out',
+                            isRead
+                              ? // Read entries recede: no card border, no card fill
+                                'border-transparent bg-transparent hover:bg-black/[0.03] dark:hover:bg-white/[0.04]'
+                              : 'border-border/40 bg-black/[0.03] hover:border-border/50 hover:bg-black/[0.04] dark:bg-white/[0.04] dark:hover:bg-white/[0.07]',
+                            isSelected &&
+                              'border-border/60 bg-black/[0.06] shadow-md dark:bg-white/10',
                             isNew && 'border-primary/50 bg-primary/5 ring-1 ring-primary/20'
                           )}
                         >
@@ -819,55 +832,62 @@ export function EntryList({
                                     title={entry.feed.title}
                                   />
                                 )}
-                                <span className="max-w-[120px] truncate">{entry.feed.title}</span>
+                                <span className="max-w-[90px] truncate sm:max-w-[120px]">
+                                  {entry.feed.title}
+                                </span>
                               </div>
-                              <div className="flex shrink-0 items-center gap-2">
+                              <div className="flex min-w-0 shrink-0 items-center gap-1.5 whitespace-nowrap sm:gap-2">
                                 {podcastEnclosure ? (
                                   <div className="flex items-center gap-1">
-                                    <button
-                                      type="button"
-                                      className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-muted-foreground/80 transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-foreground"
-                                      title={_(msg`Download`)}
-                                      data-testid="podcast-indicator-download"
-                                      onClick={(event) => {
-                                        event.preventDefault();
-                                        event.stopPropagation();
-                                        handleDownloadPodcast(entry, podcastEnclosure);
-                                      }}
-                                    >
-                                      <HugeiconsIcon icon={Download01Icon} className="size-3" />
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-muted-foreground/80 transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-foreground"
-                                      title={_(msg`Play`)}
-                                      data-testid="podcast-indicator-play"
-                                      onClick={(event) => {
-                                        event.preventDefault();
-                                        event.stopPropagation();
-                                        handlePlayPodcast(entry, podcastEnclosure);
-                                      }}
-                                    >
-                                      <HugeiconsIcon icon={PlayIcon} className="size-3" />
-                                    </button>
-                                    <button
-                                      type="button"
-                                      className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-muted-foreground/80 transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-foreground"
-                                      title={_(msg`Add to playlist`)}
-                                      data-testid="podcast-indicator-queue"
-                                      onClick={(event) => {
-                                        event.preventDefault();
-                                        event.stopPropagation();
-                                        usePlayerStore
-                                          .getState()
-                                          .addToQueue(entry, podcastEnclosure);
-                                        toast.message(_(msg`Added to playlist`), {
-                                          description: entry.title,
-                                        });
-                                      }}
-                                    >
-                                      <HugeiconsIcon icon={Playlist03Icon} className="size-3" />
-                                    </button>
+                                    {/* Downloading and playback are Rust-backed; web shows the indicator only. */}
+                                    {capabilities.podcastWindow && (
+                                      <>
+                                        <button
+                                          type="button"
+                                          className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-muted-foreground/80 transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-foreground"
+                                          title={_(msg`Download`)}
+                                          data-testid="podcast-indicator-download"
+                                          onClick={(event) => {
+                                            event.preventDefault();
+                                            event.stopPropagation();
+                                            handleDownloadPodcast(entry, podcastEnclosure);
+                                          }}
+                                        >
+                                          <HugeiconsIcon icon={Download01Icon} className="size-3" />
+                                        </button>
+                                        <button
+                                          type="button"
+                                          className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-muted-foreground/80 transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-foreground"
+                                          title={_(msg`Play`)}
+                                          data-testid="podcast-indicator-play"
+                                          onClick={(event) => {
+                                            event.preventDefault();
+                                            event.stopPropagation();
+                                            handlePlayPodcast(entry, podcastEnclosure);
+                                          }}
+                                        >
+                                          <HugeiconsIcon icon={PlayIcon} className="size-3" />
+                                        </button>
+                                        <button
+                                          type="button"
+                                          className="inline-flex size-5 cursor-pointer items-center justify-center rounded-full border-none bg-transparent p-0 text-muted-foreground/80 transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-foreground"
+                                          title={_(msg`Add to playlist`)}
+                                          data-testid="podcast-indicator-queue"
+                                          onClick={(event) => {
+                                            event.preventDefault();
+                                            event.stopPropagation();
+                                            usePlayerStore
+                                              .getState()
+                                              .addToQueue(entry, podcastEnclosure);
+                                            toast.message(_(msg`Added to playlist`), {
+                                              description: entry.title,
+                                            });
+                                          }}
+                                        >
+                                          <HugeiconsIcon icon={Playlist03Icon} className="size-3" />
+                                        </button>
+                                      </>
+                                    )}
                                     <span
                                       className="flex items-center gap-1"
                                       data-testid="podcast-indicator"
@@ -937,7 +957,7 @@ export function EntryList({
             <div ref={loadMoreRef} className="h-4" />
 
             {isFetchingNextPage && (
-              <div className="space-y-3 px-3">
+              <div className="space-y-3 px-3 sm:px-6">
                 {[1, 2, 3].map((i) => (
                   <div
                     key={`loading-skeleton-${i}`}

@@ -2,6 +2,7 @@ import { queryClient } from '@/lib/query-client';
 import { commands } from '@/lib/tauri-bindings';
 import { usePlayerStore } from '@/store/player-store';
 import { useSyncStore } from '@/store/sync-store';
+import { forgetZenModeHistory } from '@/hooks/use-zen-mode';
 import { useUIStore } from '@/store/ui-store';
 
 /**
@@ -20,25 +21,24 @@ export async function resetAccountState(): Promise<void> {
   await queryClient.resetQueries({ queryKey: ['miniflux', 'auth'] });
   await queryClient.resetQueries({ queryKey: ['miniflux', 'users'] });
 
-  // 1.5. Clear account-scoped route params so we don't keep a stale feed/category
-  // selection from the previous account.
+  // 1.5. Clear account-scoped route params so we don't keep a stale feed,
+  // category or open entry from the previous account. The open entry lives in
+  // the URL, so this is also what closes the reader.
   if (typeof window !== 'undefined') {
     const url = new URL(window.location.href);
-    const hadFeed = url.searchParams.has('feedId');
-    const hadCategory = url.searchParams.has('categoryId');
-    if (hadFeed || hadCategory) {
-      url.searchParams.delete('feedId');
-      url.searchParams.delete('categoryId');
+    const scoped = ['feedId', 'categoryId', 'entry', 'zen'];
+    if (scoped.some((param) => url.searchParams.has(param))) {
+      for (const param of scoped) {
+        url.searchParams.delete(param);
+      }
       const nextUrl = `${url.pathname}${url.search}${url.hash}`;
       window.history.replaceState(window.history.state, '', nextUrl);
     }
   }
 
   // 2. Reset account-specific UI state
+  forgetZenModeHistory();
   const uiStore = useUIStore.getState();
-  uiStore.setSelectedEntryId(undefined);
-  uiStore.setZenModeEnabled(false);
-  uiStore.setZenModeEntryId(null);
   uiStore.setInAppBrowserUrl(null);
   uiStore.setSelectionMode(false);
   uiStore.setSearchFiltersVisible(false);

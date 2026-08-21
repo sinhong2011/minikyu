@@ -1,5 +1,5 @@
 import { act, renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { useUIStore } from '@/store/ui-store';
 
 vi.mock('@/lib/tauri-bindings', () => ({
@@ -9,6 +9,13 @@ vi.mock('@/lib/tauri-bindings', () => ({
     resizeBrowserWebview: vi.fn().mockResolvedValue(undefined),
     syncBrowserTheme: vi.fn().mockResolvedValue(undefined),
   },
+}));
+
+// The hook reads the open entry from the URL; these tests render it outside a
+// RouterProvider, so stand in a location with no entry selected.
+vi.mock('@tanstack/react-router', () => ({
+  useRouterState: ({ select }: { select: (state: unknown) => unknown }) =>
+    select({ location: { search: {} } }),
 }));
 
 vi.mock('@tauri-apps/api/window', () => ({

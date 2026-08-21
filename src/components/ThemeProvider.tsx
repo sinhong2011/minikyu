@@ -1,4 +1,4 @@
-import { emit } from '@tauri-apps/api/event';
+import { emit } from '@/lib/tauri-event';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { type Theme, ThemeProviderContext } from '@/lib/theme-context';
 import { usePreferences, useSavePreferences } from '@/services/preferences';

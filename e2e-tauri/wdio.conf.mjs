@@ -4,10 +4,7 @@ import { fileURLToPath } from 'node:url';
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 // The compiled debug binary path
-const application = path.resolve(
-  __dirname,
-  '../src-tauri/target/debug/minikyu',
-);
+const application = path.resolve(__dirname, '../src-tauri/target/debug/minikyu');
 
 export const config = {
   // WebDriver server started by tauri-plugin-webdriver inside the app

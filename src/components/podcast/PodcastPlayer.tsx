@@ -15,10 +15,9 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { listen } from '@tauri-apps/api/event';
 import { openPath } from '@tauri-apps/plugin-opener';
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Button } from '@/components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
@@ -26,7 +25,6 @@ import { Slider } from '@/components/ui/slider';
 import {
   buildPodcastDownloadFileName,
   formatTimestamp,
-  getPodcastDownloadSnapshotForUrl,
   SPEED_MAX,
   SPEED_MIN,
   SPEED_PRESETS,
@@ -35,6 +33,7 @@ import {
 import type { Enclosure, Entry } from '@/lib/tauri-bindings';
 import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
+import { findDownloadByUrl, useDownloads } from '@/services/downloads';
 import {
   resolvePodcastFeedSettingsForSpeedUpdate,
   usePodcastFeedSettings,
@@ -68,11 +67,16 @@ export function PodcastPlayer({ entry, enclosure }: PodcastPlayerProps) {
   const { data: feedSettings } = usePodcastFeedSettings(entry.feed_id);
   const [speedPopoverOpen, setSpeedPopoverOpen] = useState(false);
   const [volumePopoverOpen, setVolumePopoverOpen] = useState(false);
-  const [downloadStatus, setDownloadStatus] = useState<
-    'idle' | 'downloading' | 'completed' | 'failed' | 'cancelled'
-  >('idle');
-  const [downloadProgress, setDownloadProgress] = useState(0);
-  const [downloadFilePath, setDownloadFilePath] = useState<string | null>(null);
+  // Read-through to the shared download cache: history and live progress for
+  // this enclosure, with no fetch or event listener of its own.
+  const { data: downloads = [] } = useDownloads();
+  const download = findDownloadByUrl(downloads, enclosure.url);
+  const downloadStatus = download?.status ?? 'idle';
+  const downloadProgress = download?.progress ?? 0;
+  const downloadFilePath = download?.filePath ?? null;
+  const isDownloadActive = downloadStatus === 'downloading' || downloadStatus === 'paused';
+  // Bridges the gap between the click and the downloader's first progress
+  // event, when the cache still has no row for this enclosure.
   const [downloadPending, setDownloadPending] = useState(false);
 
   const isCurrentEntry = currentEntry?.id === entry.id;
@@ -134,85 +138,8 @@ export function PodcastPlayer({ entry, enclosure }: PodcastPlayerProps) {
     usePlayerStore.getState().toggleStopAfterCurrent();
   };
 
-  useEffect(() => {
-    let unlisten: (() => void) | null = null;
-    let active = true;
-
-    const resetState = () => {
-      setDownloadStatus('idle');
-      setDownloadProgress(0);
-      setDownloadFilePath(null);
-      setDownloadPending(false);
-    };
-
-    const loadHistory = async () => {
-      resetState();
-      const result = await commands.getDownloadsFromDb();
-      if (!active || result.status === 'error') return;
-
-      const snapshot = getPodcastDownloadSnapshotForUrl(result.data, enclosure.url);
-      if (!snapshot) return;
-
-      setDownloadStatus(snapshot.status);
-      setDownloadProgress(snapshot.progress);
-      if (snapshot.status === 'completed') {
-        setDownloadFilePath(snapshot.filePath);
-      }
-    };
-
-    const bindProgressListener = async () => {
-      unlisten = await listen<{
-        // biome-ignore lint/style/useNamingConvention: API event payload
-        file_name: string;
-        // biome-ignore lint/style/useNamingConvention: API event payload
-        file_path?: string;
-        // biome-ignore lint/style/useNamingConvention: API event payload
-        downloaded_bytes: number;
-        // biome-ignore lint/style/useNamingConvention: API event payload
-        total_bytes: number;
-        progress: number;
-        status: string;
-        url: string;
-      }>('download-progress', (event) => {
-        if (event.payload.url !== enclosure.url) return;
-
-        const status = event.payload.status.toLowerCase();
-        if (
-          status !== 'downloading' &&
-          status !== 'completed' &&
-          status !== 'failed' &&
-          status !== 'cancelled'
-        ) {
-          return;
-        }
-
-        setDownloadStatus(status);
-        setDownloadProgress(event.payload.progress);
-        if (status === 'completed') {
-          setDownloadFilePath(event.payload.file_path ?? null);
-          setDownloadPending(false);
-        }
-        if (status === 'failed' || status === 'cancelled') {
-          setDownloadPending(false);
-        }
-      });
-
-      if (!active) {
-        unlisten?.();
-      }
-    };
-
-    void loadHistory();
-    void bindProgressListener();
-
-    return () => {
-      active = false;
-      unlisten?.();
-    };
-  }, [enclosure.url]);
-
   const handleDownloadAction = async () => {
-    if (downloadStatus === 'downloading') {
+    if (isDownloadActive) {
       useUIStore.getState().setDownloadsOpen(true);
       return;
     }
@@ -223,8 +150,6 @@ export function PodcastPlayer({ entry, enclosure }: PodcastPlayerProps) {
     }
 
     setDownloadPending(true);
-    setDownloadStatus('downloading');
-    setDownloadProgress(0);
 
     const fileName = buildPodcastDownloadFileName(entry.title, enclosure);
     useUIStore.getState().setDownloadsOpen(true);
@@ -232,18 +157,14 @@ export function PodcastPlayer({ entry, enclosure }: PodcastPlayerProps) {
       description: fileName,
     });
 
+    // Progress, completion and failure all arrive as download-progress events
+    // and land in the shared cache; only the error toast is ours to raise.
     const result = await commands.downloadFile(enclosure.url, fileName, 'audio');
     setDownloadPending(false);
 
     if (result.status === 'error') {
-      setDownloadStatus('failed');
       toast.error(_(msg`Download Failed`), { description: result.error });
-      return;
     }
-
-    setDownloadStatus('completed');
-    setDownloadProgress(100);
-    setDownloadFilePath(result.data);
   };
 
   const showActiveControls = isCurrentEntry && duration > 0;
@@ -255,17 +176,17 @@ export function PodcastPlayer({ entry, enclosure }: PodcastPlayerProps) {
   const volumeIcon = isMuted ? VolumeMute01Icon : volume < 0.5 ? VolumeLowIcon : VolumeHighIcon;
   const volumePercent = Math.round((isMuted ? 0 : volume) * 100);
   const downloadLabel = useMemo(() => {
-    if (downloadStatus === 'downloading') return `${downloadProgress}%`;
+    if (isDownloadActive) return `${downloadProgress}%`;
     if (downloadStatus === 'completed') return _(msg`Open`);
     if (downloadStatus === 'failed' || downloadStatus === 'cancelled') return _(msg`Retry`);
     return _(msg`Download`);
-  }, [downloadStatus, downloadProgress, _]);
+  }, [isDownloadActive, downloadStatus, downloadProgress, _]);
   const downloadTitle = useMemo(() => {
-    if (downloadStatus === 'downloading') return _(msg`View and manage your downloads`);
+    if (isDownloadActive) return _(msg`View and manage your downloads`);
     if (downloadStatus === 'completed') return _(msg`Open`);
     if (downloadStatus === 'failed' || downloadStatus === 'cancelled') return _(msg`Retry`);
     return _(msg`Download`);
-  }, [downloadStatus, _]);
+  }, [isDownloadActive, downloadStatus, _]);
 
   return (
     <div
@@ -481,7 +402,7 @@ export function PodcastPlayer({ entry, enclosure }: PodcastPlayerProps) {
               className={cn(
                 'rounded-full border border-transparent',
                 downloadStatus === 'downloading' && 'border-primary/30 bg-primary/10',
-                (downloadPending || downloadStatus === 'downloading') && 'animate-pulse'
+                (downloadPending || isDownloadActive) && 'animate-pulse'
               )}
               onClick={handleDownloadAction}
               title={downloadTitle}

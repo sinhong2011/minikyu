@@ -1,5 +1,5 @@
 import { i18n } from '@lingui/core';
-import { beforeEach, describe, expect, it, type Mock, vi } from 'vitest';
+import { beforeEach, describe, expect, it, type Mock, vi } from 'vite-plus/test';
 import { fireEvent, render, screen, waitFor, within } from '@/test/test-utils';
 import { TranslationPane } from './TranslationPane';
 

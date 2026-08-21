@@ -1,4 +1,4 @@
-import { listen, type UnlistenFn } from '@tauri-apps/api/event';
+import { listen, type UnlistenFn } from '@/lib/tauri-event';
 import { commands, type TranslationSegmentRequest } from '@/lib/tauri-bindings';
 import {
   normalizeTranslationSegmentResponse,
@@ -8,11 +8,9 @@ import {
 } from './types';
 
 export interface TranslationStreamEvent {
-  // biome-ignore lint/style/useNamingConvention: Tauri event payload field name
   stream_id: string;
   event: 'delta' | 'done' | 'error';
   text: string;
-  // biome-ignore lint/style/useNamingConvention: Tauri event payload field name
   provider_used: string | null;
 }
 
@@ -36,21 +34,13 @@ export function buildTranslationSegmentRequest(
 ): TranslationSegmentRequest {
   return {
     text: input.text,
-    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     source_language: input.sourceLanguage ?? null,
-    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     target_language: resolveTargetLanguage(input.targetLanguage, input.preferences),
-    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     route_mode: input.preferences.reader_translation_route_mode,
-    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     primary_engine: input.preferences.reader_translation_primary_engine ?? null,
-    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     engine_fallbacks: [...(input.preferences.reader_translation_engine_fallbacks ?? [])],
-    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     llm_fallbacks: [...(input.preferences.reader_translation_llm_fallbacks ?? [])],
-    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     apple_fallback_enabled: input.preferences.reader_translation_apple_fallback_enabled,
-    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
     forced_provider: input.forcedProvider ?? null,
   };
 }

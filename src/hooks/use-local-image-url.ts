@@ -1,6 +1,7 @@
 import { convertFileSrc } from '@tauri-apps/api/core';
 import { useEffect, useState } from 'react';
 import { getPlatform } from '@/hooks/use-platform';
+import { capabilities } from '@/lib/platform';
 import { commands } from '@/lib/tauri-bindings';
 
 /**
@@ -19,14 +20,15 @@ const cache = new Map<string, string>();
 
 export function useLocalImageUrl(path: string | null | undefined): string | null {
   const [url, setUrl] = useState<string | null>(() => {
-    if (!path) return null;
+    // The browser can neither read a local path nor use the asset protocol.
+    if (!path || !capabilities.backgroundImage) return null;
     if (cache.has(path)) return cache.get(path) ?? null;
     if (getPlatform() !== 'windows') return convertFileSrc(path);
     return null;
   });
 
   useEffect(() => {
-    if (!path) {
+    if (!path || !capabilities.backgroundImage) {
       setUrl(null);
       return;
     }
