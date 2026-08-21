@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { fireEvent, render, screen, waitFor } from '@testing-library/react';
+import { fireEvent, render, screen } from '@testing-library/react';
 import React from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { SidebarProvider } from '@/components/ui/sidebar';
@@ -352,36 +352,22 @@ describe('AppSidebar', () => {
     expect(screen.getByText('Search Source')).toBeInTheDocument();
   });
 
-  // The dialogs host is code-split (FeedCategoryDialogProvider), so it mounts a
-  // tick after the click rather than synchronously.
-  it('opens add feed dialog with feed tab by default from Add Feed action', async () => {
+  it('opens add feed dialog with feed tab by default from Add Feed action', () => {
     renderComponent();
 
     fireEvent.click(screen.getByLabelText('Category actions'));
     fireEvent.click(screen.getByText('Add Feed'));
 
-    await waitFor(
-      () => {
-        expect(screen.getAllByText('Add Feed').length).toBeGreaterThan(1);
-      },
-      // Resolving the lazy chunk took ~1.3s on a loaded CI runner, past the
-      // 1s default. This waits on a module load, not on app logic.
-      { timeout: 10_000 }
-    );
+    expect(screen.getAllByText('Add Feed').length).toBeGreaterThan(1);
   });
 
-  it('opens add feed dialog with search tab from Search Source action', async () => {
+  it('opens add feed dialog with search tab from Search Source action', () => {
     renderComponent();
 
     fireEvent.click(screen.getByLabelText('Category actions'));
     fireEvent.click(screen.getByText('Search Source'));
 
-    await waitFor(
-      () => {
-        expect(screen.getAllByText('Search Source').length).toBeGreaterThan(1);
-      },
-      { timeout: 10_000 }
-    );
+    expect(screen.getAllByText('Search Source').length).toBeGreaterThan(1);
   });
 
   it('shows icon-only minimized sidebar without categories', () => {
