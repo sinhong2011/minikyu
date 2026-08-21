@@ -28,6 +28,12 @@ build
 *.local.*
 
 # =============================================================================
+# DEPLOY TOOLING
+# =============================================================================
+# Local state from `wrangler pages dev` (the Cloudflare Pages Function).
+.wrangler
+
+# =============================================================================
 # ENVIRONMENT FILES
 # =============================================================================
 .env
@@ -217,3 +223,5 @@ openspec/
 # Claude Code
 .claude/settings.json
 .claude/statusline-command.sh
+# Local worktrees created by the agent; never part of the repo.
+.claude/worktrees/

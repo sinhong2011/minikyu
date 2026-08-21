@@ -1,9 +1,14 @@
 pre-commit:
   parallel: true
   commands:
-    biome-check:
-      glob: '**/*.{js,jsx,ts,tsx,json,css}'
-      run: bun run biome check --write --no-errors-on-unmatched {staged_files}
+    fmt:
+      glob: '**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts,json,jsonc,css,yml,yaml,html}'
+      run: bunx vp fmt {staged_files} --write
+      stage_fixed: true
+
+    lint:
+      glob: '**/*.{js,jsx,mjs,cjs,ts,tsx,mts,cts}'
+      run: bunx vp lint --fix {staged_files}
       stage_fixed: true
 
     type-check:
@@ -22,7 +27,7 @@ pre-commit:
 pre-push:
   parallel: true
   commands:
-    biome-full:
+    lint-full:
       run: bun run lint
 
     test:

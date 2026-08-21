@@ -1,0 +1,19 @@
+{
+  "//": "Build/test tooling that lives outside src/: Playwright specs, the mock update server, and node scripts. These are checked by `bun run typecheck:tools` (part of `typecheck`), so oxlint's wider file scope no longer surfaces errors nothing was checking.",
+  "compilerOptions": {
+    "target": "ES2022",
+    "lib": ["ES2022", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "bundler",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
+    "allowJs": true,
+    "checkJs": false,
+    "skipLibCheck": true,
+    "noEmit": true,
+    "strict": true,
+    "noUncheckedIndexedAccess": true,
+    "types": ["node", "bun"]
+  },
+  "include": ["e2e", "scripts", "api", "functions", "deploy"]
+}

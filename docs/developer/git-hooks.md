@@ -17,7 +17,7 @@ bun run lefthook
 
 **Actions:**
 
-- Run Biome to lint and format all staged files
+- Run oxfmt to format and oxlint to lint all staged files (via `vp`)
 - Run TypeScript type checking
 - Auto-stage any fixed files
 
@@ -26,9 +26,9 @@ bun run lefthook
 pre-commit:
   parallel: true
   commands:
-    biome-check:
+    fmt:
       glob: "*.{js,jsx,ts,tsx,json,css,md}"
-      run: bun run biome check --write {staged_files}
+      run: bunx vp fmt {staged_files} --write
       stage_fixed: true
 
     type-check:
@@ -191,12 +191,12 @@ Or skip hooks (not recommended):
 git commit --no-verify
 ```
 
-### Biome Not Found
+### `vp` Not Found
 
-Install Biome:
+Install the Vite+ toolchain:
 
 ```bash
-bun add -D @biomejs/biome
+bun add -D vite-plus
 ```
 
 ### Type Check Failures

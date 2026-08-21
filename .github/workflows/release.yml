@@ -1,12 +1,12 @@
-name: "Release Tauri App"
+name: 'Release Tauri App'
 
 on:
   push:
-    tags: ["v*"]
+    tags: ['v*']
   workflow_dispatch:
     inputs:
       version:
-        description: "Release version (e.g., v1.0.0)"
+        description: 'Release version (e.g., v1.0.0)'
         required: true
         type: string
 
@@ -26,21 +26,21 @@ jobs:
       matrix:
         include:
           # macOS ARM64 (Apple Silicon)
-          - platform: "macos-latest"
-            args: "--target aarch64-apple-darwin"
-            target: "aarch64-apple-darwin"
+          - platform: 'macos-latest'
+            args: '--target aarch64-apple-darwin'
+            target: 'aarch64-apple-darwin'
           # macOS x64 (Intel)
-          - platform: "macos-latest"
-            args: "--target x86_64-apple-darwin"
-            target: "x86_64-apple-darwin"
+          - platform: 'macos-latest'
+            args: '--target x86_64-apple-darwin'
+            target: 'x86_64-apple-darwin'
           # Windows
-          - platform: "windows-latest"
-            args: ""
-            target: ""
+          - platform: 'windows-latest'
+            args: ''
+            target: ''
           # Linux
-          - platform: "ubuntu-22.04"
-            args: ""
-            target: ""
+          - platform: 'ubuntu-22.04'
+            args: ''
+            target: ''
 
     runs-on: ${{ matrix.platform }}
     steps:
@@ -49,7 +49,7 @@ jobs:
       - name: Setup Bun
         uses: oven-sh/setup-bun@v2
         with:
-          bun-version: latest
+          bun-version: 1.4.0
 
       - name: Cache Bun dependencies
         uses: actions/cache@v4
@@ -67,7 +67,7 @@ jobs:
       - name: Rust cache
         uses: swatinem/rust-cache@v2
         with:
-          workspaces: "./src-tauri -> target"
+          workspaces: './src-tauri -> target'
 
       - name: Install Linux dependencies
         if: matrix.platform == 'ubuntu-22.04'
@@ -183,7 +183,7 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tagName: ${{ github.ref_name || inputs.version }}
-          releaseName: "Minikyu ${{ github.ref_name || inputs.version }}"
+          releaseName: 'Minikyu ${{ github.ref_name || inputs.version }}'
           releaseBody: |
             ## Minikyu ${{ github.ref_name || inputs.version }}
 

@@ -1,0 +1,5 @@
+{
+  "//": "Lets oxlint's per-file tsconfig discovery find the right types for the Playwright specs. Checked via `bun run typecheck:tools`.",
+  "extends": "../tsconfig.tools.json",
+  "include": ["."]
+}
