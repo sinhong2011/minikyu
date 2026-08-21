@@ -98,7 +98,7 @@ MINIFLUX_URL = https://reader.example.com
 | ---- | -------- | ---- |
 | Netlify | 构建时由 `MINIFLUX_URL` 生成 `_redirects` | [`netlify.toml`](netlify.toml) |
 | Vercel | 边缘函数（`vercel.json` 无法插入环境变量） | [`vercel.json`](vercel.json) |
-| Cloudflare Pages | Pages Function（构建命令 `bun run build:cf`） | [`functions/miniflux-api/`](functions/miniflux-api)、[`cloudflare/`](cloudflare) |
+| Cloudflare Workers | 位于静态资源前的 Worker | [`cloudflare/worker.ts`](cloudflare/worker.ts)、[`wrangler.jsonc`](wrangler.jsonc) |
 | Docker | 镜像内置 nginx，启动时读取 `MINIFLUX_URL` | [`sinhong2011/minikyu-web`](https://hub.docker.com/r/sinhong2011/minikyu-web), [`Dockerfile`](Dockerfile)、[`docker-compose.yml`](docker-compose.yml) |
 | nginx / Caddy | 你自己的反向代理 | [PWA 文档](docs/developer/pwa.md#production) |
 

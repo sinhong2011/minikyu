@@ -85,9 +85,12 @@ browser — installable, phone-friendly, no desktop install required.
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/sinhong2011/minikyu&env=MINIFLUX_URL&envDescription=Your%20Miniflux%20instance%20URL%2C%20e.g.%20https%3A%2F%2Freader.example.com&envLink=https://github.com/sinhong2011/minikyu/blob/main/docs/developer/pwa.md)
 [![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/sinhong2011/minikyu)
 
-The Cloudflare button needs one field the other two carry for you: set the build
-command to **`bun run build:cf`** (Pages' Wrangler schema has no build-command
-field, so `wrangler.jsonc` can only supply the output directory).
+The Cloudflare button deploys a Worker that serves the static build and proxies
+`/miniflux-api/`. Its **Deploy command** is pre-filled from this repo's `deploy`
+script, which runs the web build itself — so leave the **Build command** empty
+(or set it to `bun run build:cf`) rather than the desktop-target default. Add
+`MINIFLUX_URL` afterwards under Settings → Variables and secrets as a **secret**,
+so the next deploy keeps it.
 
 ### One variable to set: `MINIFLUX_URL`
 
@@ -113,7 +116,7 @@ Miniflux → Settings → API Keys, which you can revoke without changing your p
 | ---- | ---------------------- | ------ |
 | Netlify | `_redirects`, generated at build time from `MINIFLUX_URL` | [`netlify.toml`](netlify.toml) |
 | Vercel | Edge function (`vercel.json` cannot interpolate env vars) | [`vercel.json`](vercel.json), [`api/miniflux-api.ts`](api/miniflux-api.ts) |
-| Cloudflare Pages | Pages Function (build command `bun run build:cf`) | [`wrangler.jsonc`](wrangler.jsonc), [`functions/miniflux-api/`](functions/miniflux-api), [`cloudflare/`](cloudflare) |
+| Cloudflare Workers | Worker in front of the static assets | [`wrangler.jsonc`](wrangler.jsonc), [`cloudflare/worker.ts`](cloudflare/worker.ts) |
 | Docker | nginx in the image, configured from `MINIFLUX_URL` at start | [`sinhong2011/minikyu-web`](https://hub.docker.com/r/sinhong2011/minikyu-web), [`Dockerfile`](Dockerfile), [`docker-compose.yml`](docker-compose.yml) |
 | nginx / Caddy | Reverse proxy you control | [PWA docs](docs/developer/pwa.md#production) |
 

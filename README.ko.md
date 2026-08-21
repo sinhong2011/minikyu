@@ -98,7 +98,7 @@ MINIFLUX_URL = https://reader.example.com
 | ------ | ----------- | ---- |
 | Netlify | 빌드 시 `MINIFLUX_URL`로 `_redirects` 생성 | [`netlify.toml`](netlify.toml) |
 | Vercel | 엣지 함수 (`vercel.json`은 환경 변수를 치환할 수 없음) | [`vercel.json`](vercel.json) |
-| Cloudflare Pages | Pages Function (빌드 명령 `bun run build:cf`) | [`functions/miniflux-api/`](functions/miniflux-api), [`cloudflare/`](cloudflare) |
+| Cloudflare Workers | 정적 자산 앞단의 Worker | [`cloudflare/worker.ts`](cloudflare/worker.ts), [`wrangler.jsonc`](wrangler.jsonc) |
 | Docker | 이미지에 포함된 nginx가 시작할 때 `MINIFLUX_URL`을 읽음 | [`sinhong2011/minikyu-web`](https://hub.docker.com/r/sinhong2011/minikyu-web), [`Dockerfile`](Dockerfile), [`docker-compose.yml`](docker-compose.yml) |
 | nginx / Caddy | 직접 운영하는 리버스 프록시 | [PWA 문서](docs/developer/pwa.md#production) |
 

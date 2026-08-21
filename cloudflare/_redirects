@@ -1,7 +1,0 @@
-# Cloudflare Pages: SPA fallback. Copied into dist/ by `bun run build:cf`.
-#
-# Unlike Netlify's, this file carries no /miniflux-api rule — Cloudflare's
-# _redirects cannot proxy to an external origin, so that hop runs in
-# functions/miniflux-api/[[path]].ts instead. Functions are matched before
-# _redirects, so the catch-all below never shadows it.
-/*    /index.html    200

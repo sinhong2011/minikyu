@@ -1,18 +1,31 @@
 {
-  // Cloudflare Pages project config, so `wrangler pages deploy` and the
-  // "Deploy to Cloudflare" button in README.md know where the build lands.
+  // Cloudflare Workers config: the static `dist/` is served as Worker assets,
+  // and one Worker sits in front of it to proxy `/miniflux-api/*` to Miniflux.
   //
-  // Pages' Wrangler schema has no build-command field — that stays a dashboard
-  // setting (or a field in the deploy-button form) and must be `bun run
-  // build:cf`, not `build:web`: the Cloudflare target additionally copies
-  // `cloudflare/_headers` and `cloudflare/_redirects` into `dist/`. They are
-  // kept out of `public/` on purpose, or Netlify would pick up the same files.
+  // Workers, not Pages, even though this is a static site: the "Deploy to
+  // Cloudflare" button in README.md only supports Workers applications, and
+  // the flow behind it runs `wrangler deploy` — never `wrangler pages deploy`.
   //
-  // The proxy to Miniflux is a Pages Function (`functions/miniflux-api/`), and
-  // it needs `MINIFLUX_URL` under Settings → Variables and secrets. Deliberately
-  // not declared in `vars` here: it differs per deployment and belongs in the
-  // dashboard, not in the repo. See `docs/developer/pwa.md`.
+  // The build must be `bun run build:cf`, not `build:web`: the Cloudflare
+  // target additionally copies `cloudflare/_headers` into `dist/`. That file is
+  // kept out of `public/` on purpose, or Netlify would pick it up and end up
+  // with two sources of truth for its headers. The `deploy` script in
+  // package.json chains the two, and Cloudflare pre-fills its deploy field
+  // from that script.
+  //
+  // `MINIFLUX_URL` is deliberately not declared in `vars` here: it differs per
+  // deployment and belongs in the dashboard as a secret, not in the repo.
+  // See `docs/developer/pwa.md`.
   "name": "minikyu",
   "compatibility_date": "2026-08-21",
-  "pages_build_output_dir": "dist",
+  "main": "cloudflare/worker.ts",
+  "assets": {
+    "directory": "./dist",
+    "binding": "ASSETS",
+    // Client-side routing: an unknown path is a route, not a missing file.
+    "not_found_handling": "single-page-application",
+    // Assets are matched before the Worker by default, so the proxy has to
+    // claim its prefix explicitly — otherwise the SPA fallback swallows it.
+    "run_worker_first": ["/miniflux-api/*"],
+  },
 }

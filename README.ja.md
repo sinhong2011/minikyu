@@ -98,7 +98,7 @@ MINIFLUX_URL = https://reader.example.com
 | ------ | ---------------- | ---- |
 | Netlify | ビルド時に `MINIFLUX_URL` から `_redirects` を生成 | [`netlify.toml`](netlify.toml) |
 | Vercel | エッジ関数（`vercel.json` は環境変数を展開できないため） | [`vercel.json`](vercel.json) |
-| Cloudflare Pages | Pages Function（ビルドコマンドは `bun run build:cf`） | [`functions/miniflux-api/`](functions/miniflux-api)、[`cloudflare/`](cloudflare) |
+| Cloudflare Workers | 静的アセットの前段に立つ Worker | [`cloudflare/worker.ts`](cloudflare/worker.ts)、[`wrangler.jsonc`](wrangler.jsonc) |
 | Docker | イメージ内の nginx。起動時に `MINIFLUX_URL` を読み込む | [`sinhong2011/minikyu-web`](https://hub.docker.com/r/sinhong2011/minikyu-web), [`Dockerfile`](Dockerfile)、[`docker-compose.yml`](docker-compose.yml) |
 | nginx / Caddy | 自前のリバースプロキシ | [PWA ドキュメント](docs/developer/pwa.md#production) |
 

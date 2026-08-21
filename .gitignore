@@ -30,7 +30,7 @@ build
 # =============================================================================
 # DEPLOY TOOLING
 # =============================================================================
-# Local state from `wrangler pages dev` (the Cloudflare Pages Function).
+# Local state from `wrangler dev` (the Cloudflare Worker in cloudflare/).
 .wrangler
 
 # =============================================================================

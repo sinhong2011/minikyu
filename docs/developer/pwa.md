@@ -280,7 +280,7 @@ so it stays green when Miniflux itself is down. Put TLS in front of it the way
 you would any other container; the app only needs the two paths to share an
 origin.
 
-### One-click deploy (Netlify / Vercel / Cloudflare Pages)
+### One-click deploy (Netlify / Vercel / Cloudflare Workers)
 
 All three hosts are wired up in-repo, and all three need exactly one variable:
 
@@ -295,7 +295,7 @@ environment variable into a static rewrite rule:
 | ---- | --------- | ----- |
 | Netlify | `_redirects` generated at build time | `netlify.toml`, `scripts/write-deploy-redirects.ts` |
 | Vercel | Edge function proxy | `vercel.json`, `api/miniflux-api.ts` |
-| Cloudflare Pages | Pages Function proxy | `wrangler.jsonc`, `functions/miniflux-api/[[path]].ts`, `cloudflare/` |
+| Cloudflare Workers | Worker proxy in front of static assets | `wrangler.jsonc`, `cloudflare/worker.ts`, `cloudflare/_headers` |
 
 Vercel and Cloudflare run the *same* proxy — `deploy/miniflux-proxy.ts`, written
 against web-standard `Request`/`Response`/`fetch`. Only the way the runtime
@@ -332,30 +332,40 @@ and 404s `/miniflux-api/v1/me` — i.e. everything the app actually calls. Verce
 merges the original query string into the destination, so the function deletes
 `__mfpath` and forwards the rest.
 
-**Cloudflare Pages.** `wrangler.jsonc` declares the project name and
-`pages_build_output_dir`, so the output directory is already `dist`. The build
-command still has to be set by hand to `bun run build:cf` — Pages' Wrangler
-schema has no build-command field, unlike Workers. Three things differ from the
-other two:
+**Cloudflare Workers.** `wrangler.jsonc` serves `dist/` as [Workers static
+assets](https://developers.cloudflare.com/workers/static-assets/) and puts one
+Worker (`cloudflare/worker.ts`) in front of them. It is a **Worker, not a Pages
+project**, even though the site is static: the README's **Deploy to Cloudflare**
+button (`https://deploy.workers.cloudflare.com/?url=<repo>`) only supports
+Workers applications, and the build container behind it runs `wrangler deploy` —
+which fails outright against a `pages_build_output_dir` config, since that needs
+`wrangler pages deploy`. Four things differ from the other two hosts:
 
-- The proxy is a **Pages Function** at `functions/miniflux-api/[[path]].ts`.
-  Cloudflare passes bindings on `context.env`, never `process.env`.
-- `MINIFLUX_URL` goes under Settings → Variables and secrets, and applies at
-  request time — no rebuild to repoint it.
-- Static rules live in `cloudflare/_redirects` (SPA fallback) and
-  `cloudflare/_headers` (CSP and cache policy), copied into `dist/` by
-  `build:cf`. They are kept out of `public/` deliberately: Netlify would pick
-  up the same files and end up with two sources of truth for its headers.
+- The proxy is a plain `fetch` handler. Cloudflare passes bindings on the `env`
+  argument, never `process.env`.
+- Assets are matched before the Worker, so `assets.run_worker_first` lists
+  `/miniflux-api/*` to hand exactly that prefix over. Everything else is served
+  from `dist/`, with `not_found_handling: "single-page-application"` doing the
+  SPA fallback that `cloudflare/_redirects` used to — hence no `_redirects`
+  file here. (Cloudflare's could not have proxied `/miniflux-api/*` to an
+  external origin anyway; that is why the Worker exists.)
+- `cloudflare/_headers` (CSP and cache policy) is copied into `dist/` by
+  `build:cf`. It is kept out of `public/` deliberately: Netlify would pick up
+  the same file and end up with two sources of truth for its headers. It only
+  applies to asset responses — Worker responses are on their own, which is fine
+  for API JSON.
+- `MINIFLUX_URL` goes under Settings → Variables and secrets and applies at
+  request time — no rebuild to repoint it. Add it as a **secret**: secrets are
+  preserved across deploys, while a plain-text variable that exists only in the
+  dashboard can be dropped by the next `wrangler deploy`, which publishes the
+  `vars` from `wrangler.jsonc` (where the value deliberately does not live).
 
-Cloudflare's `_redirects` cannot proxy to an external origin — hence the
-Function — and Functions are matched before `_redirects`, so the `/*` SPA
-catch-all never shadows `/miniflux-api/*`.
-
-The README's **Deploy to Cloudflare** button
-(`https://deploy.workers.cloudflare.com/?url=<repo>`) forks the repo and walks
-through the same settings. It cannot pre-fill the build command or
-`MINIFLUX_URL` the way the Vercel button pre-fills its variable prompt, so both
-are steps in that form.
+The button pre-fills its **Deploy command** from the `deploy` script in
+`package.json` — `bun run build:cf && bunx wrangler deploy` — so the web build
+runs even if the auto-detected **Build command** is left at `bun run build`,
+which builds the desktop target. Leaving that field empty just avoids building
+twice. `MINIFLUX_URL` cannot be pre-filled the way the Vercel button pre-fills
+its variable prompt, so it stays a step in that form.
 
 To generate the redirects yourself for any Netlify-style host:
 

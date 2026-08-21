@@ -15,5 +15,5 @@
     "noUncheckedIndexedAccess": true,
     "types": ["node", "bun"]
   },
-  "include": ["e2e", "scripts", "api", "functions", "deploy"]
+  "include": ["e2e", "scripts", "api", "cloudflare", "deploy"]
 }
