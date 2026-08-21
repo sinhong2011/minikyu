@@ -1,0 +1,20 @@
+# Cloudflare Pages: response headers. Copied into dist/ by `bun run build:cf`.
+#
+# Kept in step with netlify.toml, vercel.json and docker/default.conf.template.
+# `connect-src 'self'` is the load-bearing rule: the browser build keeps
+# Miniflux credentials in localStorage and only ever calls the same-origin
+# /miniflux-api proxy, so an injected script has nowhere to post them.
+# `frame-src` mirrors ALLOWED_VIDEO_HOSTS in src/lib/video-embed-utils.ts.
+/*
+  Content-Security-Policy: default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https: http:; media-src 'self' blob: https: http:; font-src 'self' data:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; frame-src https://www.youtube.com https://youtube.com https://www.youtube-nocookie.com https://youtube-nocookie.com https://player.bilibili.com https://bilibili.com https://www.bilibili.com
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: strict-origin-when-cross-origin
+  Permissions-Policy: geolocation=(), microphone=(), camera=(), payment=()
+
+# Content-hashed by the build; safe to pin forever.
+/assets/*
+  Cache-Control: public, max-age=31536000, immutable
+
+# A stale service worker pins clients to an old build permanently.
+/sw.js
+  Cache-Control: public, max-age=0, must-revalidate

@@ -1,0 +1,60 @@
+#!/bin/sh
+# Sourced by nginx's docker-entrypoint before 20-envsubst-on-templates.sh.
+# Validates MINIFLUX_URL and derives everything default.conf.template needs:
+#
+#   MINIFLUX_URL  — normalised, no trailing slash (proxy_pass appends its own,
+#                   and `https://host//v1/...` is not the same request)
+#   MINIFLUX_HOST — host[:port], used for the upstream Host header and TLS SNI
+#
+# It is a `.envsh` rather than a `.sh` because the entrypoint sources those;
+# a subshell's exports would never reach envsubst.
+
+if [ -z "${MINIFLUX_URL:-}" ]; then
+  cat >&2 <<'MSG'
+minikyu: MINIFLUX_URL is not set.
+
+This image serves the PWA *and* proxies /miniflux-api to your Miniflux, because
+Miniflux sends no CORS headers and the browser can only call it same-origin.
+So it needs to know where Miniflux is:
+
+  docker run -p 8085:80 -e MINIFLUX_URL=https://reader.example.com minikyu-web
+
+Inside a compose network the service name works too, e.g.
+MINIFLUX_URL=http://miniflux:8080.
+MSG
+  exit 1
+fi
+
+# Trailing slashes: harmless in a browser, doubled path segments in proxy_pass.
+MINIFLUX_URL=$(printf '%s' "$MINIFLUX_URL" | sed -e 's:^[[:space:]]*::' -e 's:[[:space:]]*$::' -e 's:/*$::')
+
+case "$MINIFLUX_URL" in
+  http://*|https://*) ;;
+  *)
+    echo "minikyu: MINIFLUX_URL must start with http:// or https:// (got '$MINIFLUX_URL')." >&2
+    exit 1
+    ;;
+esac
+
+# host[:port] — everything between the scheme and the first path segment.
+_miniflux_rest=${MINIFLUX_URL#*://}
+MINIFLUX_HOST=${_miniflux_rest%%/*}
+unset _miniflux_rest
+
+if [ -z "$MINIFLUX_HOST" ]; then
+  echo "minikyu: MINIFLUX_URL has no host (got '$MINIFLUX_URL')." >&2
+  exit 1
+fi
+
+# Plaintext is fine over a private compose/bridge network and nowhere else —
+# the API token rides on every one of these requests.
+case "$MINIFLUX_URL" in
+  http://*)
+    echo "minikyu: warning — MINIFLUX_URL is plaintext http. Acceptable only if" >&2
+    echo "         '$MINIFLUX_HOST' is reachable solely on a private network." >&2
+    ;;
+esac
+
+export MINIFLUX_URL MINIFLUX_HOST
+
+echo "minikyu: proxying /miniflux-api/ -> $MINIFLUX_URL/ (Host: $MINIFLUX_HOST)"

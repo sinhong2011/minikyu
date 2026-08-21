@@ -1,0 +1,106 @@
+# Rendered to /etc/nginx/conf.d/default.conf at container start by nginx's
+# entrypoint (envsubst), replacing the stock config. Only ${MINIFLUX_*} is
+# substituted — NGINX_ENVSUBST_FILTER in the Dockerfile keeps nginx's own
+# $uri/$host/$scheme from being eaten. Both values come from
+# docker/10-resolve-miniflux-url.envsh.
+
+# Cache policy as a map rather than per-location `add_header`, because nginx
+# does not inherit add_header into a location that declares one of its own —
+# a Cache-Control header inside `location /assets/` would silently drop the
+# security headers below. An empty value emits no header at all, which is how
+# proxied Miniflux responses keep their own.
+map $uri $minikyu_cache_control {
+    # Content-hashed by the build; safe to pin forever.
+    ~^/assets/         "public, max-age=31536000, immutable";
+    # Miniflux answers for itself.
+    ~^/miniflux-api/   "";
+    # index.html, sw.js, the manifest, icons. A stale service worker would pin
+    # clients to an old build permanently.
+    default            "public, max-age=0, must-revalidate";
+}
+
+server {
+    listen      80;
+    listen      [::]:80;
+    server_name _;
+
+    root  /usr/share/nginx/html;
+    index index.html;
+
+    # Only API calls carry bodies here (an OPML import at most).
+    client_max_body_size 10m;
+
+    gzip            on;
+    gzip_vary       on;
+    gzip_min_length 1024;
+    gzip_proxied    any;
+    gzip_types      text/plain text/css application/javascript application/json
+                    image/svg+xml application/manifest+json;
+
+    add_header Cache-Control $minikyu_cache_control always;
+
+    # Kept byte-identical to netlify.toml and vercel.json — the three
+    # deployments should not disagree about what the app is allowed to do.
+    # `connect-src 'self'` is the load-bearing rule: the browser build keeps
+    # Miniflux credentials in localStorage, and the adapter only ever calls the
+    # same-origin /miniflux-api proxy, so an injected script has nowhere to post
+    # what it reads. `frame-src` mirrors ALLOWED_VIDEO_HOSTS in
+    # src/lib/video-embed-utils.ts; keep the two in step.
+    add_header Content-Security-Policy "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https: http:; media-src 'self' blob: https: http:; font-src 'self' data:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; frame-src https://www.youtube.com https://youtube.com https://www.youtube-nocookie.com https://youtube-nocookie.com https://player.bilibili.com https://bilibili.com https://www.bilibili.com" always;
+    add_header X-Content-Type-Options "nosniff" always;
+    add_header Referrer-Policy        "strict-origin-when-cross-origin" always;
+    add_header Permissions-Policy     "geolocation=(), microphone=(), camera=(), payment=()" always;
+
+    # For `docker compose` / orchestrator health checks. Deliberately local, so
+    # it stays green when Miniflux itself is down.
+    location = /healthz {
+        access_log off;
+        default_type text/plain;
+        return 200 "ok\n";
+    }
+
+    # Miniflux, same-origin. The reason this image serves the app itself instead
+    # of being a plain static host.
+    #
+    # The trailing slash on proxy_pass is load-bearing: it replaces the matched
+    # /miniflux-api/ prefix rather than appending to it, so
+    # /miniflux-api/v1/entries reaches Miniflux as /v1/entries.
+    location /miniflux-api/ {
+        proxy_pass         ${MINIFLUX_URL}/;
+        proxy_http_version 1.1;
+
+        # The upstream's own vhost, not this container's — a hosted Miniflux
+        # routes on Host, and sending the PWA's hostname lands on the wrong site.
+        proxy_set_header Host              ${MINIFLUX_HOST};
+        proxy_set_header X-Real-IP         $remote_addr;
+        proxy_set_header X-Forwarded-For   $proxy_add_x_forwarded_for;
+        proxy_set_header X-Forwarded-Proto $scheme;
+
+        # nginx sends no SNI to an https upstream unless told to, which fails
+        # the handshake on any shared or proxied host.
+        proxy_ssl_server_name on;
+        proxy_ssl_name        ${MINIFLUX_HOST};
+
+        # Refreshing a large feed list is not instant on a cold Miniflux.
+        proxy_connect_timeout 15s;
+        proxy_read_timeout    120s;
+        proxy_send_timeout    120s;
+    }
+
+    # Hashed filenames: a miss is a genuine 404, never the SPA shell.
+    location /assets/ {
+        try_files $uri =404;
+    }
+
+    # nginx's mime.types predates .webmanifest; without this it goes out as
+    # application/octet-stream and the install prompt never appears.
+    location = /manifest.webmanifest {
+        types { }
+        default_type application/manifest+json;
+    }
+
+    # SPA fallback — the router owns every other path.
+    location / {
+        try_files $uri /index.html;
+    }
+}
