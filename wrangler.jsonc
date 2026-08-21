@@ -1,0 +1,18 @@
+{
+  // Cloudflare Pages project config, so `wrangler pages deploy` and the
+  // "Deploy to Cloudflare" button in README.md know where the build lands.
+  //
+  // Pages' Wrangler schema has no build-command field — that stays a dashboard
+  // setting (or a field in the deploy-button form) and must be `bun run
+  // build:cf`, not `build:web`: the Cloudflare target additionally copies
+  // `cloudflare/_headers` and `cloudflare/_redirects` into `dist/`. They are
+  // kept out of `public/` on purpose, or Netlify would pick up the same files.
+  //
+  // The proxy to Miniflux is a Pages Function (`functions/miniflux-api/`), and
+  // it needs `MINIFLUX_URL` under Settings → Variables and secrets. Deliberately
+  // not declared in `vars` here: it differs per deployment and belongs in the
+  // dashboard, not in the repo. See `docs/developer/pwa.md`.
+  "name": "minikyu",
+  "compatibility_date": "2026-08-21",
+  "pages_build_output_dir": "dist",
+}

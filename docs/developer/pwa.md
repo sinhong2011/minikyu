@@ -295,7 +295,7 @@ environment variable into a static rewrite rule:
 | ---- | --------- | ----- |
 | Netlify | `_redirects` generated at build time | `netlify.toml`, `scripts/write-deploy-redirects.ts` |
 | Vercel | Edge function proxy | `vercel.json`, `api/miniflux-api.ts` |
-| Cloudflare Pages | Pages Function proxy | `functions/miniflux-api/[[path]].ts`, `cloudflare/` |
+| Cloudflare Pages | Pages Function proxy | `wrangler.jsonc`, `functions/miniflux-api/[[path]].ts`, `cloudflare/` |
 
 Vercel and Cloudflare run the *same* proxy — `deploy/miniflux-proxy.ts`, written
 against web-standard `Request`/`Response`/`fetch`. Only the way the runtime
@@ -332,8 +332,11 @@ and 404s `/miniflux-api/v1/me` — i.e. everything the app actually calls. Verce
 merges the original query string into the destination, so the function deletes
 `__mfpath` and forwards the rest.
 
-**Cloudflare Pages.** Set the build command to `bun run build:cf` and the
-output directory to `dist`. Three things differ from the other two:
+**Cloudflare Pages.** `wrangler.jsonc` declares the project name and
+`pages_build_output_dir`, so the output directory is already `dist`. The build
+command still has to be set by hand to `bun run build:cf` — Pages' Wrangler
+schema has no build-command field, unlike Workers. Three things differ from the
+other two:
 
 - The proxy is a **Pages Function** at `functions/miniflux-api/[[path]].ts`.
   Cloudflare passes bindings on `context.env`, never `process.env`.
@@ -347,6 +350,12 @@ output directory to `dist`. Three things differ from the other two:
 Cloudflare's `_redirects` cannot proxy to an external origin — hence the
 Function — and Functions are matched before `_redirects`, so the `/*` SPA
 catch-all never shadows `/miniflux-api/*`.
+
+The README's **Deploy to Cloudflare** button
+(`https://deploy.workers.cloudflare.com/?url=<repo>`) forks the repo and walks
+through the same settings. It cannot pre-fill the build command or
+`MINIFLUX_URL` the way the Vercel button pre-fills its variable prompt, so both
+are steps in that form.
 
 To generate the redirects yourself for any Netlify-style host:
 
