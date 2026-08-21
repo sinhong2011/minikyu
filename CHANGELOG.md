@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.12.1](https://github.com/sinhong2011/minikyu/compare/v1.12.0...v1.12.1) (2026-08-21)
+
+
+### Bug Fixes
+
+* **deploy:** Proxy every Miniflux path on Vercel ([0dc207c](https://github.com/sinhong2011/minikyu/commit/0dc207c68a8be0f43b1e31d541412a5f68278eb5))
+* **web:** Reject credentials that cannot be sent as HTTP headers ([70403cb](https://github.com/sinhong2011/minikyu/commit/70403cbfbc670e10c2453a36e5b96d39915b60cf))
+
 ## [1.12.0](https://github.com/sinhong2011/minikyu/compare/v1.11.9...v1.12.0) (2026-08-21)
 
 
