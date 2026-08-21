@@ -62,11 +62,19 @@ server {
     # Miniflux, same-origin. The reason this image serves the app itself instead
     # of being a plain static host.
     #
-    # The trailing slash on proxy_pass is load-bearing: it replaces the matched
-    # /miniflux-api/ prefix rather than appending to it, so
-    # /miniflux-api/v1/entries reaches Miniflux as /v1/entries.
-    location /miniflux-api/ {
-        proxy_pass         ${MINIFLUX_URL}/;
+    # A literal host here would be resolved once, at config load, and nginx
+    # refuses to start if it does not resolve — so a Miniflux that is merely
+    # slow to come up on a compose network took the whole container down with
+    # it. Proxying through a variable defers resolution to request time, which
+    # turns that into a 502 that recovers on its own.
+    #
+    # The cost is that a variable proxy_pass no longer strips the matched
+    # prefix, so the path is rebuilt explicitly from the capture below.
+    location ~ ^/miniflux-api/(?<minikyu_api_path>.*)$ {
+        resolver           ${MINIFLUX_RESOLVERS} ipv6=off valid=30s;
+        resolver_timeout   5s;
+        set $minikyu_upstream ${MINIFLUX_URL};
+        proxy_pass         $minikyu_upstream/$minikyu_api_path$is_args$args;
         proxy_http_version 1.1;
 
         # The upstream's own vhost, not this container's — a hosted Miniflux

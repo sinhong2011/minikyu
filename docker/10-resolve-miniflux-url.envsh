@@ -55,6 +55,22 @@ case "$MINIFLUX_URL" in
     ;;
 esac
 
-export MINIFLUX_URL MINIFLUX_HOST
+# nginx resolves a literal proxy_pass host at *config load* time, so an
+# unresolvable Miniflux made the container refuse to start rather than serve the
+# app and return 502 — fatal on a compose network where Miniflux may still be
+# booting. The template therefore proxies through a variable, which defers
+# resolution to request time, and that requires an explicit resolver.
+#
+# The stock 15-local-resolvers.envsh exports NGINX_LOCAL_RESOLVERS, but it runs
+# *after* this script and NGINX_ENVSUBST_FILTER=MINIFLUX_ would not substitute
+# it anyway. Derive the same value here under a name the filter passes.
+MINIFLUX_RESOLVERS=$(awk 'BEGIN{ORS=" "} $1=="nameserver" {if ($2 ~ ":") {print "["$2"]"} else {print $2}}' /etc/resolv.conf)
+MINIFLUX_RESOLVERS=${MINIFLUX_RESOLVERS% }
 
-echo "minikyu: proxying /miniflux-api/ -> $MINIFLUX_URL/ (Host: $MINIFLUX_HOST)"
+# Docker's embedded DNS, in case /etc/resolv.conf yielded nothing. An empty
+# `resolver` directive is a config error, so this must never be blank.
+[ -n "$MINIFLUX_RESOLVERS" ] || MINIFLUX_RESOLVERS=127.0.0.11
+
+export MINIFLUX_URL MINIFLUX_HOST MINIFLUX_RESOLVERS
+
+echo "minikyu: proxying /miniflux-api/ -> $MINIFLUX_URL/ (Host: $MINIFLUX_HOST, resolvers: $MINIFLUX_RESOLVERS)"
