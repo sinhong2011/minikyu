@@ -5,6 +5,7 @@ import {
   Settings01Icon,
   ViewOffIcon,
   YogaIcon,
+  Search01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
@@ -23,7 +24,10 @@ import { cn } from '@/lib/utils';
 import { useIsConnected } from '@/services/miniflux/auth';
 import { useSyncMiniflux } from '@/services/miniflux/feeds';
 import { useSyncStore } from '@/store/sync-store';
+import { toggleZenMode, useZenMode } from '@/hooks/use-zen-mode';
 import { useUIStore } from '@/store/ui-store';
+import { useIsMobile } from '@/hooks/use-mobile';
+import { capabilities } from '@/lib/platform';
 
 interface WindowTitleBarProps {
   className?: string;
@@ -35,9 +39,19 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
   const { _ } = useLingui();
   const leftSidebarVisible = useUIStore((state) => state.leftSidebarVisible);
   const toggleLeftSidebar = useUIStore((state) => state.toggleLeftSidebar);
+  const isMobile = useIsMobile();
+  // On phones the sidebar is a Sheet with its own open state; the desktop
+  // collapse flag would be silently ignored there.
+  const handleToggleSidebar = () => {
+    if (isMobile) {
+      const { mobileSidebarOpen, setMobileSidebarOpen } = useUIStore.getState();
+      setMobileSidebarOpen(!mobileSidebarOpen);
+      return;
+    }
+    toggleLeftSidebar();
+  };
   const toggleDownloads = useUIStore((state) => state.toggleDownloads);
-  const zenModeEnabled = useUIStore((state) => state.zenModeEnabled);
-  const toggleZenMode = useUIStore((state) => state.toggleZenMode);
+  const { enabled: zenModeEnabled } = useZenMode();
   const { data: isConnected } = useIsConnected();
   const { status: syncStatus, icon: syncIcon, title: syncTitle } = useSyncIndicator();
   const syncMiniflux = useSyncMiniflux();
@@ -58,19 +72,19 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
       data-tauri-drag-region
       data-frosted
       className={cn(
-        'relative z-20 flex h-10 w-full shrink-0 items-center gap-2 bg-background px-2',
-        isMacOS && 'rounded-t-xl',
+        'relative z-20 flex h-12 w-full shrink-0 items-center gap-2 bg-background px-2 sm:h-10',
+        capabilities.nativeWindowControls && isMacOS && 'rounded-t-xl',
         className
       )}
     >
       {/* Left section */}
-      <div data-tauri-drag-region className="flex items-center gap-2">
-        {isMacOS && <MacOSWindowControls />}
+      <div data-tauri-drag-region className="flex items-center gap-1 sm:gap-2">
+        {capabilities.nativeWindowControls && isMacOS && <MacOSWindowControls />}
         <Button
-          onClick={toggleLeftSidebar}
+          onClick={handleToggleSidebar}
           variant="ghost"
           size="icon"
-          className="h-8 w-8 shrink-0 text-foreground/70 hover:text-foreground"
+          className="size-10 shrink-0 sm:size-8 text-foreground/70 hover:text-foreground"
           title={_(leftSidebarVisible ? msg`Hide Left Sidebar` : msg`Show Left Sidebar`)}
         >
           {leftSidebarVisible ? (
@@ -80,11 +94,12 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
           )}
         </Button>
 
+        {/* On phones Settings lives in the bottom tab bar. */}
         <Button
           onClick={handleOpenSettings}
           variant="ghost"
           size="icon"
-          className="h-8 w-8 shrink-0 text-foreground/70 hover:text-foreground"
+          className="size-10 shrink-0 max-sm:hidden sm:size-8 text-foreground/70 hover:text-foreground"
           title={_(msg`Settings`)}
         >
           <HugeiconsIcon icon={Settings01Icon} className="h-4 w-4" />
@@ -96,7 +111,7 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
             variant="ghost"
             size="icon"
             className={cn(
-              'h-8 w-8 shrink-0 hover:text-foreground',
+              'size-10 shrink-0 max-sm:hidden sm:size-8 hover:text-foreground',
               zenModeEnabled ? 'text-primary' : 'text-foreground/70'
             )}
             title={_(zenModeEnabled ? msg`Exit Zen Mode` : msg`Enter Zen Mode`)}
@@ -107,17 +122,30 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
       </div>
 
       {/* Center: Command search + quick actions */}
-      <div data-tauri-drag-region className="flex min-w-0 flex-1 items-center justify-center gap-2">
-        <div className="min-w-0 w-full max-w-xl">
+      <div
+        data-tauri-drag-region
+        className="flex min-w-0 flex-1 items-center justify-center gap-2 max-sm:justify-end max-sm:gap-1"
+      >
+        <div className="min-w-0 w-full max-w-xl max-sm:hidden">
           <CommandSearchButton onClick={onOpenCommandPalette} />
         </div>
+        {/* Phones trade the search pill for an icon; both open the palette. */}
+        <Button
+          onClick={onOpenCommandPalette}
+          variant="ghost"
+          size="icon"
+          className="size-10 shrink-0 sm:hidden text-foreground/70 hover:text-foreground"
+          title={_(msg`Search`)}
+        >
+          <HugeiconsIcon icon={Search01Icon} className="h-4 w-4" />
+        </Button>
         {isConnected && (
           <SyncProgressPopover>
             <Button
               variant="ghost"
               size="icon"
               className={cn(
-                'h-8 w-8 shrink-0 hover:text-foreground',
+                'size-10 shrink-0 sm:size-8 hover:text-foreground',
                 syncStatus === 'failed' ? 'text-destructive' : 'text-foreground/70'
               )}
               title={syncTitle}
@@ -137,21 +165,23 @@ export function WindowTitleBar({ className, platform, onOpenCommandPalette }: Wi
             </Button>
           </SyncProgressPopover>
         )}
-        <Button
-          onClick={toggleDownloads}
-          variant="ghost"
-          size="icon"
-          className="pt-0.5 h-8 w-8 shrink-0 text-foreground/70 hover:text-foreground"
-          title={_(msg`Downloads`)}
-        >
-          <HugeiconsIcon icon={CloudDownloadIcon} className="h-4 w-4" strokeWidth={2} />
-        </Button>
-        <TitleBarPodcastAnchor />
+        {capabilities.downloads && (
+          <Button
+            onClick={toggleDownloads}
+            variant="ghost"
+            size="icon"
+            className="pt-0.5 size-10 shrink-0 sm:size-8 text-foreground/70 hover:text-foreground"
+            title={_(msg`Downloads`)}
+          >
+            <HugeiconsIcon icon={CloudDownloadIcon} className="h-4 w-4" strokeWidth={2} />
+          </Button>
+        )}
+        {capabilities.podcastWindow && <TitleBarPodcastAnchor />}
       </div>
 
       {/* Right section */}
       <div data-tauri-drag-region className="relative flex items-center gap-1 pr-2">
-        {!isMacOS && <WindowsWindowControls />}
+        {capabilities.nativeWindowControls && !isMacOS && <WindowsWindowControls />}
       </div>
     </div>
   );

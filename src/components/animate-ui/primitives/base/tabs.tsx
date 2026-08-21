@@ -1,6 +1,6 @@
 'use client';
 
-import { Tabs as TabsPrimitive } from '@base-ui-components/react/tabs';
+import { Tabs as TabsPrimitive } from '@base-ui/react/tabs';
 import { AnimatePresence, type HTMLMotionProps, motion, type Transition } from 'motion/react';
 import * as React from 'react';
 import {

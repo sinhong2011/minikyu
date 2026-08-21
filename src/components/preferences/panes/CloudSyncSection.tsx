@@ -3,7 +3,7 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useQueryClient } from '@tanstack/react-query';
-import { listen } from '@tauri-apps/api/event';
+import { listen } from '@/lib/tauri-event';
 import { AnimatePresence, motion } from 'motion/react';
 import { useEffect, useState } from 'react';
 import { Button } from '@/components/ui/button';
@@ -73,7 +73,6 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
     const unlisten = listen('cloud-sync-pushed', () => {
       queryClient.setQueryData(preferencesQueryKeys.preferences(), (old: AppPreferences) => ({
         ...old,
-        // biome-ignore lint/style/useNamingConvention: matches Rust struct field name
         cloud_sync_last_synced: new Date().toISOString(),
       }));
     });
@@ -160,7 +159,6 @@ export function CloudSyncSection({ preferences }: CloudSyncSectionProps) {
         showToast.success(_(msg`Preferences pushed to cloud`));
         queryClient.setQueryData(preferencesQueryKeys.preferences(), (old: AppPreferences) => ({
           ...old,
-          // biome-ignore lint/style/useNamingConvention: matches Rust struct field name
           cloud_sync_last_synced: new Date().toISOString(),
         }));
       } else {

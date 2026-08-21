@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
 // Mock the Tauri menu API
 const mockPopup = vi.fn().mockResolvedValue(undefined);

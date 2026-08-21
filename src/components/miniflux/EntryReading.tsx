@@ -21,8 +21,8 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { listen } from '@tauri-apps/api/event';
-import { openUrl } from '@tauri-apps/plugin-opener';
+import { listen } from '@/lib/tauri-event';
+import { openUrl } from '@/lib/shell';
 import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { type CSSProperties, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { ArticleSummaryCard, useArticleSummary } from '@/components/miniflux/ArticleSummary';
@@ -54,6 +54,7 @@ import {
 } from '@/lib/reader-theme';
 import { formatShortcutDisplay, matchesShortcut } from '@/lib/shortcut-registry';
 import { commands } from '@/lib/tauri-bindings';
+import { capabilities } from '@/lib/platform';
 import { cn } from '@/lib/utils';
 import { getVideoEmbedHtml } from '@/lib/video-embed-utils';
 import {
@@ -192,7 +193,6 @@ export function EntryReading({
 
   useEffect(() => {
     const unlisten = listen<{
-      // biome-ignore lint/style/useNamingConvention: Tauri event payload field name
       stream_id: string;
       event: 'delta' | 'done' | 'error';
       text: string;
@@ -272,6 +272,7 @@ export function EntryReading({
   const [hoveredHeadingId, setHoveredHeadingId] = useState<string | null>(null);
   const [readingProgress, setReadingProgress] = useState(0);
   const [isAtBottom, setIsAtBottom] = useState(false);
+  const [headerHidden, setHeaderHidden] = useState(false);
   const [isOriginalContentDownloaded, setIsOriginalContentDownloaded] = useState(false);
   const [contentRevision, setContentRevision] = useState(0);
   const previousEntryIdRef = useRef<string | null>(null);
@@ -531,17 +532,11 @@ export function EntryReading({
   );
   const translationPreferences: TranslationRoutingPreferences = useMemo(
     () => ({
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       reader_translation_route_mode: translationRouteMode,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       reader_translation_target_language: translationTargetLanguage ?? 'en',
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       reader_translation_primary_engine: translationPrimaryEngine,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       reader_translation_engine_fallbacks: translationEngineFallbacks,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       reader_translation_llm_fallbacks: translationLlmFallbacks,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       reader_translation_apple_fallback_enabled: appleTranslationFallbackEnabled,
     }),
     [
@@ -756,6 +751,7 @@ export function EntryReading({
     viewport.scrollTop = 0;
     scrollY.set(0);
     setReadingProgress(0);
+    setHeaderHidden(false);
     setActiveHeadingId(readingContent.tocItems[0]?.id ?? null);
 
     requestAnimationFrame(() => {
@@ -783,6 +779,8 @@ export function EntryReading({
       }
     }, 500);
 
+    let lastScrollTop = 0;
+
     const handleScroll = () => {
       scrollY.set(viewport.scrollTop);
       const maxScrollable = viewport.scrollHeight - viewport.clientHeight;
@@ -794,6 +792,23 @@ export function EntryReading({
       const distanceFromBottom = viewport.scrollHeight - viewport.scrollTop - viewport.clientHeight;
       const atBottom = distanceFromBottom < 200;
       setIsAtBottom(atBottom);
+
+      // Auto-hide the header on scroll-down, reveal it on scroll-up. Only the
+      // compact layout acts on this (see the `max-sm:` variant on the wrapper),
+      // so the state is a no-op on wide viewports. Skipped when pinned to the
+      // very bottom: showing/hiding the header changes the viewport height, and
+      // a clamped scrollTop there would read as a direction change and oscillate.
+      const scrollDelta = viewport.scrollTop - lastScrollTop;
+      if (distanceFromBottom > 2) {
+        if (viewport.scrollTop < 120) {
+          setHeaderHidden(false);
+        } else if (scrollDelta > 6) {
+          setHeaderHidden(true);
+        } else if (scrollDelta < -6) {
+          setHeaderHidden(false);
+        }
+      }
+      lastScrollTop = viewport.scrollTop;
 
       if (onScrollRef.current) {
         onScrollRef.current({
@@ -952,6 +967,11 @@ export function EntryReading({
           animate(swipeRightProgress, 0, springConfig).then(() => setSwipeRightHintVisible(false));
         }, 300);
       }
+
+      // Pull-to-navigate is a desktop-shell affordance. In the browser it fights
+      // the platform's own overscroll (pull-to-refresh, swipe-back), so the web
+      // target has no scroll-to-prev/next-article gesture at all.
+      if (!capabilities.gestures) return;
 
       // Pull from top → configurable action (1.5x threshold for vertical pulls)
       if (e.deltaY < 0) {
@@ -1412,44 +1432,55 @@ export function EntryReading({
 
   return (
     <div className="flex h-full min-w-0 flex-col overflow-hidden">
-      <EntryReadingHeader
-        entry={entry}
-        onNavigatePrev={onNavigatePrev}
-        onNavigateNext={onNavigateNext}
-        onClose={onClose}
-        hasPrev={hasPrev}
-        hasNext={hasNext}
-        hideNavigation={hideNavigation}
-        onToggleStar={() => toggleStar.mutate(entry.id)}
-        isStarred={entry.starred ?? false}
-        onToggleRead={() => toggleEntryRead.mutate(entry.id)}
-        onOpenInAppBrowser={onOpenInAppBrowser}
-        isRead={entry.status === 'read'}
-        isTogglingRead={toggleEntryRead.isPending}
-        headerPadding={headerPadding}
-        smallTitleOpacity={smallTitleOpacity}
-        smallTitleHeight={smallTitleHeight}
-        titleOpacity={titleOpacity}
-        titleScale={titleScale}
-        titleY={titleY}
-        titleMaxHeight={titleMaxHeight}
-        translationEnabled={translationEnabled}
-        onTranslationEnabledChange={handleTranslationEnabledChange}
-        translationDisplayMode={translationDisplayMode}
-        onTranslationDisplayModeChange={setTranslationDisplayMode}
-        translationTargetLanguage={translationTargetLanguage}
-        onTranslationTargetLanguageChange={setTranslationTargetLanguage}
-        activeTranslationProvider={activeTranslationProvider}
-        isExcludedFeed={isExcludedFeed}
-        onFetchOriginalContent={handleFetchOriginalContent}
-        isFetchingOriginalContent={fetchEntryContent.isPending}
-        isOriginalContentDownloaded={isOriginalContentDownloaded}
-        onSummarize={articleSummary.handleSummarize}
-        isSummarizing={articleSummary.loading}
-        hasSummary={!!articleSummary.summary}
-        focusMode={focusMode}
-        onFocusModeChange={setFocusMode}
-      />
+      <div
+        data-hidden={headerHidden}
+        className={cn(
+          'grid min-w-0 shrink-0 grid-rows-[1fr]',
+          'max-sm:transition-[grid-template-rows] max-sm:duration-300 max-sm:ease-out',
+          'max-sm:data-[hidden=true]:grid-rows-[0fr]'
+        )}
+      >
+        <div className="min-h-0 min-w-0 overflow-hidden">
+          <EntryReadingHeader
+            entry={entry}
+            onNavigatePrev={onNavigatePrev}
+            onNavigateNext={onNavigateNext}
+            onClose={onClose}
+            hasPrev={hasPrev}
+            hasNext={hasNext}
+            hideNavigation={hideNavigation}
+            onToggleStar={() => toggleStar.mutate(entry.id)}
+            isStarred={entry.starred ?? false}
+            onToggleRead={() => toggleEntryRead.mutate(entry.id)}
+            onOpenInAppBrowser={onOpenInAppBrowser}
+            isRead={entry.status === 'read'}
+            isTogglingRead={toggleEntryRead.isPending}
+            headerPadding={headerPadding}
+            smallTitleOpacity={smallTitleOpacity}
+            smallTitleHeight={smallTitleHeight}
+            titleOpacity={titleOpacity}
+            titleScale={titleScale}
+            titleY={titleY}
+            titleMaxHeight={titleMaxHeight}
+            translationEnabled={translationEnabled}
+            onTranslationEnabledChange={handleTranslationEnabledChange}
+            translationDisplayMode={translationDisplayMode}
+            onTranslationDisplayModeChange={setTranslationDisplayMode}
+            translationTargetLanguage={translationTargetLanguage}
+            onTranslationTargetLanguageChange={setTranslationTargetLanguage}
+            activeTranslationProvider={activeTranslationProvider}
+            isExcludedFeed={isExcludedFeed}
+            onFetchOriginalContent={handleFetchOriginalContent}
+            isFetchingOriginalContent={fetchEntryContent.isPending}
+            isOriginalContentDownloaded={isOriginalContentDownloaded}
+            onSummarize={articleSummary.handleSummarize}
+            isSummarizing={articleSummary.loading}
+            hasSummary={!!articleSummary.summary}
+            focusMode={focusMode}
+            onFocusModeChange={setFocusMode}
+          />
+        </div>
+      </div>
 
       <div className="relative flex-1 min-h-0 overflow-hidden">
         <ReaderSelectionToolbar
@@ -1490,20 +1521,22 @@ export function EntryReading({
                       transition: articleExitTransition,
                     }}
                     transition={articleEnterTransition}
-                    className="px-4 py-8 transition-colors duration-300 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
+                    className="px-4 py-8 max-sm:pb-24 transition-colors duration-300 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
                     data-no-ui-font=""
                     style={readerSurfaceStyle}
                   >
-                    <ArticleSummaryCard
-                      summary={articleSummary.summary}
-                      loading={articleSummary.loading}
-                      error={articleSummary.error}
-                      modelUsed={articleSummary.modelUsed}
-                      providerUsed={articleSummary.providerUsed}
-                      collapsed={articleSummary.collapsed}
-                      onToggleCollapse={articleSummary.onToggleCollapse}
-                      onRetry={articleSummary.handleSummarize}
-                    />
+                    {capabilities.summaries && (
+                      <ArticleSummaryCard
+                        summary={articleSummary.summary}
+                        loading={articleSummary.loading}
+                        error={articleSummary.error}
+                        modelUsed={articleSummary.modelUsed}
+                        providerUsed={articleSummary.providerUsed}
+                        collapsed={articleSummary.collapsed}
+                        onToggleCollapse={articleSummary.onToggleCollapse}
+                        onRetry={articleSummary.handleSummarize}
+                      />
+                    )}
                     {entry.content ? (
                       <ImmersiveTranslationLayer
                         entryId={entry.id}
@@ -2081,7 +2114,7 @@ export function EntryReading({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 12 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
-                className="absolute right-4 bottom-4 z-20"
+                className="absolute right-4 bottom-4 z-20 max-sm:bottom-[calc(4.25rem+env(safe-area-inset-bottom))]"
               >
                 <Button
                   type="button"
@@ -2104,7 +2137,7 @@ export function EntryReading({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.96 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute right-4 bottom-4 left-4 z-20 flex justify-center"
+              className="absolute right-4 bottom-4 left-4 z-20 flex justify-center max-sm:bottom-[calc(4.25rem+env(safe-area-inset-bottom))]"
             >
               <button
                 type="button"
@@ -2293,7 +2326,7 @@ export function EntryReading({
         </AnimatePresence>
 
         {translationEnabled && (
-          <div className="pointer-events-none absolute bottom-14 left-2 z-30">
+          <div className="pointer-events-none absolute bottom-14 left-2 z-30 max-sm:bottom-[calc(4.25rem+env(safe-area-inset-bottom))]">
             <TranslationProgressRing
               completed={translationProgress.completed}
               total={translationProgress.total}
@@ -2301,6 +2334,11 @@ export function EntryReading({
           </div>
         )}
 
+        {/*
+          Progress readout, desktop only. On phones the eye toggle is the sole
+          way back once it is dismissed, and a floating switch for a switch is
+          not worth the space — the byline already carries the reading time.
+        */}
         <AnimatePresence mode="wait">
           {statusBarVisible ? (
             <motion.footer
@@ -2309,7 +2347,7 @@ export function EntryReading({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 12 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="pointer-events-none absolute bottom-2 left-2 z-20"
+              className="pointer-events-none absolute bottom-2 left-2 z-20 max-sm:hidden"
             >
               <div className="pointer-events-auto flex items-center gap-1.5 rounded-full bg-popover/75 px-2 py-1 text-[10px] leading-none text-muted-foreground ring-1 ring-foreground/10 shadow-lg backdrop-blur-2xl backdrop-saturate-150">
                 <span className="font-medium tracking-wide">{progressLabel}</span>
@@ -2336,7 +2374,7 @@ export function EntryReading({
               animate={{ opacity: 1, y: 0 }}
               exit={{ opacity: 0, y: 12 }}
               transition={{ duration: 0.2, ease: 'easeOut' }}
-              className="absolute bottom-2 left-2 z-20"
+              className="absolute bottom-2 left-2 z-20 max-sm:hidden"
             >
               <Button
                 type="button"

@@ -1,11 +1,14 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { capabilities } from '@/lib/platform';
+import { openUrl } from '@/lib/shell';
 import { commands } from '@/lib/tauri-bindings';
 import { useUIStore } from '@/store/ui-store';
+import { useSelectedEntryId } from './use-selected-entry';
 
 export function useInAppBrowser() {
   const setInAppBrowserUrl = useUIStore((state) => state.setInAppBrowserUrl);
   const inAppBrowserUrl = useUIStore((state) => state.inAppBrowserUrl);
-  const selectedEntryId = useUIStore((state) => state.selectedEntryId);
+  const selectedEntryId = useSelectedEntryId();
   // Modal states — native webview must be hidden while these are open because
   // WKWebView sits above all React content regardless of CSS z-index.
   const preferencesOpen = useUIStore((state) => state.preferencesOpen);
@@ -28,9 +31,19 @@ export function useInAppBrowser() {
     return () => observer.disconnect();
   }, []);
 
-  /** Opens the browser for the given URL. */
+  /**
+   * Opens the browser for the given URL.
+   *
+   * The in-app browser is a native Tauri webview. In the web build there is no
+   * such thing, and the browser already *is* the browser — so open a new tab
+   * instead of showing an empty pane.
+   */
   const openBrowser = useCallback(
     (url: string) => {
+      if (!capabilities.inAppBrowser) {
+        void openUrl(url);
+        return;
+      }
       setInAppBrowserUrl(url);
     },
     [setInAppBrowserUrl]

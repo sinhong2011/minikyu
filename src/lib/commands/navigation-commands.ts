@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { toggleZenMode } from '@/hooks/use-zen-mode';
 import { useUIStore } from '@/store/ui-store';
 import type { AppCommand } from './types';
 
@@ -53,7 +54,7 @@ export const navigationCommands: AppCommand[] = [
     shortcut: 'Z',
     keywords: ['zen', 'focus', 'distraction', 'reading'],
     execute: () => {
-      useUIStore.getState().toggleZenMode();
+      toggleZenMode();
     },
   },
   {

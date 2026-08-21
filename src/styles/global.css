@@ -1,8 +1,8 @@
-@import "tailwindcss";
-@import "tw-animate-css";
-@import "shadcn/tailwind.css";
-@import "./animation";
-@import "./theme";
+@import 'tailwindcss';
+@import 'tw-animate-css';
+@import 'shadcn/tailwind.css';
+@import './animation';
+@import './theme';
 
 @custom-variant dark (&:is(.dark *));
 
@@ -12,9 +12,7 @@
   }
   *:focus,
   *:focus-visible {
-    /* biome-ignore lint/complexity/noImportantStyles: Required to override framework default focus styles */
     outline: none !important;
-    /* biome-ignore lint/complexity/noImportantStyles: Required to override framework default ring styles */
     --tw-ring-shadow: 0 0 #0000 !important;
   }
   :where(*):not(.no-scrollbar) {
@@ -50,13 +48,13 @@
     @apply font-sans bg-background text-foreground;
   }
   /* Only clip body corners on macOS where native window has rounded corners */
-  :root[data-platform="macos"] html {
+  :root[data-platform='macos'] html {
     @apply bg-background;
     border-radius: var(--radius-xl);
     overflow: hidden;
   }
 
-  :root[data-platform="macos"] body {
+  :root[data-platform='macos'] body {
     clip-path: inset(0 round var(--radius-xl));
   }
   html {
@@ -71,7 +69,6 @@
 html[data-ui-font],
 html[data-ui-font] body,
 html[data-ui-font] *:not([data-no-ui-font]):not([data-no-ui-font] *) {
-  /* biome-ignore lint/complexity/noImportantStyles: required to override Tailwind utilities for global font override */
   font-family: var(--ui-font-override) !important;
 }
 html[data-ui-font] code:not([data-no-ui-font] *),
@@ -79,8 +76,7 @@ html[data-ui-font] pre:not([data-no-ui-font] *),
 html[data-ui-font] kbd:not([data-no-ui-font] *),
 html[data-ui-font] samp:not([data-no-ui-font] *) {
   font-family:
-    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New",
-    /* biome-ignore lint/complexity/noImportantStyles: required to preserve monospace under global font override */
+    ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, 'Liberation Mono', 'Courier New',
     monospace !important;
 }
 
@@ -91,7 +87,7 @@ html[data-ui-font] samp:not([data-no-ui-font] *) {
 }
 
 @layer components {
-  :root[data-platform="macos"] .yarl__portal {
+  :root[data-platform='macos'] .yarl__portal {
     border-radius: var(--radius-xl);
     overflow: hidden;
   }
@@ -163,7 +159,6 @@ html[data-ui-font] samp:not([data-no-ui-font] *) {
 
 /* Toast: glass style when transparent, solid otherwise */
 [data-bg-transparent] [data-sonner-toaster] [data-sonner-toast] {
-  /* biome-ignore lint/complexity/noImportantStyles: Required to override Sonner's inline background style */
   background: color-mix(in oklch, var(--background-base) 30%, transparent) !important;
   backdrop-filter: blur(60px) saturate(1.8);
   -webkit-backdrop-filter: blur(60px) saturate(1.8);

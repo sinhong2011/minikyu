@@ -14,13 +14,12 @@ import {
   Search01Icon,
   StarIcon,
   Timer01Icon,
+  Settings01Icon,
 } from '@hugeicons/core-free-icons';
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { Link, useSearch } from '@tanstack/react-router';
-import { confirm, open as openDialog, save as saveDialog } from '@tauri-apps/plugin-dialog';
-import { readTextFile, writeTextFile } from '@tauri-apps/plugin-fs';
 import { AnimatePresence, motion } from 'motion/react';
 import * as React from 'react';
 import { toast } from 'sonner';
@@ -64,11 +63,14 @@ import {
   SidebarMenuSubItem,
   useSidebar,
 } from '@/components/ui/sidebar';
+import { confirm, message as showMessage } from '@/lib/dialog';
+import { pickTextFile, saveTextFile } from '@/lib/file-transfer';
 import { logger } from '@/lib/logger';
 import { queryClient } from '@/lib/query-client';
 import type { Category, Feed } from '@/lib/tauri-bindings';
 import { commands } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
+import { useUIStore } from '@/store/ui-store';
 import {
   useCategories,
   useCategoryFeeds,
@@ -196,7 +198,6 @@ function FeedItem({ feed }: FeedItemProps) {
                                 onClick={() => {
                                   updateFeed.mutateAsync({
                                     id: feed.id,
-                                    // biome-ignore lint/style/useNamingConvention: API field name
                                     updates: { category_id: category.id },
                                   });
                                 }}
@@ -314,7 +315,7 @@ function CategoryItem({ category }: CategoryItemProps) {
     event.preventDefault();
     event.stopPropagation();
     if (feedCount > 0) {
-      await confirm(
+      await showMessage(
         _(
           msg`Cannot delete "${category.title}" because it still has ${String(feedCount)} feed(s). Move or remove all feeds first.`
         ),
@@ -426,7 +427,14 @@ function CategoryItem({ category }: CategoryItemProps) {
 
 function AppSidebarContent({ children, className }: AppSidebarProps) {
   const { _ } = useLingui();
-  const { state: sidebarState, setOpen } = useSidebar();
+  const { state: sidebarState, setOpen, isMobile, setOpenMobile } = useSidebar();
+  // Navigation goes through <Link> anchors; row actions are buttons. Following
+  // a link on mobile should dismiss the Sheet, like any drawer navigation.
+  const handleNavClick = (event: React.MouseEvent) => {
+    if (isMobile && (event.target as HTMLElement).closest('a[href]')) {
+      setOpenMobile(false);
+    }
+  };
   const { data: isConnected, isLoading: connectionLoading } = useIsConnected();
   const { data: categories, isLoading: categoriesLoading } = useCategories();
   const { data: unreadCounts } = useUnreadCounts();
@@ -464,23 +472,24 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
   const handleExportOpml = React.useCallback(async () => {
     try {
       const date = new Date().toISOString().split('T')[0];
-      const filePath = await saveDialog({
-        title: _(msg`Export OPML`),
-        defaultPath: `miniflux-feeds-${date}.opml`,
-        filters: [
-          { name: 'OPML', extensions: ['opml'] },
-          { name: 'XML', extensions: ['xml'] },
-        ],
-      });
-      if (!filePath) return;
-
       const result = await commands.exportOpml();
       if (result.status === 'error') {
         toast.error(_(msg`Failed to export OPML`), { description: result.error });
         return;
       }
 
-      await writeTextFile(filePath, result.data);
+      const saved = await saveTextFile({
+        title: _(msg`Export OPML`),
+        defaultFileName: `miniflux-feeds-${date}.opml`,
+        contents: result.data,
+        filters: [
+          { name: 'OPML', extensions: ['opml'] },
+          { name: 'XML', extensions: ['xml'] },
+        ],
+        mimeType: 'text/xml',
+      });
+      if (!saved) return;
+
       queryClient.invalidateQueries({ queryKey: ['miniflux'] });
       toast.success(_(msg`OPML exported successfully`));
     } catch (error) {
@@ -493,18 +502,16 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
 
   const handleImportOpml = React.useCallback(async () => {
     try {
-      const filePath = await openDialog({
+      const opmlContent = await pickTextFile({
         title: _(msg`Import OPML`),
-        multiple: false,
         filters: [
           { name: 'OPML', extensions: ['opml'] },
           { name: 'XML', extensions: ['xml'] },
           { name: 'All Files', extensions: ['*'] },
         ],
       });
-      if (!filePath) return;
+      if (opmlContent === null) return;
 
-      const opmlContent = await readTextFile(filePath);
       const result = await commands.importOpml(opmlContent);
       if (result.status === 'error') {
         toast.error(_(msg`Failed to import OPML`), { description: result.error });
@@ -540,6 +547,23 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
             wordmarkClassName="group-data-[collapsible=icon]:hidden"
           />
           <div className="flex items-center gap-1 group-data-[collapsible=icon]:hidden">
+            {/* Phones only: the title bar's Settings button is `max-sm:hidden`,
+                so these two are exactly complementary — never both, never neither. */}
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className={cn(headerActionButtonClass, 'sm:hidden')}
+              aria-label={_(msg`Settings`)}
+              title={_(msg`Settings`)}
+              onClick={() => {
+                useUIStore.getState().setPreferencesOpen(true);
+                // Preferences render outside the drawer; keep only one layer open.
+                if (isMobile) setOpenMobile(false);
+              }}
+            >
+              <HugeiconsIcon icon={Settings01Icon} className="size-4" />
+            </Button>
             <Menu>
               <MenuTrigger
                 render={
@@ -583,7 +607,10 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="flex min-h-0 flex-col gap-0 overflow-hidden">
+      <SidebarContent
+        onClick={handleNavClick}
+        className="flex min-h-0 flex-col gap-0 overflow-hidden"
+      >
         <SidebarGroup className="shrink-0">
           <SidebarGroupLabel>{_(msg`Views`)}</SidebarGroupLabel>
           <SidebarGroupContent>

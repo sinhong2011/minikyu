@@ -22,8 +22,8 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { writeText } from '@tauri-apps/plugin-clipboard-manager';
-import { openUrl } from '@tauri-apps/plugin-opener';
+import { copyText } from '@/lib/shell';
+import { openUrl } from '@/lib/shell';
 import { parseISO } from 'date-fns';
 import { AnimatePresence, type MotionValue, motion } from 'motion/react';
 import { useEffect, useMemo, useState } from 'react';
@@ -50,7 +50,7 @@ import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import type { Entry } from '@/lib/bindings';
 import { convertChineseText, normalizeCustomConversionRules } from '@/lib/chinese-conversion';
-import { formatShortDate } from '@/lib/miniflux-utils';
+import { formatCompactDate, formatShortDate } from '@/lib/miniflux-utils';
 import { getPodcastEnclosure } from '@/lib/podcast-utils';
 import { normalizeReaderTheme, type ReaderTheme, readerThemeOptions } from '@/lib/reader-theme';
 import { type ReaderCodeTheme, readerCodeThemeOptions } from '@/lib/shiki-highlight';
@@ -245,7 +245,7 @@ export function EntryReadingHeader({
   const [isSavingToServices, setIsSavingToServices] = useState(false);
 
   const handleCopyUrl = async () => {
-    await writeText(entry.url);
+    await copyText(entry.url);
     setCopiedUrl(true);
     onShare?.();
     setTimeout(() => setCopiedUrl(false), 2000);
@@ -254,7 +254,7 @@ export function EntryReadingHeader({
   const handleCopyShareCode = async () => {
     if (entry.share_code) {
       const shareUrl = `${entry.feed.site_url}/share/${entry.share_code}`;
-      await writeText(shareUrl);
+      await copyText(shareUrl);
       setCopiedShareCode(true);
       setTimeout(() => setCopiedShareCode(false), 2000);
     }
@@ -342,9 +342,9 @@ export function EntryReadingHeader({
         paddingBottom: headerPadding,
       }}
     >
-      <div className="flex min-w-0 flex-col gap-3">
-        <div className="flex w-full items-center justify-between gap-1.5" role="toolbar">
-          <div className="flex items-center gap-1.5">
+      <div className="flex min-w-0 flex-col gap-3 max-sm:pt-[calc(env(safe-area-inset-top)+4px)]">
+        <div className="flex w-full items-center justify-between gap-1.5">
+          <div className="flex shrink-0 items-center gap-1.5" role="toolbar">
             {onClose && (
               <Tooltip>
                 <TooltipTrigger
@@ -353,7 +353,7 @@ export function EntryReadingHeader({
                       type="button"
                       variant="ghost"
                       size="icon"
-                      className={toolbarButtonClass}
+                      className={cn(toolbarButtonClass, 'max-sm:order-last')}
                       onClick={onClose}
                       aria-label={_(msg`Close`)}
                     />
@@ -494,7 +494,29 @@ export function EntryReadingHeader({
             )}
           </div>
 
-          <div className="flex items-center gap-1.5">
+          {/*
+            On phones the action group below leaves the top bar for a bottom
+            bar, so the byline moves up into the space it vacated and the
+            article starts at the headline. Trimmed to the feed's avatar plus the
+            date — the feed name is dropped, since the avatar already identifies
+            the source. It leads the row and the nav buttons follow it, so the
+            full version lives under the title on wider screens.
+          */}
+          <div className="hidden min-w-0 flex-1 items-center gap-2 text-xs text-muted-foreground max-sm:order-first max-sm:flex">
+            <FeedAvatar
+              title={entry.feed.title}
+              domain={entry.feed.site_url}
+              className="size-4! shrink-0"
+            />
+            <time className="shrink-0 text-muted-foreground/70" dateTime={entry.published_at}>
+              {formatCompactDate(parseISO(entry.published_at), i18n.locale)}
+            </time>
+          </div>
+
+          <div
+            role="toolbar"
+            className="flex shrink-0 items-center gap-1.5 max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:z-30 max-sm:justify-around max-sm:gap-0 max-sm:border-t max-sm:border-border max-sm:bg-background max-sm:px-2 max-sm:pt-2 max-sm:pb-[calc(0.5rem+env(safe-area-inset-bottom))]"
+          >
             <Tooltip>
               <TooltipTrigger
                 render={
@@ -840,7 +862,11 @@ export function EntryReadingHeader({
                     type="button"
                     variant="ghost"
                     size="icon"
-                    className={cn(toolbarButtonClass, isStarred && 'text-yellow-500')}
+                    className={cn(
+                      toolbarButtonClass,
+                      'max-sm:hidden',
+                      isStarred && 'text-yellow-500'
+                    )}
                     onClick={onToggleStar}
                     aria-label={isStarred ? _(msg`Unstar`) : _(msg`Star`)}
                   />
@@ -1024,7 +1050,8 @@ export function EntryReadingHeader({
               {convertedTitle}
             </h1>
           </motion.a>
-          <div className="flex min-w-0 flex-wrap items-center gap-2 text-[13px] text-muted-foreground">
+          {/* Phones get the condensed version of this up in the top bar. */}
+          <div className="flex min-w-0 flex-wrap items-center gap-2 text-[13px] text-muted-foreground max-sm:hidden">
             <FeedAvatar title={entry.feed.title} domain={entry.feed.site_url} className="size-5!" />
             <a
               href={entry.feed.site_url}

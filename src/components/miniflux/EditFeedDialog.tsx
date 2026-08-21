@@ -43,16 +43,16 @@ function normalizeOptionalText(value: string): string | null {
 function hasAdvancedDefaults(feed: Feed): boolean {
   return Boolean(
     feed.user_agent ||
-      feed.username ||
-      feed.password ||
-      feed.scraper_rules ||
-      feed.rewrite_rules ||
-      feed.blocklist_rules ||
-      feed.keeplist_rules ||
-      feed.crawler ||
-      feed.disabled ||
-      feed.ignore_http_cache ||
-      feed.fetch_via_proxy
+    feed.username ||
+    feed.password ||
+    feed.scraper_rules ||
+    feed.rewrite_rules ||
+    feed.blocklist_rules ||
+    feed.keeplist_rules ||
+    feed.crawler ||
+    feed.disabled ||
+    feed.ignore_http_cache ||
+    feed.fetch_via_proxy
   );
 }
 
@@ -82,7 +82,10 @@ export function EditFeedDialog({ feed, open, onOpenChange }: EditFeedDialogProps
     validators: {
       onChange: z.object({
         feedUrl: z.string().url(_(msg`Please enter a valid URL`)),
-        title: z.string().trim().min(1, _(msg`Title is required`)),
+        title: z
+          .string()
+          .trim()
+          .min(1, _(msg`Title is required`)),
         categoryId: z.string(),
         userAgent: z.string(),
         username: z.string(),

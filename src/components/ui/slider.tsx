@@ -52,13 +52,7 @@ function Slider({
           />
         </SliderPrimitive.Track>
         {Array.from({ length: _values.length }, (_, index) => (
-          <AnimatedThumb
-            // biome-ignore lint/suspicious/noArrayIndexKey: thumbs map to value positions
-            key={`thumb-${index}`}
-            value={_values[index]}
-            min={min}
-            max={max}
-          />
+          <AnimatedThumb key={`thumb-${index}`} value={_values[index]} min={min} max={max} />
         ))}
       </SliderPrimitive.Control>
     </SliderPrimitive.Root>

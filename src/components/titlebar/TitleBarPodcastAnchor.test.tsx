@@ -1,6 +1,6 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
-import { afterEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, describe, expect, it, vi } from 'vite-plus/test';
 import type { Enclosure, Entry } from '@/lib/tauri-bindings';
 import { usePlayerStore } from '@/store/player-store';
 import { act, render, screen } from '@/test/test-utils';

@@ -1,4 +1,4 @@
-import { emit, listen } from '@tauri-apps/api/event';
+import { emit, listen } from '@/lib/tauri-event';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { useEffect, useRef, useState } from 'react';
 import { logger } from '@/lib/logger';

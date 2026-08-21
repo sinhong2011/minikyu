@@ -17,6 +17,7 @@ import { showToast } from '@/components/ui/sonner';
 import { logger } from '@/lib/logger';
 import type { CloseBehavior, PlayerDisplayMode } from '@/lib/tauri-bindings';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
+import { capabilities } from '@/lib/platform';
 import { SettingsField, SettingsSection } from '../shared/SettingsComponents';
 
 export function GeneralPane() {
@@ -33,7 +34,6 @@ export function GeneralPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         close_behavior: value,
       });
       showToast.success(_(msg`Close behavior updated`));
@@ -51,7 +51,6 @@ export function GeneralPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         show_tray_icon: checked,
       });
       showToast.success(
@@ -73,7 +72,6 @@ export function GeneralPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         start_minimized: checked,
       });
       showToast.success(_(msg`Start minimized setting updated`));
@@ -91,7 +89,6 @@ export function GeneralPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         player_display_mode: value,
       });
       showToast.success(_(msg`Player display mode updated`));
@@ -134,7 +131,6 @@ export function GeneralPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         image_download_path: newPath || null,
       });
       showToast.success(_(msg`Image download path updated`));
@@ -152,7 +148,6 @@ export function GeneralPane() {
     try {
       await savePreferences.mutateAsync({
         ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         video_download_path: newPath || null,
       });
       showToast.success(_(msg`Video download path updated`));
@@ -164,119 +159,125 @@ export function GeneralPane() {
 
   return (
     <div className="space-y-6">
-      <SettingsSection title={_(msg`System Tray`)}>
-        <SettingsField
-          label={_(msg`Close Button Behavior`)}
-          description={_(msg`Choose what happens when you click the window close button`)}
-        >
-          <Select
-            value={preferences?.close_behavior ?? 'minimize_to_tray'}
-            onValueChange={(value: string) => handleCloseBehaviorChange(value as CloseBehavior)}
-            disabled={!preferences || savePreferences.isPending}
+      {/* Tray, window-close behavior and the floating player are desktop shell features. */}
+      {capabilities.tray && (
+        <SettingsSection title={_(msg`System Tray`)}>
+          <SettingsField
+            label={_(msg`Close Button Behavior`)}
+            description={_(msg`Choose what happens when you click the window close button`)}
           >
-            <SelectTrigger className="w-48">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="minimize_to_tray">{_(msg`Minimize to tray`)}</SelectItem>
-              <SelectItem value="quit">{_(msg`Quit application`)}</SelectItem>
-            </SelectContent>
-          </Select>
-        </SettingsField>
-
-        <SettingsField
-          label={_(msg`Show Tray Icon`)}
-          description={_(
-            msg`Display the application icon in the system tray. Requires restart to take effect when disabled.`
-          )}
-        >
-          <Switch
-            checked={preferences?.show_tray_icon ?? true}
-            onCheckedChange={handleShowTrayIconChange}
-            disabled={!preferences || savePreferences.isPending}
-          />
-        </SettingsField>
-
-        <SettingsField
-          label={_(msg`Start Minimized`)}
-          description={_(msg`Start the application minimized to the system tray`)}
-        >
-          <Switch
-            checked={preferences?.start_minimized ?? false}
-            onCheckedChange={handleStartMinimizedChange}
-            disabled={!preferences || savePreferences.isPending}
-          />
-        </SettingsField>
-
-        <SettingsField
-          label={_(msg`Player Display Mode`)}
-          description={_(msg`Choose how the player appears when clicking the tray icon`)}
-        >
-          <Select
-            value={preferences?.player_display_mode ?? 'FloatingWindow'}
-            onValueChange={(value: string) =>
-              handlePlayerDisplayModeChange(value as PlayerDisplayMode)
-            }
-            disabled={!preferences || savePreferences.isPending}
-          >
-            <SelectTrigger className="w-52">
-              <SelectValue />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="FloatingWindow">{_(msg`Floating player window`)}</SelectItem>
-              <SelectItem value="TrayPopover">{_(msg`Compact tray popover`)}</SelectItem>
-            </SelectContent>
-          </Select>
-        </SettingsField>
-      </SettingsSection>
-
-      <SettingsSection title={_(msg`Download Settings`)}>
-        <SettingsField
-          label={_(msg`Image Download Path`)}
-          description={_(msg`Default folder for saving images. Leave empty to ask every time.`)}
-        >
-          <div className="flex items-center gap-2 w-64">
-            <Input
-              value={preferences?.image_download_path ?? ''}
-              onChange={(e) => handleImagePathChange(e.target.value)}
-              placeholder={_(msg`Ask every time`)}
-              disabled={!preferences || savePreferences.isPending}
-              className="flex-1 text-sm"
-            />
-            <Button
-              variant="outline"
-              size="icon-sm"
-              onClick={() => handleBrowseFolder('image')}
+            <Select
+              value={preferences?.close_behavior ?? 'minimize_to_tray'}
+              onValueChange={(value: string) => handleCloseBehaviorChange(value as CloseBehavior)}
               disabled={!preferences || savePreferences.isPending}
             >
-              <HugeiconsIcon icon={FolderOpenIcon} className="h-4 w-4" />
-            </Button>
-          </div>
-        </SettingsField>
+              <SelectTrigger className="w-48">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="minimize_to_tray">{_(msg`Minimize to tray`)}</SelectItem>
+                <SelectItem value="quit">{_(msg`Quit application`)}</SelectItem>
+              </SelectContent>
+            </Select>
+          </SettingsField>
 
-        <SettingsField
-          label={_(msg`Video Download Path`)}
-          description={_(msg`Default folder for saving videos. Leave empty to ask every time.`)}
-        >
-          <div className="flex items-center gap-2 w-64">
-            <Input
-              value={preferences?.video_download_path ?? ''}
-              onChange={(e) => handleVideoPathChange(e.target.value)}
-              placeholder={_(msg`Ask every time`)}
+          <SettingsField
+            label={_(msg`Show Tray Icon`)}
+            description={_(
+              msg`Display the application icon in the system tray. Requires restart to take effect when disabled.`
+            )}
+          >
+            <Switch
+              checked={preferences?.show_tray_icon ?? true}
+              onCheckedChange={handleShowTrayIconChange}
               disabled={!preferences || savePreferences.isPending}
-              className="flex-1 text-sm"
             />
-            <Button
-              variant="outline"
-              size="icon-sm"
-              onClick={() => handleBrowseFolder('video')}
+          </SettingsField>
+
+          <SettingsField
+            label={_(msg`Start Minimized`)}
+            description={_(msg`Start the application minimized to the system tray`)}
+          >
+            <Switch
+              checked={preferences?.start_minimized ?? false}
+              onCheckedChange={handleStartMinimizedChange}
+              disabled={!preferences || savePreferences.isPending}
+            />
+          </SettingsField>
+
+          <SettingsField
+            label={_(msg`Player Display Mode`)}
+            description={_(msg`Choose how the player appears when clicking the tray icon`)}
+          >
+            <Select
+              value={preferences?.player_display_mode ?? 'FloatingWindow'}
+              onValueChange={(value: string) =>
+                handlePlayerDisplayModeChange(value as PlayerDisplayMode)
+              }
               disabled={!preferences || savePreferences.isPending}
             >
-              <HugeiconsIcon icon={FolderOpenIcon} className="h-4 w-4" />
-            </Button>
-          </div>
-        </SettingsField>
-      </SettingsSection>
+              <SelectTrigger className="w-52">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent>
+                <SelectItem value="FloatingWindow">{_(msg`Floating player window`)}</SelectItem>
+                <SelectItem value="TrayPopover">{_(msg`Compact tray popover`)}</SelectItem>
+              </SelectContent>
+            </Select>
+          </SettingsField>
+        </SettingsSection>
+      )}
+
+      {/* Downloads are handled by the Rust downloader writing to local folders. */}
+      {capabilities.downloads && (
+        <SettingsSection title={_(msg`Download Settings`)}>
+          <SettingsField
+            label={_(msg`Image Download Path`)}
+            description={_(msg`Default folder for saving images. Leave empty to ask every time.`)}
+          >
+            <div className="flex items-center gap-2 w-64">
+              <Input
+                value={preferences?.image_download_path ?? ''}
+                onChange={(e) => handleImagePathChange(e.target.value)}
+                placeholder={_(msg`Ask every time`)}
+                disabled={!preferences || savePreferences.isPending}
+                className="flex-1 text-sm"
+              />
+              <Button
+                variant="outline"
+                size="icon-sm"
+                onClick={() => handleBrowseFolder('image')}
+                disabled={!preferences || savePreferences.isPending}
+              >
+                <HugeiconsIcon icon={FolderOpenIcon} className="h-4 w-4" />
+              </Button>
+            </div>
+          </SettingsField>
+
+          <SettingsField
+            label={_(msg`Video Download Path`)}
+            description={_(msg`Default folder for saving videos. Leave empty to ask every time.`)}
+          >
+            <div className="flex items-center gap-2 w-64">
+              <Input
+                value={preferences?.video_download_path ?? ''}
+                onChange={(e) => handleVideoPathChange(e.target.value)}
+                placeholder={_(msg`Ask every time`)}
+                disabled={!preferences || savePreferences.isPending}
+                className="flex-1 text-sm"
+              />
+              <Button
+                variant="outline"
+                size="icon-sm"
+                onClick={() => handleBrowseFolder('video')}
+                disabled={!preferences || savePreferences.isPending}
+              >
+                <HugeiconsIcon icon={FolderOpenIcon} className="h-4 w-4" />
+              </Button>
+            </div>
+          </SettingsField>
+        </SettingsSection>
+      )}
     </div>
   );
 }

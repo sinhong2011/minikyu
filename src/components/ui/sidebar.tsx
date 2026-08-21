@@ -53,6 +53,8 @@ function SidebarProvider({
   defaultOpen = true,
   open: openProp,
   onOpenChange: setOpenProp,
+  openMobile: openMobileProp,
+  onOpenMobileChange: setOpenMobileProp,
   className,
   style,
   children,
@@ -61,9 +63,22 @@ function SidebarProvider({
   defaultOpen?: boolean;
   open?: boolean;
   onOpenChange?: (open: boolean) => void;
+  /** Controlled state for the mobile Sheet, so chrome rendered outside the
+   * provider (e.g. the titlebar toggle) can open it. */
+  openMobile?: boolean;
+  onOpenMobileChange?: (open: boolean) => void;
 }) {
   const isMobile = useIsMobile();
-  const [openMobile, setOpenMobile] = React.useState(false);
+  const [_openMobile, _setOpenMobile] = React.useState(false);
+  const openMobile = openMobileProp ?? _openMobile;
+  const setOpenMobile = React.useCallback(
+    (value: boolean | ((open: boolean) => boolean)) => {
+      const next = typeof value === 'function' ? value(openMobile) : value;
+      if (setOpenMobileProp) setOpenMobileProp(next);
+      else _setOpenMobile(next);
+    },
+    [openMobile, setOpenMobileProp]
+  );
 
   // This is the internal state of the sidebar.
   // We use openProp and setOpenProp for control from outside the component.
@@ -78,10 +93,8 @@ function SidebarProvider({
         _setOpen(openState);
       }
 
-      // biome-ignore-start lint/suspicious/noDocumentCookie: uses cookie for lightweight sidebar state
       // This sets the cookie to keep the sidebar state.
       document.cookie = `${SIDEBAR_COOKIE_NAME}=${openState}; path=/; max-age=${SIDEBAR_COOKIE_MAX_AGE}`;
-      // biome-ignore-end lint/suspicious/noDocumentCookie: uses cookie for lightweight sidebar state
     },
     [setOpenProp, open]
   );
@@ -89,7 +102,7 @@ function SidebarProvider({
   // Helper to toggle the sidebar.
   const toggleSidebar = React.useCallback(() => {
     return isMobile ? setOpenMobile((open) => !open) : setOpen((open) => !open);
-  }, [isMobile, setOpen]);
+  }, [isMobile, setOpen, setOpenMobile]);
 
   // Adds a keyboard shortcut to toggle the sidebar.
   React.useEffect(() => {
@@ -502,7 +515,10 @@ function SidebarMenuButton({
       },
       props
     ),
-    render: !tooltip ? render : TooltipTrigger,
+    // Base UI calls `render` as a plain function, so handing it a component
+    // reference risks breaking the Rules of Hooks during reconciliation (it
+    // warns about exactly this). An element makes it a normal child render.
+    render: !tooltip ? render : <TooltipTrigger />,
     state: {
       slot: 'sidebar-menu-button',
       sidebar: 'menu-button',

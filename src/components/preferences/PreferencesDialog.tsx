@@ -1,5 +1,7 @@
 import {
   AlertCircleIcon,
+  ArrowLeft01Icon,
+  ArrowRight01Icon,
   Book01Icon,
   CheckmarkCircle02Icon,
   ColorsIcon,
@@ -23,8 +25,8 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import type { ColumnDef } from '@tanstack/react-table';
-import { openUrl } from '@tauri-apps/plugin-opener';
+import type { DataTableColumnDef } from '@/components/ui/data-table';
+import { openUrl } from '@/lib/shell';
 import * as React from 'react';
 import { DeleteEntityDialog } from '@/components/miniflux/settings/DeleteEntityDialog';
 import type {
@@ -58,6 +60,7 @@ import {
   SidebarProvider,
 } from '@/components/ui/sidebar';
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
+import { useIsMobile } from '@/hooks/use-mobile';
 import type { Feed } from '@/lib/tauri-bindings';
 import { cn } from '@/lib/utils';
 import {
@@ -80,6 +83,7 @@ import {
 } from '@/services/miniflux';
 import { useActiveAccount } from '@/services/miniflux/accounts';
 import { type PreferencesPane, useUIStore } from '@/store/ui-store';
+import { capabilities } from '@/lib/platform';
 import { AboutPane } from './panes/AboutPane';
 import { AdvancedPane } from './panes/AdvancedPane';
 import { ApiTokenPane } from './panes/ApiTokenPane';
@@ -171,6 +175,67 @@ const serverSettingsItems = [
   },
 ] as const;
 
+/**
+ * Panes whose underlying feature this build does not provide. Filtered here so
+ * the desktop sidebar and the mobile menu stay in sync automatically.
+ */
+const hiddenPanes = new Set<string>([
+  ...(capabilities.gestures ? [] : ['gesture']),
+  ...(capabilities.offlineSync ? [] : ['sync']),
+  // General only holds the System Tray and Download sections, both
+  // desktop-only — without them the pane is an empty shell.
+  ...(capabilities.tray || capabilities.downloads ? [] : ['general']),
+  // Every control in Translation is backed by the Rust translation router and
+  // provider keys in the OS keychain; the pane cannot do anything without them.
+  ...(capabilities.translation ? [] : ['translation']),
+]);
+
+const visibleAppSettingsItems = appSettingsItems.filter((item) => !hiddenPanes.has(item.id));
+const visibleServerSettingsItems = serverSettingsItems.filter((item) => !hiddenPanes.has(item.id));
+
+type SettingsNavItem = (typeof appSettingsItems)[number] | (typeof serverSettingsItems)[number];
+
+interface MobileNavGroupProps {
+  label: string;
+  items: ReadonlyArray<SettingsNavItem>;
+  onSelect: (pane: PreferencesPane) => void;
+  action?: React.ReactNode;
+}
+
+/** iOS Settings-style grouped list used as the mobile root menu. */
+function MobileNavGroup({ label, items, onSelect, action }: MobileNavGroupProps) {
+  const { _ } = useLingui();
+  return (
+    <div className="space-y-2">
+      <div className="flex items-center justify-between px-1">
+        <span className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">
+          {label}
+        </span>
+        {action}
+      </div>
+      <div className="divide-y divide-border/60 overflow-hidden rounded-xl border bg-card/50">
+        {items.map((item) => (
+          <button
+            key={item.id}
+            type="button"
+            className="flex w-full items-center gap-3 px-3 py-3 text-start transition-colors active:bg-accent"
+            onClick={() => onSelect(item.id)}
+          >
+            <span className="flex size-8 shrink-0 items-center justify-center rounded-lg bg-muted text-muted-foreground">
+              <HugeiconsIcon icon={item.icon} className="size-4.5" />
+            </span>
+            <span className="flex-1 truncate text-sm font-medium">{_(item.label)}</span>
+            <HugeiconsIcon
+              icon={ArrowRight01Icon}
+              className="size-4 shrink-0 text-muted-foreground/60 rtl:rotate-180"
+            />
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 function ConnectionStatePane() {
   const { _ } = useLingui();
   return (
@@ -186,6 +251,17 @@ export function PreferencesDialog() {
   const setPreferencesOpen = useUIStore((state) => state.setPreferencesOpen);
   const activePane = useUIStore((state) => state.preferencesActivePane);
   const setPreferencesActivePane = useUIStore((state) => state.setPreferencesActivePane);
+  const mobileView = useUIStore((state) => state.preferencesMobileView);
+  const setPreferencesMobileView = useUIStore((state) => state.setPreferencesMobileView);
+  const isMobile = useIsMobile();
+
+  // A persisted pane selection can point at a pane this build hides
+  // (e.g. Gestures or Sync in the web build); fall back to General.
+  React.useEffect(() => {
+    if (hiddenPanes.has(activePane)) {
+      setPreferencesActivePane(visibleAppSettingsItems[0]?.id ?? 'about');
+    }
+  }, [activePane, setPreferencesActivePane]);
   const { data: isConnected } = useIsConnected();
   const { data: currentUser } = useCurrentUser();
   const { data: activeAccount } = useActiveAccount();
@@ -290,7 +366,7 @@ export function PreferencesDialog() {
   );
 
   // Feed columns definition
-  const feedColumns = React.useMemo<ColumnDef<Feed>[]>(
+  const feedColumns = React.useMemo<DataTableColumnDef<Feed>[]>(
     () => [
       {
         accessorKey: 'title',
@@ -487,6 +563,16 @@ export function PreferencesDialog() {
 
   const isServerPane = serverSettingsItems.some((item) => item.id === activePane);
 
+  const visibleServerItems = visibleServerSettingsItems.filter((item) => {
+    const adminOnly = item.id === 'users' || item.id === 'integrations';
+    return !adminOnly || isAdmin;
+  });
+
+  const handleSelectPane = (pane: PreferencesPane) => {
+    setPreferencesActivePane(pane);
+    setPreferencesMobileView('pane');
+  };
+
   const getPaneTitle = (pane: PreferencesPane): string => {
     const allItems = [...appSettingsItems, ...serverSettingsItems];
     const item = allItems.find((i) => i.id === pane);
@@ -495,7 +581,7 @@ export function PreferencesDialog() {
 
   return (
     <Dialog open={preferencesOpen} onOpenChange={setPreferencesOpen}>
-      <DialogContent className="flex min-h-0 flex-col gap-0 overflow-hidden p-0 max-h-[90vh] md:h-[50rem] md:max-w-260 lg:max-w-288 font-sans rounded-xl">
+      <DialogContent className="flex min-h-0 flex-col gap-0 overflow-hidden p-0 max-h-[90vh] md:h-[50rem] md:max-w-260 lg:max-w-288 font-sans rounded-xl max-md:top-0 max-md:left-0 max-md:h-dvh max-md:max-h-none max-md:w-dvw max-md:max-w-none max-md:translate-x-0 max-md:translate-y-0 max-md:rounded-none max-md:ring-0 max-md:pt-[env(safe-area-inset-top)] max-md:pb-[env(safe-area-inset-bottom)]">
         <DialogTitle className="sr-only">{_(msg`Preferences`)}</DialogTitle>
         <DialogDescription className="sr-only">
           {_(msg`Customize your application preferences here.`)}
@@ -509,7 +595,7 @@ export function PreferencesDialog() {
                 <SidebarGroupLabel>{_(msg`App Settings`)}</SidebarGroupLabel>
                 <SidebarGroupContent>
                   <SidebarMenu className="gap-1">
-                    {appSettingsItems.map((item) => (
+                    {visibleAppSettingsItems.map((item) => (
                       <SidebarMenuItem key={item.id}>
                         <SidebarMenuButton
                           isActive={activePane === item.id}
@@ -530,22 +616,17 @@ export function PreferencesDialog() {
                   <SidebarGroupLabel>{_(msg`Server`)}</SidebarGroupLabel>
                   <SidebarGroupContent>
                     <SidebarMenu className="gap-1">
-                      {serverSettingsItems
-                        .filter((item) => {
-                          const adminOnly = item.id === 'users' || item.id === 'integrations';
-                          return !adminOnly || isAdmin;
-                        })
-                        .map((item) => (
-                          <SidebarMenuItem key={item.id}>
-                            <SidebarMenuButton
-                              isActive={activePane === item.id}
-                              onClick={() => setPreferencesActivePane(item.id)}
-                            >
-                              <HugeiconsIcon icon={item.icon} />
-                              <span>{_(item.label)}</span>
-                            </SidebarMenuButton>
-                          </SidebarMenuItem>
-                        ))}
+                      {visibleServerItems.map((item) => (
+                        <SidebarMenuItem key={item.id}>
+                          <SidebarMenuButton
+                            isActive={activePane === item.id}
+                            onClick={() => setPreferencesActivePane(item.id)}
+                          >
+                            <HugeiconsIcon icon={item.icon} />
+                            <span>{_(item.label)}</span>
+                          </SidebarMenuButton>
+                        </SidebarMenuItem>
+                      ))}
                     </SidebarMenu>
                   </SidebarGroupContent>
                 </SidebarGroup>
@@ -554,230 +635,214 @@ export function PreferencesDialog() {
           </Sidebar>
 
           <main className="flex min-h-0 flex-1 flex-col overflow-hidden">
-            <header className="flex h-16 shrink-0 items-center gap-2 md:hidden">
-              <div className="flex flex-1 items-center gap-2 px-4">
-                <Breadcrumb>
-                  <BreadcrumbList>
-                    <BreadcrumbItem>
-                      <BreadcrumbLink asChild>
-                        <span>{_(msg`Preferences`)}</span>
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                      <BreadcrumbPage>{getPaneTitle(activePane)}</BreadcrumbPage>
-                    </BreadcrumbItem>
-                  </BreadcrumbList>
-                </Breadcrumb>
-                {isServerPane && serverDomain && activeAccount?.server_url && (
-                  <Badge
-                    variant="outline"
-                    className="h-4 cursor-pointer px-1.5 text-[10px] font-normal text-muted-foreground hover:text-foreground"
-                    onClick={() => openUrl(activeAccount.server_url).catch(() => {})}
-                  >
-                    {serverDomain}
-                  </Badge>
-                )}
-              </div>
-            </header>
-
-            <div className="border-b p-2 md:hidden">
-              <div className="space-y-2">
-                {/* App Settings */}
-                <div className="text-xs font-semibold text-muted-foreground px-2">
-                  {_(msg`App Settings`)}
-                </div>
-                <div className="grid grid-cols-2 gap-1">
-                  {appSettingsItems.map((item) => (
-                    <Button
-                      key={item.id}
-                      size="sm"
-                      variant={activePane === item.id ? 'secondary' : 'ghost'}
-                      className="justify-start"
-                      onClick={() => setPreferencesActivePane(item.id)}
-                    >
-                      <HugeiconsIcon icon={item.icon} className="mr-1.5 size-4" />
-                      {_(item.label)}
-                    </Button>
-                  ))}
-                </div>
-
-                {/* Server Settings */}
-                {isConnected && (
-                  <>
-                    <div className="text-xs font-semibold text-muted-foreground px-2 pt-2">
-                      {_(msg`Server`)}
-                    </div>
-                    <div className="grid grid-cols-2 gap-1">
-                      {serverSettingsItems
-                        .filter((item) => {
-                          const adminOnly = item.id === 'users' || item.id === 'integrations';
-                          return !adminOnly || isAdmin;
-                        })
-                        .map((item) => (
-                          <Button
-                            key={item.id}
-                            size="sm"
-                            variant={activePane === item.id ? 'secondary' : 'ghost'}
-                            className="justify-start"
-                            onClick={() => setPreferencesActivePane(item.id)}
+            {isMobile && mobileView === 'menu' ? (
+              /* Mobile root menu: drill-down entry point */
+              <>
+                <header className="flex h-14 shrink-0 items-center px-4">
+                  <span className="text-base font-semibold">{_(msg`Preferences`)}</span>
+                </header>
+                <div className="min-h-0 flex-1 space-y-6 overflow-y-auto px-4 pt-2 pb-8 animate-in fade-in slide-in-from-left-4 duration-200">
+                  <MobileNavGroup
+                    label={_(msg`App Settings`)}
+                    items={visibleAppSettingsItems}
+                    onSelect={handleSelectPane}
+                  />
+                  {isConnected && (
+                    <MobileNavGroup
+                      label={_(msg`Server`)}
+                      items={visibleServerItems}
+                      onSelect={handleSelectPane}
+                      action={
+                        serverDomain && activeAccount?.server_url ? (
+                          <Badge
+                            variant="outline"
+                            className="h-4 cursor-pointer px-1.5 text-[10px] font-normal text-muted-foreground hover:text-foreground"
+                            onClick={() => openUrl(activeAccount.server_url).catch(() => {})}
                           >
-                            <HugeiconsIcon icon={item.icon} className="mr-1.5 size-4" />
-                            {_(item.label)}
-                          </Button>
-                        ))}
-                    </div>
-                  </>
-                )}
-              </div>
-            </div>
-
-            <header className="hidden md:flex h-16 shrink-0 items-center gap-2 px-4">
-              <div className="flex items-center gap-2">
-                <Breadcrumb>
-                  <BreadcrumbList>
-                    <BreadcrumbItem>
-                      <BreadcrumbLink asChild>
-                        <span>{_(msg`Preferences`)}</span>
-                      </BreadcrumbLink>
-                    </BreadcrumbItem>
-                    <BreadcrumbSeparator />
-                    <BreadcrumbItem>
-                      <BreadcrumbPage>{getPaneTitle(activePane)}</BreadcrumbPage>
-                    </BreadcrumbItem>
-                  </BreadcrumbList>
-                </Breadcrumb>
-                {isServerPane && serverDomain && activeAccount?.server_url && (
-                  <Badge
-                    variant="outline"
-                    className="h-4 cursor-pointer px-1.5 text-[10px] font-normal text-muted-foreground hover:text-foreground"
-                    onClick={() => openUrl(activeAccount.server_url).catch(() => {})}
+                            {serverDomain}
+                          </Badge>
+                        ) : undefined
+                      }
+                    />
+                  )}
+                </div>
+              </>
+            ) : (
+              <>
+                {/* Mobile pane header: back navigation to the root menu */}
+                <header className="flex h-14 shrink-0 items-center gap-1 ps-2 pe-12 md:hidden">
+                  <Button
+                    variant="ghost"
+                    size="icon-sm"
+                    onClick={() => setPreferencesMobileView('menu')}
                   >
-                    {serverDomain}
-                  </Badge>
-                )}
-              </div>
-            </header>
+                    <HugeiconsIcon icon={ArrowLeft01Icon} className="size-5 rtl:rotate-180" />
+                    <span className="sr-only">{_(msg`Back`)}</span>
+                  </Button>
+                  <span className="truncate text-base font-semibold">
+                    {getPaneTitle(activePane)}
+                  </span>
+                  {isServerPane && serverDomain && activeAccount?.server_url && (
+                    <Badge
+                      variant="outline"
+                      className="h-4 shrink-0 cursor-pointer px-1.5 text-[10px] font-normal text-muted-foreground hover:text-foreground"
+                      onClick={() => openUrl(activeAccount.server_url).catch(() => {})}
+                    >
+                      {serverDomain}
+                    </Badge>
+                  )}
+                </header>
 
-            <div
-              className={cn(
-                'flex min-h-0 flex-1 flex-col gap-4 px-4 py-2',
-                activePane === 'feeds' ? 'overflow-hidden' : 'overflow-y-auto'
-              )}
-            >
-              {/* App Settings */}
-              {activePane === 'general' && <GeneralPane />}
-              {activePane === 'appearance' && <AppearancePane />}
-              {activePane === 'reader' && <ReaderPane />}
-              {activePane === 'translation' && <TranslationPane />}
-              {activePane === 'shortcuts' && <ShortcutsPane />}
-              {activePane === 'gesture' && <GesturePane />}
-              {activePane === 'advanced' && <AdvancedPane />}
-              {activePane === 'about' && <AboutPane />}
+                <header className="hidden md:flex h-16 shrink-0 items-center gap-2 px-4">
+                  <div className="flex items-center gap-2">
+                    <Breadcrumb>
+                      <BreadcrumbList>
+                        <BreadcrumbItem>
+                          <BreadcrumbLink asChild>
+                            <span>{_(msg`Preferences`)}</span>
+                          </BreadcrumbLink>
+                        </BreadcrumbItem>
+                        <BreadcrumbSeparator />
+                        <BreadcrumbItem>
+                          <BreadcrumbPage>{getPaneTitle(activePane)}</BreadcrumbPage>
+                        </BreadcrumbItem>
+                      </BreadcrumbList>
+                    </Breadcrumb>
+                    {isServerPane && serverDomain && activeAccount?.server_url && (
+                      <Badge
+                        variant="outline"
+                        className="h-4 cursor-pointer px-1.5 text-[10px] font-normal text-muted-foreground hover:text-foreground"
+                        onClick={() => openUrl(activeAccount.server_url).catch(() => {})}
+                      >
+                        {serverDomain}
+                      </Badge>
+                    )}
+                  </div>
+                </header>
 
-              {/* Server Settings - shown when connected, otherwise show message */}
-              {activePane === 'token' && (isConnected ? <ApiTokenPane /> : <ConnectionStatePane />)}
+                <div
+                  className={cn(
+                    'flex min-h-0 flex-1 flex-col gap-4 px-4 py-2',
+                    'max-md:animate-in max-md:fade-in max-md:slide-in-from-right-4 max-md:duration-200',
+                    activePane === 'feeds' ? 'overflow-hidden' : 'overflow-y-auto'
+                  )}
+                >
+                  {/* App Settings */}
+                  {activePane === 'general' && <GeneralPane />}
+                  {activePane === 'appearance' && <AppearancePane />}
+                  {activePane === 'reader' && <ReaderPane />}
+                  {activePane === 'translation' && <TranslationPane />}
+                  {activePane === 'shortcuts' && <ShortcutsPane />}
+                  {activePane === 'gesture' && <GesturePane />}
+                  {activePane === 'advanced' && <AdvancedPane />}
+                  {activePane === 'about' && <AboutPane />}
 
-              {/* Categories pane */}
-              {activePane === 'categories' &&
-                (isConnected ? (
-                  <CategoriesPane
-                    categories={categories}
-                    filteredCategories={filteredCategories}
-                    searchQuery={categorySearchQuery}
-                    onSearchChange={setCategorySearchQuery}
-                    onAddCategory={() => setCategoryDialogState({ mode: 'create' })}
-                    onEditCategory={(category) =>
-                      setCategoryDialogState({ mode: 'edit', category })
-                    }
-                    onDeleteCategory={(category) =>
-                      setDeleteDialogState({
-                        type: 'category',
-                        id: category.id,
-                        title: category.title,
-                        feedCount: feeds.filter(
-                          (f) => String(f.category?.id) === String(category.id)
-                        ).length,
-                      })
-                    }
-                    onMarkAsRead={(category) => {
-                      markCategoryAsRead.mutateAsync(category.id).catch(() => {});
-                    }}
-                    onRefreshCategory={(category) => {
-                      const categoryId = String(category.id);
-                      const feedIds = feeds
-                        .filter((f) => String(f.category?.id) === categoryId)
-                        .map((f) => f.id);
-                      setRefreshingCategoryId(categoryId);
-                      refreshCategoryFeeds
-                        .mutateAsync(feedIds)
-                        .catch(() => {})
-                        .finally(() => setRefreshingCategoryId(null));
-                    }}
-                    isRefreshingCategoryId={refreshingCategoryId}
-                  />
-                ) : (
-                  <ConnectionStatePane />
-                ))}
+                  {/* Server Settings - shown when connected, otherwise show message */}
+                  {activePane === 'token' &&
+                    (isConnected ? <ApiTokenPane /> : <ConnectionStatePane />)}
 
-              {/* Feeds pane */}
-              {activePane === 'feeds' &&
-                (isConnected ? (
-                  <FeedsPane
-                    feeds={feeds}
-                    filteredFeeds={filteredFeeds}
-                    searchQuery={feedSearchQuery}
-                    onSearchChange={setFeedSearchQuery}
-                    onAddFeed={() =>
-                      setFeedDialogState({
-                        mode: 'create',
-                        defaultCategoryId: null,
-                        initialFeedUrl: '',
-                      })
-                    }
-                    onRefreshAll={() => refreshAllFeeds.mutate()}
-                    isRefreshingAll={refreshAllFeeds.isPending}
-                    columns={feedColumns}
-                  />
-                ) : (
-                  <ConnectionStatePane />
-                ))}
+                  {/* Categories pane */}
+                  {activePane === 'categories' &&
+                    (isConnected ? (
+                      <CategoriesPane
+                        categories={categories}
+                        filteredCategories={filteredCategories}
+                        searchQuery={categorySearchQuery}
+                        onSearchChange={setCategorySearchQuery}
+                        onAddCategory={() => setCategoryDialogState({ mode: 'create' })}
+                        onEditCategory={(category) =>
+                          setCategoryDialogState({ mode: 'edit', category })
+                        }
+                        onDeleteCategory={(category) =>
+                          setDeleteDialogState({
+                            type: 'category',
+                            id: category.id,
+                            title: category.title,
+                            feedCount: feeds.filter(
+                              (f) => String(f.category?.id) === String(category.id)
+                            ).length,
+                          })
+                        }
+                        onMarkAsRead={(category) => {
+                          markCategoryAsRead.mutateAsync(category.id).catch(() => {});
+                        }}
+                        onRefreshCategory={(category) => {
+                          const categoryId = String(category.id);
+                          const feedIds = feeds
+                            .filter((f) => String(f.category?.id) === categoryId)
+                            .map((f) => f.id);
+                          setRefreshingCategoryId(categoryId);
+                          refreshCategoryFeeds
+                            .mutateAsync(feedIds)
+                            .catch(() => {})
+                            .finally(() => setRefreshingCategoryId(null));
+                        }}
+                        isRefreshingCategoryId={refreshingCategoryId}
+                      />
+                    ) : (
+                      <ConnectionStatePane />
+                    ))}
 
-              {/* Users pane */}
-              {activePane === 'users' &&
-                (isConnected ? (
-                  <UsersPane
-                    currentUser={currentUser ?? null}
-                    users={users}
-                    isError={usersError}
-                    onAddUser={() => setUserDialogState({ mode: 'create' })}
-                    onEditUser={(user) => setUserDialogState({ mode: 'edit', user })}
-                    onDeleteUser={(user) =>
-                      setDeleteDialogState({
-                        type: 'user',
-                        id: user.id,
-                        title: user.username,
-                      })
-                    }
-                  />
-                ) : (
-                  <ConnectionStatePane />
-                ))}
+                  {/* Feeds pane */}
+                  {activePane === 'feeds' &&
+                    (isConnected ? (
+                      <FeedsPane
+                        feeds={feeds}
+                        filteredFeeds={filteredFeeds}
+                        searchQuery={feedSearchQuery}
+                        onSearchChange={setFeedSearchQuery}
+                        onAddFeed={() =>
+                          setFeedDialogState({
+                            mode: 'create',
+                            defaultCategoryId: null,
+                            initialFeedUrl: '',
+                          })
+                        }
+                        onRefreshAll={() => refreshAllFeeds.mutate()}
+                        isRefreshingAll={refreshAllFeeds.isPending}
+                        columns={feedColumns}
+                      />
+                    ) : (
+                      <ConnectionStatePane />
+                    ))}
 
-              {/* Integrations pane */}
-              {activePane === 'integrations' &&
-                (isConnected ? (
-                  <IntegrationsPane
-                    integrations={integrations ?? null}
-                    isLoading={integrationsLoading}
-                  />
-                ) : (
-                  <ConnectionStatePane />
-                ))}
+                  {/* Users pane */}
+                  {activePane === 'users' &&
+                    (isConnected ? (
+                      <UsersPane
+                        currentUser={currentUser ?? null}
+                        users={users}
+                        isError={usersError}
+                        onAddUser={() => setUserDialogState({ mode: 'create' })}
+                        onEditUser={(user) => setUserDialogState({ mode: 'edit', user })}
+                        onDeleteUser={(user) =>
+                          setDeleteDialogState({
+                            type: 'user',
+                            id: user.id,
+                            title: user.username,
+                          })
+                        }
+                      />
+                    ) : (
+                      <ConnectionStatePane />
+                    ))}
 
-              {/* Sync pane */}
-              {activePane === 'sync' && (isConnected ? <SyncPane /> : <ConnectionStatePane />)}
-            </div>
+                  {/* Integrations pane */}
+                  {activePane === 'integrations' &&
+                    (isConnected ? (
+                      <IntegrationsPane
+                        integrations={integrations ?? null}
+                        isLoading={integrationsLoading}
+                      />
+                    ) : (
+                      <ConnectionStatePane />
+                    ))}
+
+                  {/* Sync pane */}
+                  {activePane === 'sync' && (isConnected ? <SyncPane /> : <ConnectionStatePane />)}
+                </div>
+              </>
+            )}
           </main>
         </SidebarProvider>
       </DialogContent>

@@ -1,5 +1,5 @@
 import { renderHook } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import type { AppPreferences } from '@/lib/tauri-bindings';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
 import { useReaderSettings } from './use-reader-settings';

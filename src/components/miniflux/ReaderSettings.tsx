@@ -38,6 +38,7 @@ import {
   readerFontFamilies,
 } from '@/lib/reader-fonts';
 import { commands } from '@/lib/tauri-bindings';
+import { capabilities } from '@/lib/platform';
 
 const MIN_FONT_SIZE = 14;
 const MAX_FONT_SIZE = 24;
@@ -98,6 +99,8 @@ export function ReaderSettings() {
       throw new Error(result.error);
     },
     staleTime: Number.POSITIVE_INFINITY,
+    // Font enumeration is a Rust call; the browser exposes no such list.
+    enabled: capabilities.systemFonts,
   });
   const [fontSizeValue, setFontSizeValue] = useState(fontSize);
   const [lineWidthValue, setLineWidthValue] = useState(lineWidth);

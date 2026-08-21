@@ -18,61 +18,31 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import type { ColumnDef } from '@tanstack/react-table';
-import { listen } from '@tauri-apps/api/event';
-import { writeText } from '@tauri-apps/plugin-clipboard-manager';
+import { copyText } from '@/lib/shell';
 import { openPath, revealItemInDir } from '@tauri-apps/plugin-opener';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { Tabs, TabsList, TabsTab } from '@/components/animate-ui/components/base/tabs';
 import { Button } from '@/components/ui/button';
-import { DataTable } from '@/components/ui/data-table';
+import { DataTable, type DataTableColumnDef, type DataTableRow } from '@/components/ui/data-table';
 import { Dialog, DialogContent, DialogDescription, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
 import { commands } from '@/lib/tauri-bindings';
 import { installAndRelaunch } from '@/lib/updater';
 import { cn } from '@/lib/utils';
+import {
+  type DownloadItem,
+  type DownloadStatus,
+  useClearDownloads,
+  useDownloads,
+  useRemoveDownload,
+} from '@/services/downloads';
 import { usePlayerStore } from '@/store/player-store';
 import { useUIStore } from '@/store/ui-store';
 import { useUpdaterStore } from '@/store/updater-store';
 
-type DownloadStatus = 'downloading' | 'completed' | 'failed' | 'cancelled' | 'paused';
 type FilterTab = 'all' | 'active' | 'completed' | 'failed';
-
-type DownloadItem = {
-  enclosureId: number;
-  url: string;
-  fileName: string;
-  status: DownloadStatus;
-  progress: number;
-  downloadedBytes: number;
-  totalBytes: number;
-  filePath?: string;
-  error?: string;
-  speed?: number;
-  eta?: string;
-  mediaType?: string;
-  updatedAt: number;
-};
-
-type EventPayload = {
-  // biome-ignore lint/style/useNamingConvention: API event payload
-  enclosure_id: number;
-  // biome-ignore lint/style/useNamingConvention: API event payload
-  file_name: string;
-  url: string;
-  progress: number;
-  // biome-ignore lint/style/useNamingConvention: API event payload
-  downloaded_bytes: number;
-  // biome-ignore lint/style/useNamingConvention: API event payload
-  total_bytes: number;
-  status: string;
-  // biome-ignore lint/style/useNamingConvention: API event payload
-  file_path?: string;
-  // biome-ignore lint/style/useNamingConvention: API event payload
-  media_type?: string;
-};
 
 function inferMediaType(fileName: string): 'audio' | 'image' | 'video' | 'file' {
   const ext = fileName.split('.').pop()?.toLowerCase() ?? '';
@@ -90,18 +60,6 @@ function hostnameFromUrl(url: string): string {
   }
 }
 
-function toUnixTimestamp(
-  // biome-ignore lint/style/useNamingConvention: Rust-serialized SystemTime
-  value?: { duration_since_unix_epoch?: number }
-): number {
-  if (!value) return Math.floor(Date.now() / 1000);
-  const unix = value.duration_since_unix_epoch;
-  if (typeof unix === 'number' && Number.isFinite(unix) && unix > 0) {
-    return unix;
-  }
-  return Math.floor(Date.now() / 1000);
-}
-
 function formatBytes(bytes: number): string {
   if (bytes <= 0) return '-';
   const k = 1024;
@@ -116,16 +74,6 @@ function formatBytes(bytes: number): string {
 function formatSpeed(bytesPerSec?: number): string {
   if (!bytesPerSec || bytesPerSec <= 0) return '';
   return `${formatBytes(bytesPerSec)}/s`;
-}
-
-function formatEta(remainingBytes: number, speedBps: number): string {
-  if (!speedBps || speedBps <= 0 || remainingBytes <= 0) return '';
-  const seconds = Math.ceil(remainingBytes / speedBps);
-  if (seconds < 60) return `${seconds}s`;
-  if (seconds < 3600) return `${Math.ceil(seconds / 60)}m`;
-  const h = Math.floor(seconds / 3600);
-  const m = Math.ceil((seconds % 3600) / 60);
-  return m > 0 ? `${h}h ${m}m` : `${h}h`;
 }
 
 function formatDate(unixSeconds: number): string {
@@ -174,7 +122,6 @@ function DownloadIcon({ item }: { item: DownloadItem }) {
 
 export function DownloadManagerDialog() {
   const { _ } = useLingui();
-  const [downloads, setDownloads] = useState<DownloadItem[]>([]);
   const [activeTab, setActiveTab] = useState<FilterTab>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const downloadsOpen = useUIStore((state) => state.downloadsOpen);
@@ -186,207 +133,13 @@ export function DownloadManagerDialog() {
   const updaterProgress = useUpdaterStore((state) =>
     'progress' in state ? (state as { progress: number }).progress : 0
   );
-  const speedRef = useRef<Record<number, { bytes: number; time: number; ema: number }>>({});
-  const completedRef = useRef<Set<number>>(new Set());
 
-  useEffect(() => {
-    let unlisten: (() => void) | null = null;
-
-    const setup = async () => {
-      try {
-        const result = await commands.getDownloadsFromDb();
-        if (result.status === 'ok') {
-          const mapped = result.data.map((state): DownloadItem => {
-            if ('Downloading' in state) {
-              const d = state.Downloading;
-              return {
-                enclosureId: Number(d.id),
-                url: d.url,
-                fileName: d.url.split('/').pop() ?? '',
-                status: 'downloading',
-                progress: d.progress,
-                downloadedBytes: Number(d.downloaded_bytes),
-                totalBytes: Number(d.total_bytes),
-                updatedAt: toUnixTimestamp(d.started_at),
-              };
-            }
-            if ('Completed' in state) {
-              const d = state.Completed;
-              return {
-                enclosureId: Number(d.id),
-                url: d.url,
-                fileName: d.file_path?.split(/[/\\]/).pop() ?? d.url.split('/').pop() ?? '',
-                status: 'completed',
-                progress: d.progress,
-                downloadedBytes: Number(d.total_bytes),
-                totalBytes: Number(d.total_bytes),
-                filePath: d.file_path,
-                updatedAt: toUnixTimestamp(d.completed_at),
-              };
-            }
-            if ('Failed' in state) {
-              const d = state.Failed;
-              return {
-                enclosureId: Number(d.id),
-                url: d.url,
-                fileName: d.url.split('/').pop() ?? '',
-                status: 'failed',
-                progress: d.progress,
-                downloadedBytes: Number(d.downloaded_bytes),
-                totalBytes: 0,
-                error: d.error,
-                updatedAt: toUnixTimestamp(d.failed_at),
-              };
-            }
-            if ('Paused' in state) {
-              const d = state.Paused;
-              return {
-                enclosureId: Number(d.id),
-                url: d.url,
-                fileName: d.url.split('/').pop() ?? '',
-                status: 'paused',
-                progress: d.progress,
-                downloadedBytes: Number(d.downloaded_bytes),
-                totalBytes: Number(d.total_bytes),
-                updatedAt: toUnixTimestamp(d.paused_at),
-              };
-            }
-
-            const d = state.Cancelled;
-            return {
-              enclosureId: Number(d.id),
-              url: d.url,
-              fileName: d.url.split('/').pop() ?? '',
-              status: 'cancelled',
-              progress: d.progress,
-              downloadedBytes: 0,
-              totalBytes: 0,
-              updatedAt: toUnixTimestamp(d.cancelled_at),
-            };
-          });
-
-          const cleaned = mapped.map((item) =>
-            item.status === 'downloading'
-              ? {
-                  ...item,
-                  status: 'failed' as DownloadStatus,
-                  error: _(msg`Interrupted — app was closed`),
-                }
-              : item
-          );
-
-          setDownloads(cleaned);
-        }
-      } catch (error) {
-        console.error('Failed to load download history:', error);
-      }
-
-      try {
-        const unlistenFn = await listen<EventPayload>('download-progress', (event) => {
-          const {
-            enclosure_id,
-            file_name,
-            url,
-            progress,
-            downloaded_bytes,
-            total_bytes,
-            status,
-            file_path,
-            media_type,
-          } = event.payload;
-
-          if (status === 'completed' && !completedRef.current.has(enclosure_id)) {
-            completedRef.current.add(enclosure_id);
-            toast.success(_(msg`Download Completed`), {
-              description: file_name,
-              action: file_path
-                ? { label: _(msg`Open`), onClick: () => openPath(file_path) }
-                : undefined,
-            });
-          } else if (status === 'failed' && !completedRef.current.has(enclosure_id)) {
-            completedRef.current.add(enclosure_id);
-            toast.error(_(msg`Download Failed`), { description: file_name });
-          }
-
-          const now = Date.now();
-          const last = speedRef.current[enclosure_id];
-          let speed = 0;
-          const emaAlpha = 0.3;
-
-          if (last && status === 'downloading') {
-            const timeDiff = (now - last.time) / 1000;
-            if (timeDiff > 0.25) {
-              const instantSpeed = (downloaded_bytes - last.bytes) / timeDiff;
-              const ema =
-                last.ema > 0 ? emaAlpha * instantSpeed + (1 - emaAlpha) * last.ema : instantSpeed;
-              speed = ema;
-              speedRef.current[enclosure_id] = { bytes: downloaded_bytes, time: now, ema };
-            } else {
-              speed = -1;
-            }
-          } else {
-            speedRef.current[enclosure_id] = { bytes: downloaded_bytes, time: now, ema: 0 };
-          }
-
-          setDownloads((prev) => {
-            const idx = prev.findIndex((d) => d.enclosureId === enclosure_id);
-            if (idx !== -1) {
-              return prev.map((d, i) =>
-                i === idx
-                  ? {
-                      ...d,
-                      fileName: file_name || d.fileName,
-                      url: url || d.url,
-                      progress,
-                      downloadedBytes: downloaded_bytes,
-                      totalBytes: total_bytes,
-                      status: status as DownloadStatus,
-                      speed: speed === -1 ? d.speed : speed,
-                      eta:
-                        speed > 0 && total_bytes > downloaded_bytes
-                          ? formatEta(total_bytes - downloaded_bytes, speed)
-                          : speed === -1
-                            ? d.eta
-                            : '',
-                      filePath: file_path || d.filePath,
-                      mediaType: media_type || d.mediaType,
-                      updatedAt: Math.floor(now / 1000),
-                    }
-                  : d
-              );
-            }
-
-            return [
-              {
-                enclosureId: enclosure_id,
-                url: url || '',
-                fileName: file_name || '',
-                status: status as DownloadStatus,
-                progress,
-                downloadedBytes: downloaded_bytes,
-                totalBytes: total_bytes,
-                speed: 0,
-                eta: '',
-                filePath: file_path,
-                mediaType: media_type,
-                updatedAt: Math.floor(now / 1000),
-              },
-              ...prev,
-            ];
-          });
-        });
-
-        unlisten = unlistenFn;
-      } catch (error) {
-        console.error('Failed to listen to download-progress event:', error);
-      }
-    };
-
-    setup();
-    return () => {
-      unlisten?.();
-    };
-  }, [_]);
+  // History and live progress both come from the shared download cache, which
+  // the app shell keeps subscribed to the downloader's events — this dialog is
+  // a pure reader of it.
+  const { data: downloads = [] } = useDownloads();
+  const removeDownload = useRemoveDownload();
+  const clearDownloads = useClearDownloads();
 
   const handleOpenFile = async (filePath: string) => {
     if (!filePath) return;
@@ -409,7 +162,7 @@ export function DownloadManagerDialog() {
   };
 
   const handleCopyUrl = async (url: string) => {
-    await writeText(url);
+    await copyText(url);
     toast.success(_(msg`URL copied to clipboard`));
   };
 
@@ -437,13 +190,9 @@ export function DownloadManagerDialog() {
     setDownloadsOpen(false);
   };
 
-  const handleRemove = async (id: number) => {
+  const handleRemove = (id: number) => {
     if (id === UPDATER_SENTINEL_ID) return;
-    setDownloads((prev) => prev.filter((d) => d.enclosureId !== id));
-    const result = await commands.deleteDownload(String(id));
-    if (result.status === 'error') {
-      console.error('Failed to delete download:', result.error);
-    }
+    removeDownload.mutate(id);
   };
 
   const handleCancel = async (dl: DownloadItem) => {
@@ -570,22 +319,10 @@ export function DownloadManagerDialog() {
         ? counts.failed > 0
         : counts.completed + counts.failed > 0;
 
-  const handleClearTab = async () => {
-    if (activeTab === 'completed') {
-      setDownloads((prev) => prev.filter((d) => d.status !== 'completed'));
-      await commands.clearDownloads('completed');
-      return;
-    }
-
-    if (activeTab === 'failed') {
-      setDownloads((prev) => prev.filter((d) => d.status !== 'failed' && d.status !== 'cancelled'));
-      await commands.clearDownloads('failed');
-      await commands.clearDownloads('cancelled');
-      return;
-    }
-
-    setDownloads((prev) => prev.filter((d) => d.status === 'downloading' || d.status === 'paused'));
-    await commands.clearDownloads(null);
+  const handleClearTab = () => {
+    clearDownloads.mutate(
+      activeTab === 'completed' ? 'completed' : activeTab === 'failed' ? 'failed' : 'finished'
+    );
   };
 
   const tabs: { key: FilterTab; label: string; count: number }[] = [
@@ -595,7 +332,7 @@ export function DownloadManagerDialog() {
     { key: 'failed', label: _(msg`Failed`), count: counts.failed },
   ];
 
-  const columns: ColumnDef<DownloadItem>[] = [
+  const columns: DataTableColumnDef<DownloadItem>[] = [
     {
       accessorKey: 'fileName',
       header: _(msg`Name`),
@@ -651,7 +388,8 @@ export function DownloadManagerDialog() {
       accessorKey: 'status',
       header: _(msg`Status`),
       size: 170,
-      sortingFn: (a, b) => a.original.status.localeCompare(b.original.status),
+      sortFn: (a: DataTableRow<DownloadItem>, b: DataTableRow<DownloadItem>) =>
+        a.original.status.localeCompare(b.original.status),
       cell: ({ row }) => {
         const item = row.original;
         const statusLabel =

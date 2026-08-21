@@ -10,7 +10,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { confirm } from '@tauri-apps/plugin-dialog';
+
 import { toast } from 'sonner';
 
 import {
@@ -24,6 +24,8 @@ import {
 } from '@/components/animate-ui/components/base/menu';
 
 import { resetAccountState } from '@/lib/account-reset';
+import { confirm } from '@/lib/dialog';
+import { capabilities } from '@/lib/platform';
 import { logger } from '@/lib/logger';
 import type { MinifluxConnection } from '@/lib/tauri-bindings';
 import { commands } from '@/lib/tauri-bindings';
@@ -355,42 +357,45 @@ export function UserNav({ compact = false }: UserNavProps = {}) {
         )}
         <MenuGroup>
           <MenuGroupLabel>{_(msg`Accounts`)}</MenuGroupLabel>
-          {accounts.map((account) => (
-            <MenuItem
-              key={account.id}
-              onClick={() => handleSwitchAccount(account.id)}
-              className="group justify-between"
-            >
-              <div className="flex items-center gap-2 overflow-hidden">
-                <HugeiconsIcon
-                  icon={account.is_admin ? ShieldUserIcon : UserCircleIcon}
-                  className="size-4 shrink-0 text-muted-foreground"
-                />
-                <div className="flex flex-col gap-0.5 overflow-hidden">
-                  <span className="truncate font-medium">{account.username}</span>
-                  <span className="truncate text-xs text-muted-foreground">
-                    {getDomain(account.server_url)}
-                  </span>
+          {/* Switching needs a Rust-side account store. "Add Account" below still
+              works on web — it is a single-account connect flow. */}
+          {capabilities.multiAccount &&
+            accounts.map((account) => (
+              <MenuItem
+                key={account.id}
+                onClick={() => handleSwitchAccount(account.id)}
+                className="group justify-between"
+              >
+                <div className="flex items-center gap-2 overflow-hidden">
+                  <HugeiconsIcon
+                    icon={account.is_admin ? ShieldUserIcon : UserCircleIcon}
+                    className="size-4 shrink-0 text-muted-foreground"
+                  />
+                  <div className="flex flex-col gap-0.5 overflow-hidden">
+                    <span className="truncate font-medium">{account.username}</span>
+                    <span className="truncate text-xs text-muted-foreground">
+                      {getDomain(account.server_url)}
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div className="flex items-center gap-1 shrink-0">
-                {account.id === currentAccount.id && (
-                  <HugeiconsIcon icon={Tick01Icon} className="size-4 text-primary" />
-                )}
-                <button
-                  type="button"
-                  className="size-5 items-center justify-center rounded opacity-0 transition-opacity hover:bg-destructive/10 group-hover:opacity-100 flex"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    handleDeleteAccount(account);
-                  }}
-                  title={_(msg`Delete account`)}
-                >
-                  <HugeiconsIcon icon={Delete02Icon} className="size-3.5 text-destructive" />
-                </button>
-              </div>
-            </MenuItem>
-          ))}
+                <div className="flex items-center gap-1 shrink-0">
+                  {account.id === currentAccount.id && (
+                    <HugeiconsIcon icon={Tick01Icon} className="size-4 text-primary" />
+                  )}
+                  <button
+                    type="button"
+                    className="size-5 items-center justify-center rounded opacity-0 transition-opacity hover:bg-destructive/10 group-hover:opacity-100 flex"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      handleDeleteAccount(account);
+                    }}
+                    title={_(msg`Delete account`)}
+                  >
+                    <HugeiconsIcon icon={Delete02Icon} className="size-3.5 text-destructive" />
+                  </button>
+                </div>
+              </MenuItem>
+            ))}
           <MenuSeparator />
           <MenuItem onClick={() => useUIStore.getState().setShowConnectionDialog(true)}>
             <HugeiconsIcon icon={AddCircleIcon} className="mr-2 size-4" />

@@ -1,6 +1,7 @@
 import { msg } from '@lingui/core/macro';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import i18n from '@/i18n/config';
+import { capabilities } from '@/lib/platform';
 import { commands } from '@/lib/tauri-bindings';
 import type { AppCommand } from './types';
 
@@ -10,6 +11,9 @@ export const windowCommands: AppCommand[] = [
     label: msg`Close Window`,
     description: msg`Close the current window`,
     shortcut: '⌘+W',
+
+    // A browser tab is not ours to close, and the Rust close handler does not exist.
+    isAvailable: () => capabilities.nativeWindowControls,
 
     execute: async (context) => {
       try {

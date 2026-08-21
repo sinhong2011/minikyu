@@ -2,17 +2,16 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import * as tauriBindings from '@/lib/tauri-bindings';
 import * as accountsService from '@/services/miniflux/accounts';
 import * as authService from '@/services/miniflux/auth';
 import * as usersService from '@/services/miniflux/users';
 import { UserNav } from './UserNav';
 
-vi.mock('@tauri-apps/plugin-dialog', () => ({
+vi.mock('@/lib/dialog', () => ({
   confirm: vi.fn().mockResolvedValue(true),
-  open: vi.fn(),
-  save: vi.fn(),
+  message: vi.fn().mockResolvedValue(undefined),
 }));
 
 vi.mock('@/lib/account-reset', () => ({

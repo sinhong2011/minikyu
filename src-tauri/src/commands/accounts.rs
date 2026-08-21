@@ -461,12 +461,13 @@ pub async fn switch_miniflux_account(
     // ambiguous and can show another account's data. Invalidate this account's
     // cached identity and force one online reconnect to re-establish ownership.
     if let Some(user_id) = selected_user_id {
-        let duplicate_count: i64 =
-            sqlx::query_scalar("SELECT COUNT(*) FROM miniflux_connections WHERE miniflux_user_id = ?")
-                .bind(user_id)
-                .fetch_one(&pool)
-                .await
-                .unwrap_or(0);
+        let duplicate_count: i64 = sqlx::query_scalar(
+            "SELECT COUNT(*) FROM miniflux_connections WHERE miniflux_user_id = ?",
+        )
+        .bind(user_id)
+        .fetch_one(&pool)
+        .await
+        .unwrap_or(0);
 
         if duplicate_count > 1 {
             log::warn!(
@@ -476,10 +477,11 @@ pub async fn switch_miniflux_account(
                 account_id
             );
             selected_user_id = None;
-            let _ = sqlx::query("UPDATE miniflux_connections SET miniflux_user_id = NULL WHERE id = ?")
-                .bind(account_id)
-                .execute(&pool)
-                .await;
+            let _ =
+                sqlx::query("UPDATE miniflux_connections SET miniflux_user_id = NULL WHERE id = ?")
+                    .bind(account_id)
+                    .execute(&pool)
+                    .await;
         }
     }
     *state.miniflux.user_id.lock().await = selected_user_id;

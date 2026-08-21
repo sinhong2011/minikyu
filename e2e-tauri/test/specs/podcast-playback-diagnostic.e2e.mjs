@@ -11,11 +11,8 @@
 
 async function waitForTauriIpc() {
   await browser.waitUntil(
-    async () =>
-      browser.execute(
-        () => typeof window.__TAURI_INTERNALS__ !== 'undefined',
-      ),
-    { timeout: 15000, timeoutMsg: 'Tauri IPC not available' },
+    async () => browser.execute(() => typeof window.__TAURI_INTERNALS__ !== 'undefined'),
+    { timeout: 15000, timeoutMsg: 'Tauri IPC not available' }
   );
 }
 
@@ -39,13 +36,9 @@ describe('Podcast Playback Diagnostic', () => {
 
             const response = await invoke('get_entries', { filters });
             const entries = response?.entries || [];
-            const withEnclosures = entries.filter(
-              (e) => e.enclosures && e.enclosures.length > 0,
-            );
+            const withEnclosures = entries.filter((e) => e.enclosures && e.enclosures.length > 0);
             const audioEnclosures = entries.flatMap((e) =>
-              (e.enclosures || []).filter((enc) =>
-                enc.mime_type.startsWith('audio/'),
-              ),
+              (e.enclosures || []).filter((enc) => enc.mime_type.startsWith('audio/'))
             );
 
             if (audioEnclosures.length > 0) {
@@ -69,18 +62,14 @@ describe('Podcast Playback Diagnostic', () => {
 
           done({
             success: false,
-            error:
-              'No audio enclosures found in any entries. The database may need a re-sync.',
+            error: 'No audio enclosures found in any entries. The database may need a re-sync.',
           });
         } catch (err) {
           done({ success: false, error: String(err) });
         }
       });
 
-      console.log(
-        '\n=== Database Enclosures ===\n' +
-          JSON.stringify(result, null, 2),
-      );
+      console.log('\n=== Database Enclosures ===\n' + JSON.stringify(result, null, 2));
 
       expect(result.success).toBe(true);
     });
@@ -101,7 +90,7 @@ describe('Podcast Playback Diagnostic', () => {
 
           for (const entry of entries) {
             const audioEnc = (entry.enclosures || []).find((enc) =>
-              enc.mime_type.startsWith('audio/'),
+              enc.mime_type.startsWith('audio/')
             );
             if (audioEnc) {
               podcastEntry = entry;
@@ -123,7 +112,7 @@ describe('Podcast Playback Diagnostic', () => {
           });
 
           const singleAudioEnc = (singleEntry.enclosures || []).find((enc) =>
-            enc.mime_type.startsWith('audio/'),
+            enc.mime_type.startsWith('audio/')
           );
 
           done({
@@ -131,9 +120,7 @@ describe('Podcast Playback Diagnostic', () => {
             entryId: singleEntry.id,
             title: singleEntry.title,
             feedTitle: singleEntry.feed?.title,
-            hasEnclosures: !!(
-              singleEntry.enclosures && singleEntry.enclosures.length > 0
-            ),
+            hasEnclosures: !!(singleEntry.enclosures && singleEntry.enclosures.length > 0),
             enclosureCount: singleEntry.enclosures?.length ?? 0,
             audioUrl: singleAudioEnc?.url?.substring(0, 100),
             audioMimeType: singleAudioEnc?.mime_type,
@@ -143,10 +130,7 @@ describe('Podcast Playback Diagnostic', () => {
         }
       });
 
-      console.log(
-        '\n=== Single Entry Enclosures ===\n' +
-          JSON.stringify(result, null, 2),
-      );
+      console.log('\n=== Single Entry Enclosures ===\n' + JSON.stringify(result, null, 2));
 
       expect(result.success).toBe(true);
     });
@@ -166,7 +150,7 @@ describe('Podcast Playback Diagnostic', () => {
 
           for (const entry of response?.entries || []) {
             const audioEnc = (entry.enclosures || []).find((enc) =>
-              enc.mime_type.startsWith('audio/'),
+              enc.mime_type.startsWith('audio/')
             );
             if (audioEnc) {
               audioUrl = audioEnc.url;
@@ -253,9 +237,7 @@ describe('Podcast Playback Diagnostic', () => {
         }
       });
 
-      console.log(
-        '\n=== Audio Load Test ===\n' + JSON.stringify(result, null, 2),
-      );
+      console.log('\n=== Audio Load Test ===\n' + JSON.stringify(result, null, 2));
 
       expect(result.success).toBe(true);
     });
@@ -275,7 +257,7 @@ describe('Podcast Playback Diagnostic', () => {
 
           for (const entry of response?.entries || []) {
             const audioEnc = (entry.enclosures || []).find((enc) =>
-              enc.mime_type.startsWith('audio/'),
+              enc.mime_type.startsWith('audio/')
             );
             if (audioEnc) {
               audioUrl = audioEnc.url;
@@ -359,10 +341,7 @@ describe('Podcast Playback Diagnostic', () => {
         }
       });
 
-      console.log(
-        '\n=== Audio Playback Test ===\n' +
-          JSON.stringify(result, null, 2),
-      );
+      console.log('\n=== Audio Playback Test ===\n' + JSON.stringify(result, null, 2));
 
       expect(result.success).toBe(true);
     });

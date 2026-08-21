@@ -171,7 +171,9 @@ function ComboboxCollection({ ...props }: ComboboxPrimitive.Collection.Props) {
   return <ComboboxPrimitive.Collection data-slot="combobox-collection" {...props} />;
 }
 
-function ComboboxEmpty({ className, children, ...props }: ComboboxPrimitive.Empty.Props) {
+// Renders a plain <div> with its own emptiness detection rather than
+// ComboboxPrimitive.Empty, so it takes native div props.
+function ComboboxEmpty({ className, children, ...props }: React.ComponentProps<'div'>) {
   const [isEmpty, setIsEmpty] = React.useState(false);
   const ref = React.useRef<HTMLDivElement>(null);
 
@@ -192,7 +194,6 @@ function ComboboxEmpty({ className, children, ...props }: ComboboxPrimitive.Empt
   }, []);
 
   return (
-    // biome-ignore lint/a11y/useSemanticElements: custom empty state for combobox
     <div
       ref={ref}
       data-slot="combobox-empty"

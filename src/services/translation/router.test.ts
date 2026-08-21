@@ -1,4 +1,4 @@
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { commands } from '@/lib/tauri-bindings';
 import { translateReaderSegmentWithPreferences } from './router';
 import type { TranslationRoutingPreferences } from './types';

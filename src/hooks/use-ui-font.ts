@@ -51,18 +51,15 @@ export function useUiFont() {
     const handleZoomIn = () => {
       if (!preferences) return;
       const next = clamp(currentSize() + UI_FONT_SIZE_STEP);
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       savePreferences.mutate({ ...preferences, ui_font_size: next });
     };
     const handleZoomOut = () => {
       if (!preferences) return;
       const next = clamp(currentSize() - UI_FONT_SIZE_STEP);
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       savePreferences.mutate({ ...preferences, ui_font_size: next });
     };
     const handleZoomReset = () => {
       if (!preferences) return;
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       savePreferences.mutate({ ...preferences, ui_font_size: null });
     };
 

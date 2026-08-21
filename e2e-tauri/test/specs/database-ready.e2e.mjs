@@ -17,10 +17,9 @@ describe('Database & Backend Integration', () => {
     // Use executeAsyncScript because Tauri invoke returns a Promise
     const result = await browser.executeAsync(async (done) => {
       try {
-        const response = await window.__TAURI_INTERNALS__.invoke(
-          'get_podcast_progress_batch',
-          { entryIds: [] },
-        );
+        const response = await window.__TAURI_INTERNALS__.invoke('get_podcast_progress_batch', {
+          entryIds: [],
+        });
         done({ success: true, data: response });
       } catch (e) {
         done({ success: false, error: String(e) });

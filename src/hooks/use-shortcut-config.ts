@@ -47,7 +47,6 @@ export function useShortcutConfig() {
 
       savePreferences({
         ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         keyboard_shortcuts: current,
       });
     },
@@ -59,7 +58,6 @@ export function useShortcutConfig() {
     if (!preferences) return;
     savePreferences({
       ...preferences,
-      // biome-ignore lint/style/useNamingConvention: preferences field name
       keyboard_shortcuts: {},
     });
   }, [preferences, savePreferences]);

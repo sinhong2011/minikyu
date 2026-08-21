@@ -11,7 +11,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { emit, listen } from '@tauri-apps/api/event';
+import { emit, listen } from '@/lib/tauri-event';
 import { getCurrentWindow } from '@tauri-apps/api/window';
 import { AnimatePresence, motion } from 'motion/react';
 import { useCallback, useEffect, useRef, useState } from 'react';

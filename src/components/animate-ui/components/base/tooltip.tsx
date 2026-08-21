@@ -46,13 +46,19 @@ function TooltipPanel({ className, sideOffset = 4, children, style, ...props }: 
       <TooltipPositionerPrimitive sideOffset={sideOffset} className="z-[60]" {...props}>
         <TooltipPopupPrimitive
           className={cn(
-            'bg-primary text-primary-foreground w-fit origin-(--transform-origin) rounded-md px-3 py-1.5 text-xs text-balance',
+            // Matches the popover/menu glass system rather than shouting in
+            // `--primary`; the /90 + /75 opacity pair is the same one menu.tsx uses.
+            'bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 supports-[backdrop-filter]:backdrop-saturate-150',
+            'text-popover-foreground ring-1 ring-foreground/10 shadow-md',
+            'w-fit origin-(--transform-origin) rounded-md px-3 py-1.5 text-xs text-balance',
             className
           )}
           style={style}
         >
           {children}
-          <TooltipArrowPrimitive className="bg-primary fill-primary z-50 size-2.5 data-[side='bottom']:-top-[4px] data-[side='right']:-left-[4px] data-[side='left']:-right-[4px] data-[side='inline-start']:-right-[4px] data-[side='inline-end']:-left-[4px] rotate-45 rounded-[2px]" />
+          {/* No ring here — a rotated square would show it on all four sides. The
+              -4px offset tucks the arrow under the popup, hiding the seam. */}
+          <TooltipArrowPrimitive className="bg-popover/90 fill-popover supports-[backdrop-filter]:bg-popover/75 backdrop-blur-xl z-50 size-2.5 data-[side='bottom']:-top-[4px] data-[side='right']:-left-[4px] data-[side='left']:-right-[4px] data-[side='inline-start']:-right-[4px] data-[side='inline-end']:-left-[4px] rotate-45 rounded-[2px]" />
         </TooltipPopupPrimitive>
       </TooltipPositionerPrimitive>
     </TooltipPortalPrimitive>

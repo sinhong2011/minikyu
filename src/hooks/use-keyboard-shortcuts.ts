@@ -4,6 +4,7 @@ import { matchesShortcut, resolveShortcut } from '@/lib/shortcut-registry';
 import { usePreferences } from '@/services/preferences';
 import { usePlayerStore } from '@/store/player-store';
 import { useUIStore } from '@/store/ui-store';
+import { toggleZenMode } from './use-zen-mode';
 
 /**
  * Handles global keyboard shortcuts for the application.
@@ -51,7 +52,7 @@ export function useKeyboardShortcuts(commandContext: CommandContext) {
 
       if (match('toggle-zen-mode', e)) {
         e.preventDefault();
-        useUIStore.getState().toggleZenMode();
+        toggleZenMode();
         return;
       }
 

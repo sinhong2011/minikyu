@@ -3,25 +3,37 @@ import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { AnimatePresence, motion } from 'motion/react';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { EntryReading } from '@/components/miniflux/EntryReading';
 import { Button } from '@/components/ui/button';
 import { Skeleton } from '@/components/ui/skeleton';
 import { useLocalImageUrl } from '@/hooks/use-local-image-url';
+import { usePlatform } from '@/hooks/use-platform';
 import { useRandomEntry } from '@/hooks/use-random-entry';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
+import {
+  closeZenMode,
+  forgetZenModeHistory,
+  setZenModeEntry,
+  useZenMode,
+} from '@/hooks/use-zen-mode';
 import { getReaderThemePalette } from '@/lib/reader-theme';
+import { cn } from '@/lib/utils';
+import { useMarkEntryRead } from '@/services/miniflux/entries';
 import { usePreferences } from '@/services/preferences';
-import { useUIStore } from '@/store/ui-store';
 
 export function ZenModeView() {
   const { _ } = useLingui();
-  const zenModeEnabled = useUIStore((state) => state.zenModeEnabled);
-  const setZenModeEnabled = useUIStore((state) => state.setZenModeEnabled);
-  const setZenModeEntryId = useUIStore((state) => state.setZenModeEntryId);
+  // `?zen=` is the whole of Zen Mode's state: whether it is open and which
+  // article is on screen. A reload or a shared link lands on the same piece.
+  const { enabled: zenModeEnabled, entryId: currentEntryId } = useZenMode();
 
   const { hasEntries, isLoading, getNextRandomEntry, resetSeenEntries } = useRandomEntry();
   const { readerTheme } = useReaderSettings();
+  // Round the overlay only where the window itself is rounded; a browser tab
+  // and the Windows/Linux shells are square, and rounding there just lets the
+  // page behind show through at the corners.
+  const roundedWindow = usePlatform() === 'macos' ? 'rounded-xl' : '';
   const readerThemePalette = getReaderThemePalette(readerTheme);
   const { data: preferences } = usePreferences();
 
@@ -31,37 +43,73 @@ export function ZenModeView() {
   const bgImageBlur = preferences?.background_image_blur ?? 0;
   const bgImageSize = preferences?.background_image_size ?? 'cover';
 
-  const [currentEntryId, setCurrentEntryId] = useState<string | null>(null);
   const [isAtBottom, setIsAtBottom] = useState(false);
   const [isLoadingNext, setIsLoadingNext] = useState(false);
+  // Every article in the pool has already been shown this session. Without
+  // this the draw-an-article effect below would retry forever, and each retry
+  // now costs a navigation.
+  const [poolExhausted, setPoolExhausted] = useState(false);
+
+  const markEntryRead = useMarkEntryRead();
+  const markEntryReadRef = useRef(markEntryRead);
+  markEntryReadRef.current = markEntryRead;
+  // Ids already sent this session — the mutation is idempotent, but there is no
+  // point re-issuing it when the reader also auto-marked on scroll.
+  const markedAsReadRef = useRef<Set<string>>(new Set());
+  const currentEntryIdRef = useRef<string | null>(null);
+  currentEntryIdRef.current = currentEntryId;
+
+  /**
+   * Record an article as read. Zen Mode has no list to return to, so finishing
+   * an article is the only signal there is — it must not depend on the reader's
+   * auto-mark-on-scroll preference, or nothing read here ever reaches History.
+   */
+  const markAsRead = useCallback((entryId: string | null) => {
+    if (!entryId || markedAsReadRef.current.has(entryId)) return;
+    markedAsReadRef.current.add(entryId);
+    markEntryReadRef.current.mutate(entryId);
+  }, []);
 
   const selectNewEntry = useCallback(() => {
-    setIsLoadingNext(true);
+    // Moving on is an explicit "done with this one".
+    markAsRead(currentEntryIdRef.current);
     const entry = getNextRandomEntry();
-    const entryId = entry?.id ?? null;
-    setCurrentEntryId(entryId);
-    setZenModeEntryId(entryId);
+
+    if (!entry) {
+      setPoolExhausted(true);
+      return;
+    }
+
+    setIsLoadingNext(true);
+    setZenModeEntry(entry.id);
     setIsAtBottom(false);
     setTimeout(() => setIsLoadingNext(false), 100);
-  }, [getNextRandomEntry, setZenModeEntryId]);
+  }, [getNextRandomEntry, markAsRead]);
 
   useEffect(() => {
-    if (zenModeEnabled && !currentEntryId && hasEntries) {
+    if (zenModeEnabled && !currentEntryId && hasEntries && !poolExhausted) {
       selectNewEntry();
     }
-  }, [zenModeEnabled, currentEntryId, hasEntries, selectNewEntry]);
+  }, [zenModeEnabled, currentEntryId, hasEntries, poolExhausted, selectNewEntry]);
 
   useEffect(() => {
     if (!zenModeEnabled) {
-      setCurrentEntryId(null);
-      setZenModeEntryId(null);
+      // Covers closes we did not initiate — a browser Back, an account switch.
+      forgetZenModeHistory();
       resetSeenEntries();
+      setPoolExhausted(false);
+      markedAsReadRef.current = new Set();
     }
-  }, [zenModeEnabled, setZenModeEntryId, resetSeenEntries]);
+  }, [zenModeEnabled, resetSeenEntries]);
 
   const handleExit = useCallback(() => {
-    setZenModeEnabled(false);
-  }, [setZenModeEnabled]);
+    // Leaving from the end of an article counts as having read it; leaving
+    // part-way through does not.
+    if (isAtBottom) {
+      markAsRead(currentEntryIdRef.current);
+    }
+    closeZenMode();
+  }, [isAtBottom, markAsRead]);
 
   useEffect(() => {
     if (!zenModeEnabled) return;
@@ -95,10 +143,10 @@ export function ZenModeView() {
   );
 
   const handleNextArticle = useCallback(() => {
-    if (hasEntries) {
+    if (hasEntries && !poolExhausted) {
       selectNewEntry();
     }
-  }, [hasEntries, selectNewEntry]);
+  }, [hasEntries, poolExhausted, selectNewEntry]);
 
   return (
     <AnimatePresence>
@@ -107,7 +155,7 @@ export function ZenModeView() {
           <motion.div
             key="zen-backdrop"
             data-glass
-            className="fixed inset-0 z-40 bg-background rounded-xl overflow-hidden"
+            className={cn('absolute inset-0 z-40 overflow-hidden bg-background', roundedWindow)}
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
@@ -167,7 +215,10 @@ export function ZenModeView() {
               filter: { duration: 0.5, ease: 'easeOut' },
             }}
             data-glass
-            className="fixed inset-0 z-50 flex flex-col bg-background rounded-xl overflow-hidden shadow-2xl"
+            className={cn(
+              'absolute inset-0 z-50 flex flex-col overflow-hidden bg-background shadow-2xl',
+              roundedWindow
+            )}
             style={{ backgroundColor: bgImagePath ? 'transparent' : readerThemePalette.surface }}
           >
             <motion.div
@@ -190,7 +241,7 @@ export function ZenModeView() {
                     </div>
                   </div>
                 </div>
-              ) : !hasEntries ? (
+              ) : !hasEntries || poolExhausted ? (
                 <div className="flex flex-col items-center justify-center h-full gap-4">
                   <p className="text-lg opacity-60" style={{ color: readerThemePalette.text }}>
                     {_(msg`No unread entries available`)}
@@ -220,7 +271,7 @@ export function ZenModeView() {
             </motion.div>
 
             <AnimatePresence>
-              {isAtBottom && hasEntries && (
+              {isAtBottom && hasEntries && !poolExhausted && (
                 <motion.div
                   initial={{ opacity: 0, y: 10 }}
                   animate={{ opacity: 1, y: 0 }}

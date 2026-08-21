@@ -1,5 +1,5 @@
 import { open as openDialog } from '@tauri-apps/plugin-dialog';
-import { lazy, Suspense, useEffect } from 'react';
+import { lazy, Suspense, useEffect, useRef } from 'react';
 import { MinifluxSettingsDialogProvider } from '@/components/miniflux/settings/store';
 
 const CommandPalette = lazy(() =>
@@ -21,13 +21,17 @@ import { SidebarInset, SidebarProvider } from '@/components/ui/sidebar';
 import { showToast, Toaster } from '@/components/ui/sonner';
 import { ZenModeView } from '@/components/zen-mode';
 import { useLocalImageUrl } from '@/hooks/use-local-image-url';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { usePlatform } from '@/hooks/use-platform';
 import { useTheme } from '@/hooks/use-theme';
 import { useUiFont } from '@/hooks/use-ui-font';
 import { useMainWindowEventListeners } from '@/hooks/useMainWindowEventListeners';
 import { commands } from '@/lib/tauri-bindings';
+import { useDownloadEvents, useDownloads } from '@/services/downloads';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
+import { useZenMode } from '@/hooks/use-zen-mode';
 import { useUIStore } from '@/store/ui-store';
+import { capabilities, isWeb } from '@/lib/platform';
 import { AppSidebar } from './AppSidebar';
 
 interface MainWindowProps {
@@ -37,14 +41,39 @@ interface MainWindowProps {
 export function MainWindow({ children }: MainWindowProps = {}) {
   const { theme } = useTheme();
   const platform = usePlatform();
+  const commandPaletteOpen = useUIStore((state) => state.commandPaletteOpen);
+  const preferencesOpen = useUIStore((state) => state.preferencesOpen);
+  // Latch: once opened, keep the component mounted. A plain `open &&` would
+  // unmount on close, discarding dialog state and cutting the exit animation.
+  const commandPaletteEverOpened = useRef(false);
+  const preferencesEverOpened = useRef(false);
+  if (commandPaletteOpen) commandPaletteEverOpened.current = true;
+  if (preferencesOpen) preferencesEverOpened.current = true;
   const leftSidebarVisible = useUIStore((state) => state.leftSidebarVisible);
+  const mobileSidebarOpen = useUIStore((state) => state.mobileSidebarOpen);
+  const setMobileSidebarOpen = useUIStore((state) => state.setMobileSidebarOpen);
   const setLeftSidebarVisible = useUIStore((state) => state.setLeftSidebarVisible);
-  const zenModeEnabled = useUIStore((state) => state.zenModeEnabled);
+  const { enabled: zenModeEnabled } = useZenMode();
+  const isMobile = useIsMobile();
+  // Web phones drop the app header entirely: sync moves into the list title
+  // row and navigation lives in the bottom tab bar. The Tauri build keeps it
+  // even in narrow windows — it carries the drag region and window controls.
+  const hideHeader = isWeb && isMobile;
+  // Zen Mode hides the header on desktop, where the OS window chrome is the
+  // reason it exists. In a browser tab it is the way back out — the Zen button
+  // already renders an "Exit Zen Mode" state — so there it stays.
+  const showHeader = !hideHeader && (isWeb || !zenModeEnabled);
   const { data: preferences } = usePreferences();
   const savePreferences = useSavePreferences();
 
   useMainWindowEventListeners();
   useUiFont();
+  // Both mounted here rather than in the download manager: progress and
+  // completion toasts must keep flowing while that dialog is closed, and the
+  // history has to be hydrated from the DB before the first progress event
+  // seeds the cache with a single row.
+  useDownloads();
+  useDownloadEvents();
 
   // Handle background image commands from command palette
   useEffect(() => {
@@ -56,9 +85,7 @@ export function MainWindow({ children }: MainWindowProps = {}) {
         if (result.status === 'ok') {
           savePreferences.mutate({
             ...preferences,
-            // biome-ignore lint/style/useNamingConvention: preferences field name
             background_image_path: result.data,
-            // biome-ignore lint/style/useNamingConvention: preferences field name
             background_image_url: url,
           });
         } else {
@@ -81,12 +108,13 @@ export function MainWindow({ children }: MainWindowProps = {}) {
       if (!filePath) return;
       savePreferences.mutate({
         ...preferences,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         background_image_path: filePath,
-        // biome-ignore lint/style/useNamingConvention: preferences field name
         background_image_url: null,
       });
     };
+
+    // Desktop-only feature; nothing dispatches these in the web build.
+    if (!capabilities.backgroundImage) return;
 
     document.addEventListener('command:set-background-url', handleUrl);
     document.addEventListener('command:select-background-file', handleFile);
@@ -154,27 +182,45 @@ export function MainWindow({ children }: MainWindowProps = {}) {
           />
         )}
         <div className="flex min-h-0 flex-1 flex-col" data-frosted-backdrop>
-          {!zenModeEnabled && <TitleBar />}
-          <SidebarProvider
-            open={leftSidebarVisible}
-            onOpenChange={setLeftSidebarVisible}
-            className="overflow-hidden min-h-0 flex-1"
-            style={{ '--sidebar-width': '18rem' } as React.CSSProperties}
-          >
-            <AppSidebar />
-            <SidebarInset>{children}</SidebarInset>
-          </SidebarProvider>
+          {showHeader && <TitleBar />}
+          {/*
+            Positioning context for the Zen Mode overlay. It covers everything
+            below the header rather than the whole window, which is what keeps
+            the browser's header — and its Exit Zen Mode button — reachable.
+            On desktop the header is gone in Zen Mode anyway, so this box is
+            the whole window and nothing changes.
+          */}
+          <div className="relative flex min-h-0 flex-1 flex-col overflow-hidden">
+            <SidebarProvider
+              open={leftSidebarVisible}
+              onOpenChange={setLeftSidebarVisible}
+              openMobile={mobileSidebarOpen}
+              onOpenMobileChange={setMobileSidebarOpen}
+              className="overflow-hidden min-h-0 flex-1"
+              style={{ '--sidebar-width': '18rem' } as React.CSSProperties}
+            >
+              <AppSidebar />
+              <SidebarInset>{children}</SidebarInset>
+            </SidebarProvider>
+            <ZenModeView />
+          </div>
         </div>
 
         <Suspense>
-          <CommandPalette />
-          <DownloadManagerDialog />
-          <MinifluxSettingsDialogProvider>
-            <PreferencesDialog />
-          </MinifluxSettingsDialogProvider>
+          {/* `lazy()` fetches as soon as the component renders, not when it
+              becomes visible — rendering these unconditionally pulled their
+              chunks into first paint. Mount on first open instead, and stay
+              mounted afterwards so dialog state and exit animations survive
+              closing. */}
+          {commandPaletteEverOpened.current && <CommandPalette />}
+          {/* Downloads are served by the Rust downloader; absent in the PWA build. */}
+          {capabilities.downloads && <DownloadManagerDialog />}
+          {preferencesEverOpened.current && (
+            <MinifluxSettingsDialogProvider>
+              <PreferencesDialog />
+            </MinifluxSettingsDialogProvider>
+          )}
         </Suspense>
-
-        <ZenModeView />
       </div>
       <Toaster
         position="top-center"

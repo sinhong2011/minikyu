@@ -15,7 +15,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { emit } from '@tauri-apps/api/event';
+import { emit } from '@/lib/tauri-event';
 import { motion, useMotionValue, useTransform } from 'motion/react';
 import { useEffect, useRef, useState } from 'react';
 import { Slider } from '@/components/ui/slider';

@@ -11,11 +11,20 @@ import { AppProviders } from '@/AppProviders';
 import { getPlatform } from '@/hooks/use-platform';
 import { defaultLocale, loadAndActivate } from '@/i18n/config';
 import { queryClient } from '@/lib/query-client';
+import { registerRouter } from '@/lib/router-ref';
+import { registerServiceWorker } from '@/lib/web/register-sw';
 import { router } from '@/router';
 import '@/styles/global.css';
 
+// Lets the command palette, native menu and shortcuts navigate without
+// importing the route tree. See `@/lib/router-ref`.
+registerRouter(router);
+
 // Set platform data attribute on <html> for platform-specific CSS
 document.documentElement.dataset.platform = getPlatform();
+
+// No-ops in the Tauri build; installs the app shell worker in the PWA build.
+registerServiceWorker();
 
 // Expose stores for e2e WebDriver testing in development
 if (import.meta.env.DEV) {

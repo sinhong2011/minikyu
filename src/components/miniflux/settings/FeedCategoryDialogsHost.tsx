@@ -22,16 +22,16 @@ function normalizeOptionalText(value: string): string | null {
 function hasAdvancedDefaults(values: FeedAdvancedValues): boolean {
   return Boolean(
     values.userAgent.trim() ||
-      values.username.trim() ||
-      values.password.trim() ||
-      values.scraperRules.trim() ||
-      values.rewriteRules.trim() ||
-      values.blocklistRules.trim() ||
-      values.keeplistRules.trim() ||
-      values.crawler ||
-      values.disabled ||
-      values.ignoreHttpCache ||
-      values.fetchViaProxy
+    values.username.trim() ||
+    values.password.trim() ||
+    values.scraperRules.trim() ||
+    values.rewriteRules.trim() ||
+    values.blocklistRules.trim() ||
+    values.keeplistRules.trim() ||
+    values.crawler ||
+    values.disabled ||
+    values.ignoreHttpCache ||
+    values.fetchViaProxy
   );
 }
 
@@ -85,28 +85,19 @@ export function FeedCategoryDialogsHost() {
       await updateFeed.mutateAsync({
         id: feedDialogState.feed.id,
         updates: {
-          // biome-ignore lint/style/useNamingConvention: API field names
           feed_url: input.feedUrl,
           title: input.title || null,
-          // biome-ignore lint/style/useNamingConvention: API field names
           category_id: input.categoryId,
-          // biome-ignore lint/style/useNamingConvention: API field names
           user_agent: advanced ? normalizeOptionalText(advanced.userAgent) : null,
           username: advanced ? normalizeOptionalText(advanced.username) : null,
           password: advanced ? normalizeOptionalText(advanced.password) : null,
-          // biome-ignore lint/style/useNamingConvention: API field names
           scraper_rules: advanced ? normalizeOptionalText(advanced.scraperRules) : null,
-          // biome-ignore lint/style/useNamingConvention: API field names
           rewrite_rules: advanced ? normalizeOptionalText(advanced.rewriteRules) : null,
-          // biome-ignore lint/style/useNamingConvention: API field names
           blocklist_rules: advanced ? normalizeOptionalText(advanced.blocklistRules) : null,
-          // biome-ignore lint/style/useNamingConvention: API field names
           keeplist_rules: advanced ? normalizeOptionalText(advanced.keeplistRules) : null,
           crawler: advanced?.crawler ?? false,
           disabled: advanced?.disabled ?? false,
-          // biome-ignore lint/style/useNamingConvention: API field names
           ignore_http_cache: advanced?.ignoreHttpCache ?? false,
-          // biome-ignore lint/style/useNamingConvention: API field names
           fetch_via_proxy: advanced?.fetchViaProxy ?? false,
         },
       });

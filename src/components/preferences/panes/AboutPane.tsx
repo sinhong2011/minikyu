@@ -10,7 +10,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { openUrl } from '@tauri-apps/plugin-opener';
+import { openUrl } from '@/lib/shell';
 import { AnimatePresence, motion } from 'motion/react';
 import { Switch } from '@/components/animate-ui/components/base/switch';
 import { AppLogo } from '@/components/brand/AppLogo';
@@ -186,7 +186,6 @@ export function AboutPane() {
               if (!preferences) return;
               await savePreferences.mutateAsync({
                 ...preferences,
-                // biome-ignore lint/style/useNamingConvention: preferences field name
                 auto_check_updates: checked,
               });
             }}
@@ -204,7 +203,6 @@ export function AboutPane() {
               if (!preferences) return;
               await savePreferences.mutateAsync({
                 ...preferences,
-                // biome-ignore lint/style/useNamingConvention: preferences field name
                 auto_download_updates: checked,
               });
             }}

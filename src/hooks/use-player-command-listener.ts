@@ -1,6 +1,7 @@
 import { i18n } from '@lingui/core';
 import { msg } from '@lingui/core/macro';
-import { listen } from '@tauri-apps/api/event';
+import { capabilities } from '@/lib/platform';
+import { listen } from '@/lib/tauri-event';
 import { useEffect } from 'react';
 import { toast } from 'sonner';
 import { PLAYER_CMD, type PlayerCmdPayload } from '@/lib/player-events';
@@ -51,7 +52,7 @@ export function usePlayerCommandListener() {
           break;
         case 'download': {
           const { currentEntry, currentEnclosure } = store;
-          if (currentEntry && currentEnclosure) {
+          if (capabilities.downloads && currentEntry && currentEnclosure) {
             const fileName = buildPodcastDownloadFileName(currentEntry.title, currentEnclosure);
             useUIStore.getState().setDownloadsOpen(true);
             void commands.downloadFile(currentEnclosure.url, fileName, 'audio').then((result) => {

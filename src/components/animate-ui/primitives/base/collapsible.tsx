@@ -1,6 +1,6 @@
 'use client';
 
-import { Collapsible as CollapsiblePrimitive } from '@base-ui-components/react/collapsible';
+import { Collapsible as CollapsiblePrimitive } from '@base-ui/react/collapsible';
 import { AnimatePresence, type HTMLMotionProps, motion } from 'motion/react';
 import type * as React from 'react';
 import { useControlledState } from '@/hooks/use-controlled-state';
@@ -72,7 +72,6 @@ function CollapsiblePanel({
               transition={transition}
               style={{
                 maskImage: 'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',
-                // biome-ignore lint/style/useNamingConvention: vendor-prefixed CSS property
                 WebkitMaskImage:
                   'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',
                 overflow: 'hidden',
@@ -103,7 +102,6 @@ function CollapsiblePanel({
                 style={{
                   maskImage:
                     'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',
-                  // biome-ignore lint/style/useNamingConvention: vendor-prefixed CSS property
                   WebkitMaskImage:
                     'linear-gradient(black var(--mask-stop), transparent var(--mask-stop))',
                   overflow: 'hidden',

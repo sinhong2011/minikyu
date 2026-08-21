@@ -1,13 +1,15 @@
 import { msg } from '@lingui/core/macro';
 import { Menu, MenuItem, PredefinedMenuItem, Submenu } from '@tauri-apps/api/menu';
-import { confirm } from '@tauri-apps/plugin-dialog';
+
 import { i18n } from '@/i18n';
 import { resetAccountState } from '@/lib/account-reset';
+import { confirm } from '@/lib/dialog';
 import { logger } from '@/lib/logger';
 import { notifications } from '@/lib/notifications';
 import { commands } from '@/lib/tauri-bindings';
 import { checkForUpdate, downloadUpdate } from '@/lib/updater';
 import { usePlayerStore } from '@/store/player-store';
+import { toggleZenMode } from '@/hooks/use-zen-mode';
 import { useUIStore } from '@/store/ui-store';
 import { useUpdaterStore } from '@/store/updater-store';
 
@@ -562,7 +564,7 @@ function handleToggleDownloads(): void {
 }
 
 function handleZenMode(): void {
-  useUIStore.getState().toggleZenMode();
+  toggleZenMode();
 }
 
 function handleUiZoomIn(): void {

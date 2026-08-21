@@ -2,7 +2,7 @@ import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { fireEvent, render, screen, waitFor } from '@testing-library/react';
 import { useState } from 'react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { commands } from '@/lib/tauri-bindings';
 import type { TranslationStreamCallbacks } from '@/services/translation';
 import { translateReaderSegmentStream } from '@/services/translation';

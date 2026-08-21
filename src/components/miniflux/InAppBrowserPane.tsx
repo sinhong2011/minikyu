@@ -8,7 +8,7 @@ import {
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { openUrl } from '@tauri-apps/plugin-opener';
+import { openUrl } from '@/lib/shell';
 import { AnimatePresence, animate, motion, useMotionValue, useTransform } from 'motion/react';
 import { type RefObject, useEffect, useRef, useState } from 'react';
 import { Button } from '@/components/ui/button';

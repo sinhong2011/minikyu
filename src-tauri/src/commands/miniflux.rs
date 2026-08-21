@@ -286,28 +286,24 @@ pub async fn get_entry(
 }
 
 /// Mark entry as read
+///
+/// Local-first: the DB is the source of truth for the entry list and History,
+/// so it is updated before the API call and the update survives an offline or
+/// failing server.
 #[tauri::command]
 #[specta::specta]
 pub async fn mark_entry_read(state: State<'_, AppState>, id: String) -> Result<(), String> {
-    let guard = state.miniflux.client.lock().await;
-    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
-
     let id_parsed = id
         .parse::<i64>()
         .map_err(|e| format!("Invalid entry ID: {}", e))?;
 
-    client
-        .update_entries(vec![id_parsed], "read".to_string())
-        .await
+    mark_entries_read_internal(&state, &[id_parsed]).await
 }
 
 /// Mark multiple entries as read
 #[tauri::command]
 #[specta::specta]
 pub async fn mark_entries_read(state: State<'_, AppState>, ids: Vec<String>) -> Result<(), String> {
-    let guard = state.miniflux.client.lock().await;
-    let client = guard.as_ref().ok_or("Not connected to Miniflux server")?;
-
     let ids_parsed: Vec<i64> = ids
         .iter()
         .map(|id| {
@@ -316,7 +312,79 @@ pub async fn mark_entries_read(state: State<'_, AppState>, ids: Vec<String>) -> 
         })
         .collect::<Result<Vec<_>, _>>()?;
 
-    client.update_entries(ids_parsed, "read".to_string()).await
+    mark_entries_read_internal(&state, &ids_parsed).await
+}
+
+/// Set `status = 'read'` locally (stamping `changed_at` so History orders by
+/// when the entry was read) and then push the change to Miniflux. An API
+/// failure is logged, not returned: the local DB already holds the truth and
+/// the next sync reconciles it.
+async fn mark_entries_read_internal(
+    state: &State<'_, AppState>,
+    ids: &[i64],
+) -> Result<(), String> {
+    if ids.is_empty() {
+        return Ok(());
+    }
+
+    let pool = state
+        .db_pool
+        .lock()
+        .await
+        .as_ref()
+        .ok_or("Database not initialized")?
+        .clone();
+
+    mark_entries_read_in_db(&pool, ids).await?;
+
+    let api_result = {
+        let guard = state.miniflux.client.lock().await;
+        if let Some(client) = guard.as_ref() {
+            client
+                .update_entries(ids.to_vec(), "read".to_string())
+                .await
+        } else {
+            Ok(())
+        }
+    };
+
+    if let Err(e) = api_result {
+        log::warn!(
+            "Failed to sync {} entries' read status with Miniflux API: {}. Local DB updated successfully.",
+            ids.len(),
+            e
+        );
+    }
+
+    Ok(())
+}
+
+/// Set `status = 'read'` on the given entries and stamp `changed_at` with the
+/// time they were read, so History (ordered by `changed_at`) lists them by when
+/// they were read rather than when they were published. Entries already read
+/// keep their original timestamp.
+pub async fn mark_entries_read_in_db(pool: &SqlitePool, ids: &[i64]) -> Result<(), String> {
+    if ids.is_empty() {
+        return Ok(());
+    }
+
+    let mut update: QueryBuilder<sqlx::Sqlite> =
+        QueryBuilder::new("UPDATE entries SET status = 'read', changed_at = ");
+    update.push_bind(Utc::now().to_rfc3339());
+    update.push(" WHERE status != 'read' AND id IN (");
+    let mut separated = update.separated(", ");
+    for id in ids {
+        separated.push_bind(*id);
+    }
+    update.push(")");
+
+    update
+        .build()
+        .execute(pool)
+        .await
+        .map_err(|e| format!("Failed to update entry status in database: {e}"))?;
+
+    Ok(())
 }
 
 /// Mark all entries in a feed as read
@@ -456,8 +524,11 @@ pub async fn toggle_entry_read(state: State<'_, AppState>, id: String) -> Result
         "read"
     };
 
-    sqlx::query("UPDATE entries SET status = ? WHERE id = ?")
+    // Stamp changed_at so History (ordered by changed_at) surfaces the entry at
+    // the time it was read, not at its publication date.
+    sqlx::query("UPDATE entries SET status = ?, changed_at = ? WHERE id = ?")
         .bind(new_status)
+        .bind(Utc::now().to_rfc3339())
         .bind(id_parsed)
         .execute(&pool)
         .await
@@ -1280,7 +1351,18 @@ async fn get_entries_from_db_with_projection(
     query.push_bind(user_id);
     apply_entry_filters(&mut query, filters);
 
-    query.push(" ORDER BY e.published_at DESC");
+    // Respect requested sort; whitelist columns so nothing user-controlled
+    // reaches the SQL string. changed_at can be NULL (never opened), so fall
+    // back to published_at to keep those rows from sinking to the end.
+    let order_column = match filters.order.as_deref() {
+        Some("changed_at") => "COALESCE(e.changed_at, e.published_at)",
+        _ => "e.published_at",
+    };
+    let order_direction = match filters.direction.as_deref() {
+        Some("asc") => "ASC",
+        _ => "DESC",
+    };
+    query.push(format!(" ORDER BY {order_column} {order_direction}"));
     query.push(" LIMIT ");
     query.push_bind(limit);
     query.push(" OFFSET ");

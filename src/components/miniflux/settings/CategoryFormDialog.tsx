@@ -34,7 +34,10 @@ export function CategoryFormDialog({
   const { _ } = useLingui();
 
   const categorySchema = z.object({
-    title: z.string().trim().min(1, _(msg`Category name is required`)),
+    title: z
+      .string()
+      .trim()
+      .min(1, _(msg`Category name is required`)),
   });
 
   const form = useForm({

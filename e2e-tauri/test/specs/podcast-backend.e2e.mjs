@@ -31,7 +31,7 @@ async function tauriInvoke(command, args = {}) {
     },
     command,
     args,
-    key,
+    key
   );
 
   await browser.waitUntil(
@@ -39,7 +39,7 @@ async function tauriInvoke(command, args = {}) {
       const r = await browser.execute((k) => window[k], key);
       return r && !r.pending;
     },
-    { timeout: 15000, interval: 200, timeoutMsg: `tauriInvoke timeout: ${command}` },
+    { timeout: 15000, interval: 200, timeoutMsg: `tauriInvoke timeout: ${command}` }
   );
 
   return browser.execute((k) => {
@@ -60,7 +60,7 @@ async function startChainAndPoll(key) {
       const r = await browser.execute((k) => window[k], key);
       return r && !r.pending;
     },
-    { timeout: 15000, interval: 200, timeoutMsg: `tauriChain timeout (key=${key})` },
+    { timeout: 15000, interval: 200, timeoutMsg: `tauriChain timeout (key=${key})` }
   );
 
   return browser.execute((k) => {
@@ -81,7 +81,7 @@ async function waitForDatabase() {
         return false;
       }
     },
-    { timeout: 15000, interval: 500, timeoutMsg: 'Database not ready after 15s' },
+    { timeout: 15000, interval: 500, timeoutMsg: 'Database not ready after 15s' }
   );
 }
 
@@ -128,8 +128,12 @@ describe('Podcast Backend Commands', () => {
         const invoke = window.__TAURI_INTERNALS__.invoke.bind(window.__TAURI_INTERNALS__);
         invoke('save_podcast_progress', { entryId: 12345, currentTime: 120, totalTime: 3600 })
           .then(() => invoke('get_podcast_progress', { entryId: 12345 }))
-          .then((data) => { window[resultKey] = { ok: true, data }; })
-          .catch((e) => { window[resultKey] = { ok: false, error: String(e) }; });
+          .then((data) => {
+            window[resultKey] = { ok: true, data };
+          })
+          .catch((e) => {
+            window[resultKey] = { ok: false, error: String(e) };
+          });
       }, key);
 
       const result = await startChainAndPoll(key);
@@ -145,8 +149,12 @@ describe('Podcast Backend Commands', () => {
         const invoke = window.__TAURI_INTERNALS__.invoke.bind(window.__TAURI_INTERNALS__);
         invoke('save_podcast_progress', { entryId: 12345, currentTime: 500, totalTime: 3600 })
           .then(() => invoke('get_podcast_progress', { entryId: 12345 }))
-          .then((data) => { window[resultKey] = { ok: true, data }; })
-          .catch((e) => { window[resultKey] = { ok: false, error: String(e) }; });
+          .then((data) => {
+            window[resultKey] = { ok: true, data };
+          })
+          .catch((e) => {
+            window[resultKey] = { ok: false, error: String(e) };
+          });
       }, key);
 
       const result = await startChainAndPoll(key);
@@ -162,10 +170,16 @@ describe('Podcast Backend Commands', () => {
         window[resultKey] = { pending: true };
         const invoke = window.__TAURI_INTERNALS__.invoke.bind(window.__TAURI_INTERNALS__);
         invoke('save_podcast_progress', { entryId: 11111, currentTime: 60, totalTime: 1800 })
-          .then(() => invoke('save_podcast_progress', { entryId: 22222, currentTime: 300, totalTime: 2400 }))
+          .then(() =>
+            invoke('save_podcast_progress', { entryId: 22222, currentTime: 300, totalTime: 2400 })
+          )
           .then(() => invoke('get_podcast_progress_batch', { entryIds: [11111, 22222, 99999] }))
-          .then((data) => { window[resultKey] = { ok: true, data }; })
-          .catch((e) => { window[resultKey] = { ok: false, error: String(e) }; });
+          .then((data) => {
+            window[resultKey] = { ok: true, data };
+          })
+          .catch((e) => {
+            window[resultKey] = { ok: false, error: String(e) };
+          });
       }, key);
 
       const result = await startChainAndPoll(key);
@@ -184,8 +198,12 @@ describe('Podcast Backend Commands', () => {
         invoke('save_podcast_progress', { entryId: 33333, currentTime: 1700, totalTime: 1800 })
           .then(() => invoke('mark_episode_completed', { entryId: 33333 }))
           .then(() => invoke('get_podcast_progress', { entryId: 33333 }))
-          .then((data) => { window[resultKey] = { ok: true, data }; })
-          .catch((e) => { window[resultKey] = { ok: false, error: String(e) }; });
+          .then((data) => {
+            window[resultKey] = { ok: true, data };
+          })
+          .catch((e) => {
+            window[resultKey] = { ok: false, error: String(e) };
+          });
       }, key);
 
       const result = await startChainAndPoll(key);
@@ -212,10 +230,19 @@ describe('Podcast Backend Commands', () => {
       await browser.execute((resultKey) => {
         window[resultKey] = { pending: true };
         const invoke = window.__TAURI_INTERNALS__.invoke.bind(window.__TAURI_INTERNALS__);
-        invoke('update_podcast_feed_settings', { feedId: 55555, autoDownloadCount: 5, playbackSpeed: 1.5, autoCleanupDays: 14 })
+        invoke('update_podcast_feed_settings', {
+          feedId: 55555,
+          autoDownloadCount: 5,
+          playbackSpeed: 1.5,
+          autoCleanupDays: 14,
+        })
           .then(() => invoke('get_podcast_feed_settings', { feedId: 55555 }))
-          .then((data) => { window[resultKey] = { ok: true, data }; })
-          .catch((e) => { window[resultKey] = { ok: false, error: String(e) }; });
+          .then((data) => {
+            window[resultKey] = { ok: true, data };
+          })
+          .catch((e) => {
+            window[resultKey] = { ok: false, error: String(e) };
+          });
       }, key);
 
       const result = await startChainAndPoll(key);
@@ -230,10 +257,19 @@ describe('Podcast Backend Commands', () => {
       await browser.execute((resultKey) => {
         window[resultKey] = { pending: true };
         const invoke = window.__TAURI_INTERNALS__.invoke.bind(window.__TAURI_INTERNALS__);
-        invoke('update_podcast_feed_settings', { feedId: 55555, autoDownloadCount: 5, playbackSpeed: 2.0, autoCleanupDays: 14 })
+        invoke('update_podcast_feed_settings', {
+          feedId: 55555,
+          autoDownloadCount: 5,
+          playbackSpeed: 2.0,
+          autoCleanupDays: 14,
+        })
           .then(() => invoke('get_podcast_feed_settings', { feedId: 55555 }))
-          .then((data) => { window[resultKey] = { ok: true, data }; })
-          .catch((e) => { window[resultKey] = { ok: false, error: String(e) }; });
+          .then((data) => {
+            window[resultKey] = { ok: true, data };
+          })
+          .catch((e) => {
+            window[resultKey] = { ok: false, error: String(e) };
+          });
       }, key);
 
       const result = await startChainAndPoll(key);

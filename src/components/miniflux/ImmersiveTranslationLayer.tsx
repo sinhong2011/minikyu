@@ -214,9 +214,7 @@ export function ImmersiveTranslationLayer({
     if (!providerSettings) return [];
     const providerDisplayNames: Record<string, string> = {
       deepl: 'DeepL',
-      // biome-ignore lint/style/useNamingConvention: provider ID from backend
       google_translate: 'Google Translate',
-      // biome-ignore lint/style/useNamingConvention: provider ID from backend
       apple_built_in: 'Apple Built-in',
       openai: 'OpenAI',
       anthropic: 'Anthropic',
@@ -369,11 +367,8 @@ export function ImmersiveTranslationLayer({
                   );
                   commands
                     .setTranslationCacheEntry(cacheKey, {
-                      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
                       translated_text: fullText,
-                      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
                       provider_used: providerUsed,
-                      // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
                       cached_at: String(Math.floor(Date.now() / 1000)),
                     })
                     .then((r) => {
@@ -427,11 +422,8 @@ export function ImmersiveTranslationLayer({
         void (async () => {
           const key = await computeTranslationCacheKey(segment.text, targetLanguage);
           void commands.setTranslationCacheEntry(key, {
-            // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
             translated_text: state.translatedText ?? '',
-            // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
             provider_used: state.providerUsed ?? '',
-            // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
             cached_at: String(Math.floor(Date.now() / 1000)),
           });
         })();
@@ -541,11 +533,8 @@ export function ImmersiveTranslationLayer({
                   computeTranslationCacheKey(segment.text, targetLanguage).then((cacheKey) => {
                     commands
                       .setTranslationCacheEntry(cacheKey, {
-                        // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
                         translated_text: fullText,
-                        // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
                         provider_used: providerUsed,
-                        // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
                         cached_at: String(Math.floor(Date.now() / 1000)),
                       })
                       .then((r) => {
@@ -650,11 +639,8 @@ export function ImmersiveTranslationLayer({
               computeTranslationCacheKey(segment.text, targetLanguage).then((cacheKey) => {
                 commands
                   .setTranslationCacheEntry(cacheKey, {
-                    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
                     translated_text: fullText,
-                    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
                     provider_used: providerUsed,
-                    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
                     cached_at: String(Math.floor(Date.now() / 1000)),
                   })
                   .then((r) => {
@@ -768,11 +754,8 @@ export function ImmersiveTranslationLayer({
               computeTranslationCacheKey(segment.text, targetLanguage).then((cacheKey) => {
                 commands
                   .setTranslationCacheEntry(cacheKey, {
-                    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
                     translated_text: fullText,
-                    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
                     provider_used: providerUsed,
-                    // biome-ignore lint/style/useNamingConvention: Tauri command payload field name
                     cached_at: String(Math.floor(Date.now() / 1000)),
                   })
                   .then((r) => {

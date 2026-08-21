@@ -2,9 +2,41 @@ import { useInfiniteQuery } from '@tanstack/react-query';
 import { useCallback, useRef } from 'react';
 import { logger } from '@/lib/logger';
 import { commands, type Entry, type EntryFilters, type EntryResponse } from '@/lib/tauri-bindings';
+import { entryQueryKeys } from '@/services/miniflux/entries';
 
 const MAX_POOL_SIZE = 500;
 const ENTRIES_PAGE_SIZE = 100;
+
+/** Zen Mode's unread pool, scoped under the shared entry-list key namespace. */
+export const zenModeEntriesQueryKey = [
+  ...entryQueryKeys.lists(),
+  { scope: 'zen-mode', status: 'unread' },
+] as const;
+
+/**
+ * Flatten paged results into Zen Mode's candidate pool.
+ *
+ * Offset pagination can hand back the same entry twice when the pool shifts
+ * mid-scroll, hence the dedupe. Read entries are dropped here rather than
+ * refetched: the read-status patch written by useToggleEntryRead /
+ * useMarkEntryRead lands in this cache too, so anything read — in Zen Mode or
+ * any other view — stops being a candidate immediately.
+ */
+export function selectUnreadPool(pages: EntryResponse[]): Entry[] {
+  const seenIds = new Set<string>();
+  const unread: Entry[] = [];
+
+  for (const page of pages) {
+    for (const entry of page.entries ?? []) {
+      if (entry.status === 'read' || seenIds.has(entry.id)) continue;
+      seenIds.add(entry.id);
+      unread.push(entry);
+      if (unread.length >= MAX_POOL_SIZE) return unread;
+    }
+  }
+
+  return unread;
+}
 
 /**
  * Weight entries by recency for random selection:
@@ -53,7 +85,10 @@ export function useRandomEntry() {
   const seenEntryIds = useRef<Set<string>>(new Set());
 
   const query = useInfiniteQuery({
-    queryKey: ['zen-mode', 'random-entries'],
+    // Nested under entryQueryKeys.lists() so the prefixed cache writes in
+    // useToggleEntryRead / useMarkEntryRead reach this pool too — an entry read
+    // in Zen Mode (or anywhere else) drops out of it without a refetch.
+    queryKey: zenModeEntriesQueryKey,
     initialPageParam: 0,
     queryFn: async ({ pageParam }): Promise<EntryResponse> => {
       const filters: EntryFilters = {
@@ -92,10 +127,7 @@ export function useRandomEntry() {
 
       return loadedCount;
     },
-    select: (data): Entry[] => {
-      const allEntries = data.pages.flatMap((page) => page.entries ?? []);
-      return allEntries.slice(0, MAX_POOL_SIZE);
-    },
+    select: (data): Entry[] => selectUnreadPool(data.pages),
     staleTime: 1000 * 60 * 2,
     gcTime: 1000 * 60 * 5,
   });

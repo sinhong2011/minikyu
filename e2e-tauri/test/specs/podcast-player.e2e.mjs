@@ -72,10 +72,9 @@ const MOCK_ENCLOSURE = {
 };
 
 async function waitForTestBridge() {
-  await browser.waitUntil(
-    async () => browser.execute(() => window.__TEST__ != null),
-    { timeout: 5000 },
-  );
+  await browser.waitUntil(async () => browser.execute(() => window.__TEST__ != null), {
+    timeout: 5000,
+  });
 }
 
 /** Read a single scalar field from the player store */
@@ -121,8 +120,8 @@ describe('Podcast Player Store', () => {
 
   describe('Initial State', () => {
     it('should have no current entry', async () => {
-      const hasEntry = await browser.execute(() =>
-        window.__TEST__.playerStore.getState().currentEntry !== null,
+      const hasEntry = await browser.execute(
+        () => window.__TEST__.playerStore.getState().currentEntry !== null
       );
       expect(hasEntry).toBe(false);
     });
@@ -161,33 +160,45 @@ describe('Podcast Player Store', () => {
 
   describe('Play', () => {
     it('should set playing state', async () => {
-      await browser.execute((entry, enc) => {
-        window.__TEST__.playerStore.getState().play(entry, enc);
-      }, MOCK_ENTRY, MOCK_ENCLOSURE);
+      await browser.execute(
+        (entry, enc) => {
+          window.__TEST__.playerStore.getState().play(entry, enc);
+        },
+        MOCK_ENTRY,
+        MOCK_ENCLOSURE
+      );
 
       expect(await getField('isPlaying')).toBe(true);
     });
 
     it('should set current entry', async () => {
-      await browser.execute((entry, enc) => {
-        window.__TEST__.playerStore.getState().play(entry, enc);
-      }, MOCK_ENTRY, MOCK_ENCLOSURE);
+      await browser.execute(
+        (entry, enc) => {
+          window.__TEST__.playerStore.getState().play(entry, enc);
+        },
+        MOCK_ENTRY,
+        MOCK_ENCLOSURE
+      );
 
-      const entryId = await browser.execute(() =>
-        window.__TEST__.playerStore.getState().currentEntry?.id,
+      const entryId = await browser.execute(
+        () => window.__TEST__.playerStore.getState().currentEntry?.id
       );
       expect(entryId).toBe('999');
     });
 
     it('should reset progress on new play', async () => {
-      await browser.execute((entry, enc) => {
-        const store = window.__TEST__.playerStore.getState();
-        store.play(entry, enc);
-        store._updateTime(500);
-        store._updateDuration(1000);
-        // Play again should reset
-        store.play(entry, enc);
-      }, MOCK_ENTRY, MOCK_ENCLOSURE);
+      await browser.execute(
+        (entry, enc) => {
+          const store = window.__TEST__.playerStore.getState();
+          store.play(entry, enc);
+          store._updateTime(500);
+          store._updateDuration(1000);
+          // Play again should reset
+          store.play(entry, enc);
+        },
+        MOCK_ENTRY,
+        MOCK_ENCLOSURE
+      );
 
       const state = await getFields('currentTime', 'duration');
       expect(state.currentTime).toBe(0);
@@ -195,12 +206,16 @@ describe('Podcast Player Store', () => {
     });
 
     it('should un-minimize on new play', async () => {
-      await browser.execute((entry, enc) => {
-        const store = window.__TEST__.playerStore.getState();
-        store.play(entry, enc);
-        store.setMinimized(true);
-        store.play(entry, enc);
-      }, MOCK_ENTRY, MOCK_ENCLOSURE);
+      await browser.execute(
+        (entry, enc) => {
+          const store = window.__TEST__.playerStore.getState();
+          store.play(entry, enc);
+          store.setMinimized(true);
+          store.play(entry, enc);
+        },
+        MOCK_ENTRY,
+        MOCK_ENCLOSURE
+      );
 
       expect(await getField('isMinimized')).toBe(false);
     });
@@ -208,35 +223,47 @@ describe('Podcast Player Store', () => {
 
   describe('Pause / Resume', () => {
     it('should pause playback', async () => {
-      await browser.execute((entry, enc) => {
-        const store = window.__TEST__.playerStore.getState();
-        store.play(entry, enc);
-        store.pause();
-      }, MOCK_ENTRY, MOCK_ENCLOSURE);
+      await browser.execute(
+        (entry, enc) => {
+          const store = window.__TEST__.playerStore.getState();
+          store.play(entry, enc);
+          store.pause();
+        },
+        MOCK_ENTRY,
+        MOCK_ENCLOSURE
+      );
 
       expect(await getField('isPlaying')).toBe(false);
     });
 
     it('should resume playback', async () => {
-      await browser.execute((entry, enc) => {
-        const store = window.__TEST__.playerStore.getState();
-        store.play(entry, enc);
-        store.pause();
-        store.resume();
-      }, MOCK_ENTRY, MOCK_ENCLOSURE);
+      await browser.execute(
+        (entry, enc) => {
+          const store = window.__TEST__.playerStore.getState();
+          store.play(entry, enc);
+          store.pause();
+          store.resume();
+        },
+        MOCK_ENTRY,
+        MOCK_ENCLOSURE
+      );
 
       expect(await getField('isPlaying')).toBe(true);
     });
 
     it('should keep entry on pause', async () => {
-      await browser.execute((entry, enc) => {
-        const store = window.__TEST__.playerStore.getState();
-        store.play(entry, enc);
-        store.pause();
-      }, MOCK_ENTRY, MOCK_ENCLOSURE);
+      await browser.execute(
+        (entry, enc) => {
+          const store = window.__TEST__.playerStore.getState();
+          store.play(entry, enc);
+          store.pause();
+        },
+        MOCK_ENTRY,
+        MOCK_ENCLOSURE
+      );
 
-      const hasEntry = await browser.execute(() =>
-        window.__TEST__.playerStore.getState().currentEntry !== null,
+      const hasEntry = await browser.execute(
+        () => window.__TEST__.playerStore.getState().currentEntry !== null
       );
       expect(hasEntry).toBe(true);
     });
@@ -244,12 +271,16 @@ describe('Podcast Player Store', () => {
 
   describe('Seek', () => {
     it('should update currentTime', async () => {
-      await browser.execute((entry, enc) => {
-        const store = window.__TEST__.playerStore.getState();
-        store.play(entry, enc);
-        store._updateDuration(3600);
-        store.seek(120);
-      }, MOCK_ENTRY, MOCK_ENCLOSURE);
+      await browser.execute(
+        (entry, enc) => {
+          const store = window.__TEST__.playerStore.getState();
+          store.play(entry, enc);
+          store._updateDuration(3600);
+          store.seek(120);
+        },
+        MOCK_ENTRY,
+        MOCK_ENCLOSURE
+      );
 
       expect(await getField('currentTime')).toBe(120);
     });
@@ -365,18 +396,22 @@ describe('Podcast Player Store', () => {
 
   describe('Dismiss', () => {
     it('should clear all state', async () => {
-      await browser.execute((entry, enc) => {
-        const store = window.__TEST__.playerStore.getState();
-        store.play(entry, enc);
-        store._updateDuration(3600);
-        store.seek(500);
-        store.setSpeed(1.5);
-        store.setMinimized(true);
-        store.dismiss();
-      }, MOCK_ENTRY, MOCK_ENCLOSURE);
+      await browser.execute(
+        (entry, enc) => {
+          const store = window.__TEST__.playerStore.getState();
+          store.play(entry, enc);
+          store._updateDuration(3600);
+          store.seek(500);
+          store.setSpeed(1.5);
+          store.setMinimized(true);
+          store.dismiss();
+        },
+        MOCK_ENTRY,
+        MOCK_ENCLOSURE
+      );
 
-      const hasEntry = await browser.execute(() =>
-        window.__TEST__.playerStore.getState().currentEntry !== null,
+      const hasEntry = await browser.execute(
+        () => window.__TEST__.playerStore.getState().currentEntry !== null
       );
       expect(hasEntry).toBe(false);
 
@@ -391,9 +426,13 @@ describe('Podcast Player Store', () => {
   describe('Minimization', () => {
     it('should set minimized state', async () => {
       // Play first, let React effects settle, then minimize
-      await browser.execute((entry, enc) => {
-        window.__TEST__.playerStore.getState().play(entry, enc);
-      }, MOCK_ENTRY, MOCK_ENCLOSURE);
+      await browser.execute(
+        (entry, enc) => {
+          window.__TEST__.playerStore.getState().play(entry, enc);
+        },
+        MOCK_ENTRY,
+        MOCK_ENCLOSURE
+      );
 
       // Wait for React effects (EntryReading auto-minimization) to settle
       await browser.pause(200);
@@ -403,16 +442,21 @@ describe('Podcast Player Store', () => {
       });
 
       // Verify state after effects
-      await browser.waitUntil(
-        async () => (await getField('isMinimized')) === true,
-        { timeout: 2000, interval: 100, timeoutMsg: 'isMinimized never became true' },
-      );
+      await browser.waitUntil(async () => (await getField('isMinimized')) === true, {
+        timeout: 2000,
+        interval: 100,
+        timeoutMsg: 'isMinimized never became true',
+      });
     });
 
     it('should un-minimize', async () => {
-      await browser.execute((entry, enc) => {
-        window.__TEST__.playerStore.getState().play(entry, enc);
-      }, MOCK_ENTRY, MOCK_ENCLOSURE);
+      await browser.execute(
+        (entry, enc) => {
+          window.__TEST__.playerStore.getState().play(entry, enc);
+        },
+        MOCK_ENTRY,
+        MOCK_ENCLOSURE
+      );
 
       await browser.pause(200);
 
@@ -426,10 +470,11 @@ describe('Podcast Player Store', () => {
         window.__TEST__.playerStore.getState().setMinimized(false);
       });
 
-      await browser.waitUntil(
-        async () => (await getField('isMinimized')) === false,
-        { timeout: 2000, interval: 100, timeoutMsg: 'isMinimized never became false' },
-      );
+      await browser.waitUntil(async () => (await getField('isMinimized')) === false, {
+        timeout: 2000,
+        interval: 100,
+        timeoutMsg: 'isMinimized never became false',
+      });
     });
   });
 });

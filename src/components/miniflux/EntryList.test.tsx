@@ -1,7 +1,7 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { describe, expect, it, vi } from 'vitest';
+import { describe, expect, it, vi } from 'vite-plus/test';
 import type { Entry } from '@/lib/bindings';
 import { fireEvent, render, screen, waitFor } from '@/test/test-utils';
 import { EntryList } from './EntryList';

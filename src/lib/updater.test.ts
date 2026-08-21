@@ -1,6 +1,6 @@
 import { relaunch } from '@tauri-apps/plugin-process';
 import { check } from '@tauri-apps/plugin-updater';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { useUpdaterStore } from '@/store/updater-store';
 import { checkForUpdate, downloadUpdate, installAndRelaunch } from './updater';
 

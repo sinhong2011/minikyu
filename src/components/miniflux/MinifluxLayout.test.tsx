@@ -1,9 +1,9 @@
 import { i18n } from '@lingui/core';
 import { I18nProvider } from '@lingui/react';
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { useSearch } from '@tanstack/react-router';
 import { act, fireEvent, render, screen, waitFor } from '@testing-library/react';
-import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { useSyncExternalStore } from 'react';
+import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 import { useAccounts, useActiveAccount } from '@/services/miniflux/accounts';
 import { useIsConnected } from '@/services/miniflux/auth';
 import { useCategories, useMarkCategoryAsRead } from '@/services/miniflux/categories';
@@ -15,8 +15,51 @@ import { useSyncStore } from '@/store/sync-store';
 import { useUIStore } from '@/store/ui-store';
 import { MinifluxLayout } from './MinifluxLayout';
 
+/**
+ * The URL is the component's state now, so the router mock has to behave like
+ * one: `navigate` applies the patch and re-renders, the way a real navigation
+ * would. A `mockReturnValue` stub would make every write a no-op and the
+ * open/close assertions vacuous.
+ */
+const routerMock = vi.hoisted(() => {
+  let search: Record<string, unknown> = {};
+  const listeners = new Set<() => void>();
+  const emit = () => {
+    for (const listener of listeners) listener();
+  };
+
+  return {
+    getSearch: () => search,
+    /** Seed the URL for a test, as if it had been navigated to directly. */
+    set: (next: Record<string, unknown>) => {
+      search = next;
+      emit();
+    },
+    subscribe: (listener: () => void) => {
+      listeners.add(listener);
+      return () => {
+        listeners.delete(listener);
+      };
+    },
+    navigate: (options: { search?: unknown }) => {
+      const patch =
+        typeof options.search === 'function'
+          ? (options.search as (prev: Record<string, unknown>) => Record<string, unknown>)(search)
+          : (options.search as Record<string, unknown> | undefined);
+      // TanStack Router drops undefined params from the query string.
+      search = Object.fromEntries(
+        Object.entries({ ...search, ...patch }).filter(([, value]) => value !== undefined)
+      );
+      emit();
+    },
+    back: vi.fn(),
+  };
+});
+
 vi.mock('@tanstack/react-router', () => ({
-  useSearch: vi.fn(() => ({})),
+  useSearch: () => useSyncExternalStore(routerMock.subscribe, routerMock.getSearch),
+  useNavigate: () => routerMock.navigate,
+  useRouter: () => ({ history: { back: routerMock.back } }),
 }));
 
 vi.mock('@/hooks/use-sync-progress-listener', () => ({
@@ -128,11 +171,8 @@ describe('MinifluxLayout', () => {
     vi.clearAllMocks();
     queryClient.clear();
 
-    useUIStore.setState({
-      selectedEntryId: undefined,
-      searchFiltersVisible: false,
-    });
-    (useSearch as any).mockReturnValue({});
+    useUIStore.setState({ searchFiltersVisible: false });
+    routerMock.set({});
 
     (useIsConnected as any).mockReturnValue({
       data: true,
@@ -190,20 +230,67 @@ describe('MinifluxLayout', () => {
     render(<MinifluxLayout />, { wrapper: TestWrapper });
 
     await waitFor(() => {
-      expect(useUIStore.getState().selectedEntryId).toBe('1536612');
+      expect(routerMock.getSearch().entry).toBe('1536612');
     });
 
     fireEvent.click(screen.getByTestId('close-reading'));
 
     await waitFor(() => {
-      expect(useUIStore.getState().selectedEntryId).toBeUndefined();
+      expect(routerMock.getSearch().entry).toBeUndefined();
     });
 
+    // The resume-last-reading effect must not undo the close on a later tick.
     await act(async () => {
       await new Promise((resolve) => setTimeout(resolve, 60));
     });
 
-    expect(useUIStore.getState().selectedEntryId).toBeUndefined();
+    expect(routerMock.getSearch().entry).toBeUndefined();
+  });
+
+  it('restores the last reading entry into the URL, without a history push', async () => {
+    render(<MinifluxLayout />, { wrapper: TestWrapper });
+
+    await waitFor(() => {
+      expect(routerMock.getSearch().entry).toBe('1536612');
+    });
+    expect(routerMock.back).not.toHaveBeenCalled();
+  });
+
+  it('defaults to unread on the article views and records an explicit all', async () => {
+    render(<MinifluxLayout />, { wrapper: TestWrapper });
+
+    // Absent means "the view default", so a pristine URL stays pristine...
+    expect(routerMock.getSearch().status).toBeUndefined();
+    expect((useEntries as any).mock.calls.at(-1)?.[0]).toMatchObject({ status: 'unread' });
+
+    // ...while choosing All is written out, so it survives a reload.
+    await act(async () => {
+      routerMock.navigate({
+        search: (prev: Record<string, unknown>) => ({ ...prev, status: 'all' }),
+      });
+    });
+
+    expect(routerMock.getSearch().status).toBe('all');
+    expect((useEntries as any).mock.calls.at(-1)?.[0].status).toBeUndefined();
+  });
+
+  it('sorts history by read time unless the URL says otherwise', async () => {
+    routerMock.set({ filter: 'history' });
+    render(<MinifluxLayout />, { wrapper: TestWrapper });
+
+    expect((useEntries as any).mock.calls.at(-1)?.[0]).toMatchObject({
+      status: 'read',
+      order: 'changed_at',
+      direction: 'desc',
+    });
+
+    await act(async () => {
+      routerMock.navigate({
+        search: (prev: Record<string, unknown>) => ({ ...prev, sort: 'published_at' }),
+      });
+    });
+
+    expect((useEntries as any).mock.calls.at(-1)?.[0]).toMatchObject({ order: 'published_at' });
   });
 
   it('shows unread count below the title on all entries view', () => {
@@ -223,7 +310,7 @@ describe('MinifluxLayout', () => {
   });
 
   it('shows starred count below the title on starred entries view', () => {
-    (useSearch as any).mockReturnValue({ filter: 'starred' });
+    routerMock.set({ filter: 'starred' });
     (useEntries as any).mockReturnValue({
       data: {
         entries: [{ id: '1536612' }],
@@ -238,7 +325,7 @@ describe('MinifluxLayout', () => {
   });
 
   it('shows history count below the title on history entries view', () => {
-    (useSearch as any).mockReturnValue({ filter: 'history' });
+    routerMock.set({ filter: 'history' });
     (useEntries as any).mockReturnValue({
       data: {
         entries: [{ id: '1536612' }],
