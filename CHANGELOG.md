@@ -1,5 +1,24 @@
 # Changelog
 
+## [1.12.0](https://github.com/sinhong2011/minikyu/compare/v1.11.9...v1.12.0) (2026-08-21)
+
+
+### Features
+
+* Add installable PWA web target with responsive mobile layout ([ff5d5ce](https://github.com/sinhong2011/minikyu/commit/ff5d5ce4f6cbebbd4278d63645d67f6539a8b177))
+* Add one-click deploy for Netlify, Vercel, Cloudflare Pages and Docker ([31d89dc](https://github.com/sinhong2011/minikyu/commit/31d89dc570d26b82cc7dc2d215a8a4c4abb9b90e))
+
+
+### Bug Fixes
+
+* **docker:** Resolve the Miniflux upstream at request time ([8942ef0](https://github.com/sinhong2011/minikyu/commit/8942ef0617ec4d353268dbfda849cb18f2afa6ff))
+* **release:** Align Cargo.toml version and annotate for release-please ([3a4115b](https://github.com/sinhong2011/minikyu/commit/3a4115b456465156afa92954326f21c982bd73e5))
+
+
+### Reverts
+
+* Undo the feed/category dialog code-split ([59a3d79](https://github.com/sinhong2011/minikyu/commit/59a3d79a3bd5e22c243254db66f25f13647f18e1))
+
 ## [1.11.9](https://github.com/sinhong2011/minikyu/compare/v1.11.8...v1.11.9) (2026-04-16)
 
 
