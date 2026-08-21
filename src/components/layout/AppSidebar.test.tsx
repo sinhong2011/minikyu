@@ -360,9 +360,14 @@ describe('AppSidebar', () => {
     fireEvent.click(screen.getByLabelText('Category actions'));
     fireEvent.click(screen.getByText('Add Feed'));
 
-    await waitFor(() => {
-      expect(screen.getAllByText('Add Feed').length).toBeGreaterThan(1);
-    });
+    await waitFor(
+      () => {
+        expect(screen.getAllByText('Add Feed').length).toBeGreaterThan(1);
+      },
+      // Resolving the lazy chunk took ~1.3s on a loaded CI runner, past the
+      // 1s default. This waits on a module load, not on app logic.
+      { timeout: 10_000 }
+    );
   });
 
   it('opens add feed dialog with search tab from Search Source action', async () => {
@@ -371,9 +376,12 @@ describe('AppSidebar', () => {
     fireEvent.click(screen.getByLabelText('Category actions'));
     fireEvent.click(screen.getByText('Search Source'));
 
-    await waitFor(() => {
-      expect(screen.getAllByText('Search Source').length).toBeGreaterThan(1);
-    });
+    await waitFor(
+      () => {
+        expect(screen.getAllByText('Search Source').length).toBeGreaterThan(1);
+      },
+      { timeout: 10_000 }
+    );
   });
 
   it('shows icon-only minimized sidebar without categories', () => {
