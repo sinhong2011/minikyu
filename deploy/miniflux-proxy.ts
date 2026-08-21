@@ -8,11 +8,12 @@
  * as an nginx `proxy_pass`; Vercel and Cloudflare Pages cannot interpolate an
  * environment variable into a static rewrite, so they run this instead:
  *
- *   api/miniflux-api/[...path].ts      → Vercel Edge Function
+ *   api/miniflux-api.ts                → Vercel Edge Function
  *   functions/miniflux-api/[[path]].ts → Cloudflare Pages Function
  *
- * Both are thin adapters over `proxyToMiniflux`; the only thing that differs
- * between them is how the runtime hands over `MINIFLUX_URL`. Written against
+ * Both are thin adapters over `proxyToMiniflux`; what differs is how the
+ * runtime hands over `MINIFLUX_URL`, and — on Vercel — how the request path
+ * survives the rewrite (see the `route` parameter). Written against
  * web-standard `Request`/`Response`/`fetch` only, so it needs no host types.
  */
 
@@ -30,6 +31,20 @@ const HOP_BY_HOP = new Set([
   'upgrade',
 ]);
 
+/**
+ * Turns whatever is in `MINIFLUX_URL` into an absolute URL.
+ *
+ * Hosts are configured by hand in a dashboard, and the connect dialog prompts
+ * for a bare hostname ("miniflux.example.com"), so a scheme-less value is the
+ * predictable mistake — and `new URL()` rejects it. Assume https, matching
+ * `resolveMinifluxApiBase()` in `vite.config.ts`.
+ */
+function withScheme(raw: string): string {
+  if (/^https?:\/\//i.test(raw)) return raw;
+  const localhost = /^(localhost|127\.0\.0\.1|\[::1\])(:|$)/i.test(raw);
+  return `${localhost ? 'http' : 'https'}://${raw}`;
+}
+
 function stripHopByHop(source: Headers): Headers {
   const out = new Headers();
   source.forEach((value, key) => {
@@ -46,11 +61,15 @@ function stripHopByHop(source: Headers): Headers {
  * instead of a mysterious network error.
  *
  * @param whereToSetIt Host-specific hint naming where `MINIFLUX_URL` belongs.
+ * @param route Overrides the path and query to forward, for hosts where the
+ *   rewrite does not leave them on `request.url`. Vercel needs it; Cloudflare
+ *   routes by file path and does not.
  */
 export async function proxyToMiniflux(
   request: Request,
   rawTarget: string | undefined,
-  whereToSetIt: string
+  whereToSetIt: string,
+  route?: { pathname: string; search: string }
 ): Promise<Response> {
   const trimmed = rawTarget?.trim();
   if (!trimmed) {
@@ -64,12 +83,12 @@ export async function proxyToMiniflux(
 
   let target: URL;
   try {
-    target = new URL(trimmed);
+    target = new URL(withScheme(trimmed));
   } catch {
     return Response.json({ error: `MINIFLUX_URL is not a valid URL: ${trimmed}` }, { status: 500 });
   }
 
-  const incoming = new URL(request.url);
+  const incoming = route ?? new URL(request.url);
   // `/miniflux-api/v1/entries` → `/v1/entries`; the prefix is ours, not Miniflux's.
   const path = incoming.pathname.startsWith(PREFIX)
     ? incoming.pathname.slice(PREFIX.length)

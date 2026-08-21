@@ -294,7 +294,7 @@ environment variable into a static rewrite rule:
 | Host | Mechanism | Files |
 | ---- | --------- | ----- |
 | Netlify | `_redirects` generated at build time | `netlify.toml`, `scripts/write-deploy-redirects.ts` |
-| Vercel | Edge function proxy | `vercel.json`, `api/miniflux-api/[...path].ts` |
+| Vercel | Edge function proxy | `vercel.json`, `api/miniflux-api.ts` |
 | Cloudflare Pages | Pages Function proxy | `functions/miniflux-api/[[path]].ts`, `cloudflare/` |
 
 Vercel and Cloudflare run the *same* proxy — `deploy/miniflux-proxy.ts`, written
@@ -314,10 +314,23 @@ catch-all, and `200!` forces it to win over any real file of that name:
 It refuses to run without `MINIFLUX_URL`, and rejects plaintext `http://` off
 localhost, since credentials cross that hop.
 
-**Vercel.** `vercel.json` rewrites `/miniflux-api/*` onto an edge function that
-reads `MINIFLUX_URL` at request time. The function strips the `/miniflux-api`
-prefix, drops hop-by-hop headers in both directions, and passes the body through
-unbuffered. Changing the target is a dashboard edit, not a rebuild.
+`MINIFLUX_URL` may be given without a scheme (`reader.example.com`) on Netlify,
+Vercel and Cloudflare — https is assumed, localhost excepted. The Docker image
+is stricter and still wants the full URL.
+
+**Vercel.** `vercel.json` rewrites `/miniflux-api/*` onto `api/miniflux-api.ts`,
+an edge function that reads `MINIFLUX_URL` at request time. The function strips
+the `/miniflux-api` prefix, drops hop-by-hop headers in both directions, and
+passes the body through unbuffered. Changing the target is a dashboard edit, not
+a rebuild.
+
+The rewrite hands the captured path over as a query parameter
+(`/api/miniflux-api?__mfpath=$1`) rather than relying on a `[...path]` catch-all
+filename. In a non-framework project Vercel matches a dynamic segment in `api/`
+against a **single** path segment, so a catch-all serves `/miniflux-api/version`
+and 404s `/miniflux-api/v1/me` — i.e. everything the app actually calls. Vercel
+merges the original query string into the destination, so the function deletes
+`__mfpath` and forwards the rest.
 
 **Cloudflare Pages.** Set the build command to `bun run build:cf` and the
 output directory to `dist`. Three things differ from the other two:

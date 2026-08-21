@@ -36,9 +36,15 @@ if (!rawUrl) {
   process.exit(1);
 }
 
+// A dashboard-entered value is often a bare hostname; `new URL()` rejects that,
+// so assume https the way `vite.config.ts` and `deploy/miniflux-proxy.ts` do.
+const withScheme = /^https?:\/\//i.test(rawUrl)
+  ? rawUrl
+  : `${/^(localhost|127\.0\.0\.1|\[::1\])(:|$)/i.test(rawUrl) ? 'http' : 'https'}://${rawUrl}`;
+
 let target: URL;
 try {
-  target = new URL(rawUrl);
+  target = new URL(withScheme);
 } catch {
   console.error(`MINIFLUX_URL is not a valid URL: ${rawUrl}`);
   process.exit(1);
