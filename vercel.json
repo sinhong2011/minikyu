@@ -6,7 +6,7 @@
   "rewrites": [
     {
       "source": "/miniflux-api/(.*)",
-      "destination": "/api/miniflux-api/$1"
+      "destination": "/api/miniflux-api?__mfpath=$1"
     },
     {
       "source": "/((?!api/|assets/|sw.js|manifest.webmanifest).*)",
