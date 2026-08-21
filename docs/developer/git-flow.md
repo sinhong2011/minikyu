@@ -55,7 +55,7 @@ hotfix/v1.2.1-security-patch
 | `feat` | New feature | `feat(auth): Add OAuth2 login support` |
 | `fix` | Bug fix | `fix(api): Handle null response in user endpoint` |
 | `docs` | Documentation only | `docs: Update installation instructions` |
-| `style` | Code style (formatting, etc) | `style: Format imports with Biome` |
+| `style` | Code style (formatting, etc) | `style: Format imports with oxfmt` |
 | `refactor` | Code refactoring | `refactor(hooks): Extract common logic to useAuth` |
 | `perf` | Performance improvement | `perf(list): Virtualize long lists` |
 | `test` | Adding/updating tests | `test(auth): Add unit tests for login flow` |
@@ -194,7 +194,7 @@ refactor: Split auth module
 ### Pre-commit (runs automatically)
 
 ```yaml
-biome-check: # Runs on staged files
+fmt / lint: # Run on staged files
   - Fixes formatting issues
   - Stages fixed files automatically
 
@@ -204,7 +204,7 @@ type-check: # Runs on .ts/.tsx files
 
 **If pre-commit fails:**
 1. Check the error message
-2. Fix the issue manually or let Biome auto-fix
+2. Fix the issue manually or let oxfmt/oxlint auto-fix
 3. Stage the fixed files
 4. Commit again
 
@@ -312,7 +312,7 @@ NEVER force push to shared branches
 ```
 ALWAYS verify hooks pass before claiming completion
 IF hook fails → Fix and retry, do NOT bypass
-IF Biome fixes issues → Stage fixed files and commit again
+IF oxfmt/oxlint fix issues → Stage fixed files and commit again
 ```
 
 ### 4. Commit Frequency
@@ -411,7 +411,7 @@ git reset --hard HEAD~1
 
 | Issue | Solution |
 |-------|----------|
-| Pre-commit fails | Let Biome auto-fix, stage fixed files, retry |
+| Pre-commit fails | Let oxfmt/oxlint auto-fix, stage fixed files, retry |
 | Tests fail in pre-push | Run `bun run test:run` locally, fix, retry |
 | Commit message rejected | Follow conventional commit format |
 | Merge conflict | `git fetch`, `git rebase origin/main`, resolve conflicts |

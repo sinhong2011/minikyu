@@ -31,6 +31,7 @@ Technical documentation for building and extending this app. These docs describe
 | [Internationalization](./i18n.md) | Translation system, RTL support             |
 | [Notifications](./notifications.md)        | Toast and native notifications              |
 | [Cross-Platform](./cross-platform.md)      | Platform detection, OS-specific adaptations |
+| [PWA (web build)](./pwa.md)                | Online-only browser target, adapter seam, CORS, Serwist |
 
 ## Data & Storage
 
@@ -43,7 +44,8 @@ Technical documentation for building and extending this app. These docs describe
 
 | Document                                              | Description                                             |
 | ----------------------------------------------------- | ------------------------------------------------------- |
-| [Static Analysis](./static-analysis.md)               | ESLint, Prettier, ast-grep, knip, jscpd, React Compiler |
+| [Static Analysis](./static-analysis.md)               | ast-grep, knip, jscpd, React Compiler                   |
+| [Linting & Formatting](./linting-formatting.md)       | oxlint + oxfmt via the Vite+ toolchain                  |
 | [Writing ast-grep Rules](./writing-ast-grep-rules.md) | AI reference for creating custom rules                  |
 | [Testing](./testing.md)                               | Test patterns, Tauri mocking                            |
 | [Bundle Optimization](./bundle-optimization.md)       | Bundle size management                                  |

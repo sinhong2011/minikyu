@@ -16,7 +16,7 @@ This template is **exceptionally well-architected** with comprehensive infrastru
 - ✅ Three-layer state management (useState → Zustand → TanStack Query)
 - ✅ Type-safe Rust-TypeScript bridge (tauri-specta)
 - ✅ Command palette, quick pane, native menus, theme system
-- ✅ Comprehensive static analysis (Biome, ast-grep, knip, jscpd)
+- ✅ Comprehensive static analysis (oxlint, oxfmt, ast-grep, knip, jscpd)
 - ✅ Git hooks (Lefthook + Commitlint)
 - ✅ Automated releases (release-please)
 - ✅ 70+ UI components, i18n support, cross-platform title bars
