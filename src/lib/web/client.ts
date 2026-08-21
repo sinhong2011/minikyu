@@ -27,16 +27,49 @@ export class MinifluxHttpError extends Error {
   }
 }
 
+/**
+ * Header values are Latin-1 in the Fetch spec, so anything outside it makes
+ * `fetch()` throw `String contains non ISO-8859-1 code point` before a request
+ * is ever sent. An API token pasted with an IME on, or copied out of a page
+ * along with a zero-width space, does exactly that — and the raw DOMException
+ * reads like a browser bug rather than "your token is wrong". Miniflux tokens
+ * are printable ASCII, so anything else is rejected here with a message that
+ * points at the real cause.
+ */
+function tokenHeader(token: string): Record<string, string> {
+  const trimmed = token.trim();
+  if (!/^[\x21-\x7e]+$/.test(trimmed)) {
+    throw new MinifluxHttpError(
+      400,
+      'API token contains characters that cannot be sent in a request header. ' +
+        'Copy it again from Miniflux → Settings → API Keys, with no surrounding ' +
+        'spaces or full-width characters.'
+    );
+  }
+  return { 'X-Auth-Token': trimmed };
+}
+
+/**
+ * `btoa()` is Latin-1 only and throws on, say, a CJK password. Miniflux decodes
+ * Basic credentials as UTF-8, so encode to bytes first and base64 those.
+ */
+function basicHeader(username: string, password: string): Record<string, string> {
+  const bytes = new TextEncoder().encode(`${username}:${password}`);
+  let binary = '';
+  for (const byte of bytes) binary += String.fromCharCode(byte);
+  return { Authorization: `Basic ${btoa(binary)}` };
+}
+
 function authHeaders(): Record<string, string> {
   const account = accountStorage.get();
   if (!account) {
     throw new MinifluxHttpError(401, 'Not connected to a Miniflux server');
   }
   if (account.auth_token) {
-    return { 'X-Auth-Token': account.auth_token };
+    return tokenHeader(account.auth_token);
   }
   if (account.username && account.password) {
-    return { Authorization: `Basic ${btoa(`${account.username}:${account.password}`)}` };
+    return basicHeader(account.username, account.password);
   }
   throw new MinifluxHttpError(401, 'Stored account has no usable credentials');
 }
@@ -113,10 +146,10 @@ export function credentialsFor(config: {
   password?: string | null;
 }): Record<string, string> {
   if (config.auth_token) {
-    return { 'X-Auth-Token': config.auth_token };
+    return tokenHeader(config.auth_token);
   }
   if (config.username && config.password) {
-    return { Authorization: `Basic ${btoa(`${config.username}:${config.password}`)}` };
+    return basicHeader(config.username, config.password);
   }
   throw new MinifluxHttpError(400, 'Either auth_token or username/password must be provided');
 }
