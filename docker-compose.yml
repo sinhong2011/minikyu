@@ -1,0 +1,64 @@
+# Minikyu PWA (the `web` target) — see docs/developer/pwa.md.
+#
+#   docker compose up -d      →  http://localhost:8085
+#
+# `minikyu-web` is the only service you need. The `miniflux` and `db` services
+# below are a complete stack for anyone who does not already run one: if you
+# do, delete both, drop the `depends_on`, and point MINIFLUX_URL at your
+# instance (https://reader.example.com).
+
+services:
+  minikyu-web:
+    # Published on every release; `docker compose pull` picks up new versions.
+    image: sinhong2011/minikyu-web:latest
+    # Or build from this checkout instead — comment out `image:` above first:
+    # build:
+    #   context: .
+    ports:
+      - '8085:80'
+    environment:
+      # Where this deployment proxies /miniflux-api/ to. Read at container
+      # start, so changing it is `docker compose up -d`, not a rebuild.
+      # Plaintext http is acceptable here *because* it never leaves the compose
+      # network; use https for anything reachable from outside.
+      MINIFLUX_URL: http://miniflux:8080
+    depends_on:
+      - miniflux
+    restart: unless-stopped
+
+  # ---------------------------------------------------------------------------
+  # Everything below is a stock Miniflux. Already have one? Delete it.
+  # ---------------------------------------------------------------------------
+  miniflux:
+    image: miniflux/miniflux:latest
+    # Not published to the host: only minikyu-web needs to reach it. Add
+    # `ports: ['8080:8080']` if you also want Miniflux's own web UI.
+    environment:
+      DATABASE_URL: postgres://miniflux:secret@db/miniflux?sslmode=disable
+      RUN_MIGRATIONS: 1
+      CREATE_ADMIN: 1
+      ADMIN_USERNAME: admin
+      # Change this before running, and sign in to Settings → API Keys to mint
+      # the token the PWA actually uses.
+      ADMIN_PASSWORD: change-me-please
+    depends_on:
+      db:
+        condition: service_healthy
+    restart: unless-stopped
+
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: miniflux
+      POSTGRES_PASSWORD: secret
+      POSTGRES_DB: miniflux
+    volumes:
+      - miniflux-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ['CMD', 'pg_isready', '-U', 'miniflux']
+      interval: 10s
+      start_period: 30s
+    restart: unless-stopped
+
+volumes:
+  miniflux-db:

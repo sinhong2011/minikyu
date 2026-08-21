@@ -1,0 +1,111 @@
+# Publishes the PWA image to Docker Hub: sinhong2011/minikyu-web
+#
+# Tags publish. Pull requests that touch the image build and smoke-test it
+# without pushing, so a broken Dockerfile is caught before it reaches a tag.
+#
+# Required repository secrets:
+#   DOCKERHUB_USERNAME — Docker Hub account (sinhong2011)
+#   DOCKERHUB_TOKEN    — access token with Read & Write, from
+#                        hub.docker.com → Account settings → Personal access tokens
+name: 'Docker (web)'
+
+on:
+  # No `paths` filter here on purpose: for a tag push GitHub evaluates paths
+  # against the tagged commit's diff, which usually does not touch the image —
+  # the release would silently publish nothing.
+  push:
+    tags: ['v*']
+  pull_request:
+    paths:
+      - 'Dockerfile'
+      - '.dockerignore'
+      - 'docker/**'
+      - '.github/workflows/docker-web.yml'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Version to publish (e.g., v1.0.0). Empty publishes :edge.'
+        required: false
+        type: string
+
+env:
+  IMAGE: sinhong2011/minikyu-web
+
+jobs:
+  docker:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      # No QEMU setup: the Dockerfile pins the bun stage to BUILDPLATFORM, so
+      # nothing is ever *executed* for a foreign architecture — the linux/arm64
+      # image is the arm64 nginx plus a COPY of platform-independent files.
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v3
+
+      # ---- Pull requests: build once, natively, and prove it runs -----------
+      - name: Build for the smoke test
+        if: github.event_name == 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          load: true
+          tags: minikyu-web:ci
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Smoke test
+        if: github.event_name == 'pull_request'
+        run: |
+          set -euo pipefail
+          docker run -d --name minikyu-ci -p 8085:80 \
+            -e MINIFLUX_URL=https://reader.example.com minikyu-web:ci
+          for _ in $(seq 1 30); do
+            curl -sf http://127.0.0.1:8085/healthz >/dev/null && break
+            sleep 1
+          done
+          curl -sf http://127.0.0.1:8085/healthz
+          curl -sf http://127.0.0.1:8085/ >/dev/null
+          # The SPA fallback must answer routes that are not files on disk.
+          curl -sf http://127.0.0.1:8085/some/deep/route >/dev/null
+          # A missing MINIFLUX_URL must fail loudly, not serve a broken app.
+          if docker run --rm minikyu-web:ci >/dev/null 2>&1; then
+            echo 'expected a non-zero exit without MINIFLUX_URL' >&2
+            exit 1
+          fi
+          docker rm -f minikyu-ci
+
+      # ---- Tags and manual runs: publish multi-arch ------------------------
+      - name: Log in to Docker Hub
+        if: github.event_name != 'pull_request'
+        uses: docker/login-action@v3
+        with:
+          username: ${{ secrets.DOCKERHUB_USERNAME }}
+          password: ${{ secrets.DOCKERHUB_TOKEN }}
+
+      - name: Derive tags
+        if: github.event_name != 'pull_request'
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.IMAGE }}
+          # `value:` falls back to the git tag when the input is empty, so the
+          # same three lines cover both a tag push and a manual version.
+          tags: |
+            type=semver,pattern={{version}},value=${{ inputs.version }}
+            type=semver,pattern={{major}}.{{minor}},value=${{ inputs.version }}
+            type=semver,pattern={{major}},value=${{ inputs.version }}
+            type=raw,value=edge,enable=${{ github.event_name == 'workflow_dispatch' && inputs.version == '' }}
+
+      - name: Build and push
+        if: github.event_name != 'pull_request'
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          # arm64 matters here — this runs next to Miniflux on Pis and ARM VPSs.
+          platforms: linux/amd64,linux/arm64
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max

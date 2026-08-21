@@ -1,0 +1,51 @@
+# Netlify deployment for the Minikyu PWA (the `web` target — see docs/developer/pwa.md).
+#
+# This file only builds the browser app. The desktop app is a Tauri binary and
+# is not deployed here.
+#
+# Required environment variable, set under Site settings → Environment variables:
+#
+#   MINIFLUX_URL = https://reader.example.com
+#
+# That is the Miniflux instance the deployment proxies to. It is required
+# because Miniflux sends no CORS headers, so the browser can never call it
+# directly — every request goes to the same-origin /miniflux-api prefix, which
+# the generated _redirects rewrites. `netlify.toml` cannot interpolate env
+# vars, hence the generation step in the build command.
+
+[build]
+command = "bun run build:web && bun run deploy:redirects"
+publish = "dist"
+
+[build.environment]
+# Keep in step with mise.toml and .github/workflows/ci.yml.
+BUN_VERSION = "1.4.0"
+
+# The service worker must never be served stale, or clients pin themselves to
+# an old build. Everything under /assets is content-hashed and safe to pin.
+[[headers]]
+for = "/sw.js"
+[headers.values]
+Cache-Control = "public, max-age=0, must-revalidate"
+
+[[headers]]
+for = "/assets/*"
+[headers.values]
+Cache-Control = "public, max-age=31536000, immutable"
+
+# Security headers. The browser build keeps Miniflux credentials in
+# localStorage (no OS keychain), so `connect-src 'self'` is the load-bearing
+# rule here: even if a script were injected, it could not post them anywhere.
+# The web adapter only ever calls the same-origin /miniflux-api proxy.
+#
+# `frame-src` mirrors ALLOWED_VIDEO_HOSTS in src/lib/video-embed-utils.ts —
+# DOMPurify already strips other iframes; this is the second layer.
+# `img-src`/`media-src` stay open because feed content legitimately embeds
+# images and audio from anywhere.
+[[headers]]
+for = "/*"
+[headers.values]
+Content-Security-Policy = "default-src 'self'; base-uri 'self'; object-src 'none'; frame-ancestors 'none'; form-action 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob: https: http:; media-src 'self' blob: https: http:; font-src 'self' data:; connect-src 'self'; worker-src 'self'; manifest-src 'self'; frame-src https://www.youtube.com https://youtube.com https://www.youtube-nocookie.com https://youtube-nocookie.com https://player.bilibili.com https://bilibili.com https://www.bilibili.com"
+X-Content-Type-Options = "nosniff"
+Referrer-Policy = "strict-origin-when-cross-origin"
+Permissions-Policy = "geolocation=(), microphone=(), camera=(), payment=()"

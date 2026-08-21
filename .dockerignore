@@ -1,0 +1,58 @@
+# Build context for the PWA image (see Dockerfile). Everything here is either
+# rebuilt inside the image or belongs to the desktop target — keeping
+# node_modules/ and src-tauri/target/ out is the difference between a few MB of
+# context and several GB.
+
+# Dependencies and build output — reinstalled/rebuilt in the builder stage.
+node_modules
+dist
+dist-ssr
+*.tsbuildinfo
+
+# The desktop target. The PWA build never touches Rust.
+src-tauri
+e2e-tauri
+
+# Tests, tooling and reports.
+e2e
+test-results
+playwright-report
+coverage
+jscpd-report
+.playwright-mcp
+
+# VCS, editor, agent and CI metadata.
+.git
+.github
+.vscode
+.idea
+.claude
+.agents
+.opencode
+.kilocode
+.sisyphus
+.worktrees
+openspec
+
+# Other deployment targets — Netlify, Vercel and Cloudflare Pages configs.
+api
+functions
+cloudflare
+deploy
+netlify.toml
+vercel.json
+
+# Docs — none of it ships in the image.
+docs
+*.md
+!README.md
+
+# Local environment. MINIFLUX_URL is supplied at container start, and a stray
+# .env would otherwise leak VITE_SERVER_URL into the build.
+.env
+.env.*
+!.env.example
+
+# Host junk.
+.DS_Store
+*.log

@@ -1,0 +1,101 @@
+/**
+ * The same-origin Miniflux proxy, shared by every host that needs one in code.
+ *
+ * Miniflux sends no CORS headers, so the PWA never calls it cross-origin —
+ * every request goes to the same-origin `/miniflux-api` prefix and the
+ * deployment decides what that resolves to (see `docs/developer/pwa.md`).
+ * Netlify expresses that as a generated `_redirects` rule and the Docker image
+ * as an nginx `proxy_pass`; Vercel and Cloudflare Pages cannot interpolate an
+ * environment variable into a static rewrite, so they run this instead:
+ *
+ *   api/miniflux-api/[...path].ts      → Vercel Edge Function
+ *   functions/miniflux-api/[[path]].ts → Cloudflare Pages Function
+ *
+ * Both are thin adapters over `proxyToMiniflux`; the only thing that differs
+ * between them is how the runtime hands over `MINIFLUX_URL`. Written against
+ * web-standard `Request`/`Response`/`fetch` only, so it needs no host types.
+ */
+
+const PREFIX = '/miniflux-api';
+
+/** Hop-by-hop headers are connection-scoped and must not be forwarded. */
+const HOP_BY_HOP = new Set([
+  'connection',
+  'keep-alive',
+  'proxy-authenticate',
+  'proxy-authorization',
+  'te',
+  'trailer',
+  'transfer-encoding',
+  'upgrade',
+]);
+
+function stripHopByHop(source: Headers): Headers {
+  const out = new Headers();
+  source.forEach((value, key) => {
+    if (!HOP_BY_HOP.has(key.toLowerCase())) out.append(key, value);
+  });
+  return out;
+}
+
+/**
+ * Forwards `request` to `rawTarget`, stripping the `/miniflux-api` prefix.
+ *
+ * Misconfiguration answers 500 with an explanation rather than throwing: the
+ * PWA surfaces the body, so a missing variable reads as a deployment problem
+ * instead of a mysterious network error.
+ *
+ * @param whereToSetIt Host-specific hint naming where `MINIFLUX_URL` belongs.
+ */
+export async function proxyToMiniflux(
+  request: Request,
+  rawTarget: string | undefined,
+  whereToSetIt: string
+): Promise<Response> {
+  const trimmed = rawTarget?.trim();
+  if (!trimmed) {
+    return Response.json(
+      {
+        error: `MINIFLUX_URL is not configured. Set it ${whereToSetIt} to the Miniflux instance this deployment should proxy to.`,
+      },
+      { status: 500 }
+    );
+  }
+
+  let target: URL;
+  try {
+    target = new URL(trimmed);
+  } catch {
+    return Response.json({ error: `MINIFLUX_URL is not a valid URL: ${trimmed}` }, { status: 500 });
+  }
+
+  const incoming = new URL(request.url);
+  // `/miniflux-api/v1/entries` → `/v1/entries`; the prefix is ours, not Miniflux's.
+  const path = incoming.pathname.startsWith(PREFIX)
+    ? incoming.pathname.slice(PREFIX.length)
+    : incoming.pathname;
+
+  const upstream = new URL(
+    `${target.pathname.replace(/\/+$/, '')}${path}${incoming.search}`,
+    target.origin
+  );
+
+  const headers = stripHopByHop(request.headers);
+  // Let fetch derive Host from the upstream URL rather than leaking ours.
+  headers.delete('host');
+
+  const response = await fetch(upstream, {
+    method: request.method,
+    headers,
+    body: request.method === 'GET' || request.method === 'HEAD' ? undefined : request.body,
+    redirect: 'manual',
+    // Required by the Fetch spec whenever a streaming body is passed through.
+    ...(request.body ? { duplex: 'half' } : {}),
+  } as RequestInit);
+
+  return new Response(response.body, {
+    status: response.status,
+    statusText: response.statusText,
+    headers: stripHopByHop(response.headers),
+  });
+}
