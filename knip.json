@@ -1,6 +1,6 @@
 {
-  "$schema": "https://unpkg.com/knip@5/schema.json",
-  "entry": ["src/main.tsx", "vite.config.ts", "vitest.config.ts"],
+  "$schema": "https://unpkg.com/knip@6/schema.json",
+  "entry": ["src/main.tsx", "vite.config.ts", "src/sw.ts", "src/lib/web/commands.ts"],
   "project": ["src/**/*.{ts,tsx}"],
   "ignore": ["src/components/ui/**", "src/test/**", "**/index.ts", "src/lib/platform-strings.ts"],
   "ignoreDependencies": [

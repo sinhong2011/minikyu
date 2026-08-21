@@ -1,0 +1,5 @@
+{
+  "//": "Lets oxlint's per-file tsconfig discovery find node/bun types for the build scripts. Checked via `bun run typecheck:tools`.",
+  "extends": "../tsconfig.tools.json",
+  "include": ["."]
+}

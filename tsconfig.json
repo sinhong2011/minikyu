@@ -21,10 +21,8 @@
     "noFallthroughCasesInSwitch": true,
     "noUncheckedIndexedAccess": true,
     "noImplicitOverride": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["./src/*"],
-      "@/lib/tauri-bindings": ["./src/lib/bindings.ts"]
+      "@/*": ["./src/*"]
     },
     "types": []
   },

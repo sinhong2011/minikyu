@@ -1,4 +1,7 @@
 {
+  "oxc.fmt.disableNestedConfig": true,
+  "editor.defaultFormatter": "oxc.oxc-vscode",
+  "editor.formatOnSave": true,
   "css.lint.unknownAtRules": "ignore",
   "tailwindCSS.includeLanguages": {
     "html": "html",
