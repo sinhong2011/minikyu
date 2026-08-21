@@ -17,7 +17,9 @@ This repository is a template with sensible defaults for building Tauri React ap
 
 **CRITICAL:** Follow these strictly:
 
-1. **Use bun only**: This project uses `bun`. Always use `bun install`, `bun run`, etc.
+1. **Use bun only**: This project uses `bun` (pinned to **1.4.0** in `mise.toml`).
+   Always use `bun install`, `bun run`, etc. The frontend toolchain is **Vite+**
+   (`vite-plus`), driven through `bun run <script>`; `vp` is available via `bunx vp`.
 2. **Read Before Editing**: Always read files first to understand context
 3. **Follow Established Patterns**: Use patterns from this file and `docs/developer`
 4. **Senior Architect Mindset**: Consider performance, maintainability, testability
@@ -60,7 +62,7 @@ When making commits, follow these rules:
    ```
 
 4. **Git Hooks** (Lefthook - cannot be bypassed):
-   - **pre-commit**: Biome auto-fix + TypeScript check
+   - **pre-commit**: oxfmt format + oxlint auto-fix + TypeScript check
    - **pre-push**: Tests + Tauri check
    - **commit-msg**: Conventional commit validation
 
@@ -201,6 +203,9 @@ const handleAction = () => {
 ### Static Analysis
 
 - **React Compiler**: Handles memoization automatically - no manual `useMemo`/`useCallback` needed
+- **oxlint + oxfmt** (via Vite+): Linting and formatting. Configured in the `lint`
+  and `fmt` blocks of `vite.config.ts` — **not** in `.oxlintrc.json`/`.oxfmtrc.json`.
+  Replaced Biome. See `docs/developer/linting-formatting.md`
 - **ast-grep**: Enforces architecture patterns (e.g., no Zustand destructuring). See `docs/developer/static-analysis.md`
 - **Knip/jscpd**: Periodic cleanup tools. Use `/cleanup` command (Claude Code)
 
@@ -383,10 +388,42 @@ function MyForm() {
 
 **Important**: All validation error messages must be translated using the `msg` macro and `useLingui` hook.
 
+### Build Targets (Tauri desktop + PWA)
+
+The codebase builds two targets. Full guide: `docs/developer/pwa.md`.
+
+| Target  | Commands                            | Notes                                        |
+| ------- | ----------------------------------- | -------------------------------------------- |
+| `tauri` | `bun run tauri:dev` / `tauri:build`  | Desktop shell, Rust backend, 4 windows       |
+| `web`   | `bun run dev:web` / `build:web`      | Installable PWA, **online-only, no offline sync** |
+
+**Rules when touching shared code:**
+
+```typescript
+// ✅ GOOD: single seam — vite.config.ts aliases this per target
+import { commands } from '@/lib/tauri-bindings';
+
+// ✅ GOOD: event shim that no-ops in the browser
+import { listen, emit } from '@/lib/tauri-event';
+
+// ✅ GOOD: gate desktop-only UI on a capability, never on raw platform sniffing
+import { capabilities } from '@/lib/platform';
+{capabilities.downloads && <DownloadManagerDialog />}
+
+// ❌ BAD: bypasses the seam / throws in the web build
+import { commands } from '@/lib/bindings';
+import { listen } from '@tauri-apps/api/event';
+```
+
+Commands the web adapter (`src/lib/web/commands.ts`) does not implement throw
+`UnsupportedInWebError`. Seeing one means a **missing capability gate**, not a
+missing feature.
+
 ### Documentation & Versions
 
 - **Context7 First**: Always use Context7 for framework docs before WebSearch
-- **Version Requirements**: Tauri v2.x, shadcn/ui v4.x, Tailwind v4.x, React 19.x, Zustand v5.x, Vite v7.x, Vitest v4.x
+- **Version Requirements**: Tauri v2.x, shadcn/ui v4.x, Tailwind v4.x, React 19.x,
+  Zustand v5.x, Vite v8.x, Vitest v4.x, TypeScript v7.x, Lingui v6.x, bun 1.4.0
 
 ### Utility Libraries
 
@@ -425,6 +462,8 @@ For complete patterns and detailed guidance, see `docs/developer/README.md`.
 Key documents:
 
 - `architecture-guide.md` - Mental models, security, anti-patterns
+- `pwa.md` - The web/PWA target: adapter seam, capability gating, CORS, Serwist
+- `linting-formatting.md` - oxlint + oxfmt configuration (Vite+)
 - `state-management.md` - State onion, getState() pattern details
 - `tauri-commands.md` - Adding new Rust commands
 - `static-analysis.md` - All linting tools and quality gates
