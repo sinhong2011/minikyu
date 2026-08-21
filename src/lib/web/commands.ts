@@ -88,7 +88,10 @@ function connectionFromStorage(): MinifluxConnection | null {
  * to the same-origin `/miniflux-api` prefix, so which Miniflux instance it
  * reaches is fixed by the deployment's proxy, not by this value.
  */
-async function connect(config: AuthConfig): Promise<MinifluxConnection> {
+async function connect(raw: AuthConfig): Promise<MinifluxConnection> {
+  // Tokens are pasted, so they arrive with stray whitespace often enough to be
+  // worth stripping once, here, rather than on every request that reads storage.
+  const config: AuthConfig = { ...raw, auth_token: raw.auth_token?.trim() || null };
   const authHeaders = credentialsFor(config);
   const user = normalizeIds<User>(await request<unknown>('me', { authHeaders }));
   const now = new Date().toISOString();
