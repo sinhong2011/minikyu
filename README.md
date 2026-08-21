@@ -83,6 +83,11 @@ browser — installable, phone-friendly, no desktop install required.
 
 [![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/sinhong2011/minikyu)
 [![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https://github.com/sinhong2011/minikyu&env=MINIFLUX_URL&envDescription=Your%20Miniflux%20instance%20URL%2C%20e.g.%20https%3A%2F%2Freader.example.com&envLink=https://github.com/sinhong2011/minikyu/blob/main/docs/developer/pwa.md)
+[![Deploy to Cloudflare](https://deploy.workers.cloudflare.com/button)](https://deploy.workers.cloudflare.com/?url=https://github.com/sinhong2011/minikyu)
+
+The Cloudflare button needs one field the other two carry for you: set the build
+command to **`bun run build:cf`** (Pages' Wrangler schema has no build-command
+field, so `wrangler.jsonc` can only supply the output directory).
 
 ### One variable to set: `MINIFLUX_URL`
 
@@ -107,8 +112,8 @@ Miniflux → Settings → API Keys, which you can revoke without changing your p
 | Host | How the proxy is wired | Config |
 | ---- | ---------------------- | ------ |
 | Netlify | `_redirects`, generated at build time from `MINIFLUX_URL` | [`netlify.toml`](netlify.toml) |
-| Vercel | Edge function (`vercel.json` cannot interpolate env vars) | [`vercel.json`](vercel.json), [`api/miniflux-api/`](api/miniflux-api) |
-| Cloudflare Pages | Pages Function (build command `bun run build:cf`) | [`functions/miniflux-api/`](functions/miniflux-api), [`cloudflare/`](cloudflare) |
+| Vercel | Edge function (`vercel.json` cannot interpolate env vars) | [`vercel.json`](vercel.json), [`api/miniflux-api.ts`](api/miniflux-api.ts) |
+| Cloudflare Pages | Pages Function (build command `bun run build:cf`) | [`wrangler.jsonc`](wrangler.jsonc), [`functions/miniflux-api/`](functions/miniflux-api), [`cloudflare/`](cloudflare) |
 | Docker | nginx in the image, configured from `MINIFLUX_URL` at start | [`sinhong2011/minikyu-web`](https://hub.docker.com/r/sinhong2011/minikyu-web), [`Dockerfile`](Dockerfile), [`docker-compose.yml`](docker-compose.yml) |
 | nginx / Caddy | Reverse proxy you control | [PWA docs](docs/developer/pwa.md#production) |
 
