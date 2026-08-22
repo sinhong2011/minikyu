@@ -45,11 +45,19 @@ function minifluxProxy(target: string) {
   };
 }
 
-/** PWA-only <head> additions; the Tauri build needs none of them. */
+/**
+ * PWA-only <head> additions; the Tauri build needs none of them.
+ *
+ * The two `theme-color` values are the app's `--background` token resolved for
+ * each scheme, and they only cover first paint: `src/lib/theme-color.ts` takes
+ * over once React mounts and follows the user's actual theme choice. Keep them
+ * in step with `src/styles/theme.css` so the title bar does not flash a colour
+ * the window never shows.
+ */
 const PWA_HEAD_TAGS = `
     <link rel="manifest" href="/manifest.webmanifest" />
-    <meta name="theme-color" content="#0b0b0f" media="(prefers-color-scheme: dark)" />
-    <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)" />
+    <meta name="theme-color" content="#161616" media="(prefers-color-scheme: dark)" />
+    <meta name="theme-color" content="#f7f4f4" media="(prefers-color-scheme: light)" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="Minikyu" />

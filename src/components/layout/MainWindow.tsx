@@ -32,6 +32,7 @@ import { usePreferences, useSavePreferences } from '@/services/preferences';
 import { useZenMode } from '@/hooks/use-zen-mode';
 import { useUIStore } from '@/store/ui-store';
 import { capabilities, isWeb } from '@/lib/platform';
+import { syncThemeColor } from '@/lib/theme-color';
 import { AppSidebar } from './AppSidebar';
 
 interface MainWindowProps {
@@ -141,6 +142,8 @@ export function MainWindow({ children }: MainWindowProps = {}) {
       html.removeAttribute('data-bg-transparent');
       html.style.removeProperty('--bg-panel-opacity');
     }
+    // Transparency swaps which token the window's visible colour comes from.
+    syncThemeColor();
     return () => {
       html.removeAttribute('data-bg-transparent');
       html.style.removeProperty('--bg-panel-opacity');
