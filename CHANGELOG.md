@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.4](https://github.com/sinhong2011/minikyu/compare/v1.12.3...v1.12.4) (2026-08-22)
+
+
+### Bug Fixes
+
+* **build:** Align tauri-plugin-fs with its npm package version ([#119](https://github.com/sinhong2011/minikyu/issues/119)) ([376f1da](https://github.com/sinhong2011/minikyu/commit/376f1da0da6063272e289a3013958dada5472df9))
+
 ## [1.12.3](https://github.com/sinhong2011/minikyu/compare/v1.12.2...v1.12.3) (2026-08-22)
 
 
