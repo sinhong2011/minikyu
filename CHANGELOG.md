@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.12.3](https://github.com/sinhong2011/minikyu/compare/v1.12.2...v1.12.3) (2026-08-22)
+
+
+### Bug Fixes
+
+* **ui:** Stop CJK unread counts wrapping and colour the PWA title bar ([#117](https://github.com/sinhong2011/minikyu/issues/117)) ([c67f8ee](https://github.com/sinhong2011/minikyu/commit/c67f8ee5aac02bc2467a9abe3b76b40ae13ab011))
+
 ## [1.12.2](https://github.com/sinhong2011/minikyu/compare/v1.12.1...v1.12.2) (2026-08-21)
 
 
