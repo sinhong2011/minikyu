@@ -62,3 +62,49 @@ describe('request auth headers', () => {
     expect(fetchMock).not.toHaveBeenCalled();
   });
 });
+
+describe('request error messages', () => {
+  const AUTH = { 'X-Auth-Token': 'token-123' };
+
+  afterEach(() => {
+    vi.unstubAllGlobals();
+  });
+
+  function respondWith(body: string, init: ResponseInit) {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => new Response(body, init))
+    );
+  }
+
+  it("surfaces Miniflux's error_message", async () => {
+    respondWith(JSON.stringify({ error_message: 'access forbidden' }), {
+      status: 403,
+      statusText: 'Forbidden',
+    });
+
+    const { request } = await import('./client');
+    await expect(request('me', { authHeaders: AUTH })).rejects.toThrow(/access forbidden/);
+  });
+
+  // Regression: the same-origin proxy answers with {"error": ...}, not
+  // Miniflux's {"error_message": ...}. Reading only the latter turned a
+  // deployment with no MINIFLUX_URL set into a bare "Internal Server Error" on
+  // the connect dialog, which reads like a rejected token.
+  it("surfaces the proxy's error field for a misconfigured deployment", async () => {
+    respondWith(JSON.stringify({ error: 'MINIFLUX_URL is not configured. Set it …' }), {
+      status: 500,
+      statusText: 'Internal Server Error',
+    });
+
+    const { request } = await import('./client');
+    await expect(request('me', { authHeaders: AUTH })).rejects.toThrow(/MINIFLUX_URL is not/);
+  });
+
+  it('falls back to the status text when the body is not JSON', async () => {
+    respondWith('<html>gateway down</html>', { status: 502, statusText: 'Bad Gateway' });
+
+    const { request } = await import('./client');
+    await expect(request('me', { authHeaders: AUTH })).rejects.toThrow(/Bad Gateway/);
+  });
+});
