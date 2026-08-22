@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { useCallback, useRef } from 'react';
+import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { EntryEmptyState } from '@/components/miniflux/EntryEmptyState';
 import { EntryReading } from '@/components/miniflux/EntryReading';
 import { InAppBrowserPane } from '@/components/miniflux/InAppBrowserPane';
@@ -45,11 +45,36 @@ export function MainWindowContent({
   const savedWidth = preferences?.layout_entry_list_width ?? undefined;
   const prefersReducedMotion = useReducedMotion();
 
+  const readerRequested = Boolean(inAppBrowserUrl || selectedEntryId);
+
+  // Closing the phone reader is one-way until its exit finishes.
+  //
+  // Presence is derived from `?entry=`, and ✕ clears it with `history.back()`.
+  // On iOS standalone that round trip can hand the router the pre-back search
+  // params again for a frame, which re-marks the overlay present mid-exit:
+  // `AnimatePresence` snaps the panel back on screen and then plays the whole
+  // close a second time. Latching the close makes a flicker on the way out
+  // unable to reopen the panel. Nothing real is lost — the overlay still
+  // covers the list for those 340ms, so no genuine reopen can land inside the
+  // window, and `onExitComplete` releases the latch in time for the next one.
+  //
+  // Only the phone layout renders that overlay, so only it can release the
+  // latch through `onExitComplete`; on desktop the latch is held clear, or a
+  // close taken at desktop width would strand it and the panel could never
+  // reopen after a resize back down.
+  const [readerClosing, setReaderClosing] = useState(false);
+  const readerWasRequestedRef = useRef(readerRequested);
+  useLayoutEffect(() => {
+    if (isMobile && readerWasRequestedRef.current && !readerRequested) setReaderClosing(true);
+    else if (!isMobile) setReaderClosing(false);
+    readerWasRequestedRef.current = readerRequested;
+  }, [readerRequested, isMobile]);
+
   // The phone reader is an overlay that animates out, so it has to outlive the
   // selection that opened it. Remember the last subject and keep rendering it
   // for the duration of the exit, otherwise the pane would flip to the empty
   // state and slide *that* off screen.
-  const mobileOverlayOpen = Boolean(inAppBrowserUrl || selectedEntryId);
+  const mobileOverlayOpen = readerRequested && !readerClosing;
   const lastMobileEntryIdRef = useRef<string | null | undefined>(null);
   const lastMobileBrowserUrlRef = useRef<string | null | undefined>(null);
   if (mobileOverlayOpen) {
@@ -194,7 +219,7 @@ export function MainWindowContent({
               reader slides away.
             */}
             <MobileTabBar />
-            <AnimatePresence initial={false}>
+            <AnimatePresence initial={false} onExitComplete={() => setReaderClosing(false)}>
               {mobileOverlayOpen && (
                 <motion.div
                   key="mobile-reader"

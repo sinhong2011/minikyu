@@ -440,6 +440,51 @@ output aligned — there is no second HTML file to drift.
 The Tauri build keeps its four entries (`index.html`, `quick-pane.html`,
 `player-window.html`, `tray-popover.html`); the web build has only one.
 
+## Safe areas and the status bar
+
+`index.html` sets `viewport-fit=cover`, and that attribute is load-bearing:
+`env(safe-area-inset-*)` resolves to `0` without it. The phone layout depends on
+those insets in about a dozen places — the reader header
+(`EntryReadingHeader.tsx`), the bottom action bar, `MobileTabBar`, the entry
+list's scroll padding, the floating filter bar — and `PWA_HEAD_TAGS` sets
+`apple-mobile-web-app-status-bar-style` to `black-translucent`, which tells iOS
+to lay the status bar *over* the web view. Drop `viewport-fit=cover` and every
+one of those compensations silently becomes zero: the status bar (a blurred
+glass band since iOS 26) covers the header, and the tab bar sits under the home
+indicator.
+
+Known gap: nothing reads `safe-area-inset-left` / `-right`, so in landscape on a
+notched device content runs under the notch.
+
+## Home-screen icons
+
+Installed icons are masked by the platform — iOS crops to a squircle, Android to
+whatever shape the launcher uses — so they must be **full-bleed and opaque**. The
+desktop icon (`src-tauri/icons/app-icon.svg`) is the opposite: a rounded plate
+floating in a transparent margin, because macOS expects that margin. Feeding it
+to `apple-touch-icon` makes iOS flatten the transparency onto white and then
+apply its own mask, which is what leaves a pale ring around a shrunken tile.
+
+`public/Icon-maskable.svg` is the full-bleed variant: same artwork, gradient
+extended to every edge, cat kept inside the maskable safe zone (the centre 80%,
+which Android may crop to). Two rasters come from it:
+
+| File | Used by |
+| --- | --- |
+| `public/apple-touch-icon.png` (180×180, no alpha) | `<link rel="apple-touch-icon">` in `index.html` |
+| `public/Icon512-maskable.png` (512×512, no alpha) | the `purpose: "maskable"` entry in `manifest.webmanifest` |
+
+`Icon.svg` and `Icon512.png` stay as-is for `purpose: "any"` and the favicon,
+where the rounded plate is the correct look. If the artwork changes, re-render
+both rasters:
+
+```bash
+rsvg-convert -w 180 -h 180 public/Icon-maskable.svg \
+  | magick png:- -background '#FF5563' -alpha remove -alpha off -strip public/apple-touch-icon.png
+rsvg-convert -w 512 -h 512 public/Icon-maskable.svg \
+  | magick png:- -background '#FF5563' -alpha remove -alpha off -strip public/Icon512-maskable.png
+```
+
 ## Extending the web adapter
 
 To add a command to the web build:
