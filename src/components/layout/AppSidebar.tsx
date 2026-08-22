@@ -147,13 +147,13 @@ function FeedItem({ feed }: FeedItemProps) {
         <Link to="/" search={{ feedId: feed.id.toString() }} className="block w-full">
           {({ isActive }) => (
             <div className="group/feed-item relative">
-              <SidebarMenuSubButton isActive={isActive} className="w-full pr-8">
+              <SidebarMenuSubButton isActive={isActive} className="w-full pr-12">
                 <div className="flex w-full min-w-0 items-center gap-2">
                   <FeedAvatar className="size-5!" domain={feed.site_url} title={feed.title} />
                   <span className="min-w-0 flex-1 truncate text-md">{feed.title}</span>
                 </div>
               </SidebarMenuSubButton>
-              <div className="pointer-events-none absolute right-2 top-1/2 flex size-6 -translate-y-1/2 items-center justify-center">
+              <div className="pointer-events-none absolute right-2 top-1/2 flex h-6 min-w-6 -translate-y-1/2 items-center justify-center">
                 <div className="flex items-center justify-center transition-all duration-200 group-hover/feed-item:scale-50 group-hover/feed-item:opacity-0">
                   <AnimatedBadge
                     count={unreadCount}
@@ -356,7 +356,7 @@ function CategoryItem({ category }: CategoryItemProps) {
                 <SidebarMenuButton
                   tooltip={category.title}
                   isActive={highlighted}
-                  className="pl-8 pr-10"
+                  className="pl-8 pr-14"
                 >
                   <span
                     className={cn(
@@ -372,7 +372,7 @@ function CategoryItem({ category }: CategoryItemProps) {
               );
             }}
           </Link>
-          <div className="pointer-events-none absolute right-2 top-1.5 flex size-6 items-center justify-center">
+          <div className="pointer-events-none absolute right-2 top-1.5 flex h-6 min-w-6 items-center justify-center">
             <div className="flex items-center justify-center transition-all duration-200 group-hover/category-item:scale-50 group-hover/category-item:opacity-0">
               <AnimatedBadge count={unreadCount} className="text-[12px]" />
             </div>

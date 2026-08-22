@@ -30,8 +30,9 @@ export function AnimatedBadge({ count, className = '' }: AnimatedBadgeProps) {
 
   return (
     <span
+      data-slot="badge-count"
       className={cn(
-        'inline-flex items-center font-sans tabular-nums lining-nums text-muted-foreground leading-none',
+        'inline-flex items-center whitespace-nowrap font-sans tabular-nums lining-nums text-muted-foreground leading-none',
         className
       )}
     >
