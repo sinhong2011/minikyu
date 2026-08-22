@@ -1,6 +1,6 @@
 [package]
 name = "minikyu"
-version = "1.12.4" # x-release-please-version
+version = "1.12.5" # x-release-please-version
 description = "A calm, focused space for your Miniflux reading"
 authors = ["sinhong2011"]
 license = "MIT"
