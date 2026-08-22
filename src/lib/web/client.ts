@@ -123,11 +123,17 @@ export async function request<T>(path: string, options: RequestOptions = {}): Pr
   });
 
   if (!response.ok) {
-    // Miniflux reports errors as {"error_message": "..."}; fall back to status text.
+    // Two different producers answer under this prefix, with two different
+    // shapes: Miniflux reports {"error_message": "..."}, while the same-origin
+    // proxy in `deploy/miniflux-proxy.ts` reports its own misconfiguration as
+    // {"error": "..."}. Read both. Reading only Miniflux's field turned "set
+    // MINIFLUX_URL for this deployment" into a bare "Internal Server Error",
+    // which on the connect dialog reads like a rejected credential.
     let message = response.statusText || `HTTP ${response.status}`;
     try {
-      const payload = (await response.json()) as { error_message?: string };
-      if (payload?.error_message) message = payload.error_message;
+      const payload = (await response.json()) as { error_message?: string; error?: string };
+      const reported = payload?.error_message ?? payload?.error;
+      if (reported) message = reported;
     } catch {
       // Non-JSON error body; keep the status text.
     }
