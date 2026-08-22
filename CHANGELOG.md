@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.12.5](https://github.com/sinhong2011/minikyu/compare/v1.12.4...v1.12.5) (2026-08-22)
+
+
+### Bug Fixes
+
+* **pwa:** Correct iOS home-screen icon, safe areas and reader close ([#122](https://github.com/sinhong2011/minikyu/issues/122)) ([853c7a5](https://github.com/sinhong2011/minikyu/commit/853c7a55c7fdd6aacde4a7cf07ad5f767dcb4b3a))
+* **web:** Surface the proxy's own error body on a failed request ([#116](https://github.com/sinhong2011/minikyu/issues/116)) ([12768b6](https://github.com/sinhong2011/minikyu/commit/12768b674848c9c37a267ada7fafe7f09f5c437a))
+
 ## [1.12.4](https://github.com/sinhong2011/minikyu/compare/v1.12.3...v1.12.4) (2026-08-22)
 
 
