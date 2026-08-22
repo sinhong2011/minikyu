@@ -1,6 +1,7 @@
 import { emit } from '@/lib/tauri-event';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { type Theme, ThemeProviderContext } from '@/lib/theme-context';
+import { syncThemeColor } from '@/lib/theme-color';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
 
 interface ThemeProviderProps {
@@ -42,6 +43,8 @@ export function ThemeProvider({
     const applyTheme = (isDark: boolean) => {
       root.classList.remove('light', 'dark');
       root.classList.add(isDark ? 'dark' : 'light');
+      // The PWA title bar is painted from `theme-color`; keep it on the theme.
+      syncThemeColor();
     };
 
     if (theme === 'system') {
