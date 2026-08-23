@@ -70,12 +70,6 @@ export interface Capabilities {
   updater: boolean;
   /** Local-first background sync into SQLite. */
   offlineSync: boolean;
-  /**
-   * Whether the user picks which Miniflux instance to talk to. On web the
-   * deployment's `/miniflux-api` proxy fixes the target (Miniflux sends no CORS
-   * headers), so the URL is not the user's to choose — only the token is.
-   */
-  configurableServerUrl: boolean;
   /** Multiple stored Miniflux accounts. */
   multiAccount: boolean;
   /** Credentials held in the OS keychain rather than localStorage. */
@@ -106,7 +100,6 @@ export const capabilities: Capabilities = {
   appDataManagement: isTauri,
   updater: isTauri,
   offlineSync: isTauri,
-  configurableServerUrl: isTauri,
   multiAccount: isTauri,
   secureCredentialStorage: isTauri,
 };
