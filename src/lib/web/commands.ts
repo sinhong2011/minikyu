@@ -41,7 +41,7 @@ import type {
   UserCreate,
   UserUpdate,
 } from '../bindings';
-import { credentialsFor, MinifluxHttpError, request } from './client';
+import { apiBaseFor, credentialsFor, MinifluxHttpError, request } from './client';
 import { unsupported, UnsupportedInWebError } from './errors';
 import { normalizeIds, toNumericId } from './normalize';
 import { accountStorage, clearAll, lastReadingStorage, preferencesStorage } from './storage';
@@ -84,16 +84,19 @@ function connectionFromStorage(): MinifluxConnection | null {
 /**
  * Verifies credentials against `/v1/me` and persists the account on success.
  *
- * Note: `config.server_url` is recorded for display only. The PWA always talks
- * to the same-origin `/miniflux-api` prefix, so which Miniflux instance it
- * reaches is fixed by the deployment's proxy, not by this value.
+ * `config.server_url` decides where that check — and every request after it —
+ * is sent: this deployment's proxy, or the instance directly. `apiBaseFor()`
+ * owns that choice; validating through the same base the account will use is
+ * what stops a server being stored that the app then cannot reach.
  */
 async function connect(raw: AuthConfig): Promise<MinifluxConnection> {
   // Tokens are pasted, so they arrive with stray whitespace often enough to be
   // worth stripping once, here, rather than on every request that reads storage.
   const config: AuthConfig = { ...raw, auth_token: raw.auth_token?.trim() || null };
   const authHeaders = credentialsFor(config);
-  const user = normalizeIds<User>(await request<unknown>('me', { authHeaders }));
+  const user = normalizeIds<User>(
+    await request<unknown>('me', { authHeaders, baseUrl: apiBaseFor(config.server_url) })
+  );
   const now = new Date().toISOString();
   const existing = accountStorage.get();
 

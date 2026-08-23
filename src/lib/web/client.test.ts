@@ -63,6 +63,31 @@ describe('request auth headers', () => {
   });
 });
 
+describe('apiBaseFor', () => {
+  it('proxies an empty or unparseable server URL', async () => {
+    const { apiBaseFor, API_PREFIX } = await import('./client');
+    expect(apiBaseFor(null)).toBe(API_PREFIX);
+    expect(apiBaseFor('   ')).toBe(API_PREFIX);
+    expect(apiBaseFor('http://')).toBe(API_PREFIX);
+  });
+
+  it("proxies this site's own origin, however it was typed", async () => {
+    const { apiBaseFor, API_PREFIX } = await import('./client');
+    const { host, origin } = window.location;
+    expect(apiBaseFor(origin)).toBe(API_PREFIX);
+    expect(apiBaseFor(`${origin}/`)).toBe(API_PREFIX);
+    // Bare host: loopback is assumed http, which is what jsdom serves from.
+    expect(apiBaseFor(host)).toBe(API_PREFIX);
+  });
+
+  it('calls any other server directly, without its trailing slash', async () => {
+    const { apiBaseFor } = await import('./client');
+    expect(apiBaseFor('https://reader.example.com')).toBe('https://reader.example.com');
+    expect(apiBaseFor('reader.example.com/')).toBe('https://reader.example.com');
+    expect(apiBaseFor('https://example.com/miniflux/')).toBe('https://example.com/miniflux');
+  });
+});
+
 describe('request error messages', () => {
   const AUTH = { 'X-Auth-Token': 'token-123' };
 
@@ -99,6 +124,34 @@ describe('request error messages', () => {
 
     const { request } = await import('./client');
     await expect(request('me', { authHeaders: AUTH })).rejects.toThrow(/MINIFLUX_URL is not/);
+  });
+
+  // A blocked cross-origin call reaches script as a bare TypeError, and
+  // "Load failed" on the connect dialog reads like a mistyped URL.
+  it('names CORS when a direct call to another origin fails', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        throw new TypeError('Load failed');
+      })
+    );
+
+    const { request } = await import('./client');
+    await expect(
+      request('me', { authHeaders: AUTH, baseUrl: 'https://reader.example.com' })
+    ).rejects.toThrow(/Access-Control-Allow-Origin/);
+  });
+
+  it('leaves a same-origin network failure alone', async () => {
+    vi.stubGlobal(
+      'fetch',
+      vi.fn(async () => {
+        throw new TypeError('Load failed');
+      })
+    );
+
+    const { request } = await import('./client');
+    await expect(request('me', { authHeaders: AUTH })).rejects.toThrow(/Load failed/);
   });
 
   it('falls back to the status text when the body is not JSON', async () => {

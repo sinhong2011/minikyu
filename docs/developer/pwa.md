@@ -183,13 +183,32 @@ the way out. See the "Type-Safe i64 Serialization" section of `AGENTS.md`.
 ## CORS: the deployment constraint
 
 The desktop app reaches Miniflux from Rust, so CORS never applies. A browser
-does apply it, and **Miniflux sends no CORS headers**. So the web build never
-calls the Miniflux origin directly. Every request goes to the same-origin path
-`/miniflux-api/v1/...`, and the deployment decides what that resolves to.
+does apply it, and **Miniflux sends no CORS headers**. The default route is
+therefore the same-origin path `/miniflux-api/v1/...`, which the deployment
+resolves — no CORS headers needed anywhere.
 
-A consequence worth knowing: in the web build the **"Server URL" field is
-recorded for display only**. Which Miniflux instance the PWA talks to is fixed
-by the proxy, not by what the user types. The API token still matters.
+The Server URL the user types decides which route a request takes.
+`apiBaseFor()` in `src/lib/web/client.ts` owns that call:
+
+| Server URL | Route | Needs CORS |
+| --- | --- | --- |
+| Empty | `/miniflux-api/v1/…` | No |
+| This page's own origin (the dialog's default) | `/miniflux-api/v1/…` | No |
+| The origin this build proxies to (`VITE_MINIFLUX_API_BASE` / `VITE_SERVER_URL`) | `/miniflux-api/v1/…` | No |
+| Anything else | `https://that-host/v1/…` | **Yes** |
+
+The last row is the escape hatch for a hosted PWA reaching an instance its own
+deployment knows nothing about. It works only if *that* Miniflux answers with
+`Access-Control-Allow-Origin` for the PWA's origin, `Access-Control-Allow-Headers`
+covering `X-Auth-Token` / `Authorization`, and the `OPTIONS` preflight — which
+means adding them at the reverse proxy in front of it, since Miniflux sends
+none of them itself. A blocked call reaches script as a bare `TypeError`, so
+`request()` rewrites it into that explanation rather than letting "Load failed"
+reach the connect dialog.
+
+The connect flow validates through the same base the account will use
+(`connect()` passes `apiBaseFor(config.server_url)`), so a server that cannot be
+reached is never stored as if it could.
 
 ### Development
 

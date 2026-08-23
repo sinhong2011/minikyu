@@ -4,13 +4,18 @@ import { normalizeIds, toNumericId } from './normalize';
 
 const ACCOUNT_KEY = 'minikyu:web:account';
 
-function storeAccount() {
+/**
+ * `server_url` decides proxy-versus-direct, so it defaults to this page's own
+ * origin — what the connect dialog prefills, and the path every other test here
+ * assumes.
+ */
+function storeAccount(serverUrl: string = window.location.origin) {
   localStorage.setItem(
     ACCOUNT_KEY,
     JSON.stringify({
       id: '1',
       username: 'tester',
-      server_url: 'https://miniflux.example.com',
+      server_url: serverUrl,
       auth_token: 'token-123',
       isAdmin: false,
       createdAt: '2026-01-01T00:00:00.000Z',
@@ -92,13 +97,25 @@ describe('web commands: connected state', () => {
     const result = await commands.getCategories();
 
     expect(fetchMock).toHaveBeenCalledTimes(1);
-    // Always same-origin: Miniflux sends no CORS headers, so the request goes
-    // through the proxied prefix rather than to the stored server_url.
+    // An account on this site's own origin goes through the proxied prefix,
+    // which is the deployment that needs no CORS headers on the Miniflux end.
     expect(String(fetchMock.mock.calls[0]?.[0])).toBe('/miniflux-api/v1/categories');
     expect(result).toEqual({
       status: 'ok',
       data: [{ id: '7', user_id: '1', title: 'Tech' }],
     });
+  });
+
+  // The other half of `apiBaseFor()`: a server this deployment knows nothing
+  // about is called directly, which is the only route a hosted PWA has to it.
+  it('calls a foreign server URL directly', async () => {
+    localStorage.clear();
+    storeAccount('https://reader.example.com');
+    const fetchMock = mockJson([]);
+
+    await commands.getCategories();
+
+    expect(String(fetchMock.mock.calls[0]?.[0])).toBe('https://reader.example.com/v1/categories');
   });
 
   it('drops null query parameters from the entries request', async () => {
