@@ -1,4 +1,5 @@
 import { msg } from '@lingui/core/macro';
+import { capabilities } from '@/lib/platform';
 import type { AppCommand } from './types';
 
 export const translationCommands: AppCommand[] = [
@@ -9,7 +10,8 @@ export const translationCommands: AppCommand[] = [
     group: 'article',
     shortcut: '⌘⇧T',
     keywords: ['translate', 'translation', 'language', 'ai'],
-    isAvailable: (context) => context.getSelectedEntryId() !== undefined,
+    isAvailable: (context) =>
+      capabilities.translation && context.getSelectedEntryId() !== undefined,
     execute: () => {
       document.dispatchEvent(new CustomEvent('command:translate'));
     },
@@ -20,7 +22,8 @@ export const translationCommands: AppCommand[] = [
     description: msg`Show original text alongside translation`,
     group: 'article',
     keywords: ['translate', 'bilingual', 'dual', 'display', 'mode'],
-    isAvailable: (context) => context.getSelectedEntryId() !== undefined,
+    isAvailable: (context) =>
+      capabilities.translation && context.getSelectedEntryId() !== undefined,
     execute: () => {
       document.dispatchEvent(
         new CustomEvent('command:set-translation-display-mode', { detail: 'bilingual' })
@@ -33,7 +36,8 @@ export const translationCommands: AppCommand[] = [
     description: msg`Show only the translated text`,
     group: 'article',
     keywords: ['translate', 'translated', 'only', 'display', 'mode'],
-    isAvailable: (context) => context.getSelectedEntryId() !== undefined,
+    isAvailable: (context) =>
+      capabilities.translation && context.getSelectedEntryId() !== undefined,
     execute: () => {
       document.dispatchEvent(
         new CustomEvent('command:set-translation-display-mode', { detail: 'translated_only' })

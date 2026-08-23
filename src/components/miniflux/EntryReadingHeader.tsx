@@ -56,6 +56,7 @@ import { normalizeReaderTheme, type ReaderTheme, readerThemeOptions } from '@/li
 import { type ReaderCodeTheme, readerCodeThemeOptions } from '@/lib/shiki-highlight';
 import type { AppPreferences, ChineseConversionMode } from '@/lib/tauri-bindings';
 import { commands } from '@/lib/tauri-bindings';
+import { capabilities } from '@/lib/platform';
 import { cn } from '@/lib/utils';
 import { usePlayerStore } from '@/store/player-store';
 import { ReaderSettings } from './ReaderSettings';
@@ -230,7 +231,14 @@ export function EntryReadingHeader({
   };
   const toolbarButtonClass =
     'h-9 w-9 rounded-xl border border-transparent text-muted-foreground/90 hover:bg-black/[0.08] dark:hover:bg-white/[0.12] hover:text-foreground data-[state=open]:border-border/60 data-[state=open]:bg-black/[0.08] dark:data-[state=open]:bg-white/[0.12] data-[state=open]:text-foreground';
-  const translationControlActive = translationEnabled;
+  const translationControlActive = capabilities.translation && translationEnabled;
+  // Without the Rust translation router the panel holds only the Chinese
+  // conversion select, so naming it "Translation" would promise a feature the
+  // web build does not have.
+  const translationPanelLabel = capabilities.translation ? _(msg`Translation`) : _(msg`中文顯示`);
+  const translationTriggerLabel = capabilities.translation
+    ? _(msg`Translation options`)
+    : _(msg`中文顯示`);
   const currentPlayerEntryId = usePlayerStore((state) => state.currentEntry?.id ?? null);
   const playerIsPlaying = usePlayerStore((state) => state.isPlaying);
   const playerIsBuffering = usePlayerStore((state) => state.isBuffering);
@@ -517,41 +525,43 @@ export function EntryReadingHeader({
             role="toolbar"
             className="flex shrink-0 items-center gap-1.5 max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:z-30 max-sm:justify-around max-sm:gap-0 max-sm:border-t max-sm:border-border max-sm:bg-background max-sm:px-2 max-sm:pt-2 max-sm:pb-[calc(0.5rem+env(safe-area-inset-bottom))]"
           >
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className={cn(
-                      toolbarButtonClass,
-                      'relative',
-                      hasSummary &&
-                        'border-border/60 bg-black/[0.08] dark:bg-white/[0.12] text-foreground'
-                    )}
-                    onClick={onSummarize}
-                    disabled={isSummarizing}
-                    aria-label={_(msg`Summarize with AI`)}
+            {capabilities.summaries && (
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className={cn(
+                        toolbarButtonClass,
+                        'relative',
+                        hasSummary &&
+                          'border-border/60 bg-black/[0.08] dark:bg-white/[0.12] text-foreground'
+                      )}
+                      onClick={onSummarize}
+                      disabled={isSummarizing}
+                      aria-label={_(msg`Summarize with AI`)}
+                    />
+                  }
+                >
+                  <HugeiconsIcon
+                    icon={SparklesIcon}
+                    className={cn('h-5 w-5', isSummarizing && 'animate-pulse')}
+                    strokeWidth={2}
                   />
-                }
-              >
-                <HugeiconsIcon
-                  icon={SparklesIcon}
-                  className={cn('h-5 w-5', isSummarizing && 'animate-pulse')}
-                  strokeWidth={2}
-                />
-                {hasSummary && (
-                  <span
-                    className="absolute -end-0.5 -top-0.5 size-2 rounded-full bg-primary"
-                    aria-hidden="true"
-                  />
-                )}
-              </TooltipTrigger>
-              <TooltipPanel>
-                {isSummarizing ? _(msg`Summarizing...`) : _(msg`Summarize with AI`)}
-              </TooltipPanel>
-            </Tooltip>
+                  {hasSummary && (
+                    <span
+                      className="absolute -end-0.5 -top-0.5 size-2 rounded-full bg-primary"
+                      aria-hidden="true"
+                    />
+                  )}
+                </TooltipTrigger>
+                <TooltipPanel>
+                  {isSummarizing ? _(msg`Summarizing...`) : _(msg`Summarize with AI`)}
+                </TooltipPanel>
+              </Tooltip>
+            )}
 
             <Popover>
               <Tooltip>
@@ -569,7 +579,7 @@ export function EntryReadingHeader({
                             translationControlActive &&
                               'border-border/60 bg-black/[0.08] dark:bg-white/[0.12] text-foreground'
                           )}
-                          aria-label={_(msg`Translation options`)}
+                          aria-label={translationTriggerLabel}
                         >
                           <HugeiconsIcon icon={Globe02Icon} className="h-5 w-5" strokeWidth={2} />
                           {translationControlActive && (
@@ -583,7 +593,7 @@ export function EntryReadingHeader({
                     />
                   }
                 />
-                <TooltipPanel>{_(msg`Translation`)}</TooltipPanel>
+                <TooltipPanel>{translationPanelLabel}</TooltipPanel>
               </Tooltip>
               <PopoverContent
                 className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 p-3.5 shadow-xl"
@@ -591,85 +601,92 @@ export function EntryReadingHeader({
                 align="end"
               >
                 <PopoverHeader>
-                  <PopoverTitle>{_(msg`Translation`)}</PopoverTitle>
+                  <PopoverTitle>{translationPanelLabel}</PopoverTitle>
                 </PopoverHeader>
 
-                {isExcludedFeed ? (
-                  <div className="rounded-md border border-border/50 px-2.5 py-2">
-                    <p className="text-xs text-muted-foreground">
-                      {_(msg`Translation disabled for this feed`)}
-                    </p>
-                  </div>
-                ) : (
-                  <>
-                    <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
-                      <div className="space-y-0.5">
-                        <p className="text-xs font-medium">{_(msg`Translate now`)}</p>
-                        <p className="text-[11px] text-muted-foreground">
-                          {_(msg`Applies to all articles when enabled`)}
-                        </p>
-                      </div>
-                      <Switch
-                        checked={translationEnabled}
-                        onCheckedChange={(checked) => onTranslationEnabledChange(Boolean(checked))}
-                        aria-label={_(msg`Translate now`)}
-                      />
+                {capabilities.translation &&
+                  (isExcludedFeed ? (
+                    <div className="rounded-md border border-border/50 px-2.5 py-2">
+                      <p className="text-xs text-muted-foreground">
+                        {_(msg`Translation disabled for this feed`)}
+                      </p>
                     </div>
+                  ) : (
+                    <>
+                      <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
+                        <div className="space-y-0.5">
+                          <p className="text-xs font-medium">{_(msg`Translate now`)}</p>
+                          <p className="text-[11px] text-muted-foreground">
+                            {_(msg`Applies to all articles when enabled`)}
+                          </p>
+                        </div>
+                        <Switch
+                          checked={translationEnabled}
+                          onCheckedChange={(checked) =>
+                            onTranslationEnabledChange(Boolean(checked))
+                          }
+                          aria-label={_(msg`Translate now`)}
+                        />
+                      </div>
 
-                    <div className="space-y-1.5">
-                      <p className="text-xs text-muted-foreground">{_(msg`Target language`)}</p>
-                      <Select
-                        value={translationTargetLanguage ?? 'en'}
-                        onValueChange={(value: string) => onTranslationTargetLanguageChange(value)}
-                      >
-                        <SelectTrigger className="h-8 w-full text-xs">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          {translationTargetLanguageOptions.map((option) => (
-                            <SelectItem key={option.value} value={option.value}>
-                              {option.label}
+                      <div className="space-y-1.5">
+                        <p className="text-xs text-muted-foreground">{_(msg`Target language`)}</p>
+                        <Select
+                          value={translationTargetLanguage ?? 'en'}
+                          onValueChange={(value: string) =>
+                            onTranslationTargetLanguageChange(value)
+                          }
+                        >
+                          <SelectTrigger className="h-8 w-full text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            {translationTargetLanguageOptions.map((option) => (
+                              <SelectItem key={option.value} value={option.value}>
+                                {option.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </div>
+
+                      <div className="space-y-1.5">
+                        <p className="text-xs text-muted-foreground">{_(msg`Display mode`)}</p>
+                        <Select
+                          value={translationDisplayMode}
+                          onValueChange={(value: string) =>
+                            onTranslationDisplayModeChange(
+                              value as AppPreferences['reader_translation_display_mode']
+                            )
+                          }
+                        >
+                          <SelectTrigger className="h-8 w-full text-xs">
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent>
+                            <SelectItem value="bilingual">{_(msg`Bilingual`)}</SelectItem>
+                            <SelectItem value="translated_only">
+                              {_(msg`Translated only`)}
                             </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    <div className="space-y-1.5">
-                      <p className="text-xs text-muted-foreground">{_(msg`Display mode`)}</p>
-                      <Select
-                        value={translationDisplayMode}
-                        onValueChange={(value: string) =>
-                          onTranslationDisplayModeChange(
-                            value as AppPreferences['reader_translation_display_mode']
-                          )
-                        }
-                      >
-                        <SelectTrigger className="h-8 w-full text-xs">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="bilingual">{_(msg`Bilingual`)}</SelectItem>
-                          <SelectItem value="translated_only">{_(msg`Translated only`)}</SelectItem>
-                        </SelectContent>
-                      </Select>
-                    </div>
-
-                    {activeTranslationProvider && (
-                      <div
-                        className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2"
-                        data-testid="active-translation-provider-badge"
-                      >
-                        <p className="text-xs text-muted-foreground">{_(msg`Provider`)}</p>
-                        <p className="text-xs font-medium">
-                          {getTranslationProviderLabel(activeTranslationProvider)}
-                        </p>
+                          </SelectContent>
+                        </Select>
                       </div>
-                    )}
-                  </>
-                )}
 
-                <div className="border-t border-border/40" />
+                      {activeTranslationProvider && (
+                        <div
+                          className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2"
+                          data-testid="active-translation-provider-badge"
+                        >
+                          <p className="text-xs text-muted-foreground">{_(msg`Provider`)}</p>
+                          <p className="text-xs font-medium">
+                            {getTranslationProviderLabel(activeTranslationProvider)}
+                          </p>
+                        </div>
+                      )}
+                    </>
+                  ))}
+
+                {capabilities.translation && <div className="border-t border-border/40" />}
 
                 <div className="space-y-1.5">
                   <p className="text-xs text-muted-foreground">{_(msg`中文顯示`)}</p>

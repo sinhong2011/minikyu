@@ -51,6 +51,32 @@ window controls, in-app browser, background image, gestures, translation, AI
 summaries, cloud sync, updater, offline sync, multi-account, secure credential
 storage.
 
+Gate the **call**, not just the file. `gate-coverage.test.ts` used to accept any
+module that mentioned `capabilities.` anywhere, and that is how `t` (translate)
+and `s` (summarize) shipped as live keys in the PWA that threw
+`UnsupportedInWebError`: the files gated something *else*. Unsupported commands
+are now frozen per command in `GATED_AT_CALL_SITE`, so adding one to an
+already-gated file fails the test until you acknowledge it.
+
+Keyboard shortcuts carry their own gate. A `ShortcutAction` in
+`src/lib/shortcut-registry.ts` may declare a `capability`; `resolveShortcut`
+then returns `''` on a target that lacks it, so `matchesShortcut` rejects every
+event and the key is free for anything else. `AVAILABLE_SHORTCUT_ACTIONS` is the
+filtered list the preferences pane renders, so the PWA never offers to rebind a
+key it cannot honour. Desktop-only today: `toggle-downloads`,
+`toggle-translation`, `summarize`, `open-app-browser`.
+
+```ts
+{ id: 'summarize', defaultKey: 's', group: 'article', capability: 'summaries', label: ... }
+```
+
+A shortcut that a lazily-mounted component owns is a shortcut that does not
+exist until that component mounts. `⌘K` lived inside `CommandPalette`, which
+`MainWindow` only mounts once the palette has been opened — so it did nothing on
+a cold load, and on web there is no native menu accelerator to cover for it.
+Global keys belong in `use-keyboard-shortcuts.ts`, which is mounted for the
+lifetime of the window.
+
 Two degrade rather than disappear, because the concept still means something:
 
 - **Read commands with no account stored** (`getCategories`, `getFeeds`,
@@ -492,8 +518,10 @@ To add a command to the web build:
 1. Implement it in `src/lib/web/commands.ts`, using `request()` from
    `./client.ts` and returning the bindings' `Result` shape.
 2. Normalise ids with `normalizeIds` / `toNumericId`.
-3. If it unlocks a feature, flip the matching flag in `src/lib/platform.ts` and
-   remove the UI gate.
+3. If it unlocks a feature, flip the matching flag in `src/lib/platform.ts`,
+   remove the UI gate, drop the command from `GATED_AT_CALL_SITE` in
+   `gate-coverage.test.ts`, and clear any `capability` on the matching
+   `ShortcutAction`.
 
 Types come from the generated bindings, so the adapter is checked against the
 exact contract the desktop build uses — a signature mismatch is a type error.

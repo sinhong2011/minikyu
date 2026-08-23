@@ -29,6 +29,15 @@ export function useKeyboardShortcuts(commandContext: CommandContext) {
 
     const handleKeyDown = (e: KeyboardEvent) => {
       // ── General shortcuts (require modifier) ──
+      // Deliberately ahead of the `isTyping` bail-out below: the palette's own
+      // search input must not swallow the key that closes it. This lives here
+      // rather than in CommandPalette because that component is mounted lazily
+      // — a listener inside it could not open the palette the first time.
+      if (match('toggle-command-palette', e)) {
+        e.preventDefault();
+        useUIStore.getState().toggleCommandPalette();
+        return;
+      }
       if (match('open-preferences', e)) {
         e.preventDefault();
         commandContext.openPreferences();

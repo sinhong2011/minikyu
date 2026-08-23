@@ -222,6 +222,9 @@ export function EntryReading({
 
   const handleSummarizeParagraph = useCallback(
     (text: string) => {
+      // Same Rust-side stream as the whole-article summary — unavailable in the
+      // browser. The menu item is hidden below; this backstops it.
+      if (!capabilities.summaries) return;
       const streamId = `paragraph-${entryId}-${Date.now()}`;
       paragraphSummaryStreamIdRef.current = streamId;
       setParagraphSummaryState({ text, summary: null, loading: true, error: false });
@@ -1139,6 +1142,10 @@ export function EntryReading({
 
   const handleTranslationEnabledChange = useCallback(
     (enabled: boolean) => {
+      // Immersive translation is a Rust-side router. The controls are hidden on
+      // web, but the shortcut, the command palette and the context menu all
+      // funnel through here, so this is the guard that has to hold.
+      if (!capabilities.translation) return;
       setTranslationEnabled(enabled);
       setTranslationAutoEnabled(enabled);
       if (enabled) {
@@ -1556,7 +1563,9 @@ export function EntryReading({
                         }
                         entryTitle={entry.title}
                         entryUrl={entry.url ?? undefined}
-                        onSummarizeParagraph={handleSummarizeParagraph}
+                        onSummarizeParagraph={
+                          capabilities.summaries ? handleSummarizeParagraph : undefined
+                        }
                         className={cn(
                           'mx-auto max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
                           useInvertedProse && 'prose-invert',
@@ -1714,124 +1723,134 @@ export function EntryReading({
                 </div>
               </div>
 
-              <ContextMenuSeparator />
+              {capabilities.summaries && (
+                <>
+                  <ContextMenuSeparator />
 
-              <ContextMenuGroup>
-                <ContextMenuLabel>{_(msg`AI`)}</ContextMenuLabel>
-                <ContextMenuItem
-                  onClick={articleSummary.handleSummarize}
-                  disabled={articleSummary.loading}
-                >
-                  <HugeiconsIcon
-                    icon={SparklesIcon}
-                    strokeWidth={2}
-                    className="size-4 text-muted-foreground"
-                  />
-                  {articleSummary.summary ? _(msg`Re-summarize`) : _(msg`Summarize Article`)}
-                  <ContextMenuShortcut>
-                    {formatShortcutDisplay(shortcuts.summarize)}
-                  </ContextMenuShortcut>
-                </ContextMenuItem>
-              </ContextMenuGroup>
+                  <ContextMenuGroup>
+                    <ContextMenuLabel>{_(msg`AI`)}</ContextMenuLabel>
+                    <ContextMenuItem
+                      onClick={articleSummary.handleSummarize}
+                      disabled={articleSummary.loading}
+                    >
+                      <HugeiconsIcon
+                        icon={SparklesIcon}
+                        strokeWidth={2}
+                        className="size-4 text-muted-foreground"
+                      />
+                      {articleSummary.summary ? _(msg`Re-summarize`) : _(msg`Summarize Article`)}
+                      <ContextMenuShortcut>
+                        {formatShortcutDisplay(shortcuts.summarize)}
+                      </ContextMenuShortcut>
+                    </ContextMenuItem>
+                  </ContextMenuGroup>
+                </>
+              )}
 
-              <ContextMenuSeparator />
+              {capabilities.translation && (
+                <>
+                  <ContextMenuSeparator />
 
-              <ContextMenuGroup>
-                <ContextMenuLabel>{_(msg`Translation`)}</ContextMenuLabel>
-                <ContextMenuItem
-                  onClick={() => handleTranslationEnabledChange(!translationEnabled)}
-                >
-                  <HugeiconsIcon
-                    icon={Globe02Icon}
-                    strokeWidth={2}
-                    className="size-4 text-muted-foreground"
-                  />
-                  {_(msg`Translate Article`)}
-                  <ContextMenuShortcut>
-                    {formatShortcutDisplay(shortcuts['toggle-translation'])}
-                  </ContextMenuShortcut>
-                </ContextMenuItem>
-                {entry.feed &&
-                  (() => {
-                    const isFeedExcluded = translationExcludedFeedIds.includes(entry.feed_id);
-                    return (
-                      <ContextMenuItem
-                        onClick={() => {
-                          const next = isFeedExcluded
-                            ? translationExcludedFeedIds.filter((id) => id !== entry.feed_id)
-                            : [...translationExcludedFeedIds, entry.feed_id];
-                          setTranslationExcludedFeedIds(next);
-                          if (isFeedExcluded) {
-                            showToast.success(
-                              _(msg`Feed translation re-enabled`),
-                              entry.feed.title
-                            );
-                          } else {
-                            showToast.info(
-                              _(msg`Feed excluded from translation`),
-                              entry.feed.title
-                            );
-                          }
-                        }}
-                      >
-                        <HugeiconsIcon
-                          icon={ViewOffIcon}
-                          strokeWidth={2}
-                          className="size-4 text-muted-foreground"
-                        />
-                        {_(msg`Skip this feed`)}
-                        <span
-                          className={cn(
-                            'ml-auto size-2 rounded-full shrink-0 transition-colors',
-                            isFeedExcluded ? 'bg-primary' : 'border border-muted-foreground/40'
-                          )}
-                        />
-                      </ContextMenuItem>
-                    );
-                  })()}
-                {entry.feed.category &&
-                  (() => {
-                    const isCategoryExcluded = translationExcludedCategoryIds.includes(
-                      entry.feed.category.id
-                    );
-                    return (
-                      <ContextMenuItem
-                        onClick={() => {
-                          const categoryId = entry.feed.category?.id;
-                          if (!categoryId) return;
-                          const next = isCategoryExcluded
-                            ? translationExcludedCategoryIds.filter((id) => id !== categoryId)
-                            : [...translationExcludedCategoryIds, categoryId];
-                          setTranslationExcludedCategoryIds(next);
-                          if (isCategoryExcluded) {
-                            showToast.success(
-                              _(msg`Category translation re-enabled`),
-                              entry.feed.category?.title
-                            );
-                          } else {
-                            showToast.info(
-                              _(msg`Category excluded from translation`),
-                              entry.feed.category?.title
-                            );
-                          }
-                        }}
-                      >
-                        <HugeiconsIcon
-                          icon={ViewOffIcon}
-                          strokeWidth={2}
-                          className="size-4 text-muted-foreground"
-                        />
-                        {_(msg`Skip this category`)}
-                        <span
-                          className={cn(
-                            'ml-auto size-2 rounded-full shrink-0 transition-colors',
-                            isCategoryExcluded ? 'bg-primary' : 'border border-muted-foreground/40'
-                          )}
-                        />
-                      </ContextMenuItem>
-                    );
-                  })()}
-              </ContextMenuGroup>
+                  <ContextMenuGroup>
+                    <ContextMenuLabel>{_(msg`Translation`)}</ContextMenuLabel>
+                    <ContextMenuItem
+                      onClick={() => handleTranslationEnabledChange(!translationEnabled)}
+                    >
+                      <HugeiconsIcon
+                        icon={Globe02Icon}
+                        strokeWidth={2}
+                        className="size-4 text-muted-foreground"
+                      />
+                      {_(msg`Translate Article`)}
+                      <ContextMenuShortcut>
+                        {formatShortcutDisplay(shortcuts['toggle-translation'])}
+                      </ContextMenuShortcut>
+                    </ContextMenuItem>
+                    {entry.feed &&
+                      (() => {
+                        const isFeedExcluded = translationExcludedFeedIds.includes(entry.feed_id);
+                        return (
+                          <ContextMenuItem
+                            onClick={() => {
+                              const next = isFeedExcluded
+                                ? translationExcludedFeedIds.filter((id) => id !== entry.feed_id)
+                                : [...translationExcludedFeedIds, entry.feed_id];
+                              setTranslationExcludedFeedIds(next);
+                              if (isFeedExcluded) {
+                                showToast.success(
+                                  _(msg`Feed translation re-enabled`),
+                                  entry.feed.title
+                                );
+                              } else {
+                                showToast.info(
+                                  _(msg`Feed excluded from translation`),
+                                  entry.feed.title
+                                );
+                              }
+                            }}
+                          >
+                            <HugeiconsIcon
+                              icon={ViewOffIcon}
+                              strokeWidth={2}
+                              className="size-4 text-muted-foreground"
+                            />
+                            {_(msg`Skip this feed`)}
+                            <span
+                              className={cn(
+                                'ml-auto size-2 rounded-full shrink-0 transition-colors',
+                                isFeedExcluded ? 'bg-primary' : 'border border-muted-foreground/40'
+                              )}
+                            />
+                          </ContextMenuItem>
+                        );
+                      })()}
+                    {entry.feed.category &&
+                      (() => {
+                        const isCategoryExcluded = translationExcludedCategoryIds.includes(
+                          entry.feed.category.id
+                        );
+                        return (
+                          <ContextMenuItem
+                            onClick={() => {
+                              const categoryId = entry.feed.category?.id;
+                              if (!categoryId) return;
+                              const next = isCategoryExcluded
+                                ? translationExcludedCategoryIds.filter((id) => id !== categoryId)
+                                : [...translationExcludedCategoryIds, categoryId];
+                              setTranslationExcludedCategoryIds(next);
+                              if (isCategoryExcluded) {
+                                showToast.success(
+                                  _(msg`Category translation re-enabled`),
+                                  entry.feed.category?.title
+                                );
+                              } else {
+                                showToast.info(
+                                  _(msg`Category excluded from translation`),
+                                  entry.feed.category?.title
+                                );
+                              }
+                            }}
+                          >
+                            <HugeiconsIcon
+                              icon={ViewOffIcon}
+                              strokeWidth={2}
+                              className="size-4 text-muted-foreground"
+                            />
+                            {_(msg`Skip this category`)}
+                            <span
+                              className={cn(
+                                'ml-auto size-2 rounded-full shrink-0 transition-colors',
+                                isCategoryExcluded
+                                  ? 'bg-primary'
+                                  : 'border border-muted-foreground/40'
+                              )}
+                            />
+                          </ContextMenuItem>
+                        );
+                      })()}
+                  </ContextMenuGroup>
+                </>
+              )}
 
               <ContextMenuSeparator />
 
