@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { logger } from '@/lib/logger';
+import { capabilities } from '@/lib/platform';
 import type { ReaderCodeTheme } from '@/lib/shiki-highlight';
 import { commands } from '@/lib/tauri-bindings';
 import type { TranslationRoutingPreferences } from '@/services/translation';
@@ -570,6 +571,9 @@ export function ImmersiveTranslationLayer({
 
   const handleTranslateNode = useCallback(
     (text: string) => {
+      // The per-paragraph menu entry is hidden without this capability; the
+      // guard covers the retry/provider paths that share this callback.
+      if (!capabilities.translation) return;
       const segment = segments.find((s) => s.text === text);
       if (!segment) {
         logger.debug(

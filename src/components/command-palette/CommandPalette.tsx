@@ -2,7 +2,7 @@ import { ArrowLeft02Icon, FolderOpenIcon, Link01Icon } from '@hugeicons/core-fre
 import { HugeiconsIcon } from '@hugeicons/react';
 import { msg } from '@lingui/core/macro';
 import { useLingui } from '@lingui/react';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useMemo, useRef, useState } from 'react';
 import {
   CommandDialog,
   CommandEmpty,
@@ -67,7 +67,6 @@ export function CommandPalette() {
   const { _ } = useLingui();
   const commandPaletteOpen = useUIStore((state) => state.commandPaletteOpen);
   const setCommandPaletteOpen = useUIStore((state) => state.setCommandPaletteOpen);
-  const toggleCommandPalette = useUIStore((state) => state.toggleCommandPalette);
   const commandContext = useCommandContext();
   const [search, setSearch] = useState('');
   const [page, setPage] = useState<Page>('root');
@@ -173,18 +172,6 @@ export function CommandPalette() {
     },
     [page, search, navigateBack, handleSubmitUrl]
   );
-
-  useEffect(() => {
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'k' && (e.metaKey || e.ctrlKey)) {
-        e.preventDefault();
-        toggleCommandPalette();
-      }
-    };
-
-    document.addEventListener('keydown', handler);
-    return () => document.removeEventListener('keydown', handler);
-  }, [toggleCommandPalette]);
 
   const getGroupLabel = (groupName: string): string => {
     switch (groupName) {

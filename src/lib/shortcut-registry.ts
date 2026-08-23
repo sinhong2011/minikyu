@@ -1,5 +1,6 @@
 import { msg } from '@lingui/core/macro';
 import { getPlatform } from '@/hooks/use-platform';
+import { type Capabilities, capabilities } from '@/lib/platform';
 
 /**
  * Normalized shortcut format:
@@ -17,6 +18,12 @@ export interface ShortcutAction {
   defaultKey: string;
   group: ShortcutGroup;
   label: ReturnType<typeof msg>;
+  /**
+   * Capability the action needs to do anything. Actions backed by the Rust side
+   * would otherwise be live keys in the PWA that silently no-op — or worse,
+   * reach an unimplemented command. Omitted means "works on every target".
+   */
+  capability?: keyof Capabilities;
 }
 
 export type ShortcutGroup = 'general' | 'navigation' | 'reading' | 'article' | 'links' | 'podcast';
@@ -41,6 +48,12 @@ export const SHORTCUT_GROUP_ORDER: ShortcutGroup[] = [
 
 export const SHORTCUT_ACTIONS: ShortcutAction[] = [
   // General (mod+ required)
+  {
+    id: 'toggle-command-palette',
+    defaultKey: 'mod+k',
+    group: 'general',
+    label: msg`Toggle command palette`,
+  },
   { id: 'open-preferences', defaultKey: 'mod+,', group: 'general', label: msg`Open preferences` },
   {
     id: 'toggle-sidebar',
@@ -48,7 +61,13 @@ export const SHORTCUT_ACTIONS: ShortcutAction[] = [
     group: 'general',
     label: msg`Toggle left sidebar`,
   },
-  { id: 'toggle-downloads', defaultKey: 'mod+d', group: 'general', label: msg`Toggle downloads` },
+  {
+    id: 'toggle-downloads',
+    defaultKey: 'mod+d',
+    group: 'general',
+    label: msg`Toggle downloads`,
+    capability: 'downloads',
+  },
 
   // Navigation
   { id: 'next-article', defaultKey: 'j', group: 'navigation', label: msg`Next article` },
@@ -82,8 +101,20 @@ export const SHORTCUT_ACTIONS: ShortcutAction[] = [
   // Article Actions
   { id: 'toggle-read', defaultKey: 'm', group: 'article', label: msg`Toggle read/unread` },
   { id: 'toggle-star', defaultKey: 'd', group: 'article', label: msg`Toggle star` },
-  { id: 'toggle-translation', defaultKey: 't', group: 'article', label: msg`Toggle translation` },
-  { id: 'summarize', defaultKey: 's', group: 'article', label: msg`Summarize article` },
+  {
+    id: 'toggle-translation',
+    defaultKey: 't',
+    group: 'article',
+    label: msg`Toggle translation`,
+    capability: 'translation',
+  },
+  {
+    id: 'summarize',
+    defaultKey: 's',
+    group: 'article',
+    label: msg`Summarize article`,
+    capability: 'summaries',
+  },
   {
     id: 'toggle-focus-mode',
     defaultKey: 'v',
@@ -111,7 +142,13 @@ export const SHORTCUT_ACTIONS: ShortcutAction[] = [
 
   // Links
   { id: 'open-browser', defaultKey: 'o', group: 'links', label: msg`Open in browser` },
-  { id: 'open-app-browser', defaultKey: 'b', group: 'links', label: msg`Open in app browser` },
+  {
+    id: 'open-app-browser',
+    defaultKey: 'b',
+    group: 'links',
+    label: msg`Open in app browser`,
+    capability: 'inAppBrowser',
+  },
   { id: 'copy-link', defaultKey: 'c', group: 'links', label: msg`Copy link` },
 
   // Podcast
@@ -135,15 +172,31 @@ export const SHORTCUT_ACTIONS: ShortcutAction[] = [
 ];
 
 /**
+ * Whether the action can actually run on this build target. Callers use it to
+ * skip a key binding; `AVAILABLE_SHORTCUT_ACTIONS` uses it so the preferences
+ * pane never offers to rebind a key that does nothing.
+ */
+export function isShortcutAvailable(action: ShortcutAction): boolean {
+  return action.capability === undefined || capabilities[action.capability];
+}
+
+/** `SHORTCUT_ACTIONS` minus everything this target cannot do. */
+export const AVAILABLE_SHORTCUT_ACTIONS: ShortcutAction[] =
+  SHORTCUT_ACTIONS.filter(isShortcutAvailable);
+
+/**
  * Resolve the effective shortcut for an action, considering user overrides.
  */
 export function resolveShortcut(
   actionId: string,
   overrides?: Partial<Record<string, string>>
 ): string {
+  const action = SHORTCUT_ACTIONS.find((a) => a.id === actionId);
+  // An unavailable action resolves to no shortcut at all, so `matchesShortcut`
+  // rejects every event and the key stays free for whatever else wants it.
+  if (action && !isShortcutAvailable(action)) return '';
   const override = overrides?.[actionId];
   if (override) return override;
-  const action = SHORTCUT_ACTIONS.find((a) => a.id === actionId);
   return action?.defaultKey ?? '';
 }
 

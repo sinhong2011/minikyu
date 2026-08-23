@@ -63,6 +63,7 @@ import {
   type SupportedCodeLanguage,
 } from '@/lib/shiki-highlight';
 import type { ChineseConversionMode, ChineseConversionRule } from '@/lib/tauri-bindings';
+import { capabilities } from '@/lib/platform';
 import { cn } from '@/lib/utils';
 import { isAllowedVideoIframeSrc, rewriteBilibiliSrc } from '@/lib/video-embed-utils';
 import { usePreferences } from '@/services/preferences';
@@ -1440,124 +1441,130 @@ export function SafeHtml({
                       </span>
                     </MenuItem>
                   </MenuGroup>
-                  <MenuSeparator className="my-1.5 bg-border/70" />
-                  <MenuGroup>
-                    <MenuGroupLabel className="px-2.5 pb-1 pt-1 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground/90">
-                      {translationActionsLabel}
-                    </MenuGroupLabel>
+                  {capabilities.translation && (
+                    <>
+                      <MenuSeparator className="my-1.5 bg-border/70" />
+                      <MenuGroup>
+                        <MenuGroupLabel className="px-2.5 pb-1 pt-1 text-[11px] font-semibold tracking-[0.08em] text-muted-foreground/90">
+                          {translationActionsLabel}
+                        </MenuGroupLabel>
 
-                    {isTranslatedBlock ? (
-                      isTranslated &&
-                      segmentState?.translatedText &&
-                      onCopyTranslation && (
-                        <MenuItem
-                          onClick={() => onCopyTranslation(segmentState.translatedText ?? '')}
-                          className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
-                        >
-                          <span className="flex items-center gap-1.5">
-                            <HugeiconsIcon icon={CopyIcon} className="h-3.5 w-3.5" />
-                            {copyTranslationLabel}
-                          </span>
-                        </MenuItem>
-                      )
-                    ) : (
-                      <>
-                        {isTranslated && segmentState?.providerUsed && (
-                          <MenuItem
-                            disabled
-                            className="rounded-lg px-2.5 py-1.5 text-[0.85rem] font-medium text-muted-foreground"
-                          >
-                            <span className="flex items-center gap-1.5">
-                              <HugeiconsIcon
-                                icon={CheckmarkCircle01Icon}
-                                className="h-3.5 w-3.5 text-emerald-500"
-                              />
-                              {segmentState.providerUsed}
-                            </span>
-                          </MenuItem>
-                        )}
-
-                        {isFailed && (
-                          <MenuItem
-                            disabled
-                            className="rounded-lg px-2.5 py-1.5 text-[0.85rem] font-medium text-destructive"
-                          >
-                            <span>{translationFailedLabel}</span>
-                          </MenuItem>
-                        )}
-
-                        {(isTranslated || isFailed) && onRetryTranslation && (
-                          <MenuItem
-                            onClick={() => onRetryTranslation(nodeText)}
-                            className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
-                          >
-                            <span>{retryTranslationLabel}</span>
-                          </MenuItem>
-                        )}
-
-                        {(isTranslated || isFailed) &&
-                          availableProviders &&
-                          availableProviders.length > 0 &&
-                          onTranslateWithProvider && (
-                            <MenuSubmenu>
-                              <MenuSubmenuTrigger className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium">
-                                {translateWithLabel}
-                              </MenuSubmenuTrigger>
-                              <MenuSubmenuPanel className="w-56 rounded-2xl border border-border/60 bg-popover/90 p-1.5 shadow-[0_24px_48px_-28px_hsl(var(--foreground)/0.7),0_14px_32px_-24px_hsl(var(--foreground)/0.55)] backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75">
-                                {availableProviders.map((provider) => (
-                                  <MenuItem
-                                    key={provider.id}
-                                    onClick={() => onTranslateWithProvider(nodeText, provider.id)}
-                                    className="rounded-lg px-2.5 py-2 text-[0.9rem] font-medium"
-                                  >
-                                    <span className="flex items-center gap-1.5">
-                                      {segmentState?.providerUsed === provider.id && (
-                                        <HugeiconsIcon
-                                          icon={CheckmarkCircle01Icon}
-                                          className="h-3.5 w-3.5 text-emerald-500"
-                                        />
-                                      )}
-                                      {provider.label}
-                                    </span>
-                                  </MenuItem>
-                                ))}
-                              </MenuSubmenuPanel>
-                            </MenuSubmenu>
-                          )}
-
-                        {!isTranslated &&
-                          !isFailed &&
-                          !isLoading &&
-                          (onTranslateNode ? (
+                        {isTranslatedBlock ? (
+                          isTranslated &&
+                          segmentState?.translatedText &&
+                          onCopyTranslation && (
                             <MenuItem
-                              onClick={() => onTranslateNode(nodeText)}
+                              onClick={() => onCopyTranslation(segmentState.translatedText ?? '')}
                               className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
                             >
-                              <span>{translateParagraphLabel}</span>
+                              <span className="flex items-center gap-1.5">
+                                <HugeiconsIcon icon={CopyIcon} className="h-3.5 w-3.5" />
+                                {copyTranslationLabel}
+                              </span>
                             </MenuItem>
-                          ) : (
-                            <MenuItem
-                              disabled
-                              className="rounded-lg px-2.5 py-2 text-[0.85rem] font-medium text-muted-foreground"
-                            >
-                              <span>{translationToolbarHintLabel}</span>
-                              <MenuShortcut className="text-[10px] font-medium tracking-[0.08em] text-muted-foreground/70">
-                                {topBarLabel}
-                              </MenuShortcut>
-                            </MenuItem>
-                          ))}
+                          )
+                        ) : (
+                          <>
+                            {isTranslated && segmentState?.providerUsed && (
+                              <MenuItem
+                                disabled
+                                className="rounded-lg px-2.5 py-1.5 text-[0.85rem] font-medium text-muted-foreground"
+                              >
+                                <span className="flex items-center gap-1.5">
+                                  <HugeiconsIcon
+                                    icon={CheckmarkCircle01Icon}
+                                    className="h-3.5 w-3.5 text-emerald-500"
+                                  />
+                                  {segmentState.providerUsed}
+                                </span>
+                              </MenuItem>
+                            )}
 
-                        {isLoading && (
-                          <MenuItem
-                            disabled
-                            className="rounded-lg px-2.5 py-1.5 text-[0.85rem] font-medium text-muted-foreground animate-pulse"
-                          >
-                            <span>{translationActionsLabel}...</span>
-                          </MenuItem>
+                            {isFailed && (
+                              <MenuItem
+                                disabled
+                                className="rounded-lg px-2.5 py-1.5 text-[0.85rem] font-medium text-destructive"
+                              >
+                                <span>{translationFailedLabel}</span>
+                              </MenuItem>
+                            )}
+
+                            {(isTranslated || isFailed) && onRetryTranslation && (
+                              <MenuItem
+                                onClick={() => onRetryTranslation(nodeText)}
+                                className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
+                              >
+                                <span>{retryTranslationLabel}</span>
+                              </MenuItem>
+                            )}
+
+                            {(isTranslated || isFailed) &&
+                              availableProviders &&
+                              availableProviders.length > 0 &&
+                              onTranslateWithProvider && (
+                                <MenuSubmenu>
+                                  <MenuSubmenuTrigger className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium">
+                                    {translateWithLabel}
+                                  </MenuSubmenuTrigger>
+                                  <MenuSubmenuPanel className="w-56 rounded-2xl border border-border/60 bg-popover/90 p-1.5 shadow-[0_24px_48px_-28px_hsl(var(--foreground)/0.7),0_14px_32px_-24px_hsl(var(--foreground)/0.55)] backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75">
+                                    {availableProviders.map((provider) => (
+                                      <MenuItem
+                                        key={provider.id}
+                                        onClick={() =>
+                                          onTranslateWithProvider(nodeText, provider.id)
+                                        }
+                                        className="rounded-lg px-2.5 py-2 text-[0.9rem] font-medium"
+                                      >
+                                        <span className="flex items-center gap-1.5">
+                                          {segmentState?.providerUsed === provider.id && (
+                                            <HugeiconsIcon
+                                              icon={CheckmarkCircle01Icon}
+                                              className="h-3.5 w-3.5 text-emerald-500"
+                                            />
+                                          )}
+                                          {provider.label}
+                                        </span>
+                                      </MenuItem>
+                                    ))}
+                                  </MenuSubmenuPanel>
+                                </MenuSubmenu>
+                              )}
+
+                            {!isTranslated &&
+                              !isFailed &&
+                              !isLoading &&
+                              (onTranslateNode ? (
+                                <MenuItem
+                                  onClick={() => onTranslateNode(nodeText)}
+                                  className="rounded-lg px-2.5 py-2 text-[0.95rem] font-medium"
+                                >
+                                  <span>{translateParagraphLabel}</span>
+                                </MenuItem>
+                              ) : (
+                                <MenuItem
+                                  disabled
+                                  className="rounded-lg px-2.5 py-2 text-[0.85rem] font-medium text-muted-foreground"
+                                >
+                                  <span>{translationToolbarHintLabel}</span>
+                                  <MenuShortcut className="text-[10px] font-medium tracking-[0.08em] text-muted-foreground/70">
+                                    {topBarLabel}
+                                  </MenuShortcut>
+                                </MenuItem>
+                              ))}
+
+                            {isLoading && (
+                              <MenuItem
+                                disabled
+                                className="rounded-lg px-2.5 py-1.5 text-[0.85rem] font-medium text-muted-foreground animate-pulse"
+                              >
+                                <span>{translationActionsLabel}...</span>
+                              </MenuItem>
+                            )}
+                          </>
                         )}
-                      </>
-                    )}
-                  </MenuGroup>
+                      </MenuGroup>
+                    </>
+                  )}
                   {onSummarizeParagraph && (
                     <>
                       <MenuSeparator className="my-1.5 bg-border/70" />

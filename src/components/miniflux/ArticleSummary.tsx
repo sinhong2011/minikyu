@@ -136,6 +136,10 @@ export function useArticleSummary(
   }, []);
 
   const handleSummarize = useCallback(() => {
+    // Summaries are streamed by the Rust backend; there is nothing to call in
+    // the browser. The UI is gated too, but shortcuts and the command palette
+    // reach this directly, so the guard has to live at the call itself.
+    if (!capabilities.summaries) return;
     if (loading || !articleText.trim()) return;
     setLoading(true);
     setError(null);

@@ -2,6 +2,7 @@ import { msg } from '@lingui/core/macro';
 import i18n from '@/i18n/config';
 import { commands } from '@/lib/tauri-bindings';
 import type { AppCommand } from './types';
+import { capabilities } from '@/lib/platform';
 
 export const articleCommands: AppCommand[] = [
   {
@@ -113,7 +114,7 @@ export const articleCommands: AppCommand[] = [
     description: msg`Generate an AI summary of the current article`,
     group: 'article',
     keywords: ['ai', 'summary', 'summarize', 'llm', 'gpt'],
-    isAvailable: (context) => context.getSelectedEntryId() !== undefined,
+    isAvailable: (context) => capabilities.summaries && context.getSelectedEntryId() !== undefined,
     execute: () => {
       document.dispatchEvent(new CustomEvent('command:summarize-article'));
     },

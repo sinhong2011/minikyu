@@ -22,6 +22,13 @@
  * Only add a file to `GATED_BY_ANCESTOR` when the call genuinely cannot run in
  * the browser — a window that is never opened, a service only started behind a
  * capability — and say which gate makes it unreachable.
+ *
+ * Everything else is frozen per *command*, not per file, in
+ * `GATED_AT_CALL_SITE`. An earlier version of this test accepted any file that
+ * mentioned `capabilities.` somewhere, which is how `summarizeArticleStream`
+ * and the translation cache shipped ungated in files that gated something
+ * *else* entirely. Listing the commands means adding a new one to an
+ * already-gated file is a deliberate act, reviewed here.
  */
 
 import { describe, expect, it } from 'vite-plus/test';
@@ -60,7 +67,8 @@ const GATED_BY_ANCESTOR: Record<string, string> = {
   'src/components/titlebar/TitleBarPodcastAnchor.tsx':
     'rendered only under capabilities.podcastWindow (WindowTitleBar)',
   'src/components/miniflux/ImmersiveTranslationLayer.tsx':
-    'mounted only when capabilities.translation is on',
+    'always mounted, but its command paths run only while translation is enabled, ' +
+    'and EntryReading refuses to enable it without capabilities.translation',
   'src/components/miniflux/InAppBrowserPane.tsx': 'reached only via capabilities.inAppBrowser',
   'src/components/podcast/PodcastPlayer.tsx': 'download action lives behind capabilities.downloads',
   'src/components/preferences/panes/TranslationPane.tsx':
@@ -77,6 +85,38 @@ const GATED_BY_ANCESTOR: Record<string, string> = {
   'src/services/miniflux/podcast.ts': 'progress calls behind capabilities.podcastWindow',
   'src/services/tray.ts': 'tray service only starts under capabilities.tray',
   'src/services/translation/router.ts': 'router only invoked when capabilities.translation',
+};
+
+/**
+ * Unsupported commands each file is allowed to call because the call itself
+ * sits behind a `capabilities.*` check. Adding a command here means you have
+ * read the call site and confirmed the browser cannot reach it.
+ */
+const GATED_AT_CALL_SITE: Record<string, string[]> = {
+  'src/components/layout/MainWindow.tsx': ['downloadBackgroundImage'],
+  'src/components/miniflux/ArticleSummary.tsx': ['getArticleSummary', 'saveArticleSummary'],
+  'src/components/miniflux/EntryList.tsx': ['downloadFile'],
+  'src/components/miniflux/EntryReading.tsx': ['summarizeArticleStream'],
+  'src/components/miniflux/MinifluxLayout.tsx': ['switchMinifluxAccount'],
+  'src/components/miniflux/ReaderSettings.tsx': ['listSystemFonts'],
+  'src/components/miniflux/UserNav.tsx': ['switchMinifluxAccount'],
+  'src/components/preferences/panes/AdvancedPane.tsx': ['factoryReset', 'getLocalDataSize'],
+  'src/components/preferences/panes/AppearancePane.tsx': [
+    'downloadBackgroundImage',
+    'listSystemFonts',
+  ],
+  'src/hooks/use-cloud-sync-auto-pull.ts': ['cloudSyncPull'],
+  'src/hooks/use-in-app-browser.ts': [
+    'closeInAppBrowser',
+    'resizeBrowserWebview',
+    'syncBrowserTheme',
+  ],
+  'src/hooks/use-local-image-url.ts': ['readImageAsDataUrl'],
+  'src/hooks/use-player-command-listener.ts': ['downloadFile'],
+  'src/lib/commands/window-commands.ts': ['handleCloseRequest'],
+  'src/lib/notifications.ts': ['sendNativeNotification'],
+  'src/lib/recovery.ts': ['cleanupOldRecoveryFiles', 'loadEmergencyData', 'saveEmergencyData'],
+  'src/services/downloads.ts': ['clearDownloads', 'deleteDownload', 'getDownloadsFromDb'],
 };
 
 function commandNames(source: string, indent: string): Set<string> {
@@ -109,21 +149,23 @@ describe('web build capability gating', () => {
       const called = unsupported.filter((c) => source.includes(`commands.${c}(`));
       if (called.length === 0) continue;
 
-      // A module is considered gated when it consults the capability map (or
-      // the raw target flag) somewhere — the coarse check that matches how
-      // these components are actually written.
-      if (source.includes('capabilities.') || source.includes('isTauri')) continue;
+      // An ancestor gate covers the whole file; otherwise every command has to
+      // be acknowledged individually.
       if (path in GATED_BY_ANCESTOR) continue;
+      const acknowledged = new Set(GATED_AT_CALL_SITE[path] ?? []);
+      const ungated = called.filter((c) => !acknowledged.has(c)).sort();
+      if (ungated.length === 0) continue;
 
-      offenders.push(`${path} → ${called.sort().join(', ')}`);
+      offenders.push(`${path} → ${ungated.join(', ')}`);
     }
 
     expect(
       offenders,
       'These modules call a command the web adapter does not implement, with no ' +
         'capability gate. In the browser the call throws UnsupportedInWebError. ' +
-        'Gate the UI on `capabilities.*` from @/lib/platform, or — if an ancestor ' +
-        'already makes it unreachable — add the file to GATED_BY_ANCESTOR with the reason.'
+        'Gate the call on `capabilities.*` from @/lib/platform and list the command ' +
+        'in GATED_AT_CALL_SITE, or — if an ancestor already makes the whole file ' +
+        'unreachable — add it to GATED_BY_ANCESTOR with the reason.'
     ).toEqual([]);
   });
 
@@ -137,6 +179,27 @@ describe('web build capability gating', () => {
       stale,
       'These files no longer call any unsupported command, so their exemption ' +
         'is dead weight — remove them from GATED_BY_ANCESTOR.'
+    ).toEqual([]);
+  });
+
+  it('keeps GATED_AT_CALL_SITE free of stale entries', () => {
+    // A gate that outlives its call site is worse than none: it silently
+    // re-arms if someone reintroduces the command later.
+    const stale: string[] = [];
+
+    for (const [relPath, commandList] of Object.entries(GATED_AT_CALL_SITE)) {
+      if (relPath in GATED_BY_ANCESTOR) {
+        stale.push(`${relPath} → also in GATED_BY_ANCESTOR; keep one`);
+        continue;
+      }
+      const source = read(relPath);
+      const gone = commandList.filter((c) => !source.includes(`commands.${c}(`));
+      if (gone.length > 0) stale.push(`${relPath} → ${gone.sort().join(', ')}`);
+    }
+
+    expect(
+      stale,
+      'These entries no longer match a real call site — remove them from ' + 'GATED_AT_CALL_SITE.'
     ).toEqual([]);
   });
 });

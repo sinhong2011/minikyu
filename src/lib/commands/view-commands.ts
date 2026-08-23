@@ -183,6 +183,8 @@ export const viewCommands: AppCommand[] = [
     description: msg`Open translation preferences`,
     group: 'view',
     keywords: ['translation', 'language', 'settings', 'translate'],
+    // The pane it opens is hidden without the Rust translation router.
+    isAvailable: () => capabilities.translation,
     execute: (context) => {
       context.openPreferencesPane('translation');
     },

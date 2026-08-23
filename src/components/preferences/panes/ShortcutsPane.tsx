@@ -3,7 +3,7 @@ import { useLingui } from '@lingui/react';
 import { Button } from '@/components/ui/button';
 import { useShortcutConfig } from '@/hooks/use-shortcut-config';
 import {
-  SHORTCUT_ACTIONS,
+  AVAILABLE_SHORTCUT_ACTIONS,
   SHORTCUT_GROUP_LABELS,
   SHORTCUT_GROUP_ORDER,
 } from '@/lib/shortcut-registry';
@@ -19,7 +19,9 @@ export function ShortcutsPane() {
   return (
     <div className="space-y-6">
       {SHORTCUT_GROUP_ORDER.map((groupId) => {
-        const actions = SHORTCUT_ACTIONS.filter((a) => a.group === groupId);
+        // Desktop-only actions are absent on web, so the pane never offers to
+        // rebind a key that cannot do anything on this target.
+        const actions = AVAILABLE_SHORTCUT_ACTIONS.filter((a) => a.group === groupId);
         if (actions.length === 0) return null;
 
         return (
