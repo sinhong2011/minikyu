@@ -207,7 +207,16 @@ function Sidebar({
             <SheetTitle>{i18n._(msg`Sidebar`)}</SheetTitle>
             <SheetDescription>{i18n._(msg`Displays the mobile sidebar.`)}</SheetDescription>
           </SheetHeader>
-          <div className="flex h-full w-full flex-col">{children}</div>
+          {/*
+            The sheet is `fixed inset-y-0`, which under `viewport-fit=cover`
+            means the whole screen — including the strips iOS draws the status
+            bar, the home indicator and Safari's floating bar over. Pad the
+            contents clear of both ends so the first and last rows stay
+            tappable.
+          */}
+          <div className="flex h-full w-full flex-col pt-[env(safe-area-inset-top)] pb-[env(safe-area-inset-bottom)]">
+            {children}
+          </div>
         </SheetContent>
       </Sheet>
     );

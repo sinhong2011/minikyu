@@ -1,5 +1,5 @@
 import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { useCallback, useLayoutEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { EntryEmptyState } from '@/components/miniflux/EntryEmptyState';
 import { EntryReading } from '@/components/miniflux/EntryReading';
 import { InAppBrowserPane } from '@/components/miniflux/InAppBrowserPane';
@@ -8,6 +8,7 @@ import { MobileTabBar } from '@/components/layout/MobileTabBar';
 import { useInAppBrowser } from '@/hooks/use-in-app-browser';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSelectedEntryId } from '@/hooks/use-selected-entry';
+import { wasBrowserInitiatedBack } from '@/lib/history-intent';
 import { cn } from '@/lib/utils';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
 import { useUIStore } from '@/store/ui-store';
@@ -63,12 +64,44 @@ export function MainWindowContent({
   // close taken at desktop width would strand it and the panel could never
   // reopen after a resize back down.
   const [readerClosing, setReaderClosing] = useState(false);
+  // A close the browser drove has already been animated once, by the browser.
+  // iOS Safari's edge-swipe slides the whole page away and only then hands the
+  // router the popped URL, so playing our own 340ms slide afterwards shows the
+  // reader closing a second time. Drop the animation for those and let the
+  // gesture be the whole transition; the ✕ (and anything else we initiate)
+  // keeps it — see `@/lib/history-intent`.
+  const [readerExitInstant, setReaderExitInstant] = useState(false);
   const readerWasRequestedRef = useRef(readerRequested);
   useLayoutEffect(() => {
-    if (isMobile && readerWasRequestedRef.current && !readerRequested) setReaderClosing(true);
-    else if (!isMobile) setReaderClosing(false);
+    if (isMobile && readerWasRequestedRef.current && !readerRequested) {
+      setReaderExitInstant(wasBrowserInitiatedBack());
+      setReaderClosing(true);
+    } else if (!isMobile) setReaderClosing(false);
     readerWasRequestedRef.current = readerRequested;
   }, [readerRequested, isMobile]);
+
+  // An instant exit completes within the frame, long before iOS has settled
+  // the history it just popped, so releasing the latch on `onExitComplete`
+  // would leave a params flicker free to snap the panel back on. Hold it for
+  // the beat the animated close would have taken instead.
+  const latchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const releaseReaderLatch = useCallback((afterMs: number) => {
+    if (latchTimerRef.current) clearTimeout(latchTimerRef.current);
+    if (afterMs <= 0) {
+      setReaderClosing(false);
+      return;
+    }
+    latchTimerRef.current = setTimeout(() => {
+      latchTimerRef.current = null;
+      setReaderClosing(false);
+    }, afterMs);
+  }, []);
+  useEffect(
+    () => () => {
+      if (latchTimerRef.current) clearTimeout(latchTimerRef.current);
+    },
+    []
+  );
 
   // The phone reader is an overlay that animates out, so it has to outlive the
   // selection that opened it. Remember the last subject and keep rendering it
@@ -219,14 +252,23 @@ export function MainWindowContent({
               reader slides away.
             */}
             <MobileTabBar />
-            <AnimatePresence initial={false} onExitComplete={() => setReaderClosing(false)}>
+            <AnimatePresence
+              initial={false}
+              onExitComplete={() => releaseReaderLatch(readerExitInstant ? 340 : 0)}
+            >
               {mobileOverlayOpen && (
                 <motion.div
                   key="mobile-reader"
                   className="absolute inset-0 z-40 bg-background shadow-[-12px_0_32px_-16px_rgb(0_0_0/0.55)]"
                   initial={prefersReducedMotion ? { opacity: 0 } : { x: '100%' }}
                   animate={prefersReducedMotion ? { opacity: 1 } : { x: '0%' }}
-                  exit={prefersReducedMotion ? { opacity: 0 } : { x: '100%' }}
+                  exit={
+                    readerExitInstant
+                      ? { opacity: 0, transition: { duration: 0 } }
+                      : prefersReducedMotion
+                        ? { opacity: 0 }
+                        : { x: '100%' }
+                  }
                   transition={{
                     duration: prefersReducedMotion ? 0.15 : 0.34,
                     ease: [0.32, 0.72, 0, 1],
