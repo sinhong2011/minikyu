@@ -1,5 +1,18 @@
 # Changelog
 
+## [1.13.0](https://github.com/sinhong2011/minikyu/compare/v1.12.5...v1.13.0) (2026-08-23)
+
+
+### Features
+
+* **web:** Let the PWA connect to a server the deployment does not proxy ([a532e79](https://github.com/sinhong2011/minikyu/commit/a532e79f4f92037312a71b261f1a6849333de00b))
+
+
+### Bug Fixes
+
+* **pwa:** Keep the phone chrome clear of iOS Safari's bars ([953fe71](https://github.com/sinhong2011/minikyu/commit/953fe71cd3e2591bd328ea9ae2aa73f8440be32d))
+* **web:** Gate desktop-only shortcuts and article actions ([576462a](https://github.com/sinhong2011/minikyu/commit/576462ab3f804508d0941dcb6ec4e13a94323346))
+
 ## [1.12.5](https://github.com/sinhong2011/minikyu/compare/v1.12.4...v1.12.5) (2026-08-22)
 
 
