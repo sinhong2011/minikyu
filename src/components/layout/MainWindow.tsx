@@ -152,9 +152,20 @@ export function MainWindow({ children }: MainWindowProps = {}) {
 
   return (
     <>
+      {/*
+        The window box is the *dynamic* viewport, not `100vh`.
+        `viewport-fit=cover` makes `100vh` the large viewport — the full screen,
+        with Safari's address bar and its floating bottom bar drawn over the
+        last stretch of it — so everything anchored to the bottom of this box
+        (the phone tab bar, the reader's action bar) ends up underneath that
+        chrome. `100dvh` is the height actually on screen, and the safe-area
+        padding those bars already carry clears the home indicator and the
+        floating bar on top of it. `h-screen` stays as the fallback for engines
+        without `dvh`; in Tauri the two are the same number.
+      */}
       <div
         className={`
-          relative flex h-screen w-full flex-col overflow-hidden bg-background
+          relative flex h-screen supports-[height:100dvh]:h-dvh w-full flex-col overflow-hidden bg-background
           ${platform === 'macos' ? 'rounded-xl [clip-path:inset(0_round_var(--radius-xl))]' : ''}
         `}
       >

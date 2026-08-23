@@ -60,6 +60,24 @@
   html {
     @apply font-sans;
   }
+  /*
+    The app is a fixed-height shell with its own scroll panes, so the document
+    itself must never scroll: a rubber-band on the page moves the whole layout
+    under iOS Safari's chrome and leaves the bottom bar stranded behind it.
+    `html` also carries a background because Safari samples it to tint its
+    floating bar — a transparent root gets a white bar in dark mode.
+  */
+  html,
+  body {
+    height: 100%;
+    overscroll-behavior: none;
+  }
+  html {
+    @apply bg-background;
+  }
+  body {
+    overflow: hidden;
+  }
 }
 
 /* UI font override — placed outside @layer so it beats Tailwind utilities.

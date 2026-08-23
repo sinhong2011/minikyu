@@ -124,7 +124,7 @@ export class ErrorBoundary extends Component<Props, State> {
       <div
         style={{
           display: 'flex',
-          minHeight: '100vh',
+          minHeight: '100dvh',
           alignItems: 'center',
           justifyContent: 'center',
           padding: '24px',

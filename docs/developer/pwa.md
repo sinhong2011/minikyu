@@ -479,8 +479,45 @@ one of those compensations silently becomes zero: the status bar (a blurred
 glass band since iOS 26) covers the header, and the tab bar sits under the home
 indicator.
 
+`viewport-fit=cover` has a second consequence: `100vh` becomes the *large*
+viewport — the whole screen, with the address bar and (since iOS 26) Safari's
+floating bottom bar drawn over the last stretch of it. The window shell in
+`MainWindow.tsx` is therefore sized in `dvh`
+(`h-screen supports-[height:100dvh]:h-dvh`, the `h-screen` being the fallback
+for engines without `dvh`); with `100vh` everything anchored to the bottom of it
+— `MobileTabBar`, the reader's action bar — lands underneath that chrome. The
+document itself never scrolls (`html, body { height: 100%; overflow: hidden;
+overscroll-behavior: none }` in `global.css`), so the bar never retracts and the
+`dvh` box does not resize while reading. `html` carries a background for the
+same family of reasons: Safari samples it to tint its floating bar.
+
+In browser Safari the bottom inset tracks the toolbar as well as the home
+indicator, so a bottom-anchored bar needs both — the `dvh` height *and* its
+`env(safe-area-inset-bottom)` padding.
+
 Known gap: nothing reads `safe-area-inset-left` / `-right`, so in landscape on a
 notched device content runs under the notch.
+
+## Back: ours versus the browser's
+
+Closing the phone reader with ✕ and closing it with iOS Safari's edge-swipe both
+arrive as one `popstate`, but they must not look the same. Safari animates the
+swipe itself — it slides the page away and only then hands the router the popped
+URL — so replaying the reader's own 340ms exit on top of that plays the close
+twice. `src/lib/history-intent.ts` keeps the two apart: ✕ calls
+`markAppInitiatedBack()` before `history.back()`, and `MainWindowContent` asks
+`wasBrowserInitiatedBack()` when the reader's presence flips off, dropping the
+exit animation for pops it did not initiate.
+
+The other half of the same symptom is in the URL rather than the animation.
+After a gesture Back, iOS hands the router the pre-back search params again for
+a beat — often late enough to land *after* the exit has finished, which snaps
+the panel back on screen and plays the whole close a second time. `?entry=` has
+exactly two deliberate writers (a tap, and prev/next), and both now say so, so
+`MinifluxLayout` reads an entry that returns on its own within
+`ENTRY_ECHO_WINDOW_MS` of being closed as that echo and replaces it back out of
+the URL. `MainWindowContent`'s close latch still covers the fast path, where the
+echo lands inside the exit itself.
 
 ## Home-screen icons
 
