@@ -71,14 +71,36 @@ export function MainWindowContent({
   // gesture be the whole transition; the ✕ (and anything else we initiate)
   // keeps it — see `@/lib/history-intent`.
   const [readerExitInstant, setReaderExitInstant] = useState(false);
+  // AnimatePresence reads `exit` from the last frame the overlay was *present*.
+  // Arm that prop while the child is still mounted, then drop presence.
+  const [overlayExiting, setOverlayExiting] = useState(false);
   const readerWasRequestedRef = useRef(readerRequested);
-  useLayoutEffect(() => {
-    if (isMobile && readerWasRequestedRef.current && !readerRequested) {
+
+  if (isMobile) {
+    if (readerRequested && !readerClosing) {
+      if (overlayExiting) setOverlayExiting(false);
+      if (readerExitInstant) setReaderExitInstant(false);
+    } else if (
+      !readerRequested &&
+      !readerClosing &&
+      !overlayExiting &&
+      readerWasRequestedRef.current
+    ) {
+      // Falling edge: stamp the exit kind onto the still-present overlay.
       setReaderExitInstant(wasBrowserInitiatedBack());
+      setOverlayExiting(true);
       setReaderClosing(true);
-    } else if (!isMobile) setReaderClosing(false);
+    }
+  } else if (readerClosing || overlayExiting || readerExitInstant) {
+    setReaderClosing(false);
+    setOverlayExiting(false);
+    setReaderExitInstant(false);
+  }
+
+  useLayoutEffect(() => {
+    if (overlayExiting) setOverlayExiting(false);
     readerWasRequestedRef.current = readerRequested;
-  }, [readerRequested, isMobile]);
+  }, [overlayExiting, readerRequested]);
 
   // An instant exit completes within the frame, long before iOS has settled
   // the history it just popped, so releasing the latch on `onExitComplete`
@@ -107,15 +129,15 @@ export function MainWindowContent({
   // selection that opened it. Remember the last subject and keep rendering it
   // for the duration of the exit, otherwise the pane would flip to the empty
   // state and slide *that* off screen.
-  const mobileOverlayOpen = readerRequested && !readerClosing;
+  const mobileOverlayOpen = overlayExiting || (readerRequested && !readerClosing);
   const lastMobileEntryIdRef = useRef<string | null | undefined>(null);
   const lastMobileBrowserUrlRef = useRef<string | null | undefined>(null);
-  if (mobileOverlayOpen) {
+  if (readerRequested) {
     lastMobileEntryIdRef.current = selectedEntryId;
     lastMobileBrowserUrlRef.current = inAppBrowserUrl;
   }
-  const mobileEntryId = mobileOverlayOpen ? selectedEntryId : lastMobileEntryIdRef.current;
-  const mobileBrowserUrl = mobileOverlayOpen ? inAppBrowserUrl : lastMobileBrowserUrlRef.current;
+  const mobileEntryId = readerRequested ? selectedEntryId : lastMobileEntryIdRef.current;
+  const mobileBrowserUrl = readerRequested ? inAppBrowserUrl : lastMobileBrowserUrlRef.current;
 
   const handlePanelResize = useCallback(
     (panelSize: { inPixels: number; asPercentage: number }) => {
@@ -259,6 +281,8 @@ export function MainWindowContent({
               {mobileOverlayOpen && (
                 <motion.div
                   key="mobile-reader"
+                  data-testid="mobile-reader-overlay"
+                  data-reader-exit={readerExitInstant ? 'instant' : 'slide'}
                   className="absolute inset-0 z-40 bg-background shadow-[-12px_0_32px_-16px_rgb(0_0_0/0.55)]"
                   initial={prefersReducedMotion ? { opacity: 0 } : { x: '100%' }}
                   animate={prefersReducedMotion ? { opacity: 1 } : { x: '0%' }}

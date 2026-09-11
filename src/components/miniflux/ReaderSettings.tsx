@@ -217,7 +217,7 @@ export function ReaderSettings() {
       </Button>
       <DialogContent
         showCloseButton={false}
-        className="w-[min(30rem,calc(100%-1.5rem))] max-h-[76vh] overflow-hidden rounded-2xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 p-0 shadow-xl sm:max-w-[30rem]"
+        className="w-[min(30rem,calc(100%-1.5rem))] max-h-[76dvh] overflow-hidden rounded-2xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 p-0 shadow-xl sm:max-w-[30rem] max-sm:max-h-[min(76dvh,calc(100dvh-env(safe-area-inset-bottom,0px)-env(safe-area-inset-top,0px)-2rem))]"
       >
         <DialogHeader className="space-y-0.5 px-3.5 pt-3 pb-0">
           <div className="flex items-center justify-between gap-2">
@@ -256,7 +256,7 @@ export function ReaderSettings() {
           </p>
         </DialogHeader>
 
-        <div className="max-h-[calc(76vh-74px)] overflow-y-auto px-3.5 py-3">
+        <div className="max-h-[calc(76dvh-74px)] overflow-y-auto overscroll-y-contain px-3.5 py-3 [-webkit-overflow-scrolling:touch]">
           <div className="overflow-hidden rounded-lg border border-border/60 bg-muted/20">
             <div className="grid grid-cols-[8.5rem_minmax(0,1fr)] gap-3 border-b border-border/60 px-3 py-2.5">
               <p className="pt-1 text-[12px] font-medium text-muted-foreground">

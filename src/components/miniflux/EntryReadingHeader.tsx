@@ -47,6 +47,7 @@ import {
 } from '@/components/ui/select';
 import { Spinner } from '@/components/ui/spinner';
 import { Tooltip, TooltipPanel, TooltipTrigger } from '@/components/ui/tooltip';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useReaderSettings } from '@/hooks/use-reader-settings';
 import type { Entry } from '@/lib/bindings';
 import { convertChineseText, normalizeCustomConversionRules } from '@/lib/chinese-conversion';
@@ -143,6 +144,8 @@ export function EntryReadingHeader({
   onFocusModeChange,
 }: EntryReadingHeaderProps) {
   const { _, i18n } = useLingui();
+  const isMobile = useIsMobile();
+  const popoverSide = isMobile ? 'top' : 'bottom';
   const {
     chineseConversionMode,
     customConversionRules,
@@ -230,7 +233,7 @@ export function EntryReadingHeader({
       .join(' ');
   };
   const toolbarButtonClass =
-    'h-9 w-9 rounded-xl border border-transparent text-muted-foreground/90 hover:bg-black/[0.08] dark:hover:bg-white/[0.12] hover:text-foreground data-[state=open]:border-border/60 data-[state=open]:bg-black/[0.08] dark:data-[state=open]:bg-white/[0.12] data-[state=open]:text-foreground';
+    'h-9 w-9 max-sm:h-11 max-sm:w-11 rounded-xl border border-transparent text-muted-foreground/90 hover:bg-black/[0.08] dark:hover:bg-white/[0.12] hover:text-foreground data-[state=open]:border-border/60 data-[state=open]:bg-black/[0.08] dark:data-[state=open]:bg-white/[0.12] data-[state=open]:text-foreground';
   const translationControlActive = capabilities.translation && translationEnabled;
   // Without the Rust translation router the panel holds only the Chinese
   // conversion select, so naming it "Translation" would promise a feature the
@@ -342,10 +345,8 @@ export function EntryReadingHeader({
 
   return (
     <motion.header
-      className="sticky top-0 z-10 w-full min-w-0 max-w-full shrink-0 overflow-hidden text-foreground"
+      className="sticky top-0 z-10 w-full min-w-0 max-w-full shrink-0 overflow-hidden px-6 text-foreground max-sm:pl-[max(1.5rem,env(safe-area-inset-left,0px))] max-sm:pr-[max(1.5rem,env(safe-area-inset-right,0px))]"
       style={{
-        paddingLeft: 24,
-        paddingRight: 24,
         paddingTop: headerPadding,
         paddingBottom: headerPadding,
       }}
@@ -523,7 +524,8 @@ export function EntryReadingHeader({
 
           <div
             role="toolbar"
-            className="flex shrink-0 items-center gap-1.5 max-sm:fixed max-sm:inset-x-0 max-sm:bottom-0 max-sm:z-30 max-sm:justify-around max-sm:gap-0 max-sm:border-t max-sm:border-border max-sm:bg-background max-sm:px-2 max-sm:pt-2 max-sm:pb-[calc(0.5rem+env(safe-area-inset-bottom))]"
+            data-testid="reader-action-toolbar"
+            className="flex shrink-0 items-center gap-1.5 max-sm:app-fixed-bottom-bar max-sm:z-30 max-sm:justify-around max-sm:gap-0 max-sm:border-t max-sm:border-border/40 max-sm:bg-background/80 max-sm:px-2 max-sm:pt-2 max-sm:backdrop-blur-xl max-sm:backdrop-saturate-150 max-sm:supports-[backdrop-filter]:bg-background/65 max-sm:pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))]"
           >
             {capabilities.summaries && (
               <Tooltip>
@@ -597,7 +599,7 @@ export function EntryReadingHeader({
               </Tooltip>
               <PopoverContent
                 className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 p-3.5 shadow-xl"
-                side="bottom"
+                side={popoverSide}
                 align="end"
               >
                 <PopoverHeader>
@@ -760,7 +762,7 @@ export function EntryReadingHeader({
                 <TooltipPanel>{_(msg`Reading display`)}</TooltipPanel>
                 <PopoverContent
                   className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 p-3.5 shadow-xl"
-                  side="bottom"
+                  side={popoverSide}
                   align="start"
                 >
                   <PopoverHeader>
@@ -953,7 +955,7 @@ export function EntryReadingHeader({
                 <TooltipPanel>{_(msg`Share`)}</TooltipPanel>
                 <PopoverContent
                   className="w-56 p-1.5 rounded-xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 shadow-xl"
-                  side="bottom"
+                  side={popoverSide}
                   align="end"
                 >
                   <button

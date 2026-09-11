@@ -506,16 +506,38 @@ floating bottom bar drawn over the last stretch of it. The window shell in
 for engines without `dvh`); with `100vh` everything anchored to the bottom of it
 — `MobileTabBar`, the reader's action bar — lands underneath that chrome. The
 document itself never scrolls (`html, body { height: 100%; overflow: hidden;
-overscroll-behavior: none }` in `global.css`), so the bar never retracts and the
-`dvh` box does not resize while reading. `html` carries a background for the
-same family of reasons: Safari samples it to tint its floating bar.
+overscroll-behavior-y: none }` in `global.css`), so the bar never retracts and
+the `dvh` box does not resize while reading. The clamp is Y-only: the shorthand
+`overscroll-behavior: none` also disables Safari's edge-swipe Back, which is how
+the phone reader closes. `html` carries a background for the same family of
+reasons: Safari samples it to tint its floating bar.
 
 In browser Safari the bottom inset tracks the toolbar as well as the home
 indicator, so a bottom-anchored bar needs both — the `dvh` height *and* its
 `env(safe-area-inset-bottom)` padding.
 
-Known gap: nothing reads `safe-area-inset-left` / `-right`, so in landscape on a
-notched device content runs under the notch.
+`position: fixed; bottom: 0` is a separate trap. The layout viewport is the
+*large* viewport under `viewport-fit=cover`, so a fixed bar sits in the strip
+Safari draws its floating tab bar over. The phone tab bar (`MobileTabBar`) is
+`absolute` inside the `dvh` shell and does not have this problem. The reader's
+action bar used to be `fixed`; it now uses `.app-fixed-bottom-bar`, which lifts
+the bar by `max(var(--vv-offset-bottom), 100lvh - 100dvh)`.
+`useSafariViewportInsets` in `MainWindow` keeps `--vv-offset-bottom` in sync
+with `visualViewport` as Safari's chrome shows and hides.
+
+The same class, plus `env(safe-area-inset-left)` / `-right`, is what keeps the
+bar clear of the notch in landscape. List titles, the reader header, the
+sidebar sheet, and article padding all read those insets now.
+
+iPhone/iPad user agents currently map to `macos` in `detectFromUserAgent` so
+shortcut glyphs stay ⌘. Native-window rounding (`data-platform="macos"`, the
+`clip-path` on `MainWindow`) is skipped in the web build — that clip would
+eat the tab bar and the home-indicator inset.
+
+On coarse pointers the reader context menu is disabled so a long-press selects
+text (Safari's native callout) instead of opening our desktop menu. Article
+enter/exit skips `filter: blur()` in the browser; that effect is a compositing
+tax on iOS WebKit.
 
 ## Back: ours versus the browser's
 
@@ -523,10 +545,13 @@ Closing the phone reader with ✕ and closing it with iOS Safari's edge-swipe bo
 arrive as one `popstate`, but they must not look the same. Safari animates the
 swipe itself — it slides the page away and only then hands the router the popped
 URL — so replaying the reader's own 340ms exit on top of that plays the close
-twice. `src/lib/history-intent.ts` keeps the two apart: ✕ calls
+twice. There is no in-app left-edge drag: Safari owns that gesture. ✕ calls
 `markAppInitiatedBack()` before `history.back()`, and `MainWindowContent` asks
 `wasBrowserInitiatedBack()` when the reader's presence flips off, dropping the
-exit animation for pops it did not initiate.
+exit animation for pops it did not initiate. AnimatePresence snapshots `exit`
+from the last frame the overlay is still mounted, so that classification is
+stamped onto the panel *before* presence drops — otherwise the swipe-back close
+still plays the 340ms slide.
 
 The other half of the same symptom is in the URL rather than the animation.
 After a gesture Back, iOS hands the router the pre-back search params again for

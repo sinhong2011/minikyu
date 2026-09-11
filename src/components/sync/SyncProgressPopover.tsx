@@ -190,7 +190,7 @@ export function SyncProgressPopover({ children }: SyncProgressPopoverProps) {
 
   return (
     <Popover>
-      <PopoverTrigger render={<div className="inline-flex">{children}</div>} />
+      <PopoverTrigger render={children} />
       <PopoverContent className="w-[22rem] p-4" align="end" side="bottom">
         <div className="space-y-4">
           <div className="space-y-2 border-b pb-3">

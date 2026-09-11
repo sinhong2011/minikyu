@@ -20,6 +20,8 @@ describe('history-intent', () => {
   });
 
   it('flags a pop the app did not ask for', () => {
+    // iOS Safari's edge-swipe Back is this path: the browser pops, then we
+    // skip our 340ms reader exit so the gesture is the whole transition.
     pop();
     expect(wasBrowserInitiatedBack()).toBe(true);
   });

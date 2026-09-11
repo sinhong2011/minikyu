@@ -755,7 +755,7 @@ export function MinifluxLayout() {
       entryTransitionDirection={entryTransitionDirection}
     >
       <div className="flex flex-col h-full relative">
-        <div className="px-2.5 pt-2 pb-3 flex items-center justify-between max-sm:px-4 max-sm:pt-[max(0.75rem,env(safe-area-inset-top))]">
+        <div className="px-2.5 pt-2 pb-3 flex items-center justify-between max-sm:px-4 max-sm:pt-[max(0.75rem,env(safe-area-inset-top,0px))] max-sm:pl-[max(1rem,env(safe-area-inset-left,0px))] max-sm:pr-[max(1rem,env(safe-area-inset-right,0px))]">
           <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
             <AnimatePresence mode="wait">
               <motion.h1

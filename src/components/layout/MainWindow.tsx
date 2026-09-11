@@ -23,6 +23,7 @@ import { ZenModeView } from '@/components/zen-mode';
 import { useLocalImageUrl } from '@/hooks/use-local-image-url';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { usePlatform } from '@/hooks/use-platform';
+import { useSafariViewportInsets } from '@/hooks/use-safari-viewport';
 import { useTheme } from '@/hooks/use-theme';
 import { useUiFont } from '@/hooks/use-ui-font';
 import { useMainWindowEventListeners } from '@/hooks/useMainWindowEventListeners';
@@ -60,6 +61,11 @@ export function MainWindow({ children }: MainWindowProps = {}) {
   // row and navigation lives in the bottom tab bar. The Tauri build keeps it
   // even in narrow windows — it carries the drag region and window controls.
   const hideHeader = isWeb && isMobile;
+  useSafariViewportInsets();
+  // Native window rounding is a Tauri/macOS affordance. Applying it in Safari
+  // (iPhone UA currently reports as `macos`) clips the bottom tab bar and the
+  // home-indicator safe area out of the webview.
+  const nativeWindowRounding = platform === 'macos' && !isWeb;
   // Zen Mode hides the header on desktop, where the OS window chrome is the
   // reason it exists. In a browser tab it is the way back out — the Zen button
   // already renders an "Exit Zen Mode" state — so there it stays.
@@ -166,7 +172,7 @@ export function MainWindow({ children }: MainWindowProps = {}) {
       <div
         className={`
           relative flex h-screen supports-[height:100dvh]:h-dvh w-full flex-col overflow-hidden bg-background
-          ${platform === 'macos' ? 'rounded-xl [clip-path:inset(0_round_var(--radius-xl))]' : ''}
+          ${nativeWindowRounding ? 'rounded-xl [clip-path:inset(0_round_var(--radius-xl))]' : ''}
         `}
       >
         {bgImageUrl && bgImageSize !== 'tile' && (
