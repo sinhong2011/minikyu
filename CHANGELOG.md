@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.1](https://github.com/sinhong2011/minikyu/compare/v1.13.0...v1.13.1) (2026-09-11)
+
+
+### Bug Fixes
+
+* **pwa:** Keep iOS Safari chrome and swipe-back from fighting the reader ([#125](https://github.com/sinhong2011/minikyu/issues/125)) ([57926c1](https://github.com/sinhong2011/minikyu/commit/57926c17c27075042e00989958b3be4cd2eccf46))
+
 ## [1.13.0](https://github.com/sinhong2011/minikyu/compare/v1.12.5...v1.13.0) (2026-08-23)
 
 
