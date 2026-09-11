@@ -128,4 +128,10 @@ describe('EntryReadingHeader translation options', () => {
 
     expect(await screen.findByTestId('entry-header-podcast-play')).toBeInTheDocument();
   });
+
+  it('uses the iOS Safari fixed-bottom class on the phone action bar', () => {
+    renderHeader();
+    const toolbar = screen.getByTestId('reader-action-toolbar');
+    expect(toolbar.className).toContain('app-fixed-bottom-bar');
+  });
 });

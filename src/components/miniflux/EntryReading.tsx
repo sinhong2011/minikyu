@@ -42,6 +42,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { showToast } from '@/components/ui/sonner';
 import { useGestureSettings } from '@/hooks/use-gesture-settings';
 import { detectSourceLanguage, useReaderSettings } from '@/hooks/use-reader-settings';
+import { useCoarsePointer } from '@/hooks/use-safari-viewport';
 import { useShortcutConfig } from '@/hooks/use-shortcut-config';
 import { getGestureAction } from '@/lib/gesture-actions';
 import { logger } from '@/lib/logger';
@@ -54,7 +55,7 @@ import {
 } from '@/lib/reader-theme';
 import { formatShortcutDisplay, matchesShortcut } from '@/lib/shortcut-registry';
 import { commands } from '@/lib/tauri-bindings';
-import { capabilities } from '@/lib/platform';
+import { capabilities, isWeb } from '@/lib/platform';
 import { cn } from '@/lib/utils';
 import { getVideoEmbedHtml } from '@/lib/video-embed-utils';
 import {
@@ -111,6 +112,7 @@ export function EntryReading({
   onOpenInAppBrowser,
 }: EntryReadingProps) {
   const { _ } = useLingui();
+  const isCoarsePointer = useCoarsePointer();
   const {
     chineseConversionMode,
     customConversionRules,
@@ -437,6 +439,7 @@ export function EntryReading({
   const canJumpNext = activeTocIndex >= 0 && activeTocIndex < readingContent.tocItems.length - 1;
   const prefersReducedMotion =
     typeof window !== 'undefined' && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const skipReaderBlur = prefersReducedMotion || isWeb;
   const articleSlideDistance = 18;
   const articleLiftOffset = 8;
   const articleEnterOpacity = 0;
@@ -448,14 +451,18 @@ export function EntryReading({
     ? { duration: 0 }
     : {
         y: { duration: 0.42, ease: [0.22, 1, 0.36, 1] as const },
-        filter: { duration: 0.38, ease: [0.22, 1, 0.36, 1] as const },
+        ...(skipReaderBlur
+          ? {}
+          : { filter: { duration: 0.38, ease: [0.22, 1, 0.36, 1] as const } }),
         opacity: { duration: 0.32, ease: [0.2, 0.95, 0.35, 1] as const },
       };
   const articleExitTransition = prefersReducedMotion
     ? { duration: 0 }
     : {
         y: { duration: 0.3, ease: [0.35, 0, 0.9, 1] as const },
-        filter: { duration: 0.28, ease: [0.35, 0, 0.9, 1] as const },
+        ...(skipReaderBlur
+          ? {}
+          : { filter: { duration: 0.28, ease: [0.35, 0, 0.9, 1] as const } }),
         opacity: { duration: 0.24, ease: [0.45, 0, 1, 1] as const },
       };
   const readerThemePalette = useMemo(() => getReaderThemePalette(readerTheme), [readerTheme]);
@@ -491,7 +498,7 @@ export function EntryReading({
     'h-9 w-9 rounded-xl border border-transparent text-muted-foreground hover:bg-black/[0.06] dark:hover:bg-white/10 hover:text-muted-foreground focus-visible:text-muted-foreground active:text-muted-foreground aria-expanded:text-muted-foreground';
   const readerSurfaceStyle = useMemo(
     () => ({
-      willChange: 'transform, opacity, filter',
+      willChange: isWeb ? 'opacity' : 'transform, opacity, filter',
       backgroundColor: readerThemePalette.surface,
       color: readerThemePalette.text,
     }),
@@ -1502,15 +1509,19 @@ export function EntryReading({
             y: pullContentY,
             scale: contentScale,
             overflow: 'hidden',
-            willChange: 'transform',
+            ...(isWeb ? {} : { willChange: 'transform' }),
           }}
         >
           <ContextMenu
+            disabled={isCoarsePointer}
             onOpenChange={(open) => {
               if (open) setContextMenuSelectedText(window.getSelection()?.toString().trim() ?? '');
             }}
           >
-            <ContextMenuTrigger className="h-full" style={{ userSelect: 'text' }}>
+            <ContextMenuTrigger
+              className="h-full"
+              style={{ userSelect: 'text', WebkitUserSelect: 'text' } as CSSProperties}
+            >
               <ScrollArea className="h-full min-h-0" ref={scrollRef}>
                 <AnimatePresence mode="wait">
                   <motion.div
@@ -1518,17 +1529,21 @@ export function EntryReading({
                     initial={{
                       opacity: articleEnterOpacity,
                       y: directionalEnterY,
-                      filter: 'blur(0.8px)',
+                      ...(skipReaderBlur ? {} : { filter: 'blur(0.8px)' }),
                     }}
-                    animate={{ opacity: 1, y: 0, filter: 'blur(0px)' }}
+                    animate={{
+                      opacity: 1,
+                      y: 0,
+                      ...(skipReaderBlur ? {} : { filter: 'blur(0px)' }),
+                    }}
                     exit={{
                       opacity: articleExitOpacity,
                       y: directionalExitY,
-                      filter: 'blur(0.8px)',
+                      ...(skipReaderBlur ? {} : { filter: 'blur(0.8px)' }),
                       transition: articleExitTransition,
                     }}
                     transition={articleEnterTransition}
-                    className="px-4 py-8 max-sm:pb-24 transition-colors duration-300 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
+                    className="px-4 py-8 max-sm:pb-[calc(6rem+env(safe-area-inset-bottom,0px))] max-sm:pl-[max(1rem,env(safe-area-inset-left,0px))] max-sm:pr-[max(1rem,env(safe-area-inset-right,0px))] transition-colors duration-300 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
                     data-no-ui-font=""
                     style={readerSurfaceStyle}
                   >
@@ -1578,7 +1593,10 @@ export function EntryReading({
                           '[&_blockquote]:my-8 [&_blockquote]:rounded-r-xl [&_blockquote]:border-l-4 [&_blockquote]:border-primary/40 [&_blockquote]:bg-primary/5 [&_blockquote]:px-4 [&_blockquote]:py-2 [&_blockquote]:text-foreground/90',
                           '[&_hr]:my-8 [&_hr]:border-border/60',
                           '[&_table]:text-sm [&_table]:leading-relaxed',
-                          '[&_img]:my-8',
+                          '[&_img]:my-8 [&_img]:h-auto [&_img]:max-w-full [&_img]:rounded-lg',
+                          '[&_iframe]:my-6 [&_iframe]:h-auto [&_iframe]:w-full [&_iframe]:max-w-full',
+                          '[&_pre]:overflow-x-auto [&_table]:block [&_table]:max-w-full [&_table]:overflow-x-auto',
+                          '[-webkit-text-size-adjust:100%] [overflow-wrap:anywhere] [hyphens:auto]',
                           '[&_p:first-child]:mt-0 [&>*:last-child]:mb-0',
                           focusMode &&
                             '[&_[data-reader-node]]:opacity-25 [&_[data-reader-node]]:transition-opacity [&_[data-reader-node]]:duration-300 [&_[data-reader-node][data-focused="true"]]:opacity-100'
@@ -2133,7 +2151,7 @@ export function EntryReading({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 12 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
-                className="absolute right-4 bottom-4 z-20 max-sm:bottom-[calc(4.25rem+env(safe-area-inset-bottom))]"
+                className="absolute right-4 bottom-4 z-20 max-sm:right-[max(1rem,env(safe-area-inset-right,0px))] max-sm:bottom-[calc(4.25rem+env(safe-area-inset-bottom,0px))]"
               >
                 <Button
                   type="button"
@@ -2156,7 +2174,7 @@ export function EntryReading({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.96 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute right-4 bottom-4 left-4 z-20 flex justify-center max-sm:bottom-[calc(4.25rem+env(safe-area-inset-bottom))]"
+              className="absolute right-4 bottom-4 left-4 z-20 flex justify-center max-sm:left-[max(1rem,env(safe-area-inset-left,0px))] max-sm:right-[max(1rem,env(safe-area-inset-right,0px))] max-sm:bottom-[calc(4.25rem+env(safe-area-inset-bottom,0px))]"
             >
               <button
                 type="button"
@@ -2345,7 +2363,7 @@ export function EntryReading({
         </AnimatePresence>
 
         {translationEnabled && (
-          <div className="pointer-events-none absolute bottom-14 left-2 z-30 max-sm:bottom-[calc(4.25rem+env(safe-area-inset-bottom))]">
+          <div className="pointer-events-none absolute bottom-14 left-2 z-30 max-sm:left-[max(0.5rem,env(safe-area-inset-left,0px))] max-sm:bottom-[calc(4.25rem+env(safe-area-inset-bottom,0px))]">
             <TranslationProgressRing
               completed={translationProgress.completed}
               total={translationProgress.total}

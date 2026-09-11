@@ -49,10 +49,14 @@ export function MobileTabBar() {
 
   const activeFilter = search.filter;
 
+  const tabClass =
+    'flex min-h-11 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-[0.68rem] font-medium touch-manipulation select-none transition-[color,transform,opacity] duration-100 [-webkit-tap-highlight-color:transparent] active:scale-95 motion-reduce:active:scale-100';
+
   return (
     <nav
       aria-label={_(msg`Primary`)}
-      className="absolute inset-x-0 bottom-0 z-30 border-t border-border bg-background pb-[env(safe-area-inset-bottom)]"
+      data-testid="mobile-tab-bar"
+      className="absolute inset-x-0 bottom-0 z-30 border-t border-border/40 bg-background/80 pt-1 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/65 pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)]"
     >
       <div className="flex h-14 items-stretch">
         {VIEW_TABS.map((tab) => {
@@ -62,10 +66,8 @@ export function MobileTabBar() {
               key={tab.filter ?? 'all'}
               to="/"
               search={tab.filter ? { filter: tab.filter } : {}}
-              className={cn(
-                'flex min-w-0 flex-1 flex-col items-center justify-center gap-1 text-[0.68rem] font-medium transition-colors active:opacity-60',
-                isActive ? 'text-primary' : 'text-muted-foreground'
-              )}
+              aria-current={isActive ? 'page' : undefined}
+              className={cn(tabClass, isActive ? 'text-primary' : 'text-muted-foreground')}
             >
               <HugeiconsIcon icon={tab.icon} className="size-5" />
               <span className="truncate">{_(tab.label)}</span>
@@ -75,7 +77,7 @@ export function MobileTabBar() {
         <button
           type="button"
           onClick={() => setMobileSidebarOpen(true)}
-          className="flex min-w-0 flex-1 flex-col items-center justify-center gap-1 text-[0.68rem] font-medium text-muted-foreground transition-colors active:opacity-60"
+          className={cn(tabClass, 'text-muted-foreground')}
         >
           <HugeiconsIcon icon={MoreHorizontalIcon} className="size-5" />
           <span className="truncate">{_(msg`More`)}</span>

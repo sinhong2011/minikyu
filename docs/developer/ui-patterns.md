@@ -197,12 +197,12 @@ textarea {
 
 ```css
 body {
-  overscroll-behavior: none; /* Prevent bounce/refresh */
+  overscroll-behavior-y: none; /* Prevent bounce/refresh; leave X for Safari swipe-back */
   overflow: hidden; /* Prevent body scroll */
 }
 ```
 
-**Why:** Prevents pull-to-refresh and elastic scrolling that feels wrong in desktop apps.
+**Why:** Prevents pull-to-refresh and elastic scrolling that feels wrong in desktop apps. Y-only so iOS Safari's edge-swipe Back still closes the phone reader.
 
 ### Drag Regions
 

@@ -10,6 +10,7 @@ import { useCategories, useMarkCategoryAsRead } from '@/services/miniflux/catego
 import { useUnreadCounts } from '@/services/miniflux/counters';
 import { useEntries, usePrefetchEntry } from '@/services/miniflux/entries';
 import { useMarkFeedAsRead, useSyncMiniflux } from '@/services/miniflux/feeds';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useLastReadingEntry, useSaveLastReading } from '@/services/reading-state';
 import { useSyncStore } from '@/store/sync-store';
 import { useUIStore } from '@/store/ui-store';
@@ -60,6 +61,10 @@ vi.mock('@tanstack/react-router', () => ({
   useSearch: () => useSyncExternalStore(routerMock.subscribe, routerMock.getSearch),
   useNavigate: () => routerMock.navigate,
   useRouter: () => ({ history: { back: routerMock.back } }),
+}));
+
+vi.mock('@/hooks/use-mobile', () => ({
+  useIsMobile: vi.fn(() => false),
 }));
 
 vi.mock('@/hooks/use-sync-progress-listener', () => ({
@@ -122,7 +127,13 @@ vi.mock('@/components/layout/MainWindowContent', () => ({
 }));
 
 vi.mock('./EntryList', () => ({
-  EntryList: () => <div data-testid="entry-list" />,
+  EntryList: ({ onEntrySelect }: { onEntrySelect?: (id: string) => void }) => (
+    <div data-testid="entry-list">
+      <button type="button" data-testid="select-entry" onClick={() => onEntrySelect?.('1536612')}>
+        Open
+      </button>
+    </div>
+  ),
 }));
 
 vi.mock('./EntryFilters', () => ({
@@ -173,6 +184,7 @@ describe('MinifluxLayout', () => {
 
     useUIStore.setState({ searchFiltersVisible: false });
     routerMock.set({});
+    vi.mocked(useIsMobile).mockReturnValue(false);
 
     (useIsConnected as any).mockReturnValue({
       data: true,
@@ -223,6 +235,32 @@ describe('MinifluxLayout', () => {
         entry_id: '1536612',
         timestamp: '1770881306750',
       },
+    });
+  });
+
+  it('closes the reader when Safari pops history (edge-swipe Back)', async () => {
+    vi.mocked(useIsMobile).mockReturnValue(true);
+    routerMock.set({ entry: '1536612' });
+    render(<MinifluxLayout />, { wrapper: TestWrapper });
+
+    expect(routerMock.getSearch().entry).toBe('1536612');
+
+    // Safari edge-swipe: popstate first (unclaimed), then the URL loses ?entry=.
+    act(() => {
+      window.dispatchEvent(new PopStateEvent('popstate'));
+      routerMock.set({});
+    });
+
+    expect(routerMock.getSearch().entry).toBeUndefined();
+    expect(routerMock.back).not.toHaveBeenCalled();
+
+    // iOS sometimes re-applies the pre-back search params after Back.
+    act(() => {
+      routerMock.set({ entry: '1536612' });
+    });
+
+    await waitFor(() => {
+      expect(routerMock.getSearch().entry).toBeUndefined();
     });
   });
 

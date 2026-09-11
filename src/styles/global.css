@@ -64,19 +64,68 @@
     The app is a fixed-height shell with its own scroll panes, so the document
     itself must never scroll: a rubber-band on the page moves the whole layout
     under iOS Safari's chrome and leaves the bottom bar stranded behind it.
-    `html` also carries a background because Safari samples it to tint its
-    floating bar — a transparent root gets a white bar in dark mode.
+    Only the Y axis is clamped — `overscroll-behavior: none` would also kill
+    Safari's edge-swipe Back, which is how the phone reader closes. `html`
+    also carries a background because Safari samples it to tint its floating
+    bar — a transparent root gets a white bar in dark mode.
   */
   html,
   body {
     height: 100%;
-    overscroll-behavior: none;
+    overscroll-behavior-y: none;
+    -webkit-text-size-adjust: 100%;
+    text-size-adjust: 100%;
   }
   html {
     @apply bg-background;
   }
   body {
     overflow: hidden;
+    -webkit-tap-highlight-color: transparent;
+  }
+}
+
+/*
+  iOS Safari paints its toolbar over the layout viewport. Fixed bottom chrome
+  has to sit on the *visual* bottom: the overlap is published as
+  `--vv-offset-bottom` (see `useSafariViewportInsets`), and `100lvh - 100dvh`
+  covers engines that size those units correctly but never fire visualViewport.
+*/
+.app-fixed-bottom-bar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: var(--vv-offset-bottom, 0px);
+  padding-left: env(safe-area-inset-left, 0px);
+  padding-right: env(safe-area-inset-right, 0px);
+}
+@supports (height: 100dvh) and (height: 100lvh) {
+  .app-fixed-bottom-bar {
+    bottom: max(var(--vv-offset-bottom, 0px), calc(100lvh - 100dvh));
+  }
+}
+
+/* iOS WebKit: native momentum on inner panes, no 300ms tap delay on chrome. */
+@supports (-webkit-touch-callout: none) {
+  button,
+  a,
+  [role='button'],
+  [role='tab'],
+  [role='menuitem'] {
+    touch-action: manipulation;
+  }
+
+  [data-slot='scroll-area-viewport'],
+  .overflow-y-auto {
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior-y: contain;
+  }
+
+  /* Reader article: keep iOS's native selection callout and text gestures. */
+  [data-no-ui-font] {
+    -webkit-touch-callout: default;
+    -webkit-user-select: text;
+    user-select: text;
   }
 }
 

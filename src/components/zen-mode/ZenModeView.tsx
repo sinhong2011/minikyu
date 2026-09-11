@@ -17,6 +17,7 @@ import {
   setZenModeEntry,
   useZenMode,
 } from '@/hooks/use-zen-mode';
+import { isWeb } from '@/lib/platform';
 import { getReaderThemePalette } from '@/lib/reader-theme';
 import { cn } from '@/lib/utils';
 import { useMarkEntryRead } from '@/services/miniflux/entries';
@@ -33,7 +34,7 @@ export function ZenModeView() {
   // Round the overlay only where the window itself is rounded; a browser tab
   // and the Windows/Linux shells are square, and rounding there just lets the
   // page behind show through at the corners.
-  const roundedWindow = usePlatform() === 'macos' ? 'rounded-xl' : '';
+  const roundedWindow = usePlatform() === 'macos' && !isWeb ? 'rounded-xl' : '';
   const readerThemePalette = getReaderThemePalette(readerTheme);
   const { data: preferences } = usePreferences();
 

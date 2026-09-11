@@ -37,6 +37,8 @@ function mapPlatform(p: Platform): AppPlatform {
 /** Best-effort platform detection from the user agent, for the PWA build. */
 function detectFromUserAgent(): AppPlatform {
   const ua = navigator.userAgent;
+  // iPhone/iPad match this too. Shortcut glyphs still want ⌘, but native-window
+  // rounding CSS must not apply — `main.tsx` skips `data-platform` on web.
   if (/Mac|iPhone|iPad|iPod/i.test(ua)) return 'macos';
   if (/Win/i.test(ua)) return 'windows';
   return 'linux';

@@ -10,6 +10,7 @@ import ReactDOM from 'react-dom/client';
 import { AppProviders } from '@/AppProviders';
 import { getPlatform } from '@/hooks/use-platform';
 import { defaultLocale, loadAndActivate } from '@/i18n/config';
+import { isWeb } from '@/lib/platform';
 import { queryClient } from '@/lib/query-client';
 import { registerRouter } from '@/lib/router-ref';
 import { registerServiceWorker } from '@/lib/web/register-sw';
@@ -20,8 +21,12 @@ import '@/styles/global.css';
 // importing the route tree. See `@/lib/router-ref`.
 registerRouter(router);
 
-// Set platform data attribute on <html> for platform-specific CSS
-document.documentElement.dataset.platform = getPlatform();
+// Native-window rounding CSS keys off `data-platform="macos"`. Skip it in the
+// browser: iPhone/iPad UA currently maps to macos, and that clip-path would
+// eat the tab bar and the home-indicator inset.
+if (!isWeb) {
+  document.documentElement.dataset.platform = getPlatform();
+}
 
 // No-ops in the Tauri build; installs the app shell worker in the PWA build.
 registerServiceWorker();
