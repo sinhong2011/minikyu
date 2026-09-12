@@ -26,7 +26,8 @@ import { copyText } from '@/lib/shell';
 import { openUrl } from '@/lib/shell';
 import { parseISO } from 'date-fns';
 import { AnimatePresence, type MotionValue, motion } from 'motion/react';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState, type ReactNode } from 'react';
+import { createPortal } from 'react-dom';
 import { toast } from 'sonner';
 import { Switch } from '@/components/animate-ui/components/base/switch';
 import { FeedAvatar } from '@/components/miniflux/FeedAvatar';
@@ -61,6 +62,7 @@ import { capabilities } from '@/lib/platform';
 import { cn } from '@/lib/utils';
 import { usePlayerStore } from '@/store/player-store';
 import { ReaderSettings } from './ReaderSettings';
+import { useReaderActionBarSlot } from './reader-action-bar-slot';
 
 interface EntryReadingHeaderProps {
   entry: Entry;
@@ -145,6 +147,7 @@ export function EntryReadingHeader({
 }: EntryReadingHeaderProps) {
   const { _, i18n } = useLingui();
   const isMobile = useIsMobile();
+  const actionBarSlot = useReaderActionBarSlot();
   const popoverSide = isMobile ? 'top' : 'bottom';
   const {
     chineseConversionMode,
@@ -343,9 +346,17 @@ export function EntryReadingHeader({
     };
   });
 
+  const wrapActionBar = (node: ReactNode) => {
+    if (!isMobile) return node;
+    // Wait for the footer slot — putting a fixed bar in the header for a
+    // frame, then jumping it to the bottom, is the drag-close flash.
+    if (!actionBarSlot) return null;
+    return createPortal(node, actionBarSlot);
+  };
+
   return (
     <motion.header
-      className="sticky top-0 z-10 w-full min-w-0 max-w-full shrink-0 overflow-hidden px-6 text-foreground max-sm:pl-[max(1.5rem,env(safe-area-inset-left,0px))] max-sm:pr-[max(1.5rem,env(safe-area-inset-right,0px))]"
+      className="sticky top-0 z-10 w-full min-w-0 max-w-full shrink-0 overflow-hidden bg-background pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(0.5rem,env(safe-area-inset-right,0px))] text-foreground md:px-6"
       style={{
         paddingTop: headerPadding,
         paddingBottom: headerPadding,
@@ -522,12 +533,205 @@ export function EntryReadingHeader({
             </time>
           </div>
 
-          <div
-            role="toolbar"
-            data-testid="reader-action-toolbar"
-            className="flex shrink-0 items-center gap-1.5 max-sm:app-fixed-bottom-bar max-sm:z-30 max-sm:justify-around max-sm:gap-0 max-sm:border-t max-sm:border-border/40 max-sm:bg-background/80 max-sm:px-2 max-sm:pt-2 max-sm:backdrop-blur-xl max-sm:backdrop-saturate-150 max-sm:supports-[backdrop-filter]:bg-background/65 max-sm:pb-[calc(0.5rem+env(safe-area-inset-bottom,0px))]"
-          >
-            {capabilities.summaries && (
+          {wrapActionBar(
+            <div
+              role="toolbar"
+              data-testid="reader-action-toolbar"
+              className={cn(
+                'flex shrink-0 items-center gap-1.5',
+                isMobile &&
+                  'app-ios-menubar pointer-events-auto z-10 mx-[max(1.25rem,env(safe-area-inset-left,0px))] mb-[max(0.6rem,env(safe-area-inset-bottom,0px))] min-w-0 max-w-full justify-around gap-0 rounded-[1.35rem] px-1.5 py-1'
+              )}
+            >
+              {capabilities.summaries && (
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="icon"
+                        className={cn(
+                          toolbarButtonClass,
+                          'relative',
+                          hasSummary &&
+                            'border-border/60 bg-black/[0.08] dark:bg-white/[0.12] text-foreground'
+                        )}
+                        onClick={onSummarize}
+                        disabled={isSummarizing}
+                        aria-label={_(msg`Summarize with AI`)}
+                      />
+                    }
+                  >
+                    <HugeiconsIcon
+                      icon={SparklesIcon}
+                      className={cn('h-5 w-5', isSummarizing && 'animate-pulse')}
+                      strokeWidth={2}
+                    />
+                    {hasSummary && (
+                      <span
+                        className="absolute -end-0.5 -top-0.5 size-2 rounded-full bg-primary"
+                        aria-hidden="true"
+                      />
+                    )}
+                  </TooltipTrigger>
+                  <TooltipPanel>
+                    {isSummarizing ? _(msg`Summarizing...`) : _(msg`Summarize with AI`)}
+                  </TooltipPanel>
+                </Tooltip>
+              )}
+
+              <Popover>
+                <Tooltip>
+                  <TooltipTrigger
+                    render={
+                      <PopoverTrigger
+                        render={
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className={cn(
+                              toolbarButtonClass,
+                              'relative',
+                              translationControlActive &&
+                                'border-border/60 bg-black/[0.08] dark:bg-white/[0.12] text-foreground'
+                            )}
+                            aria-label={translationTriggerLabel}
+                          >
+                            <HugeiconsIcon icon={Globe02Icon} className="h-5 w-5" strokeWidth={2} />
+                            {translationControlActive && (
+                              <span
+                                className="absolute -end-0.5 -top-0.5 size-2 rounded-full bg-primary"
+                                aria-hidden="true"
+                              />
+                            )}
+                          </Button>
+                        }
+                      />
+                    }
+                  />
+                  <TooltipPanel>{translationPanelLabel}</TooltipPanel>
+                </Tooltip>
+                <PopoverContent
+                  className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 p-3.5 shadow-xl"
+                  side={popoverSide}
+                  align="end"
+                >
+                  <PopoverHeader>
+                    <PopoverTitle>{translationPanelLabel}</PopoverTitle>
+                  </PopoverHeader>
+
+                  {capabilities.translation &&
+                    (isExcludedFeed ? (
+                      <div className="rounded-md border border-border/50 px-2.5 py-2">
+                        <p className="text-xs text-muted-foreground">
+                          {_(msg`Translation disabled for this feed`)}
+                        </p>
+                      </div>
+                    ) : (
+                      <>
+                        <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
+                          <div className="space-y-0.5">
+                            <p className="text-xs font-medium">{_(msg`Translate now`)}</p>
+                            <p className="text-[11px] text-muted-foreground">
+                              {_(msg`Applies to all articles when enabled`)}
+                            </p>
+                          </div>
+                          <Switch
+                            checked={translationEnabled}
+                            onCheckedChange={(checked) =>
+                              onTranslationEnabledChange(Boolean(checked))
+                            }
+                            aria-label={_(msg`Translate now`)}
+                          />
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <p className="text-xs text-muted-foreground">{_(msg`Target language`)}</p>
+                          <Select
+                            value={translationTargetLanguage ?? 'en'}
+                            onValueChange={(value: string) =>
+                              onTranslationTargetLanguageChange(value)
+                            }
+                          >
+                            <SelectTrigger className="h-8 w-full text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {translationTargetLanguageOptions.map((option) => (
+                                <SelectItem key={option.value} value={option.value}>
+                                  {option.label}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        <div className="space-y-1.5">
+                          <p className="text-xs text-muted-foreground">{_(msg`Display mode`)}</p>
+                          <Select
+                            value={translationDisplayMode}
+                            onValueChange={(value: string) =>
+                              onTranslationDisplayModeChange(
+                                value as AppPreferences['reader_translation_display_mode']
+                              )
+                            }
+                          >
+                            <SelectTrigger className="h-8 w-full text-xs">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent>
+                              <SelectItem value="bilingual">{_(msg`Bilingual`)}</SelectItem>
+                              <SelectItem value="translated_only">
+                                {_(msg`Translated only`)}
+                              </SelectItem>
+                            </SelectContent>
+                          </Select>
+                        </div>
+
+                        {activeTranslationProvider && (
+                          <div
+                            className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2"
+                            data-testid="active-translation-provider-badge"
+                          >
+                            <p className="text-xs text-muted-foreground">{_(msg`Provider`)}</p>
+                            <p className="text-xs font-medium">
+                              {getTranslationProviderLabel(activeTranslationProvider)}
+                            </p>
+                          </div>
+                        )}
+                      </>
+                    ))}
+
+                  {capabilities.translation && <div className="border-t border-border/40" />}
+
+                  <div className="space-y-1.5">
+                    <p className="text-xs text-muted-foreground">{_(msg`中文顯示`)}</p>
+                    <Select
+                      value={chineseConversionMode}
+                      onValueChange={(value: string) =>
+                        setChineseConversionMode(value as ChineseConversionMode)
+                      }
+                      disabled={isLoading}
+                    >
+                      <SelectTrigger className="h-8 w-full text-xs">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {conversionOptions.map((option) => (
+                          <SelectItem key={option.value} value={option.value}>
+                            {option.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </PopoverContent>
+              </Popover>
+
+              <ReaderSettings />
+
               <Tooltip>
                 <TooltipTrigger
                   render={
@@ -537,501 +741,318 @@ export function EntryReadingHeader({
                       size="icon"
                       className={cn(
                         toolbarButtonClass,
-                        'relative',
-                        hasSummary &&
+                        focusMode &&
                           'border-border/60 bg-black/[0.08] dark:bg-white/[0.12] text-foreground'
                       )}
-                      onClick={onSummarize}
-                      disabled={isSummarizing}
-                      aria-label={_(msg`Summarize with AI`)}
+                      onClick={() => onFocusModeChange(!focusMode)}
+                      aria-label={_(msg`Focus mode`)}
+                      aria-pressed={focusMode}
                     />
                   }
                 >
-                  <HugeiconsIcon
-                    icon={SparklesIcon}
-                    className={cn('h-5 w-5', isSummarizing && 'animate-pulse')}
-                    strokeWidth={2}
-                  />
-                  {hasSummary && (
-                    <span
-                      className="absolute -end-0.5 -top-0.5 size-2 rounded-full bg-primary"
-                      aria-hidden="true"
-                    />
-                  )}
+                  <HugeiconsIcon icon={CenterFocusIcon} className="h-5 w-5" strokeWidth={2} />
                 </TooltipTrigger>
-                <TooltipPanel>
-                  {isSummarizing ? _(msg`Summarizing...`) : _(msg`Summarize with AI`)}
-                </TooltipPanel>
+                <TooltipPanel>{_(msg`Focus mode`)}</TooltipPanel>
               </Tooltip>
-            )}
 
-            <Popover>
+              <Tooltip>
+                <Popover>
+                  <TooltipTrigger
+                    render={
+                      <PopoverTrigger
+                        render={
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className={toolbarButtonClass}
+                            aria-label={_(msg`Reading display`)}
+                            disabled={isLoading}
+                          />
+                        }
+                      >
+                        <HugeiconsIcon icon={TextIcon} className="h-5 w-5" strokeWidth={2} />
+                      </PopoverTrigger>
+                    }
+                  />
+                  <TooltipPanel>{_(msg`Reading display`)}</TooltipPanel>
+                  <PopoverContent
+                    className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 p-3.5 shadow-xl"
+                    side={popoverSide}
+                    align="start"
+                  >
+                    <PopoverHeader>
+                      <PopoverTitle>{_(msg`Reading display`)}</PopoverTitle>
+                    </PopoverHeader>
+
+                    <div className="space-y-1.5">
+                      <p className="text-xs text-muted-foreground">{_(msg`Code theme`)}</p>
+                      <Select
+                        value={codeTheme}
+                        onValueChange={(value: string) => {
+                          if ((readerCodeThemeOptions as readonly string[]).includes(value)) {
+                            setCodeTheme(value as ReaderCodeTheme);
+                          }
+                        }}
+                        disabled={isLoading}
+                      >
+                        <SelectTrigger className="h-8 w-full text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="max-h-80">
+                          {readerCodeThemeOptions.map((themeOption) => (
+                            <SelectItem key={themeOption} value={themeOption}>
+                              {formatCodeThemeLabel(themeOption)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="space-y-1.5">
+                      <p className="text-xs text-muted-foreground">{_(msg`Reading theme`)}</p>
+                      <Select
+                        value={selectedReaderTheme}
+                        onValueChange={(value: string) => setReaderTheme(value)}
+                        disabled={isLoading}
+                      >
+                        <SelectTrigger className="h-8 w-full text-xs">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          {readerThemeOptions.map((themeOption) => (
+                            <SelectItem key={themeOption} value={themeOption}>
+                              {getReaderThemeLabel(themeOption)}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+
+                    <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
+                      <div className="space-y-0.5">
+                        <p className="text-xs font-medium">{_(msg`Bionic Reading`)}</p>
+                        <p className="text-[11px] text-muted-foreground">{_(msg`English only`)}</p>
+                      </div>
+                      <Switch
+                        checked={bionicReading}
+                        onCheckedChange={(checked) => setBionicReading(Boolean(checked))}
+                        disabled={isLoading}
+                      />
+                    </div>
+
+                    <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
+                      <div className="space-y-0.5">
+                        <p className="text-xs font-medium">{_(msg`Status Bar`)}</p>
+                        <p className="text-[11px] text-muted-foreground">
+                          {_(msg`Show reading progress at bottom-left`)}
+                        </p>
+                      </div>
+                      <Switch
+                        checked={statusBarVisible}
+                        onCheckedChange={(checked) => setStatusBarVisible(Boolean(checked))}
+                        disabled={isLoading}
+                      />
+                    </div>
+                  </PopoverContent>
+                </Popover>
+              </Tooltip>
+
               <Tooltip>
                 <TooltipTrigger
                   render={
-                    <PopoverTrigger
-                      render={
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className={cn(
-                            toolbarButtonClass,
-                            'relative',
-                            translationControlActive &&
-                              'border-border/60 bg-black/[0.08] dark:bg-white/[0.12] text-foreground'
-                          )}
-                          aria-label={translationTriggerLabel}
-                        >
-                          <HugeiconsIcon icon={Globe02Icon} className="h-5 w-5" strokeWidth={2} />
-                          {translationControlActive && (
-                            <span
-                              className="absolute -end-0.5 -top-0.5 size-2 rounded-full bg-primary"
-                              aria-hidden="true"
-                            />
-                          )}
-                        </Button>
-                      }
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className={toolbarButtonClass}
+                      onClick={onToggleRead}
+                      disabled={isTogglingRead}
+                      aria-label={isRead ? _(msg`Mark as unread`) : _(msg`Mark as read`)}
                     />
                   }
-                />
-                <TooltipPanel>{translationPanelLabel}</TooltipPanel>
+                >
+                  <AnimatePresence mode="wait" initial={false}>
+                    <motion.div
+                      key={isRead ? 'read' : 'unread'}
+                      initial={{ scale: 0.6, opacity: 0, rotate: -90 }}
+                      animate={{ scale: 1, opacity: 1, rotate: 0 }}
+                      exit={{ scale: 0.6, opacity: 0, rotate: 90 }}
+                      transition={{ duration: 0.2, ease: 'backOut' }}
+                    >
+                      <HugeiconsIcon
+                        icon={isRead ? MailOpen01Icon : Mail01Icon}
+                        className="h-5 w-5"
+                      />
+                    </motion.div>
+                  </AnimatePresence>
+                </TooltipTrigger>
+                <TooltipPanel>
+                  {isRead ? _(msg`Mark as unread`) : _(msg`Mark as read`)}
+                </TooltipPanel>
               </Tooltip>
-              <PopoverContent
-                className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 p-3.5 shadow-xl"
-                side={popoverSide}
-                align="end"
-              >
-                <PopoverHeader>
-                  <PopoverTitle>{translationPanelLabel}</PopoverTitle>
-                </PopoverHeader>
 
-                {capabilities.translation &&
-                  (isExcludedFeed ? (
-                    <div className="rounded-md border border-border/50 px-2.5 py-2">
-                      <p className="text-xs text-muted-foreground">
-                        {_(msg`Translation disabled for this feed`)}
-                      </p>
-                    </div>
-                  ) : (
-                    <>
-                      <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
-                        <div className="space-y-0.5">
-                          <p className="text-xs font-medium">{_(msg`Translate now`)}</p>
-                          <p className="text-[11px] text-muted-foreground">
-                            {_(msg`Applies to all articles when enabled`)}
-                          </p>
-                        </div>
-                        <Switch
-                          checked={translationEnabled}
-                          onCheckedChange={(checked) =>
-                            onTranslationEnabledChange(Boolean(checked))
-                          }
-                          aria-label={_(msg`Translate now`)}
-                        />
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <p className="text-xs text-muted-foreground">{_(msg`Target language`)}</p>
-                        <Select
-                          value={translationTargetLanguage ?? 'en'}
-                          onValueChange={(value: string) =>
-                            onTranslationTargetLanguageChange(value)
-                          }
-                        >
-                          <SelectTrigger className="h-8 w-full text-xs">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            {translationTargetLanguageOptions.map((option) => (
-                              <SelectItem key={option.value} value={option.value}>
-                                {option.label}
-                              </SelectItem>
-                            ))}
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      <div className="space-y-1.5">
-                        <p className="text-xs text-muted-foreground">{_(msg`Display mode`)}</p>
-                        <Select
-                          value={translationDisplayMode}
-                          onValueChange={(value: string) =>
-                            onTranslationDisplayModeChange(
-                              value as AppPreferences['reader_translation_display_mode']
-                            )
-                          }
-                        >
-                          <SelectTrigger className="h-8 w-full text-xs">
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="bilingual">{_(msg`Bilingual`)}</SelectItem>
-                            <SelectItem value="translated_only">
-                              {_(msg`Translated only`)}
-                            </SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-
-                      {activeTranslationProvider && (
-                        <div
-                          className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2"
-                          data-testid="active-translation-provider-badge"
-                        >
-                          <p className="text-xs text-muted-foreground">{_(msg`Provider`)}</p>
-                          <p className="text-xs font-medium">
-                            {getTranslationProviderLabel(activeTranslationProvider)}
-                          </p>
-                        </div>
+              <Tooltip>
+                <TooltipTrigger
+                  render={
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className={cn(
+                        toolbarButtonClass,
+                        'max-sm:hidden',
+                        isStarred && 'text-yellow-500'
                       )}
-                    </>
-                  ))}
+                      onClick={onToggleStar}
+                      aria-label={isStarred ? _(msg`Unstar`) : _(msg`Star`)}
+                    />
+                  }
+                >
+                  <HugeiconsIcon icon={StarIcon} className="h-5 w-5" strokeWidth={2} />
+                </TooltipTrigger>
+                <TooltipPanel>{isStarred ? _(msg`Unstar`) : _(msg`Star`)}</TooltipPanel>
+              </Tooltip>
 
-                {capabilities.translation && <div className="border-t border-border/40" />}
-
-                <div className="space-y-1.5">
-                  <p className="text-xs text-muted-foreground">{_(msg`中文顯示`)}</p>
-                  <Select
-                    value={chineseConversionMode}
-                    onValueChange={(value: string) =>
-                      setChineseConversionMode(value as ChineseConversionMode)
-                    }
-                    disabled={isLoading}
-                  >
-                    <SelectTrigger className="h-8 w-full text-xs">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {conversionOptions.map((option) => (
-                        <SelectItem key={option.value} value={option.value}>
-                          {option.label}
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-              </PopoverContent>
-            </Popover>
-
-            <ReaderSettings />
-
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className={cn(
-                      toolbarButtonClass,
-                      focusMode &&
-                        'border-border/60 bg-black/[0.08] dark:bg-white/[0.12] text-foreground'
-                    )}
-                    onClick={() => onFocusModeChange(!focusMode)}
-                    aria-label={_(msg`Focus mode`)}
-                    aria-pressed={focusMode}
-                  />
-                }
-              >
-                <HugeiconsIcon icon={CenterFocusIcon} className="h-5 w-5" strokeWidth={2} />
-              </TooltipTrigger>
-              <TooltipPanel>{_(msg`Focus mode`)}</TooltipPanel>
-            </Tooltip>
-
-            <Tooltip>
-              <Popover>
+              <Tooltip>
                 <TooltipTrigger
                   render={
-                    <PopoverTrigger
-                      render={
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className={toolbarButtonClass}
-                          aria-label={_(msg`Reading display`)}
-                          disabled={isLoading}
-                        />
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="icon"
+                      className={toolbarButtonClass}
+                      onClick={onFetchOriginalContent}
+                      disabled={isFetchingOriginalContent}
+                      aria-label={
+                        isFetchingOriginalContent
+                          ? fetchingOriginalContentLabel
+                          : isOriginalContentDownloaded
+                            ? originalContentDownloadedLabel
+                            : fetchOriginalContentLabel
                       }
-                    >
-                      <HugeiconsIcon icon={TextIcon} className="h-5 w-5" strokeWidth={2} />
-                    </PopoverTrigger>
+                    />
                   }
-                />
-                <TooltipPanel>{_(msg`Reading display`)}</TooltipPanel>
-                <PopoverContent
-                  className="w-72 space-y-3 rounded-2xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 p-3.5 shadow-xl"
-                  side={popoverSide}
-                  align="start"
                 >
-                  <PopoverHeader>
-                    <PopoverTitle>{_(msg`Reading display`)}</PopoverTitle>
-                  </PopoverHeader>
+                  {isFetchingOriginalContent ? (
+                    <Spinner className="h-5 w-5" />
+                  ) : isOriginalContentDownloaded ? (
+                    <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-5 w-5 text-primary" />
+                  ) : (
+                    <HugeiconsIcon icon={Download01Icon} className="h-5 w-5" />
+                  )}
+                </TooltipTrigger>
+                <TooltipPanel>
+                  {isFetchingOriginalContent
+                    ? fetchingOriginalContentLabel
+                    : isOriginalContentDownloaded
+                      ? originalContentDownloadedLabel
+                      : fetchOriginalContentLabel}
+                </TooltipPanel>
+              </Tooltip>
 
-                  <div className="space-y-1.5">
-                    <p className="text-xs text-muted-foreground">{_(msg`Code theme`)}</p>
-                    <Select
-                      value={codeTheme}
-                      onValueChange={(value: string) => {
-                        if ((readerCodeThemeOptions as readonly string[]).includes(value)) {
-                          setCodeTheme(value as ReaderCodeTheme);
+              <Tooltip>
+                <Popover>
+                  <TooltipTrigger
+                    render={
+                      <PopoverTrigger
+                        render={
+                          <Button
+                            type="button"
+                            variant="ghost"
+                            size="icon"
+                            className={toolbarButtonClass}
+                            aria-label={_(msg`Share`)}
+                          />
                         }
-                      }}
-                      disabled={isLoading}
-                    >
-                      <SelectTrigger className="h-8 w-full text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="max-h-80">
-                        {readerCodeThemeOptions.map((themeOption) => (
-                          <SelectItem key={themeOption} value={themeOption}>
-                            {formatCodeThemeLabel(themeOption)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="space-y-1.5">
-                    <p className="text-xs text-muted-foreground">{_(msg`Reading theme`)}</p>
-                    <Select
-                      value={selectedReaderTheme}
-                      onValueChange={(value: string) => setReaderTheme(value)}
-                      disabled={isLoading}
-                    >
-                      <SelectTrigger className="h-8 w-full text-xs">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent>
-                        {readerThemeOptions.map((themeOption) => (
-                          <SelectItem key={themeOption} value={themeOption}>
-                            {getReaderThemeLabel(themeOption)}
-                          </SelectItem>
-                        ))}
-                      </SelectContent>
-                    </Select>
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
-                    <div className="space-y-0.5">
-                      <p className="text-xs font-medium">{_(msg`Bionic Reading`)}</p>
-                      <p className="text-[11px] text-muted-foreground">{_(msg`English only`)}</p>
-                    </div>
-                    <Switch
-                      checked={bionicReading}
-                      onCheckedChange={(checked) => setBionicReading(Boolean(checked))}
-                      disabled={isLoading}
-                    />
-                  </div>
-
-                  <div className="flex items-center justify-between rounded-md border border-border/50 px-2.5 py-2">
-                    <div className="space-y-0.5">
-                      <p className="text-xs font-medium">{_(msg`Status Bar`)}</p>
-                      <p className="text-[11px] text-muted-foreground">
-                        {_(msg`Show reading progress at bottom-left`)}
-                      </p>
-                    </div>
-                    <Switch
-                      checked={statusBarVisible}
-                      onCheckedChange={(checked) => setStatusBarVisible(Boolean(checked))}
-                      disabled={isLoading}
-                    />
-                  </div>
-                </PopoverContent>
-              </Popover>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className={toolbarButtonClass}
-                    onClick={onToggleRead}
-                    disabled={isTogglingRead}
-                    aria-label={isRead ? _(msg`Mark as unread`) : _(msg`Mark as read`)}
-                  />
-                }
-              >
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.div
-                    key={isRead ? 'read' : 'unread'}
-                    initial={{ scale: 0.6, opacity: 0, rotate: -90 }}
-                    animate={{ scale: 1, opacity: 1, rotate: 0 }}
-                    exit={{ scale: 0.6, opacity: 0, rotate: 90 }}
-                    transition={{ duration: 0.2, ease: 'backOut' }}
-                  >
-                    <HugeiconsIcon
-                      icon={isRead ? MailOpen01Icon : Mail01Icon}
-                      className="h-5 w-5"
-                    />
-                  </motion.div>
-                </AnimatePresence>
-              </TooltipTrigger>
-              <TooltipPanel>{isRead ? _(msg`Mark as unread`) : _(msg`Mark as read`)}</TooltipPanel>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className={cn(
-                      toolbarButtonClass,
-                      'max-sm:hidden',
-                      isStarred && 'text-yellow-500'
-                    )}
-                    onClick={onToggleStar}
-                    aria-label={isStarred ? _(msg`Unstar`) : _(msg`Star`)}
-                  />
-                }
-              >
-                <HugeiconsIcon icon={StarIcon} className="h-5 w-5" strokeWidth={2} />
-              </TooltipTrigger>
-              <TooltipPanel>{isStarred ? _(msg`Unstar`) : _(msg`Star`)}</TooltipPanel>
-            </Tooltip>
-
-            <Tooltip>
-              <TooltipTrigger
-                render={
-                  <Button
-                    type="button"
-                    variant="ghost"
-                    size="icon"
-                    className={toolbarButtonClass}
-                    onClick={onFetchOriginalContent}
-                    disabled={isFetchingOriginalContent}
-                    aria-label={
-                      isFetchingOriginalContent
-                        ? fetchingOriginalContentLabel
-                        : isOriginalContentDownloaded
-                          ? originalContentDownloadedLabel
-                          : fetchOriginalContentLabel
+                      >
+                        <HugeiconsIcon icon={Share01Icon} className="h-5 w-5" />
+                      </PopoverTrigger>
                     }
                   />
-                }
-              >
-                {isFetchingOriginalContent ? (
-                  <Spinner className="h-5 w-5" />
-                ) : isOriginalContentDownloaded ? (
-                  <HugeiconsIcon icon={CheckmarkCircle02Icon} className="h-5 w-5 text-primary" />
-                ) : (
-                  <HugeiconsIcon icon={Download01Icon} className="h-5 w-5" />
-                )}
-              </TooltipTrigger>
-              <TooltipPanel>
-                {isFetchingOriginalContent
-                  ? fetchingOriginalContentLabel
-                  : isOriginalContentDownloaded
-                    ? originalContentDownloadedLabel
-                    : fetchOriginalContentLabel}
-              </TooltipPanel>
-            </Tooltip>
-
-            <Tooltip>
-              <Popover>
-                <TooltipTrigger
-                  render={
-                    <PopoverTrigger
-                      render={
-                        <Button
-                          type="button"
-                          variant="ghost"
-                          size="icon"
-                          className={toolbarButtonClass}
-                          aria-label={_(msg`Share`)}
-                        />
-                      }
-                    >
-                      <HugeiconsIcon icon={Share01Icon} className="h-5 w-5" />
-                    </PopoverTrigger>
-                  }
-                />
-                <TooltipPanel>{_(msg`Share`)}</TooltipPanel>
-                <PopoverContent
-                  className="w-56 p-1.5 rounded-xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 shadow-xl"
-                  side={popoverSide}
-                  align="end"
-                >
-                  <button
-                    type="button"
-                    onClick={handleCopyUrl}
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
+                  <TooltipPanel>{_(msg`Share`)}</TooltipPanel>
+                  <PopoverContent
+                    className="w-56 p-1.5 rounded-xl border-border/60 bg-popover/90 backdrop-blur-xl supports-[backdrop-filter]:bg-popover/75 shadow-xl"
+                    side={popoverSide}
+                    align="end"
                   >
-                    <HugeiconsIcon
-                      icon={copiedUrl ? CheckmarkCircle02Icon : Copy01Icon}
-                      className={
-                        copiedUrl ? 'h-4 w-4 text-primary' : 'h-4 w-4 text-muted-foreground'
-                      }
-                    />
-                    <span className={copiedUrl ? 'text-primary' : ''}>
-                      {copiedUrl ? _(msg`URL copied!`) : _(msg`Copy article URL`)}
-                    </span>
-                  </button>
-                  {entry.share_code && (
                     <button
                       type="button"
-                      onClick={handleCopyShareCode}
+                      onClick={handleCopyUrl}
                       className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
                     >
                       <HugeiconsIcon
-                        icon={copiedShareCode ? CheckmarkCircle02Icon : Share01Icon}
+                        icon={copiedUrl ? CheckmarkCircle02Icon : Copy01Icon}
                         className={
-                          copiedShareCode ? 'h-4 w-4 text-primary' : 'h-4 w-4 text-muted-foreground'
+                          copiedUrl ? 'h-4 w-4 text-primary' : 'h-4 w-4 text-muted-foreground'
                         }
                       />
-                      <span className={copiedShareCode ? 'text-primary' : ''}>
-                        {copiedShareCode ? _(msg`Share link copied!`) : _(msg`Copy share link`)}
+                      <span className={copiedUrl ? 'text-primary' : ''}>
+                        {copiedUrl ? _(msg`URL copied!`) : _(msg`Copy article URL`)}
                       </span>
                     </button>
-                  )}
-                  {onOpenInAppBrowser && (
+                    {entry.share_code && (
+                      <button
+                        type="button"
+                        onClick={handleCopyShareCode}
+                        className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
+                      >
+                        <HugeiconsIcon
+                          icon={copiedShareCode ? CheckmarkCircle02Icon : Share01Icon}
+                          className={
+                            copiedShareCode
+                              ? 'h-4 w-4 text-primary'
+                              : 'h-4 w-4 text-muted-foreground'
+                          }
+                        />
+                        <span className={copiedShareCode ? 'text-primary' : ''}>
+                          {copiedShareCode ? _(msg`Share link copied!`) : _(msg`Copy share link`)}
+                        </span>
+                      </button>
+                    )}
+                    {onOpenInAppBrowser && (
+                      <button
+                        type="button"
+                        onClick={() => onOpenInAppBrowser(entry.url)}
+                        className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
+                      >
+                        <HugeiconsIcon icon={ViewIcon} className="h-4 w-4 text-muted-foreground" />
+                        <span>{_(msg`Open in app browser`)}</span>
+                      </button>
+                    )}
                     <button
                       type="button"
-                      onClick={() => onOpenInAppBrowser(entry.url)}
+                      onClick={handleOpenInBrowser}
                       className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
                     >
-                      <HugeiconsIcon icon={ViewIcon} className="h-4 w-4 text-muted-foreground" />
-                      <span>{_(msg`Open in app browser`)}</span>
+                      <HugeiconsIcon icon={Globe02Icon} className="h-4 w-4 text-muted-foreground" />
+                      <span>{_(msg`Open in browser`)}</span>
                     </button>
-                  )}
-                  <button
-                    type="button"
-                    onClick={handleOpenInBrowser}
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer"
-                  >
-                    <HugeiconsIcon icon={Globe02Icon} className="h-4 w-4 text-muted-foreground" />
-                    <span>{_(msg`Open in browser`)}</span>
-                  </button>
-                  <button
-                    type="button"
-                    onClick={handleSaveToServices}
-                    disabled={isSavingToServices}
-                    className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer disabled:opacity-50"
-                  >
-                    <HugeiconsIcon
-                      icon={SentIcon}
-                      className={
-                        savedToServices ? 'h-4 w-4 text-primary' : 'h-4 w-4 text-muted-foreground'
-                      }
-                    />
-                    <span className={savedToServices ? 'text-primary' : ''}>
-                      {savedToServices ? _(msg`Saved!`) : _(msg`Save to services`)}
-                    </span>
-                  </button>
-                </PopoverContent>
-              </Popover>
-            </Tooltip>
-          </div>
+                    <button
+                      type="button"
+                      onClick={handleSaveToServices}
+                      disabled={isSavingToServices}
+                      className="flex w-full items-center gap-3 rounded-lg px-3 py-2 text-sm transition-colors hover:bg-black/[0.06] dark:hover:bg-white/10 cursor-pointer disabled:opacity-50"
+                    >
+                      <HugeiconsIcon
+                        icon={SentIcon}
+                        className={
+                          savedToServices ? 'h-4 w-4 text-primary' : 'h-4 w-4 text-muted-foreground'
+                        }
+                      />
+                      <span className={savedToServices ? 'text-primary' : ''}>
+                        {savedToServices ? _(msg`Saved!`) : _(msg`Save to services`)}
+                      </span>
+                    </button>
+                  </PopoverContent>
+                </Popover>
+              </Tooltip>
+            </div>
+          )}
         </div>
 
         <motion.div
-          className="min-w-0 overflow-hidden px-3"
+          className="min-w-0 overflow-hidden px-0 md:px-3"
           style={{ opacity: smallTitleOpacity, height: smallTitleHeight }}
         >
           <h2 className="text-sm font-semibold truncate">{convertedTitle}</h2>
@@ -1048,7 +1069,7 @@ export function EntryReadingHeader({
           originY: 0,
           overflow: 'hidden',
         }}
-        className="mt-1 flex w-full min-w-0 items-start justify-between gap-3 px-3"
+        className="mt-1 flex w-full min-w-0 items-start justify-between gap-3 px-0 md:px-3"
       >
         <div className="flex w-full min-w-0 flex-1 basis-0 flex-col space-y-2.5 overflow-hidden pb-2">
           <motion.a

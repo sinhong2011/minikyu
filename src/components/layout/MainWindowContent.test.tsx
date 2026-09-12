@@ -1,8 +1,10 @@
-import { act, render, screen, waitFor } from '@testing-library/react';
+import { i18n } from '@lingui/core';
+import { I18nProvider } from '@lingui/react';
+import { render, screen } from '@testing-library/react';
+import type { ReactNode } from 'react';
 import { beforeEach, describe, expect, it, vi } from 'vite-plus/test';
 
 const selected = vi.hoisted(() => ({ id: '1536612' as string | undefined }));
-const historyIntent = vi.hoisted(() => ({ browserBack: false }));
 
 vi.mock('@/hooks/use-mobile', () => ({
   useIsMobile: () => true,
@@ -26,17 +28,19 @@ vi.mock('@/services/preferences', () => ({
   useSavePreferences: () => ({ mutate: vi.fn() }),
 }));
 
-vi.mock('@/lib/history-intent', () => ({
-  wasBrowserInitiatedBack: () => historyIntent.browserBack,
+vi.mock('@/components/ui/drawer', () => ({
+  Drawer: ({ open, children }: { open: boolean; children: ReactNode }) =>
+    open ? <div>{children}</div> : null,
+  DrawerContent: ({
+    children,
+    ...props
+  }: {
+    children: ReactNode;
+    'data-testid'?: string;
+  }) => <div {...props}>{children}</div>,
+  DrawerTitle: ({ children }: { children: ReactNode }) => <h2>{children}</h2>,
+  DrawerDescription: ({ children }: { children: ReactNode }) => <p>{children}</p>,
 }));
-
-vi.mock('motion/react', async (importOriginal) => {
-  const actual = await importOriginal<typeof import('motion/react')>();
-  return {
-    ...actual,
-    useReducedMotion: () => false,
-  };
-});
 
 vi.mock('@/components/miniflux/EntryReading', () => ({
   EntryReading: () => <div data-testid="entry-reading">article</div>,
@@ -56,69 +60,43 @@ vi.mock('@/components/layout/MobileTabBar', () => ({
 
 import { MainWindowContent } from './MainWindowContent';
 
-describe('MainWindowContent phone reader swipe-back', () => {
+i18n.load('en', {});
+i18n.activate('en');
+
+function renderPhone(ui: ReactNode) {
+  return render(<I18nProvider i18n={i18n}>{ui}</I18nProvider>);
+}
+
+describe('MainWindowContent phone reader', () => {
   beforeEach(() => {
     selected.id = '1536612';
-    historyIntent.browserBack = false;
   });
 
-  it('skips the slide-out when Safari already animated the edge-swipe', async () => {
-    const { rerender } = render(
+  it('shows the drawer while ?entry= is set', () => {
+    renderPhone(
       <MainWindowContent>
         <div>list</div>
       </MainWindowContent>
     );
-
-    expect(screen.getByTestId('mobile-reader-overlay')).toHaveAttribute(
-      'data-reader-exit',
-      'slide'
-    );
-
-    historyIntent.browserBack = true;
-    selected.id = undefined;
-    rerender(
-      <MainWindowContent>
-        <div>list</div>
-      </MainWindowContent>
-    );
-
-    await waitFor(() => {
-      expect(screen.getByTestId('mobile-reader-overlay')).toHaveAttribute(
-        'data-reader-exit',
-        'instant'
-      );
-    });
-
-    // Safari already slid the page away; our overlay must not linger for 340ms.
-    await waitFor(
-      () => {
-        expect(screen.queryByTestId('mobile-reader-overlay')).not.toBeInTheDocument();
-      },
-      { timeout: 150 }
-    );
+    expect(screen.getByTestId('mobile-reader-overlay')).toBeInTheDocument();
   });
 
-  it('keeps the 340ms slide-out when the ✕ asked for the pop', async () => {
-    const { rerender } = render(
+  it('closes the drawer when ?entry= clears', () => {
+    const { rerender } = renderPhone(
       <MainWindowContent>
         <div>list</div>
       </MainWindowContent>
     );
 
-    historyIntent.browserBack = false;
     selected.id = undefined;
     rerender(
-      <MainWindowContent>
-        <div>list</div>
-      </MainWindowContent>
+      <I18nProvider i18n={i18n}>
+        <MainWindowContent>
+          <div>list</div>
+        </MainWindowContent>
+      </I18nProvider>
     );
 
-    await act(async () => {
-      await new Promise((resolve) => setTimeout(resolve, 80));
-    });
-
-    const overlay = screen.getByTestId('mobile-reader-overlay');
-    expect(overlay).toHaveAttribute('data-reader-exit', 'slide');
-    expect(overlay).toBeInTheDocument();
+    expect(screen.queryByTestId('mobile-reader-overlay')).not.toBeInTheDocument();
   });
 });

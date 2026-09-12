@@ -23,17 +23,8 @@ const VIEW_TABS = [
 ] as const;
 
 /**
- * Bottom tab bar for phone layouts (<768px), mirroring the sidebar's Views so
- * primary navigation lives in the thumb zone. Categories and feeds stay in the
- * drawer, reached through the More tab; Settings sits at the top of the drawer.
- *
- * Hidden on desktop, where the sidebar covers navigation. It deliberately stays
- * mounted while an entry is open: the reader is a sibling overlay that slides
- * over it, so unmounting here would make the bar blink out a beat before the
- * reader arrives. That only works while the two are siblings — hence
- * `absolute`, positioned against the reader's own container rather than the
- * viewport, which also keeps the ordering immune to any stacking context an
- * ancestor picks up (the frosted-glass backdrop-filter, for one).
+ * Bottom tab bar for phone layouts (<768px). iOS 27 menubar: a slim
+ * floating glass capsule. Selected state is tint only — no dark blob.
  */
 export function MobileTabBar() {
   const { _ } = useLingui();
@@ -50,15 +41,15 @@ export function MobileTabBar() {
   const activeFilter = search.filter;
 
   const tabClass =
-    'flex min-h-11 min-w-0 flex-1 flex-col items-center justify-center gap-0.5 text-[0.68rem] font-medium touch-manipulation select-none transition-[color,transform,opacity] duration-100 [-webkit-tap-highlight-color:transparent] active:scale-95 motion-reduce:active:scale-100';
+    'flex min-w-0 flex-1 flex-col items-center justify-center gap-0.5 touch-manipulation select-none [-webkit-tap-highlight-color:transparent] active:scale-[0.96] motion-reduce:active:scale-100';
 
   return (
     <nav
       aria-label={_(msg`Primary`)}
       data-testid="mobile-tab-bar"
-      className="absolute inset-x-0 bottom-0 z-30 border-t border-border/40 bg-background/80 pt-1 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/65 pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)] pr-[env(safe-area-inset-right,0px)]"
+      className="pointer-events-none absolute inset-x-0 bottom-0 z-30 pl-[max(1.25rem,env(safe-area-inset-left,0px))] pr-[max(1.25rem,env(safe-area-inset-right,0px))] pb-[max(0.6rem,env(safe-area-inset-bottom,0px),var(--shell-overlay-bottom,0px))]"
     >
-      <div className="flex h-14 items-stretch">
+      <div className="app-ios-menubar pointer-events-auto flex h-12 items-stretch rounded-[1.35rem] px-1.5">
         {VIEW_TABS.map((tab) => {
           const isActive = activeFilter === tab.filter;
           return (
@@ -66,21 +57,34 @@ export function MobileTabBar() {
               key={tab.filter ?? 'all'}
               to="/"
               search={tab.filter ? { filter: tab.filter } : {}}
+              replace
               aria-current={isActive ? 'page' : undefined}
-              className={cn(tabClass, isActive ? 'text-primary' : 'text-muted-foreground')}
+              className={cn(
+                tabClass,
+                isActive ? 'text-primary' : 'text-muted-foreground/80'
+              )}
             >
-              <HugeiconsIcon icon={tab.icon} className="size-5" />
-              <span className="truncate">{_(tab.label)}</span>
+              <HugeiconsIcon icon={tab.icon} className="size-[1.35rem]" strokeWidth={isActive ? 2.1 : 1.7} />
+              <span
+                className={cn(
+                  'max-w-full truncate text-[0.62rem] tracking-[0.01em]',
+                  isActive ? 'font-semibold' : 'font-medium'
+                )}
+              >
+                {_(tab.label)}
+              </span>
             </Link>
           );
         })}
         <button
           type="button"
           onClick={() => setMobileSidebarOpen(true)}
-          className={cn(tabClass, 'text-muted-foreground')}
+          className={cn(tabClass, 'text-muted-foreground/80')}
         >
-          <HugeiconsIcon icon={MoreHorizontalIcon} className="size-5" />
-          <span className="truncate">{_(msg`More`)}</span>
+          <HugeiconsIcon icon={MoreHorizontalIcon} className="size-[1.35rem]" strokeWidth={1.7} />
+          <span className="max-w-full truncate text-[0.62rem] font-medium tracking-[0.01em]">
+            {_(msg`More`)}
+          </span>
         </button>
       </div>
     </nav>

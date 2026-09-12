@@ -162,16 +162,15 @@ export function MainWindow({ children }: MainWindowProps = {}) {
         The window box is the *dynamic* viewport, not `100vh`.
         `viewport-fit=cover` makes `100vh` the large viewport — the full screen,
         with Safari's address bar and its floating bottom bar drawn over the
-        last stretch of it — so everything anchored to the bottom of this box
-        (the phone tab bar, the reader's action bar) ends up underneath that
-        chrome. `100dvh` is the height actually on screen, and the safe-area
-        padding those bars already carry clears the home indicator and the
-        floating bar on top of it. `h-screen` stays as the fallback for engines
-        without `dvh`; in Tauri the two are the same number.
+        last stretch of it. `100dvh` is the height on screen. Do not also pad
+        this box by `--vv-offset-bottom`: that overlap is for `position: fixed`
+        chrome, and stacking it here opens a gap above Safari. `h-screen` stays
+        as the fallback for engines without `dvh`; in Tauri the two are the
+        same number.
       */}
       <div
         className={`
-          relative flex h-screen supports-[height:100dvh]:h-dvh w-full flex-col overflow-hidden bg-background
+          relative flex h-screen supports-[height:100dvh]:h-dvh w-full min-w-0 flex-col overflow-hidden bg-background
           ${nativeWindowRounding ? 'rounded-xl [clip-path:inset(0_round_var(--radius-xl))]' : ''}
         `}
       >
@@ -216,7 +215,7 @@ export function MainWindow({ children }: MainWindowProps = {}) {
               onOpenChange={setLeftSidebarVisible}
               openMobile={mobileSidebarOpen}
               onOpenMobileChange={setMobileSidebarOpen}
-              className="overflow-hidden min-h-0 flex-1"
+              className="overflow-hidden min-h-0 min-w-0 flex-1"
               style={{ '--sidebar-width': '18rem' } as React.CSSProperties}
             >
               <AppSidebar />

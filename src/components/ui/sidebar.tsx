@@ -214,7 +214,7 @@ function Sidebar({
             contents clear of both ends so the first and last rows stay
             tappable.
           */}
-          <div className="flex h-full w-full flex-col pt-[env(safe-area-inset-top,0px)] pr-[env(safe-area-inset-right,0px)] pb-[env(safe-area-inset-bottom,0px)] pl-[env(safe-area-inset-left,0px)]">
+          <div className="flex h-full w-full flex-col pt-[env(safe-area-inset-top,0px)] pr-[env(safe-area-inset-right,0px)] pb-[max(env(safe-area-inset-bottom,0px),var(--vv-offset-bottom,0px))] pl-[env(safe-area-inset-left,0px)]">
             {children}
           </div>
         </SheetContent>

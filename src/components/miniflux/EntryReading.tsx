@@ -42,6 +42,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { showToast } from '@/components/ui/sonner';
 import { useGestureSettings } from '@/hooks/use-gesture-settings';
 import { detectSourceLanguage, useReaderSettings } from '@/hooks/use-reader-settings';
+import { useIsMobile } from '@/hooks/use-mobile';
 import { useCoarsePointer } from '@/hooks/use-safari-viewport';
 import { useShortcutConfig } from '@/hooks/use-shortcut-config';
 import { getGestureAction } from '@/lib/gesture-actions';
@@ -66,6 +67,7 @@ import {
 } from '@/services/miniflux/entries';
 import type { TranslationRoutingPreferences } from '@/services/translation';
 import { EntryReadingHeader } from './EntryReadingHeader';
+import { ReaderActionBarSlotProvider } from './reader-action-bar-slot';
 import { buildEntryContentWithToc } from './entry-toc';
 import { ImmersiveTranslationLayer } from './ImmersiveTranslationLayer';
 import { ReaderSelectionToolbar } from './ReaderSelectionToolbar';
@@ -112,6 +114,8 @@ export function EntryReading({
   onOpenInAppBrowser,
 }: EntryReadingProps) {
   const { _ } = useLingui();
+  const isMobile = useIsMobile();
+  const [actionBarSlot, setActionBarSlot] = useState<HTMLDivElement | null>(null);
   const isCoarsePointer = useCoarsePointer();
   const {
     chineseConversionMode,
@@ -1445,7 +1449,8 @@ export function EntryReading({
   }
 
   return (
-    <div className="flex h-full min-w-0 flex-col overflow-hidden">
+    <ReaderActionBarSlotProvider slot={isMobile ? actionBarSlot : null}>
+    <div className="relative flex h-full min-w-0 flex-col overflow-hidden">
       <div
         data-hidden={headerHidden}
         className={cn(
@@ -1543,7 +1548,7 @@ export function EntryReading({
                       transition: articleExitTransition,
                     }}
                     transition={articleEnterTransition}
-                    className="px-4 py-8 max-sm:pb-[calc(6rem+env(safe-area-inset-bottom,0px))] max-sm:pl-[max(1rem,env(safe-area-inset-left,0px))] max-sm:pr-[max(1rem,env(safe-area-inset-right,0px))] transition-colors duration-300 sm:px-6 sm:py-10 lg:px-10 xl:pr-24"
+                    className="pl-[max(1rem,env(safe-area-inset-left,0px))] pr-[max(0.5rem,env(safe-area-inset-right,0px))] pt-8 pb-[calc(6rem+env(safe-area-inset-bottom,0px))] transition-colors duration-300 md:px-6 md:py-10 lg:px-10 xl:pr-24"
                     data-no-ui-font=""
                     style={readerSurfaceStyle}
                   >
@@ -1582,7 +1587,7 @@ export function EntryReading({
                           capabilities.summaries ? handleSummarizeParagraph : undefined
                         }
                         className={cn(
-                          'mx-auto max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
+                          'mx-auto w-full max-w-none break-words prose prose-slate transition-all duration-300 dark:prose-invert',
                           useInvertedProse && 'prose-invert',
                           '[&_h1]:mb-5 [&_h1]:text-3xl [&_h1]:leading-tight [&_h1]:font-semibold',
                           '[&_h2]:mt-10 [&_h2]:mb-4 [&_h2]:text-2xl [&_h2]:leading-snug [&_h2]:font-semibold',
@@ -2151,7 +2156,7 @@ export function EntryReading({
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 12 }}
                 transition={{ duration: 0.2, ease: 'easeOut' }}
-                className="absolute right-4 bottom-4 z-20 max-sm:right-[max(1rem,env(safe-area-inset-right,0px))] max-sm:bottom-[calc(4.25rem+env(safe-area-inset-bottom,0px))]"
+                className="absolute right-4 bottom-4 z-20 max-sm:right-[max(1rem,env(safe-area-inset-right,0px))] max-sm:bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))]"
               >
                 <Button
                   type="button"
@@ -2174,7 +2179,7 @@ export function EntryReading({
               animate={{ opacity: 1, y: 0, scale: 1 }}
               exit={{ opacity: 0, y: 8, scale: 0.96 }}
               transition={{ duration: 0.25, ease: [0.22, 1, 0.36, 1] }}
-              className="absolute right-4 bottom-4 left-4 z-20 flex justify-center max-sm:left-[max(1rem,env(safe-area-inset-left,0px))] max-sm:right-[max(1rem,env(safe-area-inset-right,0px))] max-sm:bottom-[calc(4.25rem+env(safe-area-inset-bottom,0px))]"
+              className="absolute right-4 bottom-4 left-4 z-20 flex justify-center max-sm:left-[max(1rem,env(safe-area-inset-left,0px))] max-sm:right-[max(1rem,env(safe-area-inset-right,0px))] max-sm:bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))]"
             >
               <button
                 type="button"
@@ -2363,7 +2368,7 @@ export function EntryReading({
         </AnimatePresence>
 
         {translationEnabled && (
-          <div className="pointer-events-none absolute bottom-14 left-2 z-30 max-sm:left-[max(0.5rem,env(safe-area-inset-left,0px))] max-sm:bottom-[calc(4.25rem+env(safe-area-inset-bottom,0px))]">
+          <div className="pointer-events-none absolute bottom-14 left-2 z-30 max-sm:left-[max(0.5rem,env(safe-area-inset-left,0px))] max-sm:bottom-[calc(5.5rem+env(safe-area-inset-bottom,0px))]">
             <TranslationProgressRing
               completed={translationProgress.completed}
               total={translationProgress.total}
@@ -2427,6 +2432,10 @@ export function EntryReading({
           )}
         </AnimatePresence>
       </div>
+      {isMobile && (
+        <div ref={setActionBarSlot} className="pointer-events-none absolute inset-x-0 bottom-0 z-30" />
+      )}
     </div>
+    </ReaderActionBarSlotProvider>
   );
 }

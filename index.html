@@ -13,8 +13,15 @@
       `black-translucent`, so without it iOS lays the status bar over the header
       with nothing padding it clear, and the tab bar sits under the home
       indicator. Harmless in the Tauri build, which has no insets to report.
+
+      `maximum-scale=1` keeps iOS Safari from pinch-zooming the fixed shell.
+      A zoomed visual viewport desyncs `--vv-offset-*` and drops the tab bar
+      under Safari's floating chrome.
     -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover" />
+    <meta
+      name="viewport"
+      content="width=device-width, initial-scale=1, maximum-scale=1, viewport-fit=cover"
+    />
     <title>Minikyu</title>
   </head>
 
