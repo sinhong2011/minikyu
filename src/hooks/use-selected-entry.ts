@@ -1,4 +1,9 @@
 import { useRouterState } from '@tanstack/react-router';
+import { isReaderEntryEcho } from '@/lib/history-intent';
+
+function selectedEntryFromSearch(entry: string | undefined): string | undefined {
+  return isReaderEntryEcho(entry) ? undefined : entry;
+}
 
 /**
  * The open entry, read from the URL.
@@ -11,10 +16,14 @@ import { useRouterState } from '@tanstack/react-router';
  * Read through `useRouterState` rather than `useSearch({ from: '/' })` so that
  * components outside the `/` route — the app shell, the command palette — can
  * use it too.
+ *
+ * After swipe-back, iOS may replay the closed `?entry=`. That echo is dropped
+ * here so the phone overlay never remounts for a frame.
  */
 export function useSelectedEntryId(): string | undefined {
   return useRouterState({
-    select: (state) => (state.location.search as { entry?: string }).entry,
+    select: (state) =>
+      selectedEntryFromSearch((state.location.search as { entry?: string }).entry),
   });
 }
 
@@ -28,5 +37,7 @@ export function useSelectedEntryId(): string | undefined {
  * The router runs on the browser history, so the two agree.
  */
 export function getSelectedEntryId(): string | undefined {
-  return new URLSearchParams(window.location.search).get('entry') ?? undefined;
+  return selectedEntryFromSearch(
+    new URLSearchParams(window.location.search).get('entry') ?? undefined
+  );
 }

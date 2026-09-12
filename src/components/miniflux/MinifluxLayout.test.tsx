@@ -8,11 +8,12 @@ import { useAccounts, useActiveAccount } from '@/services/miniflux/accounts';
 import { useIsConnected } from '@/services/miniflux/auth';
 import { useCategories, useMarkCategoryAsRead } from '@/services/miniflux/categories';
 import { useUnreadCounts } from '@/services/miniflux/counters';
-import { useEntries, usePrefetchEntry } from '@/services/miniflux/entries';
+import { useEntries, usePrefetchEntry, useToggleEntryRead } from '@/services/miniflux/entries';
 import { useMarkFeedAsRead, useSyncMiniflux } from '@/services/miniflux/feeds';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useLastReadingEntry, useSaveLastReading } from '@/services/reading-state';
 import { useSyncStore } from '@/store/sync-store';
+import { resetHistoryIntent } from '@/lib/history-intent';
 import { useUIStore } from '@/store/ui-store';
 import { MinifluxLayout } from './MinifluxLayout';
 
@@ -42,7 +43,9 @@ const routerMock = vi.hoisted(() => {
         listeners.delete(listener);
       };
     },
-    navigate: (options: { search?: unknown }) => {
+    lastReplace: undefined as boolean | undefined,
+    navigate: (options: { search?: unknown; replace?: boolean }) => {
+      routerMock.lastReplace = options.replace;
       const patch =
         typeof options.search === 'function'
           ? (options.search as (prev: Record<string, unknown>) => Record<string, unknown>)(search)
@@ -181,6 +184,8 @@ describe('MinifluxLayout', () => {
   beforeEach(() => {
     vi.clearAllMocks();
     queryClient.clear();
+    resetHistoryIntent();
+    routerMock.lastReplace = undefined;
 
     useUIStore.setState({ searchFiltersVisible: false });
     routerMock.set({});
@@ -208,11 +213,22 @@ describe('MinifluxLayout', () => {
     });
     (useEntries as any).mockReturnValue({
       data: {
-        entries: [{ id: '1536612' }],
+        entries: [
+          {
+            id: '1536612',
+            title: 'Echoed article',
+            status: 'unread',
+            starred: false,
+            url: 'https://example.com',
+            published_at: '2026-01-01T00:00:00Z',
+            feed: { title: 'Feed' },
+          },
+        ],
         total: '1',
       },
     });
     (usePrefetchEntry as any).mockReturnValue(vi.fn());
+    (useToggleEntryRead as any).mockReturnValue({ mutate: vi.fn() });
     (useSyncMiniflux as any).mockReturnValue({
       mutate: vi.fn(),
     });
@@ -238,30 +254,28 @@ describe('MinifluxLayout', () => {
     });
   });
 
-  it('closes the reader when Safari pops history (edge-swipe Back)', async () => {
+  it('replaces ?entry= on the phone so the Drawer is not a history page', async () => {
+    vi.mocked(useIsMobile).mockReturnValue(true);
+    render(<MinifluxLayout />, { wrapper: TestWrapper });
+
+    fireEvent.click(screen.getByTestId('select-entry'));
+
+    expect(routerMock.getSearch().entry).toBe('1536612');
+    expect(routerMock.lastReplace).toBe(true);
+    expect(routerMock.back).not.toHaveBeenCalled();
+  });
+
+  it('closes the phone reader with a replace, not history.back', async () => {
     vi.mocked(useIsMobile).mockReturnValue(true);
     routerMock.set({ entry: '1536612' });
     render(<MinifluxLayout />, { wrapper: TestWrapper });
 
-    expect(routerMock.getSearch().entry).toBe('1536612');
-
-    // Safari edge-swipe: popstate first (unclaimed), then the URL loses ?entry=.
-    act(() => {
-      window.dispatchEvent(new PopStateEvent('popstate'));
-      routerMock.set({});
-    });
-
-    expect(routerMock.getSearch().entry).toBeUndefined();
-    expect(routerMock.back).not.toHaveBeenCalled();
-
-    // iOS sometimes re-applies the pre-back search params after Back.
-    act(() => {
-      routerMock.set({ entry: '1536612' });
-    });
+    fireEvent.click(screen.getByTestId('close-reading'));
 
     await waitFor(() => {
       expect(routerMock.getSearch().entry).toBeUndefined();
     });
+    expect(routerMock.back).not.toHaveBeenCalled();
   });
 
   it('keeps reader closed after close button even when last reading exists', async () => {

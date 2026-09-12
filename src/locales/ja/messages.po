@@ -121,11 +121,11 @@ msgstr "{diffHours}時間前"
 msgid "{diffMins}m ago"
 msgstr "{diffMins}分前"
 
-#: src/components/miniflux/EntryReading.tsx:486
+#: src/components/miniflux/EntryReading.tsx:497
 msgid "{minutesLeft} min left"
 msgstr "残り {minutesLeft} 分"
 
-#: src/components/miniflux/EntryReading.tsx:485
+#: src/components/miniflux/EntryReading.tsx:496
 msgid "{progressPercent}% read"
 msgstr "{progressPercent}% 読了"
 
@@ -207,7 +207,7 @@ msgstr "アカウントを追加..."
 msgid "Add category"
 msgstr "カテゴリーを追加"
 
-#: src/components/layout/AppSidebar.tsx:593
+#: src/components/layout/AppSidebar.tsx:598
 msgid "Add Category"
 msgstr "カテゴリーを追加"
 
@@ -216,15 +216,15 @@ msgstr "カテゴリーを追加"
 msgid "Add feed"
 msgstr "フィードを追加"
 
-#: src/components/layout/AppSidebar.tsx:585
-#: src/components/layout/AppSidebar.tsx:735
-#: src/components/layout/AppSidebar.tsx:737
+#: src/components/layout/AppSidebar.tsx:590
+#: src/components/layout/AppSidebar.tsx:740
+#: src/components/layout/AppSidebar.tsx:742
 #: src/components/miniflux/AddFeedDialog.tsx:460
 #: src/components/miniflux/AddFeedDialog.tsx:519
 msgid "Add Feed"
 msgstr "フィードを追加"
 
-#: src/components/miniflux/MinifluxLayout.tsx:594
+#: src/components/miniflux/MinifluxLayout.tsx:631
 msgid "Add New Account"
 msgstr "新しいアカウントを追加"
 
@@ -254,13 +254,13 @@ msgid "Add the current article's podcast to the playlist"
 msgstr "この記事のポッドキャストをプレイリストに追加"
 
 #: src/components/miniflux/EntryList.tsx:874
-#: src/components/miniflux/EntryReadingHeader.tsx:492
-#: src/components/miniflux/EntryReadingHeader.tsx:499
+#: src/components/miniflux/EntryReadingHeader.tsx:504
+#: src/components/miniflux/EntryReadingHeader.tsx:511
 #: src/lib/shortcut-registry.ts:140
 msgid "Add to playlist"
 msgstr "プレイリストに追加"
 
-#: src/components/miniflux/EntryReading.tsx:1988
+#: src/components/miniflux/EntryReading.tsx:2011
 #: src/lib/commands/article-commands.ts:136
 msgid "Add to Playlist"
 msgstr "プレイリストに追加"
@@ -271,7 +271,7 @@ msgid "Add user"
 msgstr "ユーザーを追加"
 
 #: src/components/miniflux/EntryList.tsx:882
-#: src/components/miniflux/EntryReadingHeader.tsx:329
+#: src/components/miniflux/EntryReadingHeader.tsx:335
 msgid "Added to playlist"
 msgstr "プレイリストに追加しました"
 
@@ -306,7 +306,7 @@ msgstr "詳細"
 msgid "Advanced settings"
 msgstr "詳細設定"
 
-#: src/components/miniflux/EntryReading.tsx:1731
+#: src/components/miniflux/EntryReading.tsx:1754
 #: src/components/miniflux/SafeHtml.tsx:826
 #: src/components/preferences/PreferencesDialog.tsx:120
 msgid "AI"
@@ -318,14 +318,14 @@ msgid "AI Summary"
 msgstr "AI要約"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:329
-#: src/components/layout/AppSidebar.tsx:632
-#: src/components/layout/AppSidebar.tsx:643
+#: src/components/layout/AppSidebar.tsx:637
+#: src/components/layout/AppSidebar.tsx:648
 #: src/components/layout/MobileTabBar.tsx:19
 #: src/components/miniflux/EntryFilters.tsx:102
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:33
-#: src/components/miniflux/MinifluxLayout.tsx:66
-#: src/components/miniflux/MinifluxLayout.tsx:660
-#: src/components/miniflux/MinifluxLayout.tsx:668
+#: src/components/miniflux/MinifluxLayout.tsx:81
+#: src/components/miniflux/MinifluxLayout.tsx:697
+#: src/components/miniflux/MinifluxLayout.tsx:705
 msgid "All"
 msgstr "すべて"
 
@@ -355,7 +355,7 @@ msgstr "すべてのフィードを同期しました"
 msgid "All read"
 msgstr "すべて既読"
 
-#: src/components/miniflux/MinifluxLayout.tsx:441
+#: src/components/miniflux/MinifluxLayout.tsx:478
 msgid "All read entries have been deleted"
 msgstr "すべての既読エントリーが削除されました"
 
@@ -424,11 +424,11 @@ msgstr "外観"
 msgid "Appearance Settings"
 msgstr "外観設定"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:223
+#: src/components/miniflux/EntryReadingHeader.tsx:229
 msgid "Apple Built-in"
 msgstr "Apple内蔵"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:620
+#: src/components/miniflux/EntryReadingHeader.tsx:638
 msgid "Applies to all articles when enabled"
 msgstr "有効時はすべての記事に適用されます"
 
@@ -463,7 +463,7 @@ msgstr "このアカウントを削除しますか？このアカウントに関
 #~ msgid "Are you sure you want to delete this category and all its feeds?"
 #~ msgstr "このカテゴリーとすべてのフィードを削除してもよろしいですか？"
 
-#: src/components/miniflux/MinifluxLayout.tsx:420
+#: src/components/miniflux/MinifluxLayout.tsx:457
 msgid "Are you sure you want to flush history? This will delete all read entries from the Miniflux server."
 msgstr "履歴を削除しますか？Minifluxサーバーからすべての既読エントリーが削除されます。"
 
@@ -477,7 +477,8 @@ msgstr "「{0}」の購読を解除してもよろしいですか？"
 #~ msgstr "このフィードの購読を解除してもよろしいですか？"
 
 #: src/components/command-palette/CommandPalette.tsx:185
-#: src/components/miniflux/EntryReading.tsx:1858
+#: src/components/layout/MainWindowContent.tsx:232
+#: src/components/miniflux/EntryReading.tsx:1881
 #: src/lib/menu.ts:217
 msgid "Article"
 msgstr "記事"
@@ -486,7 +487,7 @@ msgstr "記事"
 msgid "Article Actions"
 msgstr "記事のアクション"
 
-#: src/components/miniflux/EntryReading.tsx:435
+#: src/components/miniflux/EntryReading.tsx:441
 msgid "Article table of contents"
 msgstr "記事の目次"
 
@@ -494,7 +495,7 @@ msgstr "記事の目次"
 msgid "Article text size in pixels (14-24)"
 msgstr "記事のテキストサイズ（ピクセル、14-24）"
 
-#: src/components/miniflux/MinifluxLayout.tsx:863
+#: src/components/miniflux/MinifluxLayout.tsx:900
 msgid "Ascending"
 msgstr "昇順"
 
@@ -507,7 +508,7 @@ msgstr "毎回確認する"
 #~ msgid "Author"
 #~ msgstr "作者"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:197
+#: src/components/miniflux/EntryReadingHeader.tsx:203
 #: src/components/preferences/panes/ReaderPane.tsx:162
 msgid "Auto"
 msgstr "自動"
@@ -590,11 +591,11 @@ msgstr "Baidu翻訳"
 msgid "Beautiful, accessible components"
 msgstr "美しく使いやすいコンポーネント"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:667
+#: src/components/miniflux/EntryReadingHeader.tsx:685
 msgid "Bilingual"
 msgstr "バイリンガル"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:816
+#: src/components/miniflux/EntryReadingHeader.tsx:834
 #: src/components/preferences/panes/ReaderPane.tsx:429
 msgid "Bionic Reading"
 msgstr "バイオニック・リーディング"
@@ -622,8 +623,8 @@ msgstr "書籍のようなリズム"
 msgid "breadcrumb"
 msgstr "パンくずリスト"
 
-#: src/components/layout/AppSidebar.tsx:727
-#: src/components/layout/AppSidebar.tsx:731
+#: src/components/layout/AppSidebar.tsx:732
+#: src/components/layout/AppSidebar.tsx:736
 msgid "Browse categories"
 msgstr "カテゴリーを閲覧"
 
@@ -675,7 +676,7 @@ msgstr "「{0}」にはまだ{1}件のフィードがあるため削除できま
 msgid "Cannot delete category"
 msgstr "カテゴリを削除できません"
 
-#: src/components/layout/AppSidebar.tsx:749
+#: src/components/layout/AppSidebar.tsx:754
 #: src/components/preferences/panes/SyncPane.tsx:132
 #: src/components/preferences/PreferencesDialog.tsx:148
 #: src/components/sync/SyncProgressPopover.tsx:51
@@ -688,14 +689,14 @@ msgstr "カテゴリはフォルダ、フィードは購読、エントリは記
 
 #: src/components/miniflux/add-feed-dialog/FeedDetailsTabPanel.tsx:132
 #: src/components/miniflux/EditFeedDialog.tsx:223
-#: src/components/miniflux/MinifluxLayout.tsx:650
+#: src/components/miniflux/MinifluxLayout.tsx:687
 #: src/components/miniflux/settings/FeedFormDialog.tsx:419
 #: src/components/preferences/PreferencesDialog.tsx:407
 msgid "Category"
 msgstr "カテゴリー"
 
-#: src/components/layout/AppSidebar.tsx:575
-#: src/components/layout/AppSidebar.tsx:576
+#: src/components/layout/AppSidebar.tsx:580
+#: src/components/layout/AppSidebar.tsx:581
 msgid "Category actions"
 msgstr "カテゴリーの操作"
 
@@ -707,7 +708,7 @@ msgstr "カテゴリーを作成しました"
 msgid "Category deleted"
 msgstr "カテゴリーを削除しました"
 
-#: src/components/miniflux/EntryReading.tsx:1828
+#: src/components/miniflux/EntryReading.tsx:1851
 msgid "Category excluded from translation"
 msgstr "このカテゴリーを翻訳から除外しました"
 
@@ -740,7 +741,7 @@ msgstr "カテゴリが空ではありません"
 msgid "Category Title"
 msgstr "カテゴリータイトル"
 
-#: src/components/miniflux/EntryReading.tsx:1823
+#: src/components/miniflux/EntryReading.tsx:1846
 msgid "Category translation re-enabled"
 msgstr "このカテゴリーの翻訳を再有効化しました"
 
@@ -800,12 +801,12 @@ msgstr "確認中..."
 msgid "Chinese"
 msgstr "中国語"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:186
+#: src/components/miniflux/EntryReadingHeader.tsx:192
 #: src/components/preferences/panes/TranslationPane.tsx:1713
 msgid "Chinese (Simplified)"
 msgstr "中国語（簡体字）"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:187
+#: src/components/miniflux/EntryReadingHeader.tsx:193
 #: src/components/preferences/panes/TranslationPane.tsx:1714
 msgid "Chinese (Traditional)"
 msgstr "中国語（繁体字）"
@@ -932,8 +933,8 @@ msgstr "消去中..."
 
 #: src/components/command-palette/CommandPalette.tsx:318
 #: src/components/downloads/DownloadManagerDialog.tsx:645
-#: src/components/miniflux/EntryReadingHeader.tsx:366
-#: src/components/miniflux/EntryReadingHeader.tsx:372
+#: src/components/miniflux/EntryReadingHeader.tsx:378
+#: src/components/miniflux/EntryReadingHeader.tsx:384
 #: src/components/miniflux/ImageViewer.tsx:236
 #: src/components/miniflux/InAppBrowserPane.tsx:274
 #: src/components/miniflux/ReaderSettings.tsx:243
@@ -983,7 +984,7 @@ msgstr "コードと精密さ"
 msgid "Code Blocks"
 msgstr "コードブロック"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:771
+#: src/components/miniflux/EntryReadingHeader.tsx:789
 #: src/components/preferences/panes/ReaderPane.tsx:349
 msgid "Code theme"
 msgstr "コードテーマ"
@@ -1037,11 +1038,11 @@ msgstr "Miniflux に接続"
 msgid "Connect to Miniflux to see server version."
 msgstr "サーバーバージョンを確認するにはMinifluxに接続してください。"
 
-#: src/components/miniflux/MinifluxLayout.tsx:594
+#: src/components/miniflux/MinifluxLayout.tsx:631
 msgid "Connect to Server"
 msgstr "サーバーに接続"
 
-#: src/components/miniflux/MinifluxLayout.tsx:565
+#: src/components/miniflux/MinifluxLayout.tsx:602
 msgid "Connect to your Miniflux server to get started"
 msgstr "Miniflux サーバーに接続して開始"
 
@@ -1111,7 +1112,7 @@ msgstr "コピー"
 msgid "Copy app version, OS, and environment details for bug reports."
 msgstr "バグ報告用にアプリのバージョン、OS、環境情報をコピーします。"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:971
+#: src/components/miniflux/EntryReadingHeader.tsx:991
 msgid "Copy article URL"
 msgstr "記事のURLをコピー"
 
@@ -1127,7 +1128,7 @@ msgstr "デバッグ情報をコピー"
 msgid "Copy link"
 msgstr "リンクをコピー"
 
-#: src/components/miniflux/EntryReading.tsx:1941
+#: src/components/miniflux/EntryReading.tsx:1964
 #: src/lib/commands/article-commands.ts:101
 #: src/lib/menu.ts:263
 msgid "Copy Link"
@@ -1141,11 +1142,11 @@ msgstr "メッセージをコピー"
 msgid "Copy phrase text"
 msgstr "フレーズテキストをコピー"
 
-#: src/components/miniflux/EntryReading.tsx:1656
+#: src/components/miniflux/EntryReading.tsx:1679
 msgid "Copy Selection"
 msgstr "選択をコピー"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:987
+#: src/components/miniflux/EntryReadingHeader.tsx:1009
 msgid "Copy share link"
 msgstr "共有リンクをコピー"
 
@@ -1391,8 +1392,8 @@ msgstr "DeepL"
 msgid "DeepSeek"
 msgstr "DeepSeek"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:208
-#: src/components/miniflux/EntryReadingHeader.tsx:218
+#: src/components/miniflux/EntryReadingHeader.tsx:214
+#: src/components/miniflux/EntryReadingHeader.tsx:224
 #: src/components/preferences/panes/ReaderPane.tsx:65
 #: src/lib/menu.ts:143
 msgid "Default"
@@ -1414,7 +1415,7 @@ msgstr "画像の保存先フォルダー。空欄にすると毎回確認しま
 msgid "Default folder for saving videos. Leave empty to ask every time."
 msgstr "動画の保存先フォルダー。空欄にすると毎回確認します。"
 
-#: src/components/layout/AppSidebar.tsx:405
+#: src/components/layout/AppSidebar.tsx:410
 #: src/components/preferences/panes/ApiTokenPane.tsx:278
 msgid "Delete"
 msgstr "削除"
@@ -1486,7 +1487,7 @@ msgstr "ユーザーを削除"
 msgid "Delete user?"
 msgstr "ユーザーを削除しますか？"
 
-#: src/components/miniflux/MinifluxLayout.tsx:869
+#: src/components/miniflux/MinifluxLayout.tsx:906
 msgid "Descending"
 msgstr "降順"
 
@@ -1503,7 +1504,7 @@ msgstr "診断"
 msgid "Dim paragraphs except the one you're reading"
 msgstr "読んでいる段落以外を暗くします"
 
-#: src/components/miniflux/MinifluxLayout.tsx:858
+#: src/components/miniflux/MinifluxLayout.tsx:895
 msgid "Direction"
 msgstr "並び順"
 
@@ -1524,7 +1525,7 @@ msgstr "無効"
 #~ msgid "Disabled (manual only)"
 #~ msgstr "無効（手動のみ）"
 
-#: src/components/miniflux/EntryReading.tsx:1617
+#: src/components/miniflux/EntryReading.tsx:1640
 msgid "Dismiss"
 msgstr "閉じる"
 
@@ -1533,7 +1534,7 @@ msgstr "閉じる"
 msgid "Dismiss Player"
 msgstr "プレーヤーを閉じる"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:654
+#: src/components/miniflux/EntryReadingHeader.tsx:672
 msgid "Display mode"
 msgstr "表示モード"
 
@@ -1589,7 +1590,7 @@ msgstr "ダウンロード失敗"
 msgid "Download from URL"
 msgstr "URLからダウンロード"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:300
+#: src/components/miniflux/EntryReadingHeader.tsx:306
 msgid "Download original content"
 msgstr "オリジナルコンテンツをダウンロード"
 
@@ -1663,7 +1664,7 @@ msgid "Each rule must include a non-empty \"From\" value"
 msgstr "各ルールには空でない「変換元」の値が必要です"
 
 #: src/components/layout/AppSidebar.tsx:186
-#: src/components/layout/AppSidebar.tsx:401
+#: src/components/layout/AppSidebar.tsx:406
 #: src/lib/menu.ts:125
 msgid "Edit"
 msgstr "編集"
@@ -1734,13 +1735,13 @@ msgstr "エンジン"
 msgid "Engine first"
 msgstr "エンジン優先"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:185
+#: src/components/miniflux/EntryReadingHeader.tsx:191
 #: src/components/preferences/panes/TranslationPane.tsx:1712
 #: src/components/preferences/panes/TranslationPane.tsx:2246
 msgid "English"
 msgstr "英語"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:817
+#: src/components/miniflux/EntryReadingHeader.tsx:835
 msgid "English only"
 msgstr "英語のみ"
 
@@ -1794,12 +1795,12 @@ msgstr "Zenモードに入る"
 msgid "Entries"
 msgstr "エントリー"
 
-#: src/components/miniflux/EntryReading.tsx:1435
+#: src/components/miniflux/EntryReading.tsx:1446
 msgid "Entry not found"
 msgstr "エントリーが見つかりません"
 
-#: src/components/miniflux/EntryReading.tsx:706
-#: src/components/miniflux/EntryReadingHeader.tsx:290
+#: src/components/miniflux/EntryReading.tsx:717
+#: src/components/miniflux/EntryReadingHeader.tsx:296
 msgid "Entry sent to services"
 msgstr "エントリーをサービスに送信しました"
 
@@ -1852,7 +1853,7 @@ msgid "Exit fullscreen mode"
 msgstr "全画面モードを終了"
 
 #: src/components/titlebar/WindowTitleBar.tsx:117
-#: src/components/zen-mode/ZenModeView.tsx:255
+#: src/components/zen-mode/ZenModeView.tsx:256
 msgid "Exit Zen Mode"
 msgstr "Zenモードを終了"
 
@@ -1873,8 +1874,8 @@ msgstr "エクスポート"
 msgid "Export feeds to an OPML file"
 msgstr "フィードをOPMLファイルにエクスポート"
 
-#: src/components/layout/AppSidebar.tsx:482
-#: src/components/layout/AppSidebar.tsx:598
+#: src/components/layout/AppSidebar.tsx:487
+#: src/components/layout/AppSidebar.tsx:603
 #: src/components/preferences/panes/AdvancedPane.tsx:340
 #: src/components/preferences/panes/AdvancedPane.tsx:487
 msgid "Export OPML"
@@ -1995,8 +1996,8 @@ msgstr "全画面表示に失敗しました：{message}"
 msgid "Failed to exit fullscreen: {message}"
 msgstr "全画面表示の終了に失敗しました：{message}"
 
-#: src/components/layout/AppSidebar.tsx:477
-#: src/components/layout/AppSidebar.tsx:497
+#: src/components/layout/AppSidebar.tsx:482
+#: src/components/layout/AppSidebar.tsx:502
 #: src/components/preferences/panes/AdvancedPane.tsx:335
 #: src/components/preferences/panes/AdvancedPane.tsx:356
 msgid "Failed to export OPML"
@@ -2016,12 +2017,12 @@ msgstr "利用可能なモデルの取得に失敗しました"
 msgid "Failed to fetch content"
 msgstr "コンテンツの取得に失敗しました"
 
-#: src/components/miniflux/MinifluxLayout.tsx:432
+#: src/components/miniflux/MinifluxLayout.tsx:469
 msgid "Failed to flush history"
 msgstr "履歴の削除に失敗しました"
 
-#: src/components/layout/AppSidebar.tsx:517
-#: src/components/layout/AppSidebar.tsx:525
+#: src/components/layout/AppSidebar.tsx:522
+#: src/components/layout/AppSidebar.tsx:530
 #: src/components/preferences/panes/AdvancedPane.tsx:376
 #: src/components/preferences/panes/AdvancedPane.tsx:385
 msgid "Failed to import OPML"
@@ -2065,10 +2066,10 @@ msgstr "フィードの既読に失敗しました"
 msgid "Failed to minimize window: {message}"
 msgstr "ウィンドウの最小化に失敗しました：{message}"
 
-#: src/components/miniflux/EntryReading.tsx:878
-#: src/components/miniflux/EntryReading.tsx:1278
-#: src/components/miniflux/EntryReading.tsx:1371
-#: src/components/miniflux/EntryReading.tsx:1908
+#: src/components/miniflux/EntryReading.tsx:889
+#: src/components/miniflux/EntryReading.tsx:1289
+#: src/components/miniflux/EntryReading.tsx:1382
+#: src/components/miniflux/EntryReading.tsx:1931
 msgid "Failed to open in browser"
 msgstr "ブラウザで開けませんでした"
 
@@ -2076,8 +2077,8 @@ msgstr "ブラウザで開けませんでした"
 msgid "Failed to pause download"
 msgstr "ダウンロードの一時停止に失敗しました"
 
-#: src/components/miniflux/MinifluxLayout.tsx:534
-#: src/components/miniflux/MinifluxLayout.tsx:538
+#: src/components/miniflux/MinifluxLayout.tsx:571
+#: src/components/miniflux/MinifluxLayout.tsx:575
 msgid "Failed to reconnect account"
 msgstr "アカウントの再接続に失敗しました"
 
@@ -2102,10 +2103,10 @@ msgstr "プロバイダーの並べ替えに失敗しました"
 msgid "Failed to resume download"
 msgstr "ダウンロードの再開に失敗しました"
 
-#: src/components/miniflux/EntryReading.tsx:703
-#: src/components/miniflux/EntryReading.tsx:709
-#: src/components/miniflux/EntryReadingHeader.tsx:286
-#: src/components/miniflux/EntryReadingHeader.tsx:293
+#: src/components/miniflux/EntryReading.tsx:714
+#: src/components/miniflux/EntryReading.tsx:720
+#: src/components/miniflux/EntryReadingHeader.tsx:292
+#: src/components/miniflux/EntryReadingHeader.tsx:299
 msgid "Failed to save entry"
 msgstr "エントリーの保存に失敗しました"
 
@@ -2121,7 +2122,7 @@ msgstr "ソースの検索に失敗しました"
 msgid "Failed to select folder"
 msgstr "フォルダーの選択に失敗しました"
 
-#: src/components/miniflux/EntryReading.tsx:1627
+#: src/components/miniflux/EntryReading.tsx:1650
 msgid "Failed to summarize paragraph"
 msgstr "段落の要約に失敗しました"
 
@@ -2230,7 +2231,7 @@ msgstr "ユーザーの更新に失敗しました"
 msgid "Failed to update video download path"
 msgstr "動画のダウンロードパスの更新に失敗しました"
 
-#: src/components/miniflux/MinifluxLayout.tsx:655
+#: src/components/miniflux/MinifluxLayout.tsx:692
 #: src/components/preferences/PreferencesDialog.tsx:373
 msgid "Feed"
 msgstr "フィード"
@@ -2247,7 +2248,7 @@ msgstr "一部の設定でフィードを作成しました"
 msgid "Feed deleted"
 msgstr "フィードを削除しました"
 
-#: src/components/miniflux/EntryReading.tsx:1786
+#: src/components/miniflux/EntryReading.tsx:1809
 msgid "Feed excluded from translation"
 msgstr "このフィードを翻訳から除外しました"
 
@@ -2271,7 +2272,7 @@ msgstr "フィードタイトル"
 msgid "Feed Title"
 msgstr "フィードタイトル"
 
-#: src/components/miniflux/EntryReading.tsx:1781
+#: src/components/miniflux/EntryReading.tsx:1804
 msgid "Feed translation re-enabled"
 msgstr "このフィードの翻訳を再有効化しました"
 
@@ -2316,7 +2317,7 @@ msgstr "すべてのフィードから新しい記事を取得"
 msgid "Fetch original content"
 msgstr "オリジナルコンテンツを取得"
 
-#: src/components/miniflux/EntryReading.tsx:1876
+#: src/components/miniflux/EntryReading.tsx:1899
 #: src/lib/commands/article-commands.ts:54
 #: src/lib/menu.ts:234
 msgid "Fetch Original Content"
@@ -2328,7 +2329,7 @@ msgstr "オリジナルコンテンツを取得"
 msgid "Fetch via proxy"
 msgstr "プロキシ経由で取得"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:301
+#: src/components/miniflux/EntryReadingHeader.tsx:307
 msgid "Fetching original content..."
 msgstr "オリジナルコンテンツを取得中..."
 
@@ -2352,7 +2353,7 @@ msgstr "フィル"
 msgid "Fill from .env"
 msgstr ".env から入力"
 
-#: src/components/miniflux/MinifluxLayout.tsx:758
+#: src/components/miniflux/MinifluxLayout.tsx:795
 msgid "Filter"
 msgstr ""
 
@@ -2364,20 +2365,20 @@ msgstr ""
 msgid "Floating player window"
 msgstr "フローティングプレーヤーウィンドウ"
 
-#: src/components/miniflux/MinifluxLayout.tsx:828
+#: src/components/miniflux/MinifluxLayout.tsx:865
 msgid "Flush history"
 msgstr "履歴を削除"
 
-#: src/components/miniflux/MinifluxLayout.tsx:422
+#: src/components/miniflux/MinifluxLayout.tsx:459
 msgid "Flush History"
 msgstr "履歴を削除"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:730
-#: src/components/miniflux/EntryReadingHeader.tsx:737
+#: src/components/miniflux/EntryReadingHeader.tsx:748
+#: src/components/miniflux/EntryReadingHeader.tsx:755
 msgid "Focus mode"
 msgstr "フォーカスモード"
 
-#: src/components/miniflux/EntryReading.tsx:1887
+#: src/components/miniflux/EntryReading.tsx:1910
 msgid "Focus Mode"
 msgstr "フォーカスモード"
 
@@ -2405,7 +2406,7 @@ msgstr "フォントサイズ"
 msgid "Found sources"
 msgstr "ソースが見つかりました"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:191
+#: src/components/miniflux/EntryReadingHeader.tsx:197
 #: src/components/preferences/panes/TranslationPane.tsx:1718
 #: src/components/preferences/panes/TranslationPane.tsx:2248
 msgid "French"
@@ -2448,7 +2449,7 @@ msgid "Generate an AI summary of the current article"
 msgstr "現在の記事のAI要約を生成"
 
 #: src/components/miniflux/ArticleSummary.tsx:275
-#: src/components/miniflux/EntryReading.tsx:1622
+#: src/components/miniflux/EntryReading.tsx:1645
 msgid "Generating summary..."
 msgstr "要約を生成中..."
 
@@ -2457,7 +2458,7 @@ msgstr "要約を生成中..."
 msgid "Georgia"
 msgstr "Georgia"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:192
+#: src/components/miniflux/EntryReadingHeader.tsx:198
 #: src/components/preferences/panes/TranslationPane.tsx:1719
 #: src/components/preferences/panes/TranslationPane.tsx:2249
 msgid "German"
@@ -2509,7 +2510,7 @@ msgstr "前のページへ"
 msgid "Go to top"
 msgstr "トップへ移動"
 
-#: src/components/miniflux/EntryReading.tsx:1719
+#: src/components/miniflux/EntryReading.tsx:1742
 msgid "Go to Top"
 msgstr "トップへ移動"
 
@@ -2540,7 +2541,7 @@ msgstr "他を非表示"
 msgid "Hide playlist"
 msgstr "プレイリストを非表示"
 
-#: src/components/miniflux/EntryReading.tsx:487
+#: src/components/miniflux/EntryReading.tsx:498
 msgid "Hide reading status"
 msgstr "読書ステータスを非表示"
 
@@ -2548,22 +2549,22 @@ msgstr "読書ステータスを非表示"
 msgid "Hide the left sidebar"
 msgstr "左サイドバーを非表示"
 
-#: src/components/layout/AppSidebar.tsx:700
-#: src/components/layout/AppSidebar.tsx:709
+#: src/components/layout/AppSidebar.tsx:705
+#: src/components/layout/AppSidebar.tsx:714
 #: src/components/layout/MobileTabBar.tsx:22
-#: src/components/miniflux/MinifluxLayout.tsx:666
+#: src/components/miniflux/MinifluxLayout.tsx:703
 msgid "History"
 msgstr "履歴"
 
-#: src/components/miniflux/MinifluxLayout.tsx:440
+#: src/components/miniflux/MinifluxLayout.tsx:477
 msgid "History flushed"
 msgstr "履歴を削除しました"
 
-#: src/components/miniflux/MinifluxLayout.tsx:690
+#: src/components/miniflux/MinifluxLayout.tsx:727
 msgid "history items"
 msgstr "履歴"
 
-#: src/components/miniflux/MinifluxLayout.tsx:467
+#: src/components/miniflux/MinifluxLayout.tsx:504
 msgid "History page is only available when connected to Miniflux server."
 msgstr "履歴ページはMinifluxサーバーに接続している場合のみ利用できます。"
 
@@ -2647,8 +2648,8 @@ msgstr "OPMLファイルからフィードをインポート"
 msgid "Import feeds from an OPML file."
 msgstr "OPMLファイルからフィードをインポートします。"
 
-#: src/components/layout/AppSidebar.tsx:506
-#: src/components/layout/AppSidebar.tsx:602
+#: src/components/layout/AppSidebar.tsx:511
+#: src/components/layout/AppSidebar.tsx:607
 #: src/components/preferences/panes/AdvancedPane.tsx:365
 #: src/components/preferences/panes/AdvancedPane.tsx:497
 msgid "Import OPML"
@@ -2748,7 +2749,7 @@ msgstr "連携"
 msgid "Interrupted — app was closed"
 msgstr "中断されました — アプリが閉じられました"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:188
+#: src/components/miniflux/EntryReadingHeader.tsx:194
 #: src/components/preferences/panes/TranslationPane.tsx:1715
 #: src/components/preferences/panes/TranslationPane.tsx:2244
 msgid "Japanese"
@@ -2768,7 +2769,7 @@ msgstr "キープリストルール"
 msgid "Kimi"
 msgstr "Kimi"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:189
+#: src/components/miniflux/EntryReadingHeader.tsx:195
 #: src/components/preferences/panes/TranslationPane.tsx:1716
 #: src/components/preferences/panes/TranslationPane.tsx:2245
 msgid "Korean"
@@ -2821,7 +2822,7 @@ msgstr "最終ログイン"
 msgid "Last Modified"
 msgstr "最終更新"
 
-#: src/components/miniflux/MinifluxLayout.tsx:853
+#: src/components/miniflux/MinifluxLayout.tsx:890
 msgid "Last read date"
 msgstr "最終閲覧日"
 
@@ -2880,7 +2881,7 @@ msgstr "行の高さ"
 msgid "Line Width"
 msgstr "行幅"
 
-#: src/components/miniflux/EntryReading.tsx:1904
+#: src/components/miniflux/EntryReading.tsx:1927
 #: src/lib/shortcut-registry.ts:36
 msgid "Links"
 msgstr "リンク"
@@ -2909,9 +2910,9 @@ msgstr "読み込み中"
 msgid "Loading version information..."
 msgstr "バージョン情報を読み込み中..."
 
-#: src/components/layout/AppSidebar.tsx:622
-#: src/components/miniflux/EntryReadingHeader.tsx:304
-#: src/components/miniflux/MinifluxLayout.tsx:449
+#: src/components/layout/AppSidebar.tsx:627
+#: src/components/miniflux/EntryReadingHeader.tsx:310
+#: src/components/miniflux/MinifluxLayout.tsx:486
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PodcastPlayer.tsx:496
 #: src/pages/TrayPopover.tsx:226
@@ -2970,15 +2971,15 @@ msgstr "サードパーティサービスの連携を管理します。"
 msgid "Manage third-party service integrations. Configure services in Miniflux settings."
 msgstr "サードパーティサービスの連携を管理します。Minifluxの設定でサービスを構成してください。"
 
-#: src/components/miniflux/MinifluxLayout.tsx:817
+#: src/components/miniflux/MinifluxLayout.tsx:854
 msgid "Mark all as read"
 msgstr "すべて既読にする"
 
 #: src/components/layout/AppSidebar.tsx:182
-#: src/components/layout/AppSidebar.tsx:397
-#: src/components/miniflux/EntryReading.tsx:1865
-#: src/components/miniflux/EntryReadingHeader.tsx:853
-#: src/components/miniflux/EntryReadingHeader.tsx:872
+#: src/components/layout/AppSidebar.tsx:402
+#: src/components/miniflux/EntryReading.tsx:1888
+#: src/components/miniflux/EntryReadingHeader.tsx:871
+#: src/components/miniflux/EntryReadingHeader.tsx:891
 #: src/components/preferences/panes/CategoriesPane.tsx:113
 #: src/components/preferences/PreferencesDialog.tsx:476
 msgid "Mark as read"
@@ -2989,9 +2990,9 @@ msgstr "既読にする"
 msgid "Mark as Read/Unread"
 msgstr "既読/未読にする"
 
-#: src/components/miniflux/EntryReading.tsx:1865
-#: src/components/miniflux/EntryReadingHeader.tsx:853
-#: src/components/miniflux/EntryReadingHeader.tsx:872
+#: src/components/miniflux/EntryReading.tsx:1888
+#: src/components/miniflux/EntryReadingHeader.tsx:871
+#: src/components/miniflux/EntryReadingHeader.tsx:891
 msgid "Mark as unread"
 msgstr "未読にする"
 
@@ -3020,7 +3021,7 @@ msgstr "記事テキストの最大幅（文字数、45-80）"
 msgid "Microsoft Translator"
 msgstr "Microsoft翻訳"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:1095
+#: src/components/miniflux/EntryReadingHeader.tsx:1118
 msgid "min read"
 msgstr "分で読了"
 
@@ -3101,7 +3102,7 @@ msgstr "モダンな Rust 駆動のデスクトップフレームワーク"
 msgid "Monospace"
 msgstr "等幅"
 
-#: src/components/layout/MobileTabBar.tsx:81
+#: src/components/layout/MobileTabBar.tsx:86
 #: src/components/ui/breadcrumb.tsx:106
 msgid "More"
 msgstr "もっと見る"
@@ -3185,7 +3186,7 @@ msgid "New password (optional)"
 msgstr "新しいパスワード（任意）"
 
 #: src/components/podcast/PlayerWindowControls.tsx:291
-#: src/components/zen-mode/ZenModeView.tsx:289
+#: src/components/zen-mode/ZenModeView.tsx:290
 #: src/pages/TrayPopover.tsx:233
 msgid "Next"
 msgstr "次へ"
@@ -3195,7 +3196,7 @@ msgstr "次へ"
 msgid "Next article"
 msgstr "次の記事"
 
-#: src/components/miniflux/EntryReading.tsx:1694
+#: src/components/miniflux/EntryReading.tsx:1717
 #: src/lib/menu.ts:276
 msgid "Next Article"
 msgstr "次の記事"
@@ -3204,12 +3205,12 @@ msgstr "次の記事"
 #~ msgid "Next entry"
 #~ msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:407
-#: src/components/miniflux/EntryReadingHeader.tsx:413
+#: src/components/miniflux/EntryReadingHeader.tsx:419
+#: src/components/miniflux/EntryReadingHeader.tsx:425
 msgid "Next entry (j or →)"
 msgstr "次のエントリー（j または →）"
 
-#: src/components/miniflux/EntryReading.tsx:434
+#: src/components/miniflux/EntryReading.tsx:440
 msgid "Next section"
 msgstr "次のセクション"
 
@@ -3250,7 +3251,7 @@ msgstr "カテゴリーなし"
 msgid "No completed downloads"
 msgstr "完了したダウンロードはありません"
 
-#: src/components/miniflux/EntryReading.tsx:1590
+#: src/components/miniflux/EntryReading.tsx:1613
 msgid "No content available"
 msgstr "コンテンツがありません"
 
@@ -3337,7 +3338,7 @@ msgstr "サーバー URL が見つかりません。"
 msgid "No sources found"
 msgstr "ソースが見つかりません"
 
-#: src/components/zen-mode/ZenModeView.tsx:247
+#: src/components/zen-mode/ZenModeView.tsx:248
 msgid "No unread entries available"
 msgstr "未読のエントリーはありません"
 
@@ -3369,16 +3370,16 @@ msgstr "オブジェクトキー"
 msgid "of"
 msgstr "/"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:179
+#: src/components/miniflux/EntryReadingHeader.tsx:185
 msgid "Off"
 msgstr "オフ"
 
-#: src/components/layout/AppSidebar.tsx:770
+#: src/components/layout/AppSidebar.tsx:775
 #: src/components/miniflux/UserNav.tsx:313
 msgid "Offline cached data"
 msgstr "オフラインキャッシュデータ"
 
-#: src/components/miniflux/MinifluxLayout.tsx:464
+#: src/components/miniflux/MinifluxLayout.tsx:501
 msgid "Offline Mode"
 msgstr "オフラインモード"
 
@@ -3386,7 +3387,7 @@ msgstr "オフラインモード"
 msgid "OK"
 msgstr "OK"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:216
+#: src/components/miniflux/EntryReadingHeader.tsx:222
 #: src/components/preferences/panes/ReaderPane.tsx:69
 #: src/lib/menu.ts:163
 msgid "OLED"
@@ -3411,18 +3412,18 @@ msgstr "開く"
 msgid "Open appearance preferences"
 msgstr "外観設定を開く"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:998
+#: src/components/miniflux/EntryReadingHeader.tsx:1020
 #: src/lib/shortcut-registry.ts:149
 msgid "Open in app browser"
 msgstr "アプリ内ブラウザで開く"
 
-#: src/components/miniflux/EntryReading.tsx:1929
+#: src/components/miniflux/EntryReading.tsx:1952
 #: src/lib/commands/article-commands.ts:90
 #: src/lib/menu.ts:258
 msgid "Open in App Browser"
 msgstr "アプリ内ブラウザで開く"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:1007
+#: src/components/miniflux/EntryReadingHeader.tsx:1029
 #: src/components/miniflux/InAppBrowserPane.tsx:208
 #: src/components/miniflux/InAppBrowserPane.tsx:214
 #: src/lib/gesture-actions.ts:19
@@ -3430,7 +3431,7 @@ msgstr "アプリ内ブラウザで開く"
 msgid "Open in browser"
 msgstr "ブラウザで開く"
 
-#: src/components/miniflux/EntryReading.tsx:1917
+#: src/components/miniflux/EntryReading.tsx:1940
 #: src/lib/commands/article-commands.ts:78
 #: src/lib/menu.ts:252
 msgid "Open in Browser"
@@ -3494,12 +3495,12 @@ msgstr "OpenRouter"
 msgid "OPML"
 msgstr "OPML"
 
-#: src/components/layout/AppSidebar.tsx:494
+#: src/components/layout/AppSidebar.tsx:499
 #: src/components/preferences/panes/AdvancedPane.tsx:352
 msgid "OPML exported successfully"
 msgstr "OPMLをエクスポートしました"
 
-#: src/components/layout/AppSidebar.tsx:522
+#: src/components/layout/AppSidebar.tsx:527
 #: src/components/preferences/panes/AdvancedPane.tsx:381
 msgid "OPML imported successfully"
 msgstr "OPMLをインポートしました"
@@ -3520,7 +3521,7 @@ msgstr "タイムアウト（オプション）"
 msgid "Optional. Leave empty for local Ollama. Required for the Ollama cloud API (ollama.com)."
 msgstr "オプション。ローカルOllamaの場合は空のまま。Ollama クラウドAPI（ollama.com）では必須。"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:302
+#: src/components/miniflux/EntryReadingHeader.tsx:308
 #: src/services/miniflux/entries.ts:588
 msgid "Original content downloaded"
 msgstr "オリジナルコンテンツをダウンロードしました"
@@ -3547,13 +3548,13 @@ msgstr "デフォルトの翻訳指示を上書きします。{source_lang} と 
 msgid "Page {0} of {1}"
 msgstr "{1} ページ中 {0} ページ"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:210
+#: src/components/miniflux/EntryReadingHeader.tsx:216
 #: src/components/preferences/panes/ReaderPane.tsx:66
 #: src/lib/menu.ts:148
 msgid "Paper"
 msgstr "ペーパー"
 
-#: src/components/miniflux/EntryReading.tsx:1610
+#: src/components/miniflux/EntryReading.tsx:1633
 msgid "Paragraph summary"
 msgstr "段落の要約"
 
@@ -3594,7 +3595,7 @@ msgid "Paste new API token"
 msgstr "新しいAPIトークンを貼り付け"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:553
-#: src/components/miniflux/EntryReadingHeader.tsx:306
+#: src/components/miniflux/EntryReadingHeader.tsx:312
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PodcastPlayer.tsx:498
 #: src/pages/TrayPopover.tsx:226
@@ -3619,7 +3620,7 @@ msgstr "フレーズ"
 
 #: src/components/downloads/DownloadManagerDialog.tsx:538
 #: src/components/miniflux/EntryList.tsx:861
-#: src/components/miniflux/EntryReadingHeader.tsx:307
+#: src/components/miniflux/EntryReadingHeader.tsx:313
 #: src/components/podcast/PlayerWindowControls.tsx:270
 #: src/components/podcast/PlayerWindowQueue.tsx:102
 #: src/components/podcast/PodcastPlayer.tsx:499
@@ -3627,7 +3628,7 @@ msgstr "フレーズ"
 msgid "Play"
 msgstr "再生"
 
-#: src/components/miniflux/EntryReading.tsx:1973
+#: src/components/miniflux/EntryReading.tsx:1996
 #: src/lib/commands/podcast-commands.ts:9
 #: src/lib/menu.ts:305
 #: src/lib/shortcut-registry.ts:155
@@ -3660,7 +3661,7 @@ msgstr "プレーヤー表示モードを更新しました"
 msgid "Playlist"
 msgstr "プレイリスト"
 
-#: src/components/miniflux/MinifluxLayout.tsx:471
+#: src/components/miniflux/MinifluxLayout.tsx:508
 msgid "Please connect to your server to use this feature."
 msgstr "この機能を使用するにはサーバーに接続してください。"
 
@@ -3687,7 +3688,7 @@ msgstr "PNG、JPG、WebP、GIF、AVIF"
 
 #: src/components/command-palette/CommandPalette.tsx:187
 #: src/components/miniflux/EntryList.tsx:896
-#: src/components/miniflux/EntryReading.tsx:1962
+#: src/components/miniflux/EntryReading.tsx:1985
 #: src/lib/menu.ts:301
 msgid "Podcast"
 msgstr "ポッドキャスト"
@@ -3752,7 +3753,7 @@ msgstr "前へ"
 msgid "Previous article"
 msgstr "前の記事"
 
-#: src/components/miniflux/EntryReading.tsx:1685
+#: src/components/miniflux/EntryReading.tsx:1708
 #: src/lib/menu.ts:270
 msgid "Previous Article"
 msgstr "前の記事"
@@ -3761,16 +3762,16 @@ msgstr "前の記事"
 #~ msgid "Previous entry"
 #~ msgstr ""
 
-#: src/components/miniflux/EntryReadingHeader.tsx:388
-#: src/components/miniflux/EntryReadingHeader.tsx:394
+#: src/components/miniflux/EntryReadingHeader.tsx:400
+#: src/components/miniflux/EntryReadingHeader.tsx:406
 msgid "Previous entry (h or ←)"
 msgstr "前のエントリー（h または ←）"
 
-#: src/components/miniflux/EntryReading.tsx:433
+#: src/components/miniflux/EntryReading.tsx:439
 msgid "Previous section"
 msgstr "前のセクション"
 
-#: src/components/layout/MobileTabBar.tsx:54
+#: src/components/layout/MobileTabBar.tsx:48
 msgid "Primary"
 msgstr ""
 
@@ -3782,7 +3783,7 @@ msgstr ""
 msgid "Protocol"
 msgstr "プロトコル"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:680
+#: src/components/miniflux/EntryReadingHeader.tsx:698
 #: src/components/preferences/panes/TranslationPane.tsx:1755
 msgid "Provider"
 msgstr "プロバイダー"
@@ -3821,7 +3822,7 @@ msgstr "プロバイダー"
 msgid "Providers resorted"
 msgstr "プロバイダーを並べ替えました"
 
-#: src/components/miniflux/MinifluxLayout.tsx:847
+#: src/components/miniflux/MinifluxLayout.tsx:884
 msgid "Published date"
 msgstr "公開日"
 
@@ -3893,7 +3894,7 @@ msgstr "Qwen-MT"
 msgid "Randomize the playback queue order"
 msgstr "再生キューの順序をランダム化"
 
-#: src/components/miniflux/EntryReading.tsx:1741
+#: src/components/miniflux/EntryReading.tsx:1764
 msgid "Re-summarize"
 msgstr "再要約"
 
@@ -3950,9 +3951,9 @@ msgstr "リーダーのタイポグラフィ設定"
 msgid "Reading"
 msgstr "閲覧"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:751
-#: src/components/miniflux/EntryReadingHeader.tsx:760
-#: src/components/miniflux/EntryReadingHeader.tsx:767
+#: src/components/miniflux/EntryReadingHeader.tsx:769
+#: src/components/miniflux/EntryReadingHeader.tsx:778
+#: src/components/miniflux/EntryReadingHeader.tsx:785
 msgid "Reading display"
 msgstr "読書表示"
 
@@ -3960,7 +3961,7 @@ msgstr "読書表示"
 msgid "Reading Features"
 msgstr "閲覧機能"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:795
+#: src/components/miniflux/EntryReadingHeader.tsx:813
 msgid "Reading theme"
 msgstr "閲覧テーマ"
 
@@ -3976,7 +3977,7 @@ msgstr "準備完了"
 msgid "Recent"
 msgstr "最近"
 
-#: src/components/miniflux/MinifluxLayout.tsx:564
+#: src/components/miniflux/MinifluxLayout.tsx:601
 msgid "Reconnect to an existing account or add a new one"
 msgstr "既存のアカウントに再接続するか、新しいアカウントを追加"
 
@@ -4299,8 +4300,8 @@ msgstr "変更を保存"
 msgid "Save Rules"
 msgstr "ルールを保存"
 
-#: src/components/miniflux/EntryReading.tsx:1952
-#: src/components/miniflux/EntryReadingHeader.tsx:1022
+#: src/components/miniflux/EntryReading.tsx:1975
+#: src/components/miniflux/EntryReadingHeader.tsx:1044
 msgid "Save to services"
 msgstr "サービスに保存"
 
@@ -4308,7 +4309,7 @@ msgstr "サービスに保存"
 msgid "Save your current settings to a JSON file for backup or migration."
 msgstr "現在の設定をJSONファイルに保存してバックアップや移行に使用します。"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:1022
+#: src/components/miniflux/EntryReadingHeader.tsx:1044
 msgid "Saved!"
 msgstr "保存しました！"
 
@@ -4336,7 +4337,7 @@ msgstr "ページをスクロール"
 msgid "Scroll page up"
 msgstr "ページを上にスクロール"
 
-#: src/components/miniflux/EntryReading.tsx:489
+#: src/components/miniflux/EntryReading.tsx:500
 msgid "Scroll to top"
 msgstr "トップにスクロール"
 
@@ -4345,7 +4346,7 @@ msgid "Scroll up"
 msgstr "上にスクロール"
 
 #: src/components/miniflux/add-feed-dialog/SearchSourcesTabPanel.tsx:83
-#: src/components/miniflux/MinifluxLayout.tsx:882
+#: src/components/miniflux/MinifluxLayout.tsx:919
 #: src/components/miniflux/ReaderSelectionToolbar.tsx:164
 #: src/components/miniflux/SafeHtml.tsx:820
 #: src/components/miniflux/settings/FeedFormDialog.tsx:337
@@ -4393,7 +4394,7 @@ msgid "Search fonts..."
 msgstr "フォントを検索..."
 
 #. placeholder {0}: contextMenuSelectedText.length > 30 ? `${contextMenuSelectedText.slice(0, 30)}…` : contextMenuSelectedText
-#: src/components/miniflux/EntryReading.tsx:1671
+#: src/components/miniflux/EntryReading.tsx:1694
 msgid "Search for \"{0}\""
 msgstr ""
 
@@ -4417,7 +4418,7 @@ msgstr "スキップする言語を検索..."
 msgid "Search or type a command..."
 msgstr "検索またはコマンドを入力..."
 
-#: src/components/layout/AppSidebar.tsx:589
+#: src/components/layout/AppSidebar.tsx:594
 #: src/components/miniflux/AddFeedDialog.tsx:454
 msgid "Search Source"
 msgstr "ソースを検索"
@@ -4480,7 +4481,7 @@ msgstr "テーマを選択"
 msgid "Select Video Download Folder"
 msgstr "動画のダウンロードフォルダーを選択"
 
-#: src/components/miniflux/EntryReading.tsx:1647
+#: src/components/miniflux/EntryReading.tsx:1670
 msgid "Selection"
 msgstr "選択テキスト"
 
@@ -4488,7 +4489,7 @@ msgstr "選択テキスト"
 msgid "Sensitivity"
 msgstr "感度"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:212
+#: src/components/miniflux/EntryReadingHeader.tsx:218
 #: src/components/preferences/panes/ReaderPane.tsx:67
 #: src/lib/menu.ts:153
 msgid "Sepia"
@@ -4545,8 +4546,8 @@ msgid "Set background from file or URL"
 msgstr "ファイルまたはURLから背景を設定"
 
 #: src/components/command-palette/CommandPalette.tsx:193
-#: src/components/layout/AppSidebar.tsx:557
-#: src/components/layout/AppSidebar.tsx:558
+#: src/components/layout/AppSidebar.tsx:562
+#: src/components/layout/AppSidebar.tsx:563
 #: src/components/preferences/panes/AdvancedPane.tsx:81
 #: src/components/titlebar/WindowTitleBar.tsx:103
 msgid "Settings"
@@ -4560,13 +4561,13 @@ msgstr "設定プレビュー"
 msgid "shadcn/ui"
 msgstr "shadcn/ui"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:945
-#: src/components/miniflux/EntryReadingHeader.tsx:953
+#: src/components/miniflux/EntryReadingHeader.tsx:965
+#: src/components/miniflux/EntryReadingHeader.tsx:973
 #: src/components/miniflux/SafeHtml.tsx:828
 msgid "Share"
 msgstr "共有"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:987
+#: src/components/miniflux/EntryReadingHeader.tsx:1009
 msgid "Share link copied!"
 msgstr "共有リンクをコピーしました！"
 
@@ -4579,7 +4580,7 @@ msgstr "段落をシェア"
 msgid "Shortcuts"
 msgstr "ショートカット"
 
-#: src/components/miniflux/MinifluxLayout.tsx:768
+#: src/components/miniflux/MinifluxLayout.tsx:805
 msgid "Show"
 msgstr ""
 
@@ -4633,11 +4634,11 @@ msgstr "翻訳と一緒に原文を表示"
 msgid "Show playlist"
 msgstr "プレイリストを表示"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:830
+#: src/components/miniflux/EntryReadingHeader.tsx:848
 msgid "Show reading progress at bottom-left"
 msgstr "左下に読書進捗を表示"
 
-#: src/components/miniflux/EntryReading.tsx:488
+#: src/components/miniflux/EntryReading.tsx:499
 msgid "Show reading status"
 msgstr "読書ステータスを表示"
 
@@ -4704,15 +4705,15 @@ msgstr "30秒進める"
 msgid "Skip source languages"
 msgstr "ソース言語をスキップ"
 
-#: src/components/miniflux/EntryReading.tsx:1839
+#: src/components/miniflux/EntryReading.tsx:1862
 msgid "Skip this category"
 msgstr "このカテゴリーをスキップ"
 
-#: src/components/miniflux/EntryReading.tsx:1797
+#: src/components/miniflux/EntryReading.tsx:1820
 msgid "Skip this feed"
 msgstr "このフィードをスキップ"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:214
+#: src/components/miniflux/EntryReadingHeader.tsx:220
 #: src/components/preferences/panes/ReaderPane.tsx:68
 #: src/lib/menu.ts:158
 msgid "Slate"
@@ -4727,8 +4728,8 @@ msgstr "一部の変更にはアプリの再起動が必要な場合がありま
 msgid "Something went wrong"
 msgstr "エラーが発生しました"
 
-#: src/components/miniflux/MinifluxLayout.tsx:836
-#: src/components/miniflux/MinifluxLayout.tsx:842
+#: src/components/miniflux/MinifluxLayout.tsx:873
+#: src/components/miniflux/MinifluxLayout.tsx:879
 msgid "Sort by"
 msgstr "並べ替え"
 
@@ -4744,7 +4745,7 @@ msgstr "ソースURLは必須です"
 msgid "Spacing between lines of text (1.4-2.2)"
 msgstr "テキストの行間（1.4-2.2）"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:190
+#: src/components/miniflux/EntryReadingHeader.tsx:196
 #: src/components/preferences/panes/TranslationPane.tsx:1717
 #: src/components/preferences/panes/TranslationPane.tsx:2247
 msgid "Spanish"
@@ -4754,9 +4755,9 @@ msgstr "スペイン語"
 msgid "Stack Trace"
 msgstr "スタックトレース"
 
-#: src/components/miniflux/EntryReading.tsx:1706
-#: src/components/miniflux/EntryReadingHeader.tsx:888
-#: src/components/miniflux/EntryReadingHeader.tsx:894
+#: src/components/miniflux/EntryReading.tsx:1729
+#: src/components/miniflux/EntryReadingHeader.tsx:908
+#: src/components/miniflux/EntryReadingHeader.tsx:914
 msgid "Star"
 msgstr "スター"
 
@@ -4764,21 +4765,21 @@ msgstr "スター"
 msgid "Star or unstar the current article"
 msgstr "現在の記事のスターを切り替え"
 
-#: src/components/layout/AppSidebar.tsx:682
-#: src/components/layout/AppSidebar.tsx:691
+#: src/components/layout/AppSidebar.tsx:687
+#: src/components/layout/AppSidebar.tsx:696
 #: src/components/layout/MobileTabBar.tsx:21
 #: src/components/miniflux/EntryFilters.tsx:118
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:44
-#: src/components/miniflux/MinifluxLayout.tsx:68
-#: src/components/miniflux/MinifluxLayout.tsx:662
+#: src/components/miniflux/MinifluxLayout.tsx:83
+#: src/components/miniflux/MinifluxLayout.tsx:699
 msgid "Starred"
 msgstr "スター付き"
 
-#: src/components/miniflux/MinifluxLayout.tsx:686
+#: src/components/miniflux/MinifluxLayout.tsx:723
 msgid "starred items"
 msgstr "スター付き"
 
-#: src/components/miniflux/MinifluxLayout.tsx:468
+#: src/components/miniflux/MinifluxLayout.tsx:505
 msgid "Starred items page is only available when connected to Miniflux server."
 msgstr "スター付きページはMinifluxサーバーに接続している場合のみ利用できます。"
 
@@ -4803,7 +4804,7 @@ msgstr "開始中"
 msgid "Status"
 msgstr "ステータス"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:828
+#: src/components/miniflux/EntryReadingHeader.tsx:846
 #: src/components/preferences/panes/ReaderPane.tsx:440
 msgid "Status Bar"
 msgstr "ステータスバー"
@@ -4864,7 +4865,7 @@ msgstr "新しいRSSフィードを購読"
 msgid "Summarize article"
 msgstr "記事を要約"
 
-#: src/components/miniflux/EntryReading.tsx:1741
+#: src/components/miniflux/EntryReading.tsx:1764
 msgid "Summarize Article"
 msgstr "記事を要約"
 
@@ -4872,14 +4873,14 @@ msgstr "記事を要約"
 msgid "Summarize paragraph"
 msgstr "段落を要約"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:544
-#: src/components/miniflux/EntryReadingHeader.tsx:561
+#: src/components/miniflux/EntryReadingHeader.tsx:562
+#: src/components/miniflux/EntryReadingHeader.tsx:579
 #: src/lib/commands/article-commands.ts:113
 #: src/lib/menu.ts:246
 msgid "Summarize with AI"
 msgstr "AIで要約"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:561
+#: src/components/miniflux/EntryReadingHeader.tsx:579
 msgid "Summarizing..."
 msgstr "要約中..."
 
@@ -4903,6 +4904,10 @@ msgstr "左スワイプの操作"
 msgid "Swipe right action"
 msgstr "右スワイプの操作"
 
+#: src/components/layout/MainWindowContent.tsx:234
+msgid "Swipe right or close to return to the list"
+msgstr ""
+
 #: src/components/preferences/panes/GesturePane.tsx:37
 #~ msgid "Swipe right to close browser"
 #~ msgstr "右にスワイプしてブラウザを閉じる"
@@ -4915,7 +4920,7 @@ msgstr "ダークテーマに切り替え"
 msgid "Switch to light theme"
 msgstr "ライトテーマに切り替え"
 
-#: src/components/miniflux/MinifluxLayout.tsx:500
+#: src/components/miniflux/MinifluxLayout.tsx:537
 #: src/components/miniflux/UserNav.tsx:86
 msgid "Switched account"
 msgstr "アカウントを切り替えました"
@@ -5050,7 +5055,7 @@ msgstr "システムUI"
 msgid "TanStack"
 msgstr "TanStack"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:633
+#: src/components/miniflux/EntryReadingHeader.tsx:651
 #: src/components/preferences/panes/TranslationPane.tsx:1697
 msgid "Target language"
 msgstr "翻訳先言語"
@@ -5196,11 +5201,11 @@ msgstr "変換先"
 msgid "to open the command palette and explore available commands."
 msgstr "コマンドパレットを開いて利用可能なコマンドを探索します。"
 
-#: src/components/layout/AppSidebar.tsx:658
-#: src/components/layout/AppSidebar.tsx:667
+#: src/components/layout/AppSidebar.tsx:663
+#: src/components/layout/AppSidebar.tsx:672
 #: src/components/layout/MobileTabBar.tsx:20
 #: src/components/miniflux/EntryList.tsx:174
-#: src/components/miniflux/MinifluxLayout.tsx:664
+#: src/components/miniflux/MinifluxLayout.tsx:701
 msgid "Today"
 msgstr "今日"
 
@@ -5208,7 +5213,7 @@ msgstr "今日"
 msgid "Toggle audio mute"
 msgstr "オーディオミュートの切り替え"
 
-#: src/components/layout/AppSidebar.tsx:414
+#: src/components/layout/AppSidebar.tsx:419
 msgid "Toggle category feeds"
 msgstr "カテゴリーのフィードを切り替え"
 
@@ -5329,14 +5334,14 @@ msgstr "合計ダウンロード済み:"
 msgid "Trace"
 msgstr "トレース"
 
-#: src/components/miniflux/EntryReading.tsx:1764
+#: src/components/miniflux/EntryReading.tsx:1787
 #: src/lib/commands/translation-commands.ts:8
 #: src/lib/menu.ts:240
 msgid "Translate Article"
 msgstr "記事を翻訳"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:618
-#: src/components/miniflux/EntryReadingHeader.tsx:628
+#: src/components/miniflux/EntryReadingHeader.tsx:636
+#: src/components/miniflux/EntryReadingHeader.tsx:646
 msgid "Translate now"
 msgstr "今すぐ翻訳"
 
@@ -5352,12 +5357,12 @@ msgstr "この段落を翻訳"
 msgid "Translate with..."
 msgstr "翻訳エンジン..."
 
-#: src/components/miniflux/EntryReadingHeader.tsx:669
+#: src/components/miniflux/EntryReadingHeader.tsx:687
 msgid "Translated only"
 msgstr "翻訳のみ"
 
-#: src/components/miniflux/EntryReading.tsx:1755
-#: src/components/miniflux/EntryReadingHeader.tsx:238
+#: src/components/miniflux/EntryReading.tsx:1778
+#: src/components/miniflux/EntryReadingHeader.tsx:244
 #: src/components/miniflux/SafeHtml.tsx:809
 #: src/components/preferences/panes/TranslationPane.tsx:1669
 msgid "Translation"
@@ -5367,7 +5372,7 @@ msgstr "翻訳"
 msgid "Translation controls in top bar"
 msgstr "トップバーの翻訳コントロール"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:611
+#: src/components/miniflux/EntryReadingHeader.tsx:629
 msgid "Translation disabled for this feed"
 msgstr "このフィードの翻訳は無効です"
 
@@ -5381,7 +5386,7 @@ msgstr "翻訳エンジン"
 msgid "Translation failed"
 msgstr "翻訳に失敗しました"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:240
+#: src/components/miniflux/EntryReadingHeader.tsx:246
 msgid "Translation options"
 msgstr "翻訳オプション"
 
@@ -5476,17 +5481,17 @@ msgstr "未読"
 
 #: src/components/miniflux/EntryFilters.tsx:110
 #: src/components/miniflux/EntryListFloatingFilterBar.tsx:38
-#: src/components/miniflux/MinifluxLayout.tsx:67
+#: src/components/miniflux/MinifluxLayout.tsx:82
 msgid "Unread"
 msgstr "未読"
 
-#: src/components/miniflux/MinifluxLayout.tsx:682
+#: src/components/miniflux/MinifluxLayout.tsx:719
 msgid "unread items"
 msgstr "未読"
 
-#: src/components/miniflux/EntryReading.tsx:1706
-#: src/components/miniflux/EntryReadingHeader.tsx:888
-#: src/components/miniflux/EntryReadingHeader.tsx:894
+#: src/components/miniflux/EntryReading.tsx:1729
+#: src/components/miniflux/EntryReadingHeader.tsx:908
+#: src/components/miniflux/EntryReadingHeader.tsx:914
 msgid "Unstar"
 msgstr "スター解除"
 
@@ -5551,7 +5556,7 @@ msgstr "更新 v{0} の準備ができました"
 msgid "URL copied to clipboard"
 msgstr "URLをクリップボードにコピーしました"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:971
+#: src/components/miniflux/EntryReadingHeader.tsx:991
 msgid "URL copied!"
 msgstr "URLをコピーしました！"
 
@@ -5694,7 +5699,7 @@ msgstr "アプリのバージョンと情報を表示"
 #~ msgid "View the source code, report issues, or contribute."
 #~ msgstr "ソースコードの閲覧、Issue の報告、コントリビュートができます。"
 
-#: src/components/layout/AppSidebar.tsx:615
+#: src/components/layout/AppSidebar.tsx:620
 msgid "Views"
 msgstr "ビュー"
 
@@ -5724,7 +5729,7 @@ msgstr "警告"
 msgid "WebDAV URL"
 msgstr "WebDAV URL"
 
-#: src/components/miniflux/MinifluxLayout.tsx:561
+#: src/components/miniflux/MinifluxLayout.tsx:598
 msgid "Welcome to Miniflux"
 msgstr "Miniflux へようこそ"
 
@@ -5776,23 +5781,23 @@ msgstr "拡大"
 msgid "Zoom Out"
 msgstr "縮小"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:238
-#: src/components/miniflux/EntryReadingHeader.tsx:241
-#: src/components/miniflux/EntryReadingHeader.tsx:692
+#: src/components/miniflux/EntryReadingHeader.tsx:244
+#: src/components/miniflux/EntryReadingHeader.tsx:247
+#: src/components/miniflux/EntryReadingHeader.tsx:710
 msgid "中文顯示"
 msgstr "中文顯示"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:182
+#: src/components/miniflux/EntryReadingHeader.tsx:188
 #: src/components/preferences/panes/TranslationPane.tsx:1967
 msgid "簡體中文"
 msgstr "簡體中文"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:181
+#: src/components/miniflux/EntryReadingHeader.tsx:187
 #: src/components/preferences/panes/TranslationPane.tsx:1966
 msgid "繁體中文（台灣）"
 msgstr "繁體中文（台灣）"
 
-#: src/components/miniflux/EntryReadingHeader.tsx:180
+#: src/components/miniflux/EntryReadingHeader.tsx:186
 #: src/components/preferences/panes/TranslationPane.tsx:1965
 msgid "繁體中文（香港）"
 msgstr "繁體中文（香港）"

@@ -1,59 +1,74 @@
 /**
- * Tells a Back *we* asked for apart from one the browser drove itself.
- *
- * Both land as the same `popstate`, but the phone reader has to treat them
- * differently. iOS Safari plays its own slide for the edge-swipe (and for its
- * toolbar Back), so replaying our exit on top of it shows the reader closing
- * twice — Safari's slide, then ours. The ✕ goes through `history.back()` too
- * and gets no such animation, so that one still needs ours.
- *
- * Kept as a module singleton rather than a store: the claim is made in
- * `MinifluxLayout` and read in `MainWindowContent`, it lives for a few
- * milliseconds, and nothing renders off it.
+ * Phone reader close is owned by the Drawer (swipe / ✕), not Safari Back.
+ * These helpers only ignore a leftover `?entry=` if iOS still echoes one.
  */
 
-let appInitiatedBack = false;
-let appInitiatedTimer: ReturnType<typeof setTimeout> | null = null;
-let lastBrowserBackAt = Number.NEGATIVE_INFINITY;
+let lastClosedEntry: string | null = null;
+let readerOpenRequested = false;
 
-/** Claim the next `popstate` as ours. Call it right before `history.back()`. */
-export function markAppInitiatedBack(): void {
-  appInitiatedBack = true;
-  if (appInitiatedTimer) clearTimeout(appInitiatedTimer);
-  // A pop we asked for always arrives on the next task. Drop an unclaimed
-  // marker so a later gesture is never mistaken for the call that never popped.
-  appInitiatedTimer = setTimeout(() => {
-    appInitiatedBack = false;
-    appInitiatedTimer = null;
-  }, 400);
+const READER_BROWSER_BACK_CHROME =
+  '[data-testid="mobile-reader-overlay"], .app-fixed-bottom-bar';
+
+export function hideReaderChromeForBrowserBack(): void {
+  if (typeof document === 'undefined') return;
+  document.documentElement.dataset.readerBrowserBack = '';
+  document.querySelectorAll(READER_BROWSER_BACK_CHROME).forEach((node) => {
+    if (!(node instanceof HTMLElement)) return;
+    node.style.setProperty('display', 'none', 'important');
+    node.setAttribute('hidden', '');
+  });
 }
 
-/** True when the browser itself popped history within `withinMs`. */
-export function wasBrowserInitiatedBack(withinMs = 400): boolean {
-  return performance.now() - lastBrowserBackAt <= withinMs;
+export function restoreReaderChromeUi(): void {
+  if (typeof document === 'undefined') return;
+  delete document.documentElement.dataset.readerBrowserBack;
+  document.querySelectorAll(READER_BROWSER_BACK_CHROME).forEach((node) => {
+    if (!(node instanceof HTMLElement)) return;
+    node.style.removeProperty('display');
+    node.removeAttribute('hidden');
+  });
 }
 
-/** Test seam: forget both the claim and the last observed browser pop. */
+export function clearReaderBrowserBackUi(): void {
+  restoreReaderChromeUi();
+}
+
+export function isReaderChromeHidden(): boolean {
+  return typeof document !== 'undefined' && 'readerBrowserBack' in document.documentElement.dataset;
+}
+
+export function markReaderOpenRequested(): void {
+  readerOpenRequested = true;
+  restoreReaderChromeUi();
+}
+
+export function rememberReaderClosed(id: string): void {
+  lastClosedEntry = id;
+}
+
+export function clearReaderClosed(): void {
+  lastClosedEntry = null;
+}
+
+export function consumeReaderOpenRequested(): boolean {
+  const requested = readerOpenRequested;
+  readerOpenRequested = false;
+  return requested;
+}
+
+export function isReaderEntryEcho(entryId: string | undefined): boolean {
+  if (!entryId || readerOpenRequested || !lastClosedEntry) return false;
+  return lastClosedEntry === entryId;
+}
+
 export function resetHistoryIntent(): void {
-  appInitiatedBack = false;
-  if (appInitiatedTimer) clearTimeout(appInitiatedTimer);
-  appInitiatedTimer = null;
-  lastBrowserBackAt = Number.NEGATIVE_INFINITY;
-}
-
-/** Exported for tests; the listener below is the only production caller. */
-export function recordPop(): void {
-  if (appInitiatedBack) {
-    appInitiatedBack = false;
-    if (appInitiatedTimer) clearTimeout(appInitiatedTimer);
-    appInitiatedTimer = null;
-    return;
+  lastClosedEntry = null;
+  readerOpenRequested = false;
+  if (typeof document !== 'undefined') {
+    restoreReaderChromeUi();
   }
-  lastBrowserBackAt = performance.now();
 }
 
-if (typeof window !== 'undefined') {
-  // Registered at import time, which is before the router builds its own
-  // history listener — the reader's close effect must see the pop classified.
-  window.addEventListener('popstate', recordPop);
+export function recordPop(): void {
+  hideReaderChromeForBrowserBack();
 }

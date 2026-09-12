@@ -5,6 +5,13 @@ import type { Entry } from '@/lib/bindings';
 import { usePlayerStore } from '@/store/player-store';
 import { fireEvent, render, screen } from '@/test/test-utils';
 import { EntryReadingHeader } from './EntryReadingHeader';
+import { ReaderActionBarSlotProvider } from './reader-action-bar-slot';
+
+const mobile = vi.hoisted(() => ({ value: false }));
+
+vi.mock('@/hooks/use-mobile', () => ({
+  useIsMobile: () => mobile.value,
+}));
 
 const sampleEntry: Entry = {
   id: 'entry-1',
@@ -80,6 +87,7 @@ function renderHeader(overrides: { isExcludedFeed?: boolean; entry?: Entry } = {
 
 describe('EntryReadingHeader translation options', () => {
   afterEach(() => {
+    mobile.value = false;
     usePlayerStore.getState().dismiss();
   });
 
@@ -129,9 +137,55 @@ describe('EntryReadingHeader translation options', () => {
     expect(await screen.findByTestId('entry-header-podcast-play')).toBeInTheDocument();
   });
 
-  it('uses the iOS Safari fixed-bottom class on the phone action bar', () => {
-    renderHeader();
+  it('renders the phone action bar into the reading footer slot, not position:fixed', () => {
+    mobile.value = true;
+    const slot = document.createElement('div');
+    document.body.append(slot);
+
+    i18n.load('en', {});
+    i18n.activate('en');
+    usePlayerStore.getState().dismiss();
+
+    render(
+      <I18nProvider i18n={i18n}>
+        <ReaderActionBarSlotProvider slot={slot}>
+          <EntryReadingHeader
+            entry={sampleEntry}
+            hasPrev={false}
+            hasNext={false}
+            onToggleStar={vi.fn()}
+            isStarred={false}
+            onToggleRead={vi.fn()}
+            isRead={false}
+            isTogglingRead={false}
+            headerPadding={8 as never}
+            smallTitleOpacity={1 as never}
+            smallTitleHeight={32 as never}
+            titleOpacity={1 as never}
+            titleScale={1 as never}
+            titleY={0 as never}
+            titleMaxHeight={120 as never}
+            translationEnabled={false}
+            onTranslationEnabledChange={vi.fn()}
+            translationDisplayMode="bilingual"
+            onTranslationDisplayModeChange={vi.fn()}
+            translationTargetLanguage="en"
+            onTranslationTargetLanguageChange={vi.fn()}
+            activeTranslationProvider={null}
+            isExcludedFeed={false}
+            onSummarize={vi.fn()}
+            isSummarizing={false}
+            hasSummary={false}
+            focusMode={false}
+            onFocusModeChange={vi.fn()}
+          />
+        </ReaderActionBarSlotProvider>
+      </I18nProvider>
+    );
+
     const toolbar = screen.getByTestId('reader-action-toolbar');
-    expect(toolbar.className).toContain('app-fixed-bottom-bar');
+    expect(toolbar.className).not.toContain('app-fixed-bottom-bar');
+    expect(toolbar.parentElement).toBe(slot);
+    slot.remove();
   });
 });

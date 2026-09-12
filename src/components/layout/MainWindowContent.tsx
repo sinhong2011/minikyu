@@ -1,14 +1,21 @@
-import { AnimatePresence, motion, useReducedMotion } from 'motion/react';
-import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
+import { msg } from '@lingui/core/macro';
+import { useLingui } from '@lingui/react';
+import { AnimatePresence, motion } from 'motion/react';
+import { useCallback, useEffect, useRef, useState, type CSSProperties } from 'react';
 import { EntryEmptyState } from '@/components/miniflux/EntryEmptyState';
 import { EntryReading } from '@/components/miniflux/EntryReading';
 import { InAppBrowserPane } from '@/components/miniflux/InAppBrowserPane';
+import {
+  Drawer,
+  DrawerContent,
+  DrawerDescription,
+  DrawerTitle,
+} from '@/components/ui/drawer';
 import { ResizableHandle, ResizablePanel, ResizablePanelGroup } from '@/components/ui/resizable';
 import { MobileTabBar } from '@/components/layout/MobileTabBar';
 import { useInAppBrowser } from '@/hooks/use-in-app-browser';
 import { useIsMobile } from '@/hooks/use-mobile';
 import { useSelectedEntryId } from '@/hooks/use-selected-entry';
-import { wasBrowserInitiatedBack } from '@/lib/history-intent';
 import { cn } from '@/lib/utils';
 import { usePreferences, useSavePreferences } from '@/services/preferences';
 import { useUIStore } from '@/store/ui-store';
@@ -36,6 +43,7 @@ export function MainWindowContent({
   nextEntryTitle,
   entryTransitionDirection = 'forward',
 }: MainWindowContentProps) {
+  const { _ } = useLingui();
   const lastQuickPaneEntry = useUIStore((state) => state.lastQuickPaneEntry);
   const selectedEntryId = useSelectedEntryId();
   const { openBrowser, closeBrowser, browserContentRef, inAppBrowserUrl } = useInAppBrowser();
@@ -44,100 +52,24 @@ export function MainWindowContent({
   const savePreferences = useSavePreferences();
   const saveTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
   const savedWidth = preferences?.layout_entry_list_width ?? undefined;
-  const prefersReducedMotion = useReducedMotion();
 
+  // Phone reader is a Drawer, not a history page. The list stays mounted
+  // underneath; swipe-to-dismiss / ✕ close the sheet. Safari edge-back is
+  // left alone so it cannot flash the live overlay over its snapshot.
   const readerRequested = Boolean(inAppBrowserUrl || selectedEntryId);
-
-  // Closing the phone reader is one-way until its exit finishes.
-  //
-  // Presence is derived from `?entry=`, and ✕ clears it with `history.back()`.
-  // On iOS standalone that round trip can hand the router the pre-back search
-  // params again for a frame, which re-marks the overlay present mid-exit:
-  // `AnimatePresence` snaps the panel back on screen and then plays the whole
-  // close a second time. Latching the close makes a flicker on the way out
-  // unable to reopen the panel. Nothing real is lost — the overlay still
-  // covers the list for those 340ms, so no genuine reopen can land inside the
-  // window, and `onExitComplete` releases the latch in time for the next one.
-  //
-  // Only the phone layout renders that overlay, so only it can release the
-  // latch through `onExitComplete`; on desktop the latch is held clear, or a
-  // close taken at desktop width would strand it and the panel could never
-  // reopen after a resize back down.
-  const [readerClosing, setReaderClosing] = useState(false);
-  // A close the browser drove has already been animated once, by the browser.
-  // iOS Safari's edge-swipe slides the whole page away and only then hands the
-  // router the popped URL, so playing our own 340ms slide afterwards shows the
-  // reader closing a second time. Drop the animation for those and let the
-  // gesture be the whole transition; the ✕ (and anything else we initiate)
-  // keeps it — see `@/lib/history-intent`.
-  const [readerExitInstant, setReaderExitInstant] = useState(false);
-  // AnimatePresence reads `exit` from the last frame the overlay was *present*.
-  // Arm that prop while the child is still mounted, then drop presence.
-  const [overlayExiting, setOverlayExiting] = useState(false);
-  const readerWasRequestedRef = useRef(readerRequested);
-
-  if (isMobile) {
-    if (readerRequested && !readerClosing) {
-      if (overlayExiting) setOverlayExiting(false);
-      if (readerExitInstant) setReaderExitInstant(false);
-    } else if (
-      !readerRequested &&
-      !readerClosing &&
-      !overlayExiting &&
-      readerWasRequestedRef.current
-    ) {
-      // Falling edge: stamp the exit kind onto the still-present overlay.
-      setReaderExitInstant(wasBrowserInitiatedBack());
-      setOverlayExiting(true);
-      setReaderClosing(true);
-    }
-  } else if (readerClosing || overlayExiting || readerExitInstant) {
-    setReaderClosing(false);
-    setOverlayExiting(false);
-    setReaderExitInstant(false);
-  }
-
-  useLayoutEffect(() => {
-    if (overlayExiting) setOverlayExiting(false);
-    readerWasRequestedRef.current = readerRequested;
-  }, [overlayExiting, readerRequested]);
-
-  // An instant exit completes within the frame, long before iOS has settled
-  // the history it just popped, so releasing the latch on `onExitComplete`
-  // would leave a params flicker free to snap the panel back on. Hold it for
-  // the beat the animated close would have taken instead.
-  const latchTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const releaseReaderLatch = useCallback((afterMs: number) => {
-    if (latchTimerRef.current) clearTimeout(latchTimerRef.current);
-    if (afterMs <= 0) {
-      setReaderClosing(false);
+  // Keep the article mounted for the close animation. Clearing ?entry= on
+  // swipe-dismiss used to empty the sheet mid-drag, so Safari's snapshot
+  // and the live list sat side by side.
+  const [heldEntryId, setHeldEntryId] = useState(selectedEntryId);
+  useEffect(() => {
+    if (selectedEntryId) {
+      setHeldEntryId(selectedEntryId);
       return;
     }
-    latchTimerRef.current = setTimeout(() => {
-      latchTimerRef.current = null;
-      setReaderClosing(false);
-    }, afterMs);
-  }, []);
-  useEffect(
-    () => () => {
-      if (latchTimerRef.current) clearTimeout(latchTimerRef.current);
-    },
-    []
-  );
-
-  // The phone reader is an overlay that animates out, so it has to outlive the
-  // selection that opened it. Remember the last subject and keep rendering it
-  // for the duration of the exit, otherwise the pane would flip to the empty
-  // state and slide *that* off screen.
-  const mobileOverlayOpen = overlayExiting || (readerRequested && !readerClosing);
-  const lastMobileEntryIdRef = useRef<string | null | undefined>(null);
-  const lastMobileBrowserUrlRef = useRef<string | null | undefined>(null);
-  if (readerRequested) {
-    lastMobileEntryIdRef.current = selectedEntryId;
-    lastMobileBrowserUrlRef.current = inAppBrowserUrl;
-  }
-  const mobileEntryId = readerRequested ? selectedEntryId : lastMobileEntryIdRef.current;
-  const mobileBrowserUrl = readerRequested ? inAppBrowserUrl : lastMobileBrowserUrlRef.current;
+    const timer = window.setTimeout(() => setHeldEntryId(undefined), 480);
+    return () => window.clearTimeout(timer);
+  }, [selectedEntryId]);
+  const drawerEntryId = selectedEntryId ?? heldEntryId;
 
   const handlePanelResize = useCallback(
     (panelSize: { inPixels: number; asPercentage: number }) => {
@@ -157,17 +89,38 @@ export function MainWindowContent({
 
   /**
    * The reader (or in-app browser). Shared by both layouts: side-by-side on
-   * wide screens, and full-width on phones where a 380px list plus a reader
-   * cannot both fit — there the reader replaces the list until it is closed.
-   *
-   * Takes its subject as arguments rather than reading the store directly, so
-   * the phone overlay can keep rendering the outgoing entry while it animates
-   * away — see `mobileEntryId` below.
+   * wide screens, overlay on phones so the list keeps its scroll.
    */
   const renderReadingPane = (
     entryId: string | null | undefined,
-    browserUrl: string | null | undefined
-  ) => (
+    browserUrl: string | null | undefined,
+    { instant = false }: { instant?: boolean } = {}
+  ) =>
+    instant ? (
+      <div className="relative flex h-full min-w-0 flex-col overflow-hidden bg-background">
+        {browserUrl ? (
+          <InAppBrowserPane
+            url={browserUrl}
+            onClose={closeBrowser}
+            browserContentRef={browserContentRef}
+          />
+        ) : (
+          entryId && (
+            <EntryReading
+              entryId={entryId}
+              onNavigatePrev={onNavigatePrev}
+              onNavigateNext={onNavigateNext}
+              onClose={onClose}
+              hasPrev={hasPrev}
+              hasNext={hasNext}
+              nextEntryTitle={nextEntryTitle}
+              transitionDirection={entryTransitionDirection}
+              onOpenInAppBrowser={openBrowser}
+            />
+          )
+        )}
+      </div>
+    ) : (
     <div className="relative flex h-full min-w-0 flex-col overflow-hidden">
       <AnimatePresence mode="sync">
         {browserUrl ? (
@@ -255,53 +208,34 @@ export function MainWindowContent({
         )}
       </AnimatePresence>
     </div>
-  );
+    );
 
   return (
     <div data-frosted className={cn('flex h-full min-w-0 flex-col bg-background', className)}>
       {children ? (
         isMobile ? (
-          // Single pane on phones: the reader overlays the list instead of
-          // replacing it, so the list keeps its mount state — closing the
-          // reader returns instantly, without replaying entry animations or
-          // losing the scroll position. `onClose` clears the selection, so the
-          // reader's close button is "back".
           <div className="relative h-full overflow-hidden">
             <div className="h-full overflow-hidden">{children}</div>
-            {/*
-              Sibling of the reader overlay, and below it: the bar stays put
-              while the reader slides over it, and is revealed again as the
-              reader slides away.
-            */}
             <MobileTabBar />
-            <AnimatePresence
-              initial={false}
-              onExitComplete={() => releaseReaderLatch(readerExitInstant ? 340 : 0)}
+            <Drawer
+              open={readerRequested}
+              onOpenChange={(open) => {
+                if (!open) onClose?.();
+              }}
+              swipeDirection="right"
             >
-              {mobileOverlayOpen && (
-                <motion.div
-                  key="mobile-reader"
-                  data-testid="mobile-reader-overlay"
-                  data-reader-exit={readerExitInstant ? 'instant' : 'slide'}
-                  className="absolute inset-0 z-40 bg-background shadow-[-12px_0_32px_-16px_rgb(0_0_0/0.55)]"
-                  initial={prefersReducedMotion ? { opacity: 0 } : { x: '100%' }}
-                  animate={prefersReducedMotion ? { opacity: 1 } : { x: '0%' }}
-                  exit={
-                    readerExitInstant
-                      ? { opacity: 0, transition: { duration: 0 } }
-                      : prefersReducedMotion
-                        ? { opacity: 0 }
-                        : { x: '100%' }
-                  }
-                  transition={{
-                    duration: prefersReducedMotion ? 0.15 : 0.34,
-                    ease: [0.32, 0.72, 0, 1],
-                  }}
-                >
-                  {renderReadingPane(mobileEntryId, mobileBrowserUrl)}
-                </motion.div>
-              )}
-            </AnimatePresence>
+              <DrawerContent
+                data-testid="mobile-reader-overlay"
+                style={{ '--drawer-content-width': '100%' } as CSSProperties}
+                className="w-full max-w-none bg-background text-foreground data-[swipe-direction=right]:rounded-none data-[swipe-direction=right]:border-l-0"
+              >
+                <DrawerTitle className="sr-only">{_(msg`Article`)}</DrawerTitle>
+                <DrawerDescription className="sr-only">
+                  {_(msg`Swipe right or close to return to the list`)}
+                </DrawerDescription>
+                {renderReadingPane(drawerEntryId, inAppBrowserUrl, { instant: true })}
+              </DrawerContent>
+            </Drawer>
           </div>
         ) : (
           <ResizablePanelGroup orientation="horizontal" className="h-full">
@@ -315,9 +249,7 @@ export function MainWindowContent({
               <div className="h-full overflow-hidden">{children}</div>
             </ResizablePanel>
             <ResizableHandle />
-            <ResizablePanel id="entry-reading">
-              {renderReadingPane(selectedEntryId, inAppBrowserUrl)}
-            </ResizablePanel>
+            <ResizablePanel id="entry-reading">{renderReadingPane(selectedEntryId, inAppBrowserUrl)}</ResizablePanel>
           </ResizablePanelGroup>
         )
       ) : (

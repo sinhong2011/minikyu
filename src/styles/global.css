@@ -72,37 +72,122 @@
   html,
   body {
     height: 100%;
+    max-width: 100%;
     overscroll-behavior-y: none;
     -webkit-text-size-adjust: 100%;
     text-size-adjust: 100%;
   }
+  /*
+    `height: 100%` on the root is the *large* viewport under
+    `viewport-fit=cover`. The app shell is `100dvh`. Leaving the document
+    taller than that box opens an empty band between the phone tab bar and
+    Safari's chrome. Size the document to `dvh` so they meet.
+  */
+  @supports (height: 100dvh) {
+    html,
+    body {
+      height: 100dvh;
+      max-height: 100dvh;
+    }
+  }
   html {
     @apply bg-background;
+    overflow-x: hidden;
   }
   body {
     overflow: hidden;
     -webkit-tap-highlight-color: transparent;
   }
+  #root {
+    height: 100%;
+  }
+}
+
+:root {
+  --vv-offset-top: 0px;
+  --vv-offset-bottom: 0px;
+  --shell-overlay-bottom: 0px;
 }
 
 /*
-  iOS Safari paints its toolbar over the layout viewport. Fixed bottom chrome
-  has to sit on the *visual* bottom: the overlap is published as
-  `--vv-offset-bottom` (see `useSafariViewportInsets`), and `100lvh - 100dvh`
-  covers engines that size those units correctly but never fire visualViewport.
+  Same-document swipe-back: Safari throws away its snapshot and shows the
+  live DOM, which still has the reader (and the action bar portaled to
+  `body`) until React unmounts them. `recordPop` sets this in the popstate
+  turn so they cannot paint.
 */
+html[data-reader-browser-back] [data-testid='mobile-reader-overlay'],
+html[data-reader-browser-back] .app-fixed-bottom-bar {
+  display: none !important;
+  visibility: hidden !important;
+  pointer-events: none !important;
+}
+
+/*
+  The window shell is `100dvh`. Do not also pad it — or lift fixed chrome —
+  by `100lvh - 100dvh`. On current iOS that difference is Safari's own
+  toolbar, and `position: fixed; bottom: 0` is already the visible bottom.
+  Using the unit gap as `bottom` floated the reader action bar up through
+  the article (a grey strip over the PDF, with more of the page visible
+  between the bar and `127.0.0.1`).
+
+  `--shell-overlay-bottom` is only the remainder that still covers the `dvh`
+  box. Absolute chrome (the phone tab bar) pads *inside* the bar so its
+  background meets Safari instead of leaving a hole.
+
+  `--vv-offset-bottom` is the single lift for `position: fixed` chrome (the
+  reader action bar, portaled to `document.body`). It comes from
+  `visualViewport` / the iPhone overlay fallback — never from `lvh - dvh`.
+  The class name must be on the element — `max-sm:app-fixed-bottom-bar`
+  does not match a raw CSS class.
+*/
+/*
+  iOS 27 Liquid Glass menubar: floating capsule, lighter dark-mode glass,
+  a defined edge (not only a drop shadow), and a specular highlight.
+  Reduce Transparency falls back to a solid lift of `--background`.
+*/
+.app-ios-menubar {
+  border: 0.5px solid color-mix(in oklch, var(--foreground) 9%, transparent);
+  background-color: color-mix(in oklch, var(--background) 84%, transparent);
+  box-shadow:
+    inset 0 0.5px 0 color-mix(in oklch, white 42%, transparent),
+    0 6px 20px color-mix(in oklch, black 12%, transparent);
+  backdrop-filter: blur(40px) saturate(1.35);
+  -webkit-backdrop-filter: blur(40px) saturate(1.35);
+}
+
+.dark .app-ios-menubar {
+  border-color: color-mix(in oklch, white 12%, transparent);
+  background-color: color-mix(in oklch, var(--background) 82%, transparent);
+  box-shadow:
+    inset 0 0.5px 0 color-mix(in oklch, white 16%, transparent),
+    0 8px 24px color-mix(in oklch, black 28%, transparent);
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .app-ios-menubar,
+  .dark .app-ios-menubar {
+    background-color: color-mix(in oklch, var(--background) 86%, var(--foreground) 14%);
+    backdrop-filter: none;
+    -webkit-backdrop-filter: none;
+  }
+}
+
+[data-slot='drawer-popup'][data-swiping] .app-ios-menubar {
+  backdrop-filter: none;
+  -webkit-backdrop-filter: none;
+}
+
 .app-fixed-bottom-bar {
   position: fixed;
   left: 0;
   right: 0;
   bottom: var(--vv-offset-bottom, 0px);
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  box-sizing: border-box;
   padding-left: env(safe-area-inset-left, 0px);
   padding-right: env(safe-area-inset-right, 0px);
-}
-@supports (height: 100dvh) and (height: 100lvh) {
-  .app-fixed-bottom-bar {
-    bottom: max(var(--vv-offset-bottom, 0px), calc(100lvh - 100dvh));
-  }
 }
 
 /* iOS WebKit: native momentum on inner panes, no 300ms tap delay on chrome. */

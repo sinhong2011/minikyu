@@ -687,7 +687,7 @@ export function EntryList({
           ref={parentRef}
           data-testid="entry-list-scroll-container"
           className={cn(
-            'min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain pb-3 [scrollbar-gutter:stable_both-edges] [-webkit-overflow-scrolling:touch] max-sm:pb-[calc(4.5rem+env(safe-area-inset-bottom,0px))] max-sm:pl-[env(safe-area-inset-left,0px)] max-sm:pr-[env(safe-area-inset-right,0px)]',
+            'min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain pb-3 [scrollbar-gutter:stable_both-edges] [-webkit-overflow-scrolling:touch] max-sm:pb-[calc(5.25rem+max(env(safe-area-inset-bottom,0px),var(--shell-overlay-bottom,0px)))] max-sm:pl-[env(safe-area-inset-left,0px)] max-sm:pr-[env(safe-area-inset-right,0px)]',
             showFloatingFilterBar && 'pb-20'
           )}
         >

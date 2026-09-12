@@ -12,7 +12,16 @@ import { useLingui } from '@lingui/react';
 import { useNavigate, useRouter, useSearch } from '@tanstack/react-router';
 
 import { AnimatePresence, motion } from 'motion/react';
-import { lazy, Suspense, useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  lazy,
+  Suspense,
+  useCallback,
+  useEffect,
+  useLayoutEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import { toast } from 'sonner';
 import {
   Menu,
@@ -31,7 +40,13 @@ import { usePlayerCommandListener } from '@/hooks/use-player-command-listener';
 import { useSyncProgressListener } from '@/hooks/use-sync-progress-listener';
 import { resetAccountState } from '@/lib/account-reset';
 import { confirm } from '@/lib/dialog';
-import { markAppInitiatedBack } from '@/lib/history-intent';
+import {
+  clearReaderClosed,
+  consumeReaderOpenRequested,
+  isReaderEntryEcho,
+  markReaderOpenRequested,
+  rememberReaderClosed,
+} from '@/lib/history-intent';
 import { capabilities } from '@/lib/platform';
 import { logger } from '@/lib/logger';
 import { queryClient } from '@/lib/query-client';
@@ -58,14 +73,6 @@ import { EntryFiltersUI } from './EntryFilters';
 import { EntryList, type EntryListFilterStatus } from './EntryList';
 
 type FilterType = 'all' | 'starred' | 'today' | 'history';
-
-/**
- * How long after a close a returning `?entry=` is read as iOS replaying the
- * pre-back params rather than a real navigation. Wide enough to outlast the
- * reader's 340ms exit and the gesture that triggered it, short enough that a
- * deliberate forward-swipe back into the article still lands.
- */
-const ENTRY_ECHO_WINDOW_MS = 700;
 
 type SortOrder = 'published_at' | 'changed_at';
 type SortDirection = 'asc' | 'desc';
@@ -103,7 +110,10 @@ export function MinifluxLayout() {
   const [entryTransitionDirection, setEntryTransitionDirection] = useState<'forward' | 'backward'>(
     'forward'
   );
-  const selectedEntryId = search.entry;
+  // iOS may put the just-closed id back on the URL. That is not an open
+  // reader — treating it as one makes the next tap of the same article
+  // `replace` instead of `push`, so swipe-back pops the list (the flash).
+  const selectedEntryId = isReaderEntryEcho(search.entry) ? undefined : search.entry;
 
   // Sort, status and the search/date filters are all read straight from the
   // URL. An absent param means "this view's default", so switching views —
@@ -251,18 +261,14 @@ export function MinifluxLayout() {
   };
 
   const handleClose = () => {
-    if (readerPushedRef.current) {
-      // Balanced with the push in handleEntrySelect; the URL→store effect
-      // performs the actual close when the router pops.
+    // Phones close the Drawer with a replace. A history pop would make
+    // Safari swipe-back fight the still-mounted sheet (the page flash).
+    if (!isMobile && readerPushedRef.current) {
       readerPushedRef.current = false;
-      // Claim the pop so the phone reader still animates itself out — only a
-      // Back the browser drove (iOS Safari's edge-swipe, which slides the page
-      // on its own) skips our exit.
-      markAppInitiatedBack();
       router.history.back();
       return;
     }
-    // Deep-linked or restored sessions have no entry to pop.
+    readerPushedRef.current = false;
     updateSearch({ entry: undefined });
   };
 
@@ -274,12 +280,10 @@ export function MinifluxLayout() {
   // reopen on the new account's last article, so that case opts out.
   const previousEntryRef = useRef(search.entry);
   const accountResetRef = useRef(false);
-  // The entry a close just cleared, and when. See the echo guard below.
-  const closedEntryRef = useRef<{ id: string; at: number } | null>(null);
-  // Set by the two places that open the reader on purpose, so the guard can
-  // tell their `?entry=` apart from one that came back on its own.
-  const openRequestedRef = useRef(false);
-  useEffect(() => {
+  // Before paint: a useEffect echo replace still left one frame of the reader
+  // mounted after swipe-back. `useSelectedEntryId` already drops the echo;
+  // this writes it back out of the URL so the next navigation is clean.
+  useLayoutEffect(() => {
     const previous = previousEntryRef.current;
     const afterAccountReset = accountResetRef.current;
     accountResetRef.current = false;
@@ -289,42 +293,33 @@ export function MinifluxLayout() {
       if (previous) {
         suppressAutoSelectRef.current = !afterAccountReset;
         readerPushedRef.current = false;
-        closedEntryRef.current = { id: previous, at: performance.now() };
+        rememberReaderClosed(previous);
       }
       return;
     }
 
-    // A close only sticks if `?entry=` stays gone, and after a gesture Back iOS
-    // hands the router the pre-back search params again for a beat — late
-    // enough to land after the reader's exit, which snaps the panel back on
-    // screen and makes it play the whole close a second time. Only a tap or
-    // prev/next puts an entry in the URL on purpose, and those say so, so an
-    // entry that returns on its own this soon after being closed is that echo.
-    const closed = closedEntryRef.current;
-    const echoed =
-      !openRequestedRef.current &&
-      closed?.id === search.entry &&
-      performance.now() - closed.at < ENTRY_ECHO_WINDOW_MS;
-    openRequestedRef.current = false;
-
-    if (echoed) {
-      // Replaces, so the echo leaves no history entry of its own to go back to.
-      updateSearch({ entry: undefined });
+    if (isReaderEntryEcho(search.entry)) {
       return;
     }
-    closedEntryRef.current = null;
+    consumeReaderOpenRequested();
+    clearReaderClosed();
   }, [search.entry, updateSearch]);
 
   const handleEntrySelect = (entryId: string) => {
     suppressAutoSelectRef.current = false;
-    openRequestedRef.current = true;
+    markReaderOpenRequested();
 
-    // One history entry per reading session: push when the reader opens,
-    // replace while flipping prev/next inside it. Back (or swipe-back) then
-    // closes the reader; the URL stays a shareable deep link throughout.
+    // Phone: the reader is a Drawer. Always replace so Safari has no
+    // extra history entry to interpolate — swipe-to-dismiss belongs to
+    // the sheet. Desktop still pushes one session so Back closes the pane.
     const opening = !selectedEntryId;
-    updateSearch({ entry: entryId }, { replace: !opening });
-    if (opening) readerPushedRef.current = true;
+    if (isMobile) {
+      updateSearch({ entry: entryId }, { replace: true });
+      readerPushedRef.current = false;
+    } else {
+      updateSearch({ entry: entryId }, { replace: !opening });
+      if (opening) readerPushedRef.current = true;
+    }
 
     // Use snapshot for transition direction
     if (selectedEntryId && selectedEntryId !== entryId) {
@@ -410,7 +405,7 @@ export function MinifluxLayout() {
       });
       // Replace, never push: a restored session is not somewhere the user
       // navigated to, so Back must still leave the view rather than undo it.
-      openRequestedRef.current = true;
+      markReaderOpenRequested();
       updateSearch({ entry: lastReadingEntry.entry_id });
     }
   }, [lastReadingEntry, selectedEntryId, updateSearch, isMobile]);

@@ -93,14 +93,16 @@ Two degrade rather than disappear, because the concept still means something:
 The desktop layout is a resizable two-pane split (`entry-list` has a 380px
 minimum) plus a reader. Below the 768px `useIsMobile()` breakpoint,
 `MainWindowContent` switches to a **single pane**: the entry list, replaced by
-the reader once an entry is opened. The reader's close button clears the
+the reader once an entry is opened. `useIsMobile` reads `window.innerWidth` on
+the first paint — this is a SPA, so there is no server HTML to mismatch, and
+starting as `false` (`!!undefined`) mounted that 380px pane on a ~390px phone
+until the effect ran. The reader's close button clears the
 selection, so it doubles as "back". Without this the reader renders off-screen
 past the right edge and tapping an entry appears to do nothing.
 
 On phones the reader **overlays** the list rather than replacing it, so the
-list keeps its mount state — closing the reader returns instantly with the
-scroll position intact, instead of remounting the list and replaying its entry
-animations.
+list keeps its mount state and scroll. Close is a history pop (Safari swipe
+or ✕ → `history.back()`); we do not play a Motion exit.
 
 The overlay carries **page semantics through the router**: the open entry is
 the `?entry=` search param (validated in `src/routes/index.tsx`), so the reader
@@ -487,43 +489,57 @@ The Tauri build keeps its four entries (`index.html`, `quick-pane.html`,
 
 ## Safe areas and the status bar
 
-`index.html` sets `viewport-fit=cover`, and that attribute is load-bearing:
-`env(safe-area-inset-*)` resolves to `0` without it. The phone layout depends on
-those insets in about a dozen places — the reader header
-(`EntryReadingHeader.tsx`), the bottom action bar, `MobileTabBar`, the entry
-list's scroll padding, the floating filter bar — and `PWA_HEAD_TAGS` sets
+`index.html` sets `viewport-fit=cover` and `maximum-scale=1`, and both are
+load-bearing. `env(safe-area-inset-*)` resolves to `0` without `viewport-fit=cover`.
+The phone layout depends on those insets in about a dozen places — the reader
+header (`EntryReadingHeader.tsx`), the bottom action bar, `MobileTabBar`, the
+entry list's scroll padding, the floating filter bar — and `PWA_HEAD_TAGS` sets
 `apple-mobile-web-app-status-bar-style` to `black-translucent`, which tells iOS
 to lay the status bar *over* the web view. Drop `viewport-fit=cover` and every
 one of those compensations silently becomes zero: the status bar (a blurred
 glass band since iOS 26) covers the header, and the tab bar sits under the home
 indicator.
 
+`maximum-scale=1` stops iOS Safari pinch-zooming the fixed-height shell. A
+zoomed visual viewport desyncs `--vv-offset-*` and the tab bar / reader action
+bar land under Safari's floating chrome.
+
 `viewport-fit=cover` has a second consequence: `100vh` becomes the *large*
 viewport — the whole screen, with the address bar and (since iOS 26) Safari's
 floating bottom bar drawn over the last stretch of it. The window shell in
 `MainWindow.tsx` is therefore sized in `dvh`
 (`h-screen supports-[height:100dvh]:h-dvh`, the `h-screen` being the fallback
-for engines without `dvh`); with `100vh` everything anchored to the bottom of it
-— `MobileTabBar`, the reader's action bar — lands underneath that chrome. The
-document itself never scrolls (`html, body { height: 100%; overflow: hidden;
-overscroll-behavior-y: none }` in `global.css`), so the bar never retracts and
-the `dvh` box does not resize while reading. The clamp is Y-only: the shorthand
-`overscroll-behavior: none` also disables Safari's edge-swipe Back, which is how
-the phone reader closes. `html` carries a background for the same family of
-reasons: Safari samples it to tint its floating bar.
+for engines without `dvh`). Do **not** also pad that box — or lift
+`.app-fixed-bottom-bar` — by `100lvh - 100dvh`. On current iOS that
+difference is Safari's own toolbar, and `position: fixed; bottom: 0` is
+already the visible bottom. Using the unit gap as `bottom` floated the
+reader action bar up through the article.
 
-In browser Safari the bottom inset tracks the toolbar as well as the home
-indicator, so a bottom-anchored bar needs both — the `dvh` height *and* its
-`env(safe-area-inset-bottom)` padding.
+`useSafariViewportInsets` publishes two bottom insets. `--vv-offset-bottom` is
+the only lift for `position: fixed` chrome (the reader action bar). It comes
+from `visualViewport` or the iPhone overlay fallback — never from `lvh - dvh`.
+`--shell-overlay-bottom` is only the remainder that still covers the `dvh`
+box — the phone tab bar pads *inside* the bar by that amount so its
+background meets the pill. The 80px iPhone-tab fallback applies only when a
+measured `100lvh` still equals `100dvh`. On current iOS, `window.innerHeight`
+already matches `dvh` (the visible area) even though `lvh` is still the full
+screen — treating that as "dvh did not shrink" invented an 80px empty band
+above `127.0.0.1`. If `lvh` cannot be measured, do not guess. `html` / `body`
+are also `100dvh` so the document does not extend below the shell. The
+document never scrolls (`overflow: hidden; overscroll-behavior-y: none` in
+`global.css`), so the bar never retracts. The clamp is Y-only: the shorthand
+`overscroll-behavior: none` also disables Safari's edge-swipe Back, which is
+how the phone reader closes. `html` carries a background because Safari samples
+it to tint its floating bar.
 
-`position: fixed; bottom: 0` is a separate trap. The layout viewport is the
-*large* viewport under `viewport-fit=cover`, so a fixed bar sits in the strip
-Safari draws its floating tab bar over. The phone tab bar (`MobileTabBar`) is
-`absolute` inside the `dvh` shell and does not have this problem. The reader's
-action bar used to be `fixed`; it now uses `.app-fixed-bottom-bar`, which lifts
-the bar by `max(var(--vv-offset-bottom), 100lvh - 100dvh)`.
-`useSafariViewportInsets` in `MainWindow` keeps `--vv-offset-bottom` in sync
-with `visualViewport` as Safari's chrome shows and hides.
+The phone tab bar (`MobileTabBar`) is `absolute` inside the `dvh` shell and
+pads internally with `--shell-overlay-bottom` when that box is still covered.
+The reader's action bar cannot stay in the header: it lives inside a sticky
+header with `overflow: hidden` and a motion overlay that applies `transform`,
+both of which trap `position: fixed`. On phones it is portaled to
+`document.body` with the `.app-fixed-bottom-bar` class (a real class name —
+`max-sm:app-fixed-bottom-bar` does not match a raw CSS class) so
+`bottom: var(--vv-offset-bottom)` is viewport-relative.
 
 The same class, plus `env(safe-area-inset-left)` / `-right`, is what keeps the
 bar clear of the notch in landscape. List titles, the reader header, the
@@ -539,29 +555,25 @@ text (Safari's native callout) instead of opening our desktop menu. Article
 enter/exit skips `filter: blur()` in the browser; that effect is a compositing
 tax on iOS WebKit.
 
-## Back: ours versus the browser's
+## Phone reader: Drawer, not a history page
 
-Closing the phone reader with ✕ and closing it with iOS Safari's edge-swipe both
-arrive as one `popstate`, but they must not look the same. Safari animates the
-swipe itself — it slides the page away and only then hands the router the popped
-URL — so replaying the reader's own 340ms exit on top of that plays the close
-twice. There is no in-app left-edge drag: Safari owns that gesture. ✕ calls
-`markAppInitiatedBack()` before `history.back()`, and `MainWindowContent` asks
-`wasBrowserInitiatedBack()` when the reader's presence flips off, dropping the
-exit animation for pops it did not initiate. AnimatePresence snapshots `exit`
-from the last frame the overlay is still mounted, so that classification is
-stamped onto the panel *before* presence drops — otherwise the swipe-back close
-still plays the 340ms slide.
+The phone reader is a shadcn/Base UI **Drawer** (`swipeDirection="right"`)
+over a still-mounted list. `?entry=` is written with **replace** so Safari
+has no extra history entry to interpolate. Tab, feed, and category `<Link>`s
+also **replace** — a push there is what made swipe-back slide two lists
+side by side. Close is the sheet: swipe right or ✕. The sheet is full-width
+so the article is not boxed into the default 75% side drawer. The article
+stays mounted until the close animation finishes.
 
-The other half of the same symptom is in the URL rather than the animation.
-After a gesture Back, iOS hands the router the pre-back search params again for
-a beat — often late enough to land *after* the exit has finished, which snaps
-the panel back on screen and plays the whole close a second time. `?entry=` has
-exactly two deliberate writers (a tap, and prev/next), and both now say so, so
-`MinifluxLayout` reads an entry that returns on its own within
-`ENTRY_ECHO_WINDOW_MS` of being closed as that echo and replaces it back out of
-the URL. `MainWindowContent`'s close latch still covers the fast path, where the
-echo lands inside the exit itself.
+Safari's left-edge Back is left alone. Treating the reader as a pushed page
+while the list stayed mounted is what flashed the whole view after
+swipe-back — the snapshot was the list, the live DOM still had the overlay.
+
+Phone bottom chrome (tab bar and reader actions) is an iOS 27 Liquid
+Glass capsule (`.app-ios-menubar`): floating, rounded, mostly-opaque
+dark-mode glass (~82% fill), a defined edge, and a specular highlight.
+Content can still frost through slightly. `prefers-reduced-transparency`
+falls back to a solid lift.
 
 ## Home-screen icons
 

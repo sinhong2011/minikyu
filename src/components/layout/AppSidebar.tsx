@@ -144,7 +144,7 @@ function FeedItem({ feed }: FeedItemProps) {
       transition={{ duration: 0.2, ease: 'easeOut' }}
     >
       <SidebarMenuSubItem key={feed.id}>
-        <Link to="/" search={{ feedId: feed.id.toString() }} className="block w-full">
+        <Link to="/" search={{ feedId: feed.id.toString() }} replace className="block w-full">
           {({ isActive }) => (
             <div className="group/feed-item relative">
               <SidebarMenuSubButton isActive={isActive} className="w-full pr-12">
@@ -349,7 +349,12 @@ function CategoryItem({ category }: CategoryItemProps) {
         className="group/collapsible"
       >
         <SidebarMenuItem className="group/category-item relative">
-          <Link to="/" search={{ categoryId: category.id.toString() }} className="min-w-0 flex-1">
+          <Link
+            to="/"
+            search={{ categoryId: category.id.toString() }}
+            replace
+            className="min-w-0 flex-1"
+          >
             {({ isActive }) => {
               const highlighted = isActive || hasFeedActive;
               return (
@@ -625,7 +630,7 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
               ) : (
                 <>
                   <SidebarMenuItem>
-                    <Link to="/" activeOptions={{ exact: true }}>
+                    <Link to="/" replace activeOptions={{ exact: true }}>
                       {({ isActive }) => (
                         <SidebarMenuButton
                           className="flex"
@@ -653,7 +658,7 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
                     </Link>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <Link to="/" search={{ filter: 'today' }}>
+                    <Link to="/" search={{ filter: 'today' }} replace>
                       {({ isActive }) => (
                         <SidebarMenuButton tooltip={_(msg`Today`)} isActive={isActive}>
                           <HugeiconsIcon
@@ -677,7 +682,7 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
                     </Link>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <Link to="/" search={{ filter: 'starred' }}>
+                    <Link to="/" search={{ filter: 'starred' }} replace>
                       {({ isActive }) => (
                         <SidebarMenuButton tooltip={_(msg`Starred`)} isActive={isActive}>
                           <HugeiconsIcon
@@ -695,7 +700,7 @@ function AppSidebarContent({ children, className }: AppSidebarProps) {
                     </Link>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
-                    <Link to="/" search={{ filter: 'history' }}>
+                    <Link to="/" search={{ filter: 'history' }} replace>
                       {({ isActive }) => (
                         <SidebarMenuButton tooltip={_(msg`History`)} isActive={isActive}>
                           <HugeiconsIcon
