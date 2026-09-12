@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.13.2](https://github.com/sinhong2011/minikyu/compare/v1.13.1...v1.13.2) (2026-09-12)
+
+
+### Bug Fixes
+
+* **pwa:** Open the phone reader in a drawer ([#127](https://github.com/sinhong2011/minikyu/issues/127)) ([51cb556](https://github.com/sinhong2011/minikyu/commit/51cb55652a79ed76fa6c932d5e28cfcb79dca99f))
+
 ## [1.13.1](https://github.com/sinhong2011/minikyu/compare/v1.13.0...v1.13.1) (2026-09-11)
 
 
